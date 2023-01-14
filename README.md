@@ -1,5 +1,8 @@
 # GalaxyBrain
 
+[![PyPI Version](https://img.shields.io/pypi/v/chaosimp.svg)](https://pypi.python.org/pypi/galaxybrain)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
+
 _Turn wordcel LLMs into mighty shape rotators!_
 
 ## Goals
