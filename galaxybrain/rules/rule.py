@@ -1,8 +1,8 @@
 from attrs import define
-from typing import Callable, Optional
+from typing import Callable
 
 
 @define
-class PromptRule():
+class Rule():
     value: str
     validator: Callable[[str], bool] = lambda v: True

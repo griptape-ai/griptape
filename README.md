@@ -1,6 +1,6 @@
 # GalaxyBrain
 
-Turn wordcel LLMs into mighty shape rotators!_
+_Turn wordcel LLMs into mighty shape rotators!_
 
 ## Goals
 

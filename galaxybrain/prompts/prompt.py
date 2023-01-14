@@ -1,6 +1,6 @@
 from attrs import define, field
 from typing import Optional
-from galaxybrain.prompts.prompt_rule import PromptRule
+from galaxybrain.rules.rule import Rule
 from galaxybrain.memory import Memory
 from jinja2 import Environment, FileSystemLoader
 import galaxybrain
@@ -10,7 +10,7 @@ import os
 @define
 class Prompt():
     value: str
-    rules: list[PromptRule] = field(default=[], kw_only=True)
+    rules: list[Rule] = field(default=[], kw_only=True)
     memory: Optional[Memory] = field(default=None, kw_only=True)
     j2_env: any = field(init=False)
 

@@ -1,15 +1,13 @@
 from attrs import define
-
 from galaxybrain.completions.completion import Completion
 from galaxybrain.prompts.prompt import Prompt
 from galaxybrain.completions.completion_result import CompletionResult
-
+from galaxybrain.rules.rule import Rule
 import openai
-import json
 
 
 @define()
-class OpenAiCompletion(Completion):
+class OpenAI(Completion):
     api_key: str = None
     model: str = "text-davinci-003"
     suffix: str = None
@@ -27,10 +25,10 @@ class OpenAiCompletion(Completion):
     logit_bias: map = {}
     user: str = ""
 
-    def complete(self, prompt: Prompt) -> CompletionResult:
-        if self.api_key:
-            openai.api_key = self.api_key
+    def __attrs_post_init__(self):
+        openai.api_key = self.api_key
 
+    def complete(self, prompt: Prompt) -> CompletionResult:
         result = openai.Completion.create(
             model=self.model,
             prompt=prompt.build(),
@@ -50,19 +48,4 @@ class OpenAiCompletion(Completion):
             user=self.user
         )
 
-        if len(result.choices) == 1:
-            result_choice = result.choices[0].text.strip()
-
-            if prompt.memory:
-                prompt.memory.add_memory(result_choice)
-
-            return CompletionResult(
-                value=result_choice,
-                meta={
-                    "id": result["id"],
-                    "created": result["created"],
-                    "usage": json.dumps(result["usage"])
-                }
-            )
-        else:
-            raise Exception("Completion with more than one choice is not supported yet.")
+        return [choice.text.strip() for choice in result.choices]

@@ -3,5 +3,5 @@ from attrs import define
 
 @define
 class CompletionResult():
-    result: str
+    value: str
     meta: any
