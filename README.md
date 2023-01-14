@@ -28,31 +28,38 @@ Here is an example of some of GalaxyBrain's functionality:
 completion = OpenAiCompletion(api_key, temperature=0.9, user="demo")
 memory = Memory()
 rules = [
-    PromptRule(
-        "act as a web API and only output valid JSON",
-        validator=lambda v : is_valid_json(v)
-    ),
-    PromptRule(
-        "output JSON field name is 'Output'",
-        validator=lambda v : has_key_in_json_object(v, "Output")
-    )
+    json_rules.return_valid_json(),
+    json_rules.put_answer_in_field("Names"),
+    Rule("only use information from fantasy novels")
 ]
 
 completion.complete(
-    Prompt("Give me 2 fantasy character name ideas in an array", memory=memory, rules=rules)
+    Prompt("Give me ideas for two names", memory=memory, rules=rules)
 )
 
 # Output:
 # {
-#     "Output": ["Gwendoline the Wizard", "Krastov the Barbarian"]
+#     "Output": ["Frodo Baggins", "Gandalf the Grey"]
 # }
 
-completion.complete(
-    Prompt("Give me 2 more", memory=memory)
+result = completion.complete(
+    Prompt("Give me 3 more from another universe", memory=memory)
 )
 
 # Output
 # {
-#     "Output": ["Lysander the Warlock", "Ltamos the Elf"]
+#     "Output": ["Dumbledore", "Luna Lovegood", "Harry Potter"]
 # }
+```
+
+You can also validate results against your rules:
+
+```python
+validator = Validator(result, rules)
+
+if validator.validate():
+    log.info("Rule validations passed")
+else:
+    log.error("Rule validations failed")
+    log.error(validator.failed_rules())
 ```
