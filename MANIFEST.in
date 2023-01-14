@@ -1,0 +1,1 @@
+recursive-include galaxybrain/prompts/templates/ *.j2

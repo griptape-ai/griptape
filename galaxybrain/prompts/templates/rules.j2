@@ -1,0 +1,8 @@
+{% if rules|length > 0 %}
+Always follow all of the following rules:
+{% else %}
+There are no rules to follow.
+{% endif %}
+{% for rule in rules %}
+- {{ rule.value }}
+{% endfor %}
