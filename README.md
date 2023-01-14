@@ -39,16 +39,16 @@ completion.complete(
 
 # Output:
 # {
-#     "Output": ["Frodo Baggins", "Gandalf the Grey"]
+#     "Names": ["Frodo Baggins", "Gandalf the Grey"]
 # }
 
 result = completion.complete(
     Prompt("Give me 3 more from another universe", memory=memory)
 )
 
-# Output
+# Output:
 # {
-#     "Output": ["Dumbledore", "Luna Lovegood", "Harry Potter"]
+#     "Names": ["Dumbledore", "Luna Lovegood", "Harry Potter"]
 # }
 ```
 
