@@ -1,11 +1,10 @@
 from attrs import define
 from typing import Optional
-from galaxybrain.completions.completion_result import CompletionResult
 from galaxybrain.prompts.prompt_rule import PromptRule
 
 
 @define()
-class ResultValidator():
+class CompletionValidator():
     result: str
     rules: list[PromptRule]
     rule_validations: dict[PromptRule, bool] = []
