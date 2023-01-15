@@ -3,7 +3,7 @@
 [![PyPI Version](https://img.shields.io/pypi/v/galaxybrain.svg)](https://pypi.python.org/pypi/galaxybrain)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
 
-_Turn wordcel LLMs into mighty shape rotators!_
+_Turning LLMs into mighty shape rotators!_
 
 ## Goals
 
@@ -28,6 +28,11 @@ OpenAiCompletion(api_key)
 Here is an example of some of GalaxyBrain's functionality:
 
 ```python
+from galaxybrain.completions import OpenAiCompletion
+from galaxybrain.memory import Memory
+import galaxybrain.rules.json as json_rules
+
+
 completion = OpenAiCompletion(api_key, temperature=0.9, user="demo")
 memory = Memory()
 rules = [
@@ -37,7 +42,7 @@ rules = [
 ]
 
 completion.complete(
-    Prompt("Give me ideas for two names", memory=memory, rules=rules)
+    Prompt("Give me ideas for two names from the same universe", memory=memory, rules=rules)
 )
 
 # Output:
@@ -61,8 +66,8 @@ You can also validate results against your rules:
 validator = Validator(result, rules)
 
 if validator.validate():
-    log.info("Rule validations passed")
+    print("Rule validations passed")
 else:
-    log.error("Rule validations failed")
-    log.error(validator.failed_rules())
+    print("Rule validations failed")
+    print(validator.failed_rules())
 ```

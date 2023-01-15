@@ -1,8 +1,8 @@
 from galaxybrain.rules.rule import Rule
-from . import json_rules
+from . import json
 
 
 __all__ = [
     "Rule",
-    "json_rules"
+    "json"
 ]
