@@ -30,7 +30,9 @@ Here is an example of some of GalaxyBrain's functionality:
 ```python
 from galaxybrain.completions import OpenAiCompletion
 from galaxybrain.memory import Memory
+from galaxybrain.prompts import Prompt
 import galaxybrain.rules.json as json_rules
+from galaxybrain.completions import Validator
 
 
 completion = OpenAiCompletion(api_key, temperature=0.9, user="demo")

@@ -22,4 +22,4 @@ class Validator():
         return self.is_valid()
 
     def failed_rules(self) -> list[Rule]:
-        return [validation[0].value for validation in self.rule_validations if not validation[1]]
+        return [validation[0] for validation in self.rule_validations if not validation[1]]
