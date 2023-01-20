@@ -32,11 +32,14 @@ class Workflow:
 
         return all_steps
 
-    def last_step(self, step: Optional[Step]) -> Optional[Step]:
+    def last_step(self) -> Optional[Step]:
+        return self.last_step_after(self.root_step)
+
+    def last_step_after(self, step: Optional[Step]) -> Optional[Step]:
         if step is None:
             return None
         elif step.child:
-            return self.last_step(step.child)
+            return self.last_step_after(step.child)
         else:
             return step
 
@@ -44,7 +47,7 @@ class Workflow:
         if self.root_step is None:
             self.root_step = step
         else:
-            self.last_step(self.root_step).add_child(step)
+            self.last_step().add_child(step)
 
         return step
 

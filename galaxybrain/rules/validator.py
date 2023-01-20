@@ -1,13 +1,16 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Optional
 from attrs import define
-from typing import Optional
-from galaxybrain.workflows.step_output import StepOutput
-from galaxybrain.rules.rule import Rule
+
+if TYPE_CHECKING:
+    from galaxybrain.workflows.step_output import StepOutput
+    from galaxybrain.rules.rule import Rule
 
 
 @define()
 class Validator:
     result: StepOutput
-    rules: list[Rule]
+    rules: list[Rule] = []
     rule_validations: dict[Rule, bool] = {}
 
     def is_valid(self) -> Optional[bool]:
