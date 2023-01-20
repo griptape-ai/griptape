@@ -1,15 +1,12 @@
 from attrs import define
-
-from galaxybrain.completions.completion import Completion
-from galaxybrain.prompts.prompt import Prompt
-from galaxybrain.completions.completion_result import CompletionResult
-
+from galaxybrain.drivers import Driver
+from galaxybrain.workflows.step_output import StepOutput
 import openai
 import json
 
 
 @define()
-class OpenAiCompletion(Completion):
+class OpenAiDriver(Driver):
     api_key: str = None
     model: str = "text-davinci-003"
     suffix: str = None
@@ -27,13 +24,13 @@ class OpenAiCompletion(Completion):
     logit_bias: map = {}
     user: str = ""
 
-    def complete(self, prompt: Prompt) -> CompletionResult:
+    def run(self, prompt_value: str) -> StepOutput:
         if self.api_key:
             openai.api_key = self.api_key
 
         result = openai.Completion.create(
             model=self.model,
-            prompt=prompt.build(),
+            prompt=prompt_value,
             suffix=self.suffix,
             max_tokens=self.max_tokens,
             temperature=self.temperature,
@@ -51,13 +48,8 @@ class OpenAiCompletion(Completion):
         )
 
         if len(result.choices) == 1:
-            result_choice = result.choices[0].text.strip()
-
-            if prompt.memory:
-                prompt.memory.add_memory(result_choice)
-
-            return CompletionResult(
-                value=result_choice,
+            return StepOutput(
+                value=result.choices[0].text.strip(),
                 meta={
                     "id": result["id"],
                     "created": result["created"],

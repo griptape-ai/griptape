@@ -1,9 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from attrs import define
 from typing import Callable
-from galaxybrain.completions.completion_result import CompletionResult
+
+if TYPE_CHECKING:
+    from galaxybrain.workflows.step_output import StepOutput
 
 
-@define
-class Rule():
+@define(frozen=True)
+class Rule:
     value: str
-    validator: Callable[[CompletionResult], bool] = lambda v: True
+    validator: Callable[[StepOutput], bool] = lambda v: True

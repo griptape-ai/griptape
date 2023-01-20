@@ -5,6 +5,8 @@
 
 _Turning LLMs into mighty shape rotators!_
 
+GalaxyBrain is a workflow framework for large language models (LLMs). With GalaxyBrain, developers can define prompt completion steps, prompt rules, result validators, and more. Additionally, the framework adds memory capabilities to LLM workflows making it easy to handle state between steps.
+
 ## Goals
 
 1. Reduce surprises when it comes to working with LLMs.
