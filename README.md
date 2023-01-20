@@ -20,43 +20,57 @@ First, install the library:
 pip install galaxybrain
 ```
 
-Currently, GalaxyBrain only supports OpenAI APIs, so you'll need to [get an API key](https://beta.openai.com/account/api-keys). You can then either keep it on your path as `OPENAI_API_KEY` or pass it to the completion object manually:
+Currently, GalaxyBrain only supports OpenAI APIs, so you'll need to [get an API key](https://beta.openai.com/account/api-keys) and keep it on your path as `OPENAI_API_KEY` or pass it to the driver object manually. For example:
 
 ```python
-api_key = ...
-OpenAiCompletion(api_key)
+import os
+from dotenv import load_dotenv
+from galaxybrain.drivers import OpenAiDriver
+
+load_dotenv()
+
+api_key = os.environ.get('OPENAI_KEY')
+driver = OpenAiDriver(api_key)
 ```
+
 
 Here is an example of some of GalaxyBrain's functionality:
 
 ```python
-from galaxybrain.completions import OpenAiCompletion
-from galaxybrain.memory import Memory
+from galaxybrain.rules import Rule, Validator
+from galaxybrain.workflows import CompletionStep, Workflow
+from galaxybrain.drivers import OpenAiDriver
 from galaxybrain.prompts import Prompt
-import galaxybrain.rules.json as json_rules
-from galaxybrain.completions import Validator
+import galaxybrain.rules as rules
 
 
-completion = OpenAiCompletion(api_key, temperature=0.9, user="demo")
-memory = Memory()
-rules = [
-    json_rules.return_valid_json(),
-    json_rules.put_answer_in_field("Names"),
+chat_rules = [
+    rules.json.return_valid_json(),
+    rules.json.put_answer_in_field("Names"),
+    rules.conversation.be_truthful(),
+    rules.conversation.your_name_is("GalaxyGPT"),
     Rule("only use information from fantasy novels")
 ]
 
-completion.complete(
-    Prompt("Give me ideas for two names from the same universe", memory=memory, rules=rules)
+driver = OpenAiDriver(temperature=0.5, user="demo")
+workflow = Workflow(rules=chat_rules, driver=driver)
+
+workflow.add_step(
+    CompletionStep(input=Prompt("Give me ideas for two names from the same universe"))
 )
+
+workflow.start()
 
 # Output:
 # {
 #     "Names": ["Frodo Baggins", "Gandalf the Grey"]
 # }
 
-result = completion.complete(
-    Prompt("Give me 3 more from another universe", memory=memory)
+workflow.add_step(
+    CompletionStep(input=Prompt("Give me 3 more from another universe"))
 )
+
+workflow.resume()
 
 # Output:
 # {
@@ -67,7 +81,7 @@ result = completion.complete(
 You can also validate results against your rules:
 
 ```python
-validator = Validator(result, rules)
+validator = Validator(workflow.last_step().output, chat_rules)
 
 if validator.validate():
     print("Rule validations passed")
