@@ -69,10 +69,10 @@ class Prompt(StepInput):
     def build(self, rules: list[Rule], memory: Memory) -> str:
         intro = self.intro(rules)
 
-        if memory.should_summarize and memory.summary is not None:
-            conversation = self.conversation_summary(memory)
-        else:
+        if memory.summary is None:
             conversation = self.full_conversation(memory)
+        else:
+            conversation = self.conversation_summary(memory)
 
         question = self.j2().get_template("input.j2").render(
             {

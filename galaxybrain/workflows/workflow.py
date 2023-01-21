@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from galaxybrain.rules import Rule
-from galaxybrain.summarizers import Summarizer, DriverSummarizer
 from galaxybrain.workflows import Memory
 
 if TYPE_CHECKING:
@@ -16,7 +15,6 @@ class Workflow:
     driver: Driver = field(kw_only=True)
     rules: list[Rule] = field(default=[], kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)
-    summarizer: Summarizer = field(default=DriverSummarizer(), kw_only=True)
 
     def steps(self):
         all_steps = []
@@ -71,10 +69,7 @@ class Workflow:
         else:
             step.run(workflow=self)
 
-            self.memory.add_step(step)
-
-            if self.memory.should_summarize:
-                self.memory.summary = self.summarizer.summarize(self, step)
+            self.memory.add_step(self, step)
 
             self.__run_from_step(step.child)
 
