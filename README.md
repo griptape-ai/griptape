@@ -79,6 +79,28 @@ workflow.resume()
 # }
 ```
 
+Use `ComputeStep` to delegate computational tasks to Python:
+
+```python
+workflow.add_step(
+    ComputeStep(input=Prompt(f"generate two random 3x3 matrices and multiply them"))
+)
+```
+
+This will generate the following code that GalaxyBrain runs locally and returns it to the LLM in the next prompt:
+
+```python
+print(np.matmul(np.random.rand(3,3), np.random.rand(3,3)))
+```
+
+You can ask it open-ended computational questions:
+```python
+workflow.add_step(
+    ComputeStep(input=Prompt(f"Sally is 5 feet tall, Jack is 14 inches taller than Sally. How tall is Jack?"))
+)
+```
+
+
 You can also validate results against your rules:
 
 ```python
