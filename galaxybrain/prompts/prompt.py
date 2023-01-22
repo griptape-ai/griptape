@@ -6,7 +6,7 @@ import os
 from galaxybrain.workflows import StepInput
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step
+    from galaxybrain.workflows import Step, Workflow
     from galaxybrain.rules.rule import Rule
     from galaxybrain.workflows import Memory
 
@@ -27,28 +27,15 @@ class Prompt(StepInput):
 
     @classmethod
     def summarize(cls, text: str) -> str:
-        return cls.j2().get_template("summarize_conversation.j2").render(
-            {
-                "text": text
-            }
-        )
+        return cls.j2().get_template("summarize_conversation.j2").render(text=text)
 
     @classmethod
     def summarize_summary_and_step(cls, summary: str, step: Step):
-        return cls.j2().get_template("summarize_summary_and_step.j2").render(
-            {
-                "summary": summary,
-                "step": step
-            }
-        )
+        return cls.j2().get_template("summarize_summary_and_step.j2").render(summary=summary, step=step)
 
     @classmethod
     def intro(cls, rules: list[Rule]):
-        return cls.j2().get_template("rules.j2").render(
-            {
-                "rules": rules
-            }
-        )
+        return cls.j2().get_template("rules.j2").render(rules=rules)
 
     @classmethod
     def full_conversation(cls, memory: Memory):
@@ -60,24 +47,16 @@ class Prompt(StepInput):
 
     @classmethod
     def conversation_summary(cls, memory: Memory):
-        return cls.j2().get_template("conversation_summary.j2").render(
-            {
-                "summary": memory.summary
-            }
-        )
+        return cls.j2().get_template("conversation_summary.j2").render(summary=memory.summary)
 
-    def build(self, rules: list[Rule], memory: Memory) -> str:
-        intro = self.intro(rules)
+    def to_string(self, workflow: Workflow) -> str:
+        intro = self.intro(workflow.rules)
 
-        if memory.summary is None:
-            conversation = self.full_conversation(memory)
+        if workflow.memory.summary is None:
+            conversation = self.full_conversation(workflow.memory)
         else:
-            conversation = self.conversation_summary(memory)
+            conversation = self.conversation_summary(workflow.memory)
 
-        question = self.j2().get_template("input.j2").render(
-            {
-                "question": self.value
-            }
-        )
+        question = self.j2().get_template("input.j2").render(question=self.value)
 
         return f"{intro}\n{conversation}\n{question}"

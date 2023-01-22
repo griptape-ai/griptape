@@ -41,6 +41,13 @@ class Workflow:
 
         return step
 
+    def add_step_after(self, before_step: Step, step: Step) -> Step:
+        if before_step.child:
+            step.add_child(before_step.child)
+        before_step.add_child(step)
+
+        return step
+
     def start(self) -> None:
         self.__run_from_step(self.root_step)
 

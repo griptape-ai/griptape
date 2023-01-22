@@ -30,10 +30,9 @@ class Step(ABC):
     def is_finished(self):
         return self.output is not None
 
-    @abstractmethod
-    def run(self, **kwargs) -> StepOutput:
-        pass
+    def to_string(self, memory: Memory) -> str:
+        return self.input.full_conversation(memory=memory)
 
     @abstractmethod
-    def to_string(self, rules: list[Rule], memory: Memory) -> str:
+    def run(self, **kwargs) -> StepOutput:
         pass

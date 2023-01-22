@@ -1,8 +1,12 @@
-{% if rules|length > 0 %}
-When you answer, always follow all of these rules:
-{% else %}
-There are no rules to follow.
-{% endif %}
+When you answer my questions, follow all of the following rules:
+
+Rule #1
+Individual questions could have specific rules defined in parenthesis. They override all other rules. For example:
+Q: (your answer to this question should always be "HELLO WORLD") What is your name?
+A: HELLO WORLD
+
 {% for rule in rules %}
-- {{ rule.value }}
+Rule #{{loop.index + 1}}
+{{ rule.value }}
+
 {% endfor %}

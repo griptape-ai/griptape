@@ -6,8 +6,6 @@ from galaxybrain.workflows.step_output import StepOutput
 
 if TYPE_CHECKING:
     from galaxybrain.drivers import Driver
-    from galaxybrain.rules import Rule
-    from galaxybrain.workflows import Memory
 
 
 @define
@@ -15,7 +13,7 @@ class CompletionStep(Step):
     driver: Optional[Driver] = field(default=None, kw_only=True)
 
     def run(self, workflow: Workflow) -> StepOutput:
-        prompt_value = self.input.build(rules=workflow.rules, memory=workflow.memory)
+        prompt_value = self.input.to_string(workflow=workflow)
 
         if self.driver is None:
             active_driver = workflow.driver
@@ -25,6 +23,3 @@ class CompletionStep(Step):
         self.output = active_driver.run(value=prompt_value)
 
         return self.output
-
-    def to_string(self, rules: list[Rule], memory: Memory) -> str:
-        return self.input.full_conversation(memory=memory)

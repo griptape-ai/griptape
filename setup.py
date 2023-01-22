@@ -21,6 +21,7 @@ setup(
         "python-dotenv>=0.21",
         "openai>=0.26",
         "attrs>=22",
-        "jinja2>=3.1"
+        "jinja2>=3.1",
+        "numpy"
     ]
 )
