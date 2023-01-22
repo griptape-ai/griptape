@@ -60,7 +60,7 @@ class Workflow:
         if step is None:
             return None
         else:
-            return step.to_string(rules=self.rules, memory=self.memory)
+            return step.to_string(memory=self.memory)
 
     def __last_step_after(self, step: Optional[Step]) -> Optional[Step]:
         if step is None:
