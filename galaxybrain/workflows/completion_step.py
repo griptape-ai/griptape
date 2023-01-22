@@ -12,11 +12,11 @@ if TYPE_CHECKING:
 class CompletionStep(Step):
     driver: Optional[Driver] = field(default=None, kw_only=True)
 
-    def run(self, workflow: Workflow) -> StepOutput:
-        prompt_value = self.input.to_string(workflow=workflow)
+    def run(self) -> StepOutput:
+        prompt_value = self.input.to_string(workflow=self.workflow)
 
         if self.driver is None:
-            active_driver = workflow.driver
+            active_driver = self.workflow.driver
         else:
             active_driver = self.driver
 

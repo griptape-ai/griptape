@@ -4,15 +4,14 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 if TYPE_CHECKING:
-
-    from galaxybrain.rules import Rule
-    from galaxybrain.workflows import Step, StepInput, StepOutput, Memory
+    from galaxybrain.workflows import Step, StepInput, StepOutput, Memory, Workflow
 
 
 @define
 class Step(ABC):
     input: StepInput
     output: Optional[StepOutput] = field(default=None, init=False)
+    workflow: Optional[Workflow] = field(default=None, init=False)
     parent: Optional[Step] = field(default=None, kw_only=True)
     child: Optional[Step] = field(default=None, kw_only=True)
 
@@ -30,8 +29,8 @@ class Step(ABC):
     def is_finished(self):
         return self.output is not None
 
-    def to_string(self, memory: Memory) -> str:
-        return self.input.full_conversation(memory=memory)
+    def to_string(self) -> str:
+        return self.input.full_conversation(memory=self.workflow.memory)
 
     @abstractmethod
     def run(self, **kwargs) -> StepOutput:

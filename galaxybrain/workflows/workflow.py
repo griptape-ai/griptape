@@ -16,6 +16,10 @@ class Workflow:
     rules: list[Rule] = field(default=[], kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)
 
+    def __attrs_post_init__(self):
+        if self.root_step:
+            self.root_step.workflow = self
+
     def steps(self):
         all_steps = []
         current_step = self.root_step
@@ -34,6 +38,8 @@ class Workflow:
         return self.__last_step_after(self.root_step)
 
     def add_step(self, step: Step) -> Step:
+        step.workflow = self
+
         if self.root_step is None:
             self.root_step = step
         else:
@@ -41,12 +47,14 @@ class Workflow:
 
         return step
 
-    def add_step_after(self, before_step: Step, step: Step) -> Step:
-        if before_step.child:
-            step.add_child(before_step.child)
-        before_step.add_child(step)
+    def add_step_after(self, step: Step, new_step: Step) -> Step:
+        new_step.workflow = self
 
-        return step
+        if step.child:
+            new_step.add_child(step.child)
+        step.add_child(new_step)
+
+        return new_step
 
     def start(self) -> None:
         self.__run_from_step(self.root_step)
@@ -60,7 +68,7 @@ class Workflow:
         if step is None:
             return None
         else:
-            return step.to_string(memory=self.memory)
+            return step.to_string()
 
     def __last_step_after(self, step: Optional[Step]) -> Optional[Step]:
         if step is None:
@@ -74,7 +82,7 @@ class Workflow:
         if step is None:
             return
         else:
-            step.run(workflow=self)
+            step.run()
 
             self.memory.add_step(self, step)
 
