@@ -10,5 +10,5 @@ if TYPE_CHECKING:
 @define
 class Driver(ABC):
     @abstractmethod
-    def run(self, value: any) -> StepOutput:
+    def run(self, **kwargs) -> StepOutput:
         pass

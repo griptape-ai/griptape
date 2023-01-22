@@ -19,8 +19,8 @@ class DriverSummarizer(Summarizer):
             return workflow.to_string()
         else:
             if workflow.memory.summary is None:
-                prompt_text = Prompt.summarize(workflow.to_string())
+                prompt_value = Prompt.summarize(workflow.to_string())
             else:
-                prompt_text = Prompt.summarize_summary_and_step(workflow.memory.summary, step)
+                prompt_value = Prompt.summarize_summary_and_step(workflow.memory.summary, step)
 
-            return self.driver.run(prompt_text).value
+            return self.driver.run(value=prompt_value).value

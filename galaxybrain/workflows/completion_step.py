@@ -22,7 +22,7 @@ class CompletionStep(Step):
         else:
             active_driver = self.driver
 
-        self.output = active_driver.run(prompt_value)
+        self.output = active_driver.run(value=prompt_value)
 
         return self.output
 

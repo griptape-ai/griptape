@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 @define
 class Workflow:
-    root_step: Optional[Step] = field(default=None)
     driver: Driver = field(kw_only=True)
+    root_step: Optional[Step] = field(default=None)
     rules: list[Rule] = field(default=[], kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)
 
@@ -31,15 +31,7 @@ class Workflow:
         return all_steps
 
     def last_step(self) -> Optional[Step]:
-        return self.last_step_after(self.root_step)
-
-    def last_step_after(self, step: Optional[Step]) -> Optional[Step]:
-        if step is None:
-            return None
-        elif step.child:
-            return self.last_step_after(step.child)
-        else:
-            return step
+        return self.__last_step_after(self.root_step)
 
     def add_step(self, step: Step) -> Step:
         if self.root_step is None:
@@ -62,6 +54,14 @@ class Workflow:
             return None
         else:
             return step.to_string(rules=self.rules, memory=self.memory)
+
+    def __last_step_after(self, step: Optional[Step]) -> Optional[Step]:
+        if step is None:
+            return None
+        elif step.child:
+            return self.__last_step_after(step.child)
+        else:
+            return step
 
     def __run_from_step(self, step: Optional[Step]) -> None:
         if step is None:

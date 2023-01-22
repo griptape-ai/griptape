@@ -24,13 +24,13 @@ class OpenAiDriver(Driver):
     logit_bias: map = {}
     user: str = ""
 
-    def run(self, prompt_value: str) -> StepOutput:
+    def run(self, value: any) -> StepOutput:
         if self.api_key:
             openai.api_key = self.api_key
 
         result = openai.Completion.create(
             model=self.model,
-            prompt=prompt_value,
+            prompt=value,
             suffix=self.suffix,
             max_tokens=self.max_tokens,
             temperature=self.temperature,
