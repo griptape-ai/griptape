@@ -6,7 +6,7 @@ import os
 from galaxybrain.workflows import StepInput
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step, Workflow
+    from galaxybrain.workflows import Step
     from galaxybrain.rules.rule import Rule
     from galaxybrain.workflows import Memory
 
@@ -39,24 +39,8 @@ class Prompt(StepInput):
 
     @classmethod
     def full_conversation(cls, memory: Memory):
-        return cls.j2().get_template("full_conversation.j2").render(
-            {
-                "steps": memory.steps
-            }
-        )
+        return cls.j2().get_template("full_conversation.j2").render(steps=memory.steps)
 
     @classmethod
     def conversation_summary(cls, memory: Memory):
         return cls.j2().get_template("conversation_summary.j2").render(summary=memory.summary)
-
-    def to_string(self, workflow: Workflow) -> str:
-        intro = self.intro(workflow.rules)
-
-        if workflow.memory.summary is None:
-            conversation = self.full_conversation(workflow.memory)
-        else:
-            conversation = self.conversation_summary(workflow.memory)
-
-        question = self.j2().get_template("input.j2").render(question=self.value)
-
-        return f"{intro}\n{conversation}\n{question}"

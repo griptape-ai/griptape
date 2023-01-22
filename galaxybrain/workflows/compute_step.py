@@ -5,7 +5,7 @@ import importlib
 from io import StringIO
 from attrs import define, field
 from galaxybrain.prompts import Prompt
-from galaxybrain.workflows import Step, CompletionStep
+from galaxybrain.workflows import CompletionStep
 from galaxybrain.workflows.step_output import StepOutput
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ComputeStep(Step):
+class ComputeStep(CompletionStep):
     AVAILABLE_LIBRARIES = {"numpy": "np", "math": "math"}
 
     driver: Optional[Driver] = field(default=None, kw_only=True)
@@ -29,9 +29,7 @@ class ComputeStep(Step):
             question=self.input.value
         )
 
-        self.output = active_driver.run(
-            value=self.input.to_string(workflow=self.workflow)
-        )
+        self.output = active_driver.run(value=self.to_string())
 
         followup_question = self.input.j2().get_template("compute_followup_question.j2").render(
             question=self.__run_code(self.output.value)

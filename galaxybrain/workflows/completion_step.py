@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
-from galaxybrain.workflows import Step, Workflow
+from galaxybrain.prompts import Prompt
+from galaxybrain.workflows import Step
 from galaxybrain.workflows.step_output import StepOutput
 
 if TYPE_CHECKING:
@@ -13,13 +14,26 @@ class CompletionStep(Step):
     driver: Optional[Driver] = field(default=None, kw_only=True)
 
     def run(self) -> StepOutput:
-        prompt_value = self.input.to_string(workflow=self.workflow)
-
         if self.driver is None:
             active_driver = self.workflow.driver
         else:
             active_driver = self.driver
 
-        self.output = active_driver.run(value=prompt_value)
+        self.output = active_driver.run(value=self.to_string())
 
         return self.output
+
+    def to_string(self) -> str:
+        question = Prompt.j2().get_template("input.j2").render(question=self.input.value)
+
+        if self.workflow:
+            intro = Prompt.intro(self.workflow.rules)
+
+            if self.workflow.memory.summary is None:
+                conversation = Prompt.full_conversation(self.workflow.memory)
+            else:
+                conversation = Prompt.conversation_summary(self.workflow.memory)
+
+            return f"{intro}\n{conversation}\n{question}"
+        else:
+            return question
