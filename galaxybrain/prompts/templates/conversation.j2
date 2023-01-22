@@ -1,4 +1,10 @@
+{% if summary %}
+Summary of the conversation so far:
+{{ summary }}
+{% else %}
 Conversation begins:
+{% endif %}
+
 {% for step in steps %}
 Q: {{ step.input.value }}
 {% if step.output %}

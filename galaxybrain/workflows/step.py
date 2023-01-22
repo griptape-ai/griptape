@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step, StepInput, StepOutput, Memory, Workflow
+    from galaxybrain.workflows import Step, StepInput, StepOutput, Workflow
 
 
 @define
@@ -29,8 +29,9 @@ class Step(ABC):
     def is_finished(self):
         return self.output is not None
 
+    @abstractmethod
     def to_string(self) -> str:
-        return self.input.full_conversation(memory=self.workflow.memory)
+        pass
 
     @abstractmethod
     def run(self, **kwargs) -> StepOutput:

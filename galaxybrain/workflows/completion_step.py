@@ -29,10 +29,7 @@ class CompletionStep(Step):
         if self.workflow:
             intro = Prompt.intro(self.workflow.rules)
 
-            if self.workflow.memory.summary is None:
-                conversation = Prompt.full_conversation(self.workflow.memory)
-            else:
-                conversation = Prompt.conversation_summary(self.workflow.memory)
+            conversation = Prompt.from_workflow(self.workflow)
 
             return f"{intro}\n{conversation}\n{question}"
         else:

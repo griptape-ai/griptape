@@ -6,9 +6,8 @@ import os
 from galaxybrain.workflows import StepInput
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step
+    from galaxybrain.workflows import Step, Workflow
     from galaxybrain.rules.rule import Rule
-    from galaxybrain.workflows import Memory
 
 
 @define
@@ -38,9 +37,8 @@ class Prompt(StepInput):
         return cls.j2().get_template("rules.j2").render(rules=rules)
 
     @classmethod
-    def full_conversation(cls, memory: Memory):
-        return cls.j2().get_template("full_conversation.j2").render(steps=memory.steps)
-
-    @classmethod
-    def conversation_summary(cls, memory: Memory):
-        return cls.j2().get_template("conversation_summary.j2").render(summary=memory.summary)
+    def from_workflow(cls, workflow: Workflow):
+        return cls.j2().get_template("conversation.j2").render(
+            summary=workflow.memory.summary,
+            steps=workflow.memory.unsummarized_steps()
+        )
