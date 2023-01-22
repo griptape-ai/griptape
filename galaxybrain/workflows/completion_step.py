@@ -28,9 +28,11 @@ class CompletionStep(Step):
 
         if self.workflow:
             intro = Prompt.intro(self.workflow.rules)
+            conversation = Prompt.conversation(self.workflow)
 
-            conversation = Prompt.from_workflow(self.workflow)
-
-            return f"{intro}\n{conversation}\n{question}"
+            if self.output:
+                return f"{intro}\n{conversation}"
+            else:
+                return f"{intro}\n{conversation}\n{question}"
         else:
             return question

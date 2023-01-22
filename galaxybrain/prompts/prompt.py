@@ -25,19 +25,15 @@ class Prompt(StepInput):
         )
 
     @classmethod
-    def summarize(cls, text: str) -> str:
-        return cls.j2().get_template("summarize_conversation.j2").render(text=text)
-
-    @classmethod
-    def summarize_summary_and_step(cls, summary: str, step: Step):
-        return cls.j2().get_template("summarize_summary_and_step.j2").render(summary=summary, step=step)
+    def summarize(cls, summary: str, steps: list[Step]):
+        return cls.j2().get_template("summarize.j2").render(summary=summary, steps=steps)
 
     @classmethod
     def intro(cls, rules: list[Rule]):
         return cls.j2().get_template("rules.j2").render(rules=rules)
 
     @classmethod
-    def from_workflow(cls, workflow: Workflow):
+    def conversation(cls, workflow: Workflow):
         return cls.j2().get_template("conversation.j2").render(
             summary=workflow.memory.summary,
             steps=workflow.memory.unsummarized_steps()

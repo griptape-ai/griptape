@@ -12,15 +12,12 @@ if TYPE_CHECKING:
 
 @define
 class DriverSummarizer(Summarizer):
-    driver: Optional[Driver] = field(default=None, kw_only=True)
+    driver: Driver = field(kw_only=True)
 
-    def summarize(self, workflow: Workflow, step: Step) -> str:
-        if self.driver is None:
-            return workflow.to_string()
+    def summarize(self, workflow: Workflow, steps: list[Step]) -> Optional[str]:
+        if len(steps) > 0:
+            return self.driver.run(
+                value=Prompt.summarize(workflow.memory.summary, steps)
+            ).value
         else:
-            if workflow.memory.summary is None:
-                prompt_value = Prompt.summarize(workflow.to_string())
-            else:
-                prompt_value = Prompt.summarize_summary_and_step(workflow.memory.summary, step)
-
-            return self.driver.run(value=prompt_value).value
+            return workflow.memory.summary

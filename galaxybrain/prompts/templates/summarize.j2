@@ -1,0 +1,19 @@
+{% if summary %}
+Conversation summary:
+{{ summary }}
+
+Update summary with this:
+{% else %}
+Summarize the following conversation:
+{% endif %}
+
+{% for step in steps %}
+Q: {{ step.input.value }}
+A: {{ step.output.value }}
+
+{% endfor %}
+{% if summary %}
+Updated summary:
+{% else %}
+Summary:
+{% endif %}
