@@ -49,8 +49,8 @@ import galaxybrain.rules as rules
 chat_rules = [
     rules.json.return_valid_json(),
     rules.json.put_answer_in_field("Names"),
-    rules.conversation.be_truthful(),
-    rules.conversation.your_name_is("GalaxyGPT"),
+    rules.meta.be_truthful(),
+    rules.meta.your_name_is("GalaxyGPT"),
     Rule("only use information from fantasy novels")
 ]
 
