@@ -4,14 +4,16 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
 [![Tests](https://github.com/galaxybrain-labs/galaxybrain/actions/workflows/tests.yml/badge.svg)](https://github.com/galaxybrain-labs/galaxybrain/actions/workflows/tests.yml)
 
-_Turning LLMs into mighty shape rotators!_
+_Turn LLMs into mighty shape rotators!_
 
-GalaxyBrain is a workflow framework for large language models (LLMs). With GalaxyBrain, developers can define prompt completion steps, prompt rules, result validators, and more. Additionally, the framework adds memory capabilities to LLM workflows making it easy to handle state between steps.
+GalaxyBrain is a workflow framework designed for large language models (LLMs). It allows developers to define prompt completion steps, prompt rules, result validators, and more. The framework also enhances LLM workflows by providing memory capabilities, enabling easy handling of state between steps.
+
+Please note that GalaxyBrain is an experimental Python library in early development. Its APIs and documentation are subject to change. For usage examples, check out the [examples repository](https://github.com/galaxybrain-labs/galaxybrain-examples) which contains the most current examples of the library's usage.
 
 ## Goals
 
 1. Reduce surprises when it comes to working with LLMs.
-1. Focus on production use cases and CI/CD compatibility.
+1. Focus on production LLM use cases and CI/CD compatibility.
 1. Avoid bloat and keep base primitives simple.
 
 ## Getting Started
@@ -30,8 +32,7 @@ from galaxybrain.drivers import OpenAiDriver
 
 load_dotenv()
 
-api_key = os.environ.get('OPENAI_KEY')
-driver = OpenAiDriver(api_key)
+driver = OpenAiDriver(os.environ.get('OPENAI_KEY'))
 ```
 
 
@@ -82,9 +83,7 @@ workflow.resume()
 Use `ComputeStep` to delegate computational tasks to Python:
 
 ```python
-workflow.add_step(
-    ComputeStep(input=Prompt(f"generate two random 3x3 matrices and multiply them"))
-)
+ComputeStep(input=Prompt(f"generate two random 3x3 matrices and multiply them"))
 ```
 
 This will generate the following code that GalaxyBrain runs locally and returns it to the LLM in the next prompt:
@@ -93,11 +92,9 @@ This will generate the following code that GalaxyBrain runs locally and returns 
 print(np.matmul(np.random.rand(3,3), np.random.rand(3,3)))
 ```
 
-You can ask it open-ended computational questions:
+You can also ask more open-ended computational questions:
 ```python
-workflow.add_step(
-    ComputeStep(input=Prompt(f"Sally is 5 feet tall, Jack is 14 inches taller than Sally. How tall is Jack?"))
-)
+ComputeStep(input=Prompt(f"Sally is 5 feet tall, Jack is 14 inches taller than Sally. How tall is Jack?"))
 ```
 
 
