@@ -2,17 +2,17 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple
 from typing import Optional
 from attrs import define, field
-from galaxybrain.summarizers import Summarizer
 
 if TYPE_CHECKING:
+    from galaxybrain.summarizers import Summarizer
     from galaxybrain.workflows import Step, Workflow
 
 
 @define
 class Memory:
-    steps: list[Tuple[Step, bool]] = []
-    should_summarize: bool = True
-    summary: Optional[str] = None
+    steps: list[Tuple[Step, bool]] = field(default=[])
+    should_summarize: bool = field(default=True)
+    summary: Optional[str] = field(default=None)
     summary_step_offset: int = field(default=1, kw_only=True)
     summarizer: Optional[Summarizer] = field(default=None, kw_only=True)
 

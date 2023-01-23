@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
-from galaxybrain.drivers import Driver
+from galaxybrain.drivers import CompletionDriver
 from galaxybrain.summarizers.summarizer import Summarizer
 from galaxybrain.prompts import Prompt
 
@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 
 @define
-class DriverSummarizer(Summarizer):
-    driver: Driver = field(kw_only=True)
+class CompletionDriverSummarizer(Summarizer):
+    driver: CompletionDriver = field(kw_only=True)
 
     def summarize(self, workflow: Workflow, steps: list[Step]) -> Optional[str]:
         if len(steps) > 0:

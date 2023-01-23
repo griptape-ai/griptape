@@ -28,11 +28,11 @@ Currently, GalaxyBrain only supports OpenAI APIs, so you'll need to [get an API 
 ```python
 import os
 from dotenv import load_dotenv
-from galaxybrain.drivers import OpenAiDriver
+from galaxybrain.drivers import OpenAiCompletionDriver
 
 load_dotenv()
 
-driver = OpenAiDriver(os.environ.get('OPENAI_KEY'))
+driver = OpenAiCompletionDriver(os.environ.get('OPENAI_KEY'))
 ```
 
 
@@ -41,10 +41,9 @@ Here is an example of some of GalaxyBrain's functionality:
 ```python
 from galaxybrain.rules import Rule, Validator
 from galaxybrain.workflows import CompletionStep, Workflow
-from galaxybrain.drivers import OpenAiDriver
+from galaxybrain.drivers import OpenAiCompletionDriver
 from galaxybrain.prompts import Prompt
 import galaxybrain.rules as rules
-
 
 chat_rules = [
     rules.json.return_valid_json(),
@@ -53,9 +52,8 @@ chat_rules = [
     rules.meta.your_name_is("GalaxyGPT"),
     Rule("only use information from fantasy novels")
 ]
-
-driver = OpenAiDriver(temperature=0.5, user="demo")
-workflow = Workflow(rules=chat_rules, driver=driver)
+driver = OpenAiCompletionDriver(temperature=0.5, user="demo")
+workflow = Workflow(rules=chat_rules, completion_driver=driver)
 
 workflow.add_step(
     CompletionStep(input=Prompt("Give me ideas for two names from the same universe"))

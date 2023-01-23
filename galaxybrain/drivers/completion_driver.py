@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Driver(ABC):
+class CompletionDriver(ABC):
     @abstractmethod
     def run(self, **kwargs) -> StepOutput:
         pass

@@ -4,23 +4,24 @@ import sys
 import importlib
 from io import StringIO
 from attrs import define, field
-from galaxybrain.prompts import Prompt
 from galaxybrain.workflows import CompletionStep
 from galaxybrain.workflows.step_output import StepOutput
 
 if TYPE_CHECKING:
-    from galaxybrain.drivers import Driver
+    from galaxybrain.drivers import CompletionDriver
 
 
 @define
 class ComputeStep(CompletionStep):
     AVAILABLE_LIBRARIES = {"numpy": "np", "math": "math"}
 
-    driver: Optional[Driver] = field(default=None, kw_only=True)
+    driver: Optional[CompletionDriver] = field(default=None, kw_only=True)
 
     def run(self) -> StepOutput:
+        from galaxybrain.prompts import Prompt
+
         if self.driver is None:
-            active_driver = self.workflow.driver
+            active_driver = self.workflow.completion_driver
         else:
             active_driver = self.driver
 

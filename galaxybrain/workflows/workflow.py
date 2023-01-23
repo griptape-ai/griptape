@@ -5,13 +5,13 @@ from galaxybrain.rules import Rule
 from galaxybrain.workflows import Memory
 
 if TYPE_CHECKING:
-    from galaxybrain.drivers import Driver
+    from galaxybrain.drivers import CompletionDriver
     from galaxybrain.workflows import Step
 
 
 @define
 class Workflow:
-    driver: Driver = field(kw_only=True)
+    completion_driver: CompletionDriver = field(kw_only=True)
     root_step: Optional[Step] = field(default=None)
     rules: list[Rule] = field(default=[], kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)

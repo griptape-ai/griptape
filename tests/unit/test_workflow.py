@@ -1,16 +1,16 @@
 from galaxybrain.rules import Rule
 from galaxybrain.workflows import Workflow, CompletionStep
 from galaxybrain.prompts import Prompt
-from tests.mocks.mock_driver import MockDriver
+from tests.mocks.mock_driver import MockCompletionDriver
 
 
 class TestWorkflow:
     def test_constructor(self):
         rule = Rule("test")
-        driver = MockDriver()
-        workflow = Workflow(driver=driver, rules=[rule])
+        driver = MockCompletionDriver()
+        workflow = Workflow(completion_driver=driver, rules=[rule])
 
-        assert workflow.driver is driver
+        assert workflow.completion_driver is driver
         assert workflow.root_step is None
         assert workflow.rules[0].value is "test"
         assert workflow.memory is not None
@@ -21,7 +21,7 @@ class TestWorkflow:
         third_step = CompletionStep(input=Prompt("test3"))
 
         workflow = Workflow(
-            driver=MockDriver(),
+            completion_driver=MockCompletionDriver(),
             root_step=first_step
         )
 
@@ -35,7 +35,7 @@ class TestWorkflow:
 
     def test_to_string(self):
         workflow = Workflow(
-            driver=MockDriver(),
+            completion_driver=MockCompletionDriver(),
             root_step=CompletionStep(input=Prompt("to_string"))
         )
 

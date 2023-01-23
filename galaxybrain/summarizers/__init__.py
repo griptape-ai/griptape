@@ -1,7 +1,7 @@
 from galaxybrain.summarizers.summarizer import Summarizer
-from galaxybrain.summarizers.driver_summarizer import DriverSummarizer
+from galaxybrain.summarizers.completion_driver_summarizer import CompletionDriverSummarizer
 
 __all__ = [
     "Summarizer",
-    "DriverSummarizer"
+    "CompletionDriverSummarizer"
 ]

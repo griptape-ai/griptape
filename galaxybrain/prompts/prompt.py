@@ -12,29 +12,31 @@ if TYPE_CHECKING:
 
 @define
 class Prompt(StepInput):
+    TEMPLATES_PATH = "prompts/templates"
+
     @classmethod
-    def j2(cls):
+    def j2(cls, path: str = TEMPLATES_PATH) -> Environment:
         import galaxybrain
 
-        templates_path = os.path.join(galaxybrain.PACKAGE_ABS_PATH, "prompts/templates")
+        templates_dir = os.path.join(galaxybrain.PACKAGE_ABS_PATH, path)
 
         return Environment(
-            loader=FileSystemLoader(templates_path),
+            loader=FileSystemLoader(templates_dir),
             trim_blocks=True,
             lstrip_blocks=True
         )
 
     @classmethod
-    def summarize(cls, summary: str, steps: list[Step]):
-        return cls.j2().get_template("summarize.j2").render(summary=summary, steps=steps)
+    def summarize(cls, summary: str, steps: list[Step], path: str = TEMPLATES_PATH, template: str = "summarize.j2") -> str:
+        return cls.j2(path).get_template(template).render(summary=summary, steps=steps)
 
     @classmethod
-    def intro(cls, rules: list[Rule]):
-        return cls.j2().get_template("rules.j2").render(rules=rules)
+    def intro(cls, rules: list[Rule], path: str = TEMPLATES_PATH, template: str = "rules.j2") -> str:
+        return cls.j2(path).get_template(template).render(rules=rules)
 
     @classmethod
-    def conversation(cls, workflow: Workflow):
-        return cls.j2().get_template("conversation.j2").render(
+    def conversation(cls, workflow: Workflow, path: str = TEMPLATES_PATH, template: str = "conversation.j2") -> str:
+        return cls.j2(path).get_template(template).render(
             summary=workflow.memory.summary,
             steps=workflow.memory.unsummarized_steps()
         )

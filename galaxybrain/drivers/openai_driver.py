@@ -1,12 +1,12 @@
 from attrs import define
-from galaxybrain.drivers import Driver
+from galaxybrain.drivers import CompletionDriver
 from galaxybrain.workflows.step_output import StepOutput
 import openai
 import json
 
 
 @define()
-class OpenAiDriver(Driver):
+class OpenAiCompletionDriver(CompletionDriver):
     api_key: str = None
     model: str = "text-davinci-003"
     suffix: str = None

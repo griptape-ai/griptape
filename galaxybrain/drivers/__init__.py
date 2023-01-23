@@ -1,7 +1,7 @@
-from galaxybrain.drivers.driver import Driver
-from galaxybrain.drivers.openai_driver import OpenAiDriver
+from galaxybrain.drivers.completion_driver import CompletionDriver
+from galaxybrain.drivers.openai_driver import OpenAiCompletionDriver
 
 __all__ = [
-    "Driver",
-    "OpenAiDriver"
+    "CompletionDriver",
+    "OpenAiCompletionDriver"
 ]
