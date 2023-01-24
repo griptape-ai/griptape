@@ -5,13 +5,12 @@ from attrs import define, field
 
 if TYPE_CHECKING:
     from galaxybrain.summarizers import Summarizer
-    from galaxybrain.workflows import Step, Workflow
+    from galaxybrain.workflows import Step
 
 
 @define
 class Memory:
     steps: list[Tuple[Step, bool]] = field(default=[])
-    should_summarize: bool = field(default=True)
     summary: Optional[str] = field(default=None)
     summary_step_offset: int = field(default=1, kw_only=True)
     summarizer: Optional[Summarizer] = field(default=None, kw_only=True)
@@ -22,12 +21,12 @@ class Memory:
     def is_empty(self) -> bool:
         return len(self.steps) == 0
 
-    def add_step(self, workflow: Workflow, step: Step) -> None:
+    def add_step(self, step: Step) -> None:
         self.steps.append((step, False))
 
         if self.summarizer is not None:
             steps = self.__steps_to_summarize()
-            self.summary = self.summarizer.summarize(workflow, steps)
+            self.summary = self.summarizer.summarize(self, steps)
 
             [self.__summarize_step(step) for step in steps]
 

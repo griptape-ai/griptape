@@ -87,7 +87,7 @@ class Workflow:
         else:
             step.run()
 
-            self.memory.add_step(self, step)
+            self.memory.add_step(step)
 
             self.__run_from_step(step.child)
 
