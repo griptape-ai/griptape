@@ -37,6 +37,9 @@ class Workflow:
     def last_step(self) -> Optional[Step]:
         return self.__last_step_after(self.root_step)
 
+    def add_steps(self, *steps: Step) -> None:
+        [self.add_step(s) for s in steps]
+
     def add_step(self, step: Step) -> Step:
         step.workflow = self
 
