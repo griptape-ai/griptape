@@ -1,6 +1,5 @@
 import os
 from typing import Optional
-
 from attrs import define, field
 from jinja2 import Environment, FileSystemLoader
 

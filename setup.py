@@ -1,5 +1,5 @@
 import pathlib
-import galaxybrain
+from galaxybrain import VERSION
 from setuptools import setup, find_packages
 
 HERE = pathlib.Path(__file__).parent
@@ -7,7 +7,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="galaxybrain",
-    version=galaxybrain.VERSION,
+    version=VERSION,
     description="LLM extensions framework",
     long_description=README,
     long_description_content_type="text/markdown",
