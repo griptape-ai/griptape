@@ -66,9 +66,9 @@ class Workflow:
     def resume(self) -> None:
         self.__run_from_step(self.__next_unfinished_step(self.root_step))
 
-    def to_string(self) -> str:
+    def to_prompt_string(self) -> str:
         rules_string = J2("rules.j2").render(rules=self.rules)
-        memory_string = self.memory.to_string()
+        memory_string = self.memory.to_prompt_string()
 
         return f"{rules_string}\n{memory_string}"
 

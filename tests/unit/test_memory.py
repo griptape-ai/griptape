@@ -27,4 +27,4 @@ class TestMemory:
 
         memory.before_run(step)
 
-        assert "Q: test" in memory.to_string()
+        assert "Q: test" in memory.to_prompt_string()

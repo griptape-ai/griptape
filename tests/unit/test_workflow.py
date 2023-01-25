@@ -51,7 +51,7 @@ class TestWorkflow:
         assert step1 in workflow.steps()
         assert step2 in workflow.steps()
 
-    def test_to_string(self):
+    def test_to_prompt_string(self):
         workflow = Workflow(
             completion_driver=MockCompletionDriver(),
             root_step=CompletionStep(input=Prompt("to_string"))
@@ -59,5 +59,5 @@ class TestWorkflow:
 
         workflow.start()
 
-        assert "ack" in workflow.to_string()
-        assert "to_string" in workflow.to_string()
+        assert "ack" in workflow.to_prompt_string()
+        assert "to_string" in workflow.to_prompt_string()

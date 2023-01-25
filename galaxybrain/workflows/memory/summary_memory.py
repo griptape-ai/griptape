@@ -30,7 +30,7 @@ class SummaryMemory(Memory):
             self.summary = self.summarizer.summarize(self, steps_to_summarize)
             self.summary_index = 1 + self.steps.index(steps_to_summarize[-1])
 
-    def to_string(self):
+    def to_prompt_string(self):
         return J2("memory.j2").render(
             summary=self.summary,
             steps=self.unsummarized_steps()

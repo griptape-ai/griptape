@@ -18,7 +18,7 @@ class CompletionStep(Step):
         else:
             active_driver = self.driver
 
-        self.output = active_driver.run(value=self.workflow.to_string())
+        self.output = active_driver.run(value=self.workflow.to_prompt_string())
 
         return self.output
 
