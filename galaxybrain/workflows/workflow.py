@@ -4,7 +4,7 @@ from attrs import define, field
 
 from galaxybrain import J2
 from galaxybrain.rules import Rule
-from galaxybrain.workflows import Memory
+from galaxybrain.workflows.memory import Memory
 
 if TYPE_CHECKING:
     from galaxybrain.drivers import CompletionDriver

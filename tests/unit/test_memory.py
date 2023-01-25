@@ -1,5 +1,6 @@
 from galaxybrain.prompts import Prompt
-from galaxybrain.workflows import Memory, CompletionStep
+from galaxybrain.workflows import CompletionStep
+from galaxybrain.workflows.memory import Memory
 
 
 class TestMemory:

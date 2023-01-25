@@ -1,5 +1,6 @@
 from galaxybrain.prompts import Prompt
-from galaxybrain.workflows import BufferMemory, Workflow, CompletionStep
+from galaxybrain.workflows import Workflow, CompletionStep
+from galaxybrain.workflows.memory import BufferMemory
 from tests.mocks.mock_driver import MockCompletionDriver
 
 
