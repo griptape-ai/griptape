@@ -30,7 +30,7 @@ class ComputeStep(CompletionStep):
             question=self.input.value
         )
 
-        self.output = active_driver.run(value=self.to_string())
+        self.output = active_driver.run(value=self.workflow.to_string())
 
         followup_question = self.input.j2().get_template("compute_followup_question.j2").render(
             question=self.__run_code(self.output.value)

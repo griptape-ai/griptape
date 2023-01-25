@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
+
+from galaxybrain import J2
 from galaxybrain.rules import Rule
 from galaxybrain.workflows import Memory
 
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
 class Workflow:
     completion_driver: CompletionDriver = field(kw_only=True)
     root_step: Optional[Step] = field(default=None)
-    rules: list[Rule] = field(default=[], kw_only=True)
+    rules: list[Rule] = field(factory=list, kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)
 
     def __attrs_post_init__(self):
@@ -65,13 +67,11 @@ class Workflow:
     def resume(self) -> None:
         self.__run_from_step(self.__next_unfinished_step(self.root_step))
 
-    def to_string(self) -> Optional[str]:
-        step = self.__last_finished_step(self.root_step)
+    def to_string(self) -> str:
+        rules_string = J2("rules.j2").render(rules=self.rules)
+        memory_string = self.memory.to_string()
 
-        if step is None:
-            return None
-        else:
-            return step.to_string()
+        return f"{rules_string}\n{memory_string}"
 
     def __last_step_after(self, step: Optional[Step]) -> Optional[Step]:
         if step is None:
@@ -85,9 +85,9 @@ class Workflow:
         if step is None:
             return
         else:
+            self.memory.before_run(step)
             step.run()
-
-            self.memory.add_step(step)
+            self.memory.after_run(step)
 
             self.__run_from_step(step.child)
 
@@ -98,17 +98,3 @@ class Workflow:
             return self.__next_unfinished_step(step.child)
         else:
             return step
-
-    def __last_finished_step(self, step: Optional[Step]) -> Optional[Step]:
-        if step is None:
-            return None
-        elif step.is_finished():
-            if step.child:
-                if step.child.is_finished():
-                    return self.__last_finished_step(step.child)
-                else:
-                    return step
-            else:
-                return step
-        else:
-            return None

@@ -30,9 +30,5 @@ class Step(ABC):
         return self.output is not None
 
     @abstractmethod
-    def to_string(self) -> str:
-        pass
-
-    @abstractmethod
     def run(self, **kwargs) -> StepOutput:
         pass

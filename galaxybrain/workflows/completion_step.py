@@ -18,20 +18,7 @@ class CompletionStep(Step):
         else:
             active_driver = self.driver
 
-        self.output = active_driver.run(value=self.to_string())
+        self.output = active_driver.run(value=self.workflow.to_string())
 
         return self.output
 
-    def to_string(self) -> str:
-        question = self.input.j2().get_template("input.j2").render(question=self.input.value)
-
-        if self.workflow:
-            intro = self.input.intro(self.workflow.rules)
-            conversation = self.input.conversation(self.workflow)
-
-            if self.output:
-                return f"{intro}\n{conversation}"
-            else:
-                return f"{intro}\n{conversation}\n{question}"
-        else:
-            return question

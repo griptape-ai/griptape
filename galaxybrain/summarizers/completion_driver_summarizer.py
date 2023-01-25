@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
+from galaxybrain import J2
 from galaxybrain.drivers import CompletionDriver
 from galaxybrain.summarizers.summarizer import Summarizer
-from galaxybrain.prompts import Prompt
 
 
 if TYPE_CHECKING:
@@ -17,7 +17,10 @@ class CompletionDriverSummarizer(Summarizer):
     def summarize(self, memory: Memory, steps: list[Step]) -> Optional[str]:
         if len(steps) > 0:
             return self.driver.run(
-                value=Prompt.summarize(memory.summary, steps)
+                value=J2("summarize.j2").render(
+                    summary=memory.summary,
+                    steps=steps
+                )
             ).value
         else:
             return memory.summary
