@@ -1,8 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
-
-from galaxybrain import J2
+from galaxybrain.utils import J2
 from galaxybrain.rules import Rule
 from galaxybrain.workflows.memory import Memory
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from attrs import define, field
-from galaxybrain import J2
+from galaxybrain.utils import J2
 
 if TYPE_CHECKING:
     from galaxybrain.workflows import Step
