@@ -88,7 +88,7 @@ else:
     print(validator.failed_rules())
 ```
 
-### 💻 Delegate Compute Tasks to Python
+### ⚙️ Delegate Compute Tasks to Python
 
 Use `ComputeStep` to delegate compute tasks to Python:
 
@@ -135,8 +135,8 @@ This will progressively summarize the whole conversation except for the latest t
 
 ## Contributing
 
-Contributions are super welcome! Take a look at the current issues and if you'd like to help please submit a pull request with some tests covering your implementation.
+Contributions in the form of bug reports, feature ideas, or pull requests are super welcome! Take a look at the current issues and if you'd like to help please submit a pull request with some tests.
 
 ## License
 
-Scotty is available under the Apache 2.0 License.
+GalaxyBrain is available under the Apache 2.0 License.
