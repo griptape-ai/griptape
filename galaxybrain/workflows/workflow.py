@@ -7,7 +7,7 @@ from galaxybrain.workflows.memory import Memory
 
 if TYPE_CHECKING:
     from galaxybrain.drivers import CompletionDriver
-    from galaxybrain.workflows import Step
+    from galaxybrain.workflows import Step, StepOutput
 
 
 @define
@@ -20,6 +20,9 @@ class Workflow:
     def __attrs_post_init__(self):
         if self.root_step:
             self.root_step.workflow = self
+
+    def is_empty(self) -> bool:
+        return self.root_step is None
 
     def steps(self):
         all_steps = []
@@ -60,17 +63,27 @@ class Workflow:
 
         return new_step
 
-    def start(self) -> None:
+    def start(self) -> Optional[StepOutput]:
         self.__run_from_step(self.root_step)
 
-    def resume(self) -> None:
+        return self.__last_output()
+
+    def resume(self) -> Optional[StepOutput]:
         self.__run_from_step(self.__next_unfinished_step(self.root_step))
+
+        return self.__last_output()
 
     def to_prompt_string(self) -> str:
         rules_string = J2("rules.j2").render(rules=self.rules)
         memory_string = self.memory.to_prompt_string()
 
         return f"{rules_string}\n{memory_string}"
+
+    def __last_output(self) -> Optional[StepOutput]:
+        if self.is_empty():
+            return None
+        else:
+            return self.last_step().output
 
     def __last_step_after(self, step: Optional[Step]) -> Optional[Step]:
         if step is None:

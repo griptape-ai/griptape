@@ -34,7 +34,7 @@ class TestWorkflow:
         assert workflow.last_step() is third_step
 
     def test_add_step(self):
-        step = CompletionStep(input=Prompt("test1"))
+        step = CompletionStep(input=Prompt("test"))
         workflow = Workflow(completion_driver=MockCompletionDriver())
 
         workflow.add_step(step)
@@ -54,10 +54,21 @@ class TestWorkflow:
     def test_to_prompt_string(self):
         workflow = Workflow(
             completion_driver=MockCompletionDriver(),
-            root_step=CompletionStep(input=Prompt("to_string"))
+            root_step=CompletionStep(input=Prompt("test"))
         )
 
         workflow.start()
 
-        assert "ack" in workflow.to_prompt_string()
-        assert "to_string" in workflow.to_prompt_string()
+        assert "mock output" in workflow.to_prompt_string()
+
+    def test_start(self):
+        workflow = Workflow(completion_driver=MockCompletionDriver())
+        workflow.add_step(CompletionStep(input=Prompt("test")))
+
+        assert "mock output" in workflow.start().value
+
+    def test_resume(self):
+        workflow = Workflow(completion_driver=MockCompletionDriver())
+        workflow.add_step(CompletionStep(input=Prompt("test")))
+
+        assert "mock output" in workflow.resume().value
