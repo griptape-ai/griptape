@@ -4,6 +4,7 @@ import sys
 import importlib
 from io import StringIO
 from attrs import define, field
+from galaxybrain.utils import J2
 from galaxybrain.workflows import CompletionStep
 from galaxybrain.workflows.step_output import StepOutput
 
@@ -25,22 +26,22 @@ class ComputeStep(CompletionStep):
         else:
             active_driver = self.driver
 
-        self.input.value = self.input.j2().get_template("compute_question.j2").render(
+        self.input.value = J2("compute_question.j2").render(
             libraries=str.join(", ", self.AVAILABLE_LIBRARIES.values()),
             question=self.input.value
         )
 
         self.output = active_driver.run(value=self.workflow.to_prompt_string())
 
-        followup_question = self.input.j2().get_template("compute_followup_question.j2").render(
-            question=self.__run_code(self.output.value)
+        followup_question = J2("compute_followup_question.j2").render(
+            question=self.run_code(self.output.value)
         )
 
         self.workflow.add_step_after(self, CompletionStep(input=Prompt(followup_question)))
 
         return self.output
 
-    def __run_code(self, code: str) -> str:
+    def run_code(self, code: str) -> str:
         global_stdout = sys.stdout
         sys.stdout = local_stdout = StringIO()
 
@@ -56,4 +57,5 @@ class ComputeStep(CompletionStep):
         except Exception as e:
             sys.stdout = global_stdout
             output = str(e)
-        return output
+
+        return output.strip()
