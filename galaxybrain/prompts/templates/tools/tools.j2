@@ -1,0 +1,12 @@
+When you answer questions you have access to external tools that you can use sequentially. Use the following format during this conversation:
+
+Q: <original question>
+Thought: <step-by-step thought process about how you can obtain an answer>
+Action: <use a tool to answer a part of the question like tool_name(tool input) and follow it up with (stop)>
+Observation: <tool response>
+... (this Thought/Action/Observation sequence can repeat N times)
+Action: exit(<your final answer using observations>)(stop)
+
+You have access to the following tools:
+{% for tool in tools %}{{ tool }}
+{% endfor %}

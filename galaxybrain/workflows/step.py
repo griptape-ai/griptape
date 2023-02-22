@@ -32,3 +32,7 @@ class Step(ABC):
     @abstractmethod
     def run(self, **kwargs) -> StepOutput:
         pass
+
+    @abstractmethod
+    def render(self) -> str:
+        pass

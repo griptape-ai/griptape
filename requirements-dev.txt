@@ -1,2 +1,3 @@
 pytest~=7.1
 twine>=4
+numpy

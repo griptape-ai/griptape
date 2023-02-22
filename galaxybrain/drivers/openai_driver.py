@@ -17,7 +17,7 @@ class OpenAiCompletionDriver(CompletionDriver):
     stream: bool = False
     logprobs: int = None
     echo: bool = False
-    stop = None
+    stop = [CompletionDriver.STOP_SEQUENCE]
     presence_penalty: int = 0
     frequency_penalty: int = 0
     best_of: int = 1

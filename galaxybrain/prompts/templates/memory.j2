@@ -9,12 +9,5 @@ Conversation begins:
 {% endif %}
 
 {% for step in steps %}
-Q: {{ step.input.value }}
-{% if step.output %}
-A: {{ step.output.value }}
-
-{% else %}
-A:
-
-{% endif %}
+{{ step.render() }}
 {% endfor %}
