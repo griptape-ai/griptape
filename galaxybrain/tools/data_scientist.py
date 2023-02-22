@@ -4,10 +4,6 @@ from galaxybrain.utils import J2, PythonRunner
 
 class DataScientist(Tool):
     AVAILABLE_LIBRARIES = {"numpy": "np", "math": "math"}
-
-    def name(self) -> str:
-        return "data_scientist"
-
     def description(self) -> str:
         return f"This tool is capable of executing Python code with the following imports: {self.__imports()}"
 

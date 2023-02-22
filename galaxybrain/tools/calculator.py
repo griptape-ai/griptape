@@ -3,9 +3,6 @@ from galaxybrain.utils import J2, PythonRunner
 
 
 class Calculator(Tool):
-    def name(self) -> str:
-        return "calculator"
-
     def description(self) -> str:
         return "This tool is capable of performing any calculation in Python syntax"
 
