@@ -85,8 +85,8 @@ class Workflow:
                     tools=[
                         J2("tools/tool.j2").render(
                             name=name,
-                            description=tool.description(),
-                            examples=[tool.examples()]
+                            description=tool.description,
+                            examples=[tool.examples]
                         ) for name, tool in self.tools.items()
                     ]
                 )

@@ -3,11 +3,11 @@ from galaxybrain.utils import J2, PythonRunner
 
 
 class Calculator(Tool):
-    def description(self) -> str:
-        return "This tool is capable of performing any calculation in Python syntax"
-
-    def examples(self) -> str:
-        return J2("tools/calculator/examples.j2").render()
+    def __init__(self):
+        self.description =\
+            "This tool is capable of performing any calculation in Python syntax"
+        self.examples =\
+            J2("tools/calculator/examples.j2").render()
 
     def run(self, value: str) -> str:
         return PythonRunner().run(f"print({value})")
