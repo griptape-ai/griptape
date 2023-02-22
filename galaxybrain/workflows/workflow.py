@@ -17,7 +17,7 @@ class Workflow:
     completion_driver: CompletionDriver = field(kw_only=True)
     root_step: Optional[Step] = field(default=None)
     rules: list[Rule] = field(factory=list, kw_only=True)
-    tools: dict[str, Tool] = field(factory=dict, kw_only=True)
+    tools: list[Tool] = field(factory=list, kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)
 
     def __attrs_post_init__(self):
@@ -84,10 +84,10 @@ class Workflow:
                 J2("tools/tools.j2").render(
                     tools=[
                         J2("tools/tool.j2").render(
-                            name=name,
+                            name=tool.name,
                             description=tool.description,
                             examples=[tool.examples]
-                        ) for name, tool in self.tools.items()
+                        ) for tool in self.tools
                     ]
                 )
             )
@@ -102,6 +102,13 @@ class Workflow:
         )
 
         return str.join("\n", string_elements)
+
+    def find_tool(self, name: str) -> Optional[Tool]:
+        for tool in self.tools:
+            if tool.name == name:
+                return tool
+
+        return None
 
     def __last_output(self) -> Optional[StepOutput]:
         if self.is_empty():

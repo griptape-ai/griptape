@@ -6,6 +6,7 @@ class DataScientist(Tool):
     AVAILABLE_LIBRARIES = {"numpy": "np", "math": "math"}
 
     def __init__(self):
+        self.name = "data_scientist"
         self.description =\
             f"This tool is capable of executing Python code with the following imports: {self.__imports()}"
         self.examples =\

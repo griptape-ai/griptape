@@ -4,6 +4,7 @@ from galaxybrain.utils import J2, PythonRunner
 
 class Calculator(Tool):
     def __init__(self):
+        self.name = "calculator"
         self.description =\
             "This tool is capable of performing any calculation in Python syntax"
         self.examples =\

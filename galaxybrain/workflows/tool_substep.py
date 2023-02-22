@@ -14,7 +14,7 @@ class ToolSubstep(Step):
     action_param: Optional[str] = field(default=None, kw_only=True)
 
     def run(self) -> StepOutput:
-        tool = self.workflow.tools.get(self.action_name)
+        tool = self.workflow.find_tool(self.action_name)
 
         if tool:
             observation = tool.run(self.action_param)
