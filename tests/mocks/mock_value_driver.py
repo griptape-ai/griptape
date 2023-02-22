@@ -4,6 +4,6 @@ from galaxybrain.workflows import StepOutput
 
 
 @define()
-class MockDriver(CompletionDriver):
+class MockValueDriver(CompletionDriver):
     def run(self, value: str) -> StepOutput:
-        return StepOutput(value=f"mock output", meta={})
+        return StepOutput(value=value, meta={})

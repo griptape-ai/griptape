@@ -1,13 +1,13 @@
 from galaxybrain.rules import Rule
 from galaxybrain.workflows import Workflow, CompletionStep
 from galaxybrain.prompts import Prompt
-from tests.mocks.mock_driver import MockCompletionDriver
+from tests.mocks.mock_driver import MockDriver
 
 
 class TestWorkflow:
     def test_constructor(self):
         rule = Rule("test")
-        driver = MockCompletionDriver()
+        driver = MockDriver()
         workflow = Workflow(completion_driver=driver, rules=[rule])
 
         assert workflow.completion_driver is driver
@@ -21,7 +21,7 @@ class TestWorkflow:
         third_step = CompletionStep(input=Prompt("test3"))
 
         workflow = Workflow(
-            completion_driver=MockCompletionDriver(),
+            completion_driver=MockDriver(),
             root_step=first_step
         )
 
@@ -35,7 +35,7 @@ class TestWorkflow:
 
     def test_add_step(self):
         step = CompletionStep(input=Prompt("test"))
-        workflow = Workflow(completion_driver=MockCompletionDriver())
+        workflow = Workflow(completion_driver=MockDriver())
 
         workflow.add_step(step)
 
@@ -44,7 +44,7 @@ class TestWorkflow:
     def test_add_steps(self):
         step1 = CompletionStep(input=Prompt("test1"))
         step2 = CompletionStep(input=Prompt("test2"))
-        workflow = Workflow(completion_driver=MockCompletionDriver())
+        workflow = Workflow(completion_driver=MockDriver())
 
         workflow.add_steps(step1, step2)
 
@@ -53,7 +53,7 @@ class TestWorkflow:
 
     def test_to_prompt_string(self):
         workflow = Workflow(
-            completion_driver=MockCompletionDriver(),
+            completion_driver=MockDriver(),
             root_step=CompletionStep(input=Prompt("test"))
         )
 
@@ -62,13 +62,13 @@ class TestWorkflow:
         assert "mock output" in workflow.to_prompt_string()
 
     def test_start(self):
-        workflow = Workflow(completion_driver=MockCompletionDriver())
+        workflow = Workflow(completion_driver=MockDriver())
         workflow.add_step(CompletionStep(input=Prompt("test")))
 
         assert "mock output" in workflow.start().value
 
     def test_resume(self):
-        workflow = Workflow(completion_driver=MockCompletionDriver())
+        workflow = Workflow(completion_driver=MockDriver())
         workflow.add_step(CompletionStep(input=Prompt("test")))
 
         assert "mock output" in workflow.resume().value

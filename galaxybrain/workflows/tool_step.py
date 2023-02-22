@@ -32,7 +32,12 @@ class ToolStep(CompletionStep):
             temp_output = self.active_driver().run(value=self.workflow.to_prompt_string())
             action_name, action_param = self.__extract_action_and_param(temp_output.value)
 
-        self.output = StepOutput(action_param)
+        if action_param is None:
+            final_output = temp_output.value
+        else:
+            final_output = action_param
+
+        self.output = StepOutput(final_output)
 
         return self.output
 
