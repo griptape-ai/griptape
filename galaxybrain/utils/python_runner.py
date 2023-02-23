@@ -6,7 +6,7 @@ from attrs import define, field
 
 @define
 class PythonRunner:
-    libs: dict[str, str] = field(factory=dict, kw_only=True)
+    libs: dict[str, str] = field(default={}, kw_only=True)
 
     def run(self, code: str) -> str:
         global_stdout = sys.stdout
