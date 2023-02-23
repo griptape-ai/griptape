@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 @define
 class CompletionDriver(ABC):
-    STOP_SEQUENCE = "(stop)"
+    STOP_SEQUENCE = "<|endoftext|>"
 
     @abstractmethod
     def run(self, **kwargs) -> StepOutput:

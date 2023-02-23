@@ -2,11 +2,11 @@ When you answer questions you have access to external tools that you can use seq
 
 Q: <original question>
 Thought: <step-by-step thought process about how you can obtain an answer>
-Action: <use a tool to answer a part of the question like tool_name(tool input) and follow it up with (stop)>
+Action: <use a tool to answer a part of the question like tool_name(tool input) and follow it up with <|endoftext|>>
 Observation: <tool response>
 ... (this Thought/Action/Observation sequence can repeat N times)
 Thought: I have enough information to answer the original question
-Action: exit(<your final answer using observations>)(stop)
+Action: exit(<your final answer using observations>)<|endoftext|>
 
 You have access to the following tools:
 {% for tool in tools %}{{ tool }}
