@@ -26,9 +26,28 @@ class Step(ABC):
     def name(self) -> str:
         return type(self).__name__
 
-    def is_finished(self):
+    def is_finished(self) -> bool:
         return self.output is not None
+
+    def before_run(self) -> None:
+        self.workflow.memory.before_run(self)
+
+    def after_run(self) -> None:
+        self.workflow.memory.after_run(self)
+
+    def execute(self) -> StepOutput:
+        self.before_run()
+
+        output = self.run()
+
+        self.after_run()
+
+        return output
 
     @abstractmethod
     def run(self, **kwargs) -> StepOutput:
+        pass
+
+    @abstractmethod
+    def render(self) -> str:
         pass

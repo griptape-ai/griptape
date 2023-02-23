@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 
 @define
 class J2:
-    template: Optional[str] = field()
+    template: str = field()
     templates_path: str = field(default="prompts/templates", kw_only=True)
     environment: Environment = field(init=False)
 

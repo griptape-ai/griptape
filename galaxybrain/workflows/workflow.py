@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
+
+from galaxybrain.tools import Tool
 from galaxybrain.utils import J2
 from galaxybrain.rules import Rule
 from galaxybrain.workflows.memory import Memory
@@ -15,6 +17,7 @@ class Workflow:
     completion_driver: CompletionDriver = field(kw_only=True)
     root_step: Optional[Step] = field(default=None)
     rules: list[Rule] = field(factory=list, kw_only=True)
+    tools: list[Tool] = field(factory=list, kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)
 
     def __attrs_post_init__(self):
@@ -64,20 +67,48 @@ class Workflow:
         return new_step
 
     def start(self) -> Optional[StepOutput]:
-        self.__run_from_step(self.root_step)
+        self.__execute_from_step(self.root_step)
 
         return self.__last_output()
 
     def resume(self) -> Optional[StepOutput]:
-        self.__run_from_step(self.__next_unfinished_step(self.root_step))
+        self.__execute_from_step(self.__next_unfinished_step(self.root_step))
 
         return self.__last_output()
 
     def to_prompt_string(self) -> str:
-        rules_string = J2("rules.j2").render(rules=self.rules)
-        memory_string = self.memory.to_prompt_string()
+        string_elements = []
 
-        return f"{rules_string}\n{memory_string}"
+        if len(self.tools) > 0:
+            string_elements.append(
+                J2("tools/tools.j2").render(
+                    tools=[
+                        J2("tools/tool.j2").render(
+                            name=tool.name,
+                            description=tool.description,
+                            examples=[tool.examples]
+                        ) for tool in self.tools
+                    ]
+                )
+            )
+
+        if len(self.rules) > 0:
+            string_elements.append(
+                J2("rules.j2").render(rules=self.rules)
+            )
+
+        string_elements.append(
+            self.memory.to_prompt_string()
+        )
+
+        return str.join("\n", string_elements)
+
+    def find_tool(self, name: str) -> Optional[Tool]:
+        for tool in self.tools:
+            if tool.name == name:
+                return tool
+
+        return None
 
     def __last_output(self) -> Optional[StepOutput]:
         if self.is_empty():
@@ -93,15 +124,13 @@ class Workflow:
         else:
             return step
 
-    def __run_from_step(self, step: Optional[Step]) -> None:
+    def __execute_from_step(self, step: Optional[Step]) -> None:
         if step is None:
             return
         else:
-            self.memory.before_run(step)
-            step.run()
-            self.memory.after_run(step)
+            step.execute()
 
-            self.__run_from_step(step.child)
+            self.__execute_from_step(step.child)
 
     def __next_unfinished_step(self, step: Optional[Step]) -> Optional[Step]:
         if step is None:
