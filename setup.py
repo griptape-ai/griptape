@@ -22,6 +22,7 @@ setup(
         "openai>=0.26",
         "attrs>=22",
         "jinja2>=3.1",
+        "tiktoken",
         "numpy",
         "wikipedia"
     ]
