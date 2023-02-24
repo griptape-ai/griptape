@@ -1,5 +1,6 @@
 from galaxybrain.rules import Rule
-from galaxybrain.workflows import Workflow, CompletionStep
+from galaxybrain.utils import TiktokenTokenizer
+from galaxybrain.workflows import Workflow, CompletionStep, StepInput, StepOutput
 from galaxybrain.prompts import Prompt
 from tests.mocks.mock_driver import MockDriver
 
@@ -60,6 +61,21 @@ class TestWorkflow:
         workflow.start()
 
         assert "mock output" in workflow.to_prompt_string()
+
+    def test_token_count(self):
+        workflow = Workflow(completion_driver=MockDriver())
+
+        assert workflow.token_count() == TiktokenTokenizer().token_count(workflow.to_prompt_string())
+
+    def test_step_input_token_count(self):
+        text = "foobar"
+
+        assert StepInput(text).token_count() == TiktokenTokenizer().token_count(text)
+
+    def test_step_output_token_count(self):
+        text = "foobar"
+
+        assert StepOutput(text).token_count() == TiktokenTokenizer().token_count(text)
 
     def test_start(self):
         workflow = Workflow(completion_driver=MockDriver())

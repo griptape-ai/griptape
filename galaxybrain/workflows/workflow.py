@@ -103,6 +103,11 @@ class Workflow:
 
         return str.join("\n", string_elements)
 
+    def token_count(self) -> int:
+        return self.completion_driver.tokenizer.token_count(
+            self.to_prompt_string()
+        )
+
     def find_tool(self, name: str) -> Optional[Tool]:
         for tool in self.tools:
             if tool.name == name:
