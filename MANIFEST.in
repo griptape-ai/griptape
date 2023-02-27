@@ -1,1 +1,3 @@
 recursive-include galaxybrain/prompts/templates/ *.j2
+recursive-include galaxybrain/tools/ *.j2
+recursive-include galaxybrain/tools/ *.json

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "email",
+  "description": "This tool can send emails. Only use it when the user explicitly says to send an email",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["email"]
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "string",
+          "description": "Recipient's email"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Email subject"
+        },
+        "body": {
+          "type": "string",
+          "description": "Email body"
+        }
+      },
+      "required": [
+        "to",
+        "subject",
+        "body"
+      ]
+    }
+  },
+  "required": [
+    "tool",
+    "input"
+  ]
+}

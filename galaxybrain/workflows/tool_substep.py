@@ -14,16 +14,22 @@ class ToolSubstep(Step):
     action_param: Optional[str] = field(default=None, kw_only=True)
 
     def run(self) -> StepOutput:
-        tool = self.workflow.find_tool(self.action_name)
+        if self.action_name == "error":
+            self.output = StepOutput(self.action_param)
 
-        if tool:
-            observation = tool.run(self.action_param)
+            return self.output
         else:
-            observation = "Tool not found"
 
-        self.output = StepOutput(observation)
+            tool = self.workflow.find_tool(self.action_name)
 
-        return self.output
+            if tool:
+                observation = tool.run(self.action_param)
+            else:
+                observation = "Tool not found"
+
+            self.output = StepOutput(observation)
+
+            return self.output
 
     def render(self) -> str:
         return J2("steps/tool/substep.j2").render(

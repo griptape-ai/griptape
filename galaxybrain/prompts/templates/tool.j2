@@ -1,0 +1,7 @@
+Tool: {{ tool.name }}
+Description: {{ tool.description }}
+Input JSON schema: {{ tool.schema_json }}
+{% if tool.examples %}
+Usage examples:
+{{ tool.examples }}
+{% endif %}

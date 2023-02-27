@@ -6,7 +6,8 @@ from galaxybrain.workflows import StepOutput
 
 @define()
 class MockValueDriver(CompletionDriver):
+    value: str
     tokenizer: Tokenizer = TiktokenTokenizer()
 
-    def run(self, value: str) -> StepOutput:
-        return StepOutput(value=value, meta={})
+    def run(self, **kwargs) -> StepOutput:
+        return StepOutput(value=self.value, meta={})

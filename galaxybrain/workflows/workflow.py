@@ -81,14 +81,9 @@ class Workflow:
 
         if len(self.tools) > 0:
             string_elements.append(
-                J2("tools/tools.j2").render(
-                    tools=[
-                        J2("tools/tool.j2").render(
-                            name=tool.name,
-                            description=tool.description,
-                            examples=[tool.examples]
-                        ) for tool in self.tools
-                    ]
+                J2("tools.j2").render(
+                    tool_names=str.join(", ", [tool.name for tool in self.tools]),
+                    tools=[J2("tool.j2").render(tool=tool) for tool in self.tools]
                 )
             )
 

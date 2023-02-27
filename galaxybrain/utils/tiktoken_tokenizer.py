@@ -11,7 +11,7 @@ class TiktokenTokenizer(Tokenizer):
     DEFAULT_MODEL = "text-davinci-003"
 
     model: str = field(default=DEFAULT_MODEL)
-    stop_token: str = field(default="<|endoftext|>")
+    stop_token: str = field(default=Tokenizer.DEFAULT_STOP_TOKEN)
 
     def encode(self, text: str) -> list[int]:
         return self.encoding().encode(text, allowed_special={self.stop_token})
