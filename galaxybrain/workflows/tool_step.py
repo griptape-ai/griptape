@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 import re
 from attrs import define, field
 from galaxybrain.utils import J2
@@ -9,6 +10,8 @@ from galaxybrain.workflows.step_output import StepOutput
 
 @define
 class ToolStep(CompletionStep):
+    JSON_PARSE_ERROR_MSG = f"invalid JSON, try again"
+
     substeps: list[ToolSubstep] = field(factory=list, kw_only=True)
     memory: Memory = field(default=Memory(), kw_only=True)
 
@@ -16,7 +19,7 @@ class ToolStep(CompletionStep):
         from galaxybrain.prompts import Prompt
 
         temp_output = self.active_driver().run(value=self.workflow.to_prompt_string())
-        action_name, action_param = self.__extract_action_and_param(temp_output.value)
+        action_name, action_param = self.parse_tool_action(temp_output.value)
 
         while action_name != "exit" and action_name is not None:
             substep = self.add_substep(
@@ -30,7 +33,7 @@ class ToolStep(CompletionStep):
             substep.run()
 
             temp_output = self.active_driver().run(value=self.workflow.to_prompt_string())
-            action_name, action_param = self.__extract_action_and_param(temp_output.value)
+            action_name, action_param = self.parse_tool_action(temp_output.value)
 
         if action_param is None:
             final_output = temp_output.value
@@ -56,18 +59,17 @@ class ToolStep(CompletionStep):
 
         return substep
 
-    def __extract_action_and_param(self, value: str) -> (str, str):
-        pattern = r'(\w+)\((.*?)\)(?!.*\()(?=$)'
-
+    def parse_tool_action(self, value: str) -> (str, str):
         try:
-            match = re.search(pattern, value, re.DOTALL)
+            pattern = r"^Action:\s*(.*)$"
 
-            if match:
-                tool_name = match.group(1)
-                content = match.group(2)
+            matches = re.findall(pattern, value, re.MULTILINE)
 
-                return tool_name, content
+            if len(matches) > 0:
+                parsed_value = json.loads(matches[-1])
+
+                return parsed_value.get("tool"), parsed_value.get("input")
             else:
-                return None, None
+                return "error", self.JSON_PARSE_ERROR_MSG
         except Exception as e:
-            return None, None
+            return "error", self.JSON_PARSE_ERROR_MSG

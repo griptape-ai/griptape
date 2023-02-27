@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "wiki",
+  "description": "This tool can search Wikipedia articles",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["wiki"]
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "articles": {
+          "type": "array",
+          "description": "Search terms to find relevant Wikipedia articles",
+          "items": {
+            "type": "string"
+          }
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query on relevant Wikipedia articles"
+        }
+      },
+      "required": [
+        "articles",
+        "query"
+      ]
+    }
+  },
+  "required": [
+    "tool",
+    "input"
+  ]
+}

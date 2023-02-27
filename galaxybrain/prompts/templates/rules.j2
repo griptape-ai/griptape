@@ -1,6 +1,5 @@
 {% if rules|length > 1 %}
 When answering questions, follow all of these rules:
-
 {% for rule in rules %}
 Rule #{{loop.index}}
 {{ rule.value }}

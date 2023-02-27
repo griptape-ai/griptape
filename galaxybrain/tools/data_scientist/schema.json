@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "data_scientist",
+  "description": "This tool can execute Python code for complex computations with the following imports: {{ imports }}",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["data_scientist"]
+    },
+    "input": {
+      "type": "string",
+      "description": "Python expression"
+    }
+  },
+  "required": [
+    "tool",
+    "input"
+  ]
+}

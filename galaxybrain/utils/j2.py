@@ -2,22 +2,18 @@ import os
 from attrs import define, field
 from jinja2 import Environment, FileSystemLoader
 from galaxybrain.utils import TiktokenTokenizer, Tokenizer
-
+import galaxybrain
 
 @define
 class J2:
     template: str = field()
-    templates_path: str = field(default="prompts/templates", kw_only=True)
+    templates_dir: str = field(default=os.path.join(galaxybrain.PACKAGE_ABS_PATH, "prompts/templates"), kw_only=True)
     tokenizer: Tokenizer = field(default=TiktokenTokenizer(), kw_only=True)
     environment: Environment = field(init=False)
 
     def __attrs_post_init__(self):
-        import galaxybrain
-
-        templates_dir = os.path.join(galaxybrain.PACKAGE_ABS_PATH, self.templates_path)
-
         self.environment = Environment(
-            loader=FileSystemLoader(templates_dir),
+            loader=FileSystemLoader(self.templates_dir),
             trim_blocks=True,
             lstrip_blocks=True
         )

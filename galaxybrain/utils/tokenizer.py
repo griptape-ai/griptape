@@ -3,6 +3,8 @@ from typing import Optional
 
 
 class Tokenizer(ABC):
+    DEFAULT_STOP_TOKEN = "<|endoftext|>"
+
     model: str
     stop_token: str
 
