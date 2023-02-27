@@ -23,6 +23,7 @@ setup(
         "attrs>=22",
         "jinja2>=3.1",
         "jsonschema>=4.17",
+        "wikipedia",
         "tiktoken",
         "numpy"
     ]
