@@ -7,15 +7,9 @@
 
 _Turn LLMs into mighty shape rotators!_
 
-GalaxyBrain is a Python framework for AI workflows. Initially, we focus on supporting various large language models (LLMs) starting with GPT. The framework allows developers to define prompt completion steps, prompt rules, result validators, and more. The framework also enhances LLM workflows by providing memory capabilities, enabling easy handling of state between steps.
+GalaxyBrain is a Python framework for creating AI workflows augmented with tools for external APIs such as searches, calculators, email, and many others . Initially, we focus on supporting large language models (LLMs) starting with OpenAI's GPT. With GalaxyBrain, developers can define workflow steps, tools, LLM rules, result validators, and more. The framework also enhances LLM workflows by providing memory capabilities, enabling easy handling of state between steps.
 
 Please note that GalaxyBrain is an experimental project in early development. Its APIs and documentation are subject to change. For usage examples, check out the [examples repository](https://github.com/galaxybrain-labs/galaxybrain-examples).
-
-## Goals
-
-1. Reduce surprises when it comes to working with LLMs.
-1. Focus on production AI use cases and CI/CD compatibility.
-1. Avoid bloat and keep base primitives simple.
 
 ## Getting Started
 First, install the library:
@@ -52,11 +46,11 @@ chat_rules = [
     rules.meta.your_name_is("GalaxyGPT"),
     Rule("only use information from fantasy novels")
 ]
-driver = OpenAiCompletionDriver(temperature=0.5, user="demo")
+driver = OpenAiPromptDriver(temperature=0.5, user="demo")
 workflow = Workflow(rules=chat_rules, prompt_driver=driver)
 
 workflow.add_step(
-    CompletionStep(input=Prompt("Give me ideas for two names from the same setting"))
+    PromptStep("Give me ideas for two names from the same setting")
 )
 
 workflow.start()
@@ -66,7 +60,7 @@ workflow.start()
 # }
 
 workflow.add_step(
-    CompletionStep(input=Prompt("Give me 3 more from another setting"))
+    PromptStep("Give me 3 more from another setting")
 )
 
 workflow.resume()
@@ -75,6 +69,14 @@ workflow.resume()
 #     "Names": ["Dumbledore", "Luna Lovegood", "Harry Potter"]
 # }
 ```
+
+You can dynamically pass arguments to the prompt by using Jinja templates:
+
+```python
+PromptStep("tell me about {{ topic }}", context={"topic": "the hobbit novel"})
+```
+
+By default, the context object contains the following fields: `worklofw`, `input`, `parent`, and `child`.
 
 Some rules have explicit validators (e.g., checking for valid JSON). You can use the built-in validator to run them:
 
@@ -88,24 +90,25 @@ else:
     print(validator.failed_rules())
 ```
 
-### ⚙️ Delegate Compute Tasks to Python
+### ⚙️ Use Tools
 
-Use `ComputeStep` to delegate compute tasks to Python:
-
-```python
-ComputeStep(input=Prompt(f"generate two random 3x3 matrices and multiply them"))
-```
-
-This will generate the following code that GalaxyBrain executes locally and returns to the LLM in the follow-up prompt:
+Use `ToolStep` to pass external tools to the LLM:
 
 ```python
-print(np.matmul(np.random.rand(3,3), np.random.rand(3,3)))
+tools = {
+    Wiki(),
+    DataScientist(),
+    Calculator(),
+    Email(host="localhost", port=1025, from_email="my@email.com", password="", use_ssl=False)
+}
+
+workflow.add_steps(
+    ToolStep("generate a random 4x4 matrix"),
+    ToolStep("Research world events in 2023 and send an executive summary to me@email.com")
+)
 ```
 
-You can also ask more open-ended computational questions:
-```python
-ComputeStep(input=Prompt(f"Sally is 5 feet tall, Jack is 14 inches taller than Sally. How tall is Jack?"))
-```
+GalaxyBrain uses the [ReAct](https://arxiv.org/abs/2210.03629) technique to implement reasoning and acting in LLMs.
 
 ### 💾 Memorize and Summarize Workflows
 
@@ -113,7 +116,7 @@ GalaxyBrain `Workflow` uses unbounded memory by default, but you can pass `Buffe
 
 ```python
 workflow = Workflow(
-    prompt_driver=OpenAiCompletionDriver(),
+    prompt_driver=OpenAiPromptDriver(),
     memory=BufferMemory(buffer_size=1)
 )
 ```
@@ -121,7 +124,7 @@ workflow = Workflow(
 `BufferMemory` will keep a sliding window of steps that are used to construct a prompt. This works great for shorter conversations but falls short if the whole workflow context needs to be present. Use `SummaryMemory` to address that:
 
 ```python
-driver = OpenAiCompletionDriver()
+driver = OpenAiPromptDriver()
 workflow = Workflow(
     prompt_driver=driver,
     memory=SummaryMemory(
