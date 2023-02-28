@@ -29,11 +29,11 @@ Currently, GalaxyBrain only supports OpenAI APIs, so you'll need to [get an API 
 ```python
 import os
 from dotenv import load_dotenv
-from galaxybrain.drivers import OpenAiCompletionDriver
+from galaxybrain.drivers import OpenAiPromptDriver
 
 load_dotenv()
 
-driver = OpenAiCompletionDriver(os.environ.get('OPENAI_KEY'))
+driver = OpenAiPromptDriver(os.environ.get('OPENAI_KEY'))
 ```
 
 ## Working with GalaxyBrain
@@ -53,7 +53,7 @@ chat_rules = [
     Rule("only use information from fantasy novels")
 ]
 driver = OpenAiCompletionDriver(temperature=0.5, user="demo")
-workflow = Workflow(rules=chat_rules, completion_driver=driver)
+workflow = Workflow(rules=chat_rules, prompt_driver=driver)
 
 workflow.add_step(
     CompletionStep(input=Prompt("Give me ideas for two names from the same setting"))
@@ -113,7 +113,7 @@ GalaxyBrain `Workflow` uses unbounded memory by default, but you can pass `Buffe
 
 ```python
 workflow = Workflow(
-    completion_driver=OpenAiCompletionDriver(),
+    prompt_driver=OpenAiCompletionDriver(),
     memory=BufferMemory(buffer_size=1)
 )
 ```
@@ -123,7 +123,7 @@ workflow = Workflow(
 ```python
 driver = OpenAiCompletionDriver()
 workflow = Workflow(
-    completion_driver=driver,
+    prompt_driver=driver,
     memory=SummaryMemory(
         summarizer=CompletionDriverSummarizer(driver=driver),
         offset=3

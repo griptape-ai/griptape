@@ -1,7 +1,7 @@
-from galaxybrain.drivers.completion_driver import CompletionDriver
-from galaxybrain.drivers.openai_driver import OpenAiCompletionDriver
+from galaxybrain.drivers.prompt_driver import PromptDriver
+from galaxybrain.drivers.openai_prompt_driver import OpenAiPromptDriver
 
 __all__ = [
-    "CompletionDriver",
-    "OpenAiCompletionDriver"
+    "PromptDriver",
+    "OpenAiPromptDriver"
 ]

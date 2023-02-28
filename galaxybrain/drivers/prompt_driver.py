@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 @define
-class CompletionDriver(ABC):
+class PromptDriver(ABC):
     tokenizer: Tokenizer
 
     @abstractmethod

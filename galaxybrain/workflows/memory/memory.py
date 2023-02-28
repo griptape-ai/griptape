@@ -21,10 +21,10 @@ class Memory:
         pass
 
     def to_prompt_string(self):
-        return J2("memory.j2").render(
+        return J2("prompts/memory.j2").render(
             steps=self.steps)
 
     def to_conversation_string(self):
-        return J2("conversation.j2").render(
+        return J2("prompts/conversation.j2").render(
             steps=self.steps
         )
