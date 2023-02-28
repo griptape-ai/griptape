@@ -1,6 +1,6 @@
 import os
 
-VERSION = "0.0.6"
+VERSION = "0.1.0"
 PACKAGE_ABS_PATH = os.path.dirname(os.path.abspath(__file__))
 
 __all__ = [
