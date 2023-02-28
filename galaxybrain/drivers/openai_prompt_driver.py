@@ -2,13 +2,13 @@ import json
 from typing import Optional
 import openai
 from attrs import define
-from galaxybrain.drivers import CompletionDriver
+from galaxybrain.drivers import PromptDriver
 from galaxybrain.utils import TiktokenTokenizer, Tokenizer
 from galaxybrain.workflows.step_output import StepOutput
 
 
 @define()
-class OpenAiCompletionDriver(CompletionDriver):
+class OpenAiPromptDriver(PromptDriver):
     api_key: str = None
     model: Optional[str] = None
     suffix: str = None

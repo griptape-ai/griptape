@@ -1,7 +1,6 @@
 from galaxybrain.rules import Rule
 from galaxybrain.utils import TiktokenTokenizer
-from galaxybrain.workflows import Workflow, CompletionStep, StepInput, StepOutput
-from galaxybrain.prompts import Prompt
+from galaxybrain.workflows import Workflow, PromptStep, StepInput, StepOutput
 from tests.mocks.mock_driver import MockDriver
 
 
@@ -9,20 +8,20 @@ class TestWorkflow:
     def test_constructor(self):
         rule = Rule("test")
         driver = MockDriver()
-        workflow = Workflow(completion_driver=driver, rules=[rule])
+        workflow = Workflow(prompt_driver=driver, rules=[rule])
 
-        assert workflow.completion_driver is driver
+        assert workflow.prompt_driver is driver
         assert workflow.root_step is None
         assert workflow.rules[0].value is "test"
         assert workflow.memory is not None
 
     def test_steps_order(self):
-        first_step = CompletionStep(input=Prompt("test1"))
-        second_step = CompletionStep(input=Prompt("test2"))
-        third_step = CompletionStep(input=Prompt("test3"))
+        first_step = PromptStep("test1")
+        second_step = PromptStep("test2")
+        third_step = PromptStep("test3")
 
         workflow = Workflow(
-            completion_driver=MockDriver(),
+            prompt_driver=MockDriver(),
             root_step=first_step
         )
 
@@ -35,17 +34,17 @@ class TestWorkflow:
         assert workflow.last_step() is third_step
 
     def test_add_step(self):
-        step = CompletionStep(input=Prompt("test"))
-        workflow = Workflow(completion_driver=MockDriver())
+        step = PromptStep("test")
+        workflow = Workflow(prompt_driver=MockDriver())
 
         workflow.add_step(step)
 
         assert step in workflow.steps()
 
     def test_add_steps(self):
-        step1 = CompletionStep(input=Prompt("test1"))
-        step2 = CompletionStep(input=Prompt("test2"))
-        workflow = Workflow(completion_driver=MockDriver())
+        step1 = PromptStep("test1")
+        step2 = PromptStep("test2")
+        workflow = Workflow(prompt_driver=MockDriver())
 
         workflow.add_steps(step1, step2)
 
@@ -54,8 +53,8 @@ class TestWorkflow:
 
     def test_to_prompt_string(self):
         workflow = Workflow(
-            completion_driver=MockDriver(),
-            root_step=CompletionStep(input=Prompt("test"))
+            prompt_driver=MockDriver(),
+            root_step=PromptStep("test")
         )
 
         workflow.start()
@@ -63,7 +62,7 @@ class TestWorkflow:
         assert "mock output" in workflow.to_prompt_string()
 
     def test_token_count(self):
-        workflow = Workflow(completion_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockDriver())
 
         assert workflow.token_count() == TiktokenTokenizer().token_count(workflow.to_prompt_string())
 
@@ -78,13 +77,13 @@ class TestWorkflow:
         assert StepOutput(text).token_count() == TiktokenTokenizer().token_count(text)
 
     def test_start(self):
-        workflow = Workflow(completion_driver=MockDriver())
-        workflow.add_step(CompletionStep(input=Prompt("test")))
+        workflow = Workflow(prompt_driver=MockDriver())
+        workflow.add_step(PromptStep("test"))
 
         assert "mock output" in workflow.start().value
 
     def test_resume(self):
-        workflow = Workflow(completion_driver=MockDriver())
-        workflow.add_step(CompletionStep(input=Prompt("test")))
+        workflow = Workflow(prompt_driver=MockDriver())
+        workflow.add_step(PromptStep("test"))
 
         assert "mock output" in workflow.resume().value

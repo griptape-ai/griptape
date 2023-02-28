@@ -8,7 +8,7 @@ Summarize the following conversation:
 {% endif %}
 
 {% for step in steps %}
-Q: {{ step.input.value }}
+Q: {{ step.render_prompt() }}
 A: {{ step.output.value }}
 
 {% endfor %}

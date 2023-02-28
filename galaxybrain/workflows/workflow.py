@@ -8,13 +8,13 @@ from galaxybrain.rules import Rule
 from galaxybrain.workflows.memory import Memory
 
 if TYPE_CHECKING:
-    from galaxybrain.drivers import CompletionDriver
+    from galaxybrain.drivers import PromptDriver
     from galaxybrain.workflows import Step, StepOutput
 
 
 @define
 class Workflow:
-    completion_driver: CompletionDriver = field(kw_only=True)
+    prompt_driver: PromptDriver = field(kw_only=True)
     root_step: Optional[Step] = field(default=None)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tools: list[Tool] = field(factory=list, kw_only=True)
@@ -81,15 +81,15 @@ class Workflow:
 
         if len(self.tools) > 0:
             string_elements.append(
-                J2("tools.j2").render(
+                J2("prompts/tools.j2").render(
                     tool_names=str.join(", ", [tool.name for tool in self.tools]),
-                    tools=[J2("tool.j2").render(tool=tool) for tool in self.tools]
+                    tools=[J2("prompts/tool.j2").render(tool=tool) for tool in self.tools]
                 )
             )
 
         if len(self.rules) > 0:
             string_elements.append(
-                J2("rules.j2").render(rules=self.rules)
+                J2("prompts/rules.j2").render(rules=self.rules)
             )
 
         string_elements.append(
@@ -99,7 +99,7 @@ class Workflow:
         return str.join("\n", string_elements)
 
     def token_count(self) -> int:
-        return self.completion_driver.tokenizer.token_count(
+        return self.prompt_driver.tokenizer.token_count(
             self.to_prompt_string()
         )
 

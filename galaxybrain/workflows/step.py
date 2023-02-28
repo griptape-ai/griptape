@@ -9,11 +9,12 @@ if TYPE_CHECKING:
 
 @define
 class Step(ABC):
-    input: StepInput
-    output: Optional[StepOutput] = field(default=None, init=False)
-    workflow: Optional[Workflow] = field(default=None, init=False)
+    input: Optional[StepInput] = field(default=None, kw_only=True)
     parent: Optional[Step] = field(default=None, kw_only=True)
     child: Optional[Step] = field(default=None, kw_only=True)
+
+    output: Optional[StepOutput] = field(default=None, init=False)
+    workflow: Optional[Workflow] = field(default=None, init=False)
 
     def add_child(self, child: Step) -> None:
         self.child = child
@@ -33,6 +34,9 @@ class Step(ABC):
         self.workflow.memory.before_run(self)
 
     def after_run(self) -> None:
+        if self.child:
+            self.child.input = self.output
+
         self.workflow.memory.after_run(self)
 
     def execute(self) -> StepOutput:
@@ -48,6 +52,3 @@ class Step(ABC):
     def run(self, **kwargs) -> StepOutput:
         pass
 
-    @abstractmethod
-    def render(self) -> str:
-        pass

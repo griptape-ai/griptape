@@ -1,11 +1,11 @@
 from attrs import define
-from galaxybrain.drivers import CompletionDriver
+from galaxybrain.drivers import PromptDriver
 from galaxybrain.utils import TiktokenTokenizer, Tokenizer
 from galaxybrain.workflows import StepOutput
 
 
 @define()
-class MockDriver(CompletionDriver):
+class MockDriver(PromptDriver):
     tokenizer: Tokenizer = TiktokenTokenizer()
 
     def run(self, value: str) -> StepOutput:
