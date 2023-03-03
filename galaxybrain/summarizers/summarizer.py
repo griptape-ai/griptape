@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from attrs import define
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step, Memory
+    from galaxybrain.workflows import Step
+    from galaxybrain.workflows.memory import Memory
 
 
 @define

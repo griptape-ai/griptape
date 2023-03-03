@@ -1,6 +1,6 @@
 from typing import Optional
 from attrs import define, field
-from galaxybrain.workflows.step_artifact import StepArtifact
+from galaxybrain.artifacts import StepArtifact
 
 
 @define(frozen=True)

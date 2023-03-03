@@ -1,8 +1,10 @@
+from attrs import define
 from galaxybrain.tools import Tool
 from galaxybrain.utils import PythonRunner
 
 
-class DataScientist(Tool):
+@define(frozen=True)
+class DataScientistTool(Tool):
     AVAILABLE_LIBRARIES = {"numpy": "np", "math": "math"}
 
     def run(self, value: str) -> str:

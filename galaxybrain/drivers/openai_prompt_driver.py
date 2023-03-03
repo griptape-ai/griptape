@@ -1,67 +1,24 @@
 import json
-from typing import Optional
 import openai
-from attrs import define
+from attrs import define, field, Factory
 from galaxybrain.drivers import PromptDriver
 from galaxybrain.utils import TiktokenTokenizer, Tokenizer
-from galaxybrain.workflows.step_output import StepOutput
+from galaxybrain.artifacts import StepOutput
 
 
 @define()
 class OpenAiPromptDriver(PromptDriver):
-    api_key: str = None
-    model: Optional[str] = None
-    suffix: str = None
-    max_tokens: Optional[int] = None
-    temperature: float = 0.5
-    top_p: float = 1
-    n: int = 1
-    stream: bool = False
-    logprobs: int = None
-    echo: bool = False
-    stop = None
-    presence_penalty: int = 0
-    frequency_penalty: int = 0
-    best_of: int = 1
-    logit_bias: map = {}
-    user: str = ""
-    tokenizer: Tokenizer = TiktokenTokenizer()
+    tokenizer: Tokenizer = field(default=Factory(lambda: TiktokenTokenizer()), kw_only=True)
+    temperature: float = field(default=0.5, kw_only=True)
+    user: str = field(default="", kw_only=True)
 
     def run(self, value: any) -> StepOutput:
-        if self.api_key:
-            openai.api_key = self.api_key
-
-        if self.stop is None:
-            stop = self.tokenizer.stop_token
-        else:
-            stop = self.stop
-
-        if self.model is None:
-            model = self.tokenizer.model
-        else:
-            model = self.model
-
-        if self.max_tokens is None:
-            tokens = TiktokenTokenizer(model).tokens_left(value)
-        else:
-            tokens = self.max_tokens
-
         result = openai.Completion.create(
-            model=model,
+            model=self.tokenizer.model,
             prompt=value,
-            suffix=self.suffix,
-            max_tokens=tokens,
+            max_tokens=self.tokenizer.tokens_left(value),
             temperature=self.temperature,
-            top_p=self.top_p,
-            n=self.n,
-            stream=self.stream,
-            logprobs=self.logprobs,
-            echo=self.echo,
-            stop=stop,
-            presence_penalty=self.presence_penalty,
-            frequency_penalty=self.frequency_penalty,
-            best_of=self.best_of,
-            logit_bias=self.logit_bias,
+            stop=self.tokenizer.stop_token,
             user=self.user
         )
 

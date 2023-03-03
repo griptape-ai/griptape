@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from galaxybrain.utils import J2
 from galaxybrain.workflows import Step
-from galaxybrain.workflows.step_output import StepOutput
+from galaxybrain.artifacts import StepOutput
 
 if TYPE_CHECKING:
     from galaxybrain.drivers import PromptDriver

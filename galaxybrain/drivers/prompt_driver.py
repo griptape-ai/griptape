@@ -1,15 +1,16 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
-from attrs import define
+from attrs import define, field, Factory
 from galaxybrain.utils import Tokenizer
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import StepOutput
+    from galaxybrain.artifacts import StepOutput
 
 
 @define
 class PromptDriver(ABC):
+    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     tokenizer: Tokenizer
 
     @abstractmethod

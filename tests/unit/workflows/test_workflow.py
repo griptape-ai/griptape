@@ -1,7 +1,11 @@
+import json
+
 from galaxybrain.rules import Rule
 from galaxybrain.utils import TiktokenTokenizer
-from galaxybrain.workflows import Workflow, PromptStep, StepInput, StepOutput
+from galaxybrain.artifacts import StepInput, StepOutput
+from galaxybrain.workflows import Workflow, PromptStep
 from tests.mocks.mock_driver import MockDriver
+from galaxybrain.tools import PingPongTool
 
 
 class TestWorkflow:
@@ -11,7 +15,7 @@ class TestWorkflow:
         workflow = Workflow(prompt_driver=driver, rules=[rule])
 
         assert workflow.prompt_driver is driver
-        assert workflow.root_step is None
+        assert workflow.first_step() is None
         assert workflow.rules[0].value is "test"
         assert workflow.memory is not None
 
@@ -21,17 +25,17 @@ class TestWorkflow:
         third_step = PromptStep("test3")
 
         workflow = Workflow(
-            prompt_driver=MockDriver(),
-            root_step=first_step
+            prompt_driver=MockDriver()
         )
 
+        workflow.add_step(first_step)
         workflow.add_step(second_step)
         workflow.add_step(third_step)
 
-        assert workflow.steps()[0] is first_step
-        assert workflow.steps()[1] is second_step
-        assert workflow.steps()[2] is third_step
-        assert workflow.last_step() is third_step
+        assert workflow.first_step().id is first_step.id
+        assert workflow.steps[1].id is second_step.id
+        assert workflow.steps[2].id is third_step.id
+        assert workflow.last_step().id is third_step.id
 
     def test_add_step(self):
         step = PromptStep("test")
@@ -39,7 +43,7 @@ class TestWorkflow:
 
         workflow.add_step(step)
 
-        assert step in workflow.steps()
+        assert step in workflow.steps
 
     def test_add_steps(self):
         step1 = PromptStep("test1")
@@ -48,14 +52,15 @@ class TestWorkflow:
 
         workflow.add_steps(step1, step2)
 
-        assert step1 in workflow.steps()
-        assert step2 in workflow.steps()
+        assert step1 in workflow.steps
+        assert step2 in workflow.steps
 
     def test_to_prompt_string(self):
         workflow = Workflow(
             prompt_driver=MockDriver(),
-            root_step=PromptStep("test")
         )
+
+        workflow.add_step(PromptStep("test"))
 
         workflow.start()
 
@@ -87,3 +92,47 @@ class TestWorkflow:
         workflow.add_step(PromptStep("test"))
 
         assert "mock output" in workflow.resume().value
+
+    def test_to_json(self):
+        workflow = Workflow()
+
+        workflow.add_steps(
+            PromptStep("test prompt"),
+            PromptStep("test prompt")
+        )
+
+        assert len(json.loads(workflow.to_json())["steps"]) == 2
+
+    def test_to_dict(self):
+        workflow = Workflow()
+
+        workflow.add_steps(
+            PromptStep("test prompt"),
+            PromptStep("test prompt")
+        )
+
+        assert len(workflow.to_dict()["steps"]) == 2
+
+    def test_from_json(self):
+        workflow = Workflow()
+
+        workflow.add_steps(
+            PromptStep("test prompt"),
+            PromptStep("test prompt")
+        )
+
+        workflow_json = workflow.to_json()
+
+        assert len(Workflow.from_json(workflow_json).steps) == 2
+
+    def test_from_dict(self):
+        workflow = Workflow()
+
+        workflow.add_steps(
+            PromptStep("test prompt"),
+            PromptStep("test prompt")
+        )
+
+        workflow_json = workflow.to_dict()
+
+        assert len(Workflow.from_dict(workflow_json).steps) == 2

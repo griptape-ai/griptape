@@ -1,7 +1,7 @@
 from attrs import define
 from galaxybrain.drivers import PromptDriver
 from galaxybrain.utils import TiktokenTokenizer, Tokenizer
-from galaxybrain.workflows import StepOutput
+from galaxybrain.artifacts import StepOutput
 
 
 @define()

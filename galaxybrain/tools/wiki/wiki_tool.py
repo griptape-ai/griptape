@@ -1,12 +1,12 @@
+import logging
 import wikipedia
-from llama_index import GPTSimpleVectorIndex
+from llama_index import GPTSimpleVectorIndex, Document
 from galaxybrain.tools import Tool
-from llama_index import download_loader
 from attrs import define
 
 
 @define(frozen=True)
-class Wiki(Tool):
+class WikiTool(Tool):
     def run(self, args: dict[str]) -> str:
         article_search_queries = args.get("articles")
         question_query = args.get("query")
@@ -16,8 +16,16 @@ class Wiki(Tool):
         [all_articles.extend(articles) for articles in nested_articles if len(articles) > 0]
 
         if len(all_articles) > 0:
-            loader = download_loader("WikipediaReader")()
-            documents = loader.load_data(pages=all_articles, auto_suggest=False)
+            documents = []
+
+            for article in all_articles:
+                try:
+                    content = wikipedia.page(article, auto_suggest=False).content
+
+                    documents.append(Document(content))
+                except Exception as e:
+                    logging.error(f"Error loading Wikipedia article '{article}': {e}")
+
             index = GPTSimpleVectorIndex(documents)
             query_result = str(index.query(question_query)).strip()
 

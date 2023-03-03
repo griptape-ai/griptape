@@ -7,7 +7,8 @@ from galaxybrain.summarizers.summarizer import Summarizer
 
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step, Memory
+    from galaxybrain.workflows import Step
+    from galaxybrain.workflows.memory import Memory
 
 
 @define

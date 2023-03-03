@@ -1,5 +1,6 @@
-from galaxybrain.workflows import PromptStep
+from galaxybrain.workflows import PromptStep, ToolStep
 from galaxybrain.workflows.memory import Memory
+from galaxybrain.tools import PingPongTool
 
 
 class TestMemory:
@@ -20,9 +21,17 @@ class TestMemory:
 
         assert memory.steps[0] == step
 
-    def test_to_string(self):
+    def test_to_string_with_prompt_step(self):
         memory = Memory()
         step = PromptStep("test")
+
+        memory.before_run(step)
+
+        assert "Q: test" in memory.to_prompt_string()
+
+    def test_to_string_with_tool_step(self):
+        memory = Memory()
+        step = ToolStep("test", tool=PingPongTool())
 
         memory.before_run(step)
 

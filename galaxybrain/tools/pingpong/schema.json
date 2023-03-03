@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ping_pong",
+  "description": "This tool returns the input that was passed to it",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["ping_pong"]
+    },
+    "input": {
+      "type": "string",
+      "description": "Any input"
+    }
+  },
+  "required": [
+    "tool",
+    "input"
+  ]
+}
