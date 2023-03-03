@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows.step_output import StepOutput
+    from galaxybrain.artifacts import StepOutput
     from galaxybrain.rules.rule import Rule
 
 

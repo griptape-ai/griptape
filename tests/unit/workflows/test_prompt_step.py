@@ -1,4 +1,4 @@
-from galaxybrain.workflows import PromptStep, Workflow
+from galaxybrain.workflows import Workflow, PromptStep
 from tests.mocks.mock_driver import MockDriver
 
 

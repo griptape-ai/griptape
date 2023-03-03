@@ -4,7 +4,7 @@ from attrs import define
 from typing import Callable
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows.step_output import StepOutput
+    from galaxybrain.artifacts import StepOutput
 
 
 @define(frozen=True)

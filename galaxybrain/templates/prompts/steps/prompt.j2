@@ -1,6 +1,7 @@
 Q: {{ step.render_prompt() }}
 {% if step.output %}
 A: {{ step.output.value }}
+
 {% else %}
 A:
 {% endif %}

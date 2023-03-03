@@ -3,7 +3,7 @@ from galaxybrain.rules.rule import Rule
 
 def be_truthful() -> Rule:
     return Rule(
-        "be truthful and say \"I don't know\" if you don't know an answer to the question",
+        "be truthful and say \"I don't know\" if you don't have the knowledge to answer a question",
         validator=lambda result: True
     )
 

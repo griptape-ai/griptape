@@ -1,4 +1,4 @@
 {{ step.render_prompt() }}
-{% if step.output %}
+{% if step.output and step.output.value %}
 Observation: {{ step.output.value }}
 {% endif %}

@@ -25,4 +25,4 @@ class TestTiktokenTokenizer:
     def test_encoding(self):
         tokenizer = TiktokenTokenizer()
 
-        assert tokenizer.encoding().name == "p50k_base"
+        assert tokenizer.encoding.name == "p50k_base"

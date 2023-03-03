@@ -1,5 +1,5 @@
 from attrs import define
-from galaxybrain.workflows import StepArtifact
+from galaxybrain.artifacts import StepArtifact
 
 
 @define
