@@ -88,7 +88,7 @@ class Step(ABC):
 
     def execute(self) -> StepOutput:
         try:
-            logging.info(f"Executing step {self.id}")
+            logging.info(f"Start executing step {self.id}")
 
             self.state = Step.State.EXECUTING
 
@@ -101,7 +101,7 @@ class Step(ABC):
             self.output = StepOutput(f"Error executing step {self.id}: {e}")
         finally:
             self.state = Step.State.FINISHED
-            logging.info(f"Finished step {self.id}")
+            logging.info(f"Finished executing step {self.id}")
 
         return self.output
 
