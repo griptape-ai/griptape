@@ -10,6 +10,6 @@ class ToolStepSchema(StepSchema):
 
     @post_load
     def make_step(self, data, **kwargs):
-        from galaxybrain.workflows import ToolStep
+        from galaxybrain.steps import ToolStep
 
         return ToolStep(**data)

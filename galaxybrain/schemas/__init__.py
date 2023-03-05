@@ -15,6 +15,8 @@ from galaxybrain.schemas.toolkit_step_schema import ToolkitStepSchema
 from galaxybrain.schemas.email_tool_schema import EmailToolSchema
 from galaxybrain.schemas.wiki_tool_schema import WikiToolSchema
 
+from galaxybrain.schemas.structure_schema import StructureSchema
+from galaxybrain.schemas.pipeline_schema import PipelineSchema
 from galaxybrain.schemas.workflow_schema import WorkflowSchema
 
 __all__ = [
@@ -35,5 +37,7 @@ __all__ = [
     "ToolStepSchema",
     "ToolkitStepSchema",
 
+    "StructureSchema",
+    "PipelineSchema",
     "WorkflowSchema"
 ]

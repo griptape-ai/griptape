@@ -1,14 +1,14 @@
 from galaxybrain.drivers import OpenAiPromptDriver
 from galaxybrain.utils import TiktokenTokenizer
 from galaxybrain.steps import PromptStep, ToolStep, ToolkitStep, Step
-from galaxybrain.structures import Workflow
-from galaxybrain.schemas import WorkflowSchema
+from galaxybrain.structures import Pipeline
+from galaxybrain.schemas import PipelineSchema
 from galaxybrain.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
 
 
-class TestWorkflowSchema:
+class TestPipelineSchema:
     def test_serialization(self):
-        workflow = Workflow(
+        pipeline = Pipeline(
             prompt_driver=OpenAiPromptDriver(
                 tokenizer=TiktokenTokenizer(stop_token="<test>"),
                 temperature=0.12345
@@ -23,29 +23,24 @@ class TestWorkflowSchema:
             WikiTool()
         ]
 
-        workflow.add_steps(
+        pipeline.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool())
+            ToolStep("test tool prompt", tool=PingPongTool()),
+            ToolkitStep("test router step", tools=tools)
         )
 
-        step = ToolkitStep("test router step", tools=tools)
-
-        workflow.steps[0].add_child(step)
-        workflow.steps[1].add_child(step)
-
-        workflow_dict = WorkflowSchema().dump(workflow)
+        workflow_dict = PipelineSchema().dump(pipeline)
 
         assert len(workflow_dict["steps"]) == 3
         assert workflow_dict["steps"][0]["state"] == "PENDING"
-        assert workflow_dict["steps"][0]["child_ids"][0] == step.id
-        assert workflow.steps[0].id in step.parent_ids
-        assert workflow.steps[1].id in step.parent_ids
+        assert workflow_dict["steps"][0]["child_ids"][0] == pipeline.steps[1].id
+        assert workflow_dict["steps"][1]["parent_ids"][0] == pipeline.steps[0].id
         assert len(workflow_dict["steps"][-1]["tools"]) == 5
         assert workflow_dict["prompt_driver"]["temperature"] == 0.12345
         assert workflow_dict["prompt_driver"]["tokenizer"]["stop_token"] == "<test>"
 
     def test_deserialization(self):
-        workflow = Workflow(
+        pipeline = Pipeline(
             prompt_driver=OpenAiPromptDriver(
                 tokenizer=TiktokenTokenizer(stop_token="<test>"),
                 temperature=0.12345
@@ -60,23 +55,19 @@ class TestWorkflowSchema:
             WikiTool()
         ]
 
-        workflow.add_steps(
+        pipeline.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool())
+            ToolStep("test tool prompt", tool=PingPongTool()),
+            ToolkitStep("test router step", tools=tools)
         )
 
-        step = ToolkitStep("test router step", tools=tools)
+        workflow_dict = PipelineSchema().dump(pipeline)
+        deserialized_pipeline = PipelineSchema().load(workflow_dict)
 
-        workflow.steps[0].add_child(step)
-        workflow.steps[1].add_child(step)
-
-        workflow_dict = WorkflowSchema().dump(workflow)
-        deserialized_workflow = WorkflowSchema().load(workflow_dict)
-
-        assert len(deserialized_workflow.steps) == 3
-        assert deserialized_workflow.steps[0].child_ids[0] == step.id
-        assert deserialized_workflow.steps[0].id in step.parent_ids
-        assert deserialized_workflow.steps[1].id in step.parent_ids
-        assert len(deserialized_workflow.steps[-1].tools) == 5
-        assert deserialized_workflow.prompt_driver.temperature == 0.12345
-        assert deserialized_workflow.prompt_driver.tokenizer.stop_token == "<test>"
+        assert len(deserialized_pipeline.steps) == 3
+        assert deserialized_pipeline.steps[0].child_ids[0] == pipeline.steps[1].id
+        assert deserialized_pipeline.steps[0].state == Step.State.PENDING
+        assert deserialized_pipeline.steps[1].parent_ids[0] == pipeline.steps[0].id
+        assert len(deserialized_pipeline.last_step().tools) == 5
+        assert deserialized_pipeline.prompt_driver.temperature == 0.12345
+        assert deserialized_pipeline.prompt_driver.tokenizer.stop_token == "<test>"

@@ -15,4 +15,4 @@ class PromptDriver(ABC):
 
     @abstractmethod
     def run(self, **kwargs) -> StepOutput:
-        pass
+        ...

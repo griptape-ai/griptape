@@ -1,5 +1,5 @@
-from galaxybrain.workflows import PromptStep, ToolStep
-from galaxybrain.workflows.memory import Memory
+from galaxybrain.steps import PromptStep, ToolStep
+from galaxybrain.memory import Memory
 from galaxybrain.tools import PingPongTool
 
 

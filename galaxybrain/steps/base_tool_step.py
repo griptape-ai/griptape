@@ -6,12 +6,11 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from galaxybrain.tools import Tool
 from galaxybrain.utils import J2
-from galaxybrain.workflows import PromptStep
-from galaxybrain.workflows.memory import Memory
+from galaxybrain.steps import PromptStep
 from galaxybrain.artifacts import StepOutput
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import ToolSubstep
+    from galaxybrain.steps import ToolSubstep
 
 
 @define
@@ -19,12 +18,11 @@ class BaseToolStep(PromptStep, ABC):
     JSON_PARSE_ERROR_MSG = f"invalid JSON, try again"
 
     substeps: list[ToolSubstep] = field(factory=list, kw_only=True)
-    memory: Memory = field(default=Memory(), kw_only=True)
 
     def run(self) -> StepOutput:
-        from galaxybrain.workflows import ToolSubstep
+        from galaxybrain.steps import ToolSubstep
 
-        temp_output = self.active_driver().run(value=self.workflow.to_prompt_string())
+        temp_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
         action_name, action_input = self.parse_tool_action(temp_output.value)
 
         while action_name is not None:
@@ -42,7 +40,7 @@ class BaseToolStep(PromptStep, ABC):
             if substep.action_name == "exit" or substep.action_name == "error":
                 break
             else:
-                temp_output = self.active_driver().run(value=self.workflow.to_prompt_string())
+                temp_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
                 action_name, action_input = self.parse_tool_action(temp_output.value)
 
         if action_input is None:
@@ -60,7 +58,7 @@ class BaseToolStep(PromptStep, ABC):
         )
 
     def add_substep(self, substep: ToolSubstep) -> ToolSubstep:
-        substep.workflow = self.workflow
+        substep.structure = self.structure
 
         if len(self.substeps) > 0:
             self.substeps[-1].add_child(substep)
@@ -86,4 +84,4 @@ class BaseToolStep(PromptStep, ABC):
 
     @abstractmethod
     def find_tool(self, action_name: str) -> Optional[Tool]:
-        pass
+        ...

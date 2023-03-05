@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from galaxybrain.utils import J2
-from galaxybrain.workflows import Step
+from galaxybrain.steps import Step
 from galaxybrain.artifacts import StepOutput
 
 if TYPE_CHECKING:
@@ -16,24 +16,20 @@ class PromptStep(Step):
     driver: Optional[PromptDriver] = field(default=None, kw_only=True)
 
     def run(self) -> StepOutput:
-        self.output = self.active_driver().run(value=self.workflow.to_prompt_string())
+        self.output = self.active_driver().run(value=self.structure.to_prompt_string(self))
 
         return self.output
 
     def active_driver(self) -> PromptDriver:
         if self.driver is None:
-            return self.workflow.prompt_driver
+            return self.structure.prompt_driver
         else:
             return self.driver
 
-    def render_prompt(self):
-        prompt_context = self.default_context
-
-        prompt_context.update(self.context)
-
+    def render_prompt(self) -> str:
         return J2().render_from_string(
             self.prompt_template,
-            **prompt_context
+            **self.full_context
         )
 
     def render(self) -> str:
@@ -42,10 +38,18 @@ class PromptStep(Step):
         )
 
     @property
+    def full_context(self) -> dict[str, any]:
+        prompt_context = self.default_context
+
+        prompt_context.update(self.context)
+
+        return prompt_context
+
+    @property
     def default_context(self) -> dict[str, any]:
         return {
-            "workflow": self.workflow,
-            "input": self.input,
-            "parent": self.parent,
-            "child": self.child,
+            "inputs": {parent.id: parent.output.value for parent in self.parents},
+            "structure": self.structure,
+            "parents": {parent.id: parent for parent in self.parents},
+            "children": {child.id: child for child in self.children}
         }

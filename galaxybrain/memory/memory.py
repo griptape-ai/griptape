@@ -4,7 +4,7 @@ from attrs import define, field
 from galaxybrain.utils import J2
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step
+    from galaxybrain.steps import Step
 
 
 @define
@@ -12,7 +12,7 @@ class Memory:
     steps: list[Step] = field(factory=list, init=False)
 
     def is_empty(self) -> bool:
-        return len(self.steps) == 0
+        return not self.steps
 
     def before_run(self, step: Step) -> None:
         self.steps.append(step)
@@ -20,7 +20,7 @@ class Memory:
     def after_run(self, step: Step) -> None:
         pass
 
-    def to_prompt_string(self):
+    def to_prompt_string(self) -> str:
         return J2("prompts/memory.j2").render(
             steps=self.steps
         )

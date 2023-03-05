@@ -1,6 +1,7 @@
-from galaxybrain.workflows import Workflow, ToolStep
+from galaxybrain.steps import ToolStep
 from galaxybrain.tools import PingPongTool
 from tests.mocks.mock_value_driver import MockValueDriver
+from galaxybrain.structures import Pipeline
 
 
 class TestToolStep:
@@ -8,16 +9,16 @@ class TestToolStep:
         output = """Action: {"tool": "exit", "input": "test is finished"}"""
 
         step = ToolStep("test", tool=PingPongTool())
-        workflow = Workflow(prompt_driver=MockValueDriver(output))
+        pipeline = Pipeline(prompt_driver=MockValueDriver(output))
 
-        workflow.add_step(step)
+        pipeline.add_step(step)
 
-        result = workflow.start()
+        result = pipeline.run()
 
         assert len(step.substeps) == 1
         assert step.substeps[0].action_name == "exit"
         assert step.substeps[0].action_input == "test is finished"
-        assert result.value == "test is finished"
+        assert result.output.value == "test is finished"
 
     def test_parse_tool_action(self):
         valid_json = """{"tool": "test", "input": "test input"}"""

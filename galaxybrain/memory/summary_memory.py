@@ -3,11 +3,11 @@ from typing import TYPE_CHECKING
 from typing import Optional
 from attrs import define, field
 from galaxybrain.utils import J2
-from galaxybrain.workflows.memory import Memory
+from galaxybrain.memory import Memory
 
 if TYPE_CHECKING:
     from galaxybrain.summarizers import Summarizer
-    from galaxybrain.workflows import Step
+    from galaxybrain.steps import Step
 
 
 @define

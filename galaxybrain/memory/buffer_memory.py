@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from attrs import define, field
-from galaxybrain.workflows.memory import Memory
+from galaxybrain.memory import Memory
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step
+    from galaxybrain.steps import Step
 
 
 @define

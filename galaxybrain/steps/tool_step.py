@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional
 from attrs import define, field
 from galaxybrain.tools import Tool
-from galaxybrain.workflows import BaseToolStep
+from galaxybrain.steps import BaseToolStep
 
 
 @define

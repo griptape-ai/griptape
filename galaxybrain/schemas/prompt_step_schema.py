@@ -9,6 +9,6 @@ class PromptStepSchema(StepSchema):
 
     @post_load
     def make_step(self, data, **kwargs):
-        from galaxybrain.workflows import PromptStep
+        from galaxybrain.steps import PromptStep
 
         return PromptStep(**data)
