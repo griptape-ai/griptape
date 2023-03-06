@@ -1,6 +1,8 @@
 from galaxybrain.drivers import OpenAiPromptDriver
+from galaxybrain.rules import Rule
 from galaxybrain.utils import TiktokenTokenizer
-from galaxybrain.workflows import Workflow, PromptStep, ToolStep, ToolkitStep
+from galaxybrain.steps import PromptStep, ToolStep, ToolkitStep, Step
+from galaxybrain.structures import Workflow
 from galaxybrain.schemas import WorkflowSchema
 from galaxybrain.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
 
@@ -11,7 +13,11 @@ class TestWorkflowSchema:
             prompt_driver=OpenAiPromptDriver(
                 tokenizer=TiktokenTokenizer(stop_token="<test>"),
                 temperature=0.12345
-            )
+            ),
+            rules=[
+                Rule("test rule 1"),
+                Rule("test rule 2"),
+            ]
         )
 
         tools = [
@@ -24,25 +30,37 @@ class TestWorkflowSchema:
 
         workflow.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool()),
-            ToolkitStep("test router step", tools=tools)
+            ToolStep("test tool prompt", tool=PingPongTool())
         )
+
+        step = ToolkitStep("test router step", tools=tools)
+
+        workflow.steps[0].add_child(step)
+        workflow.steps[1].add_child(step)
 
         workflow_dict = WorkflowSchema().dump(workflow)
 
         assert len(workflow_dict["steps"]) == 3
-        assert workflow_dict["steps"][0]["child_id"] == workflow.steps[1].id
-        assert workflow_dict["steps"][1]["parent_id"] == workflow.steps[0].id
+        assert len(workflow_dict["rules"]) == 2
+        assert workflow_dict["steps"][0]["state"] == "PENDING"
+        assert workflow_dict["steps"][0]["child_ids"][0] == step.id
+        assert workflow.steps[0].id in step.parent_ids
+        assert workflow.steps[1].id in step.parent_ids
         assert len(workflow_dict["steps"][-1]["tools"]) == 5
         assert workflow_dict["prompt_driver"]["temperature"] == 0.12345
         assert workflow_dict["prompt_driver"]["tokenizer"]["stop_token"] == "<test>"
+        assert workflow_dict["rules"][0]["value"] == "test rule 1"
 
     def test_deserialization(self):
         workflow = Workflow(
             prompt_driver=OpenAiPromptDriver(
                 tokenizer=TiktokenTokenizer(stop_token="<test>"),
                 temperature=0.12345
-            )
+            ),
+            rules=[
+                Rule("test rule 1"),
+                Rule("test rule 2"),
+            ]
         )
 
         tools = [
@@ -55,16 +73,23 @@ class TestWorkflowSchema:
 
         workflow.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool()),
-            ToolkitStep("test router step", tools=tools)
+            ToolStep("test tool prompt", tool=PingPongTool())
         )
+
+        step = ToolkitStep("test router step", tools=tools)
+
+        workflow.steps[0].add_child(step)
+        workflow.steps[1].add_child(step)
 
         workflow_dict = WorkflowSchema().dump(workflow)
         deserialized_workflow = WorkflowSchema().load(workflow_dict)
 
         assert len(deserialized_workflow.steps) == 3
-        assert deserialized_workflow.steps[0].child_id == workflow.steps[1].id
-        assert deserialized_workflow.steps[1].parent_id == workflow.steps[0].id
-        assert len(deserialized_workflow.last_step().tools) == 5
+        assert len(deserialized_workflow.rules) == 2
+        assert deserialized_workflow.steps[0].child_ids[0] == step.id
+        assert deserialized_workflow.steps[0].id in step.parent_ids
+        assert deserialized_workflow.steps[1].id in step.parent_ids
+        assert len(deserialized_workflow.steps[-1].tools) == 5
         assert deserialized_workflow.prompt_driver.temperature == 0.12345
         assert deserialized_workflow.prompt_driver.tokenizer.stop_token == "<test>"
+        assert deserialized_workflow.rules[0].value == "test rule 1"

@@ -5,7 +5,7 @@ from attrs import define, field, Factory
 from galaxybrain.utils import Tokenizer
 
 if TYPE_CHECKING:
-    from galaxybrain.artifacts import StepOutput
+    from galaxybrain.artifacts import TextOutput
 
 
 @define
@@ -14,5 +14,5 @@ class PromptDriver(ABC):
     tokenizer: Tokenizer
 
     @abstractmethod
-    def run(self, **kwargs) -> StepOutput:
-        pass
+    def run(self, **kwargs) -> TextOutput:
+        ...

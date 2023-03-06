@@ -10,6 +10,6 @@ class ToolkitStepSchema(StepSchema):
 
     @post_load
     def make_step(self, data, **kwargs):
-        from galaxybrain.workflows import ToolkitStep
+        from galaxybrain.steps import ToolkitStep
 
         return ToolkitStep(**data)

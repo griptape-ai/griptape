@@ -1,9 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import json
 import openai
 from attrs import define, field, Factory
 from galaxybrain.drivers import PromptDriver
 from galaxybrain.utils import TiktokenTokenizer, Tokenizer
-from galaxybrain.artifacts import StepOutput
+
+if TYPE_CHECKING:
+    from galaxybrain.artifacts import TextOutput
 
 
 @define()
@@ -12,7 +16,7 @@ class OpenAiPromptDriver(PromptDriver):
     temperature: float = field(default=0.5, kw_only=True)
     user: str = field(default="", kw_only=True)
 
-    def run(self, value: any) -> StepOutput:
+    def run(self, value: any) -> TextOutput:
         result = openai.Completion.create(
             model=self.tokenizer.model,
             prompt=value,
@@ -23,7 +27,7 @@ class OpenAiPromptDriver(PromptDriver):
         )
 
         if len(result.choices) == 1:
-            return StepOutput(
+            return TextOutput(
                 value=result.choices[0].text.strip(),
                 meta={
                     "id": result["id"],

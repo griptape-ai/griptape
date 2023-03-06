@@ -25,6 +25,8 @@ setup(
         "jsonschema>=4",
         "marshmallow>=3",
         "marshmallow-oneofschema>=3",
+        "marshmallow-enum>=1.5",
+        "graphlib",
         "llama_index",
         "wikipedia",
         "tiktoken",

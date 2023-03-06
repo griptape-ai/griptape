@@ -1,18 +1,15 @@
-from marshmallow import Schema, fields, post_load
-from galaxybrain.schemas import PolymorphicSchema
+from marshmallow import post_load
+from galaxybrain.schemas.structure_schema import StructureSchema
 
 
-class WorkflowSchema(Schema):
-    prompt_driver = fields.Nested(PolymorphicSchema())
-    steps = fields.List(fields.Nested(PolymorphicSchema()))
-
+class WorkflowSchema(StructureSchema):
     @post_load
-    def make_workflow(self, data, **kwargs):
-        from galaxybrain.workflows import Workflow
+    def make_structure(self, data, **kwargs):
+        from galaxybrain.structures import Workflow
 
         workflow = Workflow(**data)
 
         for step in workflow.steps:
-            step.workflow = workflow
+            step.structure = workflow
 
         return workflow

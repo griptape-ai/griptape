@@ -9,7 +9,7 @@ from galaxybrain.utils import J2
 class Tool(ABC):
     @abstractmethod
     def run(self, value: any) -> str:
-        pass
+        ...
 
     @property
     def schema_json(self) -> str:

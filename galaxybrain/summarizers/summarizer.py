@@ -4,12 +4,12 @@ from abc import ABC, abstractmethod
 from attrs import define
 
 if TYPE_CHECKING:
-    from galaxybrain.workflows import Step
-    from galaxybrain.workflows.memory import Memory
+    from galaxybrain.steps import Step
+    from galaxybrain.memory import Memory
 
 
 @define
 class Summarizer(ABC):
     @abstractmethod
     def summarize(self, memory: Memory, steps: list[Step]) -> Optional[str]:
-        pass
+        ...
