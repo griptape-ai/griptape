@@ -1,4 +1,4 @@
-from galaxybrain.utils import TiktokenTokenizer
+from warpspeed.utils import TiktokenTokenizer
 
 
 class TestTiktokenTokenizer:

@@ -1,4 +1,4 @@
-from galaxybrain.utils import PythonRunner
+from warpspeed.utils import PythonRunner
 
 
 class TestPythonRunner:

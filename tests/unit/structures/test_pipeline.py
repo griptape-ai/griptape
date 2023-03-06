@@ -1,11 +1,11 @@
 import json
-from galaxybrain.artifacts import TextOutput
-from galaxybrain.rules import Rule
-from galaxybrain.utils import TiktokenTokenizer
-from galaxybrain.steps import PromptStep, Step
-from galaxybrain.memory import Memory
+from warpspeed.artifacts import TextOutput
+from warpspeed.rules import Rule
+from warpspeed.utils import TiktokenTokenizer
+from warpspeed.steps import PromptStep, Step
+from warpspeed.memory import Memory
 from tests.mocks.mock_driver import MockDriver
-from galaxybrain.structures import Pipeline
+from warpspeed.structures import Pipeline
 
 
 class TestPipeline:

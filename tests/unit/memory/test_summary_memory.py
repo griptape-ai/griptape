@@ -1,8 +1,8 @@
-from galaxybrain.summarizers import CompletionDriverSummarizer
-from galaxybrain.memory import SummaryMemory
+from warpspeed.summarizers import CompletionDriverSummarizer
+from warpspeed.memory import SummaryMemory
 from tests.mocks.mock_driver import MockDriver
-from galaxybrain.steps import PromptStep
-from galaxybrain.structures import Pipeline
+from warpspeed.steps import PromptStep
+from warpspeed.structures import Pipeline
 
 
 class TestSummaryMemory:

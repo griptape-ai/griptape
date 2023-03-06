@@ -1,7 +1,7 @@
-from galaxybrain.steps import ToolStep
-from galaxybrain.tools import PingPongTool
+from warpspeed.steps import ToolStep
+from warpspeed.tools import PingPongTool
 from tests.mocks.mock_value_driver import MockValueDriver
-from galaxybrain.structures import Pipeline
+from warpspeed.structures import Pipeline
 
 
 class TestToolStep:

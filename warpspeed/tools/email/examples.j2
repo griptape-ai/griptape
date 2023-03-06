@@ -1,0 +1,6 @@
+Q: send an email to mail@warpspeed.com telling them that Bob will be late for dinner tonight and will arrive at 8pm
+Thought: I need to use the email tool.
+Action: {"tool": "email", "input": {"to": "mail@warpspeed.com", "subject": "Bob will be late for dinner", "body": "Hey, just wanted to let you know that Bob will be late tonight. Let's push dinner to 8pm. Thanks!"}}{{ stop_sequence }}
+Observation: email was successfully sent
+Thought: I have enough information to answer the original question
+Action: {"tool": "exit", "input": "Email to mail@warpspeed.com about Bob being late for dinner was successfully sent."}{{ stop_sequence }}

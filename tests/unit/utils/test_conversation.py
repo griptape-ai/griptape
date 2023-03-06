@@ -1,7 +1,7 @@
-from galaxybrain.steps import PromptStep
-from galaxybrain.artifacts import TextOutput
-from galaxybrain.structures import Pipeline
-from galaxybrain.utils import Conversation
+from warpspeed.steps import PromptStep
+from warpspeed.artifacts import TextOutput
+from warpspeed.structures import Pipeline
+from warpspeed.utils import Conversation
 
 
 class TestConversation:

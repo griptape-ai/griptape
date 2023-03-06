@@ -1,17 +1,17 @@
 import pathlib
-from galaxybrain import VERSION
+from warpspeed import VERSION
 from setuptools import setup, find_packages
 
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    name="galaxybrain",
+    name="warpspeed",
     version=VERSION,
     description="LLM extensions framework",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/galaxybrain-labs/galaxybrain",
+    url="https://github.com/warpspeed-labs/warpspeed",
     author="Vasily Vasinov",
     author_email="vasinov@me.com",
     license="Apache 2.0",
