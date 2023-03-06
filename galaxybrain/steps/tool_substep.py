@@ -3,7 +3,7 @@ from typing import Optional
 from attrs import define, field
 from galaxybrain.utils import J2
 from galaxybrain.steps import PromptStep, BaseToolStep
-from galaxybrain.artifacts import StepOutput
+from galaxybrain.artifacts import TextOutput
 
 
 @define
@@ -12,11 +12,11 @@ class ToolSubstep(PromptStep):
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[str] = field(default=None, kw_only=True)
 
-    def run(self) -> StepOutput:
+    def run(self) -> TextOutput:
         if self.action_name == "exit":
-            self.output = StepOutput(None)
+            self.output = TextOutput(None)
         elif self.action_name == "error":
-            self.output = StepOutput(self.action_input)
+            self.output = TextOutput(self.action_input)
         else:
 
             tool = self.tool_step.find_tool(self.action_name)
@@ -26,7 +26,7 @@ class ToolSubstep(PromptStep):
             else:
                 observation = "tool not found"
 
-            self.output = StepOutput(observation)
+            self.output = TextOutput(observation)
 
         return self.output
 

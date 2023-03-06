@@ -1,14 +1,14 @@
 from __future__ import annotations
-
 import logging
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
+from galaxybrain.artifacts import ErrorOutput
 
 if TYPE_CHECKING:
-    from galaxybrain.artifacts import StepOutput
+    from galaxybrain.artifacts import TextOutput, StructureArtifact
     from galaxybrain.steps import Step
     from galaxybrain.structures import Structure
 
@@ -26,7 +26,7 @@ class Step(ABC):
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
 
-    output: Optional[StepOutput] = field(default=None, init=False)
+    output: Optional[StructureArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
 
     @property
@@ -86,7 +86,7 @@ class Step(ABC):
     def after_run(self) -> None:
         self.structure.after_run(self)
 
-    def execute(self) -> StepOutput:
+    def execute(self) -> StructureArtifact:
         try:
             logging.info(f"Start executing step {self.id}")
 
@@ -98,7 +98,7 @@ class Step(ABC):
 
             self.after_run()
         except Exception as e:
-            self.output = StepOutput(f"Error executing step {self.id}: {e}")
+            self.output = ErrorOutput(e, step=self)
         finally:
             self.state = Step.State.FINISHED
             logging.info(f"Finished executing step {self.id}")
@@ -114,5 +114,5 @@ class Step(ABC):
         return self
 
     @abstractmethod
-    def run(self, **kwargs) -> StepOutput:
+    def run(self, **kwargs) -> TextOutput:
         ...

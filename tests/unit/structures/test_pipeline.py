@@ -1,5 +1,5 @@
 import json
-from galaxybrain.artifacts import StepOutput
+from galaxybrain.artifacts import TextOutput
 from galaxybrain.rules import Rule
 from galaxybrain.utils import TiktokenTokenizer
 from galaxybrain.steps import PromptStep, Step
@@ -114,7 +114,7 @@ class TestPipeline:
     def test_step_output_token_count(self):
         text = "foobar"
 
-        assert StepOutput(text).token_count() == TiktokenTokenizer().token_count(text)
+        assert TextOutput(text).token_count() == TiktokenTokenizer().token_count(text)
 
     def test_run(self):
         step = PromptStep("test")

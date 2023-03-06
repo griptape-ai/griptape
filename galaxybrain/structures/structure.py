@@ -1,13 +1,14 @@
 from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 from attrs import define, field
-from galaxybrain.artifacts import StepOutput
 from galaxybrain.drivers import PromptDriver, OpenAiPromptDriver
-from galaxybrain.rules import Rule
-from galaxybrain.steps import Step
 from galaxybrain.utils import J2
+
+if TYPE_CHECKING:
+    from galaxybrain.rules import Rule
+    from galaxybrain.steps import Step
 
 
 @define

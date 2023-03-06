@@ -1,13 +1,12 @@
-import json
-from abc import ABC
 from typing import Optional
 from attrs import define, field
+from galaxybrain.artifacts import StructureArtifact
 from galaxybrain.utils import TiktokenTokenizer, Tokenizer
 
 
-@define
-class StepArtifact(ABC):
-    value: Optional[any]
+@define(frozen=True)
+class TextOutput(StructureArtifact):
+    meta: Optional[any] = field(default=None)
     tokenizer: Tokenizer = field(default=TiktokenTokenizer(), kw_only=True)
 
     def token_count(self) -> Optional[int]:

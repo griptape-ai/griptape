@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from galaxybrain.utils import J2
 from galaxybrain.steps import Step
-from galaxybrain.artifacts import StepOutput
+from galaxybrain.artifacts import TextOutput
 
 if TYPE_CHECKING:
     from galaxybrain.drivers import PromptDriver
@@ -15,7 +15,7 @@ class PromptStep(Step):
     context: dict[str, any] = field(factory=dict, kw_only=True)
     driver: Optional[PromptDriver] = field(default=None, kw_only=True)
 
-    def run(self) -> StepOutput:
+    def run(self) -> TextOutput:
         self.output = self.active_driver().run(value=self.structure.to_prompt_string(self))
 
         return self.output

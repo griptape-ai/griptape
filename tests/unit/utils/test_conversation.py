@@ -1,5 +1,5 @@
 from galaxybrain.steps import PromptStep
-from galaxybrain.artifacts import StepOutput
+from galaxybrain.artifacts import TextOutput
 from galaxybrain.structures import Pipeline
 from galaxybrain.utils import Conversation
 
@@ -13,8 +13,8 @@ class TestConversation:
             PromptStep("question 2")
         )
 
-        pipeline.steps[0].output = StepOutput("answer 1")
-        pipeline.steps[1].output = StepOutput("answer 2")
+        pipeline.steps[0].output = TextOutput("answer 1")
+        pipeline.steps[1].output = TextOutput("answer 2")
 
         lines = Conversation(pipeline).lines()
 
@@ -31,8 +31,8 @@ class TestConversation:
             PromptStep("question 2")
         )
 
-        pipeline.steps[0].output = StepOutput("answer 1")
-        pipeline.steps[1].output = StepOutput("answer 2")
+        pipeline.steps[0].output = TextOutput("answer 1")
+        pipeline.steps[1].output = TextOutput("answer 2")
 
         string = Conversation(pipeline).to_string()
 

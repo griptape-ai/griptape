@@ -7,7 +7,7 @@ from attrs import define, field
 from galaxybrain.tools import Tool
 from galaxybrain.utils import J2
 from galaxybrain.steps import PromptStep
-from galaxybrain.artifacts import StepOutput
+from galaxybrain.artifacts import TextOutput
 
 if TYPE_CHECKING:
     from galaxybrain.steps import ToolSubstep
@@ -19,7 +19,7 @@ class BaseToolStep(PromptStep, ABC):
 
     substeps: list[ToolSubstep] = field(factory=list, kw_only=True)
 
-    def run(self) -> StepOutput:
+    def run(self) -> TextOutput:
         from galaxybrain.steps import ToolSubstep
 
         temp_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
@@ -48,7 +48,7 @@ class BaseToolStep(PromptStep, ABC):
         else:
             final_output = action_input
 
-        self.output = StepOutput(final_output)
+        self.output = TextOutput(final_output)
 
         return self.output
 

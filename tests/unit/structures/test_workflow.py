@@ -1,5 +1,5 @@
 import json
-from galaxybrain.artifacts import StepOutput
+from galaxybrain.artifacts import TextOutput
 from galaxybrain.rules import Rule
 from galaxybrain.utils import TiktokenTokenizer
 from galaxybrain.steps import PromptStep, Step
