@@ -1,5 +1,7 @@
 from galaxybrain.schemas.polymorphic_schema import PolymorphicSchema
 
+from galaxybrain.schemas.rule_schema import RuleSchema
+
 from galaxybrain.schemas.tiktoken_tokenizer_schema import TiktokenTokenizerSchema
 
 from galaxybrain.schemas.openai_prompt_driver_schema import OpenAiPromptDriverSchema
@@ -21,6 +23,8 @@ from galaxybrain.schemas.workflow_schema import WorkflowSchema
 
 __all__ = [
     "PolymorphicSchema",
+
+    "RuleSchema",
 
     "TiktokenTokenizerSchema",
 

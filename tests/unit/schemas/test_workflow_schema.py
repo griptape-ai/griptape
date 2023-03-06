@@ -1,4 +1,5 @@
 from galaxybrain.drivers import OpenAiPromptDriver
+from galaxybrain.rules import Rule
 from galaxybrain.utils import TiktokenTokenizer
 from galaxybrain.steps import PromptStep, ToolStep, ToolkitStep, Step
 from galaxybrain.structures import Workflow
@@ -12,7 +13,11 @@ class TestWorkflowSchema:
             prompt_driver=OpenAiPromptDriver(
                 tokenizer=TiktokenTokenizer(stop_token="<test>"),
                 temperature=0.12345
-            )
+            ),
+            rules=[
+                Rule("test rule 1"),
+                Rule("test rule 2"),
+            ]
         )
 
         tools = [
@@ -36,6 +41,7 @@ class TestWorkflowSchema:
         workflow_dict = WorkflowSchema().dump(workflow)
 
         assert len(workflow_dict["steps"]) == 3
+        assert len(workflow_dict["rules"]) == 2
         assert workflow_dict["steps"][0]["state"] == "PENDING"
         assert workflow_dict["steps"][0]["child_ids"][0] == step.id
         assert workflow.steps[0].id in step.parent_ids
@@ -43,13 +49,18 @@ class TestWorkflowSchema:
         assert len(workflow_dict["steps"][-1]["tools"]) == 5
         assert workflow_dict["prompt_driver"]["temperature"] == 0.12345
         assert workflow_dict["prompt_driver"]["tokenizer"]["stop_token"] == "<test>"
+        assert workflow_dict["rules"][0]["value"] == "test rule 1"
 
     def test_deserialization(self):
         workflow = Workflow(
             prompt_driver=OpenAiPromptDriver(
                 tokenizer=TiktokenTokenizer(stop_token="<test>"),
                 temperature=0.12345
-            )
+            ),
+            rules=[
+                Rule("test rule 1"),
+                Rule("test rule 2"),
+            ]
         )
 
         tools = [
@@ -74,9 +85,11 @@ class TestWorkflowSchema:
         deserialized_workflow = WorkflowSchema().load(workflow_dict)
 
         assert len(deserialized_workflow.steps) == 3
+        assert len(deserialized_workflow.rules) == 2
         assert deserialized_workflow.steps[0].child_ids[0] == step.id
         assert deserialized_workflow.steps[0].id in step.parent_ids
         assert deserialized_workflow.steps[1].id in step.parent_ids
         assert len(deserialized_workflow.steps[-1].tools) == 5
         assert deserialized_workflow.prompt_driver.temperature == 0.12345
         assert deserialized_workflow.prompt_driver.tokenizer.stop_token == "<test>"
+        assert deserialized_workflow.rules[0].value == "test rule 1"
