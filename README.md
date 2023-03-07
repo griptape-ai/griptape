@@ -1,9 +1,9 @@
 # Warpspeed
 
-[![Tests](https://github.com/getwarpspeed/warpspeed/actions/workflows/tests.yml/badge.svg)](https://github.com/getwarpspeed/warpspeed/actions/workflows/tests.yml)
+[![Tests](https://github.com/usewarpspeed/warpspeed/actions/workflows/tests.yml/badge.svg)](https://github.com/usewarpspeed/warpspeed/actions/workflows/tests.yml)
 [![PyPI Version](https://img.shields.io/pypi/v/warpspeed.svg)](https://pypi.python.org/pypi/warpspeed)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/getwarpspeed.svg?style=social&label=Follow%20%40getwarpspeed)](https://twitter.com/getwarpspeed)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/usewarpspeed.svg?style=social&label=Follow%20%40usewarpspeed)](https://twitter.com/usewarpspeed)
 
 Warpspeed is a Python framework for creating AI workflow DAGs and pipelines. It augments transformer models with tools for accessing external APIs, such as searches, calculators, spreadsheets, docs, email, and many others. Our initial focus is on supporting large language models (LLMs) but we plan to expand framework's capabilities to cover text-to-anything functionality soon.
 
