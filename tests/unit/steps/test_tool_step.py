@@ -1,7 +1,7 @@
-from galaxybrain.steps import ToolStep
-from galaxybrain.tools import PingPongTool
+from warpspeed.steps import ToolStep, ToolSubstep
+from warpspeed.tools import PingPongTool
 from tests.mocks.mock_value_driver import MockValueDriver
-from galaxybrain.structures import Pipeline
+from warpspeed.structures import Pipeline
 
 
 class TestToolStep:
@@ -39,3 +39,37 @@ class TestToolStep:
         assert step.parse_tool_action(f"Something\nAction: {valid_json}\n") == success_result
         assert step.parse_tool_action(f"Something\nAction: {valid_json}\n\n") == success_result
 
+    def test_add_substep(self):
+        step = ToolStep("test", tool=PingPongTool())
+        substep1 = ToolSubstep("test1", tool_step=step, action_name="exit", action_input="test")
+        substep2 = ToolSubstep("test2", tool_step=step, action_name="exit", action_input="test")
+
+        step.add_substep(substep1)
+        step.add_substep(substep2)
+
+        assert len(step.substeps) == 2
+
+        assert len(substep1.children) == 1
+        assert len(substep1.parents) == 0
+        assert substep1.children[0] == substep2
+
+        assert len(substep2.children) == 0
+        assert len(substep2.parents) == 1
+        assert substep2.parents[0] == substep1
+
+    def test_find_substep(self):
+        step = ToolStep("test", tool=PingPongTool())
+        substep1 = ToolSubstep("test1", tool_step=step, action_name="exit", action_input="test")
+        substep2 = ToolSubstep("test2", tool_step=step, action_name="exit", action_input="test")
+
+        step.add_substep(substep1)
+        step.add_substep(substep2)
+
+        assert step.find_substep(substep1.id) == substep1
+        assert step.find_substep(substep2.id) == substep2
+
+    def test_find_tool(self):
+        tool = PingPongTool()
+        step = ToolStep("test", tool=PingPongTool())
+
+        assert step.find_tool(tool.name) == tool

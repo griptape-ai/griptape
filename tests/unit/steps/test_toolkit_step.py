@@ -1,7 +1,7 @@
-from galaxybrain.steps import ToolkitStep
-from galaxybrain.tools import PingPongTool, CalculatorTool
+from warpspeed.steps import ToolkitStep
+from warpspeed.tools import PingPongTool, CalculatorTool
 from tests.mocks.mock_value_driver import MockValueDriver
-from galaxybrain.structures import Pipeline
+from warpspeed.structures import Pipeline
 
 
 class TestToolkitStep:
@@ -20,3 +20,10 @@ class TestToolkitStep:
         assert step.substeps[0].action_name == "exit"
         assert step.substeps[0].action_input == "test is finished"
         assert result.output.value == "test is finished"
+
+    def test_find_tool(self):
+        tool = PingPongTool()
+        step = ToolkitStep("test", tools=[PingPongTool()])
+
+        assert step.find_tool(tool.name) == tool
+        

@@ -1,9 +1,9 @@
-from galaxybrain.drivers import OpenAiPromptDriver
-from galaxybrain.utils import TiktokenTokenizer
-from galaxybrain.steps import PromptStep, ToolStep, ToolkitStep, Step
-from galaxybrain.structures import Pipeline
-from galaxybrain.schemas import PipelineSchema
-from galaxybrain.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
+from warpspeed.drivers import OpenAiPromptDriver
+from warpspeed.utils import TiktokenTokenizer
+from warpspeed.steps import PromptStep, ToolStep, ToolkitStep, Step
+from warpspeed.structures import Pipeline
+from warpspeed.schemas import PipelineSchema
+from warpspeed.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
 
 
 class TestPipelineSchema:
@@ -19,7 +19,7 @@ class TestPipelineSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailTool(host="localhost", port=1025, from_email="test@galaxybraintest.com", use_ssl=False),
+            EmailTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
             WikiTool()
         ]
 
@@ -51,7 +51,7 @@ class TestPipelineSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailTool(host="localhost", port=1025, from_email="test@galaxybraintest.com", use_ssl=False),
+            EmailTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
             WikiTool()
         ]
 

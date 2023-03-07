@@ -1,19 +1,18 @@
 import pathlib
-from galaxybrain import VERSION
+from warpspeed import VERSION
 from setuptools import setup, find_packages
 
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    name="galaxybrain",
+    name="warpspeed",
     version=VERSION,
-    description="LLM extensions framework",
+    description="Python framework for AI workflows and pipelines.",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/galaxybrain-labs/galaxybrain",
-    author="Vasily Vasinov",
-    author_email="vasinov@me.com",
+    url="https://github.com/usewarpspeed/warpspeed",
+    author_email="hello@warpspeed.cc",
     license="Apache 2.0",
     packages=find_packages(),
     include_package_data=True,

@@ -1,6 +1,6 @@
-from galaxybrain.steps import PromptStep
+from warpspeed.steps import PromptStep
 from tests.mocks.mock_driver import MockDriver
-from galaxybrain.structures import Pipeline
+from warpspeed.structures import Pipeline
 
 
 class TestPromptStep:

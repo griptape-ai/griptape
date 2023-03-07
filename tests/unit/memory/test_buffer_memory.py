@@ -1,6 +1,6 @@
-from galaxybrain.steps import PromptStep
-from galaxybrain.structures import Pipeline
-from galaxybrain.memory import BufferMemory
+from warpspeed.steps import PromptStep
+from warpspeed.structures import Pipeline
+from warpspeed.memory import BufferMemory
 from tests.mocks.mock_driver import MockDriver
 
 

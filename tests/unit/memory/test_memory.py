@@ -1,6 +1,6 @@
-from galaxybrain.steps import PromptStep, ToolStep
-from galaxybrain.memory import Memory
-from galaxybrain.tools import PingPongTool
+from warpspeed.steps import PromptStep, ToolStep
+from warpspeed.memory import Memory
+from warpspeed.tools import PingPongTool
 
 
 class TestMemory:

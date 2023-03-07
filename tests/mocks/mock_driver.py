@@ -1,7 +1,7 @@
 from attrs import define
-from galaxybrain.drivers import PromptDriver
-from galaxybrain.utils import TiktokenTokenizer, Tokenizer
-from galaxybrain.artifacts import TextOutput
+from warpspeed.drivers import PromptDriver
+from warpspeed.utils import TiktokenTokenizer, Tokenizer
+from warpspeed.artifacts import TextOutput
 
 
 @define()

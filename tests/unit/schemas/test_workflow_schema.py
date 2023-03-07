@@ -1,10 +1,10 @@
-from galaxybrain.drivers import OpenAiPromptDriver
-from galaxybrain.rules import Rule
-from galaxybrain.utils import TiktokenTokenizer
-from galaxybrain.steps import PromptStep, ToolStep, ToolkitStep, Step
-from galaxybrain.structures import Workflow
-from galaxybrain.schemas import WorkflowSchema
-from galaxybrain.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
+from warpspeed.drivers import OpenAiPromptDriver
+from warpspeed.rules import Rule
+from warpspeed.utils import TiktokenTokenizer
+from warpspeed.steps import PromptStep, ToolStep, ToolkitStep, Step
+from warpspeed.structures import Workflow
+from warpspeed.schemas import WorkflowSchema
+from warpspeed.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
 
 
 class TestWorkflowSchema:
@@ -24,7 +24,7 @@ class TestWorkflowSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailTool(host="localhost", port=1025, from_email="test@galaxybraintest.com", use_ssl=False),
+            EmailTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
             WikiTool()
         ]
 
@@ -67,7 +67,7 @@ class TestWorkflowSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailTool(host="localhost", port=1025, from_email="test@galaxybraintest.com", use_ssl=False),
+            EmailTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
             WikiTool()
         ]
 
