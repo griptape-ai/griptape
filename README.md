@@ -9,9 +9,9 @@ Warpspeed is a Python framework for creating AI workflow DAGs and pipelines. It 
 
 With Warpspeed, you can accomplish the following:
 
-- 🚰 Build sequential AI pipelines and sprawling DAG workflows for complex use cases.
-- 🧰️ Augment LLMs with *chain of thought* capabilities and external API tools, such as calculators, web search, and spreadsheet editors.
-- 💾 Add memory to AI pipelines for context preservation.
+1. 🚰 Build sequential **AI pipelines** and sprawling **DAG workflows** for complex use cases.
+2. 🧰️ Augment LLMs with **chain of thought** capabilities and **external tools**, such as calculators, web search, spreadsheet editors, and API connectors.
+3. 💾 Add **memory** to AI pipelines for context preservation.
 
 Please note that Warpspeed is in early development. Its APIs and documentation are subject to change. For now, this README file is the most accurate source of documentation and examples.
 
