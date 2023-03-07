@@ -2,6 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
+from warpspeed.artifacts import ErrorOutput
 from warpspeed.schemas import PipelineSchema
 from warpspeed.structures import Structure
 from warpspeed.memory import Memory
@@ -96,9 +97,10 @@ class Pipeline(Structure):
         if step is None:
             return
         else:
-            step.execute()
-
-            self.__execute_from_step(next(iter(step.children), None))
+            if isinstance(step.execute(), ErrorOutput):
+                return
+            else:
+                self.__execute_from_step(next(iter(step.children), None))
 
     def __next_unfinished_step(self, step: Optional[Step]) -> Optional[Step]:
         if step is None:

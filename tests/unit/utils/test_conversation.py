@@ -1,6 +1,7 @@
-from warpspeed.steps import PromptStep
+from warpspeed.steps import PromptStep, ToolStep, ToolkitStep
 from warpspeed.artifacts import TextOutput
 from warpspeed.structures import Pipeline
+from warpspeed.tools import PingPongTool
 from warpspeed.utils import Conversation
 
 
@@ -10,7 +11,7 @@ class TestConversation:
 
         pipeline.add_steps(
             PromptStep("question 1"),
-            PromptStep("question 2")
+            ToolStep("question 2", tool=PingPongTool())
         )
 
         pipeline.steps[0].output = TextOutput("answer 1")
@@ -28,7 +29,7 @@ class TestConversation:
 
         pipeline.add_steps(
             PromptStep("question 1"),
-            PromptStep("question 2")
+            ToolStep("question 2", tool=PingPongTool())
         )
 
         pipeline.steps[0].output = TextOutput("answer 1")

@@ -57,6 +57,9 @@ class BaseToolStep(PromptStep, ABC):
             step=self
         )
 
+    def find_substep(self, step_id: str) -> Optional[ToolSubstep]:
+        return next((step for step in self.substeps if step.id == step_id), None)
+
     def add_substep(self, substep: ToolSubstep) -> ToolSubstep:
         substep.structure = self.structure
 

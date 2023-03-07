@@ -5,6 +5,9 @@ from warpspeed.steps import Step
 
 
 class StepSchema(Schema):
+    class Meta:
+        ordered = True
+
     id = fields.Str(required=True)
     state = EnumField(Step.State)
     parent_ids = fields.List(fields.Str())

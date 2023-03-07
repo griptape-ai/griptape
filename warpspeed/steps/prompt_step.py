@@ -48,7 +48,7 @@ class PromptStep(Step):
     @property
     def default_context(self) -> dict[str, any]:
         return {
-            "inputs": {parent.id: parent.output.value for parent in self.parents},
+            "inputs": {parent.id: parent.output.value if parent.output else "" for parent in self.parents},
             "structure": self.structure,
             "parents": {parent.id: parent for parent in self.parents},
             "children": {child.id: child for child in self.children}

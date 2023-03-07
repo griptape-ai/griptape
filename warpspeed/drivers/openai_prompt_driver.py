@@ -1,13 +1,9 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 import json
 import openai
 from attrs import define, field, Factory
 from warpspeed.drivers import PromptDriver
 from warpspeed.utils import TiktokenTokenizer, Tokenizer
-
-if TYPE_CHECKING:
-    from warpspeed.artifacts import TextOutput
+from warpspeed.artifacts import TextOutput
 
 
 @define()

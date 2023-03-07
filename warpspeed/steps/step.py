@@ -88,7 +88,7 @@ class Step(ABC):
 
     def execute(self) -> StructureArtifact:
         try:
-            logging.info(f"Start executing step {self.id}")
+            logging.info(f"Start executing step '{self.id}'")
 
             self.state = Step.State.EXECUTING
 
@@ -98,10 +98,13 @@ class Step(ABC):
 
             self.after_run()
         except Exception as e:
+            logging.error(f"Error executing step '{self.id}': {e}")
+
             self.output = ErrorOutput(e, step=self)
         finally:
             self.state = Step.State.FINISHED
-            logging.info(f"Finished executing step {self.id}")
+
+            logging.info(f"Finished executing step '{self.id}'")
 
         return self.output
 

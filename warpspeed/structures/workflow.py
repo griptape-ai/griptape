@@ -4,6 +4,8 @@ import json
 import logging
 from graphlib import TopologicalSorter
 from attrs import define, field
+
+from warpspeed.artifacts import ErrorOutput
 from warpspeed.schemas import WorkflowSchema
 from warpspeed.steps import Step
 from warpspeed.structures import Structure
@@ -34,23 +36,30 @@ class Workflow(Structure):
 
     def run(self) -> list[Step]:
         ordered_steps = self.order_steps()
+        last_executed_step = None
+        exit_loop = False
 
-        while any(s for s in ordered_steps if not s.is_finished()):
-            futures_list = {}
+        try:
+            while any(s for s in ordered_steps if not s.is_finished()) and not exit_loop:
+                futures_list = {}
 
-            for step in ordered_steps:
-                if step.can_execute():
-                    future = self.executor.submit(step.execute)
-                    futures_list[future] = step
+                for step in ordered_steps:
+                    if step.can_execute():
+                        future = self.executor.submit(step.execute)
+                        futures_list[future] = step
 
-            # Wait for all tasks to complete
-            for future in futures.as_completed(futures_list):
-                step = futures_list[future]
+                # Wait for all tasks to complete
+                for future in futures.as_completed(futures_list):
+                    last_executed_step = futures_list[future]
 
-                try:
-                    future.result()
-                except Exception as e:
-                    logging.error(f"Step {step.id} raised an exception while executing: {e}")
+                    if isinstance(future.result(), ErrorOutput):
+                        exit_loop = True
+
+                        break
+        except Exception as e:
+            step_id = last_executed_step.id if last_executed_step else None
+
+            logging.error(f"Error executing step '{step_id}' in workflow: {e}")
 
         return self.output_steps()
 

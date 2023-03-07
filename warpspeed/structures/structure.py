@@ -50,7 +50,7 @@ class Structure(ABC):
         return str.join("\n", self.prompt_stack(step))
 
     def to_json(self) -> str:
-        return json.dumps(self.to_dict())
+        return json.dumps(self.to_dict(), indent=2)
 
     def before_run(self, step: Step) -> None:
         pass

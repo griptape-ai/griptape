@@ -12,6 +12,14 @@ class ToolSubstep(PromptStep):
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[str] = field(default=None, kw_only=True)
 
+    @property
+    def parents(self) -> list[ToolSubstep]:
+        return [self.tool_step.find_substep(parent_id) for parent_id in self.parent_ids]
+
+    @property
+    def children(self) -> list[ToolSubstep]:
+        return [self.tool_step.find_substep(child_id) for child_id in self.child_ids]
+
     def run(self) -> TextOutput:
         if self.action_name == "exit":
             self.output = TextOutput(None)

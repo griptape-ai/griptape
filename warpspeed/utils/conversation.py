@@ -22,7 +22,7 @@ class Conversation:
                 for substep in step.substeps:
                     lines.append(substep.render())
 
-            lines.append(f"A: {step.output.value}")
+            lines.append(f"A: {step.output.value if step.output else ''}")
 
         return lines
 
