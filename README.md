@@ -45,9 +45,9 @@ utils.Conversation(pipeline).to_string()
 
 Boom! Our first conversation, à la ChatGPT, is here:
 
-> Q: Hi, my name is Scotty. Who are you?
-> A: Hi Scotty, my name is Assistant. I'm here to help answer your questions.
-> Q: What is my name?
+> Q: Hi, my name is Scotty. Who are you?  
+> A: Hi Scotty, my name is Assistant. I'm here to help answer your questions.  
+> Q: What is my name?  
 > A: Your name is Scotty.
 
 You can dynamically pass arguments to the prompt by using Jinja templates:
