@@ -20,3 +20,10 @@ class TestToolkitStep:
         assert step.substeps[0].action_name == "exit"
         assert step.substeps[0].action_input == "test is finished"
         assert result.output.value == "test is finished"
+
+    def test_find_tool(self):
+        tool = PingPongTool()
+        step = ToolkitStep("test", tools=[PingPongTool()])
+
+        assert step.find_tool(tool.name) == tool
+        
