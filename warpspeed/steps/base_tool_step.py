@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import logging
 import re
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
@@ -44,13 +45,13 @@ class BaseToolStep(PromptStep, ABC):
                 action_name, action_input = self.parse_tool_action(temp_output.value)
 
         if action_input is None:
-            final_output = temp_output.value
+            final_output = TextOutput(temp_output.value)
         else:
-            final_output = action_input
+            final_output = TextOutput(action_input)
 
-        self.output = TextOutput(final_output)
+        self.output = final_output
 
-        return self.output
+        return final_output
 
     def render(self) -> str:
         return J2("prompts/steps/tool/tool.j2").render(
@@ -81,9 +82,10 @@ class BaseToolStep(PromptStep, ABC):
 
                 return parsed_value.get("tool"), parsed_value.get("input")
             else:
-                return "error", self.JSON_PARSE_ERROR_MSG
+                return "error", f"error: {self.JSON_PARSE_ERROR_MSG}"
         except Exception as e:
-            return "error", self.JSON_PARSE_ERROR_MSG
+            logging.error(f"Error parsing tool action: {e}\nInput value: {value}")
+            return "error", f"error: {self.JSON_PARSE_ERROR_MSG}"
 
     @abstractmethod
     def find_tool(self, action_name: str) -> Optional[Tool]:

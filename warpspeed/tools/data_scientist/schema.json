@@ -13,8 +13,5 @@
       "description": "Python expression"
     }
   },
-  "required": [
-    "tool",
-    "input"
-  ]
+  "required": ["tool", "input"]
 }

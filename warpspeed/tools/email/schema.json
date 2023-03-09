@@ -31,8 +31,5 @@
       ]
     }
   },
-  "required": [
-    "tool",
-    "input"
-  ]
+  "required": ["tool", "input"]
 }

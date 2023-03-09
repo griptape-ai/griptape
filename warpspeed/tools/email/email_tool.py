@@ -18,16 +18,16 @@ class EmailTool(Tool):
     def run(self, args: dict[str]) -> str:
         server = smtplib.SMTP(self.host, self.port)
 
+        to_email = args.get("to")
+        subject = args.get("subject")
+        body = args.get("body")
+        msg = EmailMessage()
+
+        msg['Subject'] = subject
+        msg['From'] = self.from_email
+        msg['To'] = to_email
+
         try:
-            to_email = args.get("to")
-            subject = args.get("subject")
-            body = args.get("body")
-            msg = EmailMessage()
-
-            msg['Subject'] = subject
-            msg['From'] = self.from_email
-            msg['To'] = to_email
-
             if self.use_ssl:
                 server.starttls(context=ssl.create_default_context())
 

@@ -1,0 +1,13 @@
+Q: Find all values in the second column of a spreadsheet.
+Thought: I need to use the google_sheets_reader tool.
+Action: {"tool": "google_sheets_reader", "input": {"action": "get_values", "range": "B:B"}}{{ stop_sequence }}
+Observation: [['apple'], ['orange'], ['pear']]
+Thought: I have enough information to answer the original question
+Action: {"tool": "exit", "input": "Values in the second column of the spreadsheet are[['apple'], ['orange'], ['pear']]"}{{ stop_sequence }}
+
+Q: Find all cells in the spreadsheet that have foo or bar in them as part of the cell value.
+Thought: I need to use the google_sheets_reader tool.
+Action: {"tool": "google_sheets_reader", "input": {"action": "search", "regex": "(foo|bar)"}}{{ stop_sequence }}
+Observation: ['cell A3: foobaz', 'cell A5: topbar']
+Thought: I have enough information to answer the original question
+Action: {"tool": "exit", "input": "The following cells have foo or bar in them as part of the cell value: ['cell A3: foobaz', 'cell A5: topbar']"}{{ stop_sequence }}

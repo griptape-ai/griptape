@@ -13,8 +13,5 @@
       "description": "Any input"
     }
   },
-  "required": [
-    "tool",
-    "input"
-  ]
+  "required": ["tool", "input"]
 }

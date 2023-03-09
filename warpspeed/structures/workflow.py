@@ -36,30 +36,22 @@ class Workflow(Structure):
 
     def run(self) -> list[Step]:
         ordered_steps = self.order_steps()
-        last_executed_step = None
         exit_loop = False
 
-        try:
-            while any(s for s in ordered_steps if not s.is_finished()) and not exit_loop:
-                futures_list = {}
+        while any(s for s in ordered_steps if not s.is_finished()) and not exit_loop:
+            futures_list = {}
 
-                for step in ordered_steps:
-                    if step.can_execute():
-                        future = self.executor.submit(step.execute)
-                        futures_list[future] = step
+            for step in ordered_steps:
+                if step.can_execute():
+                    future = self.executor.submit(step.execute)
+                    futures_list[future] = step
 
-                # Wait for all tasks to complete
-                for future in futures.as_completed(futures_list):
-                    last_executed_step = futures_list[future]
+            # Wait for all tasks to complete
+            for future in futures.as_completed(futures_list):
+                if isinstance(future.result(), ErrorOutput):
+                    exit_loop = True
 
-                    if isinstance(future.result(), ErrorOutput):
-                        exit_loop = True
-
-                        break
-        except Exception as e:
-            step_id = last_executed_step.id if last_executed_step else None
-
-            logging.error(f"Error executing step '{step_id}' in workflow: {e}")
+                    break
 
         return self.output_steps()
 

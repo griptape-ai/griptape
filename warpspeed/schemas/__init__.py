@@ -16,6 +16,8 @@ from warpspeed.schemas.tool_step_schema import ToolStepSchema
 from warpspeed.schemas.toolkit_step_schema import ToolkitStepSchema
 from warpspeed.schemas.email_tool_schema import EmailToolSchema
 from warpspeed.schemas.wiki_tool_schema import WikiToolSchema
+from warpspeed.schemas.google_sheets_reader_tool_schema import GoogleSheetsReaderToolSchema
+from warpspeed.schemas.google_sheets_writer_tool_schema import GoogleSheetsWriterToolSchema
 
 from warpspeed.schemas.structure_schema import StructureSchema
 from warpspeed.schemas.pipeline_schema import PipelineSchema
