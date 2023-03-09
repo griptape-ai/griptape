@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "google_sheets_reader",
+  "description": "This tool can load values and search Google Sheets",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["google_sheets_reader"]
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["get_values", "find"],
+          "description": "Action that the tool should use."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "action": { "const": "get_values" } }
+          },
+          "then": {
+            "properties": {
+              "range": {
+                "type": "string",
+                "description": "Cell range in the A1 notation."
+              }
+            },
+            "required": ["range"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "action": { "const": "search" } }
+          },
+          "then": {
+            "properties": {
+              "regex": {
+                "type": "string",
+                "description": "Regex search query."
+              }
+            },
+            "required": ["regex"]
+          }
+        }
+      ],
+      "required": ["action"]
+    }
+  },
+  "required": ["tool", "input"]
+}

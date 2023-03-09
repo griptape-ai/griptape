@@ -1,14 +1,14 @@
-from attrs import define
+from attrs import define, field
 from warpspeed.tools import Tool
 from warpspeed.utils import PythonRunner
 
 
 @define(frozen=True)
 class DataScientistTool(Tool):
-    AVAILABLE_LIBRARIES = {"numpy": "np", "math": "math"}
+    libs: dict[str, str] = field(default={"math": "math"}, kw_only=True)
 
     def run(self, value: str) -> str:
-        return PythonRunner(libs=self.AVAILABLE_LIBRARIES).run(value)
+        return PythonRunner(libs=self.libs).run(value)
 
     @property
     def schema_kwargs(self) -> dict:
@@ -17,4 +17,4 @@ class DataScientistTool(Tool):
         }
 
     def __imports(self):
-        return str.join(", ", self.AVAILABLE_LIBRARIES.values())
+        return str.join(", ", self.libs.values())

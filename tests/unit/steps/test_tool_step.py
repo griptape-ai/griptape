@@ -24,7 +24,7 @@ class TestToolStep:
         valid_json = """{"tool": "test", "input": "test input"}"""
         invalid_json = """{"tool"$ "test", "input"^ "test input"}"""
         success_result = ("test", "test input")
-        error_result = ("error", ToolStep.JSON_PARSE_ERROR_MSG)
+        error_result = ("error", f"error: invalid JSON, try again")
         step = ToolStep("test", tool=PingPongTool())
 
         assert step.parse_tool_action("") == error_result

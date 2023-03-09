@@ -60,7 +60,7 @@ In addition to user-defined fields, the `context` object contains the following:
 - `inputs`: inputs into the current step referencable by parent step IDs.
 - `structure`: the structure that the step belongs to.
 - `parents`: parent steps referencable by IDs.
-- `chidlren`: child steps referencable by IDs.
+- `children`: child steps referencable by IDs.
 
 Now, let's build a simple workflow. Let's say, we want to write a story in a fantasy world with some unique characters. We could setup a workflow that generates a world based on some keywords. Then we pass the world description to any number of child steps that create characters. Finally, the last step pulls in information from all parent steps and writes up a short story.
 
@@ -188,17 +188,180 @@ pipeline.run()
 
 `ToolkitStep` works the same way, but it provides multiple tools for the LLM to choose from depending on the task. In our example, the LLM uses `CalculatorTool` to calculate `3^12` and `EmailTool` to send an email.
 
-Warpspeed has the following tools:
-- `CalculatorTool` for calculating simple algebraic expressions.
-- `DataScientist` for answering more complex computational questions with `math` and `numpy` libraries.
-- `EmailTool` for sending emails.
-- `WikiTool` for searching and querying Wikipedia pages.
+Warpspeed supports multiple tools and allows you to implement your own.
 
-More tools to support spreadsheets, docs, web search, page scraping, and databases are coming soon.
+### `CalculatorTool`
+
+This tool enables LLMs to make simple calculations. Here's how to use it:
+
+```python
+ToolStep(
+    "what's 123^321?",
+    tool=CalculatorTool()
+)
+```
+
+The LLM will be prompted to reason via the Thought/Action/Observation loop to use the calculator and respond with an answer that the calculator provided.
+
+> **Warning**
+> By default, this tool uses `PythonRunner`, which executes code locally with sanitized `exec`. This is not ideal for production environments, where you generally want to execute arbitrary code in a container. We are working on adding more code runner options soon.
+
+### `DataScientist`
+
+This tool enables LLMs to run more complex calculations in Python. The user can notify the LLM which libraries are available by specifying them in the constructor. By default, only `math` is available.
+
+```python
+ToolStep(
+    "what's 123^321?",
+    tool=DataScientistTool(
+        libs={"numpy": "np", "math": "math"}
+    )
+)
+```
+
+This will make `numpy` available as `np` via `import numpy as np` and `math` as `math` via `import math`. Before injecting libraries in the constructor, make sure they are installed in your current environment.
+
+> **Warning**
+> By default, this tool uses `PythonRunner`, which executes code locally with sanitized `exec`. This is not ideal for production environments, where you generally want to execute arbitrary code in a container. We are working on adding more code runner options soon.
+
+### `GoogleSheetsWriterTool` and `GoogleSheetsReaderTool`
+
+These tools enable LLMs to read from and write to Google Sheets worksheets. Before using those tools, make sure to download the service account credentials JSON file and share your spreadsheet with the service account. For more information refer to the `gspread` [auth docs](https://docs.gspread.org/en/latest/oauth2.html).
+
+To read from a spreadsheet:
+
+```python
+ToolStep(
+    "read all spreadsheet values from the 2nd and 3rd columns",
+    tool=GoogleSheetsReaderTool(
+        auth_key_path=os.path.expanduser("~/Desktop/service_account.json"),
+        spreadsheet_key="<Google Sheets spreadsheet ID>",
+        worksheet_name="<optional worksheet name, defaults to the first worksheet>"
+    )
+)
+```
+
+To write to a spreadsheet:
+
+```python
+ToolStep(
+    "Create a spreadsheet with columns for 2022 months in the MM/YYYY format, last column for totals, and rows for profit, revenue, and loss",
+    tool=GoogleSheetsWriterTool(
+        auth_key_path=os.path.expanduser("~/Desktop/service_account.json"),
+        spreadsheet_key="<Google Sheets spreadsheet ID>",
+        worksheet_name="<optional worksheet name, defaults to the first worksheet>"
+    )
+)
+```
+
+### `EmailTool`
+
+This tool enables LLMs to send emails.
+
+```python
+ToolStep(
+    "send an email with a haiku to hello@warpspeed.cc",
+    EmailTool(
+        host="localhost",
+        port=1025,
+        from_email="hello@warpspeed.cc",
+        use_ssl=False
+    )
+)
+```
+
+For debugging purposes, you can run a local SMTP server that the LLM will send emails to:
+
+```shell
+python -m smtpd -c DebuggingServer -n localhost:1025
+```
+
+### `WikiTool`
+
+This tool enables LLMs to search and query Wikipedia articles:
+
+```python
+ToolStep(
+    "Research and summarize biggest world news stories in February of 2023",
+    tool=WikiTool()
+)
+```
+
+### Building Your Own Tool
+
+Building your own tools is easy with Warpspeed! All you need is a Python class, JSON schema do describe tool actions to the LLM, and a set of examples. Let's build a simple random number generator.
+
+First, create a Python class in a separate directory that generates a random float and optionally truncates it:
+
+```python
+import random
+from typing import Optional
+from warpspeed.tools import Tool
+
+
+class RandomGenTool(Tool):
+    def run(self, num_of_decimals: Optional[int]) -> float:
+        if num_of_decimals is None:
+            return random.random()
+        else:
+            return round(random.random(), num_of_decimals)
+
+```
+
+Add a `schema.json` file describing the tool:
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "random_gen",
+  "description": "This tool can be used to generate random numbers",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["random_gen"]
+    },
+    "input": {
+      "type": "int",
+      "description": "The number of decimals to be considered while rounding. Default to null."
+    }
+  },
+  "required": ["tool", "input"]
+}
+```
+
+Finally, add an `examples.j2` Jinja file with a couple of few-shot learning examples:
+
+```
+Q: generate a random number
+Thought: I need to use the random_gen tool to answer this question.
+Action: {"tool": "random_gen", "input": null}{{ stop_sequence }}
+Observation: 0.8444218515250481
+Thought: I have enough information to answer the original question
+Action: {"tool": "exit", "input": "0.8444218515250481"}{{ stop_sequence }}
+
+Q: generate a random number and round it to 2 decimal places
+Thought: I need to use the random_gen tool to answer this question.
+Action: {"tool": "random_gen", "input": 2}{{ stop_sequence }}
+Observation: 0.14
+Thought: I have enough information to answer the original question
+Action: {"tool": "exit", "input": "0.14"}{{ stop_sequence }}
+```
+
+To use the tool:
+
+```python
+ToolStep(
+    "generate a random number and round it to 3 decimal places",
+    tool=RandomGenTool()
+)
+```
+
+Check out other [Warpspeed tools](https://github.com/usewarpspeed/warpspeed/tree/main/warpspeed/tools) to learn more about tools' implementation details. 
 
 ## 💾 Memory
 
-Warpspeed supports different types of memory for pipelines. Due to the complexities of the non-linear nature of workflows you can't use memory with them yet, and we are currently investigating other options.
+Warpspeed supports different types of memory for pipelines. Due to the non-linear nature of workflows you can't use memory with them yet, but we are currently investigating other possibilities.
 
 By default, pipelines don't initialize memory, so you have to explicitly pass it to them:
 

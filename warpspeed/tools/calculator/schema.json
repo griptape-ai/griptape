@@ -13,8 +13,5 @@
       "description": "Calculator expression parsable in Python. Don't use any imports"
     }
   },
-  "required": [
-    "tool",
-    "input"
-  ]
+  "required": ["tool", "input"]
 }

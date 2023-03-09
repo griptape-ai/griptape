@@ -29,6 +29,6 @@ setup(
         "llama_index",
         "wikipedia",
         "tiktoken",
-        "numpy"
+        "gspread"
     ]
 )

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "google_sheets_writer",
+  "description": "This tool can update Google Sheets cells",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["google_sheets_writer"]
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["batch_update"],
+          "description": "Action that the tool should use"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "action": { "const": "batch_update" } }
+          },
+          "then": {
+            "properties": {
+              "ranges": {
+                "type": "array",
+                "description": "Array of sheet ranges and values",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "range": {
+                      "type": "string",
+                      "description": "Cell range in the A1 notation"
+                    },
+                    "values": {
+                      "type": "array",
+                      "description": "Array of rows to match the range",
+                      "items": {
+                        "type": "array",
+                        "description": "Array of row values",
+                        "items": {
+                          "type": "string",
+                          "description": "Cell value"
+                        }
+                      }
+                    }
+                  },
+                  "required": ["range", "values"]
+                }
+              }
+            },
+            "required": ["ranges"]
+          }
+        }
+      ],
+      "required": ["action"]
+    }
+  },
+  "required": ["tool", "input"]
+}

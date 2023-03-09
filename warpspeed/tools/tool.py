@@ -1,12 +1,16 @@
 import inspect
 import json
 import os
+from attrs import define, field
 from abc import ABC, abstractmethod
 from typing import Optional
 from warpspeed.utils import J2
 
 
+@define
 class Tool(ABC):
+    include_examples: bool = field(default=True, kw_only=True)
+
     @abstractmethod
     def run(self, value: any) -> str:
         ...

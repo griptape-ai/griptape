@@ -88,7 +88,7 @@ class Step(ABC):
 
     def execute(self) -> StructureArtifact:
         try:
-            logging.info(f"Start executing step '{self.id}'")
+            logging.info(f"Started executing step '{self.id}'")
 
             self.state = Step.State.EXECUTING
 
@@ -98,7 +98,7 @@ class Step(ABC):
 
             self.after_run()
         except Exception as e:
-            logging.error(f"Error executing step '{self.id}': {e}")
+            logging.error(f"Error executing step '{self.id}': {type(e).__name__ }({e})")
 
             self.output = ErrorOutput(e, step=self)
         finally:
@@ -106,7 +106,7 @@ class Step(ABC):
 
             logging.info(f"Finished executing step '{self.id}'")
 
-        return self.output
+            return self.output
 
     def can_execute(self) -> bool:
         return self.state == Step.State.PENDING and all(parent.is_finished() for parent in self.parents)
