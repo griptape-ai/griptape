@@ -10,6 +10,7 @@ from warpspeed.utils import J2
 @define
 class Tool(ABC):
     include_examples: bool = field(default=True, kw_only=True)
+    schema_namespace: Optional[str] = field(default=None, kw_only=True)
 
     @abstractmethod
     def run(self, value: any) -> str:

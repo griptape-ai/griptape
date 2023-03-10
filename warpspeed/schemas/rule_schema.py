@@ -1,11 +1,12 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import fields, post_load
+from warpspeed.schemas import BaseSchema
 
 
-class RuleSchema(Schema):
+class RuleSchema(BaseSchema):
     value = fields.Str()
 
     @post_load
-    def make_rule(self, data, **kwargs):
+    def make_obj(self, data, **kwargs):
         from warpspeed.rules import Rule
 
         return Rule(**data)

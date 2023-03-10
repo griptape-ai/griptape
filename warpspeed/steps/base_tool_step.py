@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json
+import ast
 import logging
 import re
 from abc import ABC, abstractmethod
@@ -78,7 +78,7 @@ class BaseToolStep(PromptStep, ABC):
             matches = re.findall(pattern, value, re.MULTILINE)
 
             if len(matches) > 0:
-                parsed_value = json.loads(matches[-1])
+                parsed_value = ast.literal_eval(matches[-1])
 
                 return parsed_value.get("tool"), parsed_value.get("input")
             else:

@@ -4,7 +4,7 @@ from warpspeed.utils import TiktokenTokenizer, Tokenizer
 from warpspeed.artifacts import TextOutput
 
 
-@define()
+@define
 class MockValueDriver(PromptDriver):
     value: str
     tokenizer: Tokenizer = TiktokenTokenizer()

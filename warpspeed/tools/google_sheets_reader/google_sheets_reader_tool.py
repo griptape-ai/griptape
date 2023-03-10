@@ -5,7 +5,7 @@ import gspread
 from warpspeed.tools import Tool
 
 
-@define(frozen=True)
+@define
 class GoogleSheetsReaderTool(Tool):
     auth_key_path: str = field(kw_only=True)
     spreadsheet_key: str = field(kw_only=True)
@@ -18,8 +18,6 @@ class GoogleSheetsReaderTool(Tool):
             return self.execute_action(action, args)
         except Exception as e:
             return f"error interacting with sheet: {e}"
-        finally:
-            pass
 
     def execute_action(self, action: str, args: dict[str]) -> Union[str, list[str]]:
         gc = gspread.service_account(filename=self.auth_key_path)

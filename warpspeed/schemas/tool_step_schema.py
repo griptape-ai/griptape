@@ -9,7 +9,7 @@ class ToolStepSchema(StepSchema):
     driver = fields.Nested(PolymorphicSchema(), allow_none=True)
 
     @post_load
-    def make_step(self, data, **kwargs):
+    def make_obj(self, data, **kwargs):
         from warpspeed.steps import ToolStep
 
         return ToolStep(**data)

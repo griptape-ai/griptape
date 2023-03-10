@@ -4,7 +4,7 @@ from warpspeed.schemas.structure_schema import StructureSchema
 
 class PipelineSchema(StructureSchema):
     @post_load
-    def make_structure(self, data, **kwargs):
+    def make_obj(self, data, **kwargs):
         from warpspeed.structures import Pipeline
 
         pipeline = Pipeline(**data)

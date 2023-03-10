@@ -5,7 +5,7 @@ from warpspeed.tools import Tool
 from attrs import define
 
 
-@define(frozen=True)
+@define
 class WikiTool(Tool):
     def run(self, args: dict[str]) -> str:
         article_search_queries = args.get("articles")

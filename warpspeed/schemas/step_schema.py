@@ -1,10 +1,11 @@
 from abc import abstractmethod
-from marshmallow import fields, Schema
+from marshmallow import fields
 from marshmallow_enum import EnumField
+from warpspeed.schemas import BaseSchema
 from warpspeed.steps import Step
 
 
-class StepSchema(Schema):
+class StepSchema(BaseSchema):
     class Meta:
         ordered = True
 
@@ -14,5 +15,5 @@ class StepSchema(Schema):
     child_ids = fields.List(fields.Str())
 
     @abstractmethod
-    def make_step(self, data, **kwargs):
+    def make_obj(self, data, **kwargs):
         ...
