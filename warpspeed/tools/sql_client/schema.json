@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sql_client",
+  "description": "This tool can execute any SQL statements for {{ engine }}",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["sql_client"]
+    },
+    "input": {
+      "type": "string",
+      "description": "SQL query to execute. Can be any standard  or engine-specific query (for example, SELECT, CREATE, INSERT, DROP, DELETE)"
+    }
+  },
+  "required": ["tool", "input"]
+}

@@ -3,7 +3,7 @@ from warpspeed.tools import Tool
 from warpspeed.utils import PythonRunner
 
 
-@define(frozen=True)
+@define
 class DataScientistTool(Tool):
     libs: dict[str, str] = field(default={"math": "math"}, kw_only=True)
 

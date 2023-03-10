@@ -1,14 +1,15 @@
-from marshmallow import post_load, Schema, fields
+from marshmallow import post_load, fields
+from warpspeed.schemas import BaseSchema
 
 
-class EmailToolSchema(Schema):
+class EmailToolSchema(BaseSchema):
     host = fields.Str(required=True)
     port = fields.Int(required=True)
     from_email = fields.Str(required=True)
     use_ssl = fields.Bool()
 
     @post_load
-    def make_tool(self, data, **kwargs):
+    def make_obj(self, data, **kwargs):
         from warpspeed.tools import EmailTool
 
         return EmailTool(**data)

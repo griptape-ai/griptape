@@ -1,3 +1,5 @@
+from warpspeed.schemas.base_schema import BaseSchema
+
 from warpspeed.schemas.polymorphic_schema import PolymorphicSchema
 
 from warpspeed.schemas.rule_schema import RuleSchema
@@ -18,12 +20,15 @@ from warpspeed.schemas.email_tool_schema import EmailToolSchema
 from warpspeed.schemas.wiki_tool_schema import WikiToolSchema
 from warpspeed.schemas.google_sheets_reader_tool_schema import GoogleSheetsReaderToolSchema
 from warpspeed.schemas.google_sheets_writer_tool_schema import GoogleSheetsWriterToolSchema
+from warpspeed.schemas.sql_client_tool_schema import SqlClientToolSchema
 
 from warpspeed.schemas.structure_schema import StructureSchema
 from warpspeed.schemas.pipeline_schema import PipelineSchema
 from warpspeed.schemas.workflow_schema import WorkflowSchema
 
 __all__ = [
+    "BaseSchema",
+
     "PolymorphicSchema",
 
     "RuleSchema",
@@ -37,6 +42,9 @@ __all__ = [
     "DataScientistToolSchema",
     "EmailToolSchema",
     "WikiToolSchema",
+    "GoogleSheetsReaderToolSchema",
+    "GoogleSheetsWriterToolSchema",
+    "SqlClientToolSchema",
 
     "StepSchema",
     "PromptStepSchema",

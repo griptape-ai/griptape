@@ -289,7 +289,7 @@ ToolStep(
 
 ### Building Your Own Tool
 
-Building your own tools is easy with Warpspeed! All you need is a Python class, JSON schema do describe tool actions to the LLM, and a set of examples. Let's build a simple random number generator.
+Building your own tools is easy with Warpspeed! All you need is a Python class, JSON schema to describe tool actions to the LLM, a set of examples, and a Marshmallow schema for serialization/deserialization. Let's walk through all the required steps and build a simple random number generator tool.
 
 First, create a Python class in a separate directory that generates a random float and optionally truncates it:
 
@@ -348,13 +348,57 @@ Thought: I have enough information to answer the original question
 Action: {"tool": "exit", "input": "0.14"}{{ stop_sequence }}
 ```
 
-To use the tool:
+Finally, if you want to use `to_json` and `from_json` serialization/deserialization methods, you'll have to add a [Marshmallow](https://marshmallow.readthedocs.io/en/stable/) schema to your tool:
 
 ```python
+from marshmallow import post_load
+from warpspeed.schemas import BaseSchema
+
+
+class RandomGenToolSchema(BaseSchema):
+    @post_load
+    def make_obj(self, data, **kwargs):
+        from .random_gen.random_gen_tool import RandomGenTool
+
+        return RandomGenTool(**data)
+
+```
+
+The schema class has to be in the following format: `<ToolClassName>Schema` and be located in `<tool_class_name>_schema.py`.
+
+Before using the tool, make sure to create an `__init__.py` file in the tool directory with the following contents:
+
+```python
+from .random_gen_tool import RandomGenTool
+from .random_gen_tool_schema import RandomGenToolSchema
+
+__all__ = [
+    "RandomGenTool",
+    "RandomGenToolSchema"
+]
+
+```
+
+Finally, to use the tool:
+
+```python
+from warpspeed.steps import ToolStep
+from random_gen.random_gen_tool import RandomGenTool
+
+
 ToolStep(
     "generate a random number and round it to 3 decimal places",
     tool=RandomGenTool()
 )
+```
+
+If you are deserializing a workflow or a pipeline from JSON, make sure to specify deserialization schema namespace:
+
+```json
+{
+  "schema_namespace": "random_gen.random_gen_tool_schema",
+  "type": "RandomGenTool"
+}
 ```
 
 Check out other [Warpspeed tools](https://github.com/usewarpspeed/warpspeed/tree/main/warpspeed/tools) to learn more about tools' implementation details. 

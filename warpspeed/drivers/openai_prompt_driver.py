@@ -6,7 +6,7 @@ from warpspeed.utils import TiktokenTokenizer, Tokenizer
 from warpspeed.artifacts import TextOutput
 
 
-@define()
+@define
 class OpenAiPromptDriver(PromptDriver):
     tokenizer: Tokenizer = field(default=Factory(lambda: TiktokenTokenizer()), kw_only=True)
     temperature: float = field(default=0.5, kw_only=True)

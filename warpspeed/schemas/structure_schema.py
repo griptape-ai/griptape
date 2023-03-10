@@ -1,9 +1,9 @@
 from abc import abstractmethod
-from marshmallow import Schema, fields
-from warpspeed.schemas import PolymorphicSchema, RuleSchema
+from marshmallow import fields
+from warpspeed.schemas import PolymorphicSchema, RuleSchema, BaseSchema
 
 
-class StructureSchema(Schema):
+class StructureSchema(BaseSchema):
     class Meta:
         ordered = True
 
@@ -12,5 +12,5 @@ class StructureSchema(Schema):
     steps = fields.List(fields.Nested(PolymorphicSchema()))
 
     @abstractmethod
-    def make_structure(self, data, **kwargs):
+    def make_obj(self, data, **kwargs):
         ...

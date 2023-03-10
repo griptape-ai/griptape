@@ -7,7 +7,7 @@ from email.message import EmailMessage
 from attrs import define, field
 
 
-@define(frozen=True)
+@define
 class EmailTool(Tool):
     host: str = field(kw_only=True)
     port: int = field(kw_only=True)
