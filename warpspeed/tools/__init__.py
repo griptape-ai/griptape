@@ -7,6 +7,7 @@ from warpspeed.tools.email.email_tool import EmailTool
 from warpspeed.tools.google_sheets_reader.google_sheets_reader_tool import GoogleSheetsReaderTool
 from warpspeed.tools.google_sheets_writer.google_sheets_writer_tool import GoogleSheetsWriterTool
 from warpspeed.tools.sql_client.sql_client_tool import SqlClientTool
+from warpspeed.tools.aws.aws_tool import AwsTool
 
 
 __all__ = [
@@ -18,5 +19,6 @@ __all__ = [
     "EmailTool",
     "GoogleSheetsReaderTool",
     "GoogleSheetsWriterTool",
-    "SqlClientTool"
+    "SqlClientTool",
+    "AwsTool"
 ]
