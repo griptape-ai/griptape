@@ -42,7 +42,7 @@ pipeline.add_steps(
 
 pipeline.run()
 
-utils.Conversation(pipeline).to_string()
+print(utils.Conversation(pipeline).to_string())
 ```
 
 Boom! Our first conversation, à la ChatGPT, is here:
