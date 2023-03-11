@@ -31,6 +31,12 @@ With Warpspeed, you can create *structures*, such as `Pipelines` and `Workflows`
 Pipelines are lists of steps that are executed sequentially. Pipelines can have `Memory`, which makes them ideal for storing LLM conversations.
 
 ```python
+from warpspeed import utils
+from warpspeed.memory import Memory
+from warpspeed.steps import PromptStep
+from warpspeed.structures import Pipeline
+
+
 pipeline = Pipeline(
     memory=Memory()
 )
