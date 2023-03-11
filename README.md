@@ -202,7 +202,7 @@ Warpspeed supports multiple tools and allows you to implement your own.
 
 ### `AwsTool`
 
-This tool enables LLMs to run AWS CLI v2 commands.
+This tool enables LLMs to run AWS CLI commands. Before using this tool, make sure to [install and configure](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) AWS CLI v2.
 
 ```python
 ToolStep(
