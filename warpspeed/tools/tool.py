@@ -16,18 +16,22 @@ class Tool(ABC):
     def run(self, value: any) -> str:
         ...
 
-    @property
-    def schema_json(self) -> str:
-        return J2(
+    def schema_json(self, flatten: bool) -> str:
+        json_string = J2(
             "schema.json",
             templates_dir=self.abs_dir_path
         ).render(
             **self.schema_kwargs
         )
 
+        if flatten:
+            json_string = json.dumps(json.loads(json_string), separators=(',', ':'))
+
+        return json_string
+
     @property
     def schema(self) -> dict:
-        return json.loads(self.schema_json)
+        return json.loads(self.schema_json(flatten=False))
 
     @property
     def name(self):

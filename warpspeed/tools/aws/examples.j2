@@ -1,0 +1,6 @@
+Q: how many domain names do I have on AWS?
+Thought: I need to use the aws tool to answer this question.
+Action: {"tool": "aws", "input": "aws route53 list-hosted-zones --query 'HostedZones[*].Name'"}{{ stop_sequence }}
+Observation: foo.com. bar.com. baz.com.
+Thought: I have enough information to answer the original question
+Action: {"tool": "exit", "input": "You own 3 domains on AWS: foo.com, bar.com, and baz.com"}{{ stop_sequence }}

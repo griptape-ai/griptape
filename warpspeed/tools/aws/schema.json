@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "aws",
+  "description": "This tool has access to AWS CLI v2",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["aws"]
+    },
+    "input": {
+      "type": "string",
+      "description": "AWS CLI command to succinctly answer the question"
+    }
+  },
+  "required": ["tool", "input"]
+}

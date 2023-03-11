@@ -40,6 +40,8 @@ pipeline.add_steps(
     PromptStep("What is my name?")
 )
 
+pipeline.run()
+
 utils.Conversation(pipeline).to_string()
 ```
 
@@ -102,6 +104,8 @@ character_step_1.add_child(story_step)
 character_step_2.add_child(story_step)
 
 workflow.run()
+
+[print(step.output.value) for step in workflow.output_steps()]
 ```
 
 And here is the beginning of our story:
@@ -190,6 +194,20 @@ pipeline.run()
 
 Warpspeed supports multiple tools and allows you to implement your own.
 
+### `AwsTool`
+
+This tool enables LLMs to run AWS CLI v2 commands.
+
+```python
+ToolStep(
+    "show me all of my VPCs",
+    tool=AwsTool()
+)
+```
+
+> **Warning**
+> By default, this tool uses `CommandRunner`, which executes commands locally in a subprocess. This is not ideal for production environments, where you generally want to execute arbitrary commands in a container. We are working on adding more command runner options soon.
+
 ### `CalculatorTool`
 
 This tool enables LLMs to make simple calculations. Here's how to use it:
@@ -206,7 +224,21 @@ The LLM will be prompted to reason via the Thought/Action/Observation loop to us
 > **Warning**
 > By default, this tool uses `PythonRunner`, which executes code locally with sanitized `exec`. This is not ideal for production environments, where you generally want to execute arbitrary code in a container. We are working on adding more code runner options soon.
 
-### `DataScientist`
+### `SqlClientTool`
+
+This tool enables LLMs to execute SQL statements via [SQLAlchemy](https://www.sqlalchemy.org/). Depending on your underlying SQL engine, [configure](https://docs.sqlalchemy.org/en/20/core/engines.html) your `engine_url` and give the LLM a hint about what engine you are using via `engine_hint`, so that it can create engine-specific statements.
+
+```python
+ToolStep(
+    "list the last 20 items in the orders table",
+    tool=SqlClientTool(
+        engine_url="sqlite:///warpspeed.db",
+        engine_hint="sqlite"
+    )
+)
+```
+
+### `DataScientistTool`
 
 This tool enables LLMs to run more complex calculations in Python. The user can notify the LLM which libraries are available by specifying them in the constructor. By default, only `math` is available.
 
