@@ -1,3 +1,5 @@
+import json
+
 from warpspeed.utils.tokenizer import Tokenizer
 from warpspeed.utils.tiktoken_tokenizer import TiktokenTokenizer
 from warpspeed.utils.j2 import J2
@@ -14,3 +16,6 @@ __all__ = [
     "CommandRunner",
     "Conversation"
 ]
+
+def minify_json(value: str) -> str:
+    return json.dumps(json.loads(value), separators=(',', ':'))

@@ -4,6 +4,7 @@ import os
 from attrs import define, field
 from abc import ABC, abstractmethod
 from typing import Optional
+from warpspeed import utils
 from warpspeed.utils import J2
 
 
@@ -16,7 +17,7 @@ class Tool(ABC):
     def run(self, value: any) -> str:
         ...
 
-    def schema_json(self, flatten: bool) -> str:
+    def schema_json(self, minify: bool) -> str:
         json_string = J2(
             "schema.json",
             templates_dir=self.abs_dir_path
@@ -24,14 +25,14 @@ class Tool(ABC):
             **self.schema_kwargs
         )
 
-        if flatten:
-            json_string = json.dumps(json.loads(json_string), separators=(',', ':'))
+        if minify:
+            json_string = utils.minify_json(json_string)
 
         return json_string
 
     @property
     def schema(self) -> dict:
-        return json.loads(self.schema_json(flatten=False))
+        return json.loads(self.schema_json(minify=False))
 
     @property
     def name(self):

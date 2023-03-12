@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "aws",
-  "description": "This tool has access to AWS CLI v2",
+  "description": "This tool has access to the AWS CLI v2",
   "type": "object",
   "properties": {
     "tool": {
