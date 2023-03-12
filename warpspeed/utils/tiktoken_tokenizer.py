@@ -1,19 +1,12 @@
 from typing import Optional
-
 from attrs import define, field
 import tiktoken
-
 from warpspeed.utils import Tokenizer
 
 
 @define(frozen=True)
 class TiktokenTokenizer(Tokenizer):
-    DEFAULT_MODEL = "text-davinci-003"
-
-    MODEL_TO_ENCODING = {
-        "gpt-3.5-turbo": "p50k_base",
-        "test": "test"
-    }
+    DEFAULT_MODEL = "gpt-3.5-turbo"
 
     MODEL_TO_MAX_TOKENS = {
         "gpt-3.5-turbo": 4000,
@@ -52,12 +45,7 @@ class TiktokenTokenizer(Tokenizer):
 
     @property
     def encoding(self) -> tiktoken.Encoding:
-        custom_encoding = self.MODEL_TO_ENCODING.get(self.model)
-
-        if custom_encoding:
-            return tiktoken.get_encoding(custom_encoding)
-        else:
-            return tiktoken.encoding_for_model(self.model)
+        return tiktoken.encoding_for_model(self.model)
 
     @property
     def max_tokens(self) -> Optional[int]:

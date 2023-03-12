@@ -27,7 +27,7 @@ setup(
         "graphlib",
         "llama_index",
         "wikipedia",
-        "tiktoken",
+        "tiktoken>=0.3",
         "gspread",
         "sqlalchemy>1"
     ]

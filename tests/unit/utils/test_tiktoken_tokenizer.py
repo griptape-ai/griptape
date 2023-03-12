@@ -5,12 +5,12 @@ class TestTiktokenTokenizer:
     def test_encode(self):
         tokenizer = TiktokenTokenizer()
 
-        assert tokenizer.encode("foo bar") == [21943, 2318]
+        assert tokenizer.encode("foo bar") == [8134, 3703]
 
     def test_decode(self):
         tokenizer = TiktokenTokenizer()
 
-        assert tokenizer.decode([21943, 2318]) == "foo bar"
+        assert tokenizer.decode([8134, 3703]) == "foo bar"
 
     def test_token_count(self):
         tokenizer = TiktokenTokenizer()
@@ -25,4 +25,4 @@ class TestTiktokenTokenizer:
     def test_encoding(self):
         tokenizer = TiktokenTokenizer()
 
-        assert tokenizer.encoding.name == "p50k_base"
+        assert tokenizer.encoding.name == "cl100k_base"
