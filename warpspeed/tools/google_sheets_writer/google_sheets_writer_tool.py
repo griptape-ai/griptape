@@ -1,6 +1,8 @@
 from typing import Optional
 import gspread
 from attrs import define, field
+from gspread.utils import ValueInputOption
+
 from warpspeed.tools import Tool
 
 
@@ -30,7 +32,10 @@ class GoogleSheetsWriterTool(Tool):
         if action == "batch_update":
             ranges = args.get("ranges")
 
-            worksheet.batch_update(ranges)
+            worksheet.batch_update(
+                ranges,
+                value_input_option=ValueInputOption.user_entered
+            )
 
             return "cells were successfully updated"
         return "invalid action name"
