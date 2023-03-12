@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "calculator",
-  "description": "This tool can perform simple calculations in Python",
+  "description": "This tool can perform simple arithmetic calculations in Python",
   "type": "object",
   "properties": {
     "tool": {
@@ -10,7 +10,7 @@
     },
     "input": {
       "type": "string",
-      "description": "Calculator expression parsable in Python. Don't use any imports"
+      "description": "Calculator arithmetic expression parsable in Python. Don't use any imports"
     }
   },
   "required": ["tool", "input"]

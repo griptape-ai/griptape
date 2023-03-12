@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "aws",
-  "description": "This tool has access to the AWS CLI v2",
+  "description": "This tool has access to the AWS CLI v2{% if policy %} limited by the following IAM policy: {{ policy }}{% endif %}",
   "type": "object",
   "properties": {
     "tool": {
@@ -10,7 +10,7 @@
     },
     "input": {
       "type": "string",
-      "description": "AWS CLI command to succinctly answer the question"
+      "description": "AWS CLI v2 command"
     }
   },
   "required": ["tool", "input"]
