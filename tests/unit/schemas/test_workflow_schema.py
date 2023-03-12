@@ -11,7 +11,7 @@ class TestWorkflowSchema:
     def test_serialization(self):
         workflow = Workflow(
             prompt_driver=OpenAiPromptDriver(
-                tokenizer=TiktokenTokenizer(stop_token="<test>"),
+                tokenizer=TiktokenTokenizer(stop_sequence="<test>"),
                 temperature=0.12345
             ),
             rules=[
@@ -48,13 +48,13 @@ class TestWorkflowSchema:
         assert workflow.steps[1].id in step.parent_ids
         assert len(workflow_dict["steps"][-1]["tools"]) == 5
         assert workflow_dict["prompt_driver"]["temperature"] == 0.12345
-        assert workflow_dict["prompt_driver"]["tokenizer"]["stop_token"] == "<test>"
+        assert workflow_dict["prompt_driver"]["tokenizer"]["stop_sequence"] == "<test>"
         assert workflow_dict["rules"][0]["value"] == "test rule 1"
 
     def test_deserialization(self):
         workflow = Workflow(
             prompt_driver=OpenAiPromptDriver(
-                tokenizer=TiktokenTokenizer(stop_token="<test>"),
+                tokenizer=TiktokenTokenizer(stop_sequence="<test>"),
                 temperature=0.12345
             ),
             rules=[
@@ -91,5 +91,5 @@ class TestWorkflowSchema:
         assert deserialized_workflow.steps[1].id in step.parent_ids
         assert len(deserialized_workflow.steps[-1].tools) == 5
         assert deserialized_workflow.prompt_driver.temperature == 0.12345
-        assert deserialized_workflow.prompt_driver.tokenizer.stop_token == "<test>"
+        assert deserialized_workflow.prompt_driver.tokenizer.stop_sequence == "<test>"
         assert deserialized_workflow.rules[0].value == "test rule 1"

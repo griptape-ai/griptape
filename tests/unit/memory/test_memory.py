@@ -27,7 +27,7 @@ class TestMemory:
 
         memory.before_run(step)
 
-        assert "Q: test" in memory.to_prompt_string()
+        assert "Input: test" in memory.to_prompt_string()
 
     def test_to_string_with_tool_step(self):
         memory = Memory()
@@ -35,4 +35,4 @@ class TestMemory:
 
         memory.before_run(step)
 
-        assert "Q: test" in memory.to_prompt_string()
+        assert "Input: test" in memory.to_prompt_string()

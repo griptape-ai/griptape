@@ -3,10 +3,10 @@ from typing import Optional
 
 
 class Tokenizer(ABC):
-    DEFAULT_STOP_TOKEN = "<|endoftext|>"
+    DEFAULT_STOP_SEQUENCE = "Observation:"
 
     model: str
-    stop_token: str
+    stop_sequence: str
 
     @abstractmethod
     def encode(self, text: str) -> list[int]:

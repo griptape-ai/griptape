@@ -10,7 +10,7 @@ class TestPipelineSchema:
     def test_serialization(self):
         pipeline = Pipeline(
             prompt_driver=OpenAiPromptDriver(
-                tokenizer=TiktokenTokenizer(stop_token="<test>"),
+                tokenizer=TiktokenTokenizer(stop_sequence="<test>"),
                 temperature=0.12345
             )
         )
@@ -37,12 +37,12 @@ class TestPipelineSchema:
         assert workflow_dict["steps"][1]["parent_ids"][0] == pipeline.steps[0].id
         assert len(workflow_dict["steps"][-1]["tools"]) == 5
         assert workflow_dict["prompt_driver"]["temperature"] == 0.12345
-        assert workflow_dict["prompt_driver"]["tokenizer"]["stop_token"] == "<test>"
+        assert workflow_dict["prompt_driver"]["tokenizer"]["stop_sequence"] == "<test>"
 
     def test_deserialization(self):
         pipeline = Pipeline(
             prompt_driver=OpenAiPromptDriver(
-                tokenizer=TiktokenTokenizer(stop_token="<test>"),
+                tokenizer=TiktokenTokenizer(stop_sequence="<test>"),
                 temperature=0.12345
             )
         )
@@ -70,4 +70,4 @@ class TestPipelineSchema:
         assert deserialized_pipeline.steps[1].parent_ids[0] == pipeline.steps[0].id
         assert len(deserialized_pipeline.last_step().tools) == 5
         assert deserialized_pipeline.prompt_driver.temperature == 0.12345
-        assert deserialized_pipeline.prompt_driver.tokenizer.stop_token == "<test>"
+        assert deserialized_pipeline.prompt_driver.tokenizer.stop_sequence == "<test>"

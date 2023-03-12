@@ -53,10 +53,10 @@ print(utils.Conversation(pipeline).to_string())
 
 Boom! Our first conversation, à la ChatGPT, is here:
 
-> Q: Hi, my name is Scotty. Who are you?  
-> A: Hi Scotty, my name is Assistant. I'm here to help answer your questions.  
-> Q: What is my name?  
-> A: Your name is Scotty.
+> Input: Hi, my name is Scotty. Who are you?  
+> Output: Hi Scotty, my name is Assistant. I'm here to help answer your questions.  
+> Input: What is my name?  
+> Output: Your name is Scotty.
 
 You can dynamically pass arguments to the prompt by using Jinja templates:
 
@@ -371,19 +371,21 @@ Add a `schema.json` file describing the tool:
 Finally, add an `examples.j2` Jinja file with a couple of few-shot learning examples:
 
 ```
-Q: generate a random number
+Input: generate a random number
 Thought: I need to use the random_gen tool to answer this question.
-Action: {"tool": "random_gen", "input": null}{{ stop_sequence }}
+Action: {"tool": "random_gen", "input": null}
 Observation: 0.8444218515250481
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "0.8444218515250481"}{{ stop_sequence }}
+Action: {"tool": "exit", "input": "0.8444218515250481"}
+Output: 0.8444218515250481
 
-Q: generate a random number and round it to 2 decimal places
+Input: generate a random number and round it to 2 decimal places
 Thought: I need to use the random_gen tool to answer this question.
-Action: {"tool": "random_gen", "input": 2}{{ stop_sequence }}
+Action: {"tool": "random_gen", "input": 2}
 Observation: 0.14
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "0.14"}{{ stop_sequence }}
+Action: {"tool": "exit", "input": "0.14"}
+Output: 0.14
 ```
 
 Finally, if you want to use `to_json` and `from_json` serialization/deserialization methods, you'll have to add a [Marshmallow](https://marshmallow.readthedocs.io/en/stable/) schema to your tool:

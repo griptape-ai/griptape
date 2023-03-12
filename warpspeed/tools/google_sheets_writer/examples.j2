@@ -1,6 +1,7 @@
-Q: Write the following values into the third row of the spreadsheet: foo, bar, baz
+Input: Write the following values into the third row of the spreadsheet: foo, bar, baz
 Thought: I need to use the google_sheets_writer tool.
-Action: {"tool": "google_sheets_writer", "input": {"action": "batch_update", "ranges": [{"range": "A3:C3", "values": [["foo", "bar", "baz"]]}]}}{{ stop_sequence }}
+Action: {"tool": "google_sheets_writer", "input": {"action": "batch_update", "ranges": [{"range": "A3:C3", "values": [["foo", "bar", "baz"]]}]}}
 Observation: cells were successfully updated
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "Values foo, bar, baz were written to the third row"}{{ stop_sequence }}
+Action: {"tool": "exit", "input": "Values foo, bar, baz were written to the third row"}
+Output: Values foo, bar, baz were written to the third row

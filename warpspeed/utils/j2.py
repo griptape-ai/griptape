@@ -25,12 +25,12 @@ class J2:
 
     def render(self, **kwargs):
         if not kwargs.get("stop_sequence"):
-            kwargs["stop_sequence"] = self.tokenizer.stop_token
+            kwargs["stop_sequence"] = self.tokenizer.stop_sequence
 
         return self.environment.get_template(self.template_name).render(kwargs)
 
     def render_from_string(self, value: str, **kwargs):
         if not kwargs.get("stop_sequence"):
-            kwargs["stop_sequence"] = self.tokenizer.stop_token
+            kwargs["stop_sequence"] = self.tokenizer.stop_sequence
 
         return self.environment.from_string(value).render(kwargs)

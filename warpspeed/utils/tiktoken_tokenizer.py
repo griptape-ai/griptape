@@ -19,10 +19,10 @@ class TiktokenTokenizer(Tokenizer):
     }
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
-    stop_token: str = field(default=Tokenizer.DEFAULT_STOP_TOKEN, kw_only=True)
+    stop_sequence: str = field(default=Tokenizer.DEFAULT_STOP_SEQUENCE, kw_only=True)
 
     def encode(self, text: str) -> list[int]:
-        return self.encoding.encode(text, allowed_special={self.stop_token})
+        return self.encoding.encode(text, allowed_special={self.stop_sequence})
 
     def decode(self, tokens: list[int]) -> str:
         return self.encoding.decode(tokens)

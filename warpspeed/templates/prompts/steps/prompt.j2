@@ -1,6 +1,6 @@
-Q: {{ step.render_prompt() }}
+Input: {{ step.render_prompt() }}
 {% if step.output %}
-A: {{ step.output.value }}
+Output: {{ step.output.value }}
 
 {% else %}
 A:

@@ -1,4 +1,4 @@
 {{ step.render_prompt() }}
-{% if step.output %}
-Observation: {% if step.output.value == None or step.output.value == "" %}no results{% else %}{{ step.output.value }}{% endif %}
+{% if step.output and step.output.value %}
+Observation: {{ step.output.value }}
 {% endif %}

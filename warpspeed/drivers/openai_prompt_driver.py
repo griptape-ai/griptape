@@ -29,7 +29,7 @@ class OpenAiPromptDriver(PromptDriver):
             ],
             max_tokens=self.tokenizer.tokens_left(value),
             temperature=self.temperature,
-            stop=self.tokenizer.stop_token,
+            stop=self.tokenizer.stop_sequence,
             user=self.user
         )
 
@@ -52,7 +52,7 @@ class OpenAiPromptDriver(PromptDriver):
             prompt=value,
             max_tokens=self.tokenizer.tokens_left(value),
             temperature=self.temperature,
-            stop=self.tokenizer.stop_token,
+            stop=self.tokenizer.stop_sequence,
             user=self.user
         )
 

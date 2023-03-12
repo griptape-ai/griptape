@@ -8,8 +8,8 @@ Summarize the following conversation:
 {% endif %}
 
 {% for step in steps %}
-Q: {{ step.render_prompt() }}
-A: {{ step.output.value }}
+Input: {{ step.render_prompt() }}
+Output: {{ step.output.value }}
 
 {% endfor %}
 {% if summary %}
