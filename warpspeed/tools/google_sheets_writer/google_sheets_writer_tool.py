@@ -2,7 +2,6 @@ from typing import Optional
 import gspread
 from attrs import define, field
 from gspread.utils import ValueInputOption
-
 from warpspeed.tools import Tool
 
 
@@ -16,11 +15,11 @@ class GoogleSheetsWriterTool(Tool):
         action = args.get("action")
 
         try:
-            return self.execute_action(action, args)
+            return self.__execute_action(action, args)
         except Exception as e:
             return f"error interacting with sheet: {e}"
 
-    def execute_action(self, action: str, args: dict[str]) -> str:
+    def __execute_action(self, action: str, args: dict[str]) -> str:
         gc = gspread.service_account(filename=self.auth_key_path)
         spreadsheet = gc.open_by_key(self.spreadsheet_key)
 
