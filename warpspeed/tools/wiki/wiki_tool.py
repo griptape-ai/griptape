@@ -1,6 +1,7 @@
 import logging
 import wikipedia
 from llama_index import GPTSimpleVectorIndex, Document
+from warpspeed.structures import Structure
 from warpspeed.tools import Tool
 from attrs import define
 
@@ -24,7 +25,7 @@ class WikiTool(Tool):
 
                     documents.append(Document(content))
                 except Exception as e:
-                    logging.error(f"Error loading Wikipedia article '{article}': {e}")
+                    logging.getLogger(Structure.LOGGER_NAME).error(f"Error loading Wikipedia article '{article}': {e}")
 
             index = GPTSimpleVectorIndex(documents)
             query_result = str(index.query(question_query)).strip()

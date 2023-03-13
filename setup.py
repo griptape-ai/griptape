@@ -29,6 +29,7 @@ setup(
         "wikipedia",
         "tiktoken>=0.3",
         "gspread",
-        "sqlalchemy>1"
+        "sqlalchemy>1",
+        "rich>=13"
     ]
 )

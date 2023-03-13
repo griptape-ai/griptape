@@ -15,10 +15,20 @@ class PromptStep(Step):
     context: dict[str, any] = field(factory=dict, kw_only=True)
     driver: Optional[PromptDriver] = field(default=None, kw_only=True)
 
+    def before_run(self) -> None:
+        super().before_run()
+
+        self.structure.logger.info(f"Step {self.id} input:\n{self.render_prompt()}")
+
     def run(self) -> TextOutput:
         self.output = self.active_driver().run(value=self.structure.to_prompt_string(self))
 
         return self.output
+
+    def after_run(self) -> None:
+        super().after_run()
+
+        self.structure.logger.info(f"Step {self.id} output:\n{self.output.value}")
 
     def active_driver(self) -> PromptDriver:
         if self.driver is None:

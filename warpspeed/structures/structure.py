@@ -1,6 +1,9 @@
 from __future__ import annotations
 import json
+import logging
+from rich.logging import RichHandler
 from abc import ABC, abstractmethod
+from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
 from attrs import define, field
 from warpspeed.drivers import PromptDriver, OpenAiPromptDriver
@@ -13,9 +16,33 @@ if TYPE_CHECKING:
 
 @define
 class Structure(ABC):
+    LOGGER_NAME = "warpspeed"
+
     prompt_driver: PromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     steps: list[Step] = field(factory=list, kw_only=True)
+    custom_logger: Optional[Logger] = field(default=None, kw_only=True)
+
+    _logger: Optional[Logger] = None
+
+    @property
+    def logger(self) -> Logger:
+        if self.custom_logger:
+            return self.custom_logger
+        else:
+            if self._logger is None:
+                self._logger = logging.getLogger(self.LOGGER_NAME)
+
+                self._logger.propagate = False
+
+                self._logger.handlers = [
+                    RichHandler(
+                        show_time=True,
+                        show_path=False
+                    )
+                ]
+
+            return self._logger
 
     def is_empty(self) -> bool:
         return not self.steps

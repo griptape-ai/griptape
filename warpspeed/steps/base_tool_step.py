@@ -1,6 +1,5 @@
 from __future__ import annotations
 import ast
-import logging
 import re
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
@@ -36,7 +35,9 @@ class BaseToolStep(PromptStep, ABC):
                 )
             )
 
+            substep.before_run()
             substep.run()
+            substep.after_run()
 
             if substep.action_name == "exit" or substep.action_name == "error":
                 break
@@ -84,7 +85,8 @@ class BaseToolStep(PromptStep, ABC):
             else:
                 return "error", f"error: {self.JSON_PARSE_ERROR_MSG}"
         except Exception as e:
-            logging.error(f"Error parsing tool action: {e}\nInput value: {value}")
+            self.structure.logger.error(f"Step {self.id} error parsing tool action:\n{e}")
+
             return "error", f"error: {self.JSON_PARSE_ERROR_MSG}"
 
     @abstractmethod

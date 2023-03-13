@@ -27,6 +27,8 @@ class TestToolStep:
         error_result = ("error", f"error: invalid JSON, try again")
         step = ToolStep("test", tool=PingPongTool())
 
+        Pipeline().add_step(step)
+
         assert step.parse_tool_action("") == error_result
         assert step.parse_tool_action(valid_json) == error_result
         assert step.parse_tool_action(f"Something Action: {valid_json}") == error_result

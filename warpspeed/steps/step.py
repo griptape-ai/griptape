@@ -1,5 +1,4 @@
 from __future__ import annotations
-import logging
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -88,8 +87,6 @@ class Step(ABC):
 
     def execute(self) -> StructureArtifact:
         try:
-            logging.info(f"Started executing step '{self.id}'")
-
             self.state = Step.State.EXECUTING
 
             self.before_run()
@@ -98,13 +95,11 @@ class Step(ABC):
 
             self.after_run()
         except Exception as e:
-            logging.error(f"Error executing step '{self.id}': {type(e).__name__ }({e})")
+            self.structure.logger.error(f"Step {self.id} error:\n{type(e).__name__ }({e})")
 
             self.output = ErrorOutput(e, step=self)
         finally:
             self.state = Step.State.FINISHED
-
-            logging.info(f"Finished executing step '{self.id}'")
 
             return self.output
 

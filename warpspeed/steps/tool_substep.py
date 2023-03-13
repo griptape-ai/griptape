@@ -1,5 +1,4 @@
 from __future__ import annotations
-import logging
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from warpspeed.utils import J2
@@ -24,10 +23,11 @@ class ToolSubstep(PromptStep):
     def children(self) -> list[ToolSubstep]:
         return [self.tool_step.find_substep(child_id) for child_id in self.child_ids]
 
+    def before_run(self) -> None:
+        self.structure.logger.info(f"Substep {self.id} input:\n{self.render_prompt()}")
+
     def run(self) -> StructureArtifact:
         try:
-            logging.info(f"Started executing substep '{self.id}'")
-
             if self.action_name == "exit":
                 self.output = TextOutput(None)
             elif self.action_name == "error":
@@ -43,13 +43,14 @@ class ToolSubstep(PromptStep):
 
                 self.output = TextOutput(observation)
         except Exception as e:
-            logging.error(f"Error executing substep '{self.id}': {type(e).__name__ }({e})")
+            self.structure.logger.error(f"Substep {self.id} error:\n{type(e).__name__ }({e})")
 
             self.output = ErrorOutput(e, step=self)
         finally:
-            logging.info(f"Finished executing substep '{self.id}'")
-
             return self.output
+
+    def after_run(self) -> None:
+        self.structure.logger.info(f"Substep {self.id} output:\n{self.output.value}")
 
     def render(self) -> str:
         return J2("prompts/steps/tool/substep.j2").render(
