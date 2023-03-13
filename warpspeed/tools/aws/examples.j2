@@ -3,5 +3,6 @@ Thought: I need to use the aws tool to answer this question.
 Action: {"tool": "aws", "input": "aws route53 list-hosted-zones --query 'HostedZones[*].Name'"}
 Observation: ["foo.com.", "bar.com.", "baz.com."]
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "You have 3 hosted zones on AWS: foo.com, bar.com, and baz.com"}
+Action: {"tool": "exit"}
+Observation: ready for final output
 Output: You have 3 hosted zones on AWS: foo.com, bar.com, and baz.com

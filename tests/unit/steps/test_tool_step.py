@@ -6,7 +6,7 @@ from warpspeed.structures import Pipeline
 
 class TestToolStep:
     def test_run(self):
-        output = """Action: {"tool": "exit", "input": "test is finished"}"""
+        output = """Action: {"tool": "exit"}"""
 
         step = ToolStep("test", tool=PingPongTool())
         pipeline = Pipeline(prompt_driver=MockValueDriver(output))
@@ -17,14 +17,14 @@ class TestToolStep:
 
         assert len(step.substeps) == 1
         assert step.substeps[0].action_name == "exit"
-        assert step.substeps[0].action_input == "test is finished"
-        assert result.output.value == "test is finished"
+        assert step.substeps[0].action_input is None
+        assert result.output.value == """Action: {"tool": "exit"}"""
 
     def test_parse_tool_action(self):
         valid_json = """{"tool": "test", "input": "test input"}"""
         invalid_json = """{"tool"$ "test", "input"^ "test input"}"""
         success_result = ("test", "test input")
-        error_result = ("error", f"error: invalid JSON, try again")
+        error_result = ("error", f"error: invalid input, try again")
         step = ToolStep("test", tool=PingPongTool())
 
         Pipeline().add_step(step)

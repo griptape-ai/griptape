@@ -15,20 +15,20 @@ if TYPE_CHECKING:
 
 @define
 class BaseToolStep(PromptStep, ABC):
-    JSON_PARSE_ERROR_MSG = f"invalid JSON, try again"
+    JSON_PARSE_ERROR_MSG = f"invalid input, try again"
 
     substeps: list[ToolSubstep] = field(factory=list, kw_only=True)
 
     def run(self) -> TextOutput:
         from warpspeed.steps import ToolSubstep
 
-        temp_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
-        action_name, action_input = self.parse_tool_action(temp_output.value)
+        action_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
+        action_name, action_input = self.parse_tool_action(action_output.value)
 
-        while action_name is not None:
+        while True:
             substep = self.add_substep(
                 ToolSubstep(
-                    temp_output.value,
+                    action_output.value,
                     tool_step=self,
                     action_name=action_name,
                     action_input=action_input
@@ -39,20 +39,17 @@ class BaseToolStep(PromptStep, ABC):
             substep.run()
             substep.after_run()
 
-            if substep.action_name == "exit" or substep.action_name == "error":
+            if substep.action_name == "exit":
+                action_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
+                substep.is_exiting = False
                 break
             else:
-                temp_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
-                action_name, action_input = self.parse_tool_action(temp_output.value)
+                action_output = self.active_driver().run(value=self.structure.to_prompt_string(self))
+                action_name, action_input = self.parse_tool_action(action_output.value)
 
-        if action_input is None:
-            final_output = TextOutput(temp_output.value)
-        else:
-            final_output = TextOutput(action_input)
+        self.output = action_output
 
-        self.output = final_output
-
-        return final_output
+        return self.output
 
     def render(self) -> str:
         return J2("prompts/steps/tool/tool.j2").render(
@@ -75,7 +72,6 @@ class BaseToolStep(PromptStep, ABC):
     def parse_tool_action(self, value: str) -> (str, str):
         try:
             pattern = r"^Action:\s*(.*)$"
-
             matches = re.findall(pattern, value, re.MULTILINE)
 
             if len(matches) > 0:
@@ -84,8 +80,9 @@ class BaseToolStep(PromptStep, ABC):
                 return parsed_value.get("tool"), parsed_value.get("input")
             else:
                 return "error", f"error: {self.JSON_PARSE_ERROR_MSG}"
+
         except Exception as e:
-            self.structure.logger.error(f"Step {self.id} error parsing tool action:\n{e}")
+            self.structure.logger.error(f"Step {self.id}\nError parsing tool action: {e}")
 
             return "error", f"error: {self.JSON_PARSE_ERROR_MSG}"
 

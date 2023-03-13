@@ -95,7 +95,7 @@ class Step(ABC):
 
             self.after_run()
         except Exception as e:
-            self.structure.logger.error(f"Step {self.id} error:\n{type(e).__name__ }({e})")
+            self.structure.logger.error(f"Step {self.id}\nError: {type(e).__name__ }({e})")
 
             self.output = ErrorOutput(e, step=self)
         finally:

@@ -376,7 +376,8 @@ Thought: I need to use the random_gen tool to answer this question.
 Action: {"tool": "random_gen", "input": null}
 Observation: 0.8444218515250481
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "0.8444218515250481"}
+Action: {"tool": "exit"}
+Observation: ready for final output
 Output: 0.8444218515250481
 
 Input: generate a random number and round it to 2 decimal places
@@ -384,7 +385,8 @@ Thought: I need to use the random_gen tool to answer this question.
 Action: {"tool": "random_gen", "input": 2}
 Observation: 0.14
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "0.14"}
+Action: {"tool": "exit"}
+Observation: ready for final output
 Output: 0.14
 ```
 

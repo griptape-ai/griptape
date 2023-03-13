@@ -14,6 +14,7 @@ class ToolSubstep(PromptStep):
     tool_step: BaseToolStep = field(kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[str] = field(default=None, kw_only=True)
+    is_exiting: bool = field(default=False, kw_only=True)
 
     @property
     def parents(self) -> list[ToolSubstep]:
@@ -24,16 +25,16 @@ class ToolSubstep(PromptStep):
         return [self.tool_step.find_substep(child_id) for child_id in self.child_ids]
 
     def before_run(self) -> None:
-        self.structure.logger.info(f"Substep {self.id} input:\n{self.render_prompt()}")
+        self.structure.logger.info(f"Substep {self.id}\n{self.render_prompt()}")
 
     def run(self) -> StructureArtifact:
         try:
             if self.action_name == "exit":
-                self.output = TextOutput(None)
+                self.is_exiting = True
+                self.output = TextOutput("ready for final output")
             elif self.action_name == "error":
                 self.output = ErrorOutput(self.action_input, step=self)
             else:
-
                 tool = self.tool_step.find_tool(self.action_name)
 
                 if tool:
@@ -43,14 +44,14 @@ class ToolSubstep(PromptStep):
 
                 self.output = TextOutput(observation)
         except Exception as e:
-            self.structure.logger.error(f"Substep {self.id} error:\n{type(e).__name__ }({e})")
+            self.structure.logger.error(f"Substep {self.id}\nError: {type(e).__name__ }({e})")
 
             self.output = ErrorOutput(e, step=self)
         finally:
             return self.output
 
     def after_run(self) -> None:
-        self.structure.logger.info(f"Substep {self.id} output:\n{self.output.value}")
+        self.structure.logger.info(f"Substep {self.id}\nObservation: {self.output.value}")
 
     def render(self) -> str:
         return J2("prompts/steps/tool/substep.j2").render(

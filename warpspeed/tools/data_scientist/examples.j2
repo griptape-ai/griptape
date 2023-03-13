@@ -3,7 +3,8 @@ Thought: I need to use the data_scientist tool to answer this question.
 Action: {"tool": "data_scientist", "input": "math.sin(math.pi / 2)"}
 Observation: 1.0
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "sin of pi over 2 is 1"}
+Action: {"tool": "exit"}
+Observation: ready for final output
 Output: sin of pi over 2 is 1
 
 Input: generate a random number
@@ -11,7 +12,8 @@ Thought: I need to use the data_scientist tool to answer this question.
 Action: {"tool": "data_scientist", "input": "math.random()"}
 Observation: 0.4
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "input": "0.4"}
+Action: {"tool": "exit"}
+Observation: ready for final output
 Output: 0.4
 
 Input: generate two random 2x2 matrices and multiply them
@@ -20,5 +22,6 @@ Action: {"tool": "data_scientist", "input": "np.random.rand(2, 2) * np.random.ra
 Observation: [[0.16519565 0.07230067]
  [0.02146958 0.01870328]]
 Thought: I have enough information to answer the original question
-Action: {"tool": "exit", "[[0.16519565 0.07230067]\n[0.02146958 0.01870328]]"}
+Action: {"tool": "exit"}
+Observation: ready for final output
 Output: [[0.16519565 0.07230067]\n[0.02146958 0.01870328]]

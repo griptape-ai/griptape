@@ -18,7 +18,7 @@ class PromptStep(Step):
     def before_run(self) -> None:
         super().before_run()
 
-        self.structure.logger.info(f"Step {self.id} input:\n{self.render_prompt()}")
+        self.structure.logger.info(f"Step {self.id}\nInput: {self.render_prompt()}")
 
     def run(self) -> TextOutput:
         self.output = self.active_driver().run(value=self.structure.to_prompt_string(self))
@@ -28,7 +28,7 @@ class PromptStep(Step):
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info(f"Step {self.id} output:\n{self.output.value}")
+        self.structure.logger.info(f"Step {self.id}\nOutput: {self.output.value}")
 
     def active_driver(self) -> PromptDriver:
         if self.driver is None:
