@@ -9,7 +9,7 @@ class StepSchema(BaseSchema):
     class Meta:
         ordered = True
 
-    id = fields.Str(required=True)
+    id = fields.Str()
     state = EnumField(Step.State)
     parent_ids = fields.List(fields.Str())
     child_ids = fields.List(fields.Str())

@@ -3,28 +3,22 @@ from typing import TYPE_CHECKING
 from attrs import define, field
 
 if TYPE_CHECKING:
-    from warpspeed.structures import Pipeline
+    from warpspeed.memory import PipelineMemory
 
 
 @define(frozen=True)
 class Conversation:
-    pipeline: Pipeline = field()
+    memory: PipelineMemory = field()
 
-    def lines(self, include_substeps=True) -> list[str]:
-        from warpspeed.steps import BaseToolStep
-
+    def lines(self) -> list[str]:
         lines = []
 
-        for step in self.pipeline.steps:
-            lines.append(f"Q: {step.render_prompt()}")
+        for run in self.memory.runs:
+            lines.append(f"Q: {run.prompt}")
 
-            if include_substeps and isinstance(step, BaseToolStep):
-                for substep in step.substeps:
-                    lines.append(substep.render())
-
-            lines.append(f"A: {step.output.value if step.output else ''}")
+            lines.append(f"A: {run.output.value}")
 
         return lines
 
-    def to_string(self, include_substeps=True) -> str:
-        return str.join("\n", self.lines(include_substeps))
+    def to_string(self) -> str:
+        return str.join("\n", self.lines())

@@ -49,17 +49,8 @@ class PromptStep(Step):
 
     @property
     def full_context(self) -> dict[str, any]:
-        prompt_context = self.default_context
+        structure_context = self.structure.context(self)
 
-        prompt_context.update(self.context)
+        structure_context.update(self.context)
 
-        return prompt_context
-
-    @property
-    def default_context(self) -> dict[str, any]:
-        return {
-            "inputs": {parent.id: parent.output.value if parent.output else "" for parent in self.parents},
-            "structure": self.structure,
-            "parents": {parent.id: parent for parent in self.parents},
-            "children": {child.id: child for child in self.children}
-        }
+        return structure_context

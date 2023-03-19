@@ -7,6 +7,7 @@ class StructureSchema(BaseSchema):
     class Meta:
         ordered = True
 
+    id = fields.Str()
     prompt_driver = fields.Nested(PolymorphicSchema())
     rules = fields.List(fields.Nested(RuleSchema()))
     steps = fields.List(fields.Nested(PolymorphicSchema()))

@@ -13,24 +13,11 @@ class TestPromptStep:
         assert step.run().value == "mock output"
 
     def test_render_prompt(self):
-        assert PromptStep("{{ test }}", context={"test": "test value"}).render_prompt() == "test value"
+        step = PromptStep("{{ test }}", context={"test": "test value"})
 
-    def test_default_context(self):
-        parent = PromptStep("parent")
-        step = PromptStep("test")
-        child = PromptStep("child")
-        pipeline = Pipeline(prompt_driver=MockDriver())
+        Pipeline().add_step(step)
 
-        pipeline.add_steps(parent, step, child)
-
-        pipeline.run()
-
-        context = step.default_context
-
-        assert context["inputs"] == {parent.id: parent.output.value}
-        assert context["structure"] == pipeline
-        assert context["parents"] == {parent.id: parent}
-        assert context["children"] == {child.id: child}
+        assert step.render_prompt() == "test value"
 
     def test_full_context(self):
         parent = PromptStep("parent")
@@ -45,7 +32,7 @@ class TestPromptStep:
         context = step.full_context
 
         assert context["foo"] == "bar"
-        assert context["inputs"] == {parent.id: parent.output.value}
+        assert context["input"] == parent.output.value
         assert context["structure"] == pipeline
-        assert context["parents"] == {parent.id: parent}
-        assert context["children"] == {child.id: child}
+        assert context["parent"] == parent
+        assert context["child"] == child

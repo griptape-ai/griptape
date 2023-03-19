@@ -3,7 +3,7 @@ from warpspeed.artifacts import TextOutput
 from warpspeed.rules import Rule
 from warpspeed.utils import TiktokenTokenizer
 from warpspeed.steps import PromptStep, Step
-from warpspeed.memory import Memory
+from warpspeed.memory import PipelineMemory
 from tests.mocks.mock_driver import MockDriver
 from warpspeed.structures import Pipeline
 
@@ -27,17 +27,19 @@ class TestPipeline:
 
         pipeline = Pipeline(
             prompt_driver=MockDriver(),
-            memory=Memory()
+            memory=PipelineMemory()
         )
 
         pipeline.add_steps(first_step, second_step, third_step)
 
         assert pipeline.memory is not None
-        assert len(pipeline.memory.steps) == 0
+        assert len(pipeline.memory.runs) == 0
 
         pipeline.run()
+        pipeline.run()
+        pipeline.run()
 
-        assert len(pipeline.memory.steps) == 3
+        assert len(pipeline.memory.runs) == 3
 
     def test_steps_order(self):
         first_step = PromptStep("test1")
@@ -128,11 +130,18 @@ class TestPipeline:
         assert "mock output" in result.output.value
         assert step.state == Step.State.FINISHED
 
-    def test_resume(self):
+    def test_run_with_args(self):
+        step = PromptStep("{{ args[0] }}-{{ args[1] }}")
         pipeline = Pipeline(prompt_driver=MockDriver())
-        pipeline.add_step(PromptStep("test"))
+        pipeline.add_steps(step)
 
-        assert "mock output" in pipeline.resume().output.value
+        pipeline._execution_args = ("test1", "test2")
+
+        assert step.render_prompt() == "test1-test2"
+
+        pipeline.run()
+
+        assert step.render_prompt() == "-"
 
     def test_to_json(self):
         pipeline = Pipeline()
@@ -177,3 +186,24 @@ class TestPipeline:
         workflow_json = pipeline.to_dict()
 
         assert len(Pipeline.from_dict(workflow_json).steps) == 2
+
+    def test_context(self):
+        parent = PromptStep("parent")
+        step = PromptStep("test")
+        child = PromptStep("child")
+        pipeline = Pipeline(prompt_driver=MockDriver())
+
+        pipeline.add_steps(parent, step, child)
+
+        context = pipeline.context(step)
+
+        assert context["input"] is None
+
+        pipeline.run()
+
+        context = pipeline.context(step)
+
+        assert context["input"] == parent.output.value
+        assert context["structure"] == pipeline
+        assert context["parent"] == parent
+        assert context["child"] == child

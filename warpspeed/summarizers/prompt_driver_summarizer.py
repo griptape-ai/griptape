@@ -7,20 +7,19 @@ from warpspeed.summarizers.summarizer import Summarizer
 
 
 if TYPE_CHECKING:
-    from warpspeed.steps import Step
-    from warpspeed.memory import Memory
+    from warpspeed.memory import PipelineMemory, PipelineRun
 
 
 @define
 class CompletionDriverSummarizer(Summarizer):
     driver: PromptDriver = field(kw_only=True)
 
-    def summarize(self, memory: Memory, steps: list[Step]) -> Optional[str]:
-        if len(steps) > 0:
+    def summarize(self, memory: PipelineMemory, runs: list[PipelineRun]) -> Optional[str]:
+        if len(runs) > 0:
             return self.driver.run(
                 value=J2("prompts/summarize.j2").render(
                     summary=memory.summary,
-                    steps=steps
+                    runs=runs
                 )
             ).value
         else:

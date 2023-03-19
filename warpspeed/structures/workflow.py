@@ -25,18 +25,19 @@ class Workflow(Structure):
         stack = Structure.prompt_stack(self, step)
 
         stack.append(
-            J2("prompts/structure.j2").render(
+            J2("prompts/workflow.j2").render(
                 step=step
             )
         )
 
         return stack
 
-    def run(self) -> list[Step]:
+    def run(self, *args) -> list[Step]:
+        self._execution_args = args
         ordered_steps = self.order_steps()
         exit_loop = False
 
-        while any(s for s in ordered_steps if not s.is_finished()) and not exit_loop:
+        while not self.is_finished() and not exit_loop:
             futures_list = {}
 
             for step in ordered_steps:
@@ -51,7 +52,22 @@ class Workflow(Structure):
 
                     break
 
+        self._execution_args = ()
+
         return self.output_steps()
+
+    def context(self, step: Step) -> dict[str, any]:
+        context = super().context(step)
+
+        context.update(
+            {
+                "inputs": {parent.id: parent.output.value if parent.output else "" for parent in step.parents},
+                "parents": {parent.id: parent for parent in step.parents},
+                "children": {child.id: child for child in step.children}
+            }
+        )
+
+        return context
 
     def output_steps(self) -> list[Step]:
         return [step for step in self.steps if not step.children]

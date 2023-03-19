@@ -1,6 +1,6 @@
 from warpspeed.drivers import OpenAiPromptDriver
 from warpspeed.utils import TiktokenTokenizer
-from warpspeed.steps import PromptStep, ToolStep, ToolkitStep, Step
+from warpspeed.steps import PromptStep, ToolStep, ToolkitStep, Step, ToolSubstep
 from warpspeed.structures import Pipeline
 from warpspeed.schemas import PipelineSchema
 from warpspeed.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
@@ -23,21 +23,23 @@ class TestPipelineSchema:
             WikiTool()
         ]
 
+        tool_step = ToolStep("test tool prompt", tool=PingPongTool())
+
         pipeline.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool()),
+            tool_step,
             ToolkitStep("test router step", tools=tools)
         )
 
-        workflow_dict = PipelineSchema().dump(pipeline)
+        pipeline_dict = PipelineSchema().dump(pipeline)
 
-        assert len(workflow_dict["steps"]) == 3
-        assert workflow_dict["steps"][0]["state"] == "PENDING"
-        assert workflow_dict["steps"][0]["child_ids"][0] == pipeline.steps[1].id
-        assert workflow_dict["steps"][1]["parent_ids"][0] == pipeline.steps[0].id
-        assert len(workflow_dict["steps"][-1]["tools"]) == 5
-        assert workflow_dict["prompt_driver"]["temperature"] == 0.12345
-        assert workflow_dict["prompt_driver"]["tokenizer"]["stop_sequence"] == "<test>"
+        assert len(pipeline_dict["steps"]) == 3
+        assert pipeline_dict["steps"][0]["state"] == "PENDING"
+        assert pipeline_dict["steps"][0]["child_ids"][0] == pipeline.steps[1].id
+        assert pipeline_dict["steps"][1]["parent_ids"][0] == pipeline.steps[0].id
+        assert len(pipeline_dict["steps"][-1]["tools"]) == 5
+        assert pipeline_dict["prompt_driver"]["temperature"] == 0.12345
+        assert pipeline_dict["prompt_driver"]["tokenizer"]["stop_sequence"] == "<test>"
 
     def test_deserialization(self):
         pipeline = Pipeline(
@@ -55,9 +57,11 @@ class TestPipelineSchema:
             WikiTool()
         ]
 
+        tool_step = ToolStep("test tool prompt", tool=PingPongTool())
+
         pipeline.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool()),
+            tool_step,
             ToolkitStep("test router step", tools=tools)
         )
 

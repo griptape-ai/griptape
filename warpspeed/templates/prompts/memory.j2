@@ -7,6 +7,6 @@ Conversation begins:
 {% else %}
 Conversation begins:
 {% endif %}
-{% for step in steps %}
-{{ step.render() }}
+{% for run in runs %}
+{{ run.render() }}
 {% endfor %}

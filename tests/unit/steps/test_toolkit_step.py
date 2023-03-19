@@ -6,7 +6,7 @@ from warpspeed.structures import Pipeline
 
 class TestToolkitStep:
     def test_run(self):
-        output = """Action: {"tool": "exit"}"""
+        output = """Output: done"""
 
         step = ToolkitStep("test", tools=[PingPongTool(), CalculatorTool()])
         pipeline = Pipeline(prompt_driver=MockValueDriver(output))
@@ -16,10 +16,8 @@ class TestToolkitStep:
         result = pipeline.run()
 
         assert len(step.tools) == 2
-        assert len(step.substeps) == 1
-        assert step.substeps[0].action_name == "exit"
-        assert step.substeps[0].action_input is None
-        assert result.output.value == """Action: {"tool": "exit"}"""
+        assert len(step._substeps) == 1
+        assert result.output.value == "done"
 
     def test_find_tool(self):
         tool = PingPongTool()

@@ -1,10 +1,12 @@
-from warpspeed.memory.memory import Memory
-from warpspeed.memory.summary_memory import SummaryMemory
-from warpspeed.memory.buffer_memory import BufferMemory
+from warpspeed.memory.pipeline_run import PipelineRun
+from warpspeed.memory.pipeline_memory import PipelineMemory
+from warpspeed.memory.summary_pipeline_memory import SummaryPipelineMemory
+from warpspeed.memory.buffer_pipeline_memory import BufferPipelineMemory
 
 
 __all__ = [
-    "Memory",
-    "SummaryMemory",
-    "BufferMemory"
+    "PipelineRun",
+    "PipelineMemory",
+    "SummaryPipelineMemory",
+    "BufferPipelineMemory"
 ]
