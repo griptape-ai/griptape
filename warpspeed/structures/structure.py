@@ -1,12 +1,16 @@
 from __future__ import annotations
 import json
 import logging
+import uuid
 from rich.logging import RichHandler
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
-from attrs import define, field
+from attrs import define, field, Factory
+
+from warpspeed.artifacts import StructureArtifact
 from warpspeed.drivers import PromptDriver, OpenAiPromptDriver
+from warpspeed.memory import PipelineRun
 from warpspeed.utils import J2
 
 if TYPE_CHECKING:
@@ -18,12 +22,22 @@ if TYPE_CHECKING:
 class Structure(ABC):
     LOGGER_NAME = "warpspeed"
 
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: PromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     steps: list[Step] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
 
+    _execution_args: tuple = ()
     _logger: Optional[Logger] = None
+
+    def __attrs_post_init__(self):
+        for step in self.steps:
+            step.structure = self
+
+    @property
+    def execution_args(self) -> tuple:
+        return self._execution_args
 
     @property
     def logger(self) -> Logger:
@@ -43,6 +57,12 @@ class Structure(ABC):
                 ]
 
             return self._logger
+
+    def is_finished(self) -> bool:
+        return all(s.is_finished() for s in self.steps)
+
+    def is_executing(self) -> bool:
+        return any(s for s in self.steps if s.is_executing())
 
     def is_empty(self) -> bool:
         return not self.steps
@@ -79,18 +99,18 @@ class Structure(ABC):
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)
 
-    def before_run(self, step: Step) -> None:
-        pass
-
-    def after_run(self, step: Step) -> None:
-        pass
+    def context(self, step: Step) -> dict[str, any]:
+        return {
+            "args": self.execution_args,
+            "structure": self,
+        }
 
     @abstractmethod
     def add_step(self, step: Step) -> Step:
         ...
 
     @abstractmethod
-    def run(self) -> Union[Step, list[Step]]:
+    def run(self, *args) -> Union[Step, list[Step]]:
         ...
 
     @abstractmethod

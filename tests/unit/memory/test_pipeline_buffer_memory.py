@@ -1,12 +1,12 @@
 from warpspeed.steps import PromptStep
 from warpspeed.structures import Pipeline
-from warpspeed.memory import BufferMemory
+from warpspeed.memory import BufferPipelineMemory
 from tests.mocks.mock_driver import MockDriver
 
 
 class TestBufferMemory:
     def test_after_run(self):
-        memory = BufferMemory(buffer_size=2)
+        memory = BufferPipelineMemory(buffer_size=2)
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 
@@ -18,5 +18,6 @@ class TestBufferMemory:
         )
 
         pipeline.run()
+        pipeline.run()
 
-        assert len(pipeline.memory.steps) == 2
+        assert len(pipeline.memory.runs) == 2

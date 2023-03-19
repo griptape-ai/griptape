@@ -16,5 +16,5 @@ def speculate() -> Rule:
 
 def your_name_is(name: str) -> Rule:
     return Rule(
-        f"you are a chat bot that responds to name \"{name}\""
+        f"respond to name \"{name}\""
     )

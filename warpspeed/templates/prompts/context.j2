@@ -10,13 +10,12 @@ Action: {"tool": "<tool name>", "input": <json object, array, or string>}
 Observation: <tool response>
 ...repeat until you can answer the question
 Thought: I have enough information to answer the question
-Action: {"tool": "exit"}
-Observation: ready for final output
 Output: <your final answer>
 
 You have access only to the following tools: [{{ tool_names }}]. NEVER make up tools and tool names. If you encounter an error from a tool you should try to fix it. If you don't need to use a tool or if you don't know which tool to use, respond like this:
 
-Action: {"tool": "exit"}
+Input: <original question>
+Output: <your final answer>
 
 Tools Descriptions:
 {% for tool in tools %}
@@ -26,8 +25,8 @@ Tools Descriptions:
 {% else %}
 You are an assistant who follows rules and answers questions. Here is the conversation format that I want you to use:
 
-Input: <my question>
-Output: <your answer>
+Input: <original question>
+Output: <your final answer>
 {% endif %}
 
 {% if rules|length > 0 %}

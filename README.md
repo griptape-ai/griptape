@@ -11,7 +11,7 @@ With Warpspeed, you can accomplish the following:
 
 1. 🚰 Build sequential **AI pipelines** and sprawling **DAG workflows** for complex use cases.
 2. 🧰️ Augment LLMs with **chain of thought** capabilities and **external tools**, such as calculators, web search, spreadsheet editors, and API connectors.
-3. 💾 Add **memory** to AI pipelines for context preservation.
+3. 💾 Add **memory** to AI pipelines for context preservation and summarization.
 
 Please note that Warpspeed is in early development. Its APIs and documentation are subject to change. For now, this README file is the most accurate source of documentation and examples.
 
@@ -32,31 +32,31 @@ Pipelines are lists of steps that are executed sequentially. Pipelines can have 
 
 ```python
 from warpspeed import utils
-from warpspeed.memory import Memory
+from warpspeed.memory import PipelineMemory
 from warpspeed.steps import PromptStep
 from warpspeed.structures import Pipeline
 
-
 pipeline = Pipeline(
-    memory=Memory()
+    memory=PipelineMemory()
 )
 
 pipeline.add_steps(
-    PromptStep("Hi, my name is Scotty. Who are you?"),
-    PromptStep("What is my name?")
+    PromptStep("{{ args[0] }}"),
+    PromptStep("Say the following like a pirate: {{ input }}")
 )
 
-pipeline.run()
+pipeline.run("I am Scotty, who are you?")
+pipeline.run("Who am I?")
 
-print(utils.Conversation(pipeline).to_string())
+print(utils.Conversation(pipeline.memory).to_string())
 ```
 
 Boom! Our first conversation, à la ChatGPT, is here:
 
-> Input: Hi, my name is Scotty. Who are you?  
-> Output: Hi Scotty, my name is Assistant. I'm here to help answer your questions.  
-> Input: What is my name?  
-> Output: Your name is Scotty.
+> Q: I am Scotty, who are you?  
+> A: Arrr, I be an AI language model designed to assist and answer yer questions, matey!  
+> Q: Who am I?  
+> A: Yarrr, ye just introduced yerself as Scotty, so ye be Scotty, matey!
 
 You can dynamically pass arguments to the prompt by using Jinja templates:
 
@@ -65,10 +65,28 @@ PromptStep("tell me about {{ topic }}", context={"topic": "the hobbit novel"})
 ```
 
 In addition to user-defined fields, the `context` object contains the following:
+
+### As Part of `Pipeline`
+- `args`: arguments passed to the `Construct.run()` method.
+- `input`: input from the parent.
+- `structure`: the structure that the step belongs to.
+- `parent`: parent step.
+- `child`: child step.
+
+### As Part of `Workflow`
+- `args`: arguments passed to the `Construct.run()` method.
 - `inputs`: inputs into the current step referencable by parent step IDs.
 - `structure`: the structure that the step belongs to.
 - `parents`: parent steps referencable by IDs.
 - `children`: child steps referencable by IDs.
+
+Warpspeed uses OpenAI's `gpt-3.5-turbo` model by default. If you want to use a different model, set a custom OpenAI prompt driver:
+
+```python
+Pipeline(
+    prompt_driver=OpenAiPromptDriver(temperature=0.1, model="gpt-4")
+)
+```
 
 Now, let's build a simple workflow. Let's say, we want to write a story in a fantasy world with some unique characters. We could setup a workflow that generates a world based on some keywords. Then we pass the world description to any number of child steps that create characters. Finally, the last step pulls in information from all parent steps and writes up a short story.
 
@@ -173,11 +191,10 @@ pipeline = Pipeline()
 pipeline.add_steps(
     ToolStep(
         "Research and summarize the most important events of February 2023",
-        tool=WikiTool(),
-        id="research"
+        tool=WikiTool()
     ),
     ToolkitStep(
-        "Calculate 3^12 and send an email with the answer and the following text to hello@warpspeed.cc:\n{{ inputs['research'] }}",
+        "Calculate 3^12 and send an email with the answer and the following text to hello@warpspeed.cc:\n{{ input }}",
         tools=[
             CalculatorTool(),
             EmailTool(
@@ -375,18 +392,14 @@ Input: generate a random number
 Thought: I need to use the random_gen tool to answer this question.
 Action: {"tool": "random_gen", "input": null}
 Observation: 0.8444218515250481
-Thought: I have enough information to answer the original question
-Action: {"tool": "exit"}
-Observation: ready for final output
+Thought: I have enough information to answer the question
 Output: 0.8444218515250481
 
 Input: generate a random number and round it to 2 decimal places
 Thought: I need to use the random_gen tool to answer this question.
 Action: {"tool": "random_gen", "input": 2}
 Observation: 0.14
-Thought: I have enough information to answer the original question
-Action: {"tool": "exit"}
-Observation: ready for final output
+Thought: I have enough information to answer the question
 Output: 0.14
 ```
 
@@ -453,15 +466,15 @@ By default, pipelines don't initialize memory, so you have to explicitly pass it
 
 ```python
 Pipeline(
-    memory=Memory()
+    memory=PipelineMemory()
 )
 ```
 
-There are two other types of memory: `BufferMemory` and `SummaryMemory`. `BufferMemory` will keep a sliding window of steps that are used to construct a prompt:
+There are two other types of memory: `BufferPipelineMemory` and `SummaryPipelineMemory`. `BufferPipelineMemory` will keep a sliding window of steps that are used to construct a prompt:
 
 ```python
 Pipeline(
-    memory=BufferMemory(buffer_size=3)
+    memory=BufferPipelineMemory(buffer_size=3)
 )
 ```
 
@@ -469,7 +482,7 @@ This works great for shorter pipelines but fails if the whole workflow context n
 
 ```python
 Pipeline(
-    memory=SummaryMemory(
+    memory=SummaryPipelineMemory(
         summarizer=CompletionDriverSummarizer(
             driver=OpenAiPromptDriver()
         ),

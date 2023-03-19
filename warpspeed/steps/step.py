@@ -76,14 +76,20 @@ class Step(ABC):
 
         return parent
 
+    def is_pending(self) -> bool:
+        return self.state == Step.State.PENDING
+
     def is_finished(self) -> bool:
         return self.state == Step.State.FINISHED
 
+    def is_executing(self) -> bool:
+        return self.state == Step.State.EXECUTING
+
     def before_run(self) -> None:
-        self.structure.before_run(self)
+        pass
 
     def after_run(self) -> None:
-        self.structure.after_run(self)
+        pass
 
     def execute(self) -> StructureArtifact:
         try:
@@ -108,9 +114,10 @@ class Step(ABC):
 
     def reset(self) -> Step:
         self.state = Step.State.PENDING
+        self.output = None
 
         return self
 
     @abstractmethod
-    def run(self, **kwargs) -> TextOutput:
+    def run(self) -> TextOutput:
         ...

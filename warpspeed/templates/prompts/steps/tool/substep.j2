@@ -1,7 +1,11 @@
-{{ step.render_prompt() }}
-{% if step.output and step.output.value %}
-Observation: {{ step.output.value }}
+{% if substep.thought %}
+Thought: {{ substep.thought }}
 {% endif %}
-{% if step.is_exiting %}
-Output:
+{% if substep.tool_name and substep.tool_input %}
+Action: {"tool": "{{ substep.tool_name }}", "input": "{{ substep.tool_input }}"}
+{% elif substep.tool_name %}
+Action: {"tool": "{{ substep.tool_name }}"}
+{% endif %}
+{% if substep.output %}
+Observation: {{ substep.output.value }}
 {% endif %}

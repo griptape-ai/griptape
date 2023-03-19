@@ -5,7 +5,5 @@ Observation: (0, 'id', 'INTEGER', 0, None, 0), (1, 'user_id', 'INTEGER', 0, None
 Thought: I know what the schema is now and can insert a new record
 Action: {"tool": "sql_client", "input": "INSERT INTO "orders" ("user_id", "item_name", "amount") VALUES  (10, 'Silver Tequila Shot', 5.99);"}
 Observation: query successfully executed
-Thought: I have enough information to answer the original question
-Action: {"tool": "exit"}
-Observation: ready for final output
+Thought: I have enough information to answer the question
 Output: Silver Tequila Shot," user with ID 10, and amount 5.99 was inserted into the orders table

@@ -8,12 +8,16 @@ from warpspeed.artifacts import TextOutput
 
 @define
 class OpenAiPromptDriver(PromptDriver):
-    tokenizer: Tokenizer = field(default=Factory(lambda: TiktokenTokenizer()), kw_only=True)
+    model: str = field(default=TiktokenTokenizer.DEFAULT_MODEL, kw_only=True)
+    tokenizer: TiktokenTokenizer = field(
+        default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
+        kw_only=True
+    )
     temperature: float = field(default=0.5, kw_only=True)
     user: str = field(default="", kw_only=True)
 
     def run(self, value: any) -> TextOutput:
-        if self.tokenizer.model == "gpt-3.5-turbo":
+        if self.tokenizer.is_chat():
             return self.__run_chat(value)
         else:
             return self.__run_completion(value)
@@ -34,7 +38,6 @@ class OpenAiPromptDriver(PromptDriver):
         )
 
         if len(result.choices) == 1:
-            content = result.choices[0]["message"]["content"]
             return TextOutput(
                 value=result.choices[0]["message"]["content"].strip(),
                 meta={

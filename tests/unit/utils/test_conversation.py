@@ -1,40 +1,37 @@
-from warpspeed.steps import PromptStep, ToolStep, ToolkitStep
-from warpspeed.artifacts import TextOutput
+from tests.mocks.mock_driver import MockDriver
+from warpspeed.memory import PipelineMemory
+from warpspeed.steps import PromptStep
 from warpspeed.structures import Pipeline
-from warpspeed.tools import PingPongTool
 from warpspeed.utils import Conversation
 
 
 class TestConversation:
     def test_lines(self):
-        pipeline = Pipeline()
+        pipeline = Pipeline(prompt_driver=MockDriver(), memory=PipelineMemory())
 
         pipeline.add_steps(
-            PromptStep("question 1"),
-            ToolStep("question 2", tool=PingPongTool())
+            PromptStep("question 1")
         )
 
-        pipeline.steps[0].output = TextOutput("answer 1")
-        pipeline.steps[1].output = TextOutput("answer 2")
+        pipeline.run()
+        pipeline.run()
 
-        lines = Conversation(pipeline).lines()
+        lines = Conversation(pipeline.memory).lines()
 
         assert lines[0] == "Q: question 1"
-        assert lines[1] == "A: answer 1"
-        assert lines[2] == "Q: question 2"
-        assert lines[3] == "A: answer 2"
+        assert lines[1] == "A: mock output"
+        assert lines[2] == "Q: question 1"
+        assert lines[3] == "A: mock output"
 
     def test_to_string(self):
-        pipeline = Pipeline()
+        pipeline = Pipeline(prompt_driver=MockDriver(), memory=PipelineMemory())
 
         pipeline.add_steps(
-            PromptStep("question 1"),
-            ToolStep("question 2", tool=PingPongTool())
+            PromptStep("question 1")
         )
 
-        pipeline.steps[0].output = TextOutput("answer 1")
-        pipeline.steps[1].output = TextOutput("answer 2")
+        pipeline.run()
 
-        string = Conversation(pipeline).to_string()
+        string = Conversation(pipeline.memory).to_string()
 
-        assert string == "Q: question 1\nA: answer 1\nQ: question 2\nA: answer 2"
+        assert string == "Q: question 1\nA: mock output"

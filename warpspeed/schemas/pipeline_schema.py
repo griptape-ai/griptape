@@ -7,9 +7,4 @@ class PipelineSchema(StructureSchema):
     def make_obj(self, data, **kwargs):
         from warpspeed.structures import Pipeline
 
-        pipeline = Pipeline(**data)
-
-        for step in pipeline.steps:
-            step.structure = pipeline
-
-        return pipeline
+        return Pipeline(**data)

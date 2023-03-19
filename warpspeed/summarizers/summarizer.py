@@ -4,12 +4,11 @@ from abc import ABC, abstractmethod
 from attrs import define
 
 if TYPE_CHECKING:
-    from warpspeed.steps import Step
-    from warpspeed.memory import Memory
+    from warpspeed.memory import PipelineMemory, PipelineRun
 
 
 @define
 class Summarizer(ABC):
     @abstractmethod
-    def summarize(self, memory: Memory, steps: list[Step]) -> Optional[str]:
+    def summarize(self, memory: PipelineMemory, runs: list[PipelineRun]) -> Optional[str]:
         ...

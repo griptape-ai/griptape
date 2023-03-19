@@ -7,9 +7,4 @@ class WorkflowSchema(StructureSchema):
     def make_obj(self, data, **kwargs):
         from warpspeed.structures import Workflow
 
-        workflow = Workflow(**data)
-
-        for step in workflow.steps:
-            step.structure = workflow
-
-        return workflow
+        return Workflow(**data)

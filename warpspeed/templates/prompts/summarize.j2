@@ -7,9 +7,9 @@ Update summary with this:
 Summarize the following conversation:
 {% endif %}
 
-{% for step in steps %}
-Input: {{ step.render_prompt() }}
-Output: {{ step.output.value }}
+{% for run in runs %}
+Input: {{ run.prompt }}
+Output: {{ run.output.value }}
 
 {% endfor %}
 {% if summary %}

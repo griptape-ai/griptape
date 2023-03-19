@@ -8,9 +8,9 @@ from warpspeed.steps import BaseToolStep
 class ToolkitStep(BaseToolStep):
     tools: list[Tool] = field(kw_only=True)
 
-    def find_tool(self, action_name: str) -> Optional[Tool]:
+    def find_tool(self, tool_name: str) -> Optional[Tool]:
         for tool in self.tools:
-            if tool.name == action_name:
+            if tool.name == tool_name:
                 return tool
 
         return None

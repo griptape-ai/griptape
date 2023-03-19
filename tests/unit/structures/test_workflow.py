@@ -1,10 +1,7 @@
 import json
-from warpspeed.artifacts import TextOutput
-from warpspeed.rules import Rule
-from warpspeed.utils import TiktokenTokenizer
-from warpspeed.steps import PromptStep, Step
-from warpspeed.memory import Memory
 from tests.mocks.mock_driver import MockDriver
+from warpspeed.rules import Rule
+from warpspeed.steps import PromptStep, Step
 from warpspeed.structures import Workflow
 
 
@@ -72,6 +69,19 @@ class TestWorkflow:
 
         assert step1.state == Step.State.FINISHED
         assert step2.state == Step.State.FINISHED
+
+    def test_run_with_args(self):
+        step = PromptStep("{{ args[0] }}-{{ args[1] }}")
+        workflow = Workflow(prompt_driver=MockDriver())
+        workflow.add_steps(step)
+
+        workflow._execution_args = ("test1", "test2")
+
+        assert step.render_prompt() == "test1-test2"
+
+        workflow.run()
+
+        assert step.render_prompt() == "-"
 
     def test_run_topology_1(self):
         step1 = PromptStep("prompt1")
@@ -195,3 +205,27 @@ class TestWorkflow:
         workflow_json = workflow.to_dict()
 
         assert len(Workflow.from_dict(workflow_json).steps) == 2
+
+    def test_context(self):
+        parent = PromptStep("parent")
+        step = PromptStep("test")
+        child = PromptStep("child")
+        workflow = Workflow(prompt_driver=MockDriver())
+
+        workflow.add_step(parent)
+
+        parent.add_child(step)
+        step.add_child(child)
+
+        context = workflow.context(step)
+
+        assert context["inputs"] == {parent.id: ""}
+
+        workflow.run()
+
+        context = workflow.context(step)
+
+        assert context["inputs"] == {parent.id: parent.output.value}
+        assert context["structure"] == workflow
+        assert context["parents"] == {parent.id: parent}
+        assert context["children"] == {child.id: child}

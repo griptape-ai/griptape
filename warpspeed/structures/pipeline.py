@@ -5,7 +5,7 @@ from attrs import define, field
 from warpspeed.artifacts import ErrorOutput
 from warpspeed.schemas import PipelineSchema
 from warpspeed.structures import Structure
-from warpspeed.memory import Memory
+from warpspeed.memory import PipelineMemory, PipelineRun
 from warpspeed.utils import J2
 
 if TYPE_CHECKING:
@@ -14,13 +14,16 @@ if TYPE_CHECKING:
 
 @define
 class Pipeline(Structure):
-    memory: Optional[Memory] = field(default=None, kw_only=True)
+    memory: Optional[PipelineMemory] = field(default=None, kw_only=True)
 
     def first_step(self) -> Optional[Step]:
         return None if self.is_empty() else self.steps[0]
 
     def last_step(self) -> Optional[Step]:
         return None if self.is_empty() else self.steps[-1]
+
+    def finished_steps(self) -> list[Step]:
+        return [s for s in self.steps if s.is_finished()]
 
     def add_step(self, step: Step) -> Step:
         if self.last_step():
@@ -32,45 +35,56 @@ class Pipeline(Structure):
 
         return step
 
-    def before_run(self, step: Step) -> None:
-        Structure.before_run(self, step)
-
-        if self.memory:
-            self.memory.before_run(step)
-
-    def after_run(self, step: Step) -> None:
-        Structure.after_run(self, step)
-
-        if self.memory:
-            self.memory.after_run(step)
-
     def prompt_stack(self, step: Step) -> list[str]:
-        stack = Structure.prompt_stack(self, step)
+        stack = super().prompt_stack(step)
 
         if self.memory:
             stack.append(
                 self.memory.to_prompt_string()
             )
-        else:
-            stack.append(
-                J2("prompts/structure.j2").render(
-                    step=step
-                )
+
+        stack.append(
+            J2("prompts/pipeline.j2").render(
+                has_memory=self.memory is not None,
+                finished_steps=self.finished_steps(),
+                current_step=step
             )
+        )
 
         return stack
 
-    def run(self) -> Step:
+    def run(self, *args) -> Step:
+        self._execution_args = args
+
         [step.reset() for step in self.steps]
 
-        self.__execute_from_step(self.first_step())
+        self.__run_from_step(self.first_step())
+
+        if self.memory:
+            run_context = PipelineRun(
+                prompt=self.first_step().render_prompt(),
+                output=self.last_step().output,
+                structure_id=self.id
+            )
+
+            self.memory.add_run(run_context)
+
+        self._execution_args = ()
 
         return self.last_step()
 
-    def resume(self) -> Step:
-        self.__execute_from_step(self.__next_unfinished_step(self.first_step()))
+    def context(self, step: Step) -> dict[str, any]:
+        context = super().context(step)
 
-        return self.last_step()
+        context.update(
+            {
+                "input": step.parents[0].output.value if step.parents and step.parents[0].output else None,
+                "parent": step.parents[0] if step.parents else None,
+                "child": step.children[0] if step.children else None
+            }
+        )
+
+        return context
 
     def to_dict(self) -> dict:
         return PipelineSchema().dump(self)
@@ -83,29 +97,11 @@ class Pipeline(Structure):
     def from_json(cls, workflow_json: str) -> Pipeline:
         return Pipeline.from_dict(json.loads(workflow_json))
 
-    def __last_step_after(self, step: Optional[Step]) -> Optional[Step]:
-        child = next(iter(step.children), None)
-
-        if step is None:
-            return None
-        elif child:
-            return self.__last_step_after(child)
-        else:
-            return step
-
-    def __execute_from_step(self, step: Optional[Step]) -> None:
+    def __run_from_step(self, step: Optional[Step]) -> None:
         if step is None:
             return
         else:
             if isinstance(step.execute(), ErrorOutput):
                 return
             else:
-                self.__execute_from_step(next(iter(step.children), None))
-
-    def __next_unfinished_step(self, step: Optional[Step]) -> Optional[Step]:
-        if step is None:
-            return None
-        elif step.is_finished():
-            return self.__next_unfinished_step(next(iter(step.children), None))
-        else:
-            return step
+                self.__run_from_step(next(iter(step.children), None))

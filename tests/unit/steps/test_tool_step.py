@@ -1,3 +1,4 @@
+from warpspeed.artifacts import ErrorOutput
 from warpspeed.steps import ToolStep, ToolSubstep
 from warpspeed.tools import PingPongTool
 from tests.mocks.mock_value_driver import MockValueDriver
@@ -6,50 +7,57 @@ from warpspeed.structures import Pipeline
 
 class TestToolStep:
     def test_run(self):
-        output = """Action: {"tool": "exit"}"""
+        output = """Output: done"""
 
-        step = ToolStep("test", tool=PingPongTool())
+        step = ToolStep("test", tool=PingPongTool(), max_substeps=10)
         pipeline = Pipeline(prompt_driver=MockValueDriver(output))
 
         pipeline.add_step(step)
 
         result = pipeline.run()
 
-        assert len(step.substeps) == 1
-        assert step.substeps[0].action_name == "exit"
-        assert step.substeps[0].action_input is None
-        assert result.output.value == """Action: {"tool": "exit"}"""
+        assert len(step._substeps) == 1
+        assert step._substeps[0].tool_input is None
+        assert result.output.value == "done"
 
-    def test_parse_tool_action(self):
-        valid_json = """{"tool": "test", "input": "test input"}"""
-        invalid_json = """{"tool"$ "test", "input"^ "test input"}"""
-        success_result = ("test", "test input")
-        error_result = ("error", f"error: invalid input, try again")
+    def test_run_max_substeps(self):
+        output = """Action: {"tool": "test"}"""
+
+        step = ToolStep("test", tool=PingPongTool(), max_substeps=3)
+        pipeline = Pipeline(prompt_driver=MockValueDriver(output))
+
+        pipeline.add_step(step)
+
+        pipeline.run()
+
+        assert len(step._substeps) == 3
+        assert isinstance(step.output, ErrorOutput)
+
+    def test_init_from_prompt(self):
+        valid_input = """Thought: need to test\nAction: {"tool": "test", "input": "test input"}\nObservation: test 
+        observation\nOutput: test output"""
         step = ToolStep("test", tool=PingPongTool())
 
         Pipeline().add_step(step)
 
-        assert step.parse_tool_action("") == error_result
-        assert step.parse_tool_action(valid_json) == error_result
-        assert step.parse_tool_action(f"Something Action: {valid_json}") == error_result
-        assert step.parse_tool_action(f"Something\nAction: {valid_json} something") == error_result
-        assert step.parse_tool_action(f"Action: {invalid_json}") == error_result
+        substep = step.add_substep(ToolSubstep(valid_input))
 
-        assert step.parse_tool_action(f"Action: {valid_json}") == success_result
-        assert step.parse_tool_action(f"Action:{valid_json}") == success_result
-        assert step.parse_tool_action(f"Something\nAction: {valid_json}") == success_result
-        assert step.parse_tool_action(f"Something\nAction: {valid_json}\n") == success_result
-        assert step.parse_tool_action(f"Something\nAction: {valid_json}\n\n") == success_result
+        assert substep.thought == "need to test"
+        assert substep.tool_name == "test"
+        assert substep.tool_input == "test input"
+        assert substep.output.value == "test output"
 
     def test_add_substep(self):
         step = ToolStep("test", tool=PingPongTool())
-        substep1 = ToolSubstep("test1", tool_step=step, action_name="exit", action_input="test")
-        substep2 = ToolSubstep("test2", tool_step=step, action_name="exit", action_input="test")
+        substep1 = ToolSubstep("test1", tool_name="test", tool_input="test")
+        substep2 = ToolSubstep("test2", tool_name="test", tool_input="test")
+
+        Pipeline().add_step(step)
 
         step.add_substep(substep1)
         step.add_substep(substep2)
 
-        assert len(step.substeps) == 2
+        assert len(step._substeps) == 2
 
         assert len(substep1.children) == 1
         assert len(substep1.parents) == 0
@@ -61,8 +69,10 @@ class TestToolStep:
 
     def test_find_substep(self):
         step = ToolStep("test", tool=PingPongTool())
-        substep1 = ToolSubstep("test1", tool_step=step, action_name="exit", action_input="test")
-        substep2 = ToolSubstep("test2", tool_step=step, action_name="exit", action_input="test")
+        substep1 = ToolSubstep("test1", tool_name="test", tool_input="test")
+        substep2 = ToolSubstep("test2", tool_name="test", tool_input="test")
+
+        Pipeline().add_step(step)
 
         step.add_substep(substep1)
         step.add_substep(substep2)
