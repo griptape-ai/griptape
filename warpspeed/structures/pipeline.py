@@ -16,6 +16,10 @@ if TYPE_CHECKING:
 class Pipeline(Structure):
     memory: Optional[PipelineMemory] = field(default=None, kw_only=True)
 
+    def __attrs_post_init__(self):
+        if self.memory:
+            self.memory.pipeline = self
+
     def first_step(self) -> Optional[Step]:
         return None if self.is_empty() else self.steps[0]
 
@@ -63,8 +67,7 @@ class Pipeline(Structure):
         if self.memory:
             run_context = PipelineRun(
                 prompt=self.first_step().render_prompt(),
-                output=self.last_step().output,
-                structure_id=self.id
+                output=self.last_step().output
             )
 
             self.memory.add_run(run_context)
