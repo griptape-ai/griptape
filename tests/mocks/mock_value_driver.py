@@ -7,6 +7,7 @@ from warpspeed.artifacts import TextOutput
 @define
 class MockValueDriver(PromptDriver):
     value: str
+    model: str = "test-model"
     tokenizer: Tokenizer = TiktokenTokenizer()
 
     def run(self, **kwargs) -> TextOutput:
