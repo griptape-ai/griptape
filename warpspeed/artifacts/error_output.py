@@ -11,4 +11,5 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class ErrorOutput(StructureArtifact):
+    exception: Optional[Exception] = field(default=None, kw_only=True)
     step: Optional[Step] = field(default=None, kw_only=True)

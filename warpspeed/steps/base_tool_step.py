@@ -33,12 +33,12 @@ class BaseToolStep(PromptStep, ABC):
             if substep.output is None:
                 if len(self._substeps) >= self.max_substeps:
                     substep.output = ErrorOutput(
-                        Exception(f"Exceeded maximum tool execution limit of {self.max_substeps} per step"),
+                        f"Exceeded maximum tool execution limit of {self.max_substeps} per step",
                         step=self
                     )
                 elif substep.tool_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
-                    substep.tool.output = TextOutput(substep.prompt_template)
+                    substep.output = TextOutput(substep.prompt_template)
                 else:
                     substep.before_run()
                     substep.run()
