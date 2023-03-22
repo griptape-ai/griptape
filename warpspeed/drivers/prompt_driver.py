@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 @define
 class PromptDriver(ABC):
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    model: str
     tokenizer: Tokenizer
 
     @abstractmethod

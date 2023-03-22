@@ -3,6 +3,7 @@ from warpspeed.schemas import PolymorphicSchema, BaseSchema
 
 
 class OpenAiPromptDriverSchema(BaseSchema):
+    model = fields.Str()
     tokenizer = fields.Nested(PolymorphicSchema())
     temperature = fields.Float()
     user = fields.Str()

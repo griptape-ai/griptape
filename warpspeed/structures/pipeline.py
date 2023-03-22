@@ -17,6 +17,8 @@ class Pipeline(Structure):
     memory: Optional[PipelineMemory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self):
+        super().__attrs_post_init__()
+
         if self.memory:
             self.memory.pipeline = self
 

@@ -2,15 +2,12 @@ from __future__ import annotations
 import json
 import logging
 import uuid
-from rich.logging import RichHandler
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
 from attrs import define, field, Factory
-
-from warpspeed.artifacts import StructureArtifact
+from rich.logging import RichHandler
 from warpspeed.drivers import PromptDriver, OpenAiPromptDriver
-from warpspeed.memory import PipelineRun
 from warpspeed.utils import J2
 
 if TYPE_CHECKING:
@@ -23,6 +20,7 @@ class Structure(ABC):
     LOGGER_NAME = "warpspeed"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
+    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     prompt_driver: PromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     steps: list[Step] = field(factory=list, kw_only=True)
