@@ -16,7 +16,7 @@ class OpenAiPromptDriver(PromptDriver):
     temperature: float = field(default=0.5, kw_only=True)
     user: str = field(default="", kw_only=True)
 
-    def run(self, value: any) -> TextOutput:
+    def try_run(self, value: any) -> TextOutput:
         if self.tokenizer.is_chat():
             return self.__run_chat(value)
         else:

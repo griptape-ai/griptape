@@ -1,10 +1,8 @@
 from marshmallow import fields, post_load
-from warpspeed.schemas import PolymorphicSchema, BaseSchema
+from warpspeed.schemas import PromptDriverSchema
 
 
-class OpenAiPromptDriverSchema(BaseSchema):
-    model = fields.Str()
-    tokenizer = fields.Nested(PolymorphicSchema())
+class OpenAiPromptDriverSchema(PromptDriverSchema):
     temperature = fields.Float()
     user = fields.Str()
 

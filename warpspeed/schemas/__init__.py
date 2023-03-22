@@ -6,6 +6,7 @@ from warpspeed.schemas.rule_schema import RuleSchema
 
 from warpspeed.schemas.tiktoken_tokenizer_schema import TiktokenTokenizerSchema
 
+from warpspeed.schemas.prompt_driver_schema import PromptDriverSchema
 from warpspeed.schemas.openai_prompt_driver_schema import OpenAiPromptDriverSchema
 
 from warpspeed.schemas.ping_pong_tool_schema import PingPongToolSchema
@@ -36,6 +37,7 @@ __all__ = [
 
     "TiktokenTokenizerSchema",
 
+    "PromptDriverSchema",
     "OpenAiPromptDriverSchema",
 
     "PingPongToolSchema",

@@ -9,5 +9,5 @@ class MockDriver(PromptDriver):
     model: str = "test-model"
     tokenizer: Tokenizer = TiktokenTokenizer()
 
-    def run(self, value: str) -> TextOutput:
+    def try_run(self, value: str) -> TextOutput:
         return TextOutput(value=f"mock output", meta={})
