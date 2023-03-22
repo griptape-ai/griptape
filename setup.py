@@ -25,7 +25,7 @@ setup(
         "marshmallow>=3",
         "marshmallow-enum>=1.5",
         "graphlib",
-        "llama_index",
+        "llama_index==0.4.23",
         "wikipedia",
         "tiktoken>=0.3",
         "gspread",
