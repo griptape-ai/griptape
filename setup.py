@@ -13,6 +13,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/usewarpspeed/warpspeed",
     author_email="hello@warpspeed.cc",
+    author="Vasily Vasinov", 
     license="Apache 2.0",
     packages=find_packages(),
     include_package_data=True,
