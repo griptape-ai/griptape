@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "email",
+  "title": "email_sender",
   "description": "This tool can send emails. Only use it when the user explicitly says to send an email",
   "type": "object",
   "properties": {
     "tool": {
       "type": "string",
-      "enum": ["email"]
+      "enum": ["email_sender"]
     },
     "input": {
       "type": "object",

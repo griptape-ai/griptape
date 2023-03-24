@@ -8,7 +8,7 @@ class TiktokenTokenizer(Tokenizer):
     DEFAULT_MODEL = "gpt-3.5-turbo"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
-    TOKEN_OFFSET = 7
+    TOKEN_OFFSET = 8
 
     MODEL_PREFIXES_TO_MAX_TOKENS = {
         "gpt-4-32k": 32768,

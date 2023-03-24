@@ -10,7 +10,7 @@
     },
     "input": {
       "type": "string",
-      "description": "Arithmetic expression parsable in pure Python. Single line only. Don't use any imports or external libraries."
+      "description": "Arithmetic expression parsable in pure Python. Single line only. Don't use any imports or external libraries"
     }
   },
   "required": ["tool", "input"]

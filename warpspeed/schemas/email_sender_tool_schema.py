@@ -2,7 +2,7 @@ from marshmallow import post_load, fields
 from warpspeed.schemas import BaseSchema
 
 
-class EmailToolSchema(BaseSchema):
+class EmailSenderToolSchema(BaseSchema):
     host = fields.Str(required=True)
     port = fields.Int(required=True)
     from_email = fields.Str(required=True)
@@ -10,6 +10,6 @@ class EmailToolSchema(BaseSchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from warpspeed.tools import EmailTool
+        from warpspeed.tools import EmailSenderTool
 
-        return EmailTool(**data)
+        return EmailSenderTool(**data)

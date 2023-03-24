@@ -20,7 +20,7 @@ class TestTiktokenTokenizer:
     def test_tokens_left(self):
         tokenizer = TiktokenTokenizer()
 
-        assert tokenizer.tokens_left("foo bar huzzah") == 4084
+        assert tokenizer.tokens_left("foo bar huzzah") == 4083
 
     def test_encoding(self):
         tokenizer = TiktokenTokenizer()

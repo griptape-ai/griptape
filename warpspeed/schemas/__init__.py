@@ -17,12 +17,14 @@ from warpspeed.schemas.step_schema import StepSchema
 from warpspeed.schemas.prompt_step_schema import PromptStepSchema
 from warpspeed.schemas.tool_step_schema import ToolStepSchema
 from warpspeed.schemas.toolkit_step_schema import ToolkitStepSchema
-from warpspeed.schemas.email_tool_schema import EmailToolSchema
+from warpspeed.schemas.email_sender_tool_schema import EmailSenderToolSchema
 from warpspeed.schemas.wiki_tool_schema import WikiToolSchema
 from warpspeed.schemas.google_sheets_reader_tool_schema import GoogleSheetsReaderToolSchema
 from warpspeed.schemas.google_sheets_writer_tool_schema import GoogleSheetsWriterToolSchema
 from warpspeed.schemas.sql_client_tool_schema import SqlClientToolSchema
 from warpspeed.schemas.aws_tool_schema import AwsToolSchema
+from warpspeed.schemas.web_scraper_tool_schema import WebScraperToolSchema
+from warpspeed.schemas.google_search_tool_schema import GoogleSearchToolSchema
 
 from warpspeed.schemas.structure_schema import StructureSchema
 from warpspeed.schemas.pipeline_schema import PipelineSchema
@@ -43,12 +45,14 @@ __all__ = [
     "PingPongToolSchema",
     "CalculatorToolSchema",
     "DataScientistToolSchema",
-    "EmailToolSchema",
+    "EmailSenderToolSchema",
     "WikiToolSchema",
     "GoogleSheetsReaderToolSchema",
     "GoogleSheetsWriterToolSchema",
     "SqlClientToolSchema",
     "AwsToolSchema",
+    "WebScraperToolSchema",
+    "GoogleSearchToolSchema",
 
     "StepSchema",
     "PromptStepSchema",
