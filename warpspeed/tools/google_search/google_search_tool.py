@@ -44,22 +44,25 @@ class GoogleSearchTool(Tool):
         } for r in raw_results]
 
     def search_api(self, query: str) -> list[dict]:
-        pages = math.ceil(self.results_count / 10)
-        results = []
+        url = f"https://www.googleapis.com/customsearch/v1?" \
+              f"key={self.api_search_key}&" \
+              f"cx={self.api_search_id}&" \
+              f"q={query}&" \
+              f"start=0&" \
+              f"num={self.results_count}&" \
+              f"gl={self.api_country}"
+        response = requests.get(url)
 
-        for i in range(0, pages):
-            start = i * 10 + 1
-
-            url = f"https://www.googleapis.com/customsearch/v1?key=" \
-                  f"{self.api_search_key}&" \
-                  f"cx={self.api_search_id}&" \
-                  f"q={query}&start={start}&" \
-                  f"num=10&" \
-                  f"gl={self.api_country}"
-            response = requests.get(url)
+        if response.status_code == 200:
             data = response.json()
-            results += data["items"]
 
-        links = [r["link"] for r in results]
+            links = [{
+                "url": r["link"],
+                "title": r["title"],
+                "description": r["snippet"],
+            } for r in data["items"]]
 
-        return links
+            return links
+        else:
+            raise Exception(f"Google Search API returned an error with status code "
+                            f"{response.status_code} and reason '{response.reason}'")
