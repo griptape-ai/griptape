@@ -25,7 +25,7 @@ class GoogleSearchTool(Tool):
         except Exception as e:
             return f"error searching Google: {e}"
 
-    @stopit.threading_timeoutable(default="not finished")
+    @stopit.threading_timeoutable(default="Google search timed out")
     def gsearch_wrapper(self, query: str) -> str:
         if self.use_api:
             results_list = self.search_api(query)
