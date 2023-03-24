@@ -34,7 +34,7 @@ setup(
         "rich>=13",
         "trafilatura",
         "requests",
-        "googlesearch-python@git+ssh://git@github.com/usewarpspeed/googlesearch.git#egg=googlesearch-python"
+        "googlesearch-python@git+https://github.com/usewarpspeed/googlesearch.git#egg=googlesearch-python"
         "stopit"
     ]
 )
