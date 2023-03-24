@@ -20,7 +20,7 @@ class GoogleSheetsReaderTool(Tool):
             return f"error interacting with sheet: {e}"
 
     def __execute_action(self, action: str, args: dict[str]) -> Union[str, list[str]]:
-        gc = gspread.service_account(filename=self.auth_key_path)
+        gc = gspread.service_account(filename=self.auth_key_path, scopes=gspread.auth.READONLY_SCOPES)
         spreadsheet = gc.open_by_key(self.spreadsheet_key)
 
         if self.worksheet_name is None:

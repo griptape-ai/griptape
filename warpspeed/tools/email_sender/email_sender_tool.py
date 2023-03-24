@@ -8,12 +8,12 @@ from attrs import define, field
 
 
 @define
-class EmailTool(Tool):
+class EmailSenderTool(Tool):
     host: str = field(kw_only=True)
     port: int = field(kw_only=True)
     from_email: str = field(kw_only=True)
     use_ssl: bool = field(default=True, kw_only=True)
-    password: Optional[str] = field(default=os.getenv('WARPSPEED_EMAIL_TOOL_PASSWORD'), kw_only=True)
+    password: Optional[str] = field(default=os.getenv("WARPSPEED_EMAIL_SENDER_TOOL_PASSWORD"), kw_only=True)
 
     def run(self, args: dict[str]) -> str:
         server = smtplib.SMTP(self.host, self.port)

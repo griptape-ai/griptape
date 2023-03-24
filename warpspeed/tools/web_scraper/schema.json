@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "web_scraper",
+  "description": "This tool can scrape web pages for title, full text, summary, author, or keywords. It can also run complex search queries on web pages",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["web_scraper"]
+    },
+    "input": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Valid HTTP URL to scrape"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["get_title" ,"get_full_text", "summarize", "search", "get_author", "get_keywords"],
+          "description": "Action name that the tool should use."
+        }
+      },
+      "required": ["url", "action"],
+      "allOf": [
+        {
+          "if": {
+            "properties": { "action": { "const": "search" } }
+          },
+          "then": {
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Search query for the page"
+              }
+            },
+            "required": ["query"]
+          }
+        }
+      ]
+    }
+  },
+  "required": ["tool", "input"]
+}

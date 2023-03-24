@@ -31,6 +31,10 @@ setup(
         "tiktoken>=0.3",
         "gspread",
         "sqlalchemy>1",
-        "rich>=13"
+        "rich>=13",
+        "trafilatura",
+        "requests",
+        "googlesearch-python",
+        "stopit"
     ]
 )

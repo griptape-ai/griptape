@@ -197,7 +197,7 @@ pipeline.add_steps(
         "Calculate 3^12 and send an email with the answer and the following text to hello@warpspeed.cc:\n{{ input }}",
         tools=[
             CalculatorTool(),
-            EmailTool(
+            EmailSenderTool(
                 host="localhost",
                 port=1025,
                 from_email="hello@warpspeed.cc",
@@ -213,7 +213,7 @@ pipeline.run()
 
 `ToolStep` instructs an LLM to use a `WikiTool` that provides a JSON schema and *few-shot learning* examples that the LLM is automatically "trained" on to interact with Warpspeed. The LLM can then decide to use a tool to provide a better prompt response by adding substeps that follow the Thought/Action/Observation ReAct routine. For this prompt, it can obviously use a Wiki tool to obtain new information.
 
-`ToolkitStep` works the same way, but it provides multiple tools for the LLM to choose from depending on the task. In our example, the LLM uses `CalculatorTool` to calculate `3^12` and `EmailTool` to send an email.
+`ToolkitStep` works the same way, but it provides multiple tools for the LLM to choose from depending on the task. In our example, the LLM uses `CalculatorTool` to calculate `3^12` and `EmailSenderTool` to send an email.
 
 Warpspeed supports multiple tools and allows you to implement your own.
 
@@ -279,6 +279,17 @@ This will make `numpy` available as `np` via `import numpy as np` and `math` as 
 > **Warning**
 > By default, this tool uses `PythonRunner`, which executes code locally with sanitized `exec`. This is not ideal for production environments, where you generally want to execute arbitrary code in a container. We are working on adding more code runner options soon.
 
+### `GoogleSearchTool`
+
+This tool enables LLMs to search Google. Every search returns links, titles, and short descriptions. Search has two modes: scraping (default) and API-based. To enable API-based search set `use_api`, `api_search_key`, and `api_search_id` params.
+
+```python
+ToolStep(
+    "Find the latest on LLMs",
+    tool=GoogleSearchTool()
+)
+```
+
 ### `GoogleSheetsWriterTool` and `GoogleSheetsReaderTool`
 
 These tools enable LLMs to read from and write to Google Sheets worksheets. Before using those tools, make sure to download the service account credentials JSON file and share your spreadsheet with the service account. For more information refer to the `gspread` [auth docs](https://docs.gspread.org/en/latest/oauth2.html).
@@ -309,14 +320,14 @@ ToolStep(
 )
 ```
 
-### `EmailTool`
+### `EmailSenderTool`
 
 This tool enables LLMs to send emails.
 
 ```python
 ToolStep(
     "send an email with a haiku to hello@warpspeed.cc",
-    EmailTool(
+    EmailSenderTool(
         host="localhost",
         port=1025,
         from_email="hello@warpspeed.cc",
@@ -329,6 +340,19 @@ For debugging purposes, you can run a local SMTP server that the LLM will send e
 
 ```shell
 python -m smtpd -c DebuggingServer -n localhost:1025
+```
+
+User the `WARPSPEED_EMAIL_SENDER_TOOL_PASSWORD` environment variable to set the password.
+
+### `WebScraperTool`
+
+This tool enables LLMs to scrape web pages for full text, summaries, authors, titles, and keywords. It can also execute search queries to answer specific questions about the page.
+
+```python
+ToolStep(
+    "Can you tell me what's on this page? https://github.com/usewarpspeed/warpspeed",
+    tool=WebScraperTool()
+)
 ```
 
 ### `WikiTool`

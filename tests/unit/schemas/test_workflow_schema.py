@@ -4,7 +4,7 @@ from warpspeed.utils import TiktokenTokenizer
 from warpspeed.steps import PromptStep, ToolStep, ToolkitStep, Step
 from warpspeed.structures import Workflow
 from warpspeed.schemas import WorkflowSchema
-from warpspeed.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailTool, WikiTool
+from warpspeed.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailSenderTool, WikiTool
 
 
 class TestWorkflowSchema:
@@ -24,7 +24,7 @@ class TestWorkflowSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
+            EmailSenderTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
             WikiTool()
         ]
 
@@ -67,7 +67,7 @@ class TestWorkflowSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
+            EmailSenderTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
             WikiTool()
         ]
 

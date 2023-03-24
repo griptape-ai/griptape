@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "google_search",
+  "description": "This tool can search Google",
+  "type": "object",
+  "properties": {
+    "tool": {
+      "type": "string",
+      "enum": ["google_search"]
+    },
+    "input": {
+      "type": "string",
+      "description": "Google search query that returns a list of pages with titles, descriptions and URLs"
+    }
+  },
+  "required": ["tool", "input"]
+}
