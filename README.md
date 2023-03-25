@@ -517,6 +517,18 @@ Pipeline(
 
 This will progressively summarize the whole pipeline except for the last two steps.
 
+## Running Tests
+To run unit tests:
+1. Clone the repo.
+2. pip install -r requirements-dev.txt
+3. pip install warpspeed
+4. cd into warpspeed
+To run unit test:
+pytest tests/unit/
+To run the tests with *coverage*:
+pytest --cov --cov-report html tests/unit/
+To see the coverage report go to warpspeed\htmlcov\index.html
+
 ## Contributing
 
 Contributions in the form of bug reports, feature ideas, or pull requests are super welcome! Take a look at the current issues and if you'd like to help please submit a pull request with some tests.
