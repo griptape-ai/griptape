@@ -3,7 +3,6 @@ import json
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from warpspeed.artifacts import ErrorOutput
-from warpspeed.schemas import PipelineSchema
 from warpspeed.structures import Structure
 from warpspeed.memory import PipelineMemory, PipelineRun
 from warpspeed.utils import J2
@@ -67,12 +66,12 @@ class Pipeline(Structure):
         self.__run_from_step(self.first_step())
 
         if self.memory:
-            run_context = PipelineRun(
-                prompt=self.first_step().render_prompt(),
-                output=self.last_step().output
+            run = PipelineRun(
+                input=self.first_step().render_prompt(),
+                output=self.last_step().output.value
             )
 
-            self.memory.add_run(run_context)
+            self.memory.add_run(run)
 
         self._execution_args = ()
 
@@ -92,15 +91,19 @@ class Pipeline(Structure):
         return context
 
     def to_dict(self) -> dict:
+        from warpspeed.schemas import PipelineSchema
+
         return PipelineSchema().dump(self)
 
     @classmethod
-    def from_dict(cls, workflow_dict: dict) -> Pipeline:
-        return PipelineSchema().load(workflow_dict)
+    def from_dict(cls, pipeline_dict: dict) -> Pipeline:
+        from warpspeed.schemas import PipelineSchema
+
+        return PipelineSchema().load(pipeline_dict)
 
     @classmethod
-    def from_json(cls, workflow_json: str) -> Pipeline:
-        return Pipeline.from_dict(json.loads(workflow_json))
+    def from_json(cls, pipeline_json: str) -> Pipeline:
+        return Pipeline.from_dict(json.loads(pipeline_json))
 
     def __run_from_step(self, step: Optional[Step]) -> None:
         if step is None:

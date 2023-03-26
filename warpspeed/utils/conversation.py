@@ -14,8 +14,8 @@ class Conversation:
         lines = []
 
         for run in self.memory.runs:
-            lines.append(f"Q: {run.prompt}")
-            lines.append(f"A: {run.output.value}")
+            lines.append(f"Q: {run.input}")
+            lines.append(f"A: {run.output}")
 
         return lines
 

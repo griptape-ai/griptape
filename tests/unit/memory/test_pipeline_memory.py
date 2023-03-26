@@ -11,13 +11,13 @@ class TestMemory:
 
         assert memory.is_empty()
 
-        memory.add_run(PipelineRun(prompt="test", output=TextOutput("test")))
+        memory.add_run(PipelineRun(input="test", output="test"))
 
         assert not memory.is_empty()
 
     def test_add_run(self):
         memory = PipelineMemory()
-        run = PipelineRun(prompt="test", output=TextOutput("test"))
+        run = PipelineRun(input="test", output="test")
 
         memory.add_run(run)
 
@@ -25,7 +25,7 @@ class TestMemory:
 
     def test_to_string(self):
         memory = PipelineMemory()
-        run = PipelineRun(prompt="test", output=TextOutput("test"))
+        run = PipelineRun(input="test", output="test")
 
         memory.add_run(run)
 

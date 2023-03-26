@@ -517,17 +517,21 @@ Pipeline(
 
 This will progressively summarize the whole pipeline except for the last two steps.
 
-## Running Tests
-To run unit tests:
-1. Clone the repo.
-2. pip install -r requirements-dev.txt
-3. pip install warpspeed
-4. cd into warpspeed
-To run unit test:
-pytest tests/unit/
-To run the tests with *coverage*:
-pytest --cov --cov-report html tests/unit/
-To see the coverage report go to warpspeed\htmlcov\index.html
+Finally, you can persist memory by using memory drivers. Warpspeed comes with one memory driver for automatically storing memory in a file on the disk. Here is how you can initialize memory with a driver:
+
+```python
+PipelineMemory(
+    driver=DiskMemoryDriver(file_path="memory.json")
+)
+```
+
+To load memory:
+
+```python
+DiskMemoryDriver(file_path="memory.json").load()
+```
+
+You can easily build drivers for your own data stores by extending `MemoryDriver`. You only need to implement `store` and `load` methods.
 
 ## Contributing
 

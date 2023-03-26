@@ -53,8 +53,8 @@ class WebScraperTool(Tool):
             elif action == "search":
                 return str(index.query(args.get("query"))).strip()
             elif action == "summarize":
-                return str(index.query("Give me a short summary of this text")).strip()
+                return str(index.query("Generate a summary")).strip()
             elif action == "get_keywords":
-                return str(index.query("Give me a list of keywords describing this text")).strip()
+                return str(index.query("Generate a list of keywords")).strip()
             else:
                 return "invalid action name"

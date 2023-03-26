@@ -4,7 +4,6 @@ import json
 from graphlib import TopologicalSorter
 from attrs import define, field
 from warpspeed.artifacts import ErrorOutput
-from warpspeed.schemas import WorkflowSchema
 from warpspeed.steps import Step
 from warpspeed.structures import Structure
 from warpspeed.utils import J2
@@ -88,10 +87,14 @@ class Workflow(Structure):
         return [self.find_step(step_id) for step_id in TopologicalSorter(self.to_graph()).static_order()]
 
     def to_dict(self) -> dict:
+        from warpspeed.schemas import WorkflowSchema
+
         return WorkflowSchema().dump(self)
 
     @classmethod
     def from_dict(cls, workflow_dict: dict) -> Workflow:
+        from warpspeed.schemas import WorkflowSchema
+
         return WorkflowSchema().load(workflow_dict)
 
     @classmethod

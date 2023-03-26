@@ -8,8 +8,8 @@ Summarize the following conversation:
 {% endif %}
 
 {% for run in runs %}
-Input: {{ run.prompt }}
-Output: {{ run.output.value }}
+Input: {{ run.input }}
+Output: {{ run.output }}
 
 {% endfor %}
 {% if summary %}
