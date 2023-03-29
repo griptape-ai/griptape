@@ -1,1 +1,2 @@
-myst-parser
+mkdocs
+mkdocs-material
