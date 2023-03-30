@@ -3,6 +3,8 @@ theme:
     name: material
     features:
         - content.code.copy
+        - navigation.sections
+        - navigation.expand
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -11,3 +13,22 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+nav:
+- Home: "index.md"
+- Getting Started:
+  - Overview: "getting_started/index.md"
+  - Pipelines and Workflows: "getting_started/structures.md"
+  - Memory: "getting_started/memory.md"
+  - Tools: "getting_started/tools.md"
+- Tools:
+  - Custom Tools: "tools/custom_tools.md"
+  - Warpspeed Tools:
+      - AWS: "tools/warpspeed_tools/aws.md"
+      - Calculator: "tools/warpspeed_tools/calculator.md"
+      - DataScientist: "tools/warpspeed_tools/data_scientist.md"
+      - EmailSender: "tools/warpspeed_tools/email_sender.md"
+      - GoogleSearch: "tools/warpspeed_tools/google_search.md"
+      - GoogleSheets: "tools/warpspeed_tools/google_sheets.md"
+      - SqlClient: "tools/warpspeed_tools/sql_client.md"
+      - WebScraper: "tools/warpspeed_tools/web_scraper.md"
+      - Wiki: "tools/warpspeed_tools/wiki.md"

@@ -1,4 +1,4 @@
-# Introduction
+# Tools
 
 The most powerful feature of Warpspeed is the ability of workflow and pipeline prompt steps to generate *chains of thought* and use tools that can interact with the outside world. We use the [ReAct](https://arxiv.org/abs/2210.03629) technique to implement reasoning and acting in the underlying LLMs without using any fine-tuning. There are two types of tool steps that Warpspeed supports:
 

@@ -1,4 +1,4 @@
-# AI Pipelines and Workflows
+# Pipelines and Workflows
 
 Pipelines are lists of steps that are executed sequentially. Pipelines can have `Memory`, which makes them ideal for storing LLM conversations.
 

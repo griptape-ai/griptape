@@ -2,6 +2,7 @@
 
 [![Tests](https://github.com/usewarpspeed/warpspeed/actions/workflows/tests.yml/badge.svg)](https://github.com/usewarpspeed/warpspeed/actions/workflows/tests.yml)
 [![PyPI Version](https://img.shields.io/pypi/v/warpspeed.svg)](https://pypi.python.org/pypi/warpspeed)
+[![Docs](https://readthedocs.org/projects/warpspeed/badge/)](https://warpspeed.readthedocs.io)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/usewarpspeed.svg?style=social&label=Follow%20%40usewarpspeed)](https://twitter.com/usewarpspeed)
 
