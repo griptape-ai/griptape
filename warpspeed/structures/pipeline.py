@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 @define
 class Pipeline(Structure):
     memory: Optional[PipelineMemory] = field(default=None, kw_only=True)
+    autoprune_memory: bool = field(default=True, kw_only=True)
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
@@ -41,22 +42,37 @@ class Pipeline(Structure):
         return step
 
     def prompt_stack(self, step: Step) -> list[str]:
-        stack = super().prompt_stack(step)
-
-        if self.memory:
-            stack.append(
-                self.memory.to_prompt_string()
-            )
-
-        stack.append(
-            J2("prompts/pipeline.j2").render(
-                has_memory=self.memory is not None,
-                finished_steps=self.finished_steps(),
-                current_step=step
-            )
+        final_stack = super().prompt_stack(step)
+        step_prompt = J2("prompts/pipeline.j2").render(
+            has_memory=self.memory is not None,
+            finished_steps=self.finished_steps(),
+            current_step=step
         )
 
-        return stack
+        if self.memory:
+            if self.autoprune_memory:
+                last_n = len(self.memory.runs)
+                should_prune = True
+
+                while should_prune and last_n > 0:
+                    temp_stack = final_stack.copy()
+                    temp_stack.append(step_prompt)
+
+                    temp_stack.append(self.memory.to_prompt_string(last_n))
+
+                    if self.prompt_driver.tokenizer.tokens_left(self.stack_to_prompt_string(temp_stack)) > 0:
+                        should_prune = False
+                    else:
+                        last_n -= 1
+
+                if last_n > 0:
+                    final_stack.append(self.memory.to_prompt_string(last_n))
+            else:
+                final_stack.append(self.memory.to_prompt_string())
+
+        final_stack.append(step_prompt)
+
+        return final_stack
 
     def run(self, *args) -> Step:
         self._execution_args = args

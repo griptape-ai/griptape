@@ -100,6 +100,47 @@ class TestPipeline:
         assert len(second_step.parents) == 1
         assert len(second_step.children) == 0
 
+    def test_prompt_stack_without_memory(self):
+        pipeline = Pipeline(
+            prompt_driver=MockDriver()
+        )
+
+        step1 = PromptStep("test")
+        step2 = PromptStep("test")
+
+        pipeline.add_step(step1)
+
+        # context and first input
+        assert len(pipeline.prompt_stack(step1)) == 2
+
+        pipeline.run()
+
+        pipeline.add_step(step2)
+
+        # context and second input
+        assert len(pipeline.prompt_stack(step2)) == 2
+
+    def test_prompt_stack_with_memory(self):
+        pipeline = Pipeline(
+            prompt_driver=MockDriver(),
+            memory=PipelineMemory()
+        )
+
+        step1 = PromptStep("test")
+        step2 = PromptStep("test")
+
+        pipeline.add_step(step1)
+
+        # context and first input
+        assert len(pipeline.prompt_stack(step1)) == 2
+
+        pipeline.run()
+
+        pipeline.add_step(step2)
+
+        # context, memory, and second input
+        assert len(pipeline.prompt_stack(step2)) == 3
+
     def test_to_prompt_string(self):
         pipeline = Pipeline(
             prompt_driver=MockDriver(),

@@ -92,7 +92,10 @@ class Structure(ABC):
         return stack
 
     def to_prompt_string(self, step: Step) -> str:
-        return str.join("\n", self.prompt_stack(step))
+        return self.stack_to_prompt_string(self.prompt_stack(step))
+
+    def stack_to_prompt_string(self, stack: list[str]) -> str:
+        return str.join("\n", stack)
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)

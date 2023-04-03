@@ -37,9 +37,9 @@ class PipelineMemory:
     def is_empty(self) -> bool:
         return not self.runs
 
-    def to_prompt_string(self) -> str:
+    def to_prompt_string(self, last_n: Optional[int] = None) -> str:
         return J2("prompts/memory.j2").render(
-            runs=self.runs
+            runs=self.runs if last_n is None else self.runs[-last_n:]
         )
 
     def to_json(self) -> str:
