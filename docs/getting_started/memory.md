@@ -23,7 +23,7 @@ This works great for shorter pipelines but fails if the whole workflow context n
 ```python
 Pipeline(
     memory=SummaryPipelineMemory(
-        summarizer=CompletionDriverSummarizer(
+        summarizer=PromptDriverSummarizer(
             driver=OpenAiPromptDriver()
         ),
         offset=2

@@ -1,4 +1,4 @@
-from warpspeed.summarizers import CompletionDriverSummarizer
+from warpspeed.summarizers import PromptDriverSummarizer
 from warpspeed.memory import SummaryPipelineMemory
 from tests.mocks.mock_driver import MockDriver
 from warpspeed.steps import PromptStep
@@ -7,7 +7,7 @@ from warpspeed.structures import Pipeline
 
 class TestSummaryMemory:
     def test_unsummarized_steps(self):
-        memory = SummaryPipelineMemory(offset=1, summarizer=CompletionDriverSummarizer(driver=MockDriver()))
+        memory = SummaryPipelineMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockDriver()))
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 
@@ -23,7 +23,7 @@ class TestSummaryMemory:
         assert len(memory.unsummarized_runs()) == 1
 
     def test_after_run(self):
-        memory = SummaryPipelineMemory(offset=1, summarizer=CompletionDriverSummarizer(driver=MockDriver()))
+        memory = SummaryPipelineMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockDriver()))
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 

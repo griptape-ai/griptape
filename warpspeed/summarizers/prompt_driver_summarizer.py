@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class CompletionDriverSummarizer(Summarizer):
+class PromptDriverSummarizer(Summarizer):
     driver: PromptDriver = field(kw_only=True)
 
     def summarize(self, memory: PipelineMemory, runs: list[PipelineRun]) -> Optional[str]:
