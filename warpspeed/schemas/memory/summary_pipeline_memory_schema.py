@@ -1,5 +1,5 @@
 from marshmallow import fields, post_load
-from warpspeed.schemas import BaseSchema, PipelineRunSchema, PipelineMemorySchema
+from warpspeed.schemas import PipelineMemorySchema
 
 
 class SummaryPipelineMemorySchema(PipelineMemorySchema):
