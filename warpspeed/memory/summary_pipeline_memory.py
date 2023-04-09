@@ -18,8 +18,18 @@ class SummaryPipelineMemory(PipelineMemory):
     summary: Optional[str] = field(default=None, kw_only=True)
     summary_index: int = field(default=0, kw_only=True)
 
-    def unsummarized_runs(self) -> list[PipelineRun]:
-        return self.runs[self.summary_index:]
+    def unsummarized_runs(self, last_n: Optional[int] = None) -> list[PipelineRun]:
+        summary_index_runs = self.runs[self.summary_index:]
+
+        if last_n:
+            last_n_runs = self.runs[-last_n:]
+
+            if len(summary_index_runs) > len(last_n_runs):
+                return last_n_runs
+            else:
+                return summary_index_runs
+        else:
+            return summary_index_runs
 
     def process_add_run(self, run: PipelineRun) -> None:
         super().process_add_run(run)
@@ -32,10 +42,10 @@ class SummaryPipelineMemory(PipelineMemory):
                 self.summary = self.summarizer.summarize(self, runs_to_summarize)
                 self.summary_index = 1 + self.runs.index(runs_to_summarize[-1])
 
-    def to_prompt_string(self):
+    def to_prompt_string(self, last_n: Optional[int] = None):
         return J2("prompts/memory.j2").render(
             summary=self.summary,
-            runs=self.unsummarized_runs()
+            runs=self.unsummarized_runs(last_n)
         )
 
     def to_dict(self) -> dict:
