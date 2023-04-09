@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "skatepark"
-version = "0.7.0"
+version = "0.8.0"
 description = "Python framework for AI workflows and pipelines."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
