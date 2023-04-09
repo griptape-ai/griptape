@@ -1,3 +1,0 @@
-recursive-include warpspeed/templates/ *.j2
-recursive-include warpspeed/tools/ *.j2
-recursive-include warpspeed/tools/ *.json
