@@ -4,10 +4,10 @@ from warpspeed.schemas.polymorphic_schema import PolymorphicSchema
 
 from warpspeed.schemas.rule_schema import RuleSchema
 
-from warpspeed.schemas.tiktoken_tokenizer_schema import TiktokenTokenizerSchema
+from warpspeed.schemas.tokenizers.tiktoken_tokenizer_schema import TiktokenTokenizerSchema
 
-from warpspeed.schemas.prompt_driver_schema import PromptDriverSchema
-from warpspeed.schemas.openai_prompt_driver_schema import OpenAiPromptDriverSchema
+from warpspeed.schemas.drivers.prompt_driver_schema import PromptDriverSchema
+from warpspeed.schemas.drivers.openai_prompt_driver_schema import OpenAiPromptDriverSchema
 
 from warpspeed.schemas.tools.ping_pong_tool_schema import PingPongToolSchema
 from warpspeed.schemas.tools.calculator_tool_schema import CalculatorToolSchema
@@ -31,9 +31,9 @@ from warpspeed.schemas.memory.pipeline_memory_schema import PipelineMemorySchema
 from warpspeed.schemas.memory.buffer_pipeline_memory_schema import BufferPipelineMemorySchema
 from warpspeed.schemas.memory.summary_pipeline_memory_schema import SummaryPipelineMemorySchema
 
-from warpspeed.schemas.structure_schema import StructureSchema
-from warpspeed.schemas.pipeline_schema import PipelineSchema
-from warpspeed.schemas.workflow_schema import WorkflowSchema
+from warpspeed.schemas.structures.structure_schema import StructureSchema
+from warpspeed.schemas.structures.pipeline_schema import PipelineSchema
+from warpspeed.schemas.structures.workflow_schema import WorkflowSchema
 
 __all__ = [
     "BaseSchema",

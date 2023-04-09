@@ -1,5 +1,5 @@
 from marshmallow import post_load, fields
-from warpspeed.schemas.structure_schema import StructureSchema
+from warpspeed.schemas import StructureSchema
 
 
 class PipelineSchema(StructureSchema):
