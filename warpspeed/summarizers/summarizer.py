@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from abc import ABC, abstractmethod
-from attrs import define
+from attrs import define, field, Factory
 
 if TYPE_CHECKING:
     from warpspeed.memory import PipelineMemory, PipelineRun
@@ -9,6 +9,8 @@ if TYPE_CHECKING:
 
 @define
 class Summarizer(ABC):
+    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+
     @abstractmethod
     def summarize(self, memory: PipelineMemory, runs: list[PipelineRun]) -> Optional[str]:
         ...

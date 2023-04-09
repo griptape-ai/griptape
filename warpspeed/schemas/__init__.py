@@ -26,6 +26,9 @@ from warpspeed.schemas.tools.aws_tool_schema import AwsToolSchema
 from warpspeed.schemas.tools.web_scraper_tool_schema import WebScraperToolSchema
 from warpspeed.schemas.tools.google_search_tool_schema import GoogleSearchToolSchema
 
+from warpspeed.schemas.summarizers.summarizer_schema import SummarizerSchema
+from warpspeed.schemas.summarizers.prompt_driver_summarizer_schema import PromptDriverSummarizerSchema
+
 from warpspeed.schemas.memory.pipeline_run_schema import PipelineRunSchema
 from warpspeed.schemas.memory.pipeline_memory_schema import PipelineMemorySchema
 from warpspeed.schemas.memory.buffer_pipeline_memory_schema import BufferPipelineMemorySchema
@@ -63,6 +66,9 @@ __all__ = [
     "PromptStepSchema",
     "ToolStepSchema",
     "ToolkitStepSchema",
+
+    "SummarizerSchema",
+    "PromptDriverSummarizerSchema",
 
     "PipelineRunSchema",
     "PipelineMemorySchema",
