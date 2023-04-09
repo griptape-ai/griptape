@@ -1,11 +1,15 @@
 [tool.poetry]
-name = "skatepark"
+name = "skatepark-lib"
 version = "0.8.0"
 description = "Python framework for AI workflows and pipelines."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
 readme = "README.md"
 repository = "https://github.com/griptape-ai/skatepark"
+
+packages = [
+    {include = "skatepark"}
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"

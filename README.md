@@ -19,7 +19,7 @@ Please note that Skatepark is in early development. Its APIs and documentation a
 First, install Skatepark with `pip`:
 
 ```
-pip install skatepark
+pip install skatepark-lib
 ```
 
 Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. Skatepark uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts and to work with [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/index.html) data structures.
@@ -538,7 +538,7 @@ Before running tests:
 
 1. `git clone https://github.com/griptape-ai/skatepark`
 2. `pip install -r requirements-dev.txt`
-3. `pip install skatepark`
+3. `pip install skatepark-lib`
 4. `cd skatepark`
 
 To run unit tests: `pytest tests/unit/`
