@@ -1,10 +1,10 @@
 import os
 import pytest
 from tests.mocks.mock_driver import MockDriver
-from warpspeed.drivers import DiskMemoryDriver
-from warpspeed.memory import PipelineMemory
-from warpspeed.steps import PromptStep
-from warpspeed.structures import Pipeline
+from skatepark.drivers import DiskMemoryDriver
+from skatepark.memory import PipelineMemory
+from skatepark.steps import PromptStep
+from skatepark.structures import Pipeline
 
 
 class TestPromptDriver:

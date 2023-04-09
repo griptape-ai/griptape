@@ -1,8 +1,8 @@
 from tests.mocks.mock_driver import MockDriver
-from warpspeed.memory import PipelineMemory
-from warpspeed.steps import PromptStep
-from warpspeed.structures import Pipeline
-from warpspeed.utils import Conversation
+from skatepark.memory import PipelineMemory
+from skatepark.steps import PromptStep
+from skatepark.structures import Pipeline
+from skatepark.utils import Conversation
 
 
 class TestConversation:

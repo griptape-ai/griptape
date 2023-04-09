@@ -1,4 +1,0 @@
-pytest~=7.1
-pytest-cover
-twine>=4
-sphinx>=3

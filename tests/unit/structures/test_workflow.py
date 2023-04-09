@@ -1,8 +1,8 @@
 import json
 from tests.mocks.mock_driver import MockDriver
-from warpspeed.rules import Rule
-from warpspeed.steps import PromptStep, Step
-from warpspeed.structures import Workflow
+from skatepark.rules import Rule
+from skatepark.steps import PromptStep, Step
+from skatepark.structures import Workflow
 
 
 class TestWorkflow:

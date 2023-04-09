@@ -1,10 +1,10 @@
-from warpspeed.drivers import OpenAiPromptDriver
-from warpspeed.rules import Rule
-from warpspeed.utils import TiktokenTokenizer
-from warpspeed.steps import PromptStep, ToolStep, ToolkitStep, Step
-from warpspeed.structures import Workflow
-from warpspeed.schemas import WorkflowSchema
-from warpspeed.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailSenderTool, WikiTool
+from skatepark.drivers import OpenAiPromptDriver
+from skatepark.rules import Rule
+from skatepark.utils import TiktokenTokenizer
+from skatepark.steps import PromptStep, ToolStep, ToolkitStep, Step
+from skatepark.structures import Workflow
+from skatepark.schemas import WorkflowSchema
+from skatepark.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailSenderTool, WikiTool
 
 
 class TestWorkflowSchema:
@@ -24,7 +24,7 @@ class TestWorkflowSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailSenderTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
+            EmailSenderTool(host="localhost", port=1025, from_email="test@skateparktest.com", use_ssl=False),
             WikiTool()
         ]
 
@@ -67,7 +67,7 @@ class TestWorkflowSchema:
             PingPongTool(),
             CalculatorTool(),
             DataScientistTool(),
-            EmailSenderTool(host="localhost", port=1025, from_email="test@warpspeedtest.com", use_ssl=False),
+            EmailSenderTool(host="localhost", port=1025, from_email="test@skateparktest.com", use_ssl=False),
             WikiTool()
         ]
 

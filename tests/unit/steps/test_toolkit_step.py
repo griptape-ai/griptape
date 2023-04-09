@@ -1,7 +1,7 @@
-from warpspeed.steps import ToolkitStep
-from warpspeed.tools import PingPongTool, CalculatorTool
+from skatepark.steps import ToolkitStep
+from skatepark.tools import PingPongTool, CalculatorTool
 from tests.mocks.mock_value_driver import MockValueDriver
-from warpspeed.structures import Pipeline
+from skatepark.structures import Pipeline
 
 
 class TestToolkitStep:

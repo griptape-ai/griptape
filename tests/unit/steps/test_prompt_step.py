@@ -1,6 +1,6 @@
-from warpspeed.steps import PromptStep
+from skatepark.steps import PromptStep
 from tests.mocks.mock_driver import MockDriver
-from warpspeed.structures import Pipeline
+from skatepark.structures import Pipeline
 
 
 class TestPromptStep:

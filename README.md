@@ -1,41 +1,40 @@
-# Warpspeed
+# Skatepark
 
-[![Tests](https://github.com/usewarpspeed/warpspeed/actions/workflows/tests.yml/badge.svg)](https://github.com/usewarpspeed/warpspeed/actions/workflows/tests.yml)
-[![PyPI Version](https://img.shields.io/pypi/v/warpspeed.svg)](https://pypi.python.org/pypi/warpspeed)
+[![Tests](https://github.com/griptape-ai/skatepark/actions/workflows/tests.yml/badge.svg)](https://github.com/griptape-ai/skatepark/actions/workflows/tests.yml)
+[![PyPI Version](https://img.shields.io/pypi/v/skatepark.svg)](https://pypi.python.org/pypi/skatepark)
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/usewarpspeed.svg?style=social&label=Follow%20%40usewarpspeed)](https://twitter.com/usewarpspeed)
 
-Warpspeed is a Python framework for creating AI workflow DAGs and pipelines. It augments transformer models with tools for accessing external APIs, such as searches, calculators, spreadsheets, docs, email, and many others. Our initial focus is on supporting large language models (LLMs) but we plan to expand framework's capabilities to cover text-to-anything functionality soon.
+Skatepark is a Python framework for creating AI workflow DAGs and pipelines. It augments transformer models with tools for accessing external APIs, such as searches, calculators, spreadsheets, docs, email, and many others. Our initial focus is on supporting large language models (LLMs) but we plan to expand framework's capabilities to cover text-to-anything functionality soon.
 
-With Warpspeed, you can accomplish the following:
+With Skatepark, you can accomplish the following:
 
 1. 🚰 Build sequential **AI pipelines** and sprawling **DAG workflows** for complex use cases.
 2. 🧰️ Augment LLMs with **chain of thought** capabilities and **external tools**, such as calculators, web search, spreadsheet editors, and API connectors.
 3. 💾 Add **memory** to AI pipelines for context preservation and summarization.
 
-Please note that Warpspeed is in early development. Its APIs and documentation are subject to change. For now, this README file is the most accurate source of documentation and examples.
+Please note that Skatepark is in early development. Its APIs and documentation are subject to change. For now, this README file is the most accurate source of documentation and examples.
 
 ## Getting Started
-First, install Warpspeed with `pip`:
+First, install Skatepark with `pip`:
 
 ```
-pip install warpspeed
+pip install skatepark
 ```
 
-Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. Warpspeed uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts and to work with [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/index.html) data structures.
+Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. Skatepark uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts and to work with [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/index.html) data structures.
 
-With Warpspeed, you can create *structures*, such as `Pipelines` and `Workflows`, that are composed of different types of steps. You can also define structures as JSON objects and load them into Warpspeed dynamically. Let's start with defining a simple pipeline.
+With Skatepark, you can create *structures*, such as `Pipelines` and `Workflows`, that are composed of different types of steps. You can also define structures as JSON objects and load them into Skatepark dynamically. Let's start with defining a simple pipeline.
 
 ## 🚰 AI Pipelines and Workflows
 
 Pipelines are lists of steps that are executed sequentially. Pipelines can have `Memory`, which makes them ideal for storing LLM conversations.
 
 ```python
-from warpspeed import utils
-from warpspeed.memory import PipelineMemory
-from warpspeed.steps import PromptStep
-from warpspeed.structures import Pipeline
+from skatepark import utils
+from skatepark.memory import PipelineMemory
+from skatepark.steps import PromptStep
+from skatepark.structures import Pipeline
 
 pipeline = Pipeline(
     memory=PipelineMemory()
@@ -81,7 +80,7 @@ In addition to user-defined fields, the `context` object contains the following:
 - `parents`: parent steps referencable by IDs.
 - `children`: child steps referencable by IDs.
 
-Warpspeed uses OpenAI's `gpt-3.5-turbo` model by default. If you want to use a different model, set a custom OpenAI prompt driver:
+Skatepark uses OpenAI's `gpt-3.5-turbo` model by default. If you want to use a different model, set a custom OpenAI prompt driver:
 
 ```python
 Pipeline(
@@ -179,7 +178,7 @@ with open("workflow.json", "r") as file:
 
 ## 🧰️ Tools
 
-The most powerful feature of Warpspeed is the ability of workflow and pipeline prompt steps to generate *chains of thought* and use tools that can interact with the outside world. We use the [ReAct](https://arxiv.org/abs/2210.03629) technique to implement reasoning and acting in the underlying LLMs without using any fine-tuning. There are two types of tool steps that Warpspeed supports:
+The most powerful feature of Skatepark is the ability of workflow and pipeline prompt steps to generate *chains of thought* and use tools that can interact with the outside world. We use the [ReAct](https://arxiv.org/abs/2210.03629) technique to implement reasoning and acting in the underlying LLMs without using any fine-tuning. There are two types of tool steps that Skatepark supports:
 
 - `ToolStep` takes one tool as a parameter and passes it to the LLM that decides if it should use it to respond to the prompt.
 - `ToolkitStep` takes multiple tools as a parameter, so that the underlying LLM can decide which tool to use for every chain of thought step.
@@ -195,13 +194,13 @@ pipeline.add_steps(
         tool=WikiTool()
     ),
     ToolkitStep(
-        "Calculate 3^12 and send an email with the answer and the following text to hello@warpspeed.cc:\n{{ input }}",
+        "Calculate 3^12 and send an email with the answer and the following text to hello@skatepark.cc:\n{{ input }}",
         tools=[
             CalculatorTool(),
             EmailSenderTool(
                 host="localhost",
                 port=1025,
-                from_email="hello@warpspeed.cc",
+                from_email="hello@skatepark.cc",
                 use_ssl=False
             )
         ],
@@ -212,11 +211,11 @@ pipeline.add_steps(
 pipeline.run()
 ```
 
-`ToolStep` instructs an LLM to use a `WikiTool` that provides a JSON schema and *few-shot learning* examples that the LLM is automatically "trained" on to interact with Warpspeed. The LLM can then decide to use a tool to provide a better prompt response by adding substeps that follow the Thought/Action/Observation ReAct routine. For this prompt, it can obviously use a Wiki tool to obtain new information.
+`ToolStep` instructs an LLM to use a `WikiTool` that provides a JSON schema and *few-shot learning* examples that the LLM is automatically "trained" on to interact with Skatepark. The LLM can then decide to use a tool to provide a better prompt response by adding substeps that follow the Thought/Action/Observation ReAct routine. For this prompt, it can obviously use a Wiki tool to obtain new information.
 
 `ToolkitStep` works the same way, but it provides multiple tools for the LLM to choose from depending on the task. In our example, the LLM uses `CalculatorTool` to calculate `3^12` and `EmailSenderTool` to send an email.
 
-Warpspeed supports multiple tools and allows you to implement your own.
+Skatepark supports multiple tools and allows you to implement your own.
 
 ### `AwsTool`
 
@@ -256,7 +255,7 @@ This tool enables LLMs to execute SQL statements via [SQLAlchemy](https://www.sq
 ToolStep(
     "list the last 20 items in the orders table",
     tool=SqlClientTool(
-        engine_url="sqlite:///warpspeed.db",
+        engine_url="sqlite:///skatepark.db",
         engine_hint="sqlite"
     )
 )
@@ -327,11 +326,11 @@ This tool enables LLMs to send emails.
 
 ```python
 ToolStep(
-    "send an email with a haiku to hello@warpspeed.cc",
+    "send an email with a haiku to hello@skatepark.cc",
     EmailSenderTool(
         host="localhost",
         port=1025,
-        from_email="hello@warpspeed.cc",
+        from_email="hello@skatepark.cc",
         use_ssl=False
     )
 )
@@ -351,7 +350,7 @@ This tool enables LLMs to scrape web pages for full text, summaries, authors, ti
 
 ```python
 ToolStep(
-    "Can you tell me what's on this page? https://github.com/usewarpspeed/warpspeed",
+    "Can you tell me what's on this page? https://github.com/griptape-ai/skatepark",
     tool=WebScraperTool()
 )
 ```
@@ -369,14 +368,14 @@ ToolStep(
 
 ### Building Your Own Tool
 
-Building your own tools is easy with Warpspeed! All you need is a Python class, JSON schema to describe tool actions to the LLM, a set of examples, and a Marshmallow schema for serialization/deserialization. Let's walk through all the required steps and build a simple random number generator tool.
+Building your own tools is easy with Skatepark! All you need is a Python class, JSON schema to describe tool actions to the LLM, a set of examples, and a Marshmallow schema for serialization/deserialization. Let's walk through all the required steps and build a simple random number generator tool.
 
 First, create a Python class in a separate directory that generates a random float and optionally truncates it:
 
 ```python
 import random
 from typing import Optional
-from warpspeed.tools import Tool
+from skatepark.tools import Tool
 
 
 class RandomGenTool(Tool):
@@ -432,7 +431,7 @@ Finally, if you want to use `to_json` and `from_json` serialization/deserializat
 
 ```python
 from marshmallow import post_load
-from warpspeed.schemas import BaseSchema
+from skatepark.schemas import BaseSchema
 
 
 class RandomGenToolSchema(BaseSchema):
@@ -462,7 +461,7 @@ __all__ = [
 Finally, to use the tool:
 
 ```python
-from warpspeed.steps import ToolStep
+from skatepark.steps import ToolStep
 from random_gen.random_gen_tool import RandomGenTool
 
 
@@ -481,11 +480,11 @@ If you are deserializing a workflow or a pipeline from JSON, make sure to specif
 }
 ```
 
-Check out other [Warpspeed tools](https://github.com/usewarpspeed/warpspeed/tree/main/warpspeed/tools) to learn more about tools' implementation details. 
+Check out other [Skatepark tools](https://github.com/griptape-ai/skatepark/tree/main/skatepark/tools) to learn more about tools' implementation details. 
 
 ## 💾 Memory
 
-Warpspeed supports different types of memory for pipelines. Due to the non-linear nature of workflows you can't use memory with them yet, but we are currently investigating other possibilities.
+Skatepark supports different types of memory for pipelines. Due to the non-linear nature of workflows you can't use memory with them yet, but we are currently investigating other possibilities.
 
 By default, pipelines don't initialize memory, so you have to explicitly pass it to them:
 
@@ -518,7 +517,7 @@ Pipeline(
 
 This will progressively summarize the whole pipeline except for the last two steps.
 
-Finally, you can persist memory by using memory drivers. Warpspeed comes with one memory driver for automatically storing memory in a file on the disk. Here is how you can initialize memory with a driver:
+Finally, you can persist memory by using memory drivers. Skatepark comes with one memory driver for automatically storing memory in a file on the disk. Here is how you can initialize memory with a driver:
 
 ```python
 PipelineMemory(
@@ -537,16 +536,16 @@ You can easily build drivers for your own data stores by extending `MemoryDriver
 ## Running Tests
 Before running tests:
 
-1. `git clone https://github.com/usewarpspeed/warpspeed`
+1. `git clone https://github.com/griptape-ai/skatepark`
 2. `pip install -r requirements-dev.txt`
-3. `pip install warpspeed`
-4. `cd warpspeed`
+3. `pip install skatepark`
+4. `cd skatepark`
 
 To run unit tests: `pytest tests/unit/`
 
 To run the tests with *coverage*: `pytest --cov --cov-report html tests/unit/`
 
-To see the coverage report go to warpspeed/htmlcov/index.html
+To see the coverage report go to skatepark/htmlcov/index.html
 
 ## Contributing
 
@@ -554,4 +553,4 @@ Contributions in the form of bug reports, feature ideas, or pull requests are su
 
 ## License
 
-Warpspeed is available under the Apache 2.0 License.
+Skatepark is available under the Apache 2.0 License.

@@ -1,8 +1,8 @@
-from warpspeed.summarizers import PromptDriverSummarizer
-from warpspeed.memory import SummaryPipelineMemory
+from skatepark.summarizers import PromptDriverSummarizer
+from skatepark.memory import SummaryPipelineMemory
 from tests.mocks.mock_driver import MockDriver
-from warpspeed.steps import PromptStep
-from warpspeed.structures import Pipeline
+from skatepark.steps import PromptStep
+from skatepark.structures import Pipeline
 
 
 class TestSummaryMemory:

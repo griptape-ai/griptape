@@ -1,7 +1,7 @@
 from attr import define
-from warpspeed.drivers import PromptDriver
-from warpspeed.utils import TiktokenTokenizer, Tokenizer
-from warpspeed.artifacts import TextOutput
+from skatepark.drivers import PromptDriver
+from skatepark.utils import TiktokenTokenizer, Tokenizer
+from skatepark.artifacts import TextOutput
 
 
 @define

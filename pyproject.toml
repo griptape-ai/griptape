@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "warpspeed"
+name = "skatepark"
 version = "0.7.0"
 description = "Python framework for AI workflows and pipelines."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
 readme = "README.md"
-repository = "https://github.com/usewarpspeed/warpspeed"
+repository = "https://github.com/griptape-ai/skatepark"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -29,8 +29,9 @@ warpspeed-googlesearch-python = ">=1.1.1"
 stopit = "*"
 
 [tool.poetry.group.test.dependencies]
-pytest = "*"
-pytest-mock = "*"
+pytest = "~=7.1"
+pytest-cover = "*"
+twine = ">=4"
 
 [build-system]
 requires = ["poetry-core"]

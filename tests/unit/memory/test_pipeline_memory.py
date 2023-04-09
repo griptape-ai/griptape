@@ -1,8 +1,8 @@
-from warpspeed.artifacts import TextOutput
-from warpspeed.steps import PromptStep, ToolStep
-from warpspeed.memory import PipelineMemory, PipelineRun
-from warpspeed.structures import Pipeline
-from warpspeed.tools import PingPongTool
+from skatepark.artifacts import TextOutput
+from skatepark.steps import PromptStep, ToolStep
+from skatepark.memory import PipelineMemory, PipelineRun
+from skatepark.structures import Pipeline
+from skatepark.tools import PingPongTool
 
 
 class TestMemory:

@@ -1,7 +1,7 @@
 from tests.mocks.mock_failing_driver import MockFailingDriver
-from warpspeed.artifacts import ErrorOutput, TextOutput
-from warpspeed.steps import PromptStep
-from warpspeed.structures import Pipeline
+from skatepark.artifacts import ErrorOutput, TextOutput
+from skatepark.steps import PromptStep
+from skatepark.structures import Pipeline
 
 
 class TestPromptDriver:

@@ -1,11 +1,11 @@
 import json
-from warpspeed.artifacts import TextOutput
-from warpspeed.rules import Rule
-from warpspeed.utils import TiktokenTokenizer
-from warpspeed.steps import PromptStep, Step
-from warpspeed.memory import PipelineMemory
+from skatepark.artifacts import TextOutput
+from skatepark.rules import Rule
+from skatepark.utils import TiktokenTokenizer
+from skatepark.steps import PromptStep, Step
+from skatepark.memory import PipelineMemory
 from tests.mocks.mock_driver import MockDriver
-from warpspeed.structures import Pipeline
+from skatepark.structures import Pipeline
 
 
 class TestPipeline:

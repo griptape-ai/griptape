@@ -1,4 +1,4 @@
-from warpspeed.utils import TiktokenTokenizer
+from skatepark.utils import TiktokenTokenizer
 
 
 class TestTiktokenTokenizer:

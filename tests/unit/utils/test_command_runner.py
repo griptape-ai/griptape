@@ -1,4 +1,4 @@
-from warpspeed.utils import CommandRunner
+from skatepark.utils import CommandRunner
 
 
 class TestCommandRunner:
