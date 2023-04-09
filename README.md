@@ -1,7 +1,7 @@
 # Skatepark
 
 [![Tests](https://github.com/griptape-ai/skatepark/actions/workflows/tests.yml/badge.svg)](https://github.com/griptape-ai/skatepark/actions/workflows/tests.yml)
-[![PyPI Version](https://img.shields.io/pypi/v/skatepark.svg)](https://pypi.python.org/pypi/skatepark)
+[![PyPI Version](https://img.shields.io/pypi/v/skatepark-lib.svg)](https://pypi.python.org/pypi/skatepark-lib)
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
 
