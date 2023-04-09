@@ -5,7 +5,7 @@ import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
-from attrs import define, field, Factory
+from attr import define, field, Factory
 from rich.logging import RichHandler
 from warpspeed.drivers import PromptDriver, OpenAiPromptDriver
 from warpspeed.utils import J2

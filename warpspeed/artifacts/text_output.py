@@ -1,5 +1,5 @@
 from typing import Optional
-from attrs import define, field
+from attr import define, field
 from warpspeed.artifacts import StructureArtifact
 from warpspeed.utils import TiktokenTokenizer, Tokenizer
 

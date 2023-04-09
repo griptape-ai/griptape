@@ -1,6 +1,6 @@
 import json
 import openai
-from attrs import define, field, Factory
+from attr import define, field, Factory
 from warpspeed.drivers import PromptDriver
 from warpspeed.utils import TiktokenTokenizer
 from warpspeed.artifacts import TextOutput

@@ -3,7 +3,7 @@ import logging
 import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
-from attrs import define, field, Factory
+from attr import define, field, Factory
 from warpspeed.utils import Tokenizer
 
 if TYPE_CHECKING:

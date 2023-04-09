@@ -1,5 +1,5 @@
 import subprocess
-from attrs import define
+from attr import define
 
 
 @define

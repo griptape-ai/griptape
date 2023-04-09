@@ -1,4 +1,4 @@
-from attrs import define
+from attr import define
 from warpspeed.tools import Tool
 from warpspeed.utils import PythonRunner
 

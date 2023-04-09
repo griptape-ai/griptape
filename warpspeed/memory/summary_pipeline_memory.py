@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 from typing import Optional
-from attrs import define, field
+from attr import define, field
 from warpspeed.utils import J2
 from warpspeed.memory import PipelineMemory
 

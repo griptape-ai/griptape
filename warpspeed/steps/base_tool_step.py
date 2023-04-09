@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field
+from attr import define, field
 from warpspeed.tools import Tool
 from warpspeed.utils import J2
 from warpspeed.steps import PromptStep

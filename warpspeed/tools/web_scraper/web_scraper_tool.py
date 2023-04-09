@@ -1,7 +1,7 @@
 import json
 from typing import Union
 import trafilatura
-from attrs import define, field
+from attr import define, field
 from llama_index import GPTSimpleVectorIndex, Document
 from trafilatura.settings import use_config
 from warpspeed.tools import Tool

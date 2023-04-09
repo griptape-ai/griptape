@@ -1,4 +1,4 @@
-from attrs import define
+from attr import define
 from warpspeed.drivers import PromptDriver
 from warpspeed.utils import TiktokenTokenizer, Tokenizer
 from warpspeed.artifacts import TextOutput

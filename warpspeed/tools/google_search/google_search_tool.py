@@ -3,7 +3,7 @@ import math
 from typing import Optional
 import requests
 import stopit
-from attrs import define, field
+from attr import define, field
 from warpspeed.tools import Tool
 from googlesearch import search as google_search
 

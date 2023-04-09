@@ -1,4 +1,4 @@
-from attrs import define, field
+from attr import define, field
 from warpspeed.tools import Tool
 from sqlalchemy import create_engine, text
 

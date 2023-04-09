@@ -2,7 +2,7 @@ import json
 from typing import Optional
 from warpspeed import utils
 from warpspeed.tools import Tool
-from attrs import define, field
+from attr import define, field
 
 
 @define

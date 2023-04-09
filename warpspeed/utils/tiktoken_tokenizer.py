@@ -1,4 +1,4 @@
-from attrs import define, field
+from attr import define, field
 import tiktoken
 from warpspeed.utils import Tokenizer
 

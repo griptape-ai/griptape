@@ -3,7 +3,7 @@ import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field, Factory
+from attr import define, field, Factory
 from warpspeed.artifacts import ErrorOutput
 
 if TYPE_CHECKING:

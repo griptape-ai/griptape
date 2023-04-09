@@ -1,4 +1,4 @@
-from attrs import define, field
+from attr import define, field
 from warpspeed.drivers import MemoryDriver
 from warpspeed.memory import PipelineMemory
 

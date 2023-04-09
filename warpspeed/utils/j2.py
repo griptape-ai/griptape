@@ -1,6 +1,6 @@
 import os
 from typing import Optional
-from attrs import define, field, Factory
+from attr import define, field, Factory
 from jinja2 import Environment, FileSystemLoader
 from warpspeed.utils import TiktokenTokenizer, Tokenizer
 import warpspeed

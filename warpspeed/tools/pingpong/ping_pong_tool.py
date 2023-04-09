@@ -1,5 +1,5 @@
 from warpspeed.tools import Tool
-from attrs import define
+from attr import define
 
 
 @define

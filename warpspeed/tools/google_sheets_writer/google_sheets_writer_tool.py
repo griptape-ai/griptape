@@ -1,6 +1,6 @@
 from typing import Optional
 import gspread
-from attrs import define, field
+from attr import define, field
 from gspread.utils import ValueInputOption
 from warpspeed.tools import Tool
 

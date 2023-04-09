@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from attrs import define, field
+from attr import define, field
 from warpspeed.memory import PipelineMemory, PipelineRun
 
 

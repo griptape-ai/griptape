@@ -1,6 +1,6 @@
 import uuid
 
-from attrs import define, field, Factory
+from attr import define, field, Factory
 
 from warpspeed.utils import J2
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 import ast
 import re
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field
+from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from warpspeed.artifacts import TextOutput, ErrorOutput

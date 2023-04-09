@@ -1,7 +1,7 @@
 import inspect
 import json
 import os
-from attrs import define, field
+from attr import define, field
 from abc import ABC, abstractmethod
 from typing import Optional
 from warpspeed import utils

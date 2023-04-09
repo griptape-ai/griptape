@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attrs import define
+from attr import define
 
 
 @define(frozen=True)

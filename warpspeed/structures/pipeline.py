@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field
+from attr import define, field
 from warpspeed.artifacts import ErrorOutput
 from warpspeed.structures import Structure
 from warpspeed.memory import PipelineMemory, PipelineRun

@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field, Factory
+from attr import define, field, Factory
 from warpspeed.memory import PipelineRun
 from warpspeed.utils import J2
 

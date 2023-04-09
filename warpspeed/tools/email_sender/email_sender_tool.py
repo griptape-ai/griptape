@@ -4,7 +4,7 @@ from typing import Optional
 from warpspeed.tools import Tool
 import smtplib
 from email.message import EmailMessage
-from attrs import define, field
+from attr import define, field
 
 
 @define

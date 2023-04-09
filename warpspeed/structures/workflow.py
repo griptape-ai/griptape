@@ -2,7 +2,7 @@ from __future__ import annotations
 import concurrent.futures as futures
 import json
 from graphlib import TopologicalSorter
-from attrs import define, field
+from attr import define, field
 from warpspeed.artifacts import ErrorOutput
 from warpspeed.steps import Step
 from warpspeed.structures import Structure

@@ -3,7 +3,7 @@ import wikipedia
 from llama_index import GPTSimpleVectorIndex, Document
 from warpspeed.structures import Structure
 from warpspeed.tools import Tool
-from attrs import define
+from attr import define
 
 
 @define

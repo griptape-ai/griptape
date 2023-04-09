@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field
+from attr import define, field
 from warpspeed.utils import J2
 from warpspeed.drivers import PromptDriver
 from warpspeed.summarizers.summarizer import Summarizer

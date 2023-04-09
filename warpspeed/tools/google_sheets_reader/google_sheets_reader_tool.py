@@ -1,6 +1,6 @@
 import re
 from typing import Optional, Union
-from attrs import define, field
+from attr import define, field
 import gspread
 from warpspeed.tools import Tool
 
