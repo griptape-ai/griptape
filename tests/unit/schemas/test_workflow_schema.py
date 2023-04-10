@@ -4,7 +4,6 @@ from skatepark.utils import TiktokenTokenizer
 from skatepark.steps import PromptStep, ToolStep, ToolkitStep, Step
 from skatepark.structures import Workflow
 from skatepark.schemas import WorkflowSchema
-from skatepark.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailSenderTool, WikiTool
 
 
 class TestWorkflowSchema:
@@ -21,19 +20,16 @@ class TestWorkflowSchema:
         )
 
         tools = [
-            PingPongTool(),
-            CalculatorTool(),
-            DataScientistTool(),
-            EmailSenderTool(host="localhost", port=1025, from_email="test@skateparktest.com", use_ssl=False),
-            WikiTool()
+            "calculator",
+            "google_search"
         ]
 
         workflow.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool())
+            ToolStep("test tool prompt", tool_name="calculator")
         )
 
-        step = ToolkitStep("test router step", tools=tools)
+        step = ToolkitStep("test router step", tool_names=tools)
 
         workflow.steps[0].add_child(step)
         workflow.steps[1].add_child(step)
@@ -64,19 +60,16 @@ class TestWorkflowSchema:
         )
 
         tools = [
-            PingPongTool(),
-            CalculatorTool(),
-            DataScientistTool(),
-            EmailSenderTool(host="localhost", port=1025, from_email="test@skateparktest.com", use_ssl=False),
-            WikiTool()
+            "calculator",
+            "google_search"
         ]
 
         workflow.add_steps(
             PromptStep("test prompt"),
-            ToolStep("test tool prompt", tool=PingPongTool())
+            ToolStep("test tool prompt", tool_name="calculator")
         )
 
-        step = ToolkitStep("test router step", tools=tools)
+        step = ToolkitStep("test router step", tool_names=tools)
 
         workflow.steps[0].add_child(step)
         workflow.steps[1].add_child(step)

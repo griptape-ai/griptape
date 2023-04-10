@@ -1,6 +1,5 @@
 from skatepark.artifacts import ErrorOutput
 from skatepark.steps import ToolStep, ToolSubstep
-from skatepark.tools import PingPongTool
 from tests.mocks.mock_value_driver import MockValueDriver
 from skatepark.structures import Pipeline
 
@@ -9,7 +8,7 @@ class TestToolStep:
     def test_run(self):
         output = """Output: done"""
 
-        step = ToolStep("test", tool=PingPongTool(), max_substeps=10)
+        step = ToolStep("test", tool_name="calculator", max_substeps=10)
         pipeline = Pipeline(prompt_driver=MockValueDriver(output))
 
         pipeline.add_step(step)
@@ -23,7 +22,7 @@ class TestToolStep:
     def test_run_max_substeps(self):
         output = """Action: {"tool": "test"}"""
 
-        step = ToolStep("test", tool=PingPongTool(), max_substeps=3)
+        step = ToolStep("test", tool_name="calculator", max_substeps=3)
         pipeline = Pipeline(prompt_driver=MockValueDriver(output))
 
         pipeline.add_step(step)
@@ -36,7 +35,7 @@ class TestToolStep:
     def test_init_from_prompt(self):
         valid_input = """Thought: need to test\nAction: {"tool": "test", "input": "test input"}\nObservation: test 
         observation\nOutput: test output"""
-        step = ToolStep("test", tool=PingPongTool())
+        step = ToolStep("test", tool_name="calculator")
 
         Pipeline().add_step(step)
 
@@ -48,7 +47,7 @@ class TestToolStep:
         assert substep.output.value == "test output"
 
     def test_add_substep(self):
-        step = ToolStep("test", tool=PingPongTool())
+        step = ToolStep("test", tool_name="calculator")
         substep1 = ToolSubstep("test1", tool_name="test", tool_input="test")
         substep2 = ToolSubstep("test2", tool_name="test", tool_input="test")
 
@@ -68,7 +67,7 @@ class TestToolStep:
         assert substep2.parents[0] == substep1
 
     def test_find_substep(self):
-        step = ToolStep("test", tool=PingPongTool())
+        step = ToolStep("test", tool_name="calculator")
         substep1 = ToolSubstep("test1", tool_name="test", tool_input="test")
         substep2 = ToolSubstep("test2", tool_name="test", tool_input="test")
 
@@ -81,7 +80,7 @@ class TestToolStep:
         assert step.find_substep(substep2.id) == substep2
 
     def test_find_tool(self):
-        tool = PingPongTool()
-        step = ToolStep("test", tool=PingPongTool())
+        tool = "calculator"
+        step = ToolStep("test", tool_name=tool)
 
         assert step.find_tool(tool.name) == tool

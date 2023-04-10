@@ -13,6 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
+griptape-core = ">=0.3.0"
 python-dotenv = ">=0.21"
 openai = ">=0.27"
 attrs = ">=22"
@@ -21,15 +22,8 @@ jsonschema = ">=4"
 marshmallow = ">=3"
 marshmallow-enum = ">=1.5"
 graphlib = "*"
-llama_index = "0.4.23"
-wikipedia = "*"
 tiktoken = ">=0.3"
-gspread = "*"
-sqlalchemy = ">1"
 rich = ">=13"
-trafilatura = "*"
-requests = "*"
-warpspeed-googlesearch-python = ">=1.1.1"
 stopit = "*"
 
 [tool.poetry.group.test.dependencies]

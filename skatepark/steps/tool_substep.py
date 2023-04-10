@@ -7,7 +7,7 @@ from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from skatepark.artifacts import TextOutput, ErrorOutput
 from skatepark.steps import PromptStep
-from skatepark.tools import Tool
+from griptape.core import BaseTool
 from skatepark.utils import J2
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ class ToolSubstep(PromptStep):
     tool_name: Optional[str] = field(default=None, kw_only=True)
     tool_input: Optional[str] = field(default=None, kw_only=True)
 
-    __tool: Optional[Tool] = None
+    __tool: Optional[BaseTool] = None
 
     def attach(self, tool_step: BaseToolStep):
         self.tool_step_id = tool_step.id

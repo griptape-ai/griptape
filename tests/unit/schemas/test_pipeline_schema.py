@@ -1,9 +1,8 @@
 from skatepark.drivers import OpenAiPromptDriver
 from skatepark.utils import TiktokenTokenizer
-from skatepark.steps import PromptStep, ToolStep, ToolkitStep, Step, ToolSubstep
+from skatepark.steps import PromptStep, ToolStep, ToolkitStep, Step
 from skatepark.structures import Pipeline
 from skatepark.schemas import PipelineSchema
-from skatepark.tools import PingPongTool, CalculatorTool, DataScientistTool, EmailSenderTool, WikiTool
 
 
 class TestPipelineSchema:
@@ -17,19 +16,16 @@ class TestPipelineSchema:
         )
 
         tools = [
-            PingPongTool(),
-            CalculatorTool(),
-            DataScientistTool(),
-            EmailSenderTool(host="localhost", port=1025, from_email="test@skateparktest.com", use_ssl=False),
-            WikiTool()
+            "calculator",
+            "google_search"
         ]
 
-        tool_step = ToolStep("test tool prompt", tool=PingPongTool())
+        tool_step = ToolStep("test tool prompt", tool_name="calculator")
 
         pipeline.add_steps(
             PromptStep("test prompt"),
             tool_step,
-            ToolkitStep("test router step", tools=tools)
+            ToolkitStep("test router step", tool_names=tools)
         )
 
         pipeline_dict = PipelineSchema().dump(pipeline)
@@ -53,19 +49,16 @@ class TestPipelineSchema:
         )
 
         tools = [
-            PingPongTool(),
-            CalculatorTool(),
-            DataScientistTool(),
-            EmailSenderTool(host="localhost", port=1025, from_email="test@skateparktest.com", use_ssl=False),
-            WikiTool()
+            "calculator",
+            "google_search"
         ]
 
-        tool_step = ToolStep("test tool prompt", tool=PingPongTool())
+        tool_step = ToolStep("test tool prompt", tool_name="calculator")
 
         pipeline.add_steps(
             PromptStep("test prompt"),
             tool_step,
-            ToolkitStep("test router step", tools=tools)
+            ToolkitStep("test router step", tool_names=tools)
         )
 
         workflow_dict = PipelineSchema().dump(pipeline)
