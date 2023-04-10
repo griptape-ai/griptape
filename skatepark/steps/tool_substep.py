@@ -61,7 +61,7 @@ class ToolSubstep(PromptStep):
 
                 self.output = TextOutput(observation)
         except Exception as e:
-            self.structure.logger.error(f"Substep {self.id}\nError: {type(e).__name__ }({e})")
+            self.structure.logger.error(f"Substep {self.id}\n{e}", exc_info=True)
 
             self.output = ErrorOutput(str(e), exception=e, step=self)
         finally:
