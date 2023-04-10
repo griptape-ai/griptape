@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 @define
 class PromptStep(Step):
-    prompt_template: str = field()
+    prompt_template: str = field(default="{{ args[0] }}")
     context: dict[str, any] = field(factory=dict, kw_only=True)
     driver: Optional[PromptDriver] = field(default=None, kw_only=True)
 
