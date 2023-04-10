@@ -69,6 +69,6 @@ class TestPipelineSchema:
         assert deserialized_pipeline.steps[0].child_ids[0] == pipeline.steps[1].id
         assert deserialized_pipeline.steps[0].state == Step.State.PENDING
         assert deserialized_pipeline.steps[1].parent_ids[0] == pipeline.steps[0].id
-        assert len(deserialized_pipeline.last_step().tools) == 5
+        assert len(deserialized_pipeline.last_step().tool_names) == 5
         assert deserialized_pipeline.prompt_driver.temperature == 0.12345
         assert deserialized_pipeline.prompt_driver.tokenizer.stop_sequence == "<test>"

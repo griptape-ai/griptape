@@ -5,6 +5,7 @@ from skatepark.utils.j2 import J2
 from skatepark.utils.python_runner import PythonRunner
 from skatepark.utils.command_runner import CommandRunner
 from skatepark.utils.conversation import Conversation
+from skatepark.utils.tool_loader import ToolLoader
 
 __all__ = [
     "Tokenizer",
@@ -12,7 +13,8 @@ __all__ = [
     "J2",
     "PythonRunner",
     "CommandRunner",
-    "Conversation"
+    "Conversation",
+    "ToolLoader"
 ]
 
 

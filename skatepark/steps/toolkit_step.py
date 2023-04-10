@@ -8,10 +8,12 @@ from skatepark.steps import BaseToolStep
 class ToolkitStep(BaseToolStep):
     tool_names: list[str] = field(kw_only=True)
 
-    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
-        for tool in self.tool_names:
-            if tool == tool_name:
-                # TODO: load tool
-                pass
+    @property
+    def tools(self) -> list[BaseTool]:
+        return [self.structure.tool_loader.load_tool(t) for t in self.tool_names]
 
-        return None
+    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
+        return next(
+            (t for t in self.tools if t.name == tool_name),
+            None
+        )

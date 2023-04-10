@@ -9,9 +9,12 @@ from skatepark.steps import BaseToolStep
 class ToolStep(BaseToolStep):
     tool_name: str = field(kw_only=True)
 
+    @property
+    def tool(self) -> Optional[BaseTool]:
+        return self.structure.tool_loader.load_tool(self.tool_name)
+
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         if self.tool_name == tool_name:
-            # TODO: load tool
-            pass
+            return self.tool
         else:
             return None
