@@ -42,7 +42,7 @@ class TestWorkflowSchema:
         assert workflow_dict["steps"][0]["child_ids"][0] == step.id
         assert workflow.steps[0].id in step.parent_ids
         assert workflow.steps[1].id in step.parent_ids
-        assert len(workflow_dict["steps"][-1]["tools"]) == 5
+        assert len(workflow_dict["steps"][-1]["tool_names"]) == 2
         assert workflow_dict["prompt_driver"]["temperature"] == 0.12345
         assert workflow_dict["prompt_driver"]["tokenizer"]["stop_sequence"] == "<test>"
         assert workflow_dict["rules"][0]["value"] == "test rule 1"
@@ -82,7 +82,7 @@ class TestWorkflowSchema:
         assert deserialized_workflow.steps[0].child_ids[0] == step.id
         assert deserialized_workflow.steps[0].id in step.parent_ids
         assert deserialized_workflow.steps[1].id in step.parent_ids
-        assert len(deserialized_workflow.steps[-1].tool_names) == 5
+        assert len(deserialized_workflow.steps[-1].tool_names) == 2
         assert deserialized_workflow.prompt_driver.temperature == 0.12345
         assert deserialized_workflow.prompt_driver.tokenizer.stop_sequence == "<test>"
         assert deserialized_workflow.rules[0].value == "test rule 1"

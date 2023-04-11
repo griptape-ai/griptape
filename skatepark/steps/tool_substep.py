@@ -25,9 +25,10 @@ class ToolSubstep(PromptStep):
     tool_step_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
     tool_name: Optional[str] = field(default=None, kw_only=True)
-    tool_input: Optional[str] = field(default=None, kw_only=True)
+    tool_action: Optional[str] = field(default=None, kw_only=True)
+    tool_value: Optional[str] = field(default=None, kw_only=True)
 
-    __tool: Optional[BaseTool] = None
+    _tool: Optional[BaseTool] = None
 
     def attach(self, tool_step: BaseToolStep):
         self.tool_step_id = tool_step.id
@@ -52,10 +53,13 @@ class ToolSubstep(PromptStep):
     def run(self) -> StructureArtifact:
         try:
             if self.tool_name == "error":
-                self.output = ErrorOutput(self.tool_input, step=self)
+                self.output = ErrorOutput(self.tool_value, step=self)
             else:
-                if self.__tool:
-                    observation = self.__tool.run(self.tool_input)
+                if self._tool:
+                    observation = self.structure.tool_loader.executor.execute(
+                        getattr(self._tool, self.tool_action),
+                        self.tool_value.encode()
+                    ).decode()
                 else:
                     observation = "tool not found"
 
@@ -109,33 +113,42 @@ class ToolSubstep(PromptStep):
                 if self.tool_name is None:
                     self.tool_name = parsed_value["tool"]
 
+                # Load the tool action; throw exception if the key is not present
+                if self.tool_action is None:
+                    self.tool_action = parsed_value["action"]
+
                 # Load the tool itself
                 if self.tool_name:
-                    self.__tool = self.tool_step.find_tool(self.tool_name)
+                    self._tool = self.tool_step.find_tool(self.tool_name)
 
                 # Validate input based on tool schema
-                if self.__tool:
-                    validate(instance=parsed_value, schema=self.__tool.schema)
+                if self._tool:
+                    validate(
+                        instance={
+                            "value": parsed_value["value"]
+                        },
+                        schema=self._tool.get_action_value_schema(getattr(self._tool, self.tool_action))
+                    )
 
-                # Load optional input; don't throw exceptions if key is not present
-                if self.tool_input is None:
-                    self.tool_input = parsed_value.get("input")
+                # Load optional input value; don't throw exceptions if key is not present
+                if self.tool_value is None:
+                    self.tool_value = parsed_value.get("value")
 
             except SyntaxError as e:
                 self.structure.logger.error(f"Step {self.tool_step.id}\nSyntax error: {e}")
 
                 self.tool_name = "error"
-                self.tool_input = f"syntax error: {e}"
+                self.tool_value = f"syntax error: {e}"
             except ValidationError as e:
                 self.structure.logger.error(f"Step {self.tool_step.id}\nInvalid JSON: {e}")
 
                 self.tool_name = "error"
-                self.tool_input = f"JSON validation error: {e}"
+                self.tool_value = f"JSON validation error: {e}"
             except Exception as e:
                 self.structure.logger.error(f"Step {self.tool_step.id}\nError parsing tool action: {e}")
 
                 self.tool_name = "error"
-                self.tool_input = f"error: {self.INVALID_ACTION_ERROR_MSG}"
+                self.tool_value = f"error: {self.INVALID_ACTION_ERROR_MSG}"
 
         if self.output is None and len(output_matches) > 0:
             self.output = TextOutput(output_matches[-1])

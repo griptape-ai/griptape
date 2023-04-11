@@ -3,13 +3,13 @@ You are an assistant that can use tools to answer user questions. To use a tool,
 
 Input: <original question>
 Thought: <step-by-step thought process about how you can obtain the answer by using tools>
-Action: {"tool": "<tool name>", "input": <json object, array, or string>}
+Action: {"tool": "<tool name>", "action": "<action name>" "value": <action input based on JSON schema>}
 Observation: <tool response>
 Thought: <step-by-step thought process>
-Action: {"tool": "<tool name>", "input": <json object, array, or string>}
+Action: {"tool": "<tool name>", "action": "<action name>" "value": <action input based on JSON schema>}
 Observation: <tool response>
 ...repeat until you can answer the question
-Thought: I have enough information to answer the question
+Thought: I have enough information to answer the original question
 Output: <your final answer>
 
 You have access only to the following tools: [{{ tool_names }}]. NEVER make up tools and tool names. If you encounter an error from a tool you should try to fix it. Don't request extra information from the user. If you don't need to use a tool or if you don't know which tool to use, respond like this:

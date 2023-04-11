@@ -18,6 +18,11 @@ class BaseToolStep(PromptStep, ABC):
     max_substeps: int = field(default=DEFAULT_MAX_SUBSTEPS, kw_only=True)
     _substeps: list[ToolSubstep] = field(factory=list)
 
+    @property
+    @abstractmethod
+    def tools(self) -> list[BaseTool]:
+        ...
+
     def run(self) -> TextOutput:
         from skatepark.steps import ToolSubstep
 
@@ -75,6 +80,8 @@ class BaseToolStep(PromptStep, ABC):
 
         return substep
 
-    @abstractmethod
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
-        ...
+        return next(
+            (t for t in self.tools if t.name == tool_name),
+            None
+        )
