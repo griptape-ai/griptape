@@ -127,7 +127,7 @@ class ToolSubstep(PromptStep):
                         instance={
                             "value": parsed_value["value"]
                         },
-                        schema=self._tool.get_action_value_schema(getattr(self._tool, self.tool_action))
+                        schema=self._tool.action_schema(getattr(self._tool, self.tool_action))
                     )
 
                 # Load optional input value; don't throw exceptions if key is not present
