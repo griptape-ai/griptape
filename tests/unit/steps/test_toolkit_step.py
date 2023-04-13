@@ -1,4 +1,4 @@
-from griptape.tools import Calculator, GoogleSearch
+from griptape.tools import Calculator, WebSearch
 
 from skatepark.steps import ToolkitStep
 from skatepark.utils import ToolLoader
@@ -12,10 +12,10 @@ class TestToolkitStep:
 
         tools = [
             Calculator(),
-            GoogleSearch()
+            WebSearch()
         ]
 
-        step = ToolkitStep("test", tool_names=["Calculator", "GoogleSearch"])
+        step = ToolkitStep("test", tool_names=["Calculator", "WebSearch"])
         pipeline = Pipeline(
             prompt_driver=MockValueDriver(output),
             tool_loader=ToolLoader(tools=tools)
