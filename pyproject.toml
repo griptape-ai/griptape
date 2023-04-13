@@ -13,7 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-griptape-core = ">= 0.4.0"
+griptape-core = ">= 0.7.2"
 python-dotenv = ">=0.21"
 openai = ">=0.27"
 attrs = ">=22"
@@ -27,7 +27,7 @@ rich = ">=13"
 stopit = "*"
 
 [tool.poetry.group.test.dependencies]
-griptape-tools = ">= 0.4.0"
+griptape-tools = ">= 0.5.1"
 pytest = "~=7.1"
 pytest-cover = "*"
 twine = ">=4"

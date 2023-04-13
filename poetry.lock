@@ -196,6 +196,18 @@ webencodings = "*"
 css = ["tinycss2 (>=1.1.0,<1.2)"]
 
 [[package]]
+name = "cachetools"
+version = "5.3.0"
+description = "Extensible memoizing collections and decorators"
+category = "main"
+optional = false
+python-versions = "~=3.7"
+files = [
+    {file = "cachetools-5.3.0-py3-none-any.whl", hash = "sha256:429e1a1e845c008ea6c85aa35d4b98b65d6a9763eeef3e37e92728a12d1de9d4"},
+    {file = "cachetools-5.3.0.tar.gz", hash = "sha256:13dfddc7b8df938c21a940dfa6557ce6e94a2f1cdfa58eb90c805721d58f2c14"},
+]
+
+[[package]]
 name = "certifi"
 version = "2022.12.7"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -588,14 +600,14 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "fastapi"
-version = "0.95.0"
+version = "0.95.1"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "fastapi-0.95.0-py3-none-any.whl", hash = "sha256:daf73bbe844180200be7966f68e8ec9fd8be57079dff1bacb366db32729e6eb5"},
-    {file = "fastapi-0.95.0.tar.gz", hash = "sha256:99d4fdb10e9dd9a24027ac1d0bd4b56702652056ca17a6c8721eec4ad2f14e18"},
+    {file = "fastapi-0.95.1-py3-none-any.whl", hash = "sha256:a870d443e5405982e1667dfe372663abf10754f246866056336d7f01c21dab07"},
+    {file = "fastapi-0.95.1.tar.gz", hash = "sha256:9569f0a381f8a457ec479d90fa01005cfddaae07546eb1f3fa035bc4797ae7d5"},
 ]
 
 [package.dependencies]
@@ -693,6 +705,23 @@ files = [
 ]
 
 [[package]]
+name = "gptcache"
+version = "0.1.10"
+description = "GPTCache, a powerful caching library that can be used to speed up and lower the cost of chat applications that rely on the LLM service. GPTCache works as a memcache for AIGC applications, similar to how Redis works for traditional applications."
+category = "main"
+optional = false
+python-versions = ">=3.8.1"
+files = [
+    {file = "gptcache-0.1.10-py3-none-any.whl", hash = "sha256:6d5baaed83784164d1cad29423c4e3433a7ae3a8794f7f4785d44ee27691dc19"},
+    {file = "gptcache-0.1.10.tar.gz", hash = "sha256:75f63b181e5ce40aff1859711fe9496bd7569e3b2afcac3ec46cd98a8a0ce974"},
+]
+
+[package.dependencies]
+cachetools = "*"
+numpy = "*"
+openai = "*"
+
+[[package]]
 name = "graphlib"
 version = "0.9.5"
 description = "Graph API"
@@ -779,14 +808,14 @@ test = ["objgraph", "psutil"]
 
 [[package]]
 name = "griptape-core"
-version = "0.4.0"
+version = "0.7.2"
 description = "Python framework for LLM middleware tools. Build once, run anywhere."
 category = "main"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "griptape_core-0.4.0-py3-none-any.whl", hash = "sha256:2ef5420b6c72924bcaf0e1adcf30e4f7ac409a10f6227e88461e8ed0b85db2b0"},
-    {file = "griptape_core-0.4.0.tar.gz", hash = "sha256:1a664c211fab68830182c9c26bc88e0210765f9902c7f130bc91a055ea101584"},
+    {file = "griptape_core-0.7.2-py3-none-any.whl", hash = "sha256:500dfabe20179018e1de312be2a981cc3fbbc17a41a1e80144a6aa3bd815233a"},
+    {file = "griptape_core-0.7.2.tar.gz", hash = "sha256:0970c753e602bd032e8e9db90e75b152f41a1d9f7c9b77b069eb81801fb8537b"},
 ]
 
 [package.dependencies]
@@ -803,18 +832,18 @@ uvicorn = ">=0.20"
 
 [[package]]
 name = "griptape-tools"
-version = "0.4.0"
+version = "0.5.1"
 description = "Tools for the griptape-core package."
 category = "dev"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "griptape_tools-0.4.0-py3-none-any.whl", hash = "sha256:0e99dedcdf2d661700c1a74397097592d2ef63fed761bf55463172bc140467d9"},
-    {file = "griptape_tools-0.4.0.tar.gz", hash = "sha256:708c848b094560c2f87262bbb993125af0dd4b58c36184ce82492a5539154713"},
+    {file = "griptape_tools-0.5.1-py3-none-any.whl", hash = "sha256:b83a667c1d213a8d0d405379ce0a64ad79c290dfc6378fadbfd226d15367bd6f"},
+    {file = "griptape_tools-0.5.1.tar.gz", hash = "sha256:7ea96abf22cfbc42b1f3df2dd48ca79c525ee67f41dcd2db8fed2c1e478cd0b3"},
 ]
 
 [package.dependencies]
-griptape-core = ">=0.4.0"
+griptape-core = ">=0.7.2"
 
 [[package]]
 name = "h11"
@@ -971,20 +1000,21 @@ testing = ["flake8 (<5)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-chec
 
 [[package]]
 name = "langchain"
-version = "0.0.137"
+version = "0.0.139"
 description = "Building applications with LLMs through composability"
 category = "main"
 optional = false
 python-versions = ">=3.8.1,<4.0"
 files = [
-    {file = "langchain-0.0.137-py3-none-any.whl", hash = "sha256:4d359712fb2c7068df98d4ffcde86887e2ea0f21d7628614209f778b08b3f91d"},
-    {file = "langchain-0.0.137.tar.gz", hash = "sha256:d8b7f45490c869d597a37e943fd8437f5414b063253e7e18a4228c51fb075bc5"},
+    {file = "langchain-0.0.139-py3-none-any.whl", hash = "sha256:2ea43780e1f788333f2b741b119d9870640a92c6f5f2d177d1ca0c98463bd097"},
+    {file = "langchain-0.0.139.tar.gz", hash = "sha256:4ea86ad6192f45c65cbbdc24ff1a56aaac4bee8c038be982981369ca553590df"},
 ]
 
 [package.dependencies]
 aiohttp = ">=3.8.3,<4.0.0"
 async-timeout = {version = ">=4.0.0,<5.0.0", markers = "python_version < \"3.11\""}
 dataclasses-json = ">=0.5.7,<0.6.0"
+gptcache = ">=0.1.7"
 numpy = ">=1,<2"
 openapi-schema-pydantic = ">=1.2,<2.0"
 pydantic = ">=1,<2"
@@ -994,7 +1024,7 @@ SQLAlchemy = ">=1,<2"
 tenacity = ">=8.1.0,<9.0.0"
 
 [package.extras]
-all = ["aleph-alpha-client (>=2.15.0,<3.0.0)", "anthropic (>=0.2.4,<0.3.0)", "beautifulsoup4 (>=4,<5)", "cohere (>=3,<4)", "deeplake (>=3.2.21,<4.0.0)", "elasticsearch (>=8,<9)", "faiss-cpu (>=1,<2)", "google-api-python-client (==2.70.0)", "google-search-results (>=2,<3)", "huggingface_hub (>=0,<1)", "jina (>=3.14,<4.0)", "jinja2 (>=3,<4)", "manifest-ml (>=0.0.1,<0.0.2)", "networkx (>=2.6.3,<3.0.0)", "nlpcloud (>=1,<2)", "nltk (>=3,<4)", "nomic (>=1.0.43,<2.0.0)", "openai (>=0,<1)", "opensearch-py (>=2.0.0,<3.0.0)", "pgvector (>=0.1.6,<0.2.0)", "pinecone-client (>=2,<3)", "psycopg2-binary (>=2.9.5,<3.0.0)", "pyowm (>=3.3.0,<4.0.0)", "pypdf (>=3.4.0,<4.0.0)", "qdrant-client (>=1.1.2,<2.0.0)", "redis (>=4,<5)", "sentence-transformers (>=2,<3)", "spacy (>=3,<4)", "tensorflow-text (>=2.11.0,<3.0.0)", "tiktoken (>=0.3.2,<0.4.0)", "torch (>=1,<2)", "transformers (>=4,<5)", "weaviate-client (>=3,<4)", "wikipedia (>=1,<2)", "wolframalpha (==5.0.0)"]
+all = ["aleph-alpha-client (>=2.15.0,<3.0.0)", "anthropic (>=0.2.4,<0.3.0)", "beautifulsoup4 (>=4,<5)", "cohere (>=3,<4)", "deeplake (>=3.2.21,<4.0.0)", "elasticsearch (>=8,<9)", "faiss-cpu (>=1,<2)", "google-api-python-client (==2.70.0)", "google-search-results (>=2,<3)", "huggingface_hub (>=0,<1)", "jina (>=3.14,<4.0)", "jinja2 (>=3,<4)", "manifest-ml (>=0.0.1,<0.0.2)", "networkx (>=2.6.3,<3.0.0)", "nlpcloud (>=1,<2)", "nltk (>=3,<4)", "nomic (>=1.0.43,<2.0.0)", "openai (>=0,<1)", "opensearch-py (>=2.0.0,<3.0.0)", "pgvector (>=0.1.6,<0.2.0)", "pinecone-client (>=2,<3)", "pinecone-text (>=0.4.2,<0.5.0)", "psycopg2-binary (>=2.9.5,<3.0.0)", "pyowm (>=3.3.0,<4.0.0)", "pypdf (>=3.4.0,<4.0.0)", "qdrant-client (>=1.1.2,<2.0.0)", "redis (>=4,<5)", "sentence-transformers (>=2,<3)", "spacy (>=3,<4)", "tensorflow-text (>=2.11.0,<3.0.0)", "tiktoken (>=0.3.2,<0.4.0)", "torch (>=1,<2)", "transformers (>=4,<5)", "weaviate-client (>=3,<4)", "wikipedia (>=1,<2)", "wolframalpha (==5.0.0)"]
 cohere = ["cohere (>=3,<4)"]
 llms = ["anthropic (>=0.2.4,<0.3.0)", "cohere (>=3,<4)", "huggingface_hub (>=0,<1)", "manifest-ml (>=0.0.1,<0.0.2)", "nlpcloud (>=1,<2)", "openai (>=0,<1)", "torch (>=1,<2)", "transformers (>=4,<5)"]
 openai = ["openai (>=0,<1)"]
@@ -1319,14 +1349,14 @@ pydantic = ">=1.8.2"
 
 [[package]]
 name = "packaging"
-version = "23.0"
+version = "23.1"
 description = "Core utilities for Python packages"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "packaging-23.0-py3-none-any.whl", hash = "sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2"},
-    {file = "packaging-23.0.tar.gz", hash = "sha256:b6ad297f8907de0fa2fe1ccbd26fdaf387f5f47c7275fedf8cce89f99446cf97"},
+    {file = "packaging-23.1-py3-none-any.whl", hash = "sha256:994793af429502c4ea2ebf6bf664629d07c1a9fe974af92966e4b8d2df7edc61"},
+    {file = "packaging-23.1.tar.gz", hash = "sha256:a392980d2b6cffa644431898be54b0045151319d1e7ec34f0cfed48767dd334f"},
 ]
 
 [[package]]
@@ -1779,14 +1809,14 @@ idna2008 = ["idna"]
 
 [[package]]
 name = "rich"
-version = "13.3.3"
+version = "13.3.4"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "rich-13.3.3-py3-none-any.whl", hash = "sha256:540c7d6d26a1178e8e8b37e9ba44573a3cd1464ff6348b99ee7061b95d1c6333"},
-    {file = "rich-13.3.3.tar.gz", hash = "sha256:dc84400a9d842b3a9c5ff74addd8eb798d155f36c1c91303888e0a66850d2a15"},
+    {file = "rich-13.3.4-py3-none-any.whl", hash = "sha256:22b74cae0278fd5086ff44144d3813be1cedc9115bdfabbfefd86400cb88b20a"},
+    {file = "rich-13.3.4.tar.gz", hash = "sha256:b5d573e13605423ec80bdd0cd5f8541f7844a0e71a13f74cf454ccb2f490708b"},
 ]
 
 [package.dependencies]
@@ -2284,4 +2314,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "e49aff3da0dd308ae7f7c3112ef6354b87a4ae1097d3aaba610584acda16e691"
+content-hash = "53b0329aee53668a6faa3b06a676b9e30bf1076b08e717dcd7acd8102780b129"
