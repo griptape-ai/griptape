@@ -132,7 +132,7 @@ class ToolSubstep(PromptStep):
 
                 # Load optional input value; don't throw exceptions if key is not present
                 if self.tool_value is None:
-                    self.tool_value = parsed_value.get("value")
+                    self.tool_value = str(parsed_value.get("value"))
 
             except SyntaxError as e:
                 self.structure.logger.error(f"Step {self.tool_step.id}\nSyntax error: {e}")
