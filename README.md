@@ -4,13 +4,19 @@
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gitbucket/gitbucket/blob/master/LICENSE)
 
-**griptape** is a modular Python framework for creating workflow DAGs and pipelines that use large language models (LLMs) such as GPT, Claude, Titan, and Cohere.
+**griptape** is a modular Python framework for LLM workflows, tools, memory, and data.
 
-With griptape, you can:
+With **griptape**, you can:
 
-1. 🚰 Build sequential **AI pipelines** and sprawling **DAG workflows** for complex use cases with [griptape-flow](https://github.com/griptape-ai/griptape-flow).
-2. 🧰️ Augment LLMs with **chain of thought** capabilities and integrate **external tools**, such as calculators, web search, spreadsheet editors, and API connectors via [griptape-core](https://github.com/griptape-ai/griptape-core).
+1. 🚰 Build sequential **LLM pipelines** and sprawling **DAG workflows** for complex use cases.
+2. 🧰️ Augment LLMs with **chain of thought** capabilities and integrate **external tools**, such as calculators, web search, spreadsheet editors, and API connectors.
 3. 💾 Add **memory** to AI pipelines for context preservation and summarization.
+
+**griptape** includes several core packages:
+
+- [griptape-flow](https://github.com/griptape-ai/griptape-flow): build LLM workflows and pipelines with memory, rules, and chain of thought reasoning.
+- [griptape-core](https://github.com/griptape-ai/griptape-flow): integrate other services and functionality into LLMs as tools; run tools in any environment (local, containerized, cloud, etc.); convert tools into underlying middleware abstractions, such as ChatGPT Plugins, LangChain tools, and Fixie.ai agents.
+- [griptape-tools](https://github.com/griptape-ai/griptape-tools): official Griptape tools registry.
 
 griptape is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce breaking features and patch versions (i.e., x.y.Z) for bug fixes.
 
@@ -72,7 +78,7 @@ print(utils.Conversation(pipeline.memory).to_string())
 
 ```
 
-Boom! Our first conversation, à la ChatGPT, is here:
+Boom! Our first multistep LLM pipeline with memory that used tools generated a conversation:
 
 > Q: Give me a summary of https://en.wikipedia.org/wiki/Large_language_model  
 > A: Arr, me hearties! Large language models have been developed and set sail since 2018, includin' BERT, GPT-2, GPT-3 [...]
