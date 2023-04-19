@@ -5,6 +5,5 @@ version:
 	@git tag v$$(poetry version -s)
 	@git push
 	@git push --tags
-	@poetry version
 	@poetry build
 	@poetry publish
