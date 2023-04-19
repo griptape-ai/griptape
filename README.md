@@ -15,7 +15,7 @@ With **griptape**, you can:
 **griptape** includes several core packages:
 
 - [griptape-flow](https://github.com/griptape-ai/griptape-flow): build LLM workflows and pipelines with memory, rules, and chain of thought reasoning.
-- [griptape-core](https://github.com/griptape-ai/griptape-flow): integrate other services and functionality into LLMs as tools; run tools in any environment (local, containerized, cloud, etc.); convert tools into underlying middleware abstractions, such as ChatGPT Plugins, LangChain tools, and Fixie.ai agents.
+- [griptape-core](https://github.com/griptape-ai/griptape-core): integrate other services and functionality into LLMs as tools; run tools in any environment (local, containerized, cloud, etc.); convert tools into underlying middleware abstractions, such as ChatGPT Plugins, LangChain tools, and Fixie.ai agents.
 - [griptape-tools](https://github.com/griptape-ai/griptape-tools): official Griptape tools registry.
 
 griptape is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce breaking features and patch versions (i.e., x.y.Z) for bug fixes.
