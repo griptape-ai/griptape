@@ -13,10 +13,9 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-griptape-core = ">= 0.9.2"
-griptape-flow = ">= 0.11.0"
-griptape-tools = ">= 0.7.0"
-
+griptape-core = "~0.9.2"
+griptape-flow = "~0.11.0"
+griptape-tools = "~0.7.0"
 
 [build-system]
 requires = ["poetry-core"]
