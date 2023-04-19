@@ -12,7 +12,7 @@ With **griptape**, you can:
 2. 🧰️ Augment LLMs with **chain of thought** capabilities and integrate **external tools**, such as calculators, web search, spreadsheet editors, and API connectors.
 3. 💾 Add **memory** to AI pipelines for context preservation and summarization.
 
-**griptape** includes several core packages:
+**griptape** consists of several core packages:
 
 - [griptape-flow](https://github.com/griptape-ai/griptape-flow): build LLM workflows and pipelines with memory, rules, and chain of thought reasoning.
 - [griptape-core](https://github.com/griptape-ai/griptape-core): integrate other services and functionality into LLMs as tools; run tools in any environment (local, containerized, cloud, etc.); convert tools into underlying middleware abstractions, such as ChatGPT Plugins, LangChain tools, and Fixie.ai agents.
