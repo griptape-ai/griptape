@@ -16,7 +16,11 @@ python = "^3.9"
 griptape-core = "==0.9.3"
 griptape-flow = "==0.12.1"
 griptape-tools = "==0.7.1"
+click = "~8"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+griptape = "griptape.main:main"
