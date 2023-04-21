@@ -102,7 +102,7 @@ Boom! Our first multistep LLM pipeline with memory that used tools generated a c
 
 ## Versioning
 
-griptape is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce breaking features and patch versions (i.e., x.y.Z) for bug fixes.
+**griptape** is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce breaking features and patch versions (i.e., x.y.Z) for bug fixes.
 
 ## Contributing
 
@@ -110,4 +110,4 @@ Contributions in the form of bug reports, feature ideas, or pull requests are su
 
 ## License
 
-griptape is available under the Apache 2.0 License.
+**griptape** is available under the Apache 2.0 License.
