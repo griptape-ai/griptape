@@ -1,0 +1,7 @@
+Input: {{ step.render_prompt() }}
+{% if step.output %}
+Output: {{ step.output.value }}
+{% else %}
+{% for substep in substeps %}{{ substep.render() }}
+{% endfor %}
+{% endif %}

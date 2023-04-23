@@ -1,0 +1,7 @@
+{% if substep.thought %}
+Thought: {{ substep.thought }}
+{% endif %}
+Action: {{ substep.to_json() }}
+{% if substep.output %}
+Observation: {{ substep.output.value }}
+{% endif %}

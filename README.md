@@ -61,11 +61,11 @@ With griptape, you can create *structures*, such as `Pipelines` and `Workflows`,
 ```python
 from decouple import config
 from griptape.tools import WebScraper, Calculator
-from griptape.flow import utils
-from griptape.flow.memory import PipelineMemory
-from griptape.flow.steps import PromptStep, ToolkitStep
-from griptape.flow.structures import Pipeline
-from griptape.flow.utils import ToolLoader
+from griptape import utils
+from griptape.memory import PipelineMemory
+from griptape.steps import PromptStep, ToolkitStep
+from griptape.structures import Pipeline
+from griptape.utils import ToolLoader
 
 
 scraper = WebScraper(

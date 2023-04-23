@@ -1,0 +1,12 @@
+{% if summary %}
+Summary of the conversation so far:
+
+{{ summary }}
+
+Conversation begins:
+{% else %}
+Conversation begins:
+{% endif %}
+{% for run in runs %}
+{{ run.render() }}
+{% endfor %}

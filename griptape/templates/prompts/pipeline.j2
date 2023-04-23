@@ -1,0 +1,7 @@
+{% if not has_memory %}
+Conversation begins:
+{% endif %}
+{% for step in finished_steps %}
+{{ step.render() }}
+{% endfor %}
+{{ current_step.render() }}
