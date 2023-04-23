@@ -1,4 +1,4 @@
-from griptape.core import BaseMiddleware
+from griptape.core.middleware import BaseMiddleware
 
 
 class StorageMiddleware(BaseMiddleware):

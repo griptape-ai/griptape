@@ -9,7 +9,7 @@ class J2:
     import griptape
 
     template_name: Optional[str] = field(default=None)
-    templates_dir: str = field(default=os.path.join(griptape.core.PACKAGE_ABS_PATH, "resources"), kw_only=True)
+    templates_dir: str = field(default=os.path.join(griptape.PACKAGE_ABS_PATH, "resources"), kw_only=True)
     environment: Environment = field(
         default=Factory(
             lambda self: Environment(

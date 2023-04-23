@@ -1,8 +1,6 @@
 from abc import ABC
 from attr import define, field
-
-from griptape.core import BaseExecutor
-from griptape.core.executors import LocalExecutor
+from griptape.core.executors import BaseExecutor, LocalExecutor
 
 
 @define

@@ -1,6 +1,6 @@
 import langchain.tools
 from attr import define
-from griptape.core import BaseAdapter
+from griptape.core.adapters import BaseAdapter
 
 
 @define

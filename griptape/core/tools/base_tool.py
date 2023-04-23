@@ -8,7 +8,7 @@ from attr import define, fields, Attribute, field, Factory
 import attrs
 from decouple import config
 from jinja2 import Template
-from . import BaseMiddleware
+from griptape.core.middleware import BaseMiddleware
 
 
 @define
