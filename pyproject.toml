@@ -13,7 +13,6 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-griptape-tools = "==0.7.1"
 python-dotenv = ">=0.21"
 openai = ">=0.27"
 cohere = ">=4"
@@ -41,7 +40,6 @@ python-decouple=">=3"
 pytest = "~=7.1"
 pytest-cover = "*"
 twine = ">=4"
-setuptools = "*"
 
 [build-system]
 requires = ["poetry-core"]

@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from starlette.responses import Response
 from griptape.core.adapters import BaseAdapter
 from griptape.core import BaseTool
-from griptape.core.utils import J2
+from griptape.utils import J2
 
 
 @define

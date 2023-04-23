@@ -1,7 +1,5 @@
 import uuid
-
 from attr import define, field, Factory
-
 from griptape.utils import J2
 
 

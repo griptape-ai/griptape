@@ -1,4 +1,4 @@
-from griptape.tools import Calculator, WebSearch
+from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorOutput
 from griptape.steps import ToolkitStep, ToolSubstep
 from griptape.utils import ToolLoader
@@ -19,11 +19,11 @@ class TestToolkitStep:
         output = """Output: done"""
 
         tools = [
-            Calculator(),
-            WebSearch()
+            MockTool(name="ToolOne"),
+            MockTool(name="ToolTwo")
         ]
 
-        step = ToolkitStep("test", tool_names=["Calculator", "WebSearch"])
+        step = ToolkitStep("test", tool_names=["ToolOne", "ToolTwo"])
         pipeline = Pipeline(
             prompt_driver=MockValueDriver(output),
             tool_loader=ToolLoader(tools=tools)
@@ -114,7 +114,7 @@ class TestToolkitStep:
         assert step.find_substep(substep2.id) == substep2
     
     def test_find_tool(self):
-        tool = Calculator()
+        tool = MockTool()
         step = ToolkitStep("test", tool_names=[tool.name])
 
         Pipeline(

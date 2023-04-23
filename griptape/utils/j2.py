@@ -2,7 +2,6 @@ import os
 from typing import Optional
 from attr import define, field, Factory
 from jinja2 import Environment, FileSystemLoader
-from griptape.tokenizers import TiktokenTokenizer, BaseTokenizer
 import griptape
 
 
@@ -10,7 +9,6 @@ import griptape
 class J2:
     template_name: Optional[str] = field(default=None)
     templates_dir: str = field(default=os.path.join(griptape.PACKAGE_ABS_PATH, "templates"), kw_only=True)
-    tokenizer: BaseTokenizer = field(default=TiktokenTokenizer(), kw_only=True)
     environment: Environment = field(
         default=Factory(
             lambda self: Environment(
@@ -24,13 +22,7 @@ class J2:
     )
 
     def render(self, **kwargs):
-        if not kwargs.get("stop_sequence"):
-            kwargs["stop_sequence"] = self.tokenizer.stop_sequence
-
         return self.environment.get_template(self.template_name).render(kwargs)
 
     def render_from_string(self, value: str, **kwargs):
-        if not kwargs.get("stop_sequence"):
-            kwargs["stop_sequence"] = self.tokenizer.stop_sequence
-
         return self.environment.from_string(value).render(kwargs)

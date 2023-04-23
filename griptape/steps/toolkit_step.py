@@ -1,5 +1,5 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.core import BaseTool
