@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 from attr import define, field, Factory
 from jinja2 import Environment, FileSystemLoader
