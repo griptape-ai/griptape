@@ -1,7 +1,7 @@
-Input: {{ step.render_prompt() }}
-{% if step.output %}
-Output: {{ step.output.value }}
+Input: {{ subtask.render_prompt() }}
+{% if subtask.output %}
+Output: {{ subtask.output.value }}
 {% else %}
-{% for step in steps %}{{ step.render() }}
+{% for subtask in subtasks %}{{ subtask.render() }}
 {% endfor %}
 {% endif %}

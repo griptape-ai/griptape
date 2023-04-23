@@ -1,0 +1,7 @@
+{% if subtask.thought %}
+Thought: {{ subtask.thought }}
+{% endif %}
+Action: {{ subtask.to_json() }}
+{% if subtask.output %}
+Observation: {{ subtask.output.value }}
+{% endif %}

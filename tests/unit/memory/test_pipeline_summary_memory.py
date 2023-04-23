@@ -6,7 +6,7 @@ from griptape.structures import Pipeline
 
 
 class TestSummaryMemory:
-    def test_unsummarized_steps(self):
+    def test_unsummarized_subtasks(self):
         memory = SummaryPipelineMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockDriver()))
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())

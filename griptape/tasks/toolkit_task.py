@@ -8,7 +8,7 @@ from griptape.tasks import PromptTask
 from griptape.artifacts import TextOutput, ErrorOutput
 
 if TYPE_CHECKING:
-    from griptape.tasks import ToolStep
+    from griptape.tasks import ToolSubtask
 
 
 @define
@@ -16,8 +16,8 @@ class ToolkitTask(PromptTask, ABC):
     DEFAULT_MAX_STEPS = 20
 
     tool_names: list[str] = field(kw_only=True)
-    max_steps: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
-    _steps: list[ToolStep] = field(factory=list)
+    max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
+    _subtasks: list[ToolSubtask] = field(factory=list)
 
     @tool_names.validator
     def validate_tool_names(self, _, tool_names) -> None:
@@ -31,61 +31,61 @@ class ToolkitTask(PromptTask, ABC):
         ]
 
     def run(self) -> TextOutput:
-        from griptape.tasks import ToolStep
+        from griptape.tasks import ToolSubtask
 
-        self._steps.clear()
+        self._subtasks.clear()
 
-        step = self.add_step(
-            ToolStep(
+        subtask = self.add_subtask(
+            ToolSubtask(
                 self.active_driver().run(value=self.structure.to_prompt_string(self)).value
             )
         )
 
         while True:
-            if step.output is None:
-                if len(self._steps) >= self.max_steps:
-                    step.output = ErrorOutput(
-                        f"Exceeded tool limit of {self.max_steps} steps per task",
+            if subtask.output is None:
+                if len(self._subtasks) >= self.max_subtasks:
+                    subtask.output = ErrorOutput(
+                        f"Exceeded tool limit of {self.max_subtasks} subtasks per task",
                         task=self
                     )
-                elif step.tool_name is None:
+                elif subtask.tool_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
-                    step.output = TextOutput(step.prompt_template)
+                    subtask.output = TextOutput(subtask.prompt_template)
                 else:
-                    step.before_run()
-                    step.run()
-                    step.after_run()
+                    subtask.before_run()
+                    subtask.run()
+                    subtask.after_run()
 
-                    step = self.add_step(
-                        ToolStep(
+                    subtask = self.add_subtask(
+                        ToolSubtask(
                             self.active_driver().run(value=self.structure.to_prompt_string(self)).value
                         )
                     )
             else:
                 break
 
-        self.output = step.output
+        self.output = subtask.output
 
         return self.output
 
     def render(self) -> str:
         return J2("prompts/tasks/tool/tool.j2").render(
-            step=self,
-            steps=self._steps
+            subtask=self,
+            subtasks=self._subtasks
         )
 
-    def find_step(self, task_id: str) -> Optional[ToolStep]:
-        return next((step for step in self._steps if step.id == task_id), None)
+    def find_subtask(self, task_id: str) -> Optional[ToolSubtask]:
+        return next((subtask for subtask in self._subtasks if subtask.id == task_id), None)
 
-    def add_step(self, step: ToolStep) -> ToolStep:
-        step.attach(self)
+    def add_subtask(self, subtask: ToolSubtask) -> ToolSubtask:
+        subtask.attach(self)
 
-        if len(self._steps) > 0:
-            self._steps[-1].add_child(step)
+        if len(self._subtasks) > 0:
+            self._subtasks[-1].add_child(subtask)
 
-        self._steps.append(step)
+        self._subtasks.append(subtask)
 
-        return step
+        return subtask
 
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         return next(

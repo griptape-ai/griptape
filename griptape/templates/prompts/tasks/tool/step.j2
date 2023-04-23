@@ -1,7 +1,0 @@
-{% if step.thought %}
-Thought: {{ step.thought }}
-{% endif %}
-Action: {{ step.to_json() }}
-{% if step.output %}
-Observation: {{ step.output.value }}
-{% endif %}

@@ -1,12 +1,12 @@
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorOutput
-from griptape.tasks import ToolkitTask, ToolStep
+from griptape.tasks import ToolkitTask, ToolSubtask
 from griptape.utils import ToolLoader
 from tests.mocks.mock_value_driver import MockValueDriver
 from griptape.structures import Pipeline
 
 
-class TestToolkitStep:
+class TestToolkitSubtask:
     def test_init(self):
         assert len(ToolkitTask("test", tool_names=["Calculator", "WebSearch"]).tool_names) == 2
 
@@ -34,20 +34,20 @@ class TestToolkitStep:
         result = pipeline.run()
 
         assert len(task.tools) == 2
-        assert len(task._steps) == 1
+        assert len(task._subtasks) == 1
         assert result.output.value == "done"
     
-    def test_run_max_steps(self):
+    def test_run_max_subtasks(self):
         output = """Action: {"tool": "test"}"""
 
-        task = ToolkitTask("test", tool_names=["Calculator"], max_steps=3)
+        task = ToolkitTask("test", tool_names=["Calculator"], max_subtasks=3)
         pipeline = Pipeline(prompt_driver=MockValueDriver(output))
 
         pipeline.add_task(task)
 
         pipeline.run()
 
-        assert len(task._steps) == 3
+        assert len(task._subtasks) == 3
         assert isinstance(task.output, ErrorOutput)
 
     def test_init_from_prompt_1(self):
@@ -57,13 +57,13 @@ class TestToolkitStep:
 
         Pipeline().add_task(task)
 
-        step = task.add_step(ToolStep(valid_input))
+        subtask = task.add_subtask(ToolSubtask(valid_input))
 
-        assert step.thought == "need to test"
-        assert step.tool_name == "test"
-        assert step.tool_action == "test action"
-        assert step.tool_value == "test input"
-        assert step.output is None
+        assert subtask.thought == "need to test"
+        assert subtask.tool_name == "test"
+        assert subtask.tool_action == "test action"
+        assert subtask.tool_value == "test input"
+        assert subtask.output is None
 
     def test_init_from_prompt_2(self):
         valid_input = """Thought: need to test\nObservation: test 
@@ -72,46 +72,46 @@ class TestToolkitStep:
 
         Pipeline().add_task(task)
 
-        step = task.add_step(ToolStep(valid_input))
+        subtask = task.add_subtask(ToolSubtask(valid_input))
 
-        assert step.thought == "need to test"
-        assert step.tool_name is None
-        assert step.tool_action is None
-        assert step.tool_value is None
-        assert step.output.value == "test output"
+        assert subtask.thought == "need to test"
+        assert subtask.tool_name is None
+        assert subtask.tool_action is None
+        assert subtask.tool_value is None
+        assert subtask.output.value == "test output"
 
-    def test_add_step(self):
+    def test_add_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        step1 = ToolStep("test1", tool_name="test", tool_action="test", tool_value="test")
-        step2 = ToolStep("test2", tool_name="test", tool_action="test", tool_value="test")
+        subtask1 = ToolSubtask("test1", tool_name="test", tool_action="test", tool_value="test")
+        subtask2 = ToolSubtask("test2", tool_name="test", tool_action="test", tool_value="test")
 
         Pipeline().add_task(task)
 
-        task.add_step(step1)
-        task.add_step(step2)
+        task.add_subtask(subtask1)
+        task.add_subtask(subtask2)
 
-        assert len(task._steps) == 2
+        assert len(task._subtasks) == 2
 
-        assert len(step1.children) == 1
-        assert len(step1.parents) == 0
-        assert step1.children[0] == step2
+        assert len(subtask1.children) == 1
+        assert len(subtask1.parents) == 0
+        assert subtask1.children[0] == subtask2
 
-        assert len(step2.children) == 0
-        assert len(step2.parents) == 1
-        assert step2.parents[0] == step1
+        assert len(subtask2.children) == 0
+        assert len(subtask2.parents) == 1
+        assert subtask2.parents[0] == subtask1
 
-    def test_find_step(self):
+    def test_find_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        step1 = ToolStep("test1", tool_name="test", tool_action="test", tool_value="test")
-        step2 = ToolStep("test2", tool_name="test", tool_action="test", tool_value="test")
+        subtask1 = ToolSubtask("test1", tool_name="test", tool_action="test", tool_value="test")
+        subtask2 = ToolSubtask("test2", tool_name="test", tool_action="test", tool_value="test")
 
         Pipeline().add_task(task)
 
-        task.add_step(step1)
-        task.add_step(step2)
+        task.add_subtask(subtask1)
+        task.add_subtask(subtask2)
 
-        assert task.find_step(step1.id) == step1
-        assert task.find_step(step2.id) == step2
+        assert task.find_subtask(subtask1.id) == subtask1
+        assert task.find_subtask(subtask2.id) == subtask2
     
     def test_find_tool(self):
         tool = MockTool()
