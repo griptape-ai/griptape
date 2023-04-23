@@ -2,7 +2,7 @@ import os
 import pytest
 from tests.mocks.mock_driver import MockDriver
 from griptape.drivers import DiskMemoryDriver
-from griptape.memory import PipelineMemory
+from griptape.memory import Memory
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 
@@ -21,7 +21,7 @@ class TestPromptDriver:
     def test_store(self):
         prompt_driver = MockDriver()
         memory_driver = DiskMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = PipelineMemory(driver=memory_driver)
+        memory = Memory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
         pipeline.add_task(
@@ -42,7 +42,7 @@ class TestPromptDriver:
     def test_load(self):
         prompt_driver = MockDriver()
         memory_driver = DiskMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = PipelineMemory(driver=memory_driver)
+        memory = Memory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
         pipeline.add_task(
@@ -54,7 +54,7 @@ class TestPromptDriver:
 
         new_memory = memory_driver.load()
 
-        assert new_memory.type == "PipelineMemory"
+        assert new_memory.type == "Memory"
         assert len(new_memory.runs) == 2
         assert new_memory.runs[0].input == "test"
         assert new_memory.runs[0].output == "mock output"

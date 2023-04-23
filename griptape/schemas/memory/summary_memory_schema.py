@@ -1,8 +1,8 @@
 from marshmallow import fields, post_load
-from griptape.schemas import PipelineMemorySchema, PolymorphicSchema
+from griptape.schemas import MemorySchema, PolymorphicSchema
 
 
-class SummaryPipelineMemorySchema(PipelineMemorySchema):
+class SummaryPipelineMemorySchema(MemorySchema):
     offset = fields.Int()
     summary = fields.Str()
     summary_index = fields.Int()

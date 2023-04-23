@@ -7,14 +7,14 @@ from griptape.summarizers.summarizer import Summarizer
 
 
 if TYPE_CHECKING:
-    from griptape.memory import PipelineMemory, PipelineRun
+    from griptape.memory import Memory, Run
 
 
 @define
 class PromptDriverSummarizer(Summarizer):
     driver: BasePromptDriver = field(kw_only=True)
 
-    def summarize(self, memory: PipelineMemory, runs: list[PipelineRun]) -> Optional[str]:
+    def summarize(self, memory: Memory, runs: list[Run]) -> Optional[str]:
         try:
             if len(runs) > 0:
                 return self.driver.run(

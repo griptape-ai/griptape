@@ -16,10 +16,10 @@ from griptape.schemas.tasks.toolkit_task_schema import ToolkitTaskSchema
 from griptape.schemas.summarizers.summarizer_schema import SummarizerSchema
 from griptape.schemas.summarizers.prompt_driver_summarizer_schema import PromptDriverSummarizerSchema
 
-from griptape.schemas.memory.pipeline_run_schema import PipelineRunSchema
-from griptape.schemas.memory.pipeline_memory_schema import PipelineMemorySchema
-from griptape.schemas.memory.buffer_pipeline_memory_schema import BufferPipelineMemorySchema
-from griptape.schemas.memory.summary_pipeline_memory_schema import SummaryPipelineMemorySchema
+from griptape.schemas.memory.run_schema import RunSchema
+from griptape.schemas.memory.memory_schema import MemorySchema
+from griptape.schemas.memory.buffer_memory_schema import BufferPipelineMemorySchema
+from griptape.schemas.memory.summary_memory_schema import SummaryPipelineMemorySchema
 
 from griptape.schemas.structures.structure_schema import StructureSchema
 from griptape.schemas.structures.pipeline_schema import PipelineSchema
@@ -44,8 +44,8 @@ __all__ = [
     "SummarizerSchema",
     "PromptDriverSummarizerSchema",
 
-    "PipelineRunSchema",
-    "PipelineMemorySchema",
+    "RunSchema",
+    "MemorySchema",
     "BufferPipelineMemorySchema",
     "SummaryPipelineMemorySchema",
 

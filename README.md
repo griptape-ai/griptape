@@ -62,7 +62,7 @@ With griptape, you can create *structures*, such as `Pipelines` and `Workflows`,
 from decouple import config
 from griptape.tools import WebScraper, Calculator
 from griptape import utils
-from griptape.memory import PipelineMemory
+from griptape.memory import Memory
 from griptape.tasks import PromptTask, ToolkitTask
 from griptape.structures import Pipeline
 from griptape.utils import ToolLoader
@@ -73,7 +73,7 @@ scraper = WebScraper(
 calculator = Calculator()
 
 pipeline = Pipeline(
-    memory=PipelineMemory(),
+    memory=Memory(),
     tool_loader=ToolLoader(
         tools=[calculator, scraper]
     )

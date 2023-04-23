@@ -22,6 +22,7 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
+    autoprune_memory: bool = field(default=True, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
@@ -80,7 +81,7 @@ class Structure(ABC):
         tools = task.tools if isinstance(task, ToolkitTask) else []
 
         stack = [
-            J2("prompts/context.j2").render(
+            J2("prompts/base.j2").render(
                 rules=self.rules,
                 tool_names=str.join(", ", [tool.name for tool in tools]),
                 tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]

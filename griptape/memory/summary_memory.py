@@ -4,21 +4,21 @@ from typing import TYPE_CHECKING
 from typing import Optional
 from attr import define, field
 from griptape.utils import J2
-from griptape.memory import PipelineMemory
+from griptape.memory import Memory
 
 if TYPE_CHECKING:
     from griptape.summarizers import Summarizer
-    from griptape.memory import PipelineRun
+    from griptape.memory import Run
 
 
 @define
-class SummaryPipelineMemory(PipelineMemory):
+class SummaryPipelineMemory(Memory):
     offset: int = field(default=1, kw_only=True)
     summarizer: Optional[Summarizer] = field(default=None, kw_only=True)
     summary: Optional[str] = field(default=None, kw_only=True)
     summary_index: int = field(default=0, kw_only=True)
 
-    def unsummarized_runs(self, last_n: Optional[int] = None) -> list[PipelineRun]:
+    def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
         summary_index_runs = self.runs[self.summary_index:]
 
         if last_n:
@@ -31,7 +31,7 @@ class SummaryPipelineMemory(PipelineMemory):
         else:
             return summary_index_runs
 
-    def process_add_run(self, run: PipelineRun) -> None:
+    def process_add_run(self, run: Run) -> None:
         super().process_add_run(run)
 
         if self.summarizer:
@@ -52,9 +52,9 @@ class SummaryPipelineMemory(PipelineMemory):
         return SummaryPipelineMemory().dump(self)
 
     @classmethod
-    def from_dict(cls, memory_dict: dict) -> PipelineMemory:
+    def from_dict(cls, memory_dict: dict) -> Memory:
         return SummaryPipelineMemory().load(memory_dict)
 
     @classmethod
-    def from_json(cls, memory_json: str) -> PipelineMemory:
+    def from_json(cls, memory_json: str) -> Memory:
         return SummaryPipelineMemory.from_dict(json.loads(memory_json))

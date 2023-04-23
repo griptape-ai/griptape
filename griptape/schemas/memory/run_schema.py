@@ -2,7 +2,7 @@ from marshmallow import fields, post_load
 from griptape.schemas import BaseSchema
 
 
-class PipelineRunSchema(BaseSchema):
+class RunSchema(BaseSchema):
     class Meta:
         ordered = True
 
@@ -12,6 +12,6 @@ class PipelineRunSchema(BaseSchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.memory import PipelineRun
+        from griptape.memory import Run
 
-        return PipelineRun(**data)
+        return Run(**data)

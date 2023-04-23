@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.artifacts import ErrorOutput
 from griptape.structures import Structure
-from griptape.memory import PipelineMemory, PipelineRun
+from griptape.memory import Memory, Run
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -13,14 +13,13 @@ if TYPE_CHECKING:
 
 @define
 class Pipeline(Structure):
-    memory: Optional[PipelineMemory] = field(default=None, kw_only=True)
-    autoprune_memory: bool = field(default=True, kw_only=True)
+    memory: Optional[Memory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
 
         if self.memory:
-            self.memory.pipeline = self
+            self.memory.structure = self
 
     def first_task(self) -> Optional[BaseTask]:
         return None if self.is_empty() else self.tasks[0]
@@ -82,7 +81,7 @@ class Pipeline(Structure):
         self.__run_from_task(self.first_task())
 
         if self.memory:
-            run = PipelineRun(
+            run = Run(
                 input=self.first_task().render_prompt(),
                 output=self.last_task().output.value
             )

@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from griptape.memory import PipelineMemory
+from griptape.memory import Memory
 
 
 class MemoryDriver(ABC):
     @abstractmethod
-    def store(self, memory: PipelineMemory) -> None:
+    def store(self, memory: Memory) -> None:
         ...
 
     @abstractmethod
-    def load(self) -> PipelineMemory:
+    def load(self) -> Memory:
         ...

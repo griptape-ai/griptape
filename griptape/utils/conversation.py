@@ -3,12 +3,12 @@ from typing import TYPE_CHECKING
 from attr import define, field
 
 if TYPE_CHECKING:
-    from griptape.memory import PipelineMemory
+    from griptape.memory import Memory
 
 
 @define(frozen=True)
 class Conversation:
-    memory: PipelineMemory = field()
+    memory: Memory = field()
 
     def lines(self) -> list[str]:
         lines = []
