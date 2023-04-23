@@ -6,10 +6,10 @@ from griptape.artifacts import StructureArtifact
 
 
 if TYPE_CHECKING:
-    from griptape.steps import Step
+    from griptape.tasks import BaseTask
 
 
 @define(frozen=True)
 class ErrorOutput(StructureArtifact):
     exception: Optional[Exception] = field(default=None, kw_only=True)
-    step: Optional[Step] = field(default=None, kw_only=True)
+    task: Optional[BaseTask] = field(default=None, kw_only=True)

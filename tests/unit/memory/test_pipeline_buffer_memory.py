@@ -1,4 +1,4 @@
-from griptape.steps import PromptStep
+from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 from griptape.memory import BufferPipelineMemory
 from tests.mocks.mock_driver import MockDriver
@@ -10,11 +10,11 @@ class TestBufferMemory:
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 
-        pipeline.add_steps(
-            PromptStep("test"),
-            PromptStep("test"),
-            PromptStep("test"),
-            PromptStep("test")
+        pipeline.add_tasks(
+            PromptTask("test"),
+            PromptTask("test"),
+            PromptTask("test"),
+            PromptTask("test")
         )
 
         pipeline.run()

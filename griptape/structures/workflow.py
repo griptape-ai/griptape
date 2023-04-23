@@ -4,7 +4,7 @@ import json
 from graphlib import TopologicalSorter
 from attr import define, field
 from griptape.artifacts import ErrorOutput
-from griptape.steps import Step
+from griptape.tasks import BaseTask
 from griptape.structures import Structure
 from griptape.utils import J2
 
@@ -13,36 +13,36 @@ from griptape.utils import J2
 class Workflow(Structure):
     executor: futures.Executor = field(default=futures.ThreadPoolExecutor(), kw_only=True)
 
-    def add_step(self, step: Step) -> Step:
-        step.structure = self
+    def add_task(self, task: BaseTask) -> BaseTask:
+        task.structure = self
 
-        self.steps.append(step)
+        self.tasks.append(task)
 
-        return step
+        return task
 
-    def prompt_stack(self, step: Step) -> list[str]:
-        stack = Structure.prompt_stack(self, step)
+    def prompt_stack(self, task: BaseTask) -> list[str]:
+        stack = Structure.prompt_stack(self, task)
 
         stack.append(
             J2("prompts/workflow.j2").render(
-                step=step
+                task=task
             )
         )
 
         return stack
 
-    def run(self, *args) -> list[Step]:
+    def run(self, *args) -> list[BaseTask]:
         self._execution_args = args
-        ordered_steps = self.order_steps()
+        ordered_tasks = self.order_tasks()
         exit_loop = False
 
         while not self.is_finished() and not exit_loop:
             futures_list = {}
 
-            for step in ordered_steps:
-                if step.can_execute():
-                    future = self.executor.submit(step.execute)
-                    futures_list[future] = step
+            for task in ordered_tasks:
+                if task.can_execute():
+                    future = self.executor.submit(task.execute)
+                    futures_list[future] = task
 
             # Wait for all tasks to complete
             for future in futures.as_completed(futures_list):
@@ -53,38 +53,38 @@ class Workflow(Structure):
 
         self._execution_args = ()
 
-        return self.output_steps()
+        return self.output_tasks()
 
-    def context(self, step: Step) -> dict[str, any]:
-        context = super().context(step)
+    def context(self, task: BaseTask) -> dict[str, any]:
+        context = super().context(task)
 
         context.update(
             {
-                "inputs": {parent.id: parent.output.value if parent.output else "" for parent in step.parents},
-                "parents": {parent.id: parent for parent in step.parents},
-                "children": {child.id: child for child in step.children}
+                "inputs": {parent.id: parent.output.value if parent.output else "" for parent in task.parents},
+                "parents": {parent.id: parent for parent in task.parents},
+                "children": {child.id: child for child in task.children}
             }
         )
 
         return context
 
-    def output_steps(self) -> list[Step]:
-        return [step for step in self.steps if not step.children]
+    def output_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.children]
 
     def to_graph(self) -> dict[str, set[str]]:
         graph: dict[str, set[str]] = {}
 
-        for key_step in self.steps:
-            graph[key_step.id] = set()
+        for key_task in self.tasks:
+            graph[key_task.id] = set()
 
-            for value_step in self.steps:
-                if key_step.id in value_step.child_ids:
-                    graph[key_step.id].add(value_step.id)
+            for value_task in self.tasks:
+                if key_task.id in value_task.child_ids:
+                    graph[key_task.id].add(value_task.id)
 
         return graph
 
-    def order_steps(self) -> list[Step]:
-        return [self.find_step(step_id) for step_id in TopologicalSorter(self.to_graph()).static_order()]
+    def order_tasks(self) -> list[BaseTask]:
+        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]
 
     def to_dict(self) -> dict:
         from griptape.schemas import WorkflowSchema

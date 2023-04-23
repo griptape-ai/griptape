@@ -1,0 +1,7 @@
+Input: {{ task.render_prompt() }}
+{% if task.output %}
+Output: {{ task.output.value }}
+
+{% else %}
+Output:
+{% endif %}

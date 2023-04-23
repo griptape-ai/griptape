@@ -1,31 +1,31 @@
-from griptape.steps import PromptStep
+from griptape.tasks import PromptTask
 from tests.mocks.mock_driver import MockDriver
 from griptape.structures import Pipeline
 
 
 class TestPromptStep:
     def test_run(self):
-        step = PromptStep("test")
+        step = PromptTask("test")
         pipeline = Pipeline(prompt_driver=MockDriver())
 
-        pipeline.add_step(step)
+        pipeline.add_task(step)
 
         assert step.run().value == "mock output"
 
     def test_render_prompt(self):
-        step = PromptStep("{{ test }}", context={"test": "test value"})
+        step = PromptTask("{{ test }}", context={"test": "test value"})
 
-        Pipeline().add_step(step)
+        Pipeline().add_task(step)
 
         assert step.render_prompt() == "test value"
 
     def test_full_context(self):
-        parent = PromptStep("parent")
-        step = PromptStep("test", context={"foo": "bar"})
-        child = PromptStep("child")
+        parent = PromptTask("parent")
+        step = PromptTask("test", context={"foo": "bar"})
+        child = PromptTask("child")
         pipeline = Pipeline(prompt_driver=MockDriver())
 
-        pipeline.add_steps(parent, step, child)
+        pipeline.add_tasks(parent, step, child)
 
         pipeline.run()
 

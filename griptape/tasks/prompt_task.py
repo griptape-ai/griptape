@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.utils import J2
-from griptape.steps import Step
+from griptape.tasks import BaseTask
 from griptape.artifacts import TextOutput
 
 if TYPE_CHECKING:
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @define
-class PromptStep(Step):
+class PromptTask(BaseTask):
     prompt_template: str = field(default="{{ args[0] }}")
     context: dict[str, any] = field(factory=dict, kw_only=True)
     driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
@@ -18,7 +18,7 @@ class PromptStep(Step):
     def before_run(self) -> None:
         super().before_run()
 
-        self.structure.logger.info(f"Step {self.id}\nInput: {self.render_prompt()}")
+        self.structure.logger.info(f"Task {self.id}\nInput: {self.render_prompt()}")
 
     def run(self) -> TextOutput:
         self.output = self.active_driver().run(value=self.structure.to_prompt_string(self))
@@ -28,7 +28,7 @@ class PromptStep(Step):
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info(f"Step {self.id}\nOutput: {self.output.value}")
+        self.structure.logger.info(f"Task {self.id}\nOutput: {self.output.value}")
 
     def active_driver(self) -> BasePromptDriver:
         if self.driver is None:
@@ -43,8 +43,8 @@ class PromptStep(Step):
         )
 
     def render(self) -> str:
-        return J2("prompts/steps/prompt.j2").render(
-            step=self
+        return J2("prompts/tasks/prompt.j2").render(
+            task=self
         )
 
     @property

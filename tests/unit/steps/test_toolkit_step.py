@@ -1,6 +1,6 @@
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorOutput
-from griptape.steps import ToolkitStep, ToolSubstep
+from griptape.tasks import ToolkitTask, ToolStep
 from griptape.utils import ToolLoader
 from tests.mocks.mock_value_driver import MockValueDriver
 from griptape.structures import Pipeline
@@ -8,10 +8,10 @@ from griptape.structures import Pipeline
 
 class TestToolkitStep:
     def test_init(self):
-        assert len(ToolkitStep("test", tool_names=["Calculator", "WebSearch"]).tool_names) == 2
+        assert len(ToolkitTask("test", tool_names=["Calculator", "WebSearch"]).tool_names) == 2
 
         try:
-            assert ToolkitStep("test", tool_names=["Calculator", "Calculator"])
+            assert ToolkitTask("test", tool_names=["Calculator", "Calculator"])
         except ValueError:
             assert True
 
@@ -23,102 +23,102 @@ class TestToolkitStep:
             MockTool(name="ToolTwo")
         ]
 
-        step = ToolkitStep("test", tool_names=["ToolOne", "ToolTwo"])
+        task = ToolkitTask("test", tool_names=["ToolOne", "ToolTwo"])
         pipeline = Pipeline(
             prompt_driver=MockValueDriver(output),
             tool_loader=ToolLoader(tools=tools)
         )
 
-        pipeline.add_step(step)
+        pipeline.add_task(task)
 
         result = pipeline.run()
 
-        assert len(step.tools) == 2
-        assert len(step._substeps) == 1
+        assert len(task.tools) == 2
+        assert len(task._steps) == 1
         assert result.output.value == "done"
     
-    def test_run_max_substeps(self):
+    def test_run_max_steps(self):
         output = """Action: {"tool": "test"}"""
 
-        step = ToolkitStep("test", tool_names=["Calculator"], max_substeps=3)
+        task = ToolkitTask("test", tool_names=["Calculator"], max_steps=3)
         pipeline = Pipeline(prompt_driver=MockValueDriver(output))
 
-        pipeline.add_step(step)
+        pipeline.add_task(task)
 
         pipeline.run()
 
-        assert len(step._substeps) == 3
-        assert isinstance(step.output, ErrorOutput)
+        assert len(task._steps) == 3
+        assert isinstance(task.output, ErrorOutput)
 
     def test_init_from_prompt_1(self):
         valid_input = """Thought: need to test\nAction: {"tool": "test", "action": "test action", "value": "test input"}\nObservation: test 
         observation\nOutput: test output"""
-        step = ToolkitStep("test", tool_names=["Calculator"])
+        task = ToolkitTask("test", tool_names=["Calculator"])
 
-        Pipeline().add_step(step)
+        Pipeline().add_task(task)
 
-        substep = step.add_substep(ToolSubstep(valid_input))
+        step = task.add_step(ToolStep(valid_input))
 
-        assert substep.thought == "need to test"
-        assert substep.tool_name == "test"
-        assert substep.tool_action == "test action"
-        assert substep.tool_value == "test input"
-        assert substep.output is None
+        assert step.thought == "need to test"
+        assert step.tool_name == "test"
+        assert step.tool_action == "test action"
+        assert step.tool_value == "test input"
+        assert step.output is None
 
     def test_init_from_prompt_2(self):
         valid_input = """Thought: need to test\nObservation: test 
         observation\nOutput: test output"""
-        step = ToolkitStep("test", tool_names=["Calculator"])
+        task = ToolkitTask("test", tool_names=["Calculator"])
 
-        Pipeline().add_step(step)
+        Pipeline().add_task(task)
 
-        substep = step.add_substep(ToolSubstep(valid_input))
+        step = task.add_step(ToolStep(valid_input))
 
-        assert substep.thought == "need to test"
-        assert substep.tool_name is None
-        assert substep.tool_action is None
-        assert substep.tool_value is None
-        assert substep.output.value == "test output"
+        assert step.thought == "need to test"
+        assert step.tool_name is None
+        assert step.tool_action is None
+        assert step.tool_value is None
+        assert step.output.value == "test output"
 
-    def test_add_substep(self):
-        step = ToolkitStep("test", tool_names=["Calculator"])
-        substep1 = ToolSubstep("test1", tool_name="test", tool_action="test", tool_value="test")
-        substep2 = ToolSubstep("test2", tool_name="test", tool_action="test", tool_value="test")
+    def test_add_step(self):
+        task = ToolkitTask("test", tool_names=["Calculator"])
+        step1 = ToolStep("test1", tool_name="test", tool_action="test", tool_value="test")
+        step2 = ToolStep("test2", tool_name="test", tool_action="test", tool_value="test")
 
-        Pipeline().add_step(step)
+        Pipeline().add_task(task)
 
-        step.add_substep(substep1)
-        step.add_substep(substep2)
+        task.add_step(step1)
+        task.add_step(step2)
 
-        assert len(step._substeps) == 2
+        assert len(task._steps) == 2
 
-        assert len(substep1.children) == 1
-        assert len(substep1.parents) == 0
-        assert substep1.children[0] == substep2
+        assert len(step1.children) == 1
+        assert len(step1.parents) == 0
+        assert step1.children[0] == step2
 
-        assert len(substep2.children) == 0
-        assert len(substep2.parents) == 1
-        assert substep2.parents[0] == substep1
+        assert len(step2.children) == 0
+        assert len(step2.parents) == 1
+        assert step2.parents[0] == step1
 
-    def test_find_substep(self):
-        step = ToolkitStep("test", tool_names=["Calculator"])
-        substep1 = ToolSubstep("test1", tool_name="test", tool_action="test", tool_value="test")
-        substep2 = ToolSubstep("test2", tool_name="test", tool_action="test", tool_value="test")
+    def test_find_step(self):
+        task = ToolkitTask("test", tool_names=["Calculator"])
+        step1 = ToolStep("test1", tool_name="test", tool_action="test", tool_value="test")
+        step2 = ToolStep("test2", tool_name="test", tool_action="test", tool_value="test")
 
-        Pipeline().add_step(step)
+        Pipeline().add_task(task)
 
-        step.add_substep(substep1)
-        step.add_substep(substep2)
+        task.add_step(step1)
+        task.add_step(step2)
 
-        assert step.find_substep(substep1.id) == substep1
-        assert step.find_substep(substep2.id) == substep2
+        assert task.find_step(step1.id) == step1
+        assert task.find_step(step2.id) == step2
     
     def test_find_tool(self):
         tool = MockTool()
-        step = ToolkitStep("test", tool_names=[tool.name])
+        task = ToolkitTask("test", tool_names=[tool.name])
 
         Pipeline(
             tool_loader=ToolLoader(tools=[tool])
-        ).add_step(step)
+        ).add_task(task)
 
-        assert step.find_tool(tool.name) == tool
+        assert task.find_tool(tool.name) == tool

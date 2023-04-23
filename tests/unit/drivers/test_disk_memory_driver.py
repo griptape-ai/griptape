@@ -3,7 +3,7 @@ import pytest
 from tests.mocks.mock_driver import MockDriver
 from griptape.drivers import DiskMemoryDriver
 from griptape.memory import PipelineMemory
-from griptape.steps import PromptStep
+from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 
 
@@ -24,8 +24,8 @@ class TestPromptDriver:
         memory = PipelineMemory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
-        pipeline.add_step(
-            PromptStep("test")
+        pipeline.add_task(
+            PromptTask("test")
         )
 
         try:
@@ -45,8 +45,8 @@ class TestPromptDriver:
         memory = PipelineMemory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
-        pipeline.add_step(
-            PromptStep("test")
+        pipeline.add_task(
+            PromptTask("test")
         )
 
         pipeline.run()

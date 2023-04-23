@@ -1,6 +1,6 @@
 from tests.mocks.mock_driver import MockDriver
 from griptape.memory import PipelineMemory
-from griptape.steps import PromptStep
+from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 from griptape.utils import Conversation
 
@@ -9,8 +9,8 @@ class TestConversation:
     def test_lines(self):
         pipeline = Pipeline(prompt_driver=MockDriver(), memory=PipelineMemory())
 
-        pipeline.add_steps(
-            PromptStep("question 1")
+        pipeline.add_tasks(
+            PromptTask("question 1")
         )
 
         pipeline.run()
@@ -26,8 +26,8 @@ class TestConversation:
     def test_to_string(self):
         pipeline = Pipeline(prompt_driver=MockDriver(), memory=PipelineMemory())
 
-        pipeline.add_steps(
-            PromptStep("question 1")
+        pipeline.add_tasks(
+            PromptTask("question 1")
         )
 
         pipeline.run()

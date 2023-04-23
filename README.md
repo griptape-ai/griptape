@@ -56,17 +56,16 @@ pip install griptape -U
 
 Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts and to work with [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/index.html) data structures.
 
-With griptape, you can create *structures*, such as `Pipelines` and `Workflows`, that are composed of different types of steps. You can also define structures as JSON objects and load them into griptape dynamically. Let's define a simple two-step pipeline that uses tools:
+With griptape, you can create *structures*, such as `Pipelines` and `Workflows`, that are composed of different types of tasks. You can also define structures as JSON objects and load them into griptape dynamically. Let's define a simple two-step pipeline that uses tools:
 
 ```python
 from decouple import config
 from griptape.tools import WebScraper, Calculator
 from griptape import utils
 from griptape.memory import PipelineMemory
-from griptape.steps import PromptStep, ToolkitStep
+from griptape.tasks import PromptTask, ToolkitTask
 from griptape.structures import Pipeline
 from griptape.utils import ToolLoader
-
 
 scraper = WebScraper(
     openai_api_key=config("OPENAI_API_KEY")
@@ -80,11 +79,11 @@ pipeline = Pipeline(
     )
 )
 
-pipeline.add_steps(
-    ToolkitStep(
+pipeline.add_tasks(
+    ToolkitTask(
         tool_names=[calculator.name, scraper.name]
     ),
-    PromptStep(
+    PromptTask(
         "Say the following like a pirate: {{ input }}"
     )
 )

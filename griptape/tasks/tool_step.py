@@ -7,23 +7,23 @@ from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from griptape.artifacts import TextOutput, ErrorOutput
-from griptape.steps import PromptStep
+from griptape.tasks import PromptTask
 from griptape.core import BaseTool
 from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.artifacts import StructureArtifact
-    from griptape.steps import ToolkitStep
+    from griptape.tasks import ToolkitTask
 
 
 @define
-class ToolSubstep(PromptStep):
+class ToolStep(PromptTask):
     THOUGHT_PATTERN = r"^Thought:\s*(.*)$"
     ACTION_PATTERN = r"^Action:\s*({.*})$"
     OUTPUT_PATTERN = r"^Output:\s?([\s\S]*)$"
     INVALID_ACTION_ERROR_MSG = f"invalid action input, try again"
 
-    parent_step_id: Optional[str] = field(default=None, kw_only=True)
+    parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
     tool_name: Optional[str] = field(default=None, kw_only=True)
     tool_action: Optional[str] = field(default=None, kw_only=True)
@@ -31,30 +31,30 @@ class ToolSubstep(PromptStep):
 
     _tool: Optional[BaseTool] = None
 
-    def attach(self, parent_step: ToolkitStep):
-        self.parent_step_id = parent_step.id
-        self.structure = parent_step.structure
+    def attach(self, parent_task: ToolkitTask):
+        self.parent_task_id = parent_task.id
+        self.structure = parent_task.structure
         self.__init_from_prompt(self.render_prompt())
 
     @property
-    def toolkit_step(self) -> Optional[ToolkitStep]:
-        return self.structure.find_step(self.parent_step_id)
+    def task(self) -> Optional[ToolkitTask]:
+        return self.structure.find_task(self.parent_task_id)
 
     @property
-    def parents(self) -> list[ToolSubstep]:
-        return [self.toolkit_step.find_substep(parent_id) for parent_id in self.parent_ids]
+    def parents(self) -> list[ToolStep]:
+        return [self.task.find_step(parent_id) for parent_id in self.parent_ids]
 
     @property
-    def children(self) -> list[ToolSubstep]:
-        return [self.toolkit_step.find_substep(child_id) for child_id in self.child_ids]
+    def children(self) -> list[ToolStep]:
+        return [self.task.find_step(child_id) for child_id in self.child_ids]
 
     def before_run(self) -> None:
-        self.structure.logger.info(f"Substep {self.id}\n{self.render_prompt()}")
+        self.structure.logger.info(f"Step {self.id}\n{self.render_prompt()}")
 
     def run(self) -> StructureArtifact:
         try:
             if self.tool_name == "error":
-                self.output = ErrorOutput(self.tool_value, step=self)
+                self.output = ErrorOutput(self.tool_value, task=self.task)
             else:
                 if self._tool:
                     observation = self.structure.tool_loader.executor.execute(
@@ -66,18 +66,18 @@ class ToolSubstep(PromptStep):
 
                 self.output = TextOutput(observation)
         except Exception as e:
-            self.structure.logger.error(f"Substep {self.id}\n{e}", exc_info=True)
+            self.structure.logger.error(f"Step {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorOutput(str(e), exception=e, step=self)
+            self.output = ErrorOutput(str(e), exception=e, task=self.task)
         finally:
             return self.output
 
     def after_run(self) -> None:
-        self.structure.logger.info(f"Substep {self.id}\nObservation: {self.output.value}")
+        self.structure.logger.info(f"Step {self.id}\nObservation: {self.output.value}")
 
     def render(self) -> str:
-        return J2("prompts/steps/tool/substep.j2").render(
-            substep=self
+        return J2("prompts/tasks/tool/step.j2").render(
+            step=self
         )
 
     def to_json(self) -> str:
@@ -94,7 +94,7 @@ class ToolSubstep(PromptStep):
 
         return json.dumps(json_dict)
 
-    def add_child(self, child: ToolSubstep) -> ToolSubstep:
+    def add_child(self, child: ToolStep) -> ToolStep:
         if child.id not in self.child_ids:
             self.child_ids.append(child.id)
 
@@ -103,7 +103,7 @@ class ToolSubstep(PromptStep):
 
         return child
 
-    def add_parent(self, parent: ToolSubstep) -> ToolSubstep:
+    def add_parent(self, parent: ToolStep) -> ToolStep:
         if parent.id not in self.parent_ids:
             self.parent_ids.append(parent.id)
 
@@ -134,7 +134,7 @@ class ToolSubstep(PromptStep):
 
                 # Load the tool itself
                 if self.tool_name:
-                    self._tool = self.toolkit_step.find_tool(self.tool_name)
+                    self._tool = self.task.find_tool(self.tool_name)
 
                 # Validate input based on tool schema
                 if self._tool:
@@ -148,17 +148,17 @@ class ToolSubstep(PromptStep):
                     self.tool_value = str(parsed_value.get("value"))
 
             except SyntaxError as e:
-                self.structure.logger.error(f"Step {self.toolkit_step.id}\nSyntax error: {e}")
+                self.structure.logger.error(f"Step {self.task.id}\nSyntax error: {e}")
 
                 self.tool_name = "error"
                 self.tool_value = f"syntax error: {e}"
             except ValidationError as e:
-                self.structure.logger.error(f"Step {self.toolkit_step.id}\nInvalid JSON: {e}")
+                self.structure.logger.error(f"Step {self.task.id}\nInvalid JSON: {e}")
 
                 self.tool_name = "error"
                 self.tool_value = f"JSON validation error: {e}"
             except Exception as e:
-                self.structure.logger.error(f"Step {self.toolkit_step.id}\nError parsing tool action: {e}")
+                self.structure.logger.error(f"Step {self.task.id}\nError parsing tool action: {e}")
 
                 self.tool_name = "error"
                 self.tool_value = f"error: {self.INVALID_ACTION_ERROR_MSG}"

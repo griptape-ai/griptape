@@ -8,12 +8,12 @@ from griptape.artifacts import ErrorOutput
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextOutput, StructureArtifact
-    from griptape.steps import Step
+    from griptape.tasks import BaseTask
     from griptape.structures import Structure
 
 
 @define
-class Step(ABC):
+class BaseTask(ABC):
     class State(Enum):
         PENDING = 1
         EXECUTING = 2
@@ -29,24 +29,24 @@ class Step(ABC):
     structure: Optional[Structure] = field(default=None, init=False)
 
     @property
-    def parents(self) -> list[Step]:
-        return [self.structure.find_step(parent_id) for parent_id in self.parent_ids]
+    def parents(self) -> list[BaseTask]:
+        return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
 
     @property
-    def children(self) -> list[Step]:
-        return [self.structure.find_step(child_id) for child_id in self.child_ids]
+    def children(self) -> list[BaseTask]:
+        return [self.structure.find_task(child_id) for child_id in self.child_ids]
 
-    def add_child(self, child: Step) -> Step:
+    def add_child(self, child: BaseTask) -> BaseTask:
         if self.structure:
             child.structure = self.structure
         elif child.structure:
             self.structure = child.structure
 
-        if child not in self.structure.steps:
-            self.structure.steps.append(child)
+        if child not in self.structure.tasks:
+            self.structure.tasks.append(child)
 
-        if self not in self.structure.steps:
-            self.structure.steps.append(self)
+        if self not in self.structure.tasks:
+            self.structure.tasks.append(self)
 
         if child.id not in self.child_ids:
             self.child_ids.append(child.id)
@@ -56,17 +56,17 @@ class Step(ABC):
 
         return child
 
-    def add_parent(self, parent: Step) -> Step:
+    def add_parent(self, parent: BaseTask) -> BaseTask:
         if self.structure:
             parent.structure = self.structure
         elif parent.structure:
             self.structure = parent.structure
 
-        if parent not in self.structure.steps:
-            self.structure.steps.append(parent)
+        if parent not in self.structure.tasks:
+            self.structure.tasks.append(parent)
 
-        if self not in self.structure.steps:
-            self.structure.steps.append(self)
+        if self not in self.structure.tasks:
+            self.structure.tasks.append(self)
 
         if parent.id not in self.parent_ids:
             self.parent_ids.append(parent.id)
@@ -77,13 +77,13 @@ class Step(ABC):
         return parent
 
     def is_pending(self) -> bool:
-        return self.state == Step.State.PENDING
+        return self.state == BaseTask.State.PENDING
 
     def is_finished(self) -> bool:
-        return self.state == Step.State.FINISHED
+        return self.state == BaseTask.State.FINISHED
 
     def is_executing(self) -> bool:
-        return self.state == Step.State.EXECUTING
+        return self.state == BaseTask.State.EXECUTING
 
     def before_run(self) -> None:
         pass
@@ -93,7 +93,7 @@ class Step(ABC):
 
     def execute(self) -> StructureArtifact:
         try:
-            self.state = Step.State.EXECUTING
+            self.state = BaseTask.State.EXECUTING
 
             self.before_run()
 
@@ -101,19 +101,19 @@ class Step(ABC):
 
             self.after_run()
         except Exception as e:
-            self.structure.logger.error(f"Step {self.id}\n{e}", exc_info=True)
+            self.structure.logger.error(f"Task {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorOutput(str(e), exception=e, step=self)
+            self.output = ErrorOutput(str(e), exception=e, task=self)
         finally:
-            self.state = Step.State.FINISHED
+            self.state = BaseTask.State.FINISHED
 
             return self.output
 
     def can_execute(self) -> bool:
-        return self.state == Step.State.PENDING and all(parent.is_finished() for parent in self.parents)
+        return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
 
-    def reset(self) -> Step:
-        self.state = Step.State.PENDING
+    def reset(self) -> BaseTask:
+        self.state = BaseTask.State.PENDING
         self.output = None
 
         return self

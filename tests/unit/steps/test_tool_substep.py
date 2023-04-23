@@ -1,5 +1,5 @@
 import json
-from griptape.steps import ToolkitStep, ToolSubstep
+from griptape.tasks import ToolkitTask, ToolStep
 from griptape.structures import Pipeline
 
 
@@ -8,9 +8,9 @@ class TestToolSubstep:
         valid_input = """Thought: need to test\nAction: {"tool": "test", "action": "test action", "value": "test input"}\nObservation: test 
         observation\nOutput: test output"""
 
-        step = ToolkitStep(tool_names=[])
-        Pipeline().add_step(step)
-        substep = step.add_substep(ToolSubstep(valid_input))
+        task = ToolkitTask(tool_names=[])
+        Pipeline().add_task(task)
+        substep = task.add_step(ToolStep(valid_input))
         json_dict = json.loads(substep.to_json())
 
         assert json_dict["tool"] == "test"

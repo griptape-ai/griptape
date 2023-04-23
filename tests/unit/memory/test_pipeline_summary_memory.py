@@ -1,7 +1,7 @@
 from griptape.summarizers import PromptDriverSummarizer
 from griptape.memory import SummaryPipelineMemory
 from tests.mocks.mock_driver import MockDriver
-from griptape.steps import PromptStep
+from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 
 
@@ -11,8 +11,8 @@ class TestSummaryMemory:
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 
-        pipeline.add_steps(
-            PromptStep("test")
+        pipeline.add_tasks(
+            PromptTask("test")
         )
 
         pipeline.run()
@@ -27,8 +27,8 @@ class TestSummaryMemory:
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 
-        pipeline.add_steps(
-            PromptStep("test")
+        pipeline.add_tasks(
+            PromptTask("test")
         )
 
         pipeline.run()

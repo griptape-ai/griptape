@@ -1,7 +1,7 @@
 import json
 from tests.mocks.mock_driver import MockDriver
 from griptape.rules import Rule
-from griptape.steps import PromptStep, Step
+from griptape.tasks import PromptTask, BaseTask
 from griptape.structures import Workflow
 
 
@@ -12,218 +12,218 @@ class TestWorkflow:
         workflow = Workflow(prompt_driver=driver, rules=[rule])
 
         assert workflow.prompt_driver is driver
-        assert len(workflow.steps) == 0
+        assert len(workflow.tasks) == 0
         assert workflow.rules[0].value is "test"
 
-    def test_add_step(self):
-        first_step = PromptStep("test1")
-        second_step = PromptStep("test2")
+    def test_add_task(self):
+        first_task = PromptTask("test1")
+        second_task = PromptTask("test2")
 
         workflow = Workflow(
             prompt_driver=MockDriver()
         )
 
-        workflow.add_step(first_step)
-        workflow.add_step(second_step)
+        workflow.add_task(first_task)
+        workflow.add_task(second_task)
 
-        assert len(workflow.steps) == 2
-        assert first_step in workflow.steps
-        assert second_step in workflow.steps
-        assert first_step.structure == workflow
-        assert second_step.structure == workflow
-        assert len(first_step.parents) == 0
-        assert len(first_step.children) == 0
-        assert len(second_step.parents) == 0
-        assert len(second_step.children) == 0
+        assert len(workflow.tasks) == 2
+        assert first_task in workflow.tasks
+        assert second_task in workflow.tasks
+        assert first_task.structure == workflow
+        assert second_task.structure == workflow
+        assert len(first_task.parents) == 0
+        assert len(first_task.children) == 0
+        assert len(second_task.parents) == 0
+        assert len(second_task.children) == 0
 
-    def test_add_steps(self):
-        first_step = PromptStep("test1")
-        second_step = PromptStep("test2")
+    def test_add_tasks(self):
+        first_task = PromptTask("test1")
+        second_task = PromptTask("test2")
 
         workflow = Workflow(
             prompt_driver=MockDriver()
         )
 
-        workflow.add_steps(first_step, second_step)
+        workflow.add_tasks(first_task, second_task)
 
-        assert len(workflow.steps) == 2
-        assert first_step in workflow.steps
-        assert second_step in workflow.steps
-        assert first_step.structure == workflow
-        assert second_step.structure == workflow
-        assert len(first_step.parents) == 0
-        assert len(first_step.children) == 0
-        assert len(second_step.parents) == 0
-        assert len(second_step.children) == 0
+        assert len(workflow.tasks) == 2
+        assert first_task in workflow.tasks
+        assert second_task in workflow.tasks
+        assert first_task.structure == workflow
+        assert second_task.structure == workflow
+        assert len(first_task.parents) == 0
+        assert len(first_task.children) == 0
+        assert len(second_task.parents) == 0
+        assert len(second_task.children) == 0
 
     def test_run(self):
-        step1 = PromptStep("test")
-        step2 = PromptStep("test")
+        task1 = PromptTask("test")
+        task2 = PromptTask("test")
         workflow = Workflow(prompt_driver=MockDriver())
-        workflow.add_steps(step1, step2)
+        workflow.add_tasks(task1, task2)
 
-        assert step1.state == Step.State.PENDING
-        assert step2.state == Step.State.PENDING
+        assert task1.state == BaseTask.State.PENDING
+        assert task2.state == BaseTask.State.PENDING
 
         workflow.run()
 
-        assert step1.state == Step.State.FINISHED
-        assert step2.state == Step.State.FINISHED
+        assert task1.state == BaseTask.State.FINISHED
+        assert task2.state == BaseTask.State.FINISHED
 
     def test_run_with_args(self):
-        step = PromptStep("{{ args[0] }}-{{ args[1] }}")
+        task = PromptTask("{{ args[0] }}-{{ args[1] }}")
         workflow = Workflow(prompt_driver=MockDriver())
-        workflow.add_steps(step)
+        workflow.add_tasks(task)
 
         workflow._execution_args = ("test1", "test2")
 
-        assert step.render_prompt() == "test1-test2"
+        assert task.render_prompt() == "test1-test2"
 
         workflow.run()
 
-        assert step.render_prompt() == "-"
+        assert task.render_prompt() == "-"
 
     def test_run_topology_1(self):
-        step1 = PromptStep("prompt1")
-        step2 = PromptStep("prompt2")
-        step3 = PromptStep("prompt3")
+        task1 = PromptTask("prompt1")
+        task2 = PromptTask("prompt2")
+        task3 = PromptTask("prompt3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        # step1 splits into step2 and step3
-        workflow.add_step(step1)
-        step1.add_child(step2)
-        step3.add_parent(step1)
+        # task1 splits into task2 and task3
+        workflow.add_task(task1)
+        task1.add_child(task2)
+        task3.add_parent(task1)
 
         workflow.run()
 
-        assert step1.state == Step.State.FINISHED
-        assert step2.state == Step.State.FINISHED
-        assert step3.state == Step.State.FINISHED
+        assert task1.state == BaseTask.State.FINISHED
+        assert task2.state == BaseTask.State.FINISHED
+        assert task3.state == BaseTask.State.FINISHED
 
     def test_run_topology_2(self):
-        step1 = PromptStep("test1")
-        step2 = PromptStep("test2")
-        step3 = PromptStep("test3")
+        task1 = PromptTask("test1")
+        task2 = PromptTask("test2")
+        task3 = PromptTask("test3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        # step1 and step2 converge into step3
-        workflow.add_steps(step1, step2)
-        step1.add_child(step3)
-        step3.add_parent(step2)
+        # task1 and task2 converge into task3
+        workflow.add_tasks(task1, task2)
+        task1.add_child(task3)
+        task3.add_parent(task2)
 
         workflow.run()
 
-        assert step1.state == Step.State.FINISHED
-        assert step2.state == Step.State.FINISHED
-        assert step3.state == Step.State.FINISHED
+        assert task1.state == BaseTask.State.FINISHED
+        assert task2.state == BaseTask.State.FINISHED
+        assert task3.state == BaseTask.State.FINISHED
 
-    def test_output_steps(self):
-        step1 = PromptStep("prompt1")
-        step2 = PromptStep("prompt2")
-        step3 = PromptStep("prompt3")
+    def test_output_tasks(self):
+        task1 = PromptTask("prompt1")
+        task2 = PromptTask("prompt2")
+        task3 = PromptTask("prompt3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_step(step1)
-        step1.add_child(step2)
-        step3.add_parent(step1)
+        workflow.add_task(task1)
+        task1.add_child(task2)
+        task3.add_parent(task1)
 
-        assert len(workflow.output_steps()) == 2
-        assert step2 in workflow.output_steps()
-        assert step3 in workflow.output_steps()
+        assert len(workflow.output_tasks()) == 2
+        assert task2 in workflow.output_tasks()
+        assert task3 in workflow.output_tasks()
 
     def test_to_graph(self):
-        step1 = PromptStep("prompt1", id="step1")
-        step2 = PromptStep("prompt2", id="step2")
-        step3 = PromptStep("prompt3", id="step3")
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        task3 = PromptTask("prompt3", id="task3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_step(step1)
-        step1.add_child(step2)
-        step3.add_parent(step1)
+        workflow.add_task(task1)
+        task1.add_child(task2)
+        task3.add_parent(task1)
 
         graph = workflow.to_graph()
 
-        assert "step1" in graph["step2"]
-        assert "step1" in graph["step3"]
+        assert "task1" in graph["task2"]
+        assert "task1" in graph["task3"]
 
-    def test_order_steps(self):
-        step1 = PromptStep("prompt1")
-        step2 = PromptStep("prompt2")
-        step3 = PromptStep("prompt3")
+    def test_order_tasks(self):
+        task1 = PromptTask("prompt1")
+        task2 = PromptTask("prompt2")
+        task3 = PromptTask("prompt3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_step(step1)
-        step1.add_child(step2)
-        step3.add_parent(step1)
+        workflow.add_task(task1)
+        task1.add_child(task2)
+        task3.add_parent(task1)
 
-        ordered_steps = workflow.order_steps()
+        ordered_tasks = workflow.order_tasks()
 
-        assert ordered_steps[0] == step1
-        assert ordered_steps[1] == step2 or ordered_steps[1] == step3
-        assert ordered_steps[2] == step2 or ordered_steps[2] == step3
+        assert ordered_tasks[0] == task1
+        assert ordered_tasks[1] == task2 or ordered_tasks[1] == task3
+        assert ordered_tasks[2] == task2 or ordered_tasks[2] == task3
 
     def test_to_json(self):
         workflow = Workflow()
 
-        workflow.add_steps(
-            PromptStep("test prompt"),
-            PromptStep("test prompt")
+        workflow.add_tasks(
+            PromptTask("test prompt"),
+            PromptTask("test prompt")
         )
 
-        assert len(json.loads(workflow.to_json())["steps"]) == 2
+        assert len(json.loads(workflow.to_json())["tasks"]) == 2
 
     def test_to_dict(self):
         workflow = Workflow()
 
-        workflow.add_steps(
-            PromptStep("test prompt"),
-            PromptStep("test prompt")
+        workflow.add_tasks(
+            PromptTask("test prompt"),
+            PromptTask("test prompt")
         )
 
-        assert len(workflow.to_dict()["steps"]) == 2
+        assert len(workflow.to_dict()["tasks"]) == 2
 
     def test_from_json(self):
         workflow = Workflow()
 
-        workflow.add_steps(
-            PromptStep("test prompt"),
-            PromptStep("test prompt")
+        workflow.add_tasks(
+            PromptTask("test prompt"),
+            PromptTask("test prompt")
         )
 
         workflow_json = workflow.to_json()
 
-        assert len(Workflow.from_json(workflow_json).steps) == 2
+        assert len(Workflow.from_json(workflow_json).tasks) == 2
 
     def test_from_dict(self):
         workflow = Workflow()
 
-        workflow.add_steps(
-            PromptStep("test prompt"),
-            PromptStep("test prompt")
+        workflow.add_tasks(
+            PromptTask("test prompt"),
+            PromptTask("test prompt")
         )
 
         workflow_json = workflow.to_dict()
 
-        assert len(Workflow.from_dict(workflow_json).steps) == 2
+        assert len(Workflow.from_dict(workflow_json).tasks) == 2
 
     def test_context(self):
-        parent = PromptStep("parent")
-        step = PromptStep("test")
-        child = PromptStep("child")
+        parent = PromptTask("parent")
+        task = PromptTask("test")
+        child = PromptTask("child")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_step(parent)
+        workflow.add_task(parent)
 
-        parent.add_child(step)
-        step.add_child(child)
+        parent.add_child(task)
+        task.add_child(child)
 
-        context = workflow.context(step)
+        context = workflow.context(task)
 
         assert context["inputs"] == {parent.id: ""}
 
         workflow.run()
 
-        context = workflow.context(step)
+        context = workflow.context(task)
 
         assert context["inputs"] == {parent.id: parent.output.value}
         assert context["structure"] == workflow

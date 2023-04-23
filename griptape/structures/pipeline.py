@@ -8,7 +8,7 @@ from griptape.memory import PipelineMemory, PipelineRun
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.steps import Step
+    from griptape.tasks import BaseTask
 
 
 @define
@@ -22,31 +22,31 @@ class Pipeline(Structure):
         if self.memory:
             self.memory.pipeline = self
 
-    def first_step(self) -> Optional[Step]:
-        return None if self.is_empty() else self.steps[0]
+    def first_task(self) -> Optional[BaseTask]:
+        return None if self.is_empty() else self.tasks[0]
 
-    def last_step(self) -> Optional[Step]:
-        return None if self.is_empty() else self.steps[-1]
+    def last_task(self) -> Optional[BaseTask]:
+        return None if self.is_empty() else self.tasks[-1]
 
-    def finished_steps(self) -> list[Step]:
-        return [s for s in self.steps if s.is_finished()]
+    def finished_tasks(self) -> list[BaseTask]:
+        return [s for s in self.tasks if s.is_finished()]
 
-    def add_step(self, step: Step) -> Step:
-        if self.last_step():
-            self.last_step().add_child(step)
+    def add_task(self, task: BaseTask) -> BaseTask:
+        if self.last_task():
+            self.last_task().add_child(task)
         else:
-            step.structure = self
+            task.structure = self
 
-            self.steps.append(step)
+            self.tasks.append(task)
 
-        return step
+        return task
 
-    def prompt_stack(self, step: Step) -> list[str]:
-        final_stack = super().prompt_stack(step)
-        step_prompt = J2("prompts/pipeline.j2").render(
+    def prompt_stack(self, task: BaseTask) -> list[str]:
+        final_stack = super().prompt_stack(task)
+        task_prompt = J2("prompts/pipeline.j2").render(
             has_memory=self.memory is not None,
-            finished_steps=self.finished_steps(),
-            current_step=step
+            finished_tasks=self.finished_tasks(),
+            current_task=task
         )
 
         if self.memory:
@@ -56,7 +56,7 @@ class Pipeline(Structure):
 
                 while should_prune and last_n > 0:
                     temp_stack = final_stack.copy()
-                    temp_stack.append(step_prompt)
+                    temp_stack.append(task_prompt)
 
                     temp_stack.append(self.memory.to_prompt_string(last_n))
 
@@ -70,37 +70,37 @@ class Pipeline(Structure):
             else:
                 final_stack.append(self.memory.to_prompt_string())
 
-        final_stack.append(step_prompt)
+        final_stack.append(task_prompt)
 
         return final_stack
 
-    def run(self, *args) -> Step:
+    def run(self, *args) -> BaseTask:
         self._execution_args = args
 
-        [step.reset() for step in self.steps]
+        [task.reset() for task in self.tasks]
 
-        self.__run_from_step(self.first_step())
+        self.__run_from_task(self.first_task())
 
         if self.memory:
             run = PipelineRun(
-                input=self.first_step().render_prompt(),
-                output=self.last_step().output.value
+                input=self.first_task().render_prompt(),
+                output=self.last_task().output.value
             )
 
             self.memory.add_run(run)
 
         self._execution_args = ()
 
-        return self.last_step()
+        return self.last_task()
 
-    def context(self, step: Step) -> dict[str, any]:
-        context = super().context(step)
+    def context(self, task: BaseTask) -> dict[str, any]:
+        context = super().context(task)
 
         context.update(
             {
-                "input": step.parents[0].output.value if step.parents and step.parents[0].output else None,
-                "parent": step.parents[0] if step.parents else None,
-                "child": step.children[0] if step.children else None
+                "input": task.parents[0].output.value if task.parents and task.parents[0].output else None,
+                "parent": task.parents[0] if task.parents else None,
+                "child": task.children[0] if task.children else None
             }
         )
 
@@ -121,11 +121,11 @@ class Pipeline(Structure):
     def from_json(cls, pipeline_json: str) -> Pipeline:
         return Pipeline.from_dict(json.loads(pipeline_json))
 
-    def __run_from_step(self, step: Optional[Step]) -> None:
-        if step is None:
+    def __run_from_task(self, task: Optional[BaseTask]) -> None:
+        if task is None:
             return
         else:
-            if isinstance(step.execute(), ErrorOutput):
+            if isinstance(task.execute(), ErrorOutput):
                 return
             else:
-                self.__run_from_step(next(iter(step.children), None))
+                self.__run_from_task(next(iter(task.children), None))

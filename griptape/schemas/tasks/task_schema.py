@@ -2,15 +2,15 @@ from abc import abstractmethod
 from marshmallow import fields
 from marshmallow_enum import EnumField
 from griptape.schemas import BaseSchema
-from griptape.steps import Step
+from griptape.tasks import BaseTask
 
 
-class StepSchema(BaseSchema):
+class TaskSchema(BaseSchema):
     class Meta:
         ordered = True
 
     id = fields.Str()
-    state = EnumField(Step.State)
+    state = EnumField(BaseTask.State)
     parent_ids = fields.List(fields.Str())
     child_ids = fields.List(fields.Str())
 

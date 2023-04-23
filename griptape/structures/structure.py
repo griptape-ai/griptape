@@ -12,7 +12,7 @@ from griptape.utils import J2, ToolLoader
 
 if TYPE_CHECKING:
     from griptape.rules import Rule
-    from griptape.steps import Step
+    from griptape.tasks import BaseTask
 
 
 @define
@@ -23,7 +23,7 @@ class Structure(ABC):
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
-    steps: list[Step] = field(factory=list, kw_only=True)
+    tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     tool_loader: ToolLoader = field(default=ToolLoader(), kw_only=True)
@@ -32,8 +32,8 @@ class Structure(ABC):
     _logger: Optional[Logger] = None
 
     def __attrs_post_init__(self):
-        for step in self.steps:
-            step.structure = self
+        for task in self.tasks:
+            task.structure = self
 
     @property
     def execution_args(self) -> tuple:
@@ -60,24 +60,24 @@ class Structure(ABC):
             return self._logger
 
     def is_finished(self) -> bool:
-        return all(s.is_finished() for s in self.steps)
+        return all(s.is_finished() for s in self.tasks)
 
     def is_executing(self) -> bool:
-        return any(s for s in self.steps if s.is_executing())
+        return any(s for s in self.tasks if s.is_executing())
 
     def is_empty(self) -> bool:
-        return not self.steps
+        return not self.tasks
 
-    def find_step(self, step_id: str) -> Optional[Step]:
-        return next((step for step in self.steps if step.id == step_id), None)
+    def find_task(self, task_id: str) -> Optional[BaseTask]:
+        return next((task for task in self.tasks if task.id == task_id), None)
 
-    def add_steps(self, *steps: Step) -> list[Step]:
-        return [self.add_step(s) for s in steps]
+    def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
+        return [self.add_task(s) for s in tasks]
 
-    def prompt_stack(self, step: Step) -> list[str]:
-        from griptape.steps import ToolkitStep
+    def prompt_stack(self, task: BaseTask) -> list[str]:
+        from griptape.tasks import ToolkitTask
 
-        tools = step.tools if isinstance(step, ToolkitStep) else []
+        tools = task.tools if isinstance(task, ToolkitTask) else []
 
         stack = [
             J2("prompts/context.j2").render(
@@ -89,8 +89,8 @@ class Structure(ABC):
 
         return stack
 
-    def to_prompt_string(self, step: Step) -> str:
-        return self.stack_to_prompt_string(self.prompt_stack(step))
+    def to_prompt_string(self, task: BaseTask) -> str:
+        return self.stack_to_prompt_string(self.prompt_stack(task))
 
     def stack_to_prompt_string(self, stack: list[str]) -> str:
         return str.join("\n", stack)
@@ -98,18 +98,18 @@ class Structure(ABC):
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)
 
-    def context(self, step: Step) -> dict[str, any]:
+    def context(self, task: BaseTask) -> dict[str, any]:
         return {
             "args": self.execution_args,
             "structure": self,
         }
 
     @abstractmethod
-    def add_step(self, step: Step) -> Step:
+    def add_task(self, task: BaseTask) -> BaseTask:
         ...
 
     @abstractmethod
-    def run(self, *args) -> Union[Step, list[Step]]:
+    def run(self, *args) -> Union[BaseTask, list[BaseTask]]:
         ...
 
     @abstractmethod
