@@ -1,4 +1,4 @@
-from griptape.core.utils import PythonRunner
+from griptape.utils import PythonRunner
 
 
 class TestPythonRunner:

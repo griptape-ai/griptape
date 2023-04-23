@@ -1,6 +1,7 @@
 from attr import define, field
 from schema import Schema, Literal
-from griptape.core.tools import BaseTool, action
+from griptape.core import BaseTool
+from griptape.utils import action
 
 
 @define

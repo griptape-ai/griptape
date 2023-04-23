@@ -1,7 +1,7 @@
 import inspect
 import os
 from abc import ABC, abstractmethod
-from griptape.core.tools import BaseTool
+from griptape.core import BaseTool
 
 
 class BaseExecutor(ABC):

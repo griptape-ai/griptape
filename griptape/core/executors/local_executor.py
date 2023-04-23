@@ -3,7 +3,7 @@ import os
 import subprocess
 from attr import define, field
 from griptape.core.executors import BaseExecutor
-from griptape.core.tools import BaseTool
+from griptape.core import BaseTool
 
 
 @define

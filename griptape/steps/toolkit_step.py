@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
-from griptape.core.tools import BaseTool
+from griptape.core import BaseTool
 from griptape.utils import J2
 from griptape.steps import PromptStep
 from griptape.artifacts import TextOutput, ErrorOutput

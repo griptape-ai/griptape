@@ -1,6 +1,6 @@
 from typing import Optional
 from attr import define, field
-from griptape.core.tools import BaseTool
+from griptape.core import BaseTool
 from griptape.core.executors import BaseExecutor, LocalExecutor
 
 

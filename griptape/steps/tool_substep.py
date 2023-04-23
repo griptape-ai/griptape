@@ -8,7 +8,7 @@ from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from griptape.artifacts import TextOutput, ErrorOutput
 from griptape.steps import PromptStep
-from griptape.core.tools import BaseTool
+from griptape.core import BaseTool
 from griptape.utils import J2
 
 if TYPE_CHECKING:

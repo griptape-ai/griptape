@@ -140,7 +140,7 @@ class BaseTool(ABC):
             return action.config["schema"].json_schema("ToolInputSchema")
 
     def validate(self) -> bool:
-        from griptape.core.utils import ManifestValidator
+        from griptape.utils import ManifestValidator
 
         if not os.path.exists(self.manifest_path):
             raise Exception(f"{self.MANIFEST_FILE} not found")

@@ -1,4 +1,4 @@
-from griptape.core.utils import CommandRunner
+from griptape.utils import CommandRunner
 
 
 class TestCommandRunner:
