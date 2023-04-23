@@ -1,5 +1,4 @@
 import json
-from .decorators import action
 from .paths import abs_path
 from .j2 import J2
 from .conversation import Conversation
@@ -19,7 +18,6 @@ __all__ = [
     "ManifestValidator",
     "PythonRunner",
     "CommandRunner",
-    "action",
     "minify_json",
     "J2",
 ]
