@@ -2,13 +2,13 @@ import os
 from typing import Optional
 from attr import define, field, Factory
 from jinja2 import Environment, FileSystemLoader
-import griptape
+from .paths import abs_path
 
 
 @define(frozen=True)
 class J2:
     template_name: Optional[str] = field(default=None)
-    templates_dir: str = field(default=os.path.join(griptape.PACKAGE_ABS_PATH, "templates"), kw_only=True)
+    templates_dir: str = field(default=abs_path("templates"), kw_only=True)
     environment: Environment = field(
         default=Factory(
             lambda self: Environment(

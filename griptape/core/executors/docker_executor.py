@@ -3,7 +3,7 @@ from typing import Optional
 from attr import define, field, Factory
 import docker
 from docker.errors import NotFound
-import griptape
+from griptape.utils.paths import abs_path
 from griptape.core import BaseTool
 from griptape.core.executors import BaseExecutor
 import stringcase
@@ -78,7 +78,9 @@ class DockerExecutor(BaseExecutor):
             shutil.copytree(self.tool_dir(tool), temp_dir)
 
             if not tool.dockerfile:
-                dockerfile_path = griptape.core.abs_path(os.path.join(self.DEFAULT_DOCKERFILE_DIR, tool.DOCKERFILE_FILE))
+                dockerfile_path = abs_path(
+                    os.path.join(self.DEFAULT_DOCKERFILE_DIR, tool.DOCKERFILE_FILE)
+                )
 
                 shutil.copy(dockerfile_path, temp_dir)
 
