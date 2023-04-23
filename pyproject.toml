@@ -38,6 +38,7 @@ python-decouple=">=3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
+pytest-mock = "*"
 pytest-cover = "*"
 twine = ">=4"
 
