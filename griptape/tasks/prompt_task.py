@@ -6,7 +6,7 @@ from griptape.tasks import BaseTask
 from griptape.artifacts import TextOutput, TextInput
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.core.drivers import BasePromptDriver
 
 
 @define

@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.utils import J2
-from griptape.drivers import BasePromptDriver
+from griptape.core.drivers import BasePromptDriver
 from griptape.summarizers.summarizer import Summarizer
 
 

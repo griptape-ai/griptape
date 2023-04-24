@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiPromptDriver
+from griptape.core.drivers import OpenAiPromptDriver
 from griptape.rules import Rule
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, ToolkitTask

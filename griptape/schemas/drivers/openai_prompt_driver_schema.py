@@ -14,6 +14,6 @@ class OpenAiPromptDriverSchema(PromptDriverSchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.drivers import OpenAiPromptDriver
+        from griptape.core.drivers import OpenAiPromptDriver
 
         return OpenAiPromptDriver(**data)

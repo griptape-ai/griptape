@@ -2,7 +2,7 @@ from attr import define, field, Factory
 from huggingface_hub import InferenceApi
 from transformers import AutoTokenizer
 from griptape.artifacts import TextOutput
-from griptape.drivers import BasePromptDriver
+from griptape.core.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 
 

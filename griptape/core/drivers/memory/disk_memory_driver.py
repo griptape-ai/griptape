@@ -1,5 +1,5 @@
 from attr import define, field
-from griptape.drivers import MemoryDriver
+from griptape.core.drivers import MemoryDriver
 from griptape.memory import Memory
 
 

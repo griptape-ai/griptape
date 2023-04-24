@@ -1,7 +1,7 @@
 import cohere
 from attr import define, field, Factory
 from griptape.artifacts import TextOutput
-from griptape.drivers import BasePromptDriver
+from griptape.core.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
 
 
