@@ -1,0 +1,8 @@
+## Tool: {{ tool.name }}
+{% if tool.metadata %}
+Tool metadata: {{ tool.metadata }}
+{% endif %}
+{% for action in tool.actions() %}
+Tool action name: {{ tool.action_name(action) }}
+Tool action description: {{ tool.action_description(action) }}
+{% endfor %}

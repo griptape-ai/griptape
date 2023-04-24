@@ -1,0 +1,7 @@
+Input: {{ subtask.input.value }}
+{% if subtask.output %}
+Output: {{ subtask.output.value }}
+{% else %}
+{% for subtask in subtasks %}{{ subtask.render() }}
+{% endfor %}
+{% endif %}

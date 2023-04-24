@@ -13,14 +13,35 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-griptape-core = "==0.9.3"
-griptape-flow = "==0.12.1"
-griptape-tools = "==0.7.1"
-click = "~8"
+python-dotenv = ">=0.21"
+openai = ">=0.27"
+cohere = ">=4"
+attrs = ">=22"
+jinja2 = ">=3.1"
+jsonschema = ">=4"
+marshmallow = ">=3"
+marshmallow-enum = ">=1.5"
+graphlib = "*"
+tiktoken = ">=0.3"
+rich = ">=13"
+stopit = "*"
+transformers = ">=4"
+huggingface-hub = ">=0.13"
+docker = ">=6"
+stringcase = ">=1"
+schema = ">=0.7"
+pyyaml = ">=6"
+langchain = ">=0.0.120"
+fastapi = ">=0.80"
+uvicorn = ">= 0.20"
+python-decouple=">=3"
+
+[tool.poetry.group.test.dependencies]
+pytest = "~=7.1"
+pytest-mock = "*"
+pytest-cover = "*"
+twine = ">=4"
 
 [build-system]
 requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-griptape = "griptape.main:main"
+build-backend = "poetry.masonry.api"
