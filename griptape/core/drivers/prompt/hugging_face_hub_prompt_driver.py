@@ -3,7 +3,7 @@ from huggingface_hub import InferenceApi
 from transformers import AutoTokenizer
 from griptape.artifacts import TextOutput
 from griptape.core.drivers import BasePromptDriver
-from griptape.tokenizers import HuggingFaceTokenizer
+from griptape.core.tokenizers import HuggingFaceTokenizer
 
 
 @define

@@ -4,7 +4,7 @@ import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 from attr import define, field, Factory
-from griptape.tokenizers import BaseTokenizer
+from griptape.core.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextOutput

@@ -4,7 +4,7 @@ import openai
 from attr import define, field, Factory
 from griptape.artifacts import TextOutput
 from griptape.core.drivers import BasePromptDriver
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.core.tokenizers import TiktokenTokenizer
 
 
 @define

@@ -1,5 +1,5 @@
 from attr import define, field, Factory
-from griptape.tokenizers import BaseTokenizer
+from griptape.core.tokenizers import BaseTokenizer
 from transformers import PreTrainedTokenizerBase
 
 

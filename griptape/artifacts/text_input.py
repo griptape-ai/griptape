@@ -1,7 +1,7 @@
 from typing import Optional
 from attr import define, field
 from griptape.artifacts import StructureArtifact
-from griptape.tokenizers import BaseTokenizer
+from griptape.core.tokenizers import BaseTokenizer
 
 
 @define(frozen=True)
