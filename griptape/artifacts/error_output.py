@@ -11,5 +11,6 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class ErrorOutput(StructureArtifact):
+    value: Optional[str] = field()
     exception: Optional[Exception] = field(default=None, kw_only=True)
     task: Optional[BaseTask] = field(default=None, kw_only=True)

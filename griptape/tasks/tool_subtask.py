@@ -34,7 +34,7 @@ class ToolSubtask(PromptTask):
     def attach(self, parent_task: ToolkitTask):
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
-        self.__init_from_prompt(self.render_prompt())
+        self.__init_from_prompt(self.input.value)
 
     @property
     def task(self) -> Optional[ToolkitTask]:
@@ -49,7 +49,7 @@ class ToolSubtask(PromptTask):
         return [self.task.find_subtask(child_id) for child_id in self.child_ids]
 
     def before_run(self) -> None:
-        self.structure.logger.info(f"Subtask {self.id}\n{self.render_prompt()}")
+        self.structure.logger.info(f"Subtask {self.id}\n{self.input.value}")
 
     def run(self) -> StructureArtifact:
         try:

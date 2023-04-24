@@ -53,7 +53,7 @@ class Agent(StructureWithMemory):
 
         if self.memory:
             run = Run(
-                input=self.task.render_prompt(),
+                input=self.task.input.value,
                 output=self.task.output.value
             )
 

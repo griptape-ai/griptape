@@ -135,11 +135,11 @@ class TestAgent:
 
         agent._execution_args = ("test1", "test2")
 
-        assert task.render_prompt() == "test1-test2"
+        assert task.input.value == "test1-test2"
 
         agent.run()
 
-        assert task.render_prompt() == "-"
+        assert task.input.value == "-"
 
     def test_to_json(self):
         agent = Agent()

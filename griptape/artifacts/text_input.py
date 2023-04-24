@@ -5,9 +5,8 @@ from griptape.tokenizers import BaseTokenizer
 
 
 @define(frozen=True)
-class TextOutput(StructureArtifact):
+class TextInput(StructureArtifact):
     value: Optional[str] = field()
-    meta: Optional[any] = field(default=None)
 
     def token_count(self, tokenizer: BaseTokenizer) -> Optional[int]:
         if isinstance(self.value, str):

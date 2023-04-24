@@ -77,11 +77,11 @@ class TestWorkflow:
 
         workflow._execution_args = ("test1", "test2")
 
-        assert task.render_prompt() == "test1-test2"
+        assert task.input.value == "test1-test2"
 
         workflow.run()
 
-        assert task.render_prompt() == "-"
+        assert task.input.value == "-"
 
     def test_run_topology_1(self):
         task1 = PromptTask("prompt1")

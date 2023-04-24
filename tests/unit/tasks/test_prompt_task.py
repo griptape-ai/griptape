@@ -17,7 +17,7 @@ class TestPromptSubtask:
 
         Pipeline().add_task(subtask)
 
-        assert subtask.render_prompt() == "test value"
+        assert subtask.input.value == "test value"
 
     def test_full_context(self):
         parent = PromptTask("parent")

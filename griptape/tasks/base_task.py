@@ -29,6 +29,11 @@ class BaseTask(ABC):
     structure: Optional[Structure] = field(default=None, init=False)
 
     @property
+    @abstractmethod
+    def input(self) -> StructureArtifact:
+        ...
+
+    @property
     def parents(self) -> list[BaseTask]:
         return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
 

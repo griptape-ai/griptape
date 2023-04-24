@@ -51,7 +51,7 @@ class Pipeline(StructureWithMemory):
 
         if self.memory:
             run = Run(
-                input=self.first_task().render_prompt(),
+                input=self.first_task().input.value,
                 output=self.last_task().output.value
             )
 
