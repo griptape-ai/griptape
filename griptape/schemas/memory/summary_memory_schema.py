@@ -10,6 +10,6 @@ class SummaryPipelineMemorySchema(MemorySchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.memory import SummaryPipelineMemory
+        from griptape.memory import SummaryMemory
 
-        return SummaryPipelineMemory(**data)
+        return SummaryMemory(**data)

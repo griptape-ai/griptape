@@ -7,25 +7,25 @@ from griptape.summarizers.summarizer import Summarizer
 
 
 if TYPE_CHECKING:
-    from griptape.memory import Memory, Run
+    from griptape.memory import Run
 
 
 @define
 class PromptDriverSummarizer(Summarizer):
     driver: BasePromptDriver = field(kw_only=True)
 
-    def summarize(self, memory: Memory, runs: list[Run]) -> Optional[str]:
+    def summarize(self, summary: str, runs: list[Run]) -> Optional[str]:
         try:
             if len(runs) > 0:
                 return self.driver.run(
                     value=J2("prompts/summarize.j2").render(
-                        summary=memory.summary,
+                        summary=summary,
                         runs=runs
                     )
                 ).value
             else:
-                return memory.summary
+                return summary
         except Exception as e:
             self.pipeline.logger.error(f"Error summarizing memory: {type(e).__name__}({e})")
 
-            return memory.summary
+            return summary

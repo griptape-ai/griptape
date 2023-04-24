@@ -1,5 +1,5 @@
 from griptape.summarizers import PromptDriverSummarizer
-from griptape.memory import SummaryPipelineMemory
+from griptape.memory import SummaryMemory
 from tests.mocks.mock_driver import MockDriver
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
@@ -7,7 +7,7 @@ from griptape.structures import Pipeline
 
 class TestSummaryMemory:
     def test_unsummarized_subtasks(self):
-        memory = SummaryPipelineMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockDriver()))
+        memory = SummaryMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockDriver()))
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 
@@ -23,7 +23,7 @@ class TestSummaryMemory:
         assert len(memory.unsummarized_runs()) == 1
 
     def test_after_run(self):
-        memory = SummaryPipelineMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockDriver()))
+        memory = SummaryMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockDriver()))
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 

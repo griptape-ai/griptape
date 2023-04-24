@@ -1,12 +1,12 @@
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
-from griptape.memory import BufferPipelineMemory
+from griptape.memory import BufferMemory
 from tests.mocks.mock_driver import MockDriver
 
 
 class TestBufferMemory:
     def test_after_run(self):
-        memory = BufferPipelineMemory(buffer_size=2)
+        memory = BufferMemory(buffer_size=2)
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
 

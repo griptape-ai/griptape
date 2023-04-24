@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @define
-class SummaryPipelineMemory(Memory):
+class SummaryMemory(Memory):
     offset: int = field(default=1, kw_only=True)
     summarizer: Optional[Summarizer] = field(default=None, kw_only=True)
     summary: Optional[str] = field(default=None, kw_only=True)
@@ -39,7 +39,7 @@ class SummaryPipelineMemory(Memory):
             runs_to_summarize = unsummarized_runs[:max(0, len(unsummarized_runs) - self.offset)]
 
             if len(runs_to_summarize) > 0:
-                self.summary = self.summarizer.summarize(self, runs_to_summarize)
+                self.summary = self.summarizer.summarize(self.summary, runs_to_summarize)
                 self.summary_index = 1 + self.runs.index(runs_to_summarize[-1])
 
     def to_prompt_string(self, last_n: Optional[int] = None):
@@ -49,12 +49,12 @@ class SummaryPipelineMemory(Memory):
         )
 
     def to_dict(self) -> dict:
-        return SummaryPipelineMemory().dump(self)
+        return SummaryMemory().dump(self)
 
     @classmethod
     def from_dict(cls, memory_dict: dict) -> Memory:
-        return SummaryPipelineMemory().load(memory_dict)
+        return SummaryMemory().load(memory_dict)
 
     @classmethod
     def from_json(cls, memory_json: str) -> Memory:
-        return SummaryPipelineMemory.from_dict(json.loads(memory_json))
+        return SummaryMemory.from_dict(json.loads(memory_json))
