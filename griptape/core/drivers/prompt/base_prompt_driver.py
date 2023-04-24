@@ -7,7 +7,7 @@ from attr import define, field, Factory
 from griptape.core.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextOutput
+    from griptape.core.artifacts import TextOutput
 
 
 @define

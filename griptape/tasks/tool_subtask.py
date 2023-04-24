@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
-from griptape.artifacts import TextOutput, ErrorOutput
+from griptape.core.artifacts import TextOutput, ErrorOutput
 from griptape.tasks import PromptTask
 from griptape.core import BaseTool
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.artifacts import StructureArtifact
+    from griptape.core.artifacts import BaseArtifact
     from griptape.tasks import ToolkitTask
 
 
@@ -51,7 +51,7 @@ class ToolSubtask(PromptTask):
     def before_run(self) -> None:
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.value}")
 
-    def run(self) -> StructureArtifact:
+    def run(self) -> BaseArtifact:
         try:
             if self.tool_name == "error":
                 self.output = ErrorOutput(self.tool_value, task=self.task)

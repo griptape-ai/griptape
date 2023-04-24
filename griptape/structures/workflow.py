@@ -3,7 +3,7 @@ import concurrent.futures as futures
 import json
 from graphlib import TopologicalSorter
 from attr import define, field
-from griptape.artifacts import ErrorOutput
+from griptape.core.artifacts import ErrorOutput
 from griptape.tasks import BaseTask
 from griptape.structures import Structure
 from griptape.utils import J2

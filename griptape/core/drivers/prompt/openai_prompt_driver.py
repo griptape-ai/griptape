@@ -2,7 +2,7 @@ import json
 from typing import Optional
 import openai
 from attr import define, field, Factory
-from griptape.artifacts import TextOutput
+from griptape.core.artifacts import TextOutput
 from griptape.core.drivers import BasePromptDriver
 from griptape.core.tokenizers import TiktokenTokenizer
 

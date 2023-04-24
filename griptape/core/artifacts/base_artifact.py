@@ -4,5 +4,5 @@ from attr import define, field
 
 
 @define
-class StructureArtifact(ABC):
+class BaseArtifact(ABC):
     value: Optional[any] = field()

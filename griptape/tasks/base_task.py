@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.artifacts import ErrorOutput
+from griptape.core.artifacts import ErrorOutput
 
 if TYPE_CHECKING:
-    from griptape.artifacts import StructureArtifact
+    from griptape.core.artifacts import BaseArtifact
     from griptape.tasks import BaseTask
     from griptape.structures import Structure
 
@@ -25,12 +25,12 @@ class BaseTask(ABC):
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
 
-    output: Optional[StructureArtifact] = field(default=None, init=False)
+    output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
 
     @property
     @abstractmethod
-    def input(self) -> StructureArtifact:
+    def input(self) -> BaseArtifact:
         ...
 
     @property
@@ -96,7 +96,7 @@ class BaseTask(ABC):
     def after_run(self) -> None:
         pass
 
-    def execute(self) -> StructureArtifact:
+    def execute(self) -> BaseArtifact:
         try:
             self.state = BaseTask.State.EXECUTING
 
@@ -124,5 +124,5 @@ class BaseTask(ABC):
         return self
 
     @abstractmethod
-    def run(self) -> StructureArtifact:
+    def run(self) -> BaseArtifact:
         ...

@@ -1,5 +1,5 @@
 import json
-from griptape.artifacts import TextOutput
+from griptape.core.artifacts import TextOutput
 from griptape.rules import Rule
 from griptape.core.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask

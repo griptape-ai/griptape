@@ -1,11 +1,11 @@
 from typing import Optional
 from attr import define, field
-from griptape.artifacts import StructureArtifact
+from griptape.core.artifacts import BaseArtifact
 from griptape.core.tokenizers import BaseTokenizer
 
 
 @define(frozen=True)
-class TextOutput(StructureArtifact):
+class TextOutput(BaseArtifact):
     value: Optional[str] = field()
     meta: Optional[any] = field(default=None)
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
 from attr import define
-from griptape.artifacts import ErrorOutput
+from griptape.core.artifacts import ErrorOutput
 from griptape.memory import Run
 from griptape.structures import StructureWithMemory
 from griptape.utils import J2
