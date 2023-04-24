@@ -1,10 +1,10 @@
 from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
-from attr import define, field
+from attr import define
 from griptape.artifacts import ErrorOutput
-from griptape.structures import Structure
-from griptape.memory import Memory, Run
+from griptape.memory import Run
+from griptape.structures import StructureWithMemory
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -12,20 +12,12 @@ if TYPE_CHECKING:
 
 
 @define
-class Pipeline(Structure):
-    memory: Optional[Memory] = field(default=None, kw_only=True)
-
-    def __attrs_post_init__(self):
-        super().__attrs_post_init__()
-
-        if self.memory:
-            self.memory.structure = self
-
+class Pipeline(StructureWithMemory):
     def first_task(self) -> Optional[BaseTask]:
-        return None if self.is_empty() else self.tasks[0]
+        return self.tasks[0] if self.tasks else None
 
     def last_task(self) -> Optional[BaseTask]:
-        return None if self.is_empty() else self.tasks[-1]
+        return self.tasks[-1] if self.tasks else None
 
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
@@ -41,37 +33,14 @@ class Pipeline(Structure):
         return task
 
     def prompt_stack(self, task: BaseTask) -> list[str]:
-        final_stack = super().prompt_stack(task)
-        task_prompt = J2("prompts/pipeline.j2").render(
-            has_memory=self.memory is not None,
-            finished_tasks=self.finished_tasks(),
-            current_task=task
+        return self.add_memory_to_prompt_stack(
+            super().prompt_stack(task),
+            J2("prompts/pipeline.j2").render(
+                has_memory=self.memory is not None,
+                finished_tasks=self.finished_tasks(),
+                current_task=task
+            )
         )
-
-        if self.memory:
-            if self.autoprune_memory:
-                last_n = len(self.memory.runs)
-                should_prune = True
-
-                while should_prune and last_n > 0:
-                    temp_stack = final_stack.copy()
-                    temp_stack.append(task_prompt)
-
-                    temp_stack.append(self.memory.to_prompt_string(last_n))
-
-                    if self.prompt_driver.tokenizer.tokens_left(self.stack_to_prompt_string(temp_stack)) > 0:
-                        should_prune = False
-                    else:
-                        last_n -= 1
-
-                if last_n > 0:
-                    final_stack.append(self.memory.to_prompt_string(last_n))
-            else:
-                final_stack.append(self.memory.to_prompt_string())
-
-        final_stack.append(task_prompt)
-
-        return final_stack
 
     def run(self, *args) -> BaseTask:
         self._execution_args = args

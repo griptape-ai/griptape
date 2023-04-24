@@ -22,6 +22,7 @@ from griptape.schemas.memory.buffer_memory_schema import BufferPipelineMemorySch
 from griptape.schemas.memory.summary_memory_schema import SummaryPipelineMemorySchema
 
 from griptape.schemas.structures.structure_schema import StructureSchema
+from griptape.schemas.structures.agent_schema import AgentSchema
 from griptape.schemas.structures.pipeline_schema import PipelineSchema
 from griptape.schemas.structures.workflow_schema import WorkflowSchema
 
@@ -50,6 +51,7 @@ __all__ = [
     "SummaryPipelineMemorySchema",
 
     "StructureSchema",
+    "AgentSchema",
     "PipelineSchema",
     "WorkflowSchema"
 ]

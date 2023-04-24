@@ -22,13 +22,11 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
-    autoprune_memory: bool = field(default=True, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     tool_loader: ToolLoader = field(default=ToolLoader(), kw_only=True)
-
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
@@ -65,9 +63,6 @@ class Structure(ABC):
 
     def is_executing(self) -> bool:
         return any(s for s in self.tasks if s.is_executing())
-
-    def is_empty(self) -> bool:
-        return not self.tasks
 
     def find_task(self, task_id: str) -> Optional[BaseTask]:
         return next((task for task in self.tasks if task.id == task_id), None)
@@ -119,10 +114,10 @@ class Structure(ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, workflow_dict: dict) -> Structure:
+    def from_dict(cls, structure_dict: dict) -> Structure:
         ...
 
     @classmethod
     @abstractmethod
-    def from_json(cls, workflow_json: str) -> Structure:
+    def from_json(cls, structure_json: str) -> Structure:
         ...
