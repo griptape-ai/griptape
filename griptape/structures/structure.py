@@ -7,7 +7,7 @@ from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape.core.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.utils import J2, ToolLoader
 
 if TYPE_CHECKING:

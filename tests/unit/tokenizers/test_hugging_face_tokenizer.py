@@ -1,6 +1,6 @@
 import pytest
 from transformers import GPT2Tokenizer
-from griptape.core.tokenizers import HuggingFaceTokenizer
+from griptape.tokenizers import HuggingFaceTokenizer
 
 
 class TestHuggingFaceTokenizer:

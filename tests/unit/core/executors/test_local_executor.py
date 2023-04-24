@@ -1,4 +1,4 @@
-from griptape.core.executors import LocalExecutor
+from griptape.executors import LocalExecutor
 from tests.mocks.mock_tool.tool import MockTool
 
 

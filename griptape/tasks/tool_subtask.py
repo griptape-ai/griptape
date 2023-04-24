@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
-from griptape.core.artifacts import TextOutput, ErrorOutput
+from griptape.artifacts import TextOutput, ErrorOutput
 from griptape.tasks import PromptTask
 from griptape.core import BaseTool
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.core.artifacts import BaseArtifact
+    from griptape.artifacts import BaseArtifact
     from griptape.tasks import ToolkitTask
 
 

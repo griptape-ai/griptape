@@ -1,5 +1,5 @@
 import pytest
-from griptape.core.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import TiktokenTokenizer
 
 
 class TestTiktokenTokenizer:

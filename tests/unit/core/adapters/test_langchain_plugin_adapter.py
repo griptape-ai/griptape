@@ -1,7 +1,7 @@
 import pytest
 import langchain.tools
-from griptape.core.adapters import LangchainToolAdapter
-from griptape.core.executors import LocalExecutor
+from griptape.adapters import LangchainToolAdapter
+from griptape.executors import LocalExecutor
 from tests.mocks.mock_tool.tool import MockTool
 
 

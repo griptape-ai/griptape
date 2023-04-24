@@ -5,7 +5,7 @@ from attr import define, field
 from griptape.core import BaseTool
 from griptape.utils import J2
 from griptape.tasks import PromptTask
-from griptape.core.artifacts import TextOutput, ErrorOutput
+from griptape.artifacts import TextOutput, ErrorOutput
 
 if TYPE_CHECKING:
     from griptape.tasks import ToolSubtask

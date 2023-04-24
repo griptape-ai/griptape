@@ -1,4 +1,4 @@
-from griptape.core.summarizers import PromptDriverSummarizer
+from griptape.summarizers import PromptDriverSummarizer
 from griptape.memory import SummaryMemory
 from tests.mocks.mock_driver import MockDriver
 from griptape.tasks import PromptTask

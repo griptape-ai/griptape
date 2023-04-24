@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.core.artifacts import ErrorOutput
+from griptape.artifacts import ErrorOutput
 
 if TYPE_CHECKING:
-    from griptape.core.artifacts import BaseArtifact
+    from griptape.artifacts import BaseArtifact
     from griptape.tasks import BaseTask
     from griptape.structures import Structure
 

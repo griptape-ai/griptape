@@ -1,7 +1,7 @@
 import json
-from griptape.core.artifacts import TextOutput
+from griptape.artifacts import TextOutput
 from griptape.rules import Rule
-from griptape.core.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask
 from griptape.memory import Memory
 from tests.mocks.mock_driver import MockDriver

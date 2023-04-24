@@ -1,4 +1,4 @@
-from griptape.core.executors import DockerExecutor
+from griptape.executors import DockerExecutor
 
 
 class TestDockerExecutor:

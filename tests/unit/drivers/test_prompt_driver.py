@@ -1,5 +1,5 @@
 from tests.mocks.mock_failing_driver import MockFailingDriver
-from griptape.core.artifacts import ErrorOutput, TextOutput
+from griptape.artifacts import ErrorOutput, TextOutput
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 

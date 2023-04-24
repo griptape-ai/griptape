@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.utils import J2
 from griptape.tasks import BaseTask
-from griptape.core.artifacts import TextOutput, TextInput
+from griptape.artifacts import TextOutput, TextInput
 
 if TYPE_CHECKING:
-    from griptape.core.drivers import BasePromptDriver
+    from griptape.drivers import BasePromptDriver
 
 
 @define

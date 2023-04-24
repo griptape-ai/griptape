@@ -1,5 +1,5 @@
-from griptape.core.drivers import OpenAiPromptDriver
-from griptape.core.tokenizers import TiktokenTokenizer
+from griptape.drivers import OpenAiPromptDriver
+from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, ToolkitTask, BaseTask
 from griptape.structures import Pipeline
 from griptape.schemas import PipelineSchema

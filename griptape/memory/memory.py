@@ -6,7 +6,7 @@ from griptape.memory import Run
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.core.drivers import MemoryDriver
+    from griptape.drivers import MemoryDriver
     from griptape.structures import Structure
 
 

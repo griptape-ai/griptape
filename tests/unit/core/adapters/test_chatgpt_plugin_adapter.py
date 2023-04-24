@@ -1,7 +1,7 @@
 import pytest
 from fastapi import FastAPI
-from griptape.core.adapters import ChatgptPluginAdapter
-from griptape.core.executors import LocalExecutor
+from griptape.adapters import ChatgptPluginAdapter
+from griptape.executors import LocalExecutor
 from tests.mocks.mock_tool.tool import MockTool
 
 

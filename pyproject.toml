@@ -44,4 +44,4 @@ twine = ">=4"
 
 [build-system]
 requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "poetry.masonry.api"
