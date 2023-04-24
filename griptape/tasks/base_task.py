@@ -7,7 +7,7 @@ from attr import define, field, Factory
 from griptape.artifacts import ErrorOutput
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextOutput, StructureArtifact
+    from griptape.artifacts import StructureArtifact
     from griptape.tasks import BaseTask
     from griptape.structures import Structure
 
@@ -124,5 +124,5 @@ class BaseTask(ABC):
         return self
 
     @abstractmethod
-    def run(self) -> TextOutput:
+    def run(self) -> StructureArtifact:
         ...
