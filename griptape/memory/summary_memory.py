@@ -7,7 +7,7 @@ from griptape.utils import J2
 from griptape.memory import Memory
 
 if TYPE_CHECKING:
-    from griptape.summarizers import Summarizer
+    from griptape.core.summarizers import Summarizer
     from griptape.memory import Run
 
 

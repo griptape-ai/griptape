@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.utils import J2
 from griptape.core.drivers import BasePromptDriver
-from griptape.summarizers.summarizer import Summarizer
+from griptape.core.summarizers.summarizer import Summarizer
 
 
 if TYPE_CHECKING:

@@ -6,6 +6,6 @@ class PromptDriverSummarizerSchema(SummarizerSchema):
     driver = fields.Nested(PolymorphicSchema())
 
     def make_obj(self, data, **kwargs):
-        from griptape.summarizers import PromptDriverSummarizer
+        from griptape.core.summarizers import PromptDriverSummarizer
 
         return PromptDriverSummarizer(**data)
