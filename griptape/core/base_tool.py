@@ -19,7 +19,7 @@ class BaseTool(ABC):
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     metadata: Optional[str] = field(default=None, kw_only=True)
-    middleware: dict[callable, BaseMiddleware] = field(factory=dict, kw_only=True)
+    middleware: dict[str, BaseMiddleware] = field(factory=dict, kw_only=True)
 
     # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
     logging.basicConfig(level=logging.ERROR)
@@ -77,6 +77,13 @@ class BaseTool(ABC):
     @property
     def schema_template_args(self) -> dict:
         return {}
+
+    def find_action(self, name: str) -> Optional[callable]:
+        for _, method in inspect.getmembers(self, predicate=inspect.ismethod):
+            if getattr(method, "is_action", False) and method.config["name"] == name:
+                return method
+
+        return None
 
     def actions(self) -> list[callable]:
         methods = []

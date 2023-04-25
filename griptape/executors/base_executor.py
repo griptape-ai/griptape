@@ -16,6 +16,12 @@ class BaseExecutor(ABC):
         return value
 
     def after_execute(self, tool_action: callable, result: bytes) -> bytes:
+        tool: BaseTool = tool_action.__self__
+        middleware = tool.middleware.get(tool_action.config["name"])
+
+        if middleware:
+            result = middleware.process_output(result)
+
         return result
 
     @abstractmethod

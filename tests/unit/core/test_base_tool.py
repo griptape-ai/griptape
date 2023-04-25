@@ -78,6 +78,9 @@ class TestBaseTool:
         assert tool.action_schema(tool.test) == \
                tool.test.config["schema"].json_schema("ToolInputSchema")
 
+    def test_find_action(self, tool):
+        assert tool.find_action("test") == tool.test
+
     def test_actions(self, tool):
         assert len(tool.actions()) == 1
         assert tool.actions()[0] == tool.test
