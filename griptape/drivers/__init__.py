@@ -5,6 +5,8 @@ from griptape.drivers.prompt.hugging_face_pipeline_prompt_driver import HuggingF
 from griptape.drivers.prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from griptape.drivers.memory.memory_driver import MemoryDriver
 from griptape.drivers.memory.disk_memory_driver import DiskMemoryDriver
+from griptape.drivers.storage.base_storage_driver import BaseStorageDriver
+from griptape.drivers.storage.memory_storage_driver import MemoryStorageDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -14,5 +16,8 @@ __all__ = [
     "HuggingFaceHubPromptDriver",
 
     "MemoryDriver",
-    "DiskMemoryDriver"
+    "DiskMemoryDriver",
+
+    "BaseStorageDriver",
+    "MemoryStorageDriver"
 ]

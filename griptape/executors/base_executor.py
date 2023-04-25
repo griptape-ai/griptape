@@ -20,7 +20,7 @@ class BaseExecutor(ABC):
         middleware = tool.middleware.get(tool_action.config["name"])
 
         if middleware:
-            result = middleware.process_output(result)
+            result = middleware.process_output(tool_action, result)
 
         return result
 
