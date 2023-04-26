@@ -1,7 +1,11 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import inspect
 import os
 from abc import ABC, abstractmethod
-from griptape.core import BaseTool
+
+if TYPE_CHECKING:
+    from griptape.core import BaseTool
 
 
 class BaseExecutor(ABC):

@@ -1,9 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import logging
 import os
 import subprocess
 from attr import define, field
 from griptape.executors import BaseExecutor
-from griptape.core import BaseTool
+
+if TYPE_CHECKING:
+    from griptape.core import BaseTool
 
 
 @define

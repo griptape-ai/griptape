@@ -1,16 +1,19 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import logging
 from typing import Optional
 from attr import define, field, Factory
 import docker
 from docker.errors import NotFound
 from griptape.utils.paths import abs_path
-from griptape.core import BaseTool
 from griptape.executors import BaseExecutor
 import stringcase
 import tempfile
 import shutil
 import os
 
+if TYPE_CHECKING:
+    from griptape.core import BaseTool
 
 @define
 class DockerExecutor(BaseExecutor):

@@ -8,7 +8,8 @@ from typing import Optional, Union, TYPE_CHECKING
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
-from griptape.utils import J2, ToolLoader
+from griptape.utils import J2
+from griptape.core import ToolLoader
 
 if TYPE_CHECKING:
     from griptape.rules import Rule

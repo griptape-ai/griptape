@@ -3,7 +3,6 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
-
 from tests.mocks.mock_tool.tool import MockTool
 
 

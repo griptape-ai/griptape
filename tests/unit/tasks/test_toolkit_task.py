@@ -1,7 +1,7 @@
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorOutput
 from griptape.tasks import ToolkitTask, ToolSubtask
-from griptape.utils import ToolLoader
+from griptape.core import ToolLoader
 from tests.mocks.mock_value_driver import MockValueDriver
 from griptape.structures import Pipeline
 

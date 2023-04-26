@@ -1,5 +1,5 @@
 from tests.mocks.mock_tool.tool import MockTool
-from griptape.utils import ToolLoader
+from griptape.core import ToolLoader
 
 
 class TestToolLoader:

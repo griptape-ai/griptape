@@ -1,7 +1,12 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from typing import Optional
 from attr import define, field
-from griptape.core import BaseTool
-from griptape.executors import BaseExecutor, LocalExecutor
+from griptape.executors import LocalExecutor
+
+if TYPE_CHECKING:
+    from griptape.core import BaseTool
+    from griptape.executors import BaseExecutor
 
 
 @define
