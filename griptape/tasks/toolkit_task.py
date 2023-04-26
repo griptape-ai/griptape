@@ -20,7 +20,7 @@ class ToolkitTask(PromptTask, ABC):
     _subtasks: list[ToolSubtask] = field(factory=list)
 
     @tool_names.validator
-    def validate_tool_names(self, _, tool_names) -> None:
+    def validate_tool_names(self, _, tool_names: list[str]) -> None:
         if len(tool_names) > len(set(tool_names)):
             raise ValueError("tool names have to be unique")
 

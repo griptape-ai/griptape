@@ -19,13 +19,20 @@ class BaseTool(ABC):
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     metadata: Optional[str] = field(default=None, kw_only=True)
-    middleware: dict[str, BaseMiddleware] = field(factory=dict, kw_only=True)
+    middleware: dict[str, list[BaseMiddleware]] = field(factory=dict, kw_only=True)
 
     # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
     logging.basicConfig(level=logging.ERROR)
 
     def __attrs_post_init__(self):
         attrs.resolve_types(self.__class__, globals(), locals())
+
+    @middleware.validator
+    def validate_middleware(self, _, middleware: dict[str, BaseMiddleware]) -> None:
+        middleware_names = middleware.keys()
+
+        if len(middleware_names) > len(set(middleware_names)):
+            raise ValueError("tool names have to be unique")
 
     @property
     def class_name(self):

@@ -15,7 +15,7 @@ class ToolLoader:
     executor: BaseExecutor = field(default=LocalExecutor(), kw_only=True)
 
     @tools.validator
-    def validate_tools(self, _, tools) -> None:
+    def validate_tools(self, _, tools: list[BaseTool]) -> None:
         tool_names = [t.name for t in tools]
 
         if len(tool_names) > len(set(tool_names)):

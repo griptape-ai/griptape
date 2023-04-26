@@ -20,10 +20,7 @@ class BaseExecutor(ABC):
         return value
 
     def after_execute(self, tool_action: callable, result: bytes) -> bytes:
-        tool: BaseTool = tool_action.__self__
-        middleware = tool.middleware.get(tool_action.config["name"])
-
-        if middleware:
+        for middleware in tool_action.__self__.middleware.get(tool_action.config["name"], []):
             result = middleware.process_output(tool_action, result)
 
         return result
