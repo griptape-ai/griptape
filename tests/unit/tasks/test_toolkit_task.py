@@ -1,3 +1,5 @@
+from griptape.drivers import MemoryStorageDriver
+from griptape.middleware import StorageMiddleware
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorOutput
 from griptape.tasks import ToolkitTask, ToolSubtask
@@ -122,3 +124,35 @@ class TestToolkitSubtask:
         ).add_task(task)
 
         assert task.find_tool(tool.name) == tool
+
+    def test_middlewares(self):
+        tool1 = MockTool(
+            name="Tool1",
+            middleware={
+                "test": [
+                    StorageMiddleware(name="Middleware1", driver=MemoryStorageDriver()),
+                    StorageMiddleware(name="Middleware2", driver=MemoryStorageDriver())
+                ]
+            }
+        )
+
+        tool2 = MockTool(
+            name="Tool2",
+            middleware={
+                "test": [
+                    StorageMiddleware(name="Middleware2", driver=MemoryStorageDriver()),
+                    StorageMiddleware(name="Middleware3", driver=MemoryStorageDriver())
+                ]
+            }
+        )
+
+        task = ToolkitTask(tool_names=[tool1.name, tool2.name])
+
+        Pipeline(
+            tool_loader=ToolLoader(tools=[tool1, tool2])
+        ).add_task(task)
+
+        assert len(task.middlewares) == 3
+        assert task.middlewares[0].name == "Middleware1"
+        assert task.middlewares[1].name == "Middleware2"
+        assert task.middlewares[2].name == "Middleware3"

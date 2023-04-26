@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from griptape.middleware import BaseMiddleware
-from attr import define, field, Factory
+from attr import define, field
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseStorageDriver
@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 @define
 class StorageMiddleware(BaseMiddleware):
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     driver: BaseStorageDriver = field(kw_only=True)
 
     def process_output(self, tool_action: callable, value: bytes) -> bytes:

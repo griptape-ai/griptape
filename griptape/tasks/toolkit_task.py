@@ -9,6 +9,7 @@ from griptape.artifacts import TextOutput, ErrorOutput
 
 if TYPE_CHECKING:
     from griptape.tasks import ToolSubtask
+    from griptape.middleware import BaseMiddleware
 
 
 @define
@@ -29,6 +30,18 @@ class ToolkitTask(PromptTask, ABC):
         return [
             t for t in [self.structure.tool_loader.load_tool(t) for t in self.tool_names] if t is not None
         ]
+
+    @property
+    def middlewares(self) -> list[BaseMiddleware]:
+        unique_middleware_dict = {}
+
+        for middleware_dict in [tool.middleware for tool in self.tools]:
+            for middleware_list in middleware_dict.values():
+                for middleware in middleware_list:
+                    if middleware.name not in unique_middleware_dict:
+                        unique_middleware_dict[middleware.name] = middleware
+
+        return list(unique_middleware_dict.values())
 
     def run(self) -> TextOutput:
         from griptape.tasks import ToolSubtask
