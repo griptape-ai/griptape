@@ -37,8 +37,8 @@ class ActionSubtask(PromptTask):
                 description="Action name"
             ): str,
             Literal(
-                "method",
-                description="Action method"
+                "activity",
+                description="Action activity"
             ): str,
             schema.Optional(
                 Literal(
@@ -53,7 +53,7 @@ class ActionSubtask(PromptTask):
     thought: Optional[str] = field(default=None, kw_only=True)
     action_type: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
-    action_method: Optional[str] = field(default=None, kw_only=True)
+    action_activity: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[str] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
@@ -87,7 +87,7 @@ class ActionSubtask(PromptTask):
                 if self.action_type == "tool":
                     if self._tool:
                         observation = self.structure.tool_loader.executor.execute(
-                            getattr(self._tool, self.action_method),
+                            getattr(self._tool, self.action_activity),
                             self.action_input.encode()
                         ).decode()
                     else:
@@ -125,8 +125,8 @@ class ActionSubtask(PromptTask):
         if self.action_name:
             json_dict["name"] = self.action_name
 
-        if self.action_method:
-            json_dict["method"] = self.action_method
+        if self.action_activity:
+            json_dict["activity"] = self.action_activity
 
         if self.action_input:
             json_dict["input"] = self.action_input
@@ -177,8 +177,8 @@ class ActionSubtask(PromptTask):
                     self.action_name = action_object["name"]
 
                 # Load action method; throw exception if the key is not present
-                if self.action_method is None:
-                    self.action_method = action_object["method"]
+                if self.action_activity is None:
+                    self.action_activity = action_object["activity"]
 
                 # Load optional input value; don't throw exceptions if key is not present
                 if self.action_input is None:
@@ -193,7 +193,7 @@ class ActionSubtask(PromptTask):
                     if self._tool:
                         validate(
                             instance=self.action_input,
-                            schema=self._tool.action_schema(getattr(self._tool, self.action_method))
+                            schema=self._tool.activity_schema(getattr(self._tool, self.action_activity))
                         )
                 elif self.action_type == "middleware":
                     if self.action_name:

@@ -31,22 +31,22 @@ class DockerExecutor(BaseExecutor):
 
             return None
 
-    def try_execute(self, tool_action: callable, value: bytes) -> bytes:
-        tool = tool_action.__self__
+    def try_execute(self, tool_activity: callable, value: bytes) -> bytes:
+        tool = tool_activity.__self__
 
         self.build_image(tool)
         self.remove_existing_container(self.container_name(tool))
 
-        return self.run_container(tool_action, value).encode()
+        return self.run_container(tool_activity, value).encode()
 
-    def run_container(self, tool_action: callable, value: bytes) -> str:
-        tool = tool_action.__self__
+    def run_container(self, tool_activity: callable, value: bytes) -> str:
+        tool = tool_activity.__self__
         workdir = "/tool"
         tool_name = tool.class_name
         command = [
             "python",
             "-c",
-            f'from tool import {tool_name}; print({tool_name}().{tool_action.__name__}({value}))'
+            f'from tool import {tool_name}; print({tool_name}().{tool_activity.__name__}({value}))'
         ]
         binds = {
             self.tool_dir(tool): {

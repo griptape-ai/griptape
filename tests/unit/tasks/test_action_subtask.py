@@ -6,7 +6,7 @@ from griptape.structures import Pipeline
 class TestActionSubtask:
     def test_to_json(self):
         valid_input = 'Thought: need to test\n' \
-                      'Action: {"type": "tool", "name": "test", "method": "test action", "input": "test input"}\n' \
+                      'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test input"}\n' \
                       'Observation: test observation\n' \
                       'Output: test output'
 
@@ -17,5 +17,5 @@ class TestActionSubtask:
 
         assert json_dict["type"] == "tool"
         assert json_dict["name"] == "test"
-        assert json_dict["method"] == "test action"
+        assert json_dict["activity"] == "test action"
         assert json_dict["input"] == "test input"

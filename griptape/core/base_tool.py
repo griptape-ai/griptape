@@ -84,18 +84,18 @@ class BaseTool(ABC):
     def schema_template_args(self) -> dict:
         return {}
 
-    def find_action(self, name: str) -> Optional[callable]:
+    def find_activity(self, name: str) -> Optional[callable]:
         for _, method in inspect.getmembers(self, predicate=inspect.ismethod):
-            if getattr(method, "is_action", False) and method.config["name"] == name:
+            if getattr(method, "is_activity", False) and method.config["name"] == name:
                 return method
 
         return None
 
-    def actions(self) -> list[callable]:
+    def activities(self) -> list[callable]:
         methods = []
 
         for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
-            if getattr(method, "is_action", False):
+            if getattr(method, "is_activity", False):
                 methods.append(method)
 
         return methods
@@ -124,34 +124,34 @@ class BaseTool(ABC):
             # If all fails, return None
             return None
 
-    def action_name(self, action: callable) -> str:
-        if action is None or not getattr(action, "is_action", False):
-            raise Exception("This method is not a tool action.")
+    def activity_name(self, activity: callable) -> str:
+        if activity is None or not getattr(activity, "is_activity", False):
+            raise Exception("This method is not a tool activity.")
         else:
-            return action.config["name"]
+            return activity.config["name"]
 
-    def action_description(self, action: callable) -> str:
-        if action is None or not getattr(action, "is_action", False):
-            raise Exception("This method is not a tool action.")
+    def activity_description(self, activity: callable) -> str:
+        if activity is None or not getattr(activity, "is_activity", False):
+            raise Exception("This method is not a tool activity.")
         else:
-            return Template(action.config["description"]).render(self.schema_template_args)
+            return Template(activity.config["description"]).render(self.schema_template_args)
 
-    def full_action_description(self, action: callable) -> str:
-        if action is None or not getattr(action, "is_action", False):
-            raise Exception("This method is not a tool action.")
+    def full_activity_description(self, activity: callable) -> str:
+        if activity is None or not getattr(activity, "is_activity", False):
+            raise Exception("This method is not a tool activity.")
         else:
             description_lines = [
-                self.action_description(action),
-                f"Method input schema: {self.action_schema(action)}"
+                self.activity_description(activity),
+                f"Method input schema: {self.activity_schema(activity)}"
             ]
 
             return str.join("\n", description_lines)
 
-    def action_schema(self, action: callable) -> dict:
-        if action is None or not getattr(action, "is_action", False):
-            raise Exception("This method is not a tool action.")
+    def activity_schema(self, activity: callable) -> dict:
+        if activity is None or not getattr(activity, "is_activity", False):
+            raise Exception("This method is not a tool activity.")
         else:
-            return action.config["schema"].json_schema("ToolInputSchema")
+            return activity.config["schema"].json_schema("ToolInputSchema")
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator

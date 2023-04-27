@@ -61,12 +61,12 @@ class ChatgptPluginAdapter(BaseAdapter):
             description="OpenAPI plugin spec"
         )
 
-        for action in tool.actions():
+        for action in tool.activities():
             app.add_api_route(
                 f"{self.path_prefix}{action.config['name']}",
                 functools.partial(self.__execute_action, action),
                 methods=["GET"],
-                description=tool.full_action_description(action)
+                description=tool.full_activity_description(action)
             )
 
         return app

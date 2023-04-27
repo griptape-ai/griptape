@@ -54,7 +54,7 @@ class TestToolkitSubtask:
 
     def test_init_from_prompt_1(self):
         valid_input = 'Thought: need to test\n' \
-                      'Action: {"type": "tool", "name": "test", "method": "test action", "input": "test input"}\n' \
+                      'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test input"}\n' \
                       'Observation: test observation\n' \
                       'Output: test output'
         task = ToolkitTask("test", tool_names=["Calculator"])
@@ -66,7 +66,7 @@ class TestToolkitSubtask:
         assert subtask.thought == "need to test"
         assert subtask.action_type == "tool"
         assert subtask.action_name == "test"
-        assert subtask.action_method == "test action"
+        assert subtask.action_activity == "test action"
         assert subtask.action_input == "test input"
         assert subtask.output is None
 
@@ -81,14 +81,14 @@ class TestToolkitSubtask:
 
         assert subtask.thought == "need to test"
         assert subtask.action_name is None
-        assert subtask.action_method is None
+        assert subtask.action_activity is None
         assert subtask.action_input is None
         assert subtask.output.value == "test output"
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        subtask1 = ActionSubtask("test1", action_name="test", action_method="test", action_input="test")
-        subtask2 = ActionSubtask("test2", action_name="test", action_method="test", action_input="test")
+        subtask1 = ActionSubtask("test1", action_name="test", action_activity="test", action_input="test")
+        subtask2 = ActionSubtask("test2", action_name="test", action_activity="test", action_input="test")
 
         Pipeline().add_task(task)
 
@@ -107,8 +107,8 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        subtask1 = ActionSubtask("test1", action_name="test", action_method="test", action_input="test")
-        subtask2 = ActionSubtask("test2", action_name="test", action_method="test", action_input="test")
+        subtask1 = ActionSubtask("test1", action_name="test", action_activity="test", action_input="test")
+        subtask2 = ActionSubtask("test2", action_name="test", action_activity="test", action_input="test")
 
         Pipeline().add_task(task)
 

@@ -11,7 +11,7 @@ def action(config: dict):
             return func(self, *args, **kwargs)
 
         wrapper.config = config
-        wrapper.is_action = True
+        wrapper.is_activity = True
 
         return wrapper
     return decorator

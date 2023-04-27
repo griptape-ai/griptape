@@ -57,8 +57,8 @@ class TestBaseTool:
         assert isinstance(tool.env_value("TEST_INT"), int)
         assert tool.env_value("TEST_INT") == 1
 
-    def test_action_name(self, tool):
-        assert tool.action_name(tool.test) == "test"
+    def test_activity_name(self, tool):
+        assert tool.activity_name(tool.test) == "test"
 
     def test_name(self):
         assert MockTool().name == "MockTool"
@@ -68,28 +68,28 @@ class TestBaseTool:
         assert MockTool().class_name == "MockTool"
         assert MockTool(name="FooBar").class_name == "MockTool"
 
-    def test_action_description(self, tool):
-        description = tool.action_description(tool.test)
+    def test_activity_description(self, tool):
+        description = tool.activity_description(tool.test)
 
         assert "bar" in description
         assert "baz" not in description
 
     def test_full_action_description(self, tool):
-        description = tool.full_action_description(tool.test)
+        description = tool.full_activity_description(tool.test)
 
         assert "bar" in description
         assert "baz" not in description
 
-    def test_action_schema(self, tool):
-        assert tool.action_schema(tool.test) == \
+    def test_activity_schema(self, tool):
+        assert tool.activity_schema(tool.test) == \
                tool.test.config["schema"].json_schema("ToolInputSchema")
 
     def test_find_action(self, tool):
-        assert tool.find_action("test") == tool.test
+        assert tool.find_activity("test") == tool.test
 
-    def test_actions(self, tool):
-        assert len(tool.actions()) == 1
-        assert tool.actions()[0] == tool.test
+    def test_activities(self, tool):
+        assert len(tool.activities()) == 1
+        assert tool.activities()[0] == tool.test
 
     def test_validate(self, tool):
         assert tool.validate()
