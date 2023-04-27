@@ -128,6 +128,25 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
+    def test_find_middleware(self):
+        m1 = StorageMiddleware(name="Middleware1", driver=MemoryStorageDriver())
+        m2 = StorageMiddleware(name="Middleware2", driver=MemoryStorageDriver())
+
+        tool = MockTool(
+            name="Tool1",
+            middleware={
+                "test": [m1, m2]
+            }
+        )
+        task = ToolkitTask("test", tool_names=[tool.name])
+
+        Pipeline(
+            tool_loader=ToolLoader(tools=[tool])
+        ).add_task(task)
+
+        assert task.find_middleware("Middleware1") == m1
+        assert task.find_middleware("Middleware2") == m2
+
     def test_middlewares(self):
         tool1 = MockTool(
             name="Tool1",

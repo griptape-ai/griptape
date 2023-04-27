@@ -105,3 +105,9 @@ class ToolkitTask(PromptTask, ABC):
             (t for t in self.tools if t.name == tool_name),
             None
         )
+
+    def find_middleware(self, middleware_name: str) -> Optional[BaseMiddleware]:
+        return next(
+            (m for m in self.middlewares if m.name == middleware_name),
+            None
+        )

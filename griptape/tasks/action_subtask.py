@@ -9,6 +9,7 @@ from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, And, Literal
 from griptape.artifacts import TextOutput, ErrorOutput
+from griptape.middleware import BaseMiddleware
 from griptape.tasks import PromptTask
 from griptape.core import BaseTool
 from griptape.utils import J2
@@ -56,6 +57,7 @@ class ActionSubtask(PromptTask):
     action_input: Optional[str] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
+    _middleware: Optional[BaseMiddleware] = None
 
     def attach(self, parent_task: ToolkitTask):
         self.parent_task_id = parent_task.id
@@ -82,13 +84,21 @@ class ActionSubtask(PromptTask):
             if self.action_name == "error":
                 self.output = ErrorOutput(self.action_input, task=self.task)
             else:
-                if self._tool:
-                    observation = self.structure.tool_loader.executor.execute(
-                        getattr(self._tool, self.action_method),
-                        self.action_input.encode()
-                    ).decode()
+                if self.action_type == "tool":
+                    if self._tool:
+                        observation = self.structure.tool_loader.executor.execute(
+                            getattr(self._tool, self.action_method),
+                            self.action_input.encode()
+                        ).decode()
+                    else:
+                        observation = "tool not found"
+                elif self.action_type == "middleware":
+                    if self._middleware:
+                        observation = "not available"
+                    else:
+                        observation = "middleware not found"
                 else:
-                    observation = "tool not found"
+                    observation = "invalid action"
 
                 self.output = TextOutput(observation)
         except Exception as e:
@@ -166,25 +176,33 @@ class ActionSubtask(PromptTask):
                 if self.action_name is None:
                     self.action_name = action_object["name"]
 
-                # Load tool method; throw exception if the key is not present
+                # Load action method; throw exception if the key is not present
                 if self.action_method is None:
                     self.action_method = action_object["method"]
-
-                # Load the tool itself
-                if self.action_name:
-                    self._tool = self.task.find_tool(self.action_name)
 
                 # Load optional input value; don't throw exceptions if key is not present
                 if self.action_input is None:
                     self.action_input = str(action_object["input"]) if "input" in action_object else None
 
-                # Validate input based on tool schema
-                if self._tool:
-                    validate(
-                        instance=self.action_input,
-                        schema=self._tool.action_schema(getattr(self._tool, self.action_method))
-                    )
+                # Load the action itself
+                if self.action_type == "tool":
+                    if self.action_name:
+                        self._tool = self.task.find_tool(self.action_name)
 
+                    # Validate input based on tool schema
+                    if self._tool:
+                        validate(
+                            instance=self.action_input,
+                            schema=self._tool.action_schema(getattr(self._tool, self.action_method))
+                        )
+                elif self.action_type == "middleware":
+                    if self.action_name:
+                        self._middleware = self.task.find_middleware(self.action_name)
+
+                    # Validate input based on middleware schema
+                    if self._middleware:
+                        # TODO: validate
+                        pass
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 
