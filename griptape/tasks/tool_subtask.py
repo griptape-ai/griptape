@@ -3,9 +3,11 @@ import ast
 import json
 import re
 from typing import TYPE_CHECKING, Optional
+import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
+from schema import Schema, And, Literal
 from griptape.artifacts import TextOutput, ErrorOutput
 from griptape.tasks import PromptTask
 from griptape.core import BaseTool
@@ -22,12 +24,36 @@ class ToolSubtask(PromptTask):
     ACTION_PATTERN = r"^Action:\s*({.*})$"
     OUTPUT_PATTERN = r"^Output:\s?([\s\S]*)$"
     INVALID_ACTION_ERROR_MSG = f"invalid action input, try again"
+    ACTION_SCHEMA = Schema(
+        description="Actions have type, name, method, and optional input value.",
+        schema={
+            Literal(
+                "type",
+                description="Action type"
+            ): And(str, lambda s: s in ("tool", "middleware")),
+            Literal(
+                "name",
+                description="Action name"
+            ): str,
+            Literal(
+                "method",
+                description="Action method"
+            ): str,
+            schema.Optional(
+                Literal(
+                    "input",
+                    description="Action method input value"
+                )
+            ): schema.Or(str, list, {object: object})
+        }
+    )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    tool_name: Optional[str] = field(default=None, kw_only=True)
-    tool_action: Optional[str] = field(default=None, kw_only=True)
-    tool_value: Optional[str] = field(default=None, kw_only=True)
+    action_type: Optional[str] = field(default=None, kw_only=True)
+    action_name: Optional[str] = field(default=None, kw_only=True)
+    action_method: Optional[str] = field(default=None, kw_only=True)
+    action_input: Optional[str] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
 
@@ -53,13 +79,13 @@ class ToolSubtask(PromptTask):
 
     def run(self) -> BaseArtifact:
         try:
-            if self.tool_name == "error":
-                self.output = ErrorOutput(self.tool_value, task=self.task)
+            if self.action_name == "error":
+                self.output = ErrorOutput(self.action_input, task=self.task)
             else:
                 if self._tool:
                     observation = self.structure.tool_loader.executor.execute(
-                        getattr(self._tool, self.tool_action),
-                        self.tool_value.encode()
+                        getattr(self._tool, self.action_method),
+                        self.action_input.encode()
                     ).decode()
                 else:
                     observation = "tool not found"
@@ -83,14 +109,17 @@ class ToolSubtask(PromptTask):
     def to_json(self) -> str:
         json_dict = {}
 
-        if self.tool_name:
-            json_dict["tool"] = self.tool_name
+        if self.action_type:
+            json_dict["type"] = self.action_type
 
-        if self.tool_action:
-            json_dict["action"] = self.tool_action
+        if self.action_name:
+            json_dict["name"] = self.action_name
 
-        if self.tool_value:
-            json_dict["value"] = self.tool_value
+        if self.action_method:
+            json_dict["method"] = self.action_method
+
+        if self.action_input:
+            json_dict["input"] = self.action_input
 
         return json.dumps(json_dict)
 
@@ -122,45 +151,54 @@ class ToolSubtask(PromptTask):
 
         if len(action_matches) > 0:
             try:
-                parsed_value = ast.literal_eval(action_matches[-1])
+                action_object: dict = ast.literal_eval(action_matches[-1])
 
-                # Load the tool name; throw exception if the key is not present
-                if self.tool_name is None:
-                    self.tool_name = parsed_value["tool"]
+                validate(
+                    instance=action_object,
+                    schema=self.ACTION_SCHEMA.schema
+                )
 
-                # Load the tool action; throw exception if the key is not present
-                if self.tool_action is None:
-                    self.tool_action = parsed_value["action"]
+                # Load action type; throw exception if the key is not present
+                if self.action_type is None:
+                    self.action_type = action_object["type"]
+
+                # Load action name; throw exception if the key is not present
+                if self.action_name is None:
+                    self.action_name = action_object["name"]
+
+                # Load tool method; throw exception if the key is not present
+                if self.action_method is None:
+                    self.action_method = action_object["method"]
 
                 # Load the tool itself
-                if self.tool_name:
-                    self._tool = self.task.find_tool(self.tool_name)
+                if self.action_name:
+                    self._tool = self.task.find_tool(self.action_name)
+
+                # Load optional input value; don't throw exceptions if key is not present
+                if self.action_input is None:
+                    self.action_input = str(action_object["input"]) if "input" in action_object else None
 
                 # Validate input based on tool schema
                 if self._tool:
                     validate(
-                        instance=parsed_value["value"],
-                        schema=self._tool.action_schema(getattr(self._tool, self.tool_action))
+                        instance=self.action_input,
+                        schema=self._tool.action_schema(getattr(self._tool, self.action_method))
                     )
-
-                # Load optional input value; don't throw exceptions if key is not present
-                if self.tool_value is None:
-                    self.tool_value = str(parsed_value.get("value"))
 
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 
-                self.tool_name = "error"
-                self.tool_value = f"syntax error: {e}"
+                self.action_name = "error"
+                self.action_input = f"syntax error: {e}"
             except ValidationError as e:
-                self.structure.logger.error(f"Subtask {self.task.id}\nInvalid JSON: {e}")
+                self.structure.logger.error(f"Subtask {self.task.id}\nInvalid action JSON: {e}")
 
-                self.tool_name = "error"
-                self.tool_value = f"JSON validation error: {e}"
+                self.action_name = "error"
+                self.action_input = f"JSON validation error: {e}"
             except Exception as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nError parsing tool action: {e}")
 
-                self.tool_name = "error"
-                self.tool_value = f"error: {self.INVALID_ACTION_ERROR_MSG}"
+                self.action_name = "error"
+                self.action_input = f"error: {self.INVALID_ACTION_ERROR_MSG}"
         elif self.output is None and len(output_matches) > 0:
             self.output = TextOutput(output_matches[-1])

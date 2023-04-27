@@ -53,8 +53,10 @@ class TestToolkitSubtask:
         assert isinstance(task.output, ErrorOutput)
 
     def test_init_from_prompt_1(self):
-        valid_input = """Thought: need to test\nAction: {"tool": "test", "action": "test action", "value": "test input"}\nObservation: test 
-        observation\nOutput: test output"""
+        valid_input = 'Thought: need to test\n' \
+                      'Action: {"type": "tool", "name": "test", "method": "test action", "input": "test input"}\n' \
+                      'Observation: test observation\n' \
+                      'Output: test output'
         task = ToolkitTask("test", tool_names=["Calculator"])
 
         Pipeline().add_task(task)
@@ -62,9 +64,10 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ToolSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.tool_name == "test"
-        assert subtask.tool_action == "test action"
-        assert subtask.tool_value == "test input"
+        assert subtask.action_type == "tool"
+        assert subtask.action_name == "test"
+        assert subtask.action_method == "test action"
+        assert subtask.action_input == "test input"
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
@@ -77,15 +80,15 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ToolSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.tool_name is None
-        assert subtask.tool_action is None
-        assert subtask.tool_value is None
+        assert subtask.action_name is None
+        assert subtask.action_method is None
+        assert subtask.action_input is None
         assert subtask.output.value == "test output"
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        subtask1 = ToolSubtask("test1", tool_name="test", tool_action="test", tool_value="test")
-        subtask2 = ToolSubtask("test2", tool_name="test", tool_action="test", tool_value="test")
+        subtask1 = ToolSubtask("test1", action_name="test", action_method="test", action_input="test")
+        subtask2 = ToolSubtask("test2", action_name="test", action_method="test", action_input="test")
 
         Pipeline().add_task(task)
 
@@ -104,8 +107,8 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        subtask1 = ToolSubtask("test1", tool_name="test", tool_action="test", tool_value="test")
-        subtask2 = ToolSubtask("test2", tool_name="test", tool_action="test", tool_value="test")
+        subtask1 = ToolSubtask("test1", action_name="test", action_method="test", action_input="test")
+        subtask2 = ToolSubtask("test2", action_name="test", action_method="test", action_input="test")
 
         Pipeline().add_task(task)
 

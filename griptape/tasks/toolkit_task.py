@@ -61,7 +61,7 @@ class ToolkitTask(PromptTask, ABC):
                         f"Exceeded tool limit of {self.max_subtasks} subtasks per task",
                         task=self
                     )
-                elif subtask.tool_name is None:
+                elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
                     subtask.output = TextOutput(subtask.prompt_template)
                 else:

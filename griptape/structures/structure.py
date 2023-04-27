@@ -7,6 +7,8 @@ from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
 from attr import define, field, Factory
 from rich.logging import RichHandler
+from griptape.tasks import ToolSubtask
+from griptape import utils
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.utils import J2
 from griptape.core import ToolLoader
@@ -75,10 +77,19 @@ class Structure(ABC):
         from griptape.tasks import ToolkitTask
 
         tools = task.tools if isinstance(task, ToolkitTask) else []
+        middlewares = task.middlewares if isinstance(task, ToolkitTask) else []
+        action_schema = utils.minify_json(
+            json.dumps(
+                ToolSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
+            )
+        )
 
         stack = [
             J2("prompts/base.j2").render(
                 rules=self.rules,
+                action_schema=action_schema,
+                middleware_names=str.join(", ", [middleware.name for middleware in middlewares]),
+                middlewares=[J2("prompts/middleware.j2").render(middleware=middleware) for middleware in middlewares],
                 tool_names=str.join(", ", [tool.name for tool in tools]),
                 tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]
             )
