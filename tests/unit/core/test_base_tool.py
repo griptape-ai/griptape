@@ -13,7 +13,6 @@ class TestBaseTool:
     @pytest.fixture
     def tool(self):
         return MockTool(
-            metadata="metadata",
             test_field="hello",
             test_int=5
         )
@@ -74,14 +73,12 @@ class TestBaseTool:
 
         assert "bar" in description
         assert "baz" not in description
-        assert "metadata" not in description
 
     def test_full_action_description(self, tool):
         description = tool.full_action_description(tool.test)
 
         assert "bar" in description
         assert "baz" not in description
-        assert "metadata" in description
 
     def test_action_schema(self, tool):
         assert tool.action_schema(tool.test) == \
@@ -118,7 +115,6 @@ class TestBaseTool:
                     )
                 ]
             },
-            metadata="metadata",
             test_field="hello",
             test_int=5
         )
@@ -138,7 +134,6 @@ class TestBaseTool:
                         )
                     ]
                 },
-                metadata="metadata",
                 test_field="hello",
                 test_int=5
             )

@@ -18,7 +18,6 @@ class BaseTool(ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    metadata: Optional[str] = field(default=None, kw_only=True)
     middleware: dict[str, list[BaseMiddleware]] = field(factory=dict, kw_only=True)
 
     # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
@@ -145,11 +144,6 @@ class BaseTool(ABC):
                 self.action_description(action),
                 f"Method input schema: {self.action_schema(action)}"
             ]
-
-            if self.metadata:
-                description_lines.append(
-                    f"Additional metadata: {self.metadata}"
-                )
 
             return str.join("\n", description_lines)
 

@@ -1,9 +1,5 @@
 ## Name
 {{ tool.name }}
-{% if tool.metadata %}
-## {{ tool.name }} Metadata
-{{ tool.metadata }}
-{% endif %}
 ## {{ tool.name }} Methods
 {% for action in tool.actions() %}
 ### {{ tool.action_name(action) }}
