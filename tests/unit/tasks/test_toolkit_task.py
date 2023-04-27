@@ -2,7 +2,7 @@ from griptape.drivers import MemoryStorageDriver
 from griptape.middleware import StorageMiddleware
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorOutput
-from griptape.tasks import ToolkitTask, ToolSubtask
+from griptape.tasks import ToolkitTask, ActionSubtask
 from griptape.core import ToolLoader
 from tests.mocks.mock_value_driver import MockValueDriver
 from griptape.structures import Pipeline
@@ -61,7 +61,7 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        subtask = task.add_subtask(ToolSubtask(valid_input))
+        subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
         assert subtask.action_type == "tool"
@@ -77,7 +77,7 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        subtask = task.add_subtask(ToolSubtask(valid_input))
+        subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
         assert subtask.action_name is None
@@ -87,8 +87,8 @@ class TestToolkitSubtask:
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        subtask1 = ToolSubtask("test1", action_name="test", action_method="test", action_input="test")
-        subtask2 = ToolSubtask("test2", action_name="test", action_method="test", action_input="test")
+        subtask1 = ActionSubtask("test1", action_name="test", action_method="test", action_input="test")
+        subtask2 = ActionSubtask("test2", action_name="test", action_method="test", action_input="test")
 
         Pipeline().add_task(task)
 
@@ -107,8 +107,8 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tool_names=["Calculator"])
-        subtask1 = ToolSubtask("test1", action_name="test", action_method="test", action_input="test")
-        subtask2 = ToolSubtask("test2", action_name="test", action_method="test", action_input="test")
+        subtask1 = ActionSubtask("test1", action_name="test", action_method="test", action_input="test")
+        subtask2 = ActionSubtask("test2", action_name="test", action_method="test", action_input="test")
 
         Pipeline().add_task(task)
 

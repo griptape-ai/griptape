@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolSubtask(PromptTask):
+class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"^Thought:\s*(.*)$"
     ACTION_PATTERN = r"^Action:\s*({.*})$"
     OUTPUT_PATTERN = r"^Output:\s?([\s\S]*)$"
@@ -67,11 +67,11 @@ class ToolSubtask(PromptTask):
         return self.structure.find_task(self.parent_task_id)
 
     @property
-    def parents(self) -> list[ToolSubtask]:
+    def parents(self) -> list[ActionSubtask]:
         return [self.task.find_subtask(parent_id) for parent_id in self.parent_ids]
 
     @property
-    def children(self) -> list[ToolSubtask]:
+    def children(self) -> list[ActionSubtask]:
         return [self.task.find_subtask(child_id) for child_id in self.child_ids]
 
     def before_run(self) -> None:
@@ -123,7 +123,7 @@ class ToolSubtask(PromptTask):
 
         return json.dumps(json_dict)
 
-    def add_child(self, child: ToolSubtask) -> ToolSubtask:
+    def add_child(self, child: ActionSubtask) -> ActionSubtask:
         if child.id not in self.child_ids:
             self.child_ids.append(child.id)
 
@@ -132,7 +132,7 @@ class ToolSubtask(PromptTask):
 
         return child
 
-    def add_parent(self, parent: ToolSubtask) -> ToolSubtask:
+    def add_parent(self, parent: ActionSubtask) -> ActionSubtask:
         if parent.id not in self.parent_ids:
             self.parent_ids.append(parent.id)
 

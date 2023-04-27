@@ -8,7 +8,7 @@ from griptape.tasks import PromptTask
 from griptape.artifacts import TextOutput, ErrorOutput
 
 if TYPE_CHECKING:
-    from griptape.tasks import ToolSubtask
+    from griptape.tasks import ActionSubtask
     from griptape.middleware import BaseMiddleware
 
 
@@ -18,7 +18,7 @@ class ToolkitTask(PromptTask, ABC):
 
     tool_names: list[str] = field(kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
-    _subtasks: list[ToolSubtask] = field(factory=list)
+    _subtasks: list[ActionSubtask] = field(factory=list)
 
     @tool_names.validator
     def validate_tool_names(self, _, tool_names: list[str]) -> None:
@@ -44,12 +44,12 @@ class ToolkitTask(PromptTask, ABC):
         return list(unique_middleware_dict.values())
 
     def run(self) -> TextOutput:
-        from griptape.tasks import ToolSubtask
+        from griptape.tasks import ActionSubtask
 
         self._subtasks.clear()
 
         subtask = self.add_subtask(
-            ToolSubtask(
+            ActionSubtask(
                 self.active_driver().run(value=self.structure.to_prompt_string(self)).value
             )
         )
@@ -70,7 +70,7 @@ class ToolkitTask(PromptTask, ABC):
                     subtask.after_run()
 
                     subtask = self.add_subtask(
-                        ToolSubtask(
+                        ActionSubtask(
                             self.active_driver().run(value=self.structure.to_prompt_string(self)).value
                         )
                     )
@@ -87,10 +87,10 @@ class ToolkitTask(PromptTask, ABC):
             subtasks=self._subtasks
         )
 
-    def find_subtask(self, task_id: str) -> Optional[ToolSubtask]:
+    def find_subtask(self, task_id: str) -> Optional[ActionSubtask]:
         return next((subtask for subtask in self._subtasks if subtask.id == task_id), None)
 
-    def add_subtask(self, subtask: ToolSubtask) -> ToolSubtask:
+    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         subtask.attach(self)
 
         if len(self._subtasks) > 0:

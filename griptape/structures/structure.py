@@ -7,7 +7,7 @@ from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape.tasks import ToolSubtask
+from griptape.tasks import ActionSubtask
 from griptape import utils
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.utils import J2
@@ -80,7 +80,7 @@ class Structure(ABC):
         middlewares = task.middlewares if isinstance(task, ToolkitTask) else []
         action_schema = utils.minify_json(
             json.dumps(
-                ToolSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
+                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
             )
         )
 
