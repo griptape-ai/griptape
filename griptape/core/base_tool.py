@@ -7,12 +7,12 @@ import yaml
 from attr import define, fields, Attribute, field, Factory
 import attrs
 from decouple import config
-from jinja2 import Template
+from griptape.core import ActivityMixin
 from griptape.middleware import BaseMiddleware
 
 
 @define
-class BaseTool(ABC):
+class BaseTool(ActivityMixin, ABC):
     MANIFEST_FILE = "manifest.yml"
     DOCKERFILE_FILE = "Dockerfile"
     REQUIREMENTS_FILE = "requirements.txt"
@@ -80,26 +80,6 @@ class BaseTool(ABC):
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {}
-
-    def find_activity(self, name: str) -> Optional[callable]:
-        for _, method in inspect.getmembers(self, predicate=inspect.ismethod):
-            if getattr(method, "is_activity", False) and method.config["name"] == name:
-                return method
-
-        return None
-
-    def activities(self) -> list[callable]:
-        methods = []
-
-        for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
-            if getattr(method, "is_activity", False):
-                methods.append(method)
-
-        return methods
-
     def env_value(self, name: str) -> Optional[any]:
         # First, check if there is a matching field with an environment variable in the metadata
         env_field = next(
@@ -123,35 +103,6 @@ class BaseTool(ABC):
         else:
             # If all fails, return None
             return None
-
-    def activity_name(self, activity: callable) -> str:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
-        else:
-            return activity.config["name"]
-
-    def activity_description(self, activity: callable) -> str:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
-        else:
-            return Template(activity.config["description"]).render(self.schema_template_args)
-
-    def full_activity_description(self, activity: callable) -> str:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
-        else:
-            description_lines = [
-                self.activity_description(activity),
-                f"Method input schema: {self.activity_schema(activity)}"
-            ]
-
-            return str.join("\n", description_lines)
-
-    def activity_schema(self, activity: callable) -> dict:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
-        else:
-            return activity.config["schema"].json_schema("ToolInputSchema")
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator
