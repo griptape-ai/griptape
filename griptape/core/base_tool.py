@@ -135,9 +135,15 @@ class BaseTool(ABC):
         if action is None or not getattr(action, "is_action", False):
             raise Exception("This method is not a tool action.")
         else:
+            return Template(action.config["description"]).render(self.schema_template_args)
+
+    def full_action_description(self, action: callable) -> str:
+        if action is None or not getattr(action, "is_action", False):
+            raise Exception("This method is not a tool action.")
+        else:
             description_lines = [
-                Template(action.config["description"]).render(self.schema_template_args),
-                f"Input Schema: {self.action_schema(action)}"
+                self.action_description(action),
+                f"Method input schema: {self.action_schema(action)}"
             ]
 
             if self.metadata:

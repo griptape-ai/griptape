@@ -66,7 +66,7 @@ class ChatgptPluginAdapter(BaseAdapter):
                 f"{self.path_prefix}{action.config['name']}",
                 functools.partial(self.__execute_action, action),
                 methods=["GET"],
-                description=tool.action_description(action)
+                description=tool.full_action_description(action)
             )
 
         return app
