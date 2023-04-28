@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from schema import Schema
-from griptape.core import ActivityMixin, action
+from griptape.core import action
 from griptape.middleware import BaseMiddleware
 from attr import define, field
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @define
-class StorageMiddleware(ActivityMixin, BaseMiddleware):
+class StorageMiddleware(BaseMiddleware):
     driver: BaseStorageDriver = field(kw_only=True)
 
     def process_output(self, tool_activity: callable, value: bytes) -> bytes:

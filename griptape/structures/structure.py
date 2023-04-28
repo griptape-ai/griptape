@@ -77,7 +77,7 @@ class Structure(ABC):
         from griptape.tasks import ToolkitTask
 
         tools = task.tools if isinstance(task, ToolkitTask) else []
-        middlewares = task.middlewares if isinstance(task, ToolkitTask) else []
+        middlewares = [m for m in task.middlewares if len(m.activities()) > 0] if isinstance(task, ToolkitTask) else []
         action_schema = utils.minify_json(
             json.dumps(
                 ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
