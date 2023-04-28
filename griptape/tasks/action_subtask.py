@@ -94,11 +94,11 @@ class ActionSubtask(PromptTask):
                         observation = "tool not found"
                 elif self.action_type == "middleware":
                     if self._middleware:
-                        observation = "not available"
+                        observation = getattr(self._middleware, self.action_activity)(self.action_input.encode())
                     else:
                         observation = "middleware not found"
                 else:
-                    observation = "invalid action"
+                    observation = "invalid action type"
 
                 self.output = TextOutput(observation)
         except Exception as e:

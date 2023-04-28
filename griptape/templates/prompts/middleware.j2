@@ -1,2 +1,9 @@
 ## Name
 {{ middleware.name }}
+## {{ middleware.name }} Activities
+{% for activity in middleware.activities() %}
+### {{ middleware.activity_name(activity) }}
+{{ middleware.activity_name(activity) }} description: {{ middleware.activity_description(activity) }}
+{{ middleware.activity_name(activity) }} input schema: {{ middleware.activity_schema(activity) }}
+
+{% endfor %}
