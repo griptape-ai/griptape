@@ -11,7 +11,7 @@ from schema import Schema, And, Literal
 from griptape.artifacts import TextOutput, ErrorOutput
 from griptape.middleware import BaseMiddleware
 from griptape.tasks import PromptTask
-from griptape.core import BaseTool
+from griptape.core import BaseTool, ActivityMixin
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -189,20 +189,14 @@ class ActionSubtask(PromptTask):
                     if self.action_name:
                         self._tool = self.task.find_tool(self.action_name)
 
-                    # Validate input based on tool schema
                     if self._tool:
-                        validate(
-                            instance=self.action_input,
-                            schema=self._tool.activity_schema(getattr(self._tool, self.action_activity))
-                        )
+                        self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "middleware":
                     if self.action_name:
                         self._middleware = self.task.find_middleware(self.action_name)
 
-                    # Validate input based on middleware schema
                     if self._middleware:
-                        # TODO: validate
-                        pass
+                        self.__validate_activity_mixin(self._middleware)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 
@@ -212,7 +206,7 @@ class ActionSubtask(PromptTask):
                 self.structure.logger.error(f"Subtask {self.task.id}\nInvalid action JSON: {e}")
 
                 self.action_name = "error"
-                self.action_input = f"JSON validation error: {e}"
+                self.action_input = f"Action JSON validation error: {e}"
             except Exception as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nError parsing tool action: {e}")
 
@@ -220,3 +214,15 @@ class ActionSubtask(PromptTask):
                 self.action_input = f"error: {self.INVALID_ACTION_ERROR_MSG}"
         elif self.output is None and len(output_matches) > 0:
             self.output = TextOutput(output_matches[-1])
+
+    def __validate_activity_mixin(self, mixin: ActivityMixin) -> None:
+        try:
+            validate(
+                instance=self.action_input,
+                schema=mixin.activity_schema(getattr(mixin, self.action_activity))
+            )
+        except ValidationError as e:
+            self.structure.logger.error(f"Subtask {self.task.id}\nInvalid activity input JSON: {e}")
+
+            self.action_name = "error"
+            self.action_input = f"Activity input JSON validation error: {e}"
