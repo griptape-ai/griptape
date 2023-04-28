@@ -1,6 +1,5 @@
 from abc import ABC
 from attr import define, field, Factory
-
 from griptape.core import ActivityMixin
 
 

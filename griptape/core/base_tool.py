@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import inspect
 import logging
 import os
@@ -8,7 +10,9 @@ from attr import define, fields, Attribute, field, Factory
 import attrs
 from decouple import config
 from griptape.core import ActivityMixin
-from griptape.middleware import BaseMiddleware
+
+if TYPE_CHECKING:
+    from griptape.middleware import BaseMiddleware
 
 
 @define
@@ -24,6 +28,9 @@ class BaseTool(ActivityMixin, ABC):
     logging.basicConfig(level=logging.ERROR)
 
     def __attrs_post_init__(self):
+        from griptape.middleware import BaseMiddleware
+
+        # https://www.attrs.org/en/stable/api.html#attrs.resolve_types
         attrs.resolve_types(self.__class__, globals(), locals())
 
     @middleware.validator
