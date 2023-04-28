@@ -16,8 +16,11 @@ class BaseExecutor(ABC):
 
         return result
 
-    def before_execute(self, tool_activity: callable, value: bytes) -> bytes:
-        return value
+    def before_execute(self, tool_activity: callable, result: bytes) -> bytes:
+        for middleware in tool_activity.__self__.middleware.get(tool_activity.config["name"], []):
+            result = middleware.process_input(tool_activity, result)
+
+        return result
 
     def after_execute(self, tool_activity: callable, result: bytes) -> bytes:
         for middleware in tool_activity.__self__.middleware.get(tool_activity.config["name"], []):
