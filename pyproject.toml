@@ -35,6 +35,7 @@ langchain = ">=0.0.120"
 fastapi = ">=0.80"
 uvicorn = ">= 0.20"
 python-decouple=">=3"
+llama_index = "==0.4.23"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
