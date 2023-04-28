@@ -31,7 +31,7 @@ pip install griptape griptape-tools -U
 
 Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts and to work with [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/index.html) data structures.
 
-With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. You can also define structures as JSON objects and load them into **griptape** dynamically. Let's define a simple two-step pipeline that uses tools:
+With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. You can also define structures as JSON objects and load them into **griptape** dynamically. Let's define a simple two-task pipeline that uses tools:
 
 ```python
 from decouple import config
@@ -69,7 +69,7 @@ print(utils.Conversation(pipeline.memory).to_string())
 
 ```
 
-Boom! Our first multistep LLM pipeline with memory that used tools generated a conversation:
+Boom! Our first LLM pipeline with two sequential tasks generated the following exchange:
 
 > Q: Give me a summary of https://en.wikipedia.org/wiki/Large_language_model  
 > A: Arr, me hearties! Large language models have been developed and set sail since 2018, includin' BERT, GPT-2, GPT-3 [...]
