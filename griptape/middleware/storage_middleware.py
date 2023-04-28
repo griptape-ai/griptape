@@ -27,7 +27,7 @@ class StorageMiddleware(BaseMiddleware):
 
     @activity(config={
         "name": "search_entry",
-        "description": "Can be used to search a storage entry for information with any query",
+        "description": "Can be used to search a storage entry",
         "schema": Schema({
             Literal(
                 "id",
@@ -35,7 +35,7 @@ class StorageMiddleware(BaseMiddleware):
             ): str,
             Literal(
                 "query",
-                description="Search query"
+                description="Search query to run against the storage entry"
             ): str
         })
     })
@@ -46,7 +46,7 @@ class StorageMiddleware(BaseMiddleware):
         if text:
             index = self._to_vector_index(text)
 
-            return str(index.query(f"search the following text for '{params['query']}'")).strip()
+            return str(index.query(params['query'])).strip()
         else:
             return "Entry not found"
 
@@ -64,7 +64,7 @@ class StorageMiddleware(BaseMiddleware):
         if text:
             index = self._to_vector_index(text)
 
-            return str(index.query("generate a summary")).strip()
+            return str(index.query("What is the summary of this document point-by-point?")).strip()
         else:
             return "Entry not found"
 
