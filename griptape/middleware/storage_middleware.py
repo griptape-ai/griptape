@@ -1,12 +1,14 @@
 from __future__ import annotations
+import ast
 from typing import TYPE_CHECKING
-from schema import Schema
+from schema import Schema, Literal
 from griptape.core.decorators import activity
 from griptape.middleware import BaseMiddleware
 from attr import define, field
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseStorageDriver
+    from llama_index import GPTSimpleVectorIndex
 
 
 @define
@@ -20,16 +22,55 @@ class StorageMiddleware(BaseMiddleware):
             storage_name=self.name,
             tool_name=tool_activity.__self__.name,
             action_name=tool_activity.config["name"],
-            key=self.driver.save(value)
+            key=self.driver.save(value.decode())
         ).encode()
 
     @activity(config={
-        "name": "load_data",
-        "description": "Can be used to load data from the storage middleware",
+        "name": "search_entry",
+        "description": "Can be used to search a storage entry for information with any query",
+        "schema": Schema({
+            Literal(
+                "id",
+                description="Storage entry ID"
+            ): str,
+            Literal(
+                "query",
+                description="Search query"
+            ): str
+        })
+    })
+    def search_entry(self, value: bytes) -> str:
+        params = ast.literal_eval(value.decode())
+        text = self.driver.load(params["id"])
+
+        if text:
+            index = self._to_vector_index(text)
+
+            return str(index.query(f"search the following text for '{params['query']}'")).strip()
+        else:
+            return "Entry not found"
+
+    @activity(config={
+        "name": "summarize",
+        "description": "Can be used to generate a summary of a storage entry",
         "schema": Schema(
             str,
-            description="Artifact ID"
+            description="Storage entry ID"
         )
     })
-    def load_data(self, value: bytes) -> str:
-        return self.driver.load(value.decode())
+    def summarize(self, value: bytes) -> str:
+        text = self.driver.load(value.decode())
+
+        if text:
+            index = self._to_vector_index(text)
+
+            return str(index.query("generate a summary")).strip()
+        else:
+            return "Entry not found"
+
+    def _to_vector_index(self, text: str) -> GPTSimpleVectorIndex:
+        from llama_index import GPTSimpleVectorIndex, Document
+
+        return GPTSimpleVectorIndex([
+            Document(text)
+        ])

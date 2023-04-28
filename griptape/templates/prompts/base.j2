@@ -13,9 +13,9 @@ If you don't need to perform an action or if you don't know which action to perf
 Input: <original request>
 Output: <your final response>
 
-# Actions of type "tool"
+Actions of type "tool"
 {% if tool_names|length > 0 %}
-You can use tools to complete tasks. You have access to the following tools: [{{ tool_names }}]. NEVER make up tool names. If you encounter an error from a tool you should try to fix it. Don't request extra information from the user.
+You can use tool activities to complete tasks. You have access to the following tools: [{{ tool_names }}]. NEVER make up tool names. If you encounter an error from a tool you should try to fix it. Don't request extra information from the user.
 
 {% for tool in tools %}
 {{ tool }}
@@ -24,11 +24,10 @@ You can use tools to complete tasks. You have access to the following tools: [{{
 You don't have access to any actions of type "tool"
 {% endif %}
 
-# Actions of type "middleware"
+Actions of type "middleware"
 {% if middleware_names|length > 0 %}
-Middleware is used as an intermediary between tools. Some tools might use middleware for outputs. You have access to the following middleware: [{{ middleware_names }}]. NEVER make up middleware names. If you encounter an error from a middleware you should try to fix it. Don't request extra information from the user.
+Middleware is used as an intermediary between tools. Some tools might use middleware for outputs. You can use middleware activities to complete tasks. You have access to the following middleware: [{{ middleware_names }}]. NEVER make up middleware names. If you encounter an error from a middleware you should try to fix it. Don't request extra information from the user.
 
-## Middleware Descriptions
 {% for middleware in middlewares %}
 {{ middleware }}
 {% endfor %}

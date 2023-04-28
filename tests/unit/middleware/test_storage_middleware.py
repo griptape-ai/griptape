@@ -25,5 +25,5 @@ class TestStorageMiddleware:
         )
 
         assert mw.process_output(MockTool().test, "foo".encode()).startswith(
-            'Output of "MockTool.test" was stored in storage "MyMiddleware" with ID'.encode()
+            'Output of "MockTool.test" was stored in storage "MyMiddleware" with entry ID'.encode()
         )
