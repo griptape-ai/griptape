@@ -2,7 +2,7 @@ from __future__ import annotations
 import ast
 import json
 import re
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Tuple
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
@@ -54,7 +54,7 @@ class ActionSubtask(PromptTask):
     action_type: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_activity: Optional[str] = field(default=None, kw_only=True)
-    action_input: Optional[str] = field(default=None, kw_only=True)
+    action_input: Optional[Tuple[str, list, dict]] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
     _middleware: Optional[BaseMiddleware] = None
@@ -88,13 +88,13 @@ class ActionSubtask(PromptTask):
                     if self._tool:
                         observation = self.structure.tool_loader.executor.execute(
                             getattr(self._tool, self.action_activity),
-                            self.action_input.encode()
+                            str(self.action_input).encode()
                         ).decode()
                     else:
                         observation = "tool not found"
                 elif self.action_type == "middleware":
                     if self._middleware:
-                        observation = getattr(self._middleware, self.action_activity)(self.action_input.encode())
+                        observation = getattr(self._middleware, self.action_activity)(str(self.action_input).encode())
                     else:
                         observation = "middleware not found"
                 else:
@@ -182,7 +182,7 @@ class ActionSubtask(PromptTask):
 
                 # Load optional input value; don't throw exceptions if key is not present
                 if self.action_input is None:
-                    self.action_input = str(action_object["input"]) if "input" in action_object else None
+                    self.action_input = action_object["input"] if "input" in action_object else None
 
                 # Load the action itself
                 if self.action_type == "tool":
