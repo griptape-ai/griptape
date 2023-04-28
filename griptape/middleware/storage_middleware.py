@@ -46,7 +46,7 @@ class StorageMiddleware(BaseMiddleware):
         if text:
             index = self._to_vector_index(text)
 
-            return str(index.query(params['query'])).strip()
+            return str(index.query(f"Search query: {params['query']}")).strip()
         else:
             return "Entry not found"
 
