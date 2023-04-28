@@ -2,7 +2,7 @@ import functools
 from schema import Schema
 
 
-def action(config: dict):
+def activity(config: dict):
     __config_schema().validate(config)
 
     def decorator(func):

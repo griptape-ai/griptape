@@ -1,6 +1,7 @@
 from attr import define, field
 from schema import Schema
-from griptape.core import action, BaseTool
+from griptape.core import BaseTool
+from griptape.core.decorators import activity
 
 
 @define
@@ -20,7 +21,7 @@ class MockTool(BaseTool):
     test_field: str = field(default="test", kw_only=True, metadata={"env": "TEST_FIELD"})
     test_int: int = field(default=5, kw_only=True, metadata={"env": "TEST_INT"})
 
-    @action(config=configs["test"])
+    @activity(config=configs["test"])
     def test(self, value: bytes) -> str:
         return f"ack {value.decode()}"
 

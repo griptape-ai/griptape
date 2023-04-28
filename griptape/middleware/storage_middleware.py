@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from schema import Schema
-from griptape.core import action
+from griptape.core.decorators import activity
 from griptape.middleware import BaseMiddleware
 from attr import define, field
 
@@ -23,7 +23,7 @@ class StorageMiddleware(BaseMiddleware):
             key=self.driver.save(value)
         ).encode()
 
-    @action(config={
+    @activity(config={
         "name": "load_data",
         "description": "Can be used to load data from the storage middleware",
         "schema": Schema(
