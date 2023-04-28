@@ -5,13 +5,13 @@ import yaml
 from attr import define, field
 from fastapi import FastAPI
 from starlette.responses import Response
-from griptape.adapters import BaseAdapter
+from griptape.converters import BaseConverter
 from griptape.core import BaseTool
 from griptape.utils import J2
 
 
 @define
-class ChatgptPluginAdapter(BaseAdapter):
+class ChatgptPluginConverter(BaseConverter):
     class YAMLResponse(Response):
         media_type = "text/yaml"
 
@@ -27,7 +27,7 @@ class ChatgptPluginAdapter(BaseAdapter):
 
     def generate_manifest(self, tool: BaseTool) -> dict:
         return json.loads(
-            J2(f"chatgpt_plugin_adapter/{self.OPENAI_MANIFEST_FILE}.j2").render(
+            J2(f"converters/chatgpt_plugin/{self.OPENAI_MANIFEST_FILE}.j2").render(
                 name_for_human=tool.manifest["name"],
                 name_for_model=tool.manifest["name"],
                 description_for_human=tool.manifest["description"],

@@ -1,10 +1,10 @@
 import langchain.tools
 from attr import define
-from griptape.adapters import BaseAdapter
+from griptape.converters import BaseConverter
 
 
 @define
-class LangchainToolAdapter(BaseAdapter):
+class LangchainToolConverter(BaseConverter):
     def generate_tool(self, tool_activity: callable) -> langchain.tools.BaseTool:
         tool = tool_activity.__self__
 

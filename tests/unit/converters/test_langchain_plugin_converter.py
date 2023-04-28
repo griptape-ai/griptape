@@ -1,11 +1,11 @@
 import pytest
 import langchain.tools
-from griptape.adapters import LangchainToolAdapter
+from griptape.converters import LangchainToolConverter
 from griptape.executors import LocalExecutor
 from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestLangchainToolAdapter:
+class TestLangchainToolConverter:
     @pytest.fixture
     def tool(self):
         return MockTool(
@@ -17,7 +17,7 @@ class TestLangchainToolAdapter:
         return LocalExecutor()
 
     def test_generate(self, tool, executor):
-        assert isinstance(LangchainToolAdapter(executor=executor).generate_tool(tool.test), langchain.tools.BaseTool)
+        assert isinstance(LangchainToolConverter(executor=executor).generate_tool(tool.test), langchain.tools.BaseTool)
 
     def test_run(self, tool, executor):
-        assert LangchainToolAdapter(executor=executor).generate_tool(tool.test)._run("test") == "ack test"
+        assert LangchainToolConverter(executor=executor).generate_tool(tool.test)._run("test") == "ack test"
