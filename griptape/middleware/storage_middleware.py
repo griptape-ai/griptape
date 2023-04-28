@@ -21,7 +21,7 @@ class StorageMiddleware(BaseMiddleware):
         return J2("middleware/storage.j2").render(
             storage_name=self.name,
             tool_name=tool_activity.__self__.name,
-            action_name=tool_activity.config["name"],
+            activity_name=tool_activity.config["name"],
             key=self.driver.save(value.decode())
         ).encode()
 
