@@ -88,13 +88,13 @@ class ActionSubtask(PromptTask):
                     if self._tool:
                         observation = self.structure.tool_loader.executor.execute(
                             getattr(self._tool, self.action_activity),
-                            str(self.action_input).encode()
-                        ).decode()
+                            self.action_input
+                        )
                     else:
                         observation = "tool not found"
                 elif self.action_type == "middleware":
                     if self._middleware:
-                        observation = getattr(self._middleware, self.action_activity)(str(self.action_input).encode())
+                        observation = getattr(self._middleware, self.action_activity)(self.action_input)
                     else:
                         observation = "middleware not found"
                 else:

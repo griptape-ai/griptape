@@ -15,6 +15,6 @@ class CommandRunner:
         stdout, stderr = process.communicate()
 
         if len(stderr) == 0:
-            return stdout.decode().strip()
+            return stdout.strip().decode()
         else:
-            return f"error: {stderr.decode().strip()}"
+            return f"error: {stderr.strip()}"

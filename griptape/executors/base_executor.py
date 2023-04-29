@@ -9,27 +9,27 @@ if TYPE_CHECKING:
 
 
 class BaseExecutor(ABC):
-    def execute(self, tool_activity: callable, value: bytes) -> bytes:
+    def execute(self, tool_activity: callable, value: any) -> any:
         value = self.before_execute(tool_activity, value)
         result = self.try_execute(tool_activity, value)
         result = self.after_execute(tool_activity, result)
 
         return result
 
-    def before_execute(self, tool_activity: callable, result: bytes) -> bytes:
+    def before_execute(self, tool_activity: callable, result: any) -> any:
         for middleware in tool_activity.__self__.middleware.get(tool_activity.config["name"], []):
             result = middleware.process_input(tool_activity, result)
 
         return result
 
-    def after_execute(self, tool_activity: callable, result: bytes) -> bytes:
+    def after_execute(self, tool_activity: callable, result: any) -> any:
         for middleware in tool_activity.__self__.middleware.get(tool_activity.config["name"], []):
             result = middleware.process_output(tool_activity, result)
 
         return result
 
     @abstractmethod
-    def try_execute(self, tool_activity: callable, value: bytes) -> bytes:
+    def try_execute(self, tool_activity: callable, value: any) -> any:
         ...
 
     def tool_dir(self, tool: BaseTool):

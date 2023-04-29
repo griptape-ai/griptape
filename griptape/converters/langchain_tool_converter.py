@@ -12,9 +12,9 @@ class LangchainToolConverter(BaseConverter):
         description = tool.full_activity_description(tool_activity).replace("{", "{{").replace("}", "}}")
 
         def _run(_self, value: str) -> str:
-            return self.executor.execute(tool_activity, value.encode()).decode()
+            return self.executor.execute(tool_activity, value)
 
-        async def _arun(_self, query: str) -> str:
+        async def _arun(_self, value: str) -> str:
             raise NotImplementedError("async is not supported")
 
         return type(

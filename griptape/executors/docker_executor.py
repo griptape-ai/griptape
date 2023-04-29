@@ -31,18 +31,19 @@ class DockerExecutor(BaseExecutor):
 
             return None
 
-    def try_execute(self, tool_activity: callable, value: bytes) -> bytes:
+    def try_execute(self, tool_activity: callable, value: any) -> any:
         tool = tool_activity.__self__
 
         self.build_image(tool)
         self.remove_existing_container(self.container_name(tool))
 
-        return self.run_container(tool_activity, value).encode()
+        return self.run_container(tool_activity, value)
 
-    def run_container(self, tool_activity: callable, value: bytes) -> str:
+    def run_container(self, tool_activity: callable, value: any) -> str:
         tool = tool_activity.__self__
         workdir = "/tool"
         tool_name = tool.class_name
+        value = f'"{value}"' if isinstance(value, str) else value
         command = [
             "python",
             "-c",
@@ -64,7 +65,7 @@ class DockerExecutor(BaseExecutor):
             remove=True
         )
 
-        return result.decode().strip()
+        return result.strip()
 
     def remove_existing_container(self, name: str) -> None:
         try:

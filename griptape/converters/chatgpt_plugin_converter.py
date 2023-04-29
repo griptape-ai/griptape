@@ -72,7 +72,7 @@ class ChatgptPluginConverter(BaseConverter):
         return app
 
     def __execute_action(self, action: callable, value: str) -> Union[str, dict]:
-        result = self.executor.execute(action, value.encode()).decode()
+        result = self.executor.execute(action, value)
 
         try:
             return json.loads(result)

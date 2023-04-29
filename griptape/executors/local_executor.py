@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import ast
 from typing import TYPE_CHECKING
 import logging
 import os
@@ -14,7 +16,7 @@ if TYPE_CHECKING:
 class LocalExecutor(BaseExecutor):
     verbose: int = field(default=False, kw_only=True)
 
-    def try_execute(self, tool_activity: callable, value: bytes) -> bytes:
+    def try_execute(self, tool_activity: callable, value: any) -> any:
         tool = tool_activity.__self__
 
         logging.warning(f"You are executing the {tool.name} tool in the local environment. Make sure to "
@@ -29,9 +31,9 @@ class LocalExecutor(BaseExecutor):
         output = self.run_subprocess(env, tool_activity, value)
 
         if output.stderr:
-            return output.stderr.strip().encode()
+            return output.stderr.strip()
         else:
-            return output.stdout.strip().encode()
+            return output.stdout.strip()
 
     def install_dependencies(self, env: dict[str, str], tool: BaseTool) -> None:
         command = [
@@ -51,9 +53,10 @@ class LocalExecutor(BaseExecutor):
             stderr=None if self.verbose else subprocess.DEVNULL
         )
 
-    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: bytes) -> subprocess.CompletedProcess:
+    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: any) -> subprocess.CompletedProcess:
         tool = tool_activity.__self__
         tool_name = tool.class_name
+        value = f'"{value}"' if isinstance(value, str) else value
         command = [
             "python",
             "-c",

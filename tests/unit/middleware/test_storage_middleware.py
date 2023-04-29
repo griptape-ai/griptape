@@ -24,6 +24,6 @@ class TestStorageMiddleware:
             driver=MemoryStorageDriver()
         )
 
-        assert mw.process_output(MockTool().test, "foo".encode()).startswith(
-            'Output of "MockTool.test" was stored in storage "MyMiddleware" with entry ID'.encode()
+        assert mw.process_output(MockTool().test, "foo").startswith(
+            'Output of "MockTool.test" was stored in storage "MyMiddleware" with entry ID'
         )

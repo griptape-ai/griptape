@@ -1,5 +1,4 @@
 from __future__ import annotations
-import ast
 from typing import TYPE_CHECKING
 from schema import Schema, Literal
 from griptape.core.decorators import activity
@@ -15,15 +14,15 @@ if TYPE_CHECKING:
 class StorageMiddleware(BaseMiddleware):
     driver: BaseStorageDriver = field(kw_only=True)
 
-    def process_output(self, tool_activity: callable, value: bytes) -> bytes:
+    def process_output(self, tool_activity: callable, value: any) -> any:
         from griptape.utils import J2
 
         return J2("middleware/storage.j2").render(
             storage_name=self.name,
             tool_name=tool_activity.__self__.name,
             activity_name=tool_activity.config["name"],
-            key=self.driver.save(value.decode())
-        ).encode()
+            key=self.driver.save(value)
+        )
 
     @activity(config={
         "name": "search_entry",
@@ -39,14 +38,13 @@ class StorageMiddleware(BaseMiddleware):
             ): str
         })
     })
-    def search_entry(self, value: bytes) -> str:
-        params = ast.literal_eval(value.decode())
-        text = self.driver.load(params["id"])
+    def search_entry(self, value: dict) -> str:
+        text = self.driver.load(value["id"])
 
         if text:
             index = self._to_vector_index(text)
 
-            return str(index.query(f"Search query: {params['query']}")).strip()
+            return str(index.query(f"Search query: {value['query']}")).strip()
         else:
             return "Entry not found"
 
@@ -58,8 +56,8 @@ class StorageMiddleware(BaseMiddleware):
             description="Storage entry ID"
         )
     })
-    def summarize(self, value: bytes) -> str:
-        text = self.driver.load(value.decode())
+    def summarize(self, value: str) -> str:
+        text = self.driver.load(value)
 
         if text:
             index = self._to_vector_index(text)

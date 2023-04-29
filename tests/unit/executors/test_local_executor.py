@@ -7,4 +7,4 @@ class TestLocalExecutor:
         executor = LocalExecutor()
         tool = MockTool()
 
-        assert executor.execute(tool.test, "test".encode()).decode() == "ack test"
+        assert executor.execute(tool.test, "test") == "ack test"
