@@ -86,21 +86,25 @@ class ActionSubtask(PromptTask):
             else:
                 if self.action_type == "tool":
                     if self._tool:
-                        observation = self.structure.tool_loader.executor.execute(
-                            getattr(self._tool, self.action_activity),
-                            self.action_input
+                        observation = TextOutput(
+                            self.structure.tool_loader.executor.execute(
+                                getattr(self._tool, self.action_activity),
+                                self.action_input
+                            )
                         )
                     else:
-                        observation = "tool not found"
+                        observation = ErrorOutput("tool not found")
                 elif self.action_type == "middleware":
                     if self._middleware:
-                        observation = getattr(self._middleware, self.action_activity)(self.action_input)
+                        observation = TextOutput(
+                            getattr(self._middleware, self.action_activity)(self.action_input)
+                        )
                     else:
-                        observation = "middleware not found"
+                        observation = ErrorOutput("middleware not found")
                 else:
-                    observation = "invalid action type"
+                    observation = ErrorOutput("invalid action type")
 
-                self.output = TextOutput(observation)
+                self.output = observation
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
