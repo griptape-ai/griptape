@@ -11,4 +11,4 @@ class MockValueDriver(BasePromptDriver):
     tokenizer: BaseTokenizer = TiktokenTokenizer()
 
     def try_run(self, **kwargs) -> TextOutput:
-        return TextOutput(value=self.value, meta={})
+        return TextOutput(value=self.value)

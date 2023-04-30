@@ -1,10 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 import logging
 from typing import Optional
 from attr import define, field, Factory
 import docker
 from docker.errors import NotFound
+from griptape.artifacts import BaseArtifact, TextOutput
 from griptape.utils.paths import abs_path
 from griptape.executors import BaseExecutor
 import stringcase
@@ -14,6 +15,7 @@ import os
 
 if TYPE_CHECKING:
     from griptape.core import BaseTool
+
 
 @define
 class DockerExecutor(BaseExecutor):
@@ -31,13 +33,13 @@ class DockerExecutor(BaseExecutor):
 
             return None
 
-    def try_execute(self, tool_activity: callable, value: any) -> any:
+    def try_execute(self, tool_activity: callable, value: BaseArtifact) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
         self.build_image(tool)
         self.remove_existing_container(self.container_name(tool))
 
-        return self.run_container(tool_activity, value)
+        return self.run_container(tool_activity, value.value)
 
     def run_container(self, tool_activity: callable, value: any) -> str:
         tool = tool_activity.__self__

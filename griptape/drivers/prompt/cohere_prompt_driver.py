@@ -30,8 +30,7 @@ class CoherePromptDriver(BasePromptDriver):
             generation = result.generations[0]
 
             return TextOutput(
-                value=generation.text.strip(),
-                meta=result.meta
+                value=generation.text.strip()
             )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")

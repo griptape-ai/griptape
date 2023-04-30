@@ -5,6 +5,8 @@ import yaml
 from attr import define, field
 from fastapi import FastAPI
 from starlette.responses import Response
+
+from griptape.artifacts import TextOutput
 from griptape.converters import BaseConverter
 from griptape.core import BaseTool
 from griptape.utils import J2
@@ -72,7 +74,7 @@ class ChatgptPluginConverter(BaseConverter):
         return app
 
     def __execute_action(self, action: callable, value: str) -> Union[str, dict]:
-        result = self.executor.execute(action, value)
+        result = self.executor.execute(action, TextOutput(value)).value
 
         try:
             return json.loads(result)

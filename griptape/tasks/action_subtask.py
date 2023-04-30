@@ -8,7 +8,7 @@ from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, And, Literal
-from griptape.artifacts import TextOutput, ErrorOutput
+from griptape.artifacts import ErrorOutput, TextOutput
 from griptape.middleware import BaseMiddleware
 from griptape.tasks import PromptTask
 from griptape.core import BaseTool, ActivityMixin
@@ -86,19 +86,15 @@ class ActionSubtask(PromptTask):
             else:
                 if self.action_type == "tool":
                     if self._tool:
-                        observation = TextOutput(
-                            self.structure.tool_loader.executor.execute(
-                                getattr(self._tool, self.action_activity),
-                                self.action_input
-                            )
+                        observation = self.structure.tool_loader.executor.execute(
+                            getattr(self._tool, self.action_activity),
+                            TextOutput(self.action_input)
                         )
                     else:
                         observation = ErrorOutput("tool not found")
                 elif self.action_type == "middleware":
                     if self._middleware:
-                        observation = TextOutput(
-                            getattr(self._middleware, self.action_activity)(self.action_input)
-                        )
+                        observation = getattr(self._middleware, self.action_activity)(self.action_input)
                     else:
                         observation = ErrorOutput("middleware not found")
                 else:

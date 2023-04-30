@@ -33,5 +33,5 @@ class TestActivityMixin:
         assert tool.find_activity("test") == tool.test
 
     def test_activities(self, tool):
-        assert len(tool.activities()) == 1
+        assert len(tool.activities()) == 3
         assert tool.activities()[0] == tool.test

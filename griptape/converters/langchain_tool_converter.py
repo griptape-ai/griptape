@@ -1,5 +1,7 @@
 import langchain.tools
 from attr import define
+
+from griptape.artifacts import TextOutput
 from griptape.converters import BaseConverter
 
 
@@ -12,7 +14,7 @@ class LangchainToolConverter(BaseConverter):
         description = tool.full_activity_description(tool_activity).replace("{", "{{").replace("}", "}}")
 
         def _run(_self, value: str) -> str:
-            return self.executor.execute(tool_activity, value)
+            return self.executor.execute(tool_activity, TextOutput(value)).value
 
         async def _arun(_self, value: str) -> str:
             raise NotImplementedError("async is not supported")

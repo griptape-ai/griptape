@@ -51,12 +51,7 @@ class OpenAiPromptDriver(BasePromptDriver):
 
         if len(result.choices) == 1:
             return TextOutput(
-                value=result.choices[0]["message"]["content"].strip(),
-                meta={
-                    "id": result["id"],
-                    "created": result["created"],
-                    "usage": json.dumps(result["usage"])
-                }
+                value=result.choices[0]["message"]["content"].strip()
             )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
@@ -73,12 +68,7 @@ class OpenAiPromptDriver(BasePromptDriver):
 
         if len(result.choices) == 1:
             return TextOutput(
-                value=result.choices[0].text.strip(),
-                meta={
-                    "id": result["id"],
-                    "created": result["created"],
-                    "usage": json.dumps(result["usage"])
-                }
+                value=result.choices[0].text.strip()
             )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")

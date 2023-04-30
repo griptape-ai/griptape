@@ -2,6 +2,10 @@ from griptape.schemas.base_schema import BaseSchema
 
 from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
+from griptape.schemas.artifacts.artifact_schema import ArtifactSchema
+from griptape.schemas.artifacts.text_output_schema import TextOutputSchema
+from griptape.schemas.artifacts.error_output_schema import ErrorOutputSchema
+
 from griptape.schemas.rule_schema import RuleSchema
 
 from griptape.schemas.tokenizers.tiktoken_tokenizer_schema import TiktokenTokenizerSchema
@@ -30,6 +34,10 @@ __all__ = [
     "BaseSchema",
 
     "PolymorphicSchema",
+
+    "ArtifactSchema",
+    "TextOutputSchema",
+    "ErrorOutputSchema",
 
     "RuleSchema",
 

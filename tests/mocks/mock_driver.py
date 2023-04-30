@@ -10,4 +10,4 @@ class MockDriver(BasePromptDriver):
     tokenizer: BaseTokenizer = TiktokenTokenizer()
 
     def try_run(self, value: str) -> TextOutput:
-        return TextOutput(value=f"mock output", meta={})
+        return TextOutput(value=f"mock output")

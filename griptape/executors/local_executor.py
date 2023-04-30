@@ -1,11 +1,10 @@
 from __future__ import annotations
-
-import ast
-from typing import TYPE_CHECKING
 import logging
 import os
 import subprocess
+from typing import TYPE_CHECKING, Union
 from attr import define, field
+from griptape.artifacts import BaseArtifact, ErrorOutput, TextOutput
 from griptape.executors import BaseExecutor
 
 if TYPE_CHECKING:
@@ -16,7 +15,7 @@ if TYPE_CHECKING:
 class LocalExecutor(BaseExecutor):
     verbose: int = field(default=False, kw_only=True)
 
-    def try_execute(self, tool_activity: callable, value: any) -> any:
+    def try_execute(self, tool_activity: callable, value: BaseArtifact) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
         logging.warning(f"You are executing the {tool.name} tool in the local environment. Make sure to "
@@ -28,10 +27,10 @@ class LocalExecutor(BaseExecutor):
 
         self.install_dependencies(env, tool)
 
-        output = self.run_subprocess(env, tool_activity, value)
+        output = self.run_subprocess(env, tool_activity, value.value)
 
-        if output.stderr:
-            return output.stderr.strip()
+        if output.stderr and not output.stdout:
+            return ErrorOutput(output.stderr.strip())
         else:
             return output.stdout.strip()
 
