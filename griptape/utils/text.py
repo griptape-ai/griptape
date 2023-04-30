@@ -10,7 +10,7 @@ def to_vector_index(text: str) -> GPTSimpleVectorIndex:
         [Document(text)],
         llm_predictor=LLMPredictor(
             llm=OpenAI(
-                openai_api_key=config("OPENAI_API_KEY")
+                openai_api_key=config("OPENAI_API_KEY", None)
             )
         )
     )
