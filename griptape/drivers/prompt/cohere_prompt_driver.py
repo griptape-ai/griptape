@@ -1,6 +1,6 @@
 import cohere
 from attr import define, field, Factory
-from griptape.artifacts import TextOutput
+from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
 
@@ -17,7 +17,7 @@ class CoherePromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: any) -> TextOutput:
+    def try_run(self, value: any) -> TextArtifact:
         result = self.client.generate(
             value,
             model=self.model,
@@ -29,7 +29,7 @@ class CoherePromptDriver(BasePromptDriver):
         if len(result.generations) == 1:
             generation = result.generations[0]
 
-            return TextOutput(
+            return TextArtifact(
                 value=generation.text.strip()
             )
         else:

@@ -6,7 +6,7 @@ from griptape.tokenizers import BaseTokenizer
 
 
 @define(frozen=True)
-class TextOutput(BaseArtifact):
+class TextArtifact(BaseArtifact):
     value: Optional[str] = field()
 
     def token_count(self, tokenizer: BaseTokenizer) -> Optional[int]:
@@ -16,6 +16,6 @@ class TextOutput(BaseArtifact):
             return None
 
     def __str__(self):
-        from griptape.schemas import TextOutputSchema
+        from griptape.schemas import TextArtifactSchema
 
-        return json.dumps(TextOutputSchema().dump(self))
+        return json.dumps(TextArtifactSchema().dump(self))

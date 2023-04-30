@@ -1,6 +1,6 @@
 from attr import define, field
 from schema import Schema
-from griptape.artifacts import TextOutput, ErrorOutput, BaseArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.core import BaseTool
 from griptape.core.decorators import activity
 
@@ -20,7 +20,7 @@ class MockTool(BaseTool):
         "foo": "bar"
     })
     def test(self, value: str) -> BaseArtifact:
-        return TextOutput(f"ack {value}")
+        return TextArtifact(f"ack {value}")
 
     @activity(config={
         "name": "test_error",
@@ -32,7 +32,7 @@ class MockTool(BaseTool):
         "foo": "bar"
     })
     def test_error(self, value: str) -> BaseArtifact:
-        return ErrorOutput(f"error {value}")
+        return ErrorArtifact(f"error {value}")
 
     @activity(config={
         "name": "test_str_output",

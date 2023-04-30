@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.artifacts import ErrorOutput
+from griptape.artifacts import ErrorArtifact
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -108,7 +108,7 @@ class BaseTask(ABC):
         except Exception as e:
             self.structure.logger.error(f"Task {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorOutput(str(e), exception=e, task=self)
+            self.output = ErrorArtifact(str(e), exception=e, task=self)
         finally:
             self.state = BaseTask.State.FINISHED
 

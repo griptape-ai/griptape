@@ -2,7 +2,7 @@ import json
 from typing import Optional
 import openai
 from attr import define, field, Factory
-from griptape.artifacts import TextOutput
+from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import TiktokenTokenizer
 
@@ -28,13 +28,13 @@ class OpenAiPromptDriver(BasePromptDriver):
         openai.api_key = self.api_key
         openai.organization = self.organization
 
-    def try_run(self, value: any) -> TextOutput:
+    def try_run(self, value: any) -> TextArtifact:
         if self.tokenizer.is_chat():
             return self.__run_chat(value)
         else:
             return self.__run_completion(value)
 
-    def __run_chat(self, value: str) -> TextOutput:
+    def __run_chat(self, value: str) -> TextArtifact:
         result = openai.ChatCompletion.create(
             model=self.tokenizer.model,
             messages=[
@@ -50,13 +50,13 @@ class OpenAiPromptDriver(BasePromptDriver):
         )
 
         if len(result.choices) == 1:
-            return TextOutput(
+            return TextArtifact(
                 value=result.choices[0]["message"]["content"].strip()
             )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def __run_completion(self, value: str) -> TextOutput:
+    def __run_completion(self, value: str) -> TextArtifact:
         result = openai.Completion.create(
             model=self.tokenizer.model,
             prompt=value,
@@ -67,7 +67,7 @@ class OpenAiPromptDriver(BasePromptDriver):
         )
 
         if len(result.choices) == 1:
-            return TextOutput(
+            return TextArtifact(
                 value=result.choices[0].text.strip()
             )
         else:

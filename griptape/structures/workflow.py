@@ -3,7 +3,7 @@ import concurrent.futures as futures
 import json
 from graphlib import TopologicalSorter
 from attr import define, field
-from griptape.artifacts import ErrorOutput
+from griptape.artifacts import ErrorArtifact
 from griptape.tasks import BaseTask
 from griptape.structures import Structure
 from griptape.utils import J2
@@ -46,7 +46,7 @@ class Workflow(Structure):
 
             # Wait for all tasks to complete
             for future in futures.as_completed(futures_list):
-                if isinstance(future.result(), ErrorOutput):
+                if isinstance(future.result(), ErrorArtifact):
                     exit_loop = True
 
                     break

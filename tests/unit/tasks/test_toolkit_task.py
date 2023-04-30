@@ -1,7 +1,7 @@
 from griptape.drivers import MemoryStorageDriver
 from griptape.middleware import StorageMiddleware
 from tests.mocks.mock_tool.tool import MockTool
-from griptape.artifacts import ErrorOutput
+from griptape.artifacts import ErrorArtifact
 from griptape.tasks import ToolkitTask, ActionSubtask
 from griptape.core import ToolLoader
 from tests.mocks.mock_value_driver import MockValueDriver
@@ -50,7 +50,7 @@ class TestToolkitSubtask:
         pipeline.run()
 
         assert len(task._subtasks) == 3
-        assert isinstance(task.output, ErrorOutput)
+        assert isinstance(task.output, ErrorArtifact)
 
     def test_init_from_prompt_1(self):
         valid_input = 'Thought: need to test\n' \

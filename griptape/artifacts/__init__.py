@@ -1,10 +1,10 @@
 from griptape.artifacts.base_artifact import BaseArtifact
-from griptape.artifacts.error_output import ErrorOutput
-from griptape.artifacts.text_output import TextOutput
+from griptape.artifacts.error_artifact import ErrorArtifact
+from griptape.artifacts.text_artifact import TextArtifact
 
 
 __all__ = [
     "BaseArtifact",
-    "ErrorOutput",
-    "TextOutput"
+    "ErrorArtifact",
+    "TextArtifact"
 ]

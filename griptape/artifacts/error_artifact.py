@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 
 @define(frozen=True)
-class ErrorOutput(BaseArtifact):
+class ErrorArtifact(BaseArtifact):
     value: Optional[str] = field()
     exception: Optional[Exception] = field(default=None, kw_only=True)
     task: Optional[BaseTask] = field(default=None, kw_only=True)
 
     def __str__(self):
-        from griptape.schemas import ErrorOutputSchema
+        from griptape.schemas import ErrorArtifactSchema
 
-        return json.dumps(ErrorOutputSchema().dump(self))
+        return json.dumps(ErrorArtifactSchema().dump(self))

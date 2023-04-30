@@ -2,9 +2,9 @@ from marshmallow import post_load
 from griptape.schemas import ArtifactSchema
 
 
-class ErrorOutputSchema(ArtifactSchema):
+class TextArtifactSchema(ArtifactSchema):
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.artifacts import ErrorOutput
+        from griptape.artifacts import TextArtifact
 
-        return ErrorOutput(**data)
+        return TextArtifact(**data)

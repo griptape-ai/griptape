@@ -5,7 +5,7 @@ from attr import define, field
 from griptape.core import BaseTool
 from griptape.utils import J2
 from griptape.tasks import PromptTask
-from griptape.artifacts import TextOutput, ErrorOutput
+from griptape.artifacts import TextArtifact, ErrorArtifact
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
@@ -43,7 +43,7 @@ class ToolkitTask(PromptTask, ABC):
 
         return list(unique_middleware_dict.values())
 
-    def run(self) -> TextOutput:
+    def run(self) -> TextArtifact:
         from griptape.tasks import ActionSubtask
 
         self._subtasks.clear()
@@ -57,13 +57,13 @@ class ToolkitTask(PromptTask, ABC):
         while True:
             if subtask.output is None:
                 if len(self._subtasks) >= self.max_subtasks:
-                    subtask.output = ErrorOutput(
+                    subtask.output = ErrorArtifact(
                         f"Exceeded tool limit of {self.max_subtasks} subtasks per task",
                         task=self
                     )
                 elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
-                    subtask.output = TextOutput(subtask.prompt_template)
+                    subtask.output = TextArtifact(subtask.prompt_template)
                 else:
                     subtask.before_run()
                     subtask.run()

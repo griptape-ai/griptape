@@ -1,7 +1,7 @@
 from attr import define, field, Factory
 from huggingface_hub import InferenceApi
 from transformers import AutoTokenizer
-from griptape.artifacts import TextOutput
+from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 
@@ -36,7 +36,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: any) -> TextOutput:
+    def try_run(self, value: any) -> TextArtifact:
         if self.client.task in self.SUPPORTED_TASKS:
             response = self.client(
                 inputs=value,
@@ -44,7 +44,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             )
 
             if len(response) == 1:
-                return TextOutput(
+                return TextArtifact(
                     value=response[0]["generated_text"].strip()
                 )
             else:

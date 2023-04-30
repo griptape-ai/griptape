@@ -1,5 +1,5 @@
 from tests.mocks.mock_failing_driver import MockFailingDriver
-from griptape.artifacts import ErrorOutput, TextOutput
+from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 
@@ -13,7 +13,7 @@ class TestPromptDriver:
             PromptTask("test")
         )
 
-        assert isinstance(pipeline.run().output, TextOutput)
+        assert isinstance(pipeline.run().output, TextArtifact)
 
     def test_run_retries_failure(self):
         driver = MockFailingDriver(max_failures=2, max_retries=1, retry_delay=0.01)
@@ -23,4 +23,4 @@ class TestPromptDriver:
             PromptTask("test")
         )
 
-        assert isinstance(pipeline.run().output, ErrorOutput)
+        assert isinstance(pipeline.run().output, ErrorArtifact)

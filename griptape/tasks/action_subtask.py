@@ -8,7 +8,7 @@ from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, And, Literal
-from griptape.artifacts import ErrorOutput, TextOutput
+from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.middleware import BaseMiddleware
 from griptape.tasks import PromptTask
 from griptape.core import BaseTool, ActivityMixin
@@ -82,29 +82,29 @@ class ActionSubtask(PromptTask):
     def run(self) -> BaseArtifact:
         try:
             if self.action_name == "error":
-                self.output = ErrorOutput(self.action_input, task=self.task)
+                self.output = ErrorArtifact(self.action_input, task=self.task)
             else:
                 if self.action_type == "tool":
                     if self._tool:
                         observation = self.structure.tool_loader.executor.execute(
                             getattr(self._tool, self.action_activity),
-                            TextOutput(self.action_input)
+                            TextArtifact(self.action_input)
                         )
                     else:
-                        observation = ErrorOutput("tool not found")
+                        observation = ErrorArtifact("tool not found")
                 elif self.action_type == "middleware":
                     if self._middleware:
                         observation = getattr(self._middleware, self.action_activity)(self.action_input)
                     else:
-                        observation = ErrorOutput("middleware not found")
+                        observation = ErrorArtifact("middleware not found")
                 else:
-                    observation = ErrorOutput("invalid action type")
+                    observation = ErrorArtifact("invalid action type")
 
                 self.output = observation
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorOutput(str(e), exception=e, task=self.task)
+            self.output = ErrorArtifact(str(e), exception=e, task=self.task)
         finally:
             return self.output
 
@@ -213,7 +213,7 @@ class ActionSubtask(PromptTask):
                 self.action_name = "error"
                 self.action_input = f"error: {self.INVALID_ACTION_ERROR_MSG}"
         elif self.output is None and len(output_matches) > 0:
-            self.output = TextOutput(output_matches[-1])
+            self.output = TextArtifact(output_matches[-1])
 
     def __validate_activity_mixin(self, mixin: ActivityMixin) -> None:
         try:

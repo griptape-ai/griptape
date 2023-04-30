@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.utils import J2
 from griptape.tasks import BaseTask
-from griptape.artifacts import TextOutput
+from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -16,8 +16,8 @@ class PromptTask(BaseTask):
     driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
 
     @property
-    def input(self) -> TextOutput:
-        return TextOutput(
+    def input(self) -> TextArtifact:
+        return TextArtifact(
             J2().render_from_string(
                 self.prompt_template,
                 **self.full_context
@@ -29,7 +29,7 @@ class PromptTask(BaseTask):
 
         self.structure.logger.info(f"Task {self.id}\nInput: {self.input.value}")
 
-    def run(self) -> TextOutput:
+    def run(self) -> TextArtifact:
         self.output = self.active_driver().run(value=self.structure.to_prompt_string(self))
 
         return self.output

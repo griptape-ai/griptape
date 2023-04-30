@@ -1,5 +1,5 @@
 import json
-from griptape.artifacts import TextOutput
+from griptape.artifacts import TextArtifact
 from griptape.rules import Rule
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask
@@ -154,10 +154,10 @@ class TestPipeline:
 
         assert "mock output" in pipeline.to_prompt_string(task)
 
-    def test_text_output_token_count(self):
+    def test_text_artifact_token_count(self):
         text = "foobar"
 
-        assert TextOutput(text).token_count(TiktokenTokenizer()) == TiktokenTokenizer().token_count(text)
+        assert TextArtifact(text).token_count(TiktokenTokenizer()) == TiktokenTokenizer().token_count(text)
 
     def test_run(self):
         task = PromptTask("test")

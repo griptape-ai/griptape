@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from schema import Schema, Literal
-from griptape.artifacts import BaseArtifact, TextOutput, ErrorOutput
+from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.core.decorators import activity
 from griptape.middleware import BaseMiddleware
 from attr import define, field
@@ -18,7 +18,7 @@ class StorageMiddleware(BaseMiddleware):
     def process_output(self, tool_activity: callable, value: BaseArtifact) -> BaseArtifact:
         from griptape.utils import J2
 
-        if isinstance(value, TextOutput):
+        if isinstance(value, TextArtifact):
             key = self.driver.save(value.value)
             output = J2("middleware/storage.j2").render(
                 storage_name=self.name,
@@ -27,7 +27,7 @@ class StorageMiddleware(BaseMiddleware):
                 key=key
             )
 
-            return TextOutput(output)
+            return TextArtifact(output)
         else:
             return value
 
@@ -51,11 +51,11 @@ class StorageMiddleware(BaseMiddleware):
         if text:
             index = self._to_vector_index(text)
 
-            return TextOutput(
+            return TextArtifact(
                 str(index.query(f"Search query: {value['query']}")).strip()
             )
         else:
-            return ErrorOutput("Entry not found")
+            return ErrorArtifact("Entry not found")
 
     @activity(config={
         "name": "summarize",
@@ -71,11 +71,11 @@ class StorageMiddleware(BaseMiddleware):
         if text:
             index = self._to_vector_index(text)
 
-            return TextOutput(
+            return TextArtifact(
                 str(index.query("What is the summary of this document point-by-point?")).strip()
             )
         else:
-            return ErrorOutput("Entry not found")
+            return ErrorArtifact("Entry not found")
 
     def _to_vector_index(self, text: str) -> GPTSimpleVectorIndex:
         from llama_index import GPTSimpleVectorIndex, Document

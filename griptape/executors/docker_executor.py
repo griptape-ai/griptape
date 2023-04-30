@@ -5,7 +5,7 @@ from typing import Optional
 from attr import define, field, Factory
 import docker
 from docker.errors import NotFound
-from griptape.artifacts import BaseArtifact, TextOutput
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.utils.paths import abs_path
 from griptape.executors import BaseExecutor
 import stringcase

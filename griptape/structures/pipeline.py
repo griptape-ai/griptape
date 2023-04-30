@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
 from attr import define
-from griptape.artifacts import ErrorOutput
+from griptape.artifacts import ErrorArtifact
 from griptape.memory import Run
 from griptape.structures import StructureWithMemory
 from griptape.utils import J2
@@ -93,7 +93,7 @@ class Pipeline(StructureWithMemory):
         if task is None:
             return
         else:
-            if isinstance(task.execute(), ErrorOutput):
+            if isinstance(task.execute(), ErrorArtifact):
                 return
             else:
                 self.__run_from_task(next(iter(task.children), None))

@@ -4,7 +4,7 @@ import os
 import subprocess
 from typing import TYPE_CHECKING, Union
 from attr import define, field
-from griptape.artifacts import BaseArtifact, ErrorOutput, TextOutput
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.executors import BaseExecutor
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class LocalExecutor(BaseExecutor):
         output = self.run_subprocess(env, tool_activity, value.value)
 
         if output.stderr and not output.stdout:
-            return ErrorOutput(output.stderr.strip())
+            return ErrorArtifact(output.stderr.strip())
         else:
             return output.stdout.strip()
 

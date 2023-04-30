@@ -7,7 +7,7 @@ from attr import define, field, Factory
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextOutput
+    from griptape.artifacts import TextArtifact
 
 
 @define
@@ -19,7 +19,7 @@ class BasePromptDriver(ABC):
     model: str
     tokenizer: BaseTokenizer
 
-    def run(self, **kwargs) -> TextOutput:
+    def run(self, **kwargs) -> TextArtifact:
         for attempt in range(0, self.max_retries + 1):
             try:
                 return self.try_run(**kwargs)
@@ -32,5 +32,5 @@ class BasePromptDriver(ABC):
                     raise e
 
     @abstractmethod
-    def try_run(self, **kwargs) -> TextOutput:
+    def try_run(self, **kwargs) -> TextArtifact:
         ...

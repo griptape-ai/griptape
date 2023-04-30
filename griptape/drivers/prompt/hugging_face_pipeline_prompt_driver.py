@@ -1,6 +1,6 @@
 from attr import define, field, Factory
 from transformers import pipeline, AutoTokenizer
-from griptape.artifacts import TextOutput
+from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 
@@ -24,7 +24,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: any) -> TextOutput:
+    def try_run(self, value: any) -> TextArtifact:
         generator = pipeline(
             tokenizer=self.tokenizer.tokenizer,
             model=self.model,
@@ -42,7 +42,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
             )
 
             if len(response) == 1:
-                return TextOutput(
+                return TextArtifact(
                     value=response[0]["generated_text"].strip()
                 )
             else:
