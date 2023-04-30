@@ -5,15 +5,17 @@ from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.core.decorators import activity
 from griptape.middleware import BaseMiddleware
 from attr import define, field
+from griptape.summarizers import PromptDriverSummarizer
+from griptape.drivers import OpenAiPromptDriver
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseStorageDriver
-    from llama_index import GPTSimpleVectorIndex
+    from griptape.drivers import BaseStorageDriver, BasePromptDriver
 
 
 @define
 class StorageMiddleware(BaseMiddleware):
     driver: BaseStorageDriver = field(kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
 
     def process_output(self, tool_activity: callable, value: BaseArtifact) -> BaseArtifact:
         from griptape.utils import J2
@@ -69,17 +71,10 @@ class StorageMiddleware(BaseMiddleware):
         text = self.driver.load(value)
 
         if text:
-            index = self._to_vector_index(text)
+            summary = PromptDriverSummarizer(
+                driver=self.prompt_driver
+            ).summarize_text(text)
 
-            return TextArtifact(
-                str(index.query("What is the summary of this document point-by-point?")).strip()
-            )
+            return TextArtifact(summary)
         else:
             return ErrorArtifact("Entry not found")
-
-    def _to_vector_index(self, text: str) -> GPTSimpleVectorIndex:
-        from llama_index import GPTSimpleVectorIndex, Document
-
-        return GPTSimpleVectorIndex([
-            Document(text)
-        ])

@@ -7,14 +7,14 @@ from griptape.utils import J2
 from griptape.memory import Memory
 
 if TYPE_CHECKING:
-    from griptape.summarizers import Summarizer
+    from griptape.summarizers import BaseSummarizer
     from griptape.memory import Run
 
 
 @define
 class SummaryMemory(Memory):
     offset: int = field(default=1, kw_only=True)
-    summarizer: Optional[Summarizer] = field(default=None, kw_only=True)
+    summarizer: Optional[BaseSummarizer] = field(default=None, kw_only=True)
     summary: Optional[str] = field(default=None, kw_only=True)
     summary_index: int = field(default=0, kw_only=True)
 
@@ -39,7 +39,7 @@ class SummaryMemory(Memory):
             runs_to_summarize = unsummarized_runs[:max(0, len(unsummarized_runs) - self.offset)]
 
             if len(runs_to_summarize) > 0:
-                self.summary = self.summarizer.summarize(self.summary, runs_to_summarize)
+                self.summary = self.summarizer.summarize_runs(self.summary, runs_to_summarize)
                 self.summary_index = 1 + self.runs.index(runs_to_summarize[-1])
 
     def to_prompt_string(self, last_n: Optional[int] = None):
