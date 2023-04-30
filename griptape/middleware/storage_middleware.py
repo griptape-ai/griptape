@@ -7,6 +7,7 @@ from griptape.middleware import BaseMiddleware
 from attr import define, field
 from griptape.summarizers import PromptDriverSummarizer
 from griptape.drivers import OpenAiPromptDriver
+from griptape.utils.text import to_vector_index
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseStorageDriver, BasePromptDriver
@@ -51,10 +52,8 @@ class StorageMiddleware(BaseMiddleware):
         text = self.driver.load(value["id"])
 
         if text:
-            index = self._to_vector_index(text)
-
             return TextArtifact(
-                str(index.query(f"Search query: {value['query']}")).strip()
+                str(to_vector_index(text).query(f"Search query: {value['query']}")).strip()
             )
         else:
             return ErrorArtifact("Entry not found")

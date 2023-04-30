@@ -2,13 +2,13 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 from attr import define, field
+from griptape.utils.text import to_vector_index
 from griptape.utils import J2
 from griptape.drivers import BasePromptDriver
 from griptape.summarizers.base_summarizer import BaseSummarizer
 
 if TYPE_CHECKING:
     from griptape.memory import Run
-    from llama_index import GPTSimpleVectorIndex
 
 
 @define
@@ -32,13 +32,8 @@ class PromptDriverSummarizer(BaseSummarizer):
             return previous_summary
 
     def summarize_text(self, text: str) -> str:
-        index = self._to_vector_index(text)
-
-        return str(index.query("What is the summary of the following text? Include links.")).strip()
-
-    def _to_vector_index(self, text: str) -> GPTSimpleVectorIndex:
-        from llama_index import GPTSimpleVectorIndex, Document
-
-        return GPTSimpleVectorIndex([
-            Document(text)
-        ])
+        return str(
+            to_vector_index(text).query(
+                "Generate a summary. Include URLs in the summary."
+            )
+        ).strip()
