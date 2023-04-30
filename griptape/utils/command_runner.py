@@ -1,10 +1,11 @@
 import subprocess
 from attr import define
+from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 
 
 @define
 class CommandRunner:
-    def run(self, command: str) -> str:
+    def run(self, command: str) -> BaseArtifact:
         process = subprocess.Popen(
             command,
             shell=True,
@@ -15,6 +16,6 @@ class CommandRunner:
         stdout, stderr = process.communicate()
 
         if len(stderr) == 0:
-            return stdout.strip().decode()
+            return TextArtifact(stdout.strip().decode())
         else:
-            return f"error: {stderr.strip()}"
+            return ErrorArtifact(f"error: {stderr.strip()}")
