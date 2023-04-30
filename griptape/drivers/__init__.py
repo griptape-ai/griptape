@@ -7,6 +7,7 @@ from griptape.drivers.memory.memory_driver import MemoryDriver
 from griptape.drivers.memory.disk_memory_driver import DiskMemoryDriver
 from griptape.drivers.storage.base_storage_driver import BaseStorageDriver
 from griptape.drivers.storage.memory_storage_driver import MemoryStorageDriver
+from griptape.drivers.storage.dynamodb_storage_driver import DynamoDBStorageDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -19,5 +20,6 @@ __all__ = [
     "DiskMemoryDriver",
 
     "BaseStorageDriver",
-    "MemoryStorageDriver"
+    "MemoryStorageDriver",
+    "DynamoDBStorageDriver"
 ]
