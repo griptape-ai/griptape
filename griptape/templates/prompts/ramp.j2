@@ -1,0 +1,8 @@
+ramp name: {{ ramp.name }}
+{{ ramp.name }} activities
+{% for activity in ramp.activities() %}
+activity name: {{ ramp.activity_name(activity) }}
+{{ ramp.activity_name(activity) }} activity description: {{ ramp.activity_description(activity) }}
+{{ ramp.activity_name(activity) }} activity input schema: {{ ramp.activity_schema(activity) }}
+
+{% endfor %}

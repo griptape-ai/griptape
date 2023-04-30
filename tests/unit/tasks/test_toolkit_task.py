@@ -1,5 +1,5 @@
 from griptape.drivers import MemoryStorageDriver
-from griptape.middleware import StorageMiddleware
+from griptape.ramps import StorageRamp
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
 from griptape.tasks import ToolkitTask, ActionSubtask
@@ -128,13 +128,13 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_middleware(self):
-        m1 = StorageMiddleware(name="Middleware1", driver=MemoryStorageDriver())
-        m2 = StorageMiddleware(name="Middleware2", driver=MemoryStorageDriver())
+    def test_find_ramps(self):
+        m1 = StorageRamp(name="Ramp1", driver=MemoryStorageDriver())
+        m2 = StorageRamp(name="Ramp2", driver=MemoryStorageDriver())
 
         tool = MockTool(
             name="Tool1",
-            middleware={
+            ramps={
                 "test": [m1, m2]
             }
         )
@@ -144,26 +144,26 @@ class TestToolkitSubtask:
             tool_loader=ToolLoader(tools=[tool])
         ).add_task(task)
 
-        assert task.find_middleware("Middleware1") == m1
-        assert task.find_middleware("Middleware2") == m2
+        assert task.find_ramps("Ramp1") == m1
+        assert task.find_ramps("Ramp2") == m2
 
-    def test_middlewares(self):
+    def test_ramps(self):
         tool1 = MockTool(
             name="Tool1",
-            middleware={
+            ramps={
                 "test": [
-                    StorageMiddleware(name="Middleware1", driver=MemoryStorageDriver()),
-                    StorageMiddleware(name="Middleware2", driver=MemoryStorageDriver())
+                    StorageRamp(name="Ramp1", driver=MemoryStorageDriver()),
+                    StorageRamp(name="Ramp2", driver=MemoryStorageDriver())
                 ]
             }
         )
 
         tool2 = MockTool(
             name="Tool2",
-            middleware={
+            ramps={
                 "test": [
-                    StorageMiddleware(name="Middleware2", driver=MemoryStorageDriver()),
-                    StorageMiddleware(name="Middleware3", driver=MemoryStorageDriver())
+                    StorageRamp(name="Ramp2", driver=MemoryStorageDriver()),
+                    StorageRamp(name="Ramp3", driver=MemoryStorageDriver())
                 ]
             }
         )
@@ -174,7 +174,7 @@ class TestToolkitSubtask:
             tool_loader=ToolLoader(tools=[tool1, tool2])
         ).add_task(task)
 
-        assert len(task.middlewares) == 3
-        assert task.middlewares[0].name == "Middleware1"
-        assert task.middlewares[1].name == "Middleware2"
-        assert task.middlewares[2].name == "Middleware3"
+        assert len(task.ramps) == 3
+        assert task.ramps[0].name == "Ramp1"
+        assert task.ramps[1].name == "Ramp2"
+        assert task.ramps[2].name == "Ramp3"

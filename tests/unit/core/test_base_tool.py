@@ -4,7 +4,7 @@ import pytest
 import yaml
 from schema import SchemaMissingKeyError
 from griptape.drivers import MemoryStorageDriver
-from griptape.middleware import StorageMiddleware
+from griptape.ramps import StorageRamp
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -76,15 +76,15 @@ class TestBaseTool:
     def test_custom_config(self, tool):
         assert tool.test.config["foo"] == "bar"
 
-    def test_middleware(self):
+    def test_ramps(self):
         tool = MockTool(
-            middleware={
+            ramps={
                 "test": [
-                    StorageMiddleware(
-                        name="Middleware1", driver=MemoryStorageDriver()
+                    StorageRamp(
+                        name="Ramp1", driver=MemoryStorageDriver()
                     ),
-                    StorageMiddleware(
-                        name="Middleware2", driver=MemoryStorageDriver()
+                    StorageRamp(
+                        name="Ramp2", driver=MemoryStorageDriver()
                     )
                 ]
             },
@@ -92,18 +92,18 @@ class TestBaseTool:
             test_int=5
         )
 
-        assert len(tool.middleware["test"]) == 2
+        assert len(tool.ramps["test"]) == 2
 
-    def test_middleware_validation(self):
+    def test_ramp_validation(self):
         try:
             MockTool(
-                middleware={
+                ramps={
                     "test": [
-                        StorageMiddleware(
-                            name="Middleware1", driver=MemoryStorageDriver()
+                        StorageRamp(
+                            name="Ramp1", driver=MemoryStorageDriver()
                         ),
-                        StorageMiddleware(
-                            name="Middleware1", driver=MemoryStorageDriver()
+                        StorageRamp(
+                            name="Ramp1", driver=MemoryStorageDriver()
                         )
                     ]
                 },

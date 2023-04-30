@@ -9,7 +9,7 @@ from griptape.artifacts import TextArtifact, ErrorArtifact
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
-    from griptape.middleware import BaseMiddleware
+    from griptape.ramps import BaseRamp
 
 
 @define
@@ -32,16 +32,16 @@ class ToolkitTask(PromptTask, ABC):
         ]
 
     @property
-    def middlewares(self) -> list[BaseMiddleware]:
-        unique_middleware_dict = {}
+    def ramps(self) -> list[BaseRamp]:
+        unique_ramps_dict = {}
 
-        for middleware_dict in [tool.middleware for tool in self.tools]:
-            for middleware_list in middleware_dict.values():
-                for middleware in middleware_list:
-                    if middleware.name not in unique_middleware_dict:
-                        unique_middleware_dict[middleware.name] = middleware
+        for ramps_dict in [tool.ramps for tool in self.tools]:
+            for ramps_list in ramps_dict.values():
+                for ramps in ramps_list:
+                    if ramps.name not in unique_ramps_dict:
+                        unique_ramps_dict[ramps.name] = ramps
 
-        return list(unique_middleware_dict.values())
+        return list(unique_ramps_dict.values())
 
     def run(self) -> TextArtifact:
         from griptape.tasks import ActionSubtask
@@ -106,8 +106,8 @@ class ToolkitTask(PromptTask, ABC):
             None
         )
 
-    def find_middleware(self, middleware_name: str) -> Optional[BaseMiddleware]:
+    def find_ramps(self, ramp_name: str) -> Optional[BaseRamp]:
         return next(
-            (m for m in self.middlewares if m.name == middleware_name),
+            (r for r in self.ramps if r.name == ramp_name),
             None
         )

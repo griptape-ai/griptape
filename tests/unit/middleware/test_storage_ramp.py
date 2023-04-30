@@ -1,30 +1,30 @@
 from griptape.artifacts import TextArtifact
 from griptape.drivers import MemoryStorageDriver
-from griptape.middleware import StorageMiddleware
+from griptape.ramps import StorageRamp
 from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestStorageMiddleware:
+class TestStorageRamp:
     def test_constructor(self):
-        mw = StorageMiddleware(
+        mw = StorageRamp(
             driver=MemoryStorageDriver()
         )
 
-        assert mw.name == "StorageMiddleware"
+        assert mw.name == "StorageRamp"
 
-        mw = StorageMiddleware(
-            name="MyMiddleware",
+        mw = StorageRamp(
+            name="MyRamp",
             driver=MemoryStorageDriver()
         )
 
-        assert mw.name == "MyMiddleware"
+        assert mw.name == "MyRamp"
 
     def test_process_output(self):
-        mw = StorageMiddleware(
-            name="MyMiddleware",
+        mw = StorageRamp(
+            name="MyRamp",
             driver=MemoryStorageDriver()
         )
 
         assert mw.process_output(MockTool().test, TextArtifact("foo")).value.startswith(
-            'Output of "MockTool.test" was stored in storage "MyMiddleware" with entry ID'
+            'Output of "MockTool.test" was stored in ramp "MyRamp" with entry ID'
         )

@@ -9,7 +9,7 @@ from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, And, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.middleware import BaseMiddleware
+from griptape.ramps import BaseRamp
 from griptape.tasks import PromptTask
 from griptape.core import BaseTool, ActivityMixin
 from griptape.utils import J2
@@ -31,7 +31,7 @@ class ActionSubtask(PromptTask):
             Literal(
                 "type",
                 description="Action type"
-            ): And(str, lambda s: s in ("tool", "middleware")),
+            ): And(str, lambda s: s in ("tool", "ramp")),
             Literal(
                 "name",
                 description="Action name"
@@ -57,7 +57,7 @@ class ActionSubtask(PromptTask):
     action_input: Optional[Tuple[str, list, dict]] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
-    _middleware: Optional[BaseMiddleware] = None
+    _ramps: Optional[BaseRamp] = None
 
     def attach(self, parent_task: ToolkitTask):
         self.parent_task_id = parent_task.id
@@ -92,11 +92,11 @@ class ActionSubtask(PromptTask):
                         )
                     else:
                         observation = ErrorArtifact("tool not found")
-                elif self.action_type == "middleware":
-                    if self._middleware:
-                        observation = getattr(self._middleware, self.action_activity)(self.action_input)
+                elif self.action_type == "ramp":
+                    if self._ramps:
+                        observation = getattr(self._ramps, self.action_activity)(self.action_input)
                     else:
-                        observation = ErrorArtifact("middleware not found")
+                        observation = ErrorArtifact("ramps not found")
                 else:
                     observation = ErrorArtifact("invalid action type")
 
@@ -191,12 +191,12 @@ class ActionSubtask(PromptTask):
 
                     if self._tool:
                         self.__validate_activity_mixin(self._tool)
-                elif self.action_type == "middleware":
+                elif self.action_type == "ramp":
                     if self.action_name:
-                        self._middleware = self.task.find_middleware(self.action_name)
+                        self._ramps = self.task.find_ramps(self.action_name)
 
-                    if self._middleware:
-                        self.__validate_activity_mixin(self._middleware)
+                    if self._ramps:
+                        self.__validate_activity_mixin(self._ramps)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 

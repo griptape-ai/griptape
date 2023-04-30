@@ -77,7 +77,7 @@ class Structure(ABC):
         from griptape.tasks import ToolkitTask
 
         tools = task.tools if isinstance(task, ToolkitTask) else []
-        middlewares = [m for m in task.middlewares if len(m.activities()) > 0] if isinstance(task, ToolkitTask) else []
+        ramps = [r for r in task.ramps if len(r.activities()) > 0] if isinstance(task, ToolkitTask) else []
         action_schema = utils.minify_json(
             json.dumps(
                 ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
@@ -88,8 +88,8 @@ class Structure(ABC):
             J2("prompts/base.j2").render(
                 rules=self.rules,
                 action_schema=action_schema,
-                middleware_names=str.join(", ", [middleware.name for middleware in middlewares]),
-                middlewares=[J2("prompts/middleware.j2").render(middleware=middleware) for middleware in middlewares],
+                ramp_names=str.join(", ", [ramp.name for ramp in ramps]),
+                ramps=[J2("prompts/ramp.j2").render(ramp=ramp) for ramp in ramps],
                 tool_names=str.join(", ", [tool.name for tool in tools]),
                 tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]
             )

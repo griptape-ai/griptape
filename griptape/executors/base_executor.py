@@ -21,14 +21,14 @@ class BaseExecutor(ABC):
         return result
 
     def before_execute(self, tool_activity: callable, value: BaseArtifact) -> BaseArtifact:
-        for middleware in tool_activity.__self__.middleware.get(tool_activity.config["name"], []):
-            value = middleware.process_input(tool_activity, value)
+        for ramps in tool_activity.__self__.ramps.get(tool_activity.config["name"], []):
+            value = ramps.process_input(tool_activity, value)
 
         return value
 
     def after_execute(self, tool_activity: callable, value: BaseArtifact) -> BaseArtifact:
-        for middleware in tool_activity.__self__.middleware.get(tool_activity.config["name"], []):
-            value = middleware.process_output(tool_activity, value)
+        for ramps in tool_activity.__self__.ramps.get(tool_activity.config["name"], []):
+            value = ramps.process_output(tool_activity, value)
 
         return value
 

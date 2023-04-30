@@ -12,7 +12,7 @@ from decouple import config
 from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.middleware import BaseMiddleware
+    from griptape.ramps import BaseRamp
 
 
 @define
@@ -22,23 +22,23 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    middleware: dict[str, list[BaseMiddleware]] = field(factory=dict, kw_only=True)
+    ramps: dict[str, list[BaseRamp]] = field(factory=dict, kw_only=True)
 
     # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
     logging.basicConfig(level=logging.ERROR)
 
     def __attrs_post_init__(self):
-        from griptape.middleware import BaseMiddleware
+        from griptape.ramps import BaseRamp
 
         # https://www.attrs.org/en/stable/api.html#attrs.resolve_types
         attrs.resolve_types(self.__class__, globals(), locals())
 
-    @middleware.validator
-    def validate_middleware(self, _, middleware: dict[str, BaseMiddleware]) -> None:
-        middleware_names = middleware.keys()
+    @ramps.validator
+    def validate_ramps(self, _, ramps: dict[str, BaseRamp]) -> None:
+        ramp_names = ramps.keys()
 
-        if len(middleware_names) > len(set(middleware_names)):
-            raise ValueError("tool names have to be unique")
+        if len(ramp_names) > len(set(ramp_names)):
+            raise ValueError("ramp names have to be unique")
 
     @property
     def class_name(self):

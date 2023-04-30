@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.core.decorators import activity
-from griptape.middleware import BaseMiddleware
+from griptape.ramps import BaseRamp
 from attr import define, field
 from griptape.summarizers import PromptDriverSummarizer
 from griptape.drivers import OpenAiPromptDriver
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @define
-class StorageMiddleware(BaseMiddleware):
+class StorageRamp(BaseRamp):
     driver: BaseStorageDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
 
@@ -23,7 +23,7 @@ class StorageMiddleware(BaseMiddleware):
 
         if isinstance(value, TextArtifact):
             key = self.driver.save(value.value)
-            output = J2("middleware/storage.j2").render(
+            output = J2("ramps/storage.j2").render(
                 storage_name=self.name,
                 tool_name=tool_activity.__self__.name,
                 activity_name=tool_activity.config["name"],

@@ -1,8 +1,0 @@
-middleware name: {{ middleware.name }}
-{{ middleware.name }} activities
-{% for activity in middleware.activities() %}
-activity name: {{ middleware.activity_name(activity) }}
-{{ middleware.activity_name(activity) }} activity description: {{ middleware.activity_description(activity) }}
-{{ middleware.activity_name(activity) }} activity input schema: {{ middleware.activity_schema(activity) }}
-
-{% endfor %}
