@@ -6,7 +6,7 @@ from griptape.drivers import BaseStorageDriver
 
 
 @define
-class DynamoDBStorageDriver(BaseStorageDriver):
+class DynamoDbStorageDriver(BaseStorageDriver):
     aws_region: str = field(default=None, kw_only=True)
     table_name: str = field(default=None, kw_only=True)
     partition_key: str = field(default=None, kw_only=True)
@@ -20,11 +20,12 @@ class DynamoDBStorageDriver(BaseStorageDriver):
             "dynamodb",
             region_name=self.aws_region,
         )
-        table = dynamodb.Table(self.table_name)
-        self.table = table
+
+        self.table = dynamodb.Table(self.table_name)
 
     def save(self, value: any) -> str:
         key = uuid4().hex
+
         self.table.put_item(
             Item={
                 self.partition_key: key,
@@ -37,6 +38,7 @@ class DynamoDBStorageDriver(BaseStorageDriver):
 
     def load(self, key: str) -> Optional[any]:
         response = self.table.get_item(Key={self.partition_key: key})
+
         if "Item" in response:
             return response["Item"][self.value_attribute_key]
         return None
