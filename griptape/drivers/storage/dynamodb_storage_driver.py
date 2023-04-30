@@ -1,13 +1,12 @@
-
 from uuid import uuid4
 from typing import Optional
 from boto3 import resource
-from griptape.drivers import BaseStorageDriver
 from attr import define, field
+from griptape.drivers import BaseStorageDriver
 
 
 @define
-class DynamoDBDriver(BaseStorageDriver):
+class DynamoDBStorageDriver(BaseStorageDriver):
     aws_region: str = field(default=None, kw_only=True)
     table_name: str = field(default=None, kw_only=True)
     primary_key: str = field(default=None, kw_only=True)
@@ -37,10 +36,10 @@ class DynamoDBDriver(BaseStorageDriver):
         return key
 
     def load(self, key: str) -> Optional[any]:
-        response = self.table.get_item(Key={"deviceId": key})
+        response = self.table.get_item(Key={self.primary_key: key})
         if "Item" in response:
-            return response["Item"]["a.value"]
+            return response["Item"][self.value_attribute_key]
         return None
 
     def delete(self, key: str) -> None:
-        return self.table.delete_item(Key={"deviceId": key})
+        return self.table.delete_item(Key={self.primary_key: key})
