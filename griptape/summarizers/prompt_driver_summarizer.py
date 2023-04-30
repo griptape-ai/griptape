@@ -1,6 +1,6 @@
 from __future__ import annotations
-import logging
 from typing import TYPE_CHECKING
+import logging
 from attr import define, field
 from griptape.utils.text import to_vector_index
 from griptape.utils import J2
