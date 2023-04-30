@@ -40,7 +40,7 @@ from griptape import utils
 from griptape.memory import Memory
 from griptape.tasks import PromptTask, ToolkitTask
 from griptape.structures import Pipeline
-from griptape.utils import ToolLoader
+from griptape.core import ToolLoader
 
 scraper = WebScraper(
     openai_api_key=config("OPENAI_API_KEY")
