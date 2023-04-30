@@ -36,7 +36,7 @@ class StorageRamp(BaseRamp):
 
     @activity(config={
         "name": "search_entry",
-        "description": "Can be used to search a storage entry",
+        "description": "Can be used to search a storage entry for any content",
         "schema": Schema({
             Literal(
                 "id",
