@@ -8,7 +8,7 @@ class TestDynamoDBStorageDriver:
     @pytest.fixture(autouse=True)
     @mock_dynamodb
     def driver_gen(self):
-        dynamodb = resource("dynamodb")
+        dynamodb = resource("dynamodb", region_name="us-west-2")
         driver = DynamoDBStorageDriver(
             aws_region="us-west-2",
             table_name="griptape",
