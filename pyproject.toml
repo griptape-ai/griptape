@@ -36,6 +36,7 @@ fastapi = ">=0.80"
 uvicorn = ">= 0.20"
 python-decouple=">=3"
 llama_index = "==0.4.23"
+boto3 = "^1.26.123"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
@@ -47,6 +48,7 @@ twine = ">=4"
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.17.3"
 black = "^23.3.0"
+moto = {extras = ["dynamodb"], version = "^4.1.8"}
 
 [build-system]
 requires = ["poetry-core"]

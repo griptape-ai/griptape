@@ -9,7 +9,7 @@ from griptape.drivers import BaseStorageDriver
 class DynamoDBStorageDriver(BaseStorageDriver):
     aws_region: str = field(default=None, kw_only=True)
     table_name: str = field(default=None, kw_only=True)
-    primary_key: str = field(default=None, kw_only=True)
+    partition_key: str = field(default=None, kw_only=True)
     value_attribute_key: str = field(default=None, kw_only=True)
     extra_attributes: any = field(default={}, kw_only=True)
 
@@ -27,7 +27,7 @@ class DynamoDBStorageDriver(BaseStorageDriver):
         key = uuid4().hex
         self.table.put_item(
             Item={
-                self.primary_key: key,
+                self.partition_key: key,
                 self.value_attribute_key: value,
                 **self.extra_attributes,
             }
@@ -36,10 +36,10 @@ class DynamoDBStorageDriver(BaseStorageDriver):
         return key
 
     def load(self, key: str) -> Optional[any]:
-        response = self.table.get_item(Key={self.primary_key: key})
+        response = self.table.get_item(Key={self.partition_key: key})
         if "Item" in response:
             return response["Item"][self.value_attribute_key]
         return None
 
     def delete(self, key: str) -> None:
-        return self.table.delete_item(Key={self.primary_key: key})
+        self.table.delete_item(Key={self.partition_key: key})
