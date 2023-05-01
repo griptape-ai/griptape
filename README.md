@@ -35,45 +35,64 @@ With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, a
 
 ```python
 from decouple import config
-from griptape.tools import WebScraper, Calculator
-from griptape import utils
-from griptape.memory import Memory
-from griptape.tasks import PromptTask, ToolkitTask
-from griptape.structures import Pipeline
 from griptape.core import ToolLoader
+from griptape.drivers import OpenAiPromptDriver, MemoryStorageDriver
+from griptape.executors import LocalExecutor
+from griptape.memory import Memory
+from griptape.ramps import StorageRamp
+from griptape.structures import Pipeline
+from griptape.tasks import ToolkitTask, PromptTask
+from griptape.tools import WebScraper
+
+storage = StorageRamp(
+    driver=MemoryStorageDriver()
+)
 
 scraper = WebScraper(
-    openai_api_key=config("OPENAI_API_KEY")
+    ramps={
+        "get_content": [storage]
+    }
 )
-calculator = Calculator()
 
 pipeline = Pipeline(
     memory=Memory(),
     tool_loader=ToolLoader(
-        tools=[calculator, scraper]
+        tools=[scraper],
+        executor=LocalExecutor()
     )
 )
 
 pipeline.add_tasks(
     ToolkitTask(
-        tool_names=[calculator.name, scraper.name]
+        tool_names=[scraper.name]
     ),
     PromptTask(
-        "Say the following like a pirate: {{ input }}"
+        "Say the following like a skater: {{ input }}"
     )
 )
 
-pipeline.run("Give me a summary of https://en.wikipedia.org/wiki/Large_language_model")
+result = pipeline.run("Give me a summary of https://en.wikipedia.org/wiki/Large_language_model")
 
-print(utils.Conversation(pipeline.memory).to_string())
+print(result.output.value)
+
 
 ```
 
 Boom! Our first LLM pipeline with two sequential tasks generated the following exchange:
 
-> Q: Give me a summary of https://en.wikipedia.org/wiki/Large_language_model  
-> A: Arr, me hearties! Large language models have been developed and set sail since 2018, includin' BERT, GPT-2, GPT-3 [...]
-
+```
+Q: Give me a summary of https://en.wikipedia.org/wiki/Large_language_model
+[chain of thought output... will vary depending on the model driver you're using]
+A: Dude, like, large language models are, like, developed by all these rad 
+organizations and researchers, ya know? Some gnarly models include Amazon Science's 
+20B-parameter Alexa model for few-shot learning, Facebook's 65-billion-parameter 
+LLaMA model, Stanford CRFM's Alpaca model, OpenAI's GPT-4 model, Cerebras' 
+Cerebras-GPT model, TII's ChatGPT model, and BloombergGPT's language 
+model for finance, man. Ren and the crew also dropped the PanGu-Σ model for 
+trillion parameter language modeling with sparse heterogeneous computing, 
+which is sick! These models have been shreddin' it for solving quantitative 
+reasoning problems, science, and other rad applications, bro.
+```
 ## Versioning
 
 **griptape** is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
