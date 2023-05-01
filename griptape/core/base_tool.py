@@ -34,8 +34,8 @@ class BaseTool(ActivityMixin, ABC):
         attrs.resolve_types(self.__class__, globals(), locals())
 
     @ramps.validator
-    def validate_ramps(self, _, ramps: dict[str, BaseRamp]) -> None:
-        ramp_names = ramps.keys()
+    def validate_ramps(self, _, ramps: dict[str, list[BaseRamp]]) -> None:
+        ramp_names = [item.name for sublist in ramps.values() for item in sublist]
 
         if len(ramp_names) > len(set(ramp_names)):
             raise ValueError("ramp names have to be unique")

@@ -70,6 +70,8 @@ class TestBaseTool:
     def test_invalid_config(self):
         try:
             from tests.mocks.invalid_mock_tool.tool import InvalidMockTool
+
+            assert False
         except SchemaMissingKeyError as e:
             assert True
 
@@ -110,5 +112,6 @@ class TestBaseTool:
                 test_field="hello",
                 test_int=5
             )
+            assert False
         except ValueError:
             assert True

@@ -13,7 +13,8 @@ class TestToolkitSubtask:
         assert len(ToolkitTask("test", tool_names=["Calculator", "WebSearch"]).tool_names) == 2
 
         try:
-            assert ToolkitTask("test", tool_names=["Calculator", "Calculator"])
+            ToolkitTask("test", tool_names=["Calculator", "Calculator"])
+            assert False
         except ValueError:
             assert True
 

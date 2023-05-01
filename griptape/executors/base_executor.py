@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import logging
 from typing import TYPE_CHECKING, Union
 import inspect
 import os
@@ -37,17 +38,10 @@ class BaseExecutor(ABC):
             return result
         else:
             try:
-                from griptape.schemas import TextArtifactSchema, ErrorArtifactSchema
+                return BaseArtifact.from_dict(json.loads(result))
+            except Exception:
+                logging.exception("Error converting executor result to an artifact; defaulting to TextArtifact")
 
-                result_dict = json.loads(result)
-
-                if result_dict["type"] == "TextArtifact":
-                    return TextArtifactSchema().load(result_dict)
-                elif result_dict["type"] == "ErrorArtifact":
-                    return ErrorArtifactSchema().load(result_dict)
-                else:
-                    return TextArtifact(result)
-            except Exception as e:
                 return TextArtifact(result)
 
     @abstractmethod

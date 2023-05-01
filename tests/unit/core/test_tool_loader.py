@@ -10,6 +10,7 @@ class TestToolLoader:
 
         try:
             ToolLoader(tools=[MockTool(), MockTool()])
+            assert False
         except ValueError:
             assert True
 
