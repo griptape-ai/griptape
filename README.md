@@ -67,7 +67,7 @@ pipeline.add_tasks(
         tool_names=[scraper.name]
     ),
     PromptTask(
-        "Say the following like a spanish: {{ input }}"
+        "Say the following in spanish: {{ input }}"
     )
 )
 
