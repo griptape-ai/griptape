@@ -67,7 +67,7 @@ pipeline.add_tasks(
         tool_names=[scraper.name]
     ),
     PromptTask(
-        "Say the following like a skater: {{ input }}"
+        "Say the following like a spanish: {{ input }}"
     )
 )
 
@@ -83,16 +83,14 @@ Boom! Our first LLM pipeline with two sequential tasks generated the following e
 ```
 Q: Give me a summary of https://en.wikipedia.org/wiki/Large_language_model
 [chain of thought output... will vary depending on the model driver you're using]
-A: Dude, like, large language models are, like, developed by all these rad 
-organizations and researchers, ya know? Some gnarly models include Amazon Science's 
-20B-parameter Alexa model for few-shot learning, Facebook's 65-billion-parameter 
-LLaMA model, Stanford CRFM's Alpaca model, OpenAI's GPT-4 model, Cerebras' 
-Cerebras-GPT model, TII's ChatGPT model, and BloombergGPT's language 
-model for finance, man. Ren and the crew also dropped the PanGu-Σ model for 
-trillion parameter language modeling with sparse heterogeneous computing, 
-which is sick! These models have been shreddin' it for solving quantitative 
-reasoning problems, science, and other rad applications, bro.
+A: Los modelos de lenguaje de gran tamaño son herramientas utilizadas para tareas de 
+procesamiento del lenguaje natural, como detectar falsedades, completar oraciones y comprender 
+el lenguaje. Algunos modelos notables incluyen BERT, GPT-2, GPT-3, GPT-Neo y GLaM. The Pile es 
+un conjunto de datos extenso utilizado para el modelado del lenguaje. Estos modelos han sido 
+desarrollados e investigados en trabajos como TruthfulQA, HellaSwag y BERT: Pre-entrenamiento 
+de transformadores bidireccionales profundos para la comprensión del lenguaje.
 ```
+
 ## Versioning
 
 **griptape** is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
