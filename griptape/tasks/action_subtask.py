@@ -26,7 +26,7 @@ class ActionSubtask(PromptTask):
     OUTPUT_PATTERN = r"^Output:\s?([\s\S]*)$"
     INVALID_ACTION_ERROR_MSG = f"invalid action input, try again"
     ACTION_SCHEMA = Schema(
-        description="Actions have type, name, method, and optional input value.",
+        description="Actions have type, name, activity, and input value.",
         schema={
             Literal(
                 "type",
@@ -43,7 +43,7 @@ class ActionSubtask(PromptTask):
             schema.Optional(
                 Literal(
                     "input",
-                    description="Action method input value"
+                    description="Action activity input value"
                 )
             ): schema.Or(str, list, {object: object})
         }
@@ -86,7 +86,7 @@ class ActionSubtask(PromptTask):
             else:
                 if self.action_type == "tool":
                     if self._tool:
-                        observation = self.structure.tool_executor.execute(
+                        observation = self.task.executor.execute(
                             getattr(self._tool, self.action_activity),
                             TextArtifact(self.action_input)
                         )

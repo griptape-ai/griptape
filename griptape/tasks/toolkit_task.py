@@ -3,6 +3,7 @@ from abc import ABC
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.core import BaseTool
+from griptape.executors import BaseExecutor, LocalExecutor
 from griptape.utils import J2
 from griptape.tasks import PromptTask
 from griptape.artifacts import TextArtifact, ErrorArtifact
@@ -17,6 +18,7 @@ class ToolkitTask(PromptTask, ABC):
     DEFAULT_MAX_STEPS = 20
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
+    executor: BaseExecutor = field(default=LocalExecutor(), kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     _subtasks: list[ActionSubtask] = field(factory=list)
 
