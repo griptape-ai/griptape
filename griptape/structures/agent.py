@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 from typing import TYPE_CHECKING
 from attr import define, field
 from griptape.memory import Run
