@@ -85,18 +85,3 @@ class Workflow(Structure):
 
     def order_tasks(self) -> list[BaseTask]:
         return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import WorkflowSchema
-
-        return WorkflowSchema().dump(self)
-
-    @classmethod
-    def from_dict(cls, workflow_dict: dict) -> Workflow:
-        from griptape.schemas import WorkflowSchema
-
-        return WorkflowSchema().load(workflow_dict)
-
-    @classmethod
-    def from_json(cls, workflow_json: str) -> Workflow:
-        return Workflow.from_dict(json.loads(workflow_json))

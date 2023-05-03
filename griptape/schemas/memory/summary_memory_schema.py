@@ -1,12 +1,11 @@
 from marshmallow import fields, post_load
-from griptape.schemas import MemorySchema, PolymorphicSchema
+from griptape.schemas import MemorySchema
 
 
-class SummaryPipelineMemorySchema(MemorySchema):
+class SummaryMemorySchema(MemorySchema):
     offset = fields.Int()
-    summary = fields.Str()
+    summary = fields.Str(allow_none=True)
     summary_index = fields.Int()
-    summarizer = fields.Nested(PolymorphicSchema())
 
     @post_load
     def make_obj(self, data, **kwargs):

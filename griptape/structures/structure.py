@@ -23,7 +23,6 @@ class Structure(ABC):
     LOGGER_NAME = "griptape-flow"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
@@ -103,9 +102,6 @@ class Structure(ABC):
     def stack_to_prompt_string(self, stack: list[str]) -> str:
         return str.join("\n", stack)
 
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
     def context(self, task: BaseTask) -> dict[str, any]:
         return {
             "args": self.execution_args,
@@ -118,18 +114,4 @@ class Structure(ABC):
 
     @abstractmethod
     def run(self, *args) -> Union[BaseTask, list[BaseTask]]:
-        ...
-
-    @abstractmethod
-    def to_dict(self) -> dict:
-        ...
-
-    @classmethod
-    @abstractmethod
-    def from_dict(cls, structure_dict: dict) -> Structure:
-        ...
-
-    @classmethod
-    @abstractmethod
-    def from_json(cls, structure_json: str) -> Structure:
         ...

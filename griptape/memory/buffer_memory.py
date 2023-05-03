@@ -2,6 +2,7 @@ from __future__ import annotations
 import json
 from attr import define, field
 from griptape.memory import Memory, Run
+from griptape.schemas import BufferMemorySchema
 
 
 @define
@@ -15,12 +16,12 @@ class BufferMemory(Memory):
             self.runs.pop(0)
 
     def to_dict(self) -> dict:
-        return BufferMemory().dump(self)
+        return BufferMemorySchema().dump(self)
 
     @classmethod
-    def from_dict(cls, memory_dict: dict) -> Memory:
-        return BufferMemory().load(memory_dict)
+    def from_dict(cls, memory_dict: dict) -> BufferMemory:
+        return BufferMemorySchema().load(memory_dict)
 
     @classmethod
-    def from_json(cls, memory_json: str) -> Memory:
+    def from_json(cls, memory_json: str) -> BufferMemory:
         return BufferMemory.from_dict(json.loads(memory_json))

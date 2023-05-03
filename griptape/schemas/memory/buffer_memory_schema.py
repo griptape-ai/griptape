@@ -2,7 +2,7 @@ from marshmallow import fields, post_load
 from griptape.schemas import MemorySchema
 
 
-class BufferPipelineMemorySchema(MemorySchema):
+class BufferMemorySchema(MemorySchema):
     buffer_size = fields.Int()
 
     @post_load

@@ -62,18 +62,3 @@ class Agent(StructureWithMemory):
         self._execution_args = ()
 
         return self.task
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import AgentSchema
-
-        return AgentSchema().dump(self)
-
-    @classmethod
-    def from_dict(cls, agent_dict: dict) -> Agent:
-        from griptape.schemas import AgentSchema
-
-        return AgentSchema().load(agent_dict)
-
-    @classmethod
-    def from_json(cls, agent_json: str) -> Agent:
-        return Agent.from_dict(json.loads(agent_json))

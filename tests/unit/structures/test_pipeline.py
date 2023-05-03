@@ -184,50 +184,6 @@ class TestPipeline:
 
         assert task.input.value == "-"
 
-    def test_to_json(self):
-        pipeline = Pipeline()
-
-        pipeline.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        assert len(json.loads(pipeline.to_json())["tasks"]) == 2
-
-    def test_to_dict(self):
-        pipeline = Pipeline()
-
-        pipeline.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        assert len(pipeline.to_dict()["tasks"]) == 2
-
-    def test_from_json(self):
-        pipeline = Pipeline()
-
-        pipeline.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        workflow_json = pipeline.to_json()
-
-        assert len(Pipeline.from_json(workflow_json).tasks) == 2
-
-    def test_from_dict(self):
-        pipeline = Pipeline()
-
-        pipeline.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        workflow_json = pipeline.to_dict()
-
-        assert len(Pipeline.from_dict(workflow_json).tasks) == 2
-
     def test_context(self):
         parent = PromptTask("parent")
         task = PromptTask("test")

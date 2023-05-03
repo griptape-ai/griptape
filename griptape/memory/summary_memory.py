@@ -3,6 +3,7 @@ import json
 from typing import TYPE_CHECKING
 from typing import Optional
 from attr import define, field
+from griptape.schemas import SummaryMemorySchema
 from griptape.utils import J2
 from griptape.memory import Memory
 
@@ -49,12 +50,12 @@ class SummaryMemory(Memory):
         )
 
     def to_dict(self) -> dict:
-        return SummaryMemory().dump(self)
+        return SummaryMemorySchema().dump(self)
 
     @classmethod
-    def from_dict(cls, memory_dict: dict) -> Memory:
-        return SummaryMemory().load(memory_dict)
+    def from_dict(cls, memory_dict: dict) -> SummaryMemory:
+        return SummaryMemorySchema().load(memory_dict)
 
     @classmethod
-    def from_json(cls, memory_json: str) -> Memory:
+    def from_json(cls, memory_json: str) -> SummaryMemory:
         return SummaryMemory.from_dict(json.loads(memory_json))

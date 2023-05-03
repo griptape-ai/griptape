@@ -162,50 +162,6 @@ class TestWorkflow:
         assert ordered_tasks[1] == task2 or ordered_tasks[1] == task3
         assert ordered_tasks[2] == task2 or ordered_tasks[2] == task3
 
-    def test_to_json(self):
-        workflow = Workflow()
-
-        workflow.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        assert len(json.loads(workflow.to_json())["tasks"]) == 2
-
-    def test_to_dict(self):
-        workflow = Workflow()
-
-        workflow.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        assert len(workflow.to_dict()["tasks"]) == 2
-
-    def test_from_json(self):
-        workflow = Workflow()
-
-        workflow.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        workflow_json = workflow.to_json()
-
-        assert len(Workflow.from_json(workflow_json).tasks) == 2
-
-    def test_from_dict(self):
-        workflow = Workflow()
-
-        workflow.add_tasks(
-            PromptTask("test prompt"),
-            PromptTask("test prompt")
-        )
-
-        workflow_json = workflow.to_dict()
-
-        assert len(Workflow.from_dict(workflow_json).tasks) == 2
-
     def test_context(self):
         parent = PromptTask("parent")
         task = PromptTask("test")

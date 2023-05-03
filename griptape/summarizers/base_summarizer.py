@@ -9,8 +9,6 @@ if TYPE_CHECKING:
 
 @define
 class BaseSummarizer(ABC):
-    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-
     @abstractmethod
     def summarize_runs(self, previous_summary: str, runs: list[Run]) -> str:
         ...

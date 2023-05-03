@@ -74,21 +74,6 @@ class Pipeline(StructureWithMemory):
 
         return context
 
-    def to_dict(self) -> dict:
-        from griptape.schemas import PipelineSchema
-
-        return PipelineSchema().dump(self)
-
-    @classmethod
-    def from_dict(cls, pipeline_dict: dict) -> Pipeline:
-        from griptape.schemas import PipelineSchema
-
-        return PipelineSchema().load(pipeline_dict)
-
-    @classmethod
-    def from_json(cls, pipeline_json: str) -> Pipeline:
-        return Pipeline.from_dict(json.loads(pipeline_json))
-
     def __run_from_task(self, task: Optional[BaseTask]) -> None:
         if task is None:
             return

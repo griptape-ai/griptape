@@ -141,42 +141,6 @@ class TestAgent:
 
         assert task.input.value == "-"
 
-    def test_to_json(self):
-        agent = Agent()
-
-        agent.add_task(PromptTask("test prompt"))
-
-        assert len(json.loads(agent.to_json())["tasks"]) == 1
-        assert json.loads(agent.to_json())["task"]["prompt_template"] == "test prompt"
-
-    def test_to_dict(self):
-        agent = Agent()
-
-        agent.add_task(PromptTask("test prompt"))
-
-        assert len(agent.to_dict()["tasks"]) == 1
-        assert agent.to_dict()["task"]["prompt_template"] == "test prompt"
-
-    def test_from_json(self):
-        agent = Agent()
-
-        agent.add_task(PromptTask("test prompt"))
-
-        agent_json = agent.to_json()
-
-        assert len(Agent.from_json(agent_json).tasks) == 1
-        assert Agent.from_json(agent_json).task.prompt_template == "test prompt"
-
-    def test_from_dict(self):
-        agent = Agent()
-
-        agent.add_task(PromptTask("test prompt"))
-
-        agent_dict = agent.to_dict()
-
-        assert len(Agent.from_dict(agent_dict).tasks) == 1
-        assert Agent.from_dict(agent_dict).task.prompt_template == "test prompt"
-
     def test_context(self):
         task = PromptTask("test prompt")
         agent = Agent(prompt_driver=MockDriver())
