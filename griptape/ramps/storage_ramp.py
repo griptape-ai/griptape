@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from llama_index import Document, GPTListIndex
+from llama_index import Document, GPTVectorStoreIndex
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.core.decorators import activity
@@ -52,7 +52,7 @@ class StorageRamp(BaseRamp):
         text = self.driver.load(value["id"])
 
         if text:
-            index = GPTListIndex.from_documents([Document(text)])
+            index = GPTVectorStoreIndex.from_documents([Document(text)])
             query_engine = index.as_query_engine()
 
             return TextArtifact(
