@@ -1,9 +1,8 @@
-import json
-from griptape.rules import Rule
-from griptape.tasks import PromptTask, BaseTask
 from griptape.memory import Memory
-from tests.mocks.mock_driver import MockDriver
+from griptape.rules import Rule
 from griptape.structures import Agent
+from griptape.tasks import PromptTask, BaseTask
+from tests.mocks.mock_driver import MockDriver
 
 
 class TestAgent:
