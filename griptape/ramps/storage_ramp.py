@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from llama_index import Document, GPTListIndex
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.core.decorators import activity
@@ -7,7 +8,6 @@ from griptape.ramps import BaseRamp
 from attr import define, field
 from griptape.summarizers import PromptDriverSummarizer
 from griptape.drivers import OpenAiPromptDriver
-from griptape.utils.text import to_vector_index
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseStorageDriver, BasePromptDriver
@@ -52,8 +52,11 @@ class StorageRamp(BaseRamp):
         text = self.driver.load(value["id"])
 
         if text:
+            index = GPTListIndex.from_documents([Document(text)])
+            query_engine = index.as_query_engine()
+
             return TextArtifact(
-                str(to_vector_index(text).query(f"Search query: {value['query']}")).strip()
+                str(query_engine.query(f"Search text with query: {value['query']}")).strip()
             )
         else:
             return ErrorArtifact("Entry not found")

@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
 from attr import define, field
-from griptape.utils.text import to_vector_index
+from llama_index import Document, GPTListIndex
 from griptape.utils import J2
 from griptape.drivers import BasePromptDriver
 from griptape.summarizers.base_summarizer import BaseSummarizer
@@ -32,8 +32,13 @@ class PromptDriverSummarizer(BaseSummarizer):
             return previous_summary
 
     def summarize_text(self, text: str) -> str:
+        index = GPTListIndex.from_documents([Document(text)])
+        query_engine = index.as_query_engine(
+            response_mode="tree_summarize"
+        )
+
         return str(
-            to_vector_index(text).query(
+            query_engine.query(
                 "Generate a summary. Include URLs in the summary."
             )
         ).strip()
