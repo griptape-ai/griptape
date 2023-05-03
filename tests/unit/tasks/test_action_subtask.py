@@ -10,7 +10,7 @@ class TestActionSubtask:
                       'Observation: test observation\n' \
                       'Output: test output'
 
-        task = ToolkitTask(tool_names=[])
+        task = ToolkitTask(tools=[])
         Pipeline().add_task(task)
         subtask = task.add_subtask(ActionSubtask(valid_input))
         json_dict = json.loads(subtask.to_json())

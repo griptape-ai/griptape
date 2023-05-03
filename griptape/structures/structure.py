@@ -7,11 +7,11 @@ from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
 from attr import define, field, Factory
 from rich.logging import RichHandler
+from griptape.executors import BaseExecutor, LocalExecutor
 from griptape.tasks import ActionSubtask
 from griptape import utils
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.utils import J2
-from griptape.core import ToolLoader
 
 if TYPE_CHECKING:
     from griptape.rules import Rule
@@ -28,7 +28,7 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    tool_loader: ToolLoader = field(default=ToolLoader(), kw_only=True)
+    tool_executor: BaseExecutor = field(default=LocalExecutor(), kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 

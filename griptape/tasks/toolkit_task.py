@@ -16,20 +16,16 @@ if TYPE_CHECKING:
 class ToolkitTask(PromptTask, ABC):
     DEFAULT_MAX_STEPS = 20
 
-    tool_names: list[str] = field(kw_only=True)
+    tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     _subtasks: list[ActionSubtask] = field(factory=list)
 
-    @tool_names.validator
-    def validate_tool_names(self, _, tool_names: list[str]) -> None:
-        if len(tool_names) > len(set(tool_names)):
-            raise ValueError("tool names have to be unique")
+    @tools.validator
+    def validate_tools(self, _, tools: list[BaseTool]) -> None:
+        tool_names = [t.name for t in tools]
 
-    @property
-    def tools(self) -> list[BaseTool]:
-        return [
-            t for t in [self.structure.tool_loader.load_tool(t) for t in self.tool_names] if t is not None
-        ]
+        if len(tool_names) > len(set(tool_names)):
+            raise ValueError("tools have to be unique")
 
     @property
     def ramps(self) -> list[BaseRamp]:

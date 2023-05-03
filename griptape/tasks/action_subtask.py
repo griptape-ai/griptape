@@ -86,7 +86,7 @@ class ActionSubtask(PromptTask):
             else:
                 if self.action_type == "tool":
                     if self._tool:
-                        observation = self.structure.tool_loader.executor.execute(
+                        observation = self.structure.tool_executor.execute(
                             getattr(self._tool, self.action_activity),
                             TextArtifact(self.action_input)
                         )
