@@ -29,9 +29,12 @@ class TestActivityMixin:
         assert tool.activity_schema(tool.test) == \
                tool.test.config["schema"].json_schema("ToolInputSchema")
 
+    def test_activity_with_no_schema(self, tool):
+        assert tool.activity_schema(tool.test_no_schema) is None
+
     def test_find_activity(self, tool):
         assert tool.find_activity("test") == tool.test
 
     def test_activities(self, tool):
-        assert len(tool.activities()) == 3
+        assert len(tool.activities()) == 4
         assert tool.activities()[0] == tool.test

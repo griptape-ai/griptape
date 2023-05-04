@@ -2,7 +2,7 @@ from __future__ import annotations
 import ast
 import json
 import re
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple, Union
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
@@ -43,7 +43,7 @@ class ActionSubtask(PromptTask):
             schema.Optional(
                 Literal(
                     "input",
-                    description="Action activity input value"
+                    description="Optional action activity input value"
                 )
             ): schema.Or(str, list, {object: object})
         }
@@ -54,7 +54,7 @@ class ActionSubtask(PromptTask):
     action_type: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_activity: Optional[str] = field(default=None, kw_only=True)
-    action_input: Optional[Tuple[str, list, dict]] = field(default=None, kw_only=True)
+    action_input: Optional[Union[str, list, dict]] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
     _ramps: Optional[BaseRamp] = None
@@ -88,13 +88,15 @@ class ActionSubtask(PromptTask):
                     if self._tool:
                         observation = self.task.executor.execute(
                             getattr(self._tool, self.action_activity),
-                            TextArtifact(self.action_input)
+                            TextArtifact(self.action_input) if self.action_input else None
                         )
                     else:
                         observation = ErrorArtifact("tool not found")
                 elif self.action_type == "ramp":
                     if self._ramps:
-                        observation = getattr(self._ramps, self.action_activity)(self.action_input)
+                        observation = getattr(self._ramps, self.action_activity)(
+                            self.action_input if self.action_input else None
+                        )
                     else:
                         observation = ErrorArtifact("ramps not found")
                 else:
@@ -217,10 +219,13 @@ class ActionSubtask(PromptTask):
 
     def __validate_activity_mixin(self, mixin: ActivityMixin) -> None:
         try:
-            validate(
-                instance=self.action_input,
-                schema=mixin.activity_schema(getattr(mixin, self.action_activity))
-            )
+            activity_schema = mixin.activity_schema(getattr(mixin, self.action_activity))
+
+            if activity_schema:
+                validate(
+                    instance=self.action_input,
+                    schema=activity_schema
+                )
         except ValidationError as e:
             self.structure.logger.error(f"Subtask {self.task.id}\nInvalid activity input JSON: {e}")
 

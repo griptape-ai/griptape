@@ -40,15 +40,22 @@ class ActivityMixin:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not a tool activity.")
         else:
+            activity_schema = self.activity_schema(activity)
             description_lines = [
-                self.activity_description(activity),
-                f"Method input schema: {self.activity_schema(activity)}"
+                self.activity_description(activity)
             ]
+
+            if activity_schema:
+                description_lines.append(
+                    f"Method input schema: {activity_schema}"
+                )
 
             return str.join("\n", description_lines)
 
-    def activity_schema(self, activity: callable) -> dict:
+    def activity_schema(self, activity: callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not a tool activity.")
-        else:
+        elif activity.config["schema"]:
             return activity.config["schema"].json_schema("ToolInputSchema")
+        else:
+            return None

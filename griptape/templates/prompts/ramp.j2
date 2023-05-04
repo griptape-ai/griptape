@@ -3,6 +3,9 @@ ramp name: {{ ramp.name }}
 {% for activity in ramp.activities() %}
 activity name: {{ ramp.activity_name(activity) }}
 {{ ramp.activity_name(activity) }} activity description: {{ ramp.activity_description(activity) }}
-{{ ramp.activity_name(activity) }} activity input schema: {{ ramp.activity_schema(activity) }}
-
+{% if ramp.activity_schema(activity) %}
+{{ ramp.activity_name(activity) }} activity input value schema: {{ ramp.activity_schema(activity) }}
+{% else %}
+{{ ramp.activity_name(activity) }} activity has no input value
+{% endif %}
 {% endfor %}

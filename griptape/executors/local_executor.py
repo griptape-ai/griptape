@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union, Optional
 from attr import define, field
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.executors import BaseExecutor
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class LocalExecutor(BaseExecutor):
     verbose: int = field(default=False, kw_only=True)
 
-    def try_execute(self, tool_activity: callable, value: BaseArtifact) -> Union[BaseArtifact, str]:
+    def try_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
         logging.warning(f"You are executing the {tool.name} tool in the local environment. Make sure to "
@@ -27,7 +27,7 @@ class LocalExecutor(BaseExecutor):
 
         self.install_dependencies(env, tool)
 
-        output = self.run_subprocess(env, tool_activity, value.value)
+        output = self.run_subprocess(env, tool_activity, value)
 
         if output.stderr and not output.stdout:
             return ErrorArtifact(output.stderr.strip())
@@ -52,14 +52,14 @@ class LocalExecutor(BaseExecutor):
             stderr=None if self.verbose else subprocess.DEVNULL
         )
 
-    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: any) -> subprocess.CompletedProcess:
+    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: Optional[BaseArtifact]) -> subprocess.CompletedProcess:
         tool = tool_activity.__self__
         tool_name = tool.class_name
-        value = f'"{value}"' if isinstance(value, str) else value
+        input_value = (f'"{value.value}"' if isinstance(value.value, str) else value.value) if value else ""
         command = [
             "python",
             "-c",
-            f'from tool import {tool_name}; print({tool_name}().{tool_activity.__name__}({value}))'
+            f'from tool import {tool_name}; print({tool_name}().{tool_activity.__name__}({input_value}))'
         ]
 
         return subprocess.run(

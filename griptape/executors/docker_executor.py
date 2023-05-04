@@ -5,7 +5,7 @@ from typing import Optional
 from attr import define, field, Factory
 import docker
 from docker.errors import NotFound
-from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact
 from griptape.utils.paths import abs_path
 from griptape.executors import BaseExecutor
 import stringcase
@@ -33,23 +33,23 @@ class DockerExecutor(BaseExecutor):
 
             return None
 
-    def try_execute(self, tool_activity: callable, value: BaseArtifact) -> Union[BaseArtifact, str]:
+    def try_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
         self.build_image(tool)
         self.remove_existing_container(self.container_name(tool))
 
-        return self.run_container(tool_activity, value.value)
+        return self.run_container(tool_activity, value)
 
-    def run_container(self, tool_activity: callable, value: any) -> str:
+    def run_container(self, tool_activity: callable, value: Optional[BaseArtifact]) -> str:
         tool = tool_activity.__self__
         workdir = "/tool"
         tool_name = tool.class_name
-        value = f'"{value}"' if isinstance(value, str) else value
+        input_value = (f'"{value.value}"' if isinstance(value.value, str) else value.value) if value else ""
         command = [
             "python",
             "-c",
-            f'from tool import {tool_name}; print({tool_name}().{tool_activity.__name__}({value}))'
+            f'from tool import {tool_name}; print({tool_name}().{tool_activity.__name__}({input_value}))'
         ]
         binds = {
             self.tool_dir(tool): {

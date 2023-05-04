@@ -46,6 +46,13 @@ class MockTool(BaseTool):
     def test_str_output(self, value: str) -> str:
         return f"ack {value}"
 
+    @activity(config={
+        "name": "test_no_schema",
+        "description": "test description: {{ foo }}"
+    })
+    def test_no_schema(self) -> str:
+        return f"no schema"
+
     @property
     def schema_template_args(self) -> dict:
         return {
