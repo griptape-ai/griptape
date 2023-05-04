@@ -34,7 +34,6 @@ Second, configure an OpenAI client by [getting an API key](https://beta.openai.c
 With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. You can also define structures as JSON objects and load them into **griptape** dynamically. Let's define a simple two-task pipeline that uses tools:
 
 ```python
-from decouple import config
 from griptape.core import ToolLoader
 from griptape.drivers import OpenAiPromptDriver, MemoryStorageDriver
 from griptape.executors import LocalExecutor
