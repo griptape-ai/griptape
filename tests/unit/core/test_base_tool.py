@@ -89,15 +89,13 @@ class TestBaseTool:
                         name="Ramp2", driver=MemoryStorageDriver()
                     )
                 ]
-            },
-            test_field="hello",
-            test_int=5
+            }
         )
 
         assert len(tool.ramps["test"]) == 2
 
     def test_ramp_validation(self):
-        try:
+        with pytest.raises(ValueError):
             MockTool(
                 ramps={
                     "test": [
@@ -108,10 +106,31 @@ class TestBaseTool:
                             name="Ramp1", driver=MemoryStorageDriver()
                         )
                     ]
-                },
-                test_field="hello",
-                test_int=5
+                }
             )
-            assert False
-        except ValueError:
-            assert True
+
+        with pytest.raises(ValueError):
+            MockTool(
+                ramps={
+                    "fake_activity": [
+                        StorageRamp(
+                            name="Ramp1", driver=MemoryStorageDriver()
+                        )
+                    ]
+                }
+            )
+
+        assert MockTool(
+                ramps={
+                    "test": [
+                        StorageRamp(
+                            name="Ramp1", driver=MemoryStorageDriver()
+                        )
+                    ],
+                    "test_str_output": [
+                        StorageRamp(
+                            name="Ramp1", driver=MemoryStorageDriver()
+                        )
+                    ]
+                }
+            )

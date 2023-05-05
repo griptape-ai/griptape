@@ -35,10 +35,14 @@ class BaseTool(ActivityMixin, ABC):
 
     @ramps.validator
     def validate_ramps(self, _, ramps: dict[str, list[BaseRamp]]) -> None:
-        ramp_names = [item.name for sublist in ramps.values() for item in sublist]
+        for activity_name, ramp_list in ramps.items():
+            ramp_names = [ramp.name for ramp in ramp_list]
 
-        if len(ramp_names) > len(set(ramp_names)):
-            raise ValueError("ramp names have to be unique")
+            if not self.find_activity(activity_name):
+                raise ValueError(f"activity {activity_name} doesn't exist")
+
+            if len(ramp_names) > len(set(ramp_names)):
+                raise ValueError(f"ramp names have to be unique in activity {activity_name}")
 
     @property
     def class_name(self):
