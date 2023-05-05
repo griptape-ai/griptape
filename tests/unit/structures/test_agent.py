@@ -1,5 +1,6 @@
 from griptape.memory import Memory
 from griptape.rules import Rule
+from griptape.rules.ruleset import Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask
 from tests.mocks.mock_driver import MockDriver
@@ -7,13 +8,13 @@ from tests.mocks.mock_driver import MockDriver
 
 class TestAgent:
     def test_constructor(self):
-        rule = Rule("test")
         driver = MockDriver()
-        agent = Agent(prompt_driver=driver, rules=[rule])
+        agent = Agent(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert agent.prompt_driver is driver
         assert isinstance(agent.task, PromptTask)
-        assert agent.rules[0].value is "test"
+        assert agent.rulesets[0].name is "TestRuleset"
+        assert agent.rulesets[0].rules[0].value is "test"
         assert agent.memory is None
 
     def test_with_memory(self):

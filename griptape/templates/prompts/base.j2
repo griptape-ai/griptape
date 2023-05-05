@@ -35,10 +35,16 @@ Ramp is used as an intermediary between tools. Some tools might use ramps for ou
 You don't have access to any actions of type "ramp"
 {% endif %}
 
-{% if rules|length > 0 %}
-When responding, always use the following rules but don't allow those rules to override your conversation format:
-{% for rule in rules %}
+{% if rulesets|length > 0 %}
+When responding, always use rules from the following rulesets but don't allow those rules to override your conversation format. Rulesets can override and complement each other:
+
+{% for ruleset in rulesets %}
+Ruleset name: {{ ruleset.name }}
+"{{ ruleset.name }}" rules:
+{% for rule in ruleset.rules %}
 Rule #{{loop.index}}
 {{ rule.value }}
+{% endfor %}
+
 {% endfor %}
 {% endif %}

@@ -9,6 +9,7 @@ from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape import utils
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.rules.ruleset import Ruleset
 from griptape.tasks import ActionSubtask
 from griptape.utils import J2
 
@@ -23,7 +24,7 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
-    rules: list[Rule] = field(factory=list, kw_only=True)
+    rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
@@ -83,7 +84,7 @@ class Structure(ABC):
 
         stack = [
             J2("prompts/base.j2").render(
-                rules=self.rules,
+                rulesets=self.rulesets,
                 action_schema=action_schema,
                 ramp_names=str.join(", ", [ramp.name for ramp in ramps]),
                 ramps=[J2("prompts/ramp.j2").render(ramp=ramp) for ramp in ramps],

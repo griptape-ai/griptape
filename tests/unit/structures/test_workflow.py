@@ -1,4 +1,6 @@
 import json
+
+from griptape.rules.ruleset import Ruleset
 from tests.mocks.mock_driver import MockDriver
 from griptape.rules import Rule
 from griptape.tasks import PromptTask, BaseTask
@@ -9,11 +11,12 @@ class TestWorkflow:
     def test_constructor(self):
         rule = Rule("test")
         driver = MockDriver()
-        workflow = Workflow(prompt_driver=driver, rules=[rule])
+        workflow = Workflow(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert workflow.prompt_driver is driver
         assert len(workflow.tasks) == 0
-        assert workflow.rules[0].value is "test"
+        assert workflow.rulesets[0].name is "TestRuleset"
+        assert workflow.rulesets[0].rules[0].value is "test"
 
     def test_add_task(self):
         first_task = PromptTask("test1")

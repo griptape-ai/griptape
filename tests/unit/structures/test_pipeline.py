@@ -1,6 +1,7 @@
 import json
 from griptape.artifacts import TextArtifact
 from griptape.rules import Rule
+from griptape.rules.ruleset import Ruleset
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask
 from griptape.memory import Memory
@@ -12,12 +13,13 @@ class TestPipeline:
     def test_constructor(self):
         rule = Rule("test")
         driver = MockDriver()
-        pipeline = Pipeline(prompt_driver=driver, rules=[rule])
+        pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert pipeline.prompt_driver is driver
         assert pipeline.first_task() is None
         assert pipeline.last_task() is None
-        assert pipeline.rules[0].value is "test"
+        assert pipeline.rulesets[0].name is "TestRuleset"
+        assert pipeline.rulesets[0].rules[0].value is "test"
         assert pipeline.memory is None
 
     def test_with_memory(self):
