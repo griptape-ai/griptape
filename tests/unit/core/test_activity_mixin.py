@@ -32,9 +32,42 @@ class TestActivityMixin:
     def test_activity_with_no_schema(self, tool):
         assert tool.activity_schema(tool.test_no_schema) is None
 
-    def test_find_activity(self, tool):
+    def test_find_activity(self):
+        tool = MockTool(
+            test_field="hello",
+            test_int=5,
+            allowlist=["test"]
+        )
         assert tool.find_activity("test") == tool.test
+        assert tool.find_activity("test_str_output") is None
 
     def test_activities(self, tool):
         assert len(tool.activities()) == 4
         assert tool.activities()[0] == tool.test
+
+    def test_allowlist_and_denylist_validation(self):
+        with pytest.raises(ValueError):
+            MockTool(
+                test_field="hello",
+                test_int=5,
+                allowlist=[],
+                denylist=[]
+            )
+
+    def test_allowlist(self):
+        tool = MockTool(
+            test_field="hello",
+            test_int=5,
+            allowlist=["test"]
+        )
+
+        assert len(tool.activities()) == 1
+
+    def test_denylist(self):
+        tool = MockTool(
+            test_field="hello",
+            test_int=5,
+            denylist=["test"]
+        )
+
+        assert len(tool.activities()) == 3
