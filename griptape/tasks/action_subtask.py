@@ -31,7 +31,7 @@ class ActionSubtask(PromptTask):
             Literal(
                 "type",
                 description="Action type"
-            ): And(str, lambda s: s in ("tool", "ramp")),
+            ): schema.Or("tool", "ramp"),
             Literal(
                 "name",
                 description="Action name"
