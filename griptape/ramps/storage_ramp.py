@@ -22,7 +22,7 @@ class StorageRamp(BaseRamp):
         from griptape.utils import J2
 
         if isinstance(value, TextArtifact):
-            key = self.driver.save(value.value)
+            key = self.driver.save(value.to_text())
             output = J2("ramps/storage.j2").render(
                 storage_name=self.name,
                 tool_name=tool_activity.__self__.name,

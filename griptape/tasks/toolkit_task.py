@@ -47,7 +47,7 @@ class ToolkitTask(PromptTask):
 
         subtask = self.add_subtask(
             ActionSubtask(
-                self.active_driver().run(value=self.structure.to_prompt_string(self)).value
+                self.active_driver().run(value=self.structure.to_prompt_string(self)).to_text()
             )
         )
 
@@ -55,8 +55,7 @@ class ToolkitTask(PromptTask):
             if subtask.output is None:
                 if len(self._subtasks) >= self.max_subtasks:
                     subtask.output = ErrorArtifact(
-                        f"Exceeded tool limit of {self.max_subtasks} subtasks per task",
-                        task=self
+                        f"Exceeded tool limit of {self.max_subtasks} subtasks per task"
                     )
                 elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
@@ -68,7 +67,7 @@ class ToolkitTask(PromptTask):
 
                     subtask = self.add_subtask(
                         ActionSubtask(
-                            self.active_driver().run(value=self.structure.to_prompt_string(self)).value
+                            self.active_driver().run(value=self.structure.to_prompt_string(self)).to_text()
                         )
                     )
             else:

@@ -10,14 +10,14 @@ class TestPromptSubtask:
 
         pipeline.add_task(subtask)
 
-        assert subtask.run().value == "mock output"
+        assert subtask.run().to_text() == "mock output"
 
     def test_render_prompt(self):
         subtask = PromptTask("{{ test }}", context={"test": "test value"})
 
         Pipeline().add_task(subtask)
 
-        assert subtask.input.value == "test value"
+        assert subtask.input.to_text() == "test value"
 
     def test_full_context(self):
         parent = PromptTask("parent")
@@ -32,7 +32,7 @@ class TestPromptSubtask:
         context = subtask.full_context
 
         assert context["foo"] == "bar"
-        assert context["input"] == parent.output.value
+        assert context["input"] == parent.output.to_text()
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child

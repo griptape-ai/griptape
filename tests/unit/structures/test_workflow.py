@@ -80,11 +80,11 @@ class TestWorkflow:
 
         workflow._execution_args = ("test1", "test2")
 
-        assert task.input.value == "test1-test2"
+        assert task.input.to_text() == "test1-test2"
 
         workflow.run()
 
-        assert task.input.value == "-"
+        assert task.input.to_text() == "-"
 
     def test_run_topology_1(self):
         task1 = PromptTask("prompt1")
@@ -184,7 +184,7 @@ class TestWorkflow:
 
         context = workflow.context(task)
 
-        assert context["inputs"] == {parent.id: parent.output.value}
+        assert context["inputs"] == {parent.id: parent.output.to_text()}
         assert context["structure"] == workflow
         assert context["parents"] == {parent.id: parent}
         assert context["children"] == {child.id: child}

@@ -72,7 +72,7 @@ pipeline.add_tasks(
 
 result = pipeline.run("Give me a summary of https://en.wikipedia.org/wiki/Large_language_model")
 
-print(result.output.value)
+print(result.output.to_text())
 
 
 ```

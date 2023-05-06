@@ -3,5 +3,5 @@ Thought: {{ subtask.thought }}
 {% endif %}
 Action: {{ subtask.to_json() }}
 {% if subtask.output %}
-Observation: {{ subtask.output.value }}
+Observation: {{ subtask.output.to_text() }}
 {% endif %}

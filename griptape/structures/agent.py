@@ -52,8 +52,8 @@ class Agent(StructureWithMemory):
 
         if self.memory:
             run = Run(
-                input=self.task.input.value,
-                output=self.task.output.value
+                input=self.task.input.to_text(),
+                output=self.task.output.to_text()
             )
 
             self.memory.add_run(run)

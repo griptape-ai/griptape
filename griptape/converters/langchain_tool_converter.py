@@ -14,7 +14,7 @@ class LangchainToolConverter(BaseConverter):
         description = tool.full_activity_description(tool_activity).replace("{", "{{").replace("}", "}}")
 
         def _run(_self, value: str) -> str:
-            return self.executor.execute(tool_activity, TextArtifact(value)).value
+            return self.executor.execute(tool_activity, TextArtifact(value)).to_text()
 
         async def _arun(_self, value: str) -> str:
             raise NotImplementedError("async is not supported")

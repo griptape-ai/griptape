@@ -1,6 +1,6 @@
-Input: {{ task.input.value }}
+Input: {{ task.input.to_text() }}
 {% if task.output %}
-Output: {{ task.output.value }}
+Output: {{ task.output.to_text() }}
 
 {% else %}
 Output:

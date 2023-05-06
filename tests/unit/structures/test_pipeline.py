@@ -170,7 +170,7 @@ class TestPipeline:
 
         result = pipeline.run()
 
-        assert "mock output" in result.output.value
+        assert "mock output" in result.output.to_text()
         assert task.state == BaseTask.State.FINISHED
 
     def test_run_with_args(self):
@@ -180,11 +180,11 @@ class TestPipeline:
 
         pipeline._execution_args = ("test1", "test2")
 
-        assert task.input.value == "test1-test2"
+        assert task.input.to_text() == "test1-test2"
 
         pipeline.run()
 
-        assert task.input.value == "-"
+        assert task.input.to_text() == "-"
 
     def test_context(self):
         parent = PromptTask("parent")
@@ -202,7 +202,7 @@ class TestPipeline:
 
         context = pipeline.context(task)
 
-        assert context["input"] == parent.output.value
+        assert context["input"] == parent.output.to_text()
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child

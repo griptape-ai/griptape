@@ -45,7 +45,8 @@ class DockerExecutor(BaseExecutor):
         tool = tool_activity.__self__
         workdir = "/tool"
         tool_name = tool.class_name
-        input_value = (f'"{value.value}"' if isinstance(value.value, str) else value.value) if value else ""
+        text_value = value.to_text()
+        input_value = (f'"{text_value}"' if isinstance(text_value, str) else text_value) if value else ""
         command = [
             "python",
             "-c",

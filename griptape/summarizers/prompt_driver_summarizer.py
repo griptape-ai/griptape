@@ -23,7 +23,7 @@ class PromptDriverSummarizer(BaseSummarizer):
                         summary=previous_summary,
                         runs=runs
                     )
-                ).value
+                ).to_text()
             else:
                 return previous_summary
         except Exception as e:

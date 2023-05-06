@@ -25,6 +25,6 @@ class TestStorageRamp:
             driver=MemoryStorageDriver()
         )
 
-        assert mw.process_output(MockTool().test, TextArtifact("foo")).value.startswith(
+        assert mw.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
             'Output of "MockTool.test" was stored in ramp "MyRamp" with entry ID'
         )

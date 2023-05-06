@@ -107,7 +107,7 @@ class BaseTask(ABC):
         except Exception as e:
             self.structure.logger.error(f"Task {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorArtifact(str(e), exception=e, task=self)
+            self.output = ErrorArtifact(str(e))
         finally:
             self.state = BaseTask.State.FINISHED
 

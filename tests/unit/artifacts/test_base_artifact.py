@@ -10,7 +10,7 @@ class TestBaseArtifact:
         artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, TextArtifact)
-        assert artifact.value == "foobar"
+        assert artifact.to_text() == "foobar"
 
     def test_error_artifact_from_dict(self):
         dict_value = {
@@ -20,7 +20,7 @@ class TestBaseArtifact:
         artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, ErrorArtifact)
-        assert artifact.value == "foobar"
+        assert artifact.to_text() == "foobar"
 
     def test_unsupported_from_dict(self):
         dict_value = {

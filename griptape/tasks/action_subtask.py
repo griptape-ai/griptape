@@ -62,7 +62,7 @@ class ActionSubtask(PromptTask):
     def attach(self, parent_task: ToolkitTask):
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
-        self.__init_from_prompt(self.input.value)
+        self.__init_from_prompt(self.input.to_text())
 
     @property
     def task(self) -> Optional[ToolkitTask]:
@@ -77,12 +77,12 @@ class ActionSubtask(PromptTask):
         return [self.task.find_subtask(child_id) for child_id in self.child_ids]
 
     def before_run(self) -> None:
-        self.structure.logger.info(f"Subtask {self.id}\n{self.input.value}")
+        self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
         try:
             if self.action_name == "error":
-                self.output = ErrorArtifact(self.action_input, task=self.task)
+                self.output = ErrorArtifact(self.action_input)
             else:
                 if self.action_type == "tool":
                     if self._tool:
@@ -106,12 +106,12 @@ class ActionSubtask(PromptTask):
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorArtifact(str(e), exception=e, task=self.task)
+            self.output = ErrorArtifact(str(e))
         finally:
             return self.output
 
     def after_run(self) -> None:
-        self.structure.logger.info(f"Subtask {self.id}\nObservation: {self.output.value}")
+        self.structure.logger.info(f"Subtask {self.id}\nObservation: {self.output.to_text()}")
 
     def render(self) -> str:
         return J2("prompts/tasks/tool/subtask.j2").render(
