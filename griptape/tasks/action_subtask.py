@@ -2,16 +2,16 @@ from __future__ import annotations
 import ast
 import json
 import re
-from typing import TYPE_CHECKING, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Optional, Union
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
-from schema import Schema, And, Literal
+from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
+from griptape.core import BaseTool, ActivityMixin
 from griptape.ramps import BaseRamp
 from griptape.tasks import PromptTask
-from griptape.core import BaseTool, ActivityMixin
 from griptape.utils import J2
 
 if TYPE_CHECKING:

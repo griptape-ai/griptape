@@ -8,13 +8,15 @@ class BaseArtifact(ABC):
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     @classmethod
-    def from_dict(cls, value: dict) -> BaseArtifact:
-        from griptape.schemas import TextArtifactSchema, ErrorArtifactSchema
+    def from_dict(cls, artifact_dict: dict) -> BaseArtifact:
+        from griptape.schemas import TextArtifactSchema, ErrorArtifactSchema, FileArtifactSchema
 
-        if value["type"] == "TextArtifact":
-            return TextArtifactSchema().load(value)
-        elif value["type"] == "ErrorArtifact":
-            return ErrorArtifactSchema().load(value)
+        if artifact_dict["type"] == "TextArtifact":
+            return TextArtifactSchema().load(artifact_dict)
+        elif artifact_dict["type"] == "ErrorArtifact":
+            return ErrorArtifactSchema().load(artifact_dict)
+        elif artifact_dict["type"] == "FileArtifact":
+            return FileArtifactSchema().load(artifact_dict)
         else:
             raise ValueError("Unsupported artifact type")
 
