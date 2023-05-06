@@ -9,9 +9,9 @@ Output: <your final response>
 
 "Input:", "Thought:", "Action:", "Observation:", and "Output:" must ALWAYS start on a new line.
 
-Action must ALWAYS be a minified JSON object starting on the same like as "Action:"
+Action must ALWAYS be a minified JSON object starting on the same line as "Action:"
 
-If you don't need to perform an action or if you don't know which action to perform, ignore Thought/Action/Observation and go straight to Output.
+If you don't need to perform an action or if you don't know which action to perform, ignore Thought/Action/Observation and go straight to Output. NEVER make up action types.
 
 Actions of type "tool"
 {% if tool_names|length > 0 %}
