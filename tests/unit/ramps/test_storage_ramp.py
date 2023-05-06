@@ -6,25 +6,25 @@ from tests.mocks.mock_tool.tool import MockTool
 
 class TestStorageRamp:
     def test_constructor(self):
-        mw = StorageRamp(
+        ramp = StorageRamp(
             driver=MemoryStorageDriver()
         )
 
-        assert mw.name == "StorageRamp"
+        assert ramp.name == "StorageRamp"
 
-        mw = StorageRamp(
+        ramp = StorageRamp(
             name="MyRamp",
             driver=MemoryStorageDriver()
         )
 
-        assert mw.name == "MyRamp"
+        assert ramp.name == "MyRamp"
 
     def test_process_output(self):
-        mw = StorageRamp(
+        ramp = StorageRamp(
             name="MyRamp",
             driver=MemoryStorageDriver()
         )
 
-        assert mw.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
+        assert ramp.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
             'Output of "MockTool.test" was stored in ramp "MyRamp" with entry ID'
         )

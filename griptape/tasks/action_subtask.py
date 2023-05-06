@@ -195,7 +195,7 @@ class ActionSubtask(PromptTask):
                         self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "ramp":
                     if self.action_name:
-                        self._ramps = self.task.find_ramps(self.action_name)
+                        self._ramps = self.task.find_ramp(self.action_name)
 
                     if self._ramps:
                         self.__validate_activity_mixin(self._ramps)

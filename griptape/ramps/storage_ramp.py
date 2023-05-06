@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from llama_index import Document, GPTVectorStoreIndex
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
@@ -48,7 +48,7 @@ class StorageRamp(BaseRamp):
             ): str
         })
     })
-    def search_entry(self, value: dict) -> BaseArtifact:
+    def search_entry(self, value: dict) -> Union[TextArtifact, ErrorArtifact]:
         text = self.driver.load(value["id"])
 
         if text:
@@ -69,7 +69,7 @@ class StorageRamp(BaseRamp):
             description="Storage entry ID"
         )
     })
-    def summarize(self, value: str) -> BaseArtifact:
+    def summarize(self, value: str) -> Union[TextArtifact, ErrorArtifact]:
         text = self.driver.load(value)
 
         if text:

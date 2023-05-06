@@ -102,7 +102,7 @@ class ToolkitTask(PromptTask):
             None
         )
 
-    def find_ramps(self, ramp_name: str) -> Optional[BaseRamp]:
+    def find_ramp(self, ramp_name: str) -> Optional[BaseRamp]:
         return next(
             (r for r in self.ramps if r.name == ramp_name),
             None

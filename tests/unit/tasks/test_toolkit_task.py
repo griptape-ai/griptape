@@ -125,7 +125,7 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_ramps(self):
+    def test_find_ramp(self):
         m1 = StorageRamp(name="Ramp1", driver=MemoryStorageDriver())
         m2 = StorageRamp(name="Ramp2", driver=MemoryStorageDriver())
 
@@ -139,8 +139,8 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        assert task.find_ramps("Ramp1") == m1
-        assert task.find_ramps("Ramp2") == m2
+        assert task.find_ramp("Ramp1") == m1
+        assert task.find_ramp("Ramp2") == m2
 
     def test_ramps(self):
         tool1 = MockTool(
