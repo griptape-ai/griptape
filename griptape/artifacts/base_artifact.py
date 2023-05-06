@@ -9,14 +9,14 @@ class BaseArtifact(ABC):
 
     @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:
-        from griptape.schemas import TextArtifactSchema, ErrorArtifactSchema, FileArtifactSchema
+        from griptape.schemas import TextArtifactSchema, ErrorArtifactSchema, BlobArtifactSchema
 
         if artifact_dict["type"] == "TextArtifact":
             return TextArtifactSchema().load(artifact_dict)
         elif artifact_dict["type"] == "ErrorArtifact":
             return ErrorArtifactSchema().load(artifact_dict)
-        elif artifact_dict["type"] == "FileArtifact":
-            return FileArtifactSchema().load(artifact_dict)
+        elif artifact_dict["type"] == "BlobArtifact":
+            return BlobArtifactSchema().load(artifact_dict)
         else:
             raise ValueError("Unsupported artifact type")
 
