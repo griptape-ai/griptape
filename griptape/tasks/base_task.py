@@ -40,6 +40,12 @@ class BaseTask(ABC):
     def children(self) -> list[BaseTask]:
         return [self.structure.find_task(child_id) for child_id in self.child_ids]
 
+    def __rshift__(self, child: BaseTask) -> BaseTask:
+        return self.add_child(child)
+
+    def __lshift__(self, child: BaseTask) -> BaseTask:
+        return self.add_parent(child)
+
     def add_child(self, child: BaseTask) -> BaseTask:
         if self.structure:
             child.structure = self.structure

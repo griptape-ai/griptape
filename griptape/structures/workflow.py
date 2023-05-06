@@ -13,6 +13,9 @@ from griptape.utils import J2
 class Workflow(Structure):
     executor: futures.Executor = field(default=futures.ThreadPoolExecutor(), kw_only=True)
 
+    def __add__(self, other: BaseTask) -> BaseTask:
+        return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
+
     def add_task(self, task: BaseTask) -> BaseTask:
         task.structure = self
 

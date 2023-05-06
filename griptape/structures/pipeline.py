@@ -22,6 +22,9 @@ class Pipeline(StructureWithMemory):
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
 
+    def __add__(self, other: BaseTask) -> BaseTask:
+        return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
+
     def add_task(self, task: BaseTask) -> BaseTask:
         if self.last_task():
             self.last_task().add_child(task)

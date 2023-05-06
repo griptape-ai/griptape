@@ -32,7 +32,7 @@ class TestPipeline:
             memory=Memory()
         )
 
-        pipeline.add_tasks(first_task, second_task, third_task)
+        pipeline + [first_task, second_task, third_task]
 
         assert pipeline.memory is not None
         assert len(pipeline.memory.runs) == 0
@@ -52,9 +52,9 @@ class TestPipeline:
             prompt_driver=MockDriver()
         )
 
-        pipeline.add_task(first_task)
-        pipeline.add_task(second_task)
-        pipeline.add_task(third_task)
+        pipeline + first_task
+        pipeline + second_task
+        pipeline + third_task
 
         assert pipeline.first_task().id is first_task.id
         assert pipeline.tasks[1].id is second_task.id
@@ -69,8 +69,8 @@ class TestPipeline:
             prompt_driver=MockDriver()
         )
 
-        pipeline.add_task(first_task)
-        pipeline.add_task(second_task)
+        pipeline + first_task
+        pipeline + second_task
 
         assert len(pipeline.tasks) == 2
         assert first_task in pipeline.tasks
@@ -90,7 +90,7 @@ class TestPipeline:
             prompt_driver=MockDriver()
         )
 
-        pipeline.add_tasks(first_task, second_task)
+        pipeline + [first_task, second_task]
 
         assert len(pipeline.tasks) == 2
         assert first_task in pipeline.tasks
@@ -110,14 +110,14 @@ class TestPipeline:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
 
-        pipeline.add_task(task1)
+        pipeline + [task1]
 
         # context and first input
         assert len(pipeline.prompt_stack(task1)) == 2
 
         pipeline.run()
 
-        pipeline.add_task(task2)
+        pipeline + [task2]
 
         # context and second input
         assert len(pipeline.prompt_stack(task2)) == 2
@@ -131,14 +131,14 @@ class TestPipeline:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
 
-        pipeline.add_task(task1)
+        pipeline + [task1]
 
         # context and first input
         assert len(pipeline.prompt_stack(task1)) == 2
 
         pipeline.run()
 
-        pipeline.add_task(task2)
+        pipeline + task2
 
         # context, memory, and second input
         assert len(pipeline.prompt_stack(task2)) == 3
@@ -150,7 +150,7 @@ class TestPipeline:
 
         task = PromptTask("test")
 
-        pipeline.add_task(task)
+        pipeline + task
 
         pipeline.run()
 
@@ -164,7 +164,7 @@ class TestPipeline:
     def test_run(self):
         task = PromptTask("test")
         pipeline = Pipeline(prompt_driver=MockDriver())
-        pipeline.add_task(task)
+        pipeline + task
 
         assert task.state == BaseTask.State.PENDING
 
@@ -176,7 +176,7 @@ class TestPipeline:
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
         pipeline = Pipeline(prompt_driver=MockDriver())
-        pipeline.add_tasks(task)
+        pipeline + [task]
 
         pipeline._execution_args = ("test1", "test2")
 
@@ -192,7 +192,7 @@ class TestPipeline:
         child = PromptTask("child")
         pipeline = Pipeline(prompt_driver=MockDriver())
 
-        pipeline.add_tasks(parent, task, child)
+        pipeline + [parent, task, child]
 
         context = pipeline.context(task)
 

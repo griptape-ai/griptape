@@ -26,8 +26,8 @@ class TestWorkflow:
             prompt_driver=MockDriver()
         )
 
-        workflow.add_task(first_task)
-        workflow.add_task(second_task)
+        workflow + first_task
+        workflow + second_task
 
         assert len(workflow.tasks) == 2
         assert first_task in workflow.tasks
@@ -47,7 +47,7 @@ class TestWorkflow:
             prompt_driver=MockDriver()
         )
 
-        workflow.add_tasks(first_task, second_task)
+        workflow + [first_task, second_task]
 
         assert len(workflow.tasks) == 2
         assert first_task in workflow.tasks
@@ -63,7 +63,7 @@ class TestWorkflow:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
         workflow = Workflow(prompt_driver=MockDriver())
-        workflow.add_tasks(task1, task2)
+        workflow + [task1, task2]
 
         assert task1.state == BaseTask.State.PENDING
         assert task2.state == BaseTask.State.PENDING
@@ -76,7 +76,7 @@ class TestWorkflow:
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
         workflow = Workflow(prompt_driver=MockDriver())
-        workflow.add_tasks(task)
+        workflow + task
 
         workflow._execution_args = ("test1", "test2")
 
@@ -93,9 +93,9 @@ class TestWorkflow:
         workflow = Workflow(prompt_driver=MockDriver())
 
         # task1 splits into task2 and task3
-        workflow.add_task(task1)
-        task1.add_child(task2)
-        task3.add_parent(task1)
+        workflow + task1
+        task1 >> task2
+        task3 << task1
 
         workflow.run()
 
@@ -110,9 +110,9 @@ class TestWorkflow:
         workflow = Workflow(prompt_driver=MockDriver())
 
         # task1 and task2 converge into task3
-        workflow.add_tasks(task1, task2)
-        task1.add_child(task3)
-        task3.add_parent(task2)
+        workflow + [task1, task2]
+        task1 >> task3
+        task3 << task2
 
         workflow.run()
 
@@ -126,9 +126,9 @@ class TestWorkflow:
         task3 = PromptTask("prompt3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_task(task1)
-        task1.add_child(task2)
-        task3.add_parent(task1)
+        workflow + task1
+        task1 >> task2
+        task3 << task1
 
         assert len(workflow.output_tasks()) == 2
         assert task2 in workflow.output_tasks()
@@ -140,9 +140,9 @@ class TestWorkflow:
         task3 = PromptTask("prompt3", id="task3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_task(task1)
-        task1.add_child(task2)
-        task3.add_parent(task1)
+        workflow + task1
+        task1 >> task2
+        task3 << task1
 
         graph = workflow.to_graph()
 
@@ -155,9 +155,9 @@ class TestWorkflow:
         task3 = PromptTask("prompt3")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_task(task1)
-        task1.add_child(task2)
-        task3.add_parent(task1)
+        workflow + task1
+        task1 >> task2
+        task3 << task1
 
         ordered_tasks = workflow.order_tasks()
 
@@ -171,10 +171,10 @@ class TestWorkflow:
         child = PromptTask("child")
         workflow = Workflow(prompt_driver=MockDriver())
 
-        workflow.add_task(parent)
+        workflow + parent
 
-        parent.add_child(task)
-        task.add_child(child)
+        parent >> task
+        task >> child
 
         context = workflow.context(task)
 
