@@ -1,10 +1,12 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import Union
 from attr import define, field, Factory
 
 
 @define
 class BaseArtifact(ABC):
+    value: Union[str, bytes] = field()
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     @classmethod
