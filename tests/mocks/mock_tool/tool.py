@@ -1,5 +1,5 @@
 from attr import define, field
-from schema import Schema
+from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.core import BaseTool
 from griptape.core.decorators import activity
@@ -13,8 +13,9 @@ class MockTool(BaseTool):
     @activity(config={
         "name": "test",
         "description": "test description: {{ foo }}",
-        "schema": Schema(
-            str,
+        "schema": Schema({
+                Literal("test"): str
+            },
             description="Test input"
         ),
         "foo": "bar"
@@ -25,8 +26,9 @@ class MockTool(BaseTool):
     @activity(config={
         "name": "test_error",
         "description": "test description: {{ foo }}",
-        "schema": Schema(
-            str,
+        "schema": Schema({
+                Literal("test"): str
+            },
             description="Test input"
         ),
         "foo": "bar"
@@ -37,8 +39,9 @@ class MockTool(BaseTool):
     @activity(config={
         "name": "test_str_output",
         "description": "test description: {{ foo }}",
-        "schema": Schema(
-            str,
+        "schema": Schema({
+                Literal("test"): str
+            },
             description="Test input"
         ),
         "foo": "bar"
@@ -56,11 +59,12 @@ class MockTool(BaseTool):
     @activity(config={
         "name": "test_with_required_ramp",
         "description": "test description",
-        "schema": Schema(
-            str,
+        "schema": Schema({
+                Literal("test"): str
+            },
             description="Test input"
         ),
-        "require_ramp": True
+        "pass_artifact": True
     })
     def test_with_required_ramp(self, value: str) -> str:
         return f"ack {value}"

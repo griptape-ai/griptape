@@ -2,10 +2,22 @@ import inspect
 from typing import Optional
 from attr import define, field
 from jinja2 import Template
+from schema import Schema, Literal
 
 
 @define
 class ActivityMixin:
+    RAMP_SCHEMA = {
+        Literal(
+            "ramp_name",
+            description="Ramp to should be used to load blob or text into the tool"
+        ): str,
+        Literal(
+            "ramp_item_id",
+            description="ID of the item to load from the ramp and pass to the tool"
+        ): str
+    }
+
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
 
@@ -46,19 +58,19 @@ class ActivityMixin:
 
     def activity_name(self, activity: callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
+            raise Exception("This method is not an activity.")
         else:
             return activity.config["name"]
 
     def activity_description(self, activity: callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
+            raise Exception("This method is not an activity.")
         else:
             return Template(activity.config["description"]).render(self.schema_template_args)
 
     def full_activity_description(self, activity: callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
+            raise Exception("This method is not an activity.")
         else:
             activity_schema = self.activity_schema(activity)
             description_lines = [
@@ -74,14 +86,21 @@ class ActivityMixin:
 
     def activity_schema(self, activity: callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
+            raise Exception("This method is not an activity.")
+        elif self.should_pass_artifact(activity):
+            base_schema = activity.config["schema"]
+            schema_with_ramp = base_schema.schema if base_schema else {}
+
+            schema_with_ramp.update(self.RAMP_SCHEMA)
+
+            return Schema(schema_with_ramp).json_schema("InputSchema")
         elif activity.config["schema"]:
-            return activity.config["schema"].json_schema("ToolInputSchema")
+            return activity.config["schema"].json_schema("InputSchema")
         else:
             return None
 
-    def is_ramp_required(self, activity: callable) -> bool:
+    def should_pass_artifact(self, activity: callable) -> bool:
         if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not a tool activity.")
+            raise Exception("This method is not an activity.")
         else:
-            return activity.config["require_ramp"]
+            return activity.config.get("pass_artifact", False)

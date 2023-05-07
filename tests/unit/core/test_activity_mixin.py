@@ -27,7 +27,14 @@ class TestActivityMixin:
 
     def test_activity_schema(self, tool):
         assert tool.activity_schema(tool.test) == \
-               tool.test.config["schema"].json_schema("ToolInputSchema")
+               tool.test.config["schema"].json_schema("InputSchema")
+
+    def test_activity_schema_with_ramp(self, tool):
+        props = tool.activity_schema(tool.test_with_required_ramp)["properties"]
+
+        assert props["test"]
+        assert props["ramp_name"]
+        assert props["ramp_item_id"]
 
     def test_activity_with_no_schema(self, tool):
         assert tool.activity_schema(tool.test_no_schema) is None
@@ -72,6 +79,6 @@ class TestActivityMixin:
 
         assert len(tool.activities()) == 4
 
-    def test_is_ramp_required(self, tool):
-        assert tool.is_ramp_required(tool.test) is False
-        assert tool.is_ramp_required(tool.test_with_required_ramp) is True
+    def test_should_pass_artifact(self, tool):
+        assert tool.should_pass_artifact(tool.test) is False
+        assert tool.should_pass_artifact(tool.test_with_required_ramp) is True
