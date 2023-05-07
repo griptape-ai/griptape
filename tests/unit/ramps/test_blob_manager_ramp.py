@@ -47,7 +47,7 @@ class TestBlobManagerRamp:
     def test_save(self):
         with tempfile.TemporaryDirectory() as blob_dir:
             ramp = BlobManagerRamp(dir=blob_dir)
-            artifact = BlobArtifact("foo.txt", path="bar", value=b"foobar")
+            artifact = BlobArtifact("foo.txt", dir="bar", value=b"foobar")
 
             ramp.add_blob(artifact)
 
