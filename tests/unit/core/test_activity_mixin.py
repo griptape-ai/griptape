@@ -26,8 +26,12 @@ class TestActivityMixin:
         assert "baz" not in description
 
     def test_activity_schema(self, tool):
-        assert tool.activity_schema(tool.test) == \
+        schema = tool.activity_schema(tool.test)
+        assert schema == \
                tool.test.config["schema"].json_schema("InputSchema")
+
+        assert schema["properties"].get("ramp_name") is None
+        assert schema["properties"].get("ramp_item_id") is None
 
     def test_activity_schema_with_ramp(self, tool):
         props = tool.activity_schema(tool.test_with_required_ramp)["properties"]
