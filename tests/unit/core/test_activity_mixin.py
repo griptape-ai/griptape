@@ -42,7 +42,7 @@ class TestActivityMixin:
         assert tool.find_activity("test_str_output") is None
 
     def test_activities(self, tool):
-        assert len(tool.activities()) == 4
+        assert len(tool.activities()) == 5
         assert tool.activities()[0] == tool.test
 
     def test_allowlist_and_denylist_validation(self):
@@ -70,4 +70,8 @@ class TestActivityMixin:
             denylist=["test"]
         )
 
-        assert len(tool.activities()) == 3
+        assert len(tool.activities()) == 4
+
+    def test_is_ramp_required(self, tool):
+        assert tool.is_ramp_required(tool.test) is False
+        assert tool.is_ramp_required(tool.test_with_required_ramp) is True

@@ -79,3 +79,9 @@ class ActivityMixin:
             return activity.config["schema"].json_schema("ToolInputSchema")
         else:
             return None
+
+    def is_ramp_required(self, activity: callable) -> bool:
+        if activity is None or not getattr(activity, "is_activity", False):
+            raise Exception("This method is not a tool activity.")
+        else:
+            return activity.config["require_ramp"]

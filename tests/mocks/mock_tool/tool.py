@@ -48,10 +48,22 @@ class MockTool(BaseTool):
 
     @activity(config={
         "name": "test_no_schema",
-        "description": "test description: {{ foo }}"
+        "description": "test description"
     })
     def test_no_schema(self) -> str:
         return f"no schema"
+
+    @activity(config={
+        "name": "test_with_required_ramp",
+        "description": "test description",
+        "schema": Schema(
+            str,
+            description="Test input"
+        ),
+        "require_ramp": True
+    })
+    def test_with_required_ramp(self, value: str) -> str:
+        return f"ack {value}"
 
     @property
     def schema_template_args(self) -> dict:
