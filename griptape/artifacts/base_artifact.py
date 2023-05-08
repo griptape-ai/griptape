@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 from abc import ABC, abstractmethod
 from typing import Union
 from attr import define, field, Factory
@@ -22,10 +23,13 @@ class BaseArtifact(ABC):
         else:
             raise ValueError("Unsupported artifact type")
 
+    def __str__(self):
+        return json.dumps(self.to_dict())
+
     @abstractmethod
     def to_text(self) -> str:
         ...
 
     @abstractmethod
-    def __str__(self):
+    def to_dict(self) -> dict:
         ...

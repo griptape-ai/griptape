@@ -1,4 +1,3 @@
-import json
 import os.path
 from typing import Optional
 from attr import field, define
@@ -7,8 +6,8 @@ from griptape.artifacts import BaseArtifact
 
 @define(frozen=True)
 class BlobArtifact(BaseArtifact):
-    value: bytes = field(kw_only=True)
     name: str = field()
+    value: bytes = field(kw_only=True)
     dir: Optional[str] = field(default=None, kw_only=True)
 
     @dir.validator
@@ -23,7 +22,7 @@ class BlobArtifact(BaseArtifact):
     def to_text(self) -> str:
         return self.full_path
 
-    def __str__(self):
+    def to_dict(self) -> dict:
         from griptape.schemas import BlobArtifactSchema
 
-        return json.dumps(BlobArtifactSchema().dump(self))
+        return BlobArtifactSchema().dump(self)

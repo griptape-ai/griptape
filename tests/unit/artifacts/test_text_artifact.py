@@ -8,3 +8,6 @@ class TestTextArtifact:
 
     def test_token_count(self):
         assert TextArtifact("foobarbaz").token_count(TiktokenTokenizer()) == 2
+
+    def test_to_dict(self):
+        assert TextArtifact("foobar").to_dict()["value"] == "foobar"

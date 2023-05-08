@@ -8,6 +8,9 @@ class TestBlobArtifact:
     def test_to_text(self):
         assert BlobArtifact("foobar.txt", dir="foo", value=b"foobar").to_text() == "foo/foobar.txt"
 
+    def test_to_dict(self):
+        assert BlobArtifact("foobar.txt", dir="foo", value=b"foobar").to_dict()["name"] == "foobar.txt"
+
     def test_path_validation(self):
         with pytest.raises(ValueError):
             BlobArtifact("foobar.txt", dir="/foo", value=b"foobar").to_text()

@@ -1,4 +1,3 @@
-import json
 from attr import define, field
 from griptape.artifacts import BaseArtifact
 
@@ -10,7 +9,7 @@ class ErrorArtifact(BaseArtifact):
     def to_text(self) -> str:
         return self.value
 
-    def __str__(self):
+    def to_dict(self) -> dict:
         from griptape.schemas import ErrorArtifactSchema
 
-        return json.dumps(ErrorArtifactSchema().dump(self))
+        return ErrorArtifactSchema().dump(self)

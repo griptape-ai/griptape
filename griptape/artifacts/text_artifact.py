@@ -1,4 +1,3 @@
-import json
 from attr import define, field
 from griptape.artifacts import BaseArtifact
 from griptape.tokenizers import BaseTokenizer
@@ -14,7 +13,7 @@ class TextArtifact(BaseArtifact):
     def to_text(self) -> str:
         return self.value
 
-    def __str__(self):
+    def to_dict(self) -> dict:
         from griptape.schemas import TextArtifactSchema
 
-        return json.dumps(TextArtifactSchema().dump(self))
+        return TextArtifactSchema().dump(self)
