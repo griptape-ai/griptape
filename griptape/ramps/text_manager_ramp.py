@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @define
-class StorageRamp(BaseRamp):
+class TextManagerRamp(BaseRamp):
     driver: BaseStorageDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
 

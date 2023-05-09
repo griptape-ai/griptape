@@ -1,18 +1,12 @@
 from griptape.artifacts import TextArtifact
 from griptape.drivers import MemoryStorageDriver
-from griptape.ramps import StorageRamp
+from griptape.ramps import TextManagerRamp
 from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestStorageRamp:
+class TestTextManagerRamp:
     def test_constructor(self):
-        ramp = StorageRamp(
-            driver=MemoryStorageDriver()
-        )
-
-        assert ramp.name == "StorageRamp"
-
-        ramp = StorageRamp(
+        ramp = TextManagerRamp(
             name="MyRamp",
             driver=MemoryStorageDriver()
         )
@@ -20,7 +14,7 @@ class TestStorageRamp:
         assert ramp.name == "MyRamp"
 
     def test_process_output(self):
-        ramp = StorageRamp(
+        ramp = TextManagerRamp(
             name="MyRamp",
             driver=MemoryStorageDriver()
         )

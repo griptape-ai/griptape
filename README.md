@@ -38,12 +38,12 @@ from griptape.core import ToolLoader
 from griptape.drivers import OpenAiPromptDriver, MemoryStorageDriver
 from griptape.executors import LocalExecutor
 from griptape.memory import Memory
-from griptape.ramps import StorageRamp
+from griptape.ramps import TextManagerRamp
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, PromptTask
 from griptape.tools import WebScraper
 
-storage = StorageRamp(
+storage = TextManagerRamp(
     driver=MemoryStorageDriver()
 )
 

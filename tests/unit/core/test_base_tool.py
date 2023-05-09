@@ -6,7 +6,7 @@ from schema import SchemaMissingKeyError
 
 from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import MemoryStorageDriver
-from griptape.ramps import StorageRamp
+from griptape.ramps import TextManagerRamp
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -84,10 +84,10 @@ class TestBaseTool:
         tool = MockTool(
             ramps={
                 "test": [
-                    StorageRamp(
+                    TextManagerRamp(
                         name="Ramp1", driver=MemoryStorageDriver()
                     ),
-                    StorageRamp(
+                    TextManagerRamp(
                         name="Ramp2", driver=MemoryStorageDriver()
                     )
                 ]
@@ -101,10 +101,10 @@ class TestBaseTool:
             MockTool(
                 ramps={
                     "test": [
-                        StorageRamp(
+                        TextManagerRamp(
                             name="Ramp1", driver=MemoryStorageDriver()
                         ),
-                        StorageRamp(
+                        TextManagerRamp(
                             name="Ramp1", driver=MemoryStorageDriver()
                         )
                     ]
@@ -115,7 +115,7 @@ class TestBaseTool:
             MockTool(
                 ramps={
                     "fake_activity": [
-                        StorageRamp(
+                        TextManagerRamp(
                             name="Ramp1", driver=MemoryStorageDriver()
                         )
                     ]
@@ -125,12 +125,12 @@ class TestBaseTool:
         assert MockTool(
                 ramps={
                     "test": [
-                        StorageRamp(
+                        TextManagerRamp(
                             name="Ramp1", driver=MemoryStorageDriver()
                         )
                     ],
                     "test_str_output": [
-                        StorageRamp(
+                        TextManagerRamp(
                             name="Ramp1", driver=MemoryStorageDriver()
                         )
                     ]
