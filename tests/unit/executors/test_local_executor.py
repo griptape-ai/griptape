@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
 from griptape.executors import LocalExecutor
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -29,5 +29,5 @@ class TestLocalExecutor:
     def test_execute_str_output(self, executor, tool):
         output = executor.execute(tool.test_str_output, {"test": "test"})
 
-        assert isinstance(output, TextArtifact)
+        assert isinstance(output, InfoArtifact)
         assert output.to_text() == "ack test"

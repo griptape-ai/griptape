@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Union, Optional
 import inspect
 import os
 from abc import ABC, abstractmethod
-from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact
 
 if TYPE_CHECKING:
     from griptape.core import BaseTool
@@ -44,9 +44,9 @@ class BaseExecutor(ABC):
             try:
                 return BaseArtifact.from_dict(json.loads(result))
             except Exception:
-                logging.error("Error converting executor result to an artifact; defaulting to TextArtifact")
+                logging.error("Error converting executor result to an artifact; defaulting to InfoArtifact")
 
-                return TextArtifact(result)
+                return InfoArtifact(result)
 
     def tool_dir(self, tool: BaseTool):
         class_file = inspect.getfile(tool.__class__)

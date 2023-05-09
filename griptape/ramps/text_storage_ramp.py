@@ -1,7 +1,7 @@
 from typing import Union, Optional
 from attr import define, field
 from schema import Schema, Literal
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact
 from griptape.core.decorators import activity
 from griptape.ramps import BaseRamp
 from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
@@ -23,7 +23,7 @@ class TextStorageRamp(BaseRamp):
                 key=key
             )
 
-            return TextArtifact(output)
+            return InfoArtifact(output)
         else:
             return artifact
 

@@ -1,6 +1,6 @@
 from typing import Optional
 from attr import define, field
-from griptape.artifacts import BlobArtifact, BaseArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact
 from griptape.drivers import BaseBlobStorageDriver, MemoryBlobStorageDriver
 from griptape.ramps import BaseRamp
 
@@ -22,7 +22,7 @@ class BlobStorageRamp(BaseRamp):
                 full_path=artifact.full_path
             )
 
-            return TextArtifact(output)
+            return InfoArtifact(output)
         else:
             return artifact
 
