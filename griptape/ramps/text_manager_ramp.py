@@ -33,32 +33,32 @@ class TextManagerRamp(BaseRamp):
         if value:
             return TextArtifact(value)
         else:
-            return ErrorArtifact(f"can't find record {name}")
+            return ErrorArtifact(f"can't find artifact {name}")
 
     @activity(config={
-        "name": "query_record",
-        "description": "Can be used to query a storage record for any content",
+        "name": "query_artifact",
+        "description": "Can be used to query an artifact in the ramp for any content",
         "schema": Schema({
             Literal(
                 "id",
-                description="Storage record ID"
+                description="Storage artifact ID"
             ): str,
             Literal(
                 "query",
-                description="Query to run against the storage record"
+                description="Query to run against the artifact"
             ): str
         })
     })
-    def search_record(self, value: dict) -> Union[TextArtifact, ErrorArtifact]:
+    def query_artifact(self, value: dict) -> Union[TextArtifact, ErrorArtifact]:
         return self.driver.query_record(value["id"], value['query'])
 
     @activity(config={
-        "name": "summarize_record",
-        "description": "Can be used to generate a summary of a storage record",
+        "name": "summarize_artifact",
+        "description": "Can be used to generate a summary of a ramp artifact",
         "schema": Schema(
             str,
-            description="Storage record ID"
+            description="Ramp artifact ID"
         )
     })
-    def summarize_record(self, value: str) -> Union[TextArtifact, ErrorArtifact]:
+    def summarize_artifact(self, value: str) -> Union[TextArtifact, ErrorArtifact]:
         return self.driver.summarize_record(value)

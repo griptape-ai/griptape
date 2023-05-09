@@ -141,7 +141,7 @@ class TestBaseTool:
         artifact1 = TextArtifact("test")
         artifact2 = BlobArtifact("blob.txt", value=b"foobar")
         params = {
-            "records": {
+            "artifacts": {
                 "values": [artifact1.to_dict(), artifact2.to_dict()]
             }
         }

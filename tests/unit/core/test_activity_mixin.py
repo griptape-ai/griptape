@@ -36,7 +36,7 @@ class TestActivityMixin:
         props = tool.activity_schema(tool.test_with_required_ramp)["properties"]
 
         assert props["test"]
-        assert isinstance(props["records"], dict)
+        assert isinstance(props["artifacts"], dict)
 
     def test_activity_with_no_schema(self, tool):
         assert tool.activity_schema(tool.test_no_schema) is None

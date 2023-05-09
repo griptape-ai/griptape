@@ -16,25 +16,25 @@ class BaseRamp(ActivityMixin, ABC):
         return artifact
 
     def load_artifacts(self, value: Optional[dict]) -> Optional[dict]:
-        record_names = []
+        artifact_names = []
 
         if value:
-            sources = value.get("records", {}).get("sources", [])
+            sources = value.get("artifacts", {}).get("sources", [])
 
             for source in sources:
                 if source["ramp_name"] == self.name:
-                    record_names.extend(source["record_names"])
+                    artifact_names.extend(source["artifact_names"])
 
-        if len(record_names) > 0:
+        if len(artifact_names) > 0:
             new_value = value.copy()
 
-            new_value.update({"records": {"values": []}})
+            new_value.update({"artifacts": {"values": []}})
 
-            for record_name in record_names:
-                artifact = self.load_artifact(record_name)
+            for artifact_name in artifact_names:
+                artifact = self.load_artifact(artifact_name)
 
                 if artifact:
-                    new_value["records"]["values"].append(artifact.to_dict())
+                    new_value["artifacts"]["values"].append(artifact.to_dict())
 
             return new_value
         else:

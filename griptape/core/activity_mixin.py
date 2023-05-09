@@ -8,16 +8,16 @@ from schema import Schema, Literal
 @define
 class ActivityMixin:
     RAMP_SCHEMA = {
-        "records": {
+        "artifacts": {
             "sources": [
                 {
                     Literal(
                         "ramp_name",
-                        description="Name of the ramp that should be used to load records into the tool"
+                        description="Name of the ramp that should be used to load artifacts into the tool"
                     ): str,
                     Literal(
-                        "record_names",
-                        description="Names of the records to load from the ramp and pass to the tool"
+                        "artifact_names",
+                        description="Names of the artifacts to load from the ramp and pass to the tool"
                     ): []
                 }
             ]
