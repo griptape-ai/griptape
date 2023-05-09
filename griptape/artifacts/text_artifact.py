@@ -16,4 +16,4 @@ class TextArtifact(BaseArtifact):
     def to_dict(self) -> dict:
         from griptape.schemas import TextArtifactSchema
 
-        return TextArtifactSchema().dump(self)
+        return dict(TextArtifactSchema().dump(self))

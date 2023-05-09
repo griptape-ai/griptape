@@ -25,4 +25,4 @@ class BlobArtifact(BaseArtifact):
     def to_dict(self) -> dict:
         from griptape.schemas import BlobArtifactSchema
 
-        return BlobArtifactSchema().dump(self)
+        return dict(BlobArtifactSchema().dump(self))

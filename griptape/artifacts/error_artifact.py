@@ -12,4 +12,4 @@ class ErrorArtifact(BaseArtifact):
     def to_dict(self) -> dict:
         from griptape.schemas import ErrorArtifactSchema
 
-        return ErrorArtifactSchema().dump(self)
+        return dict(ErrorArtifactSchema().dump(self))

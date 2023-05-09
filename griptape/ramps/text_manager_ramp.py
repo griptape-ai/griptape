@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 from attr import define, field
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
@@ -26,6 +26,9 @@ class TextManagerRamp(BaseRamp):
             return TextArtifact(output)
         else:
             return artifact
+
+    def load_artifact(self, name: str) -> Optional[BaseArtifact]:
+        return self.driver.load(name)
 
     @activity(config={
         "name": "query_record",

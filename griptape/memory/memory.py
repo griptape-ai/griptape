@@ -48,7 +48,7 @@ class Memory:
     def to_dict(self) -> dict:
         from griptape.schemas import MemorySchema
 
-        return MemorySchema().dump(self)
+        return dict(MemorySchema().dump(self))
 
     @classmethod
     def from_dict(cls, memory_dict: dict) -> Memory:

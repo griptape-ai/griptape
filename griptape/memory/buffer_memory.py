@@ -16,7 +16,7 @@ class BufferMemory(Memory):
             self.runs.pop(0)
 
     def to_dict(self) -> dict:
-        return BufferMemorySchema().dump(self)
+        return dict(BufferMemorySchema().dump(self))
 
     @classmethod
     def from_dict(cls, memory_dict: dict) -> BufferMemory:

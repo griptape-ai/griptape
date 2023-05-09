@@ -50,7 +50,7 @@ class SummaryMemory(Memory):
         )
 
     def to_dict(self) -> dict:
-        return SummaryMemorySchema().dump(self)
+        return dict(SummaryMemorySchema().dump(self))
 
     @classmethod
     def from_dict(cls, memory_dict: dict) -> SummaryMemory:
