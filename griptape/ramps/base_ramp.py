@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact
@@ -40,5 +40,7 @@ class BaseRamp(ActivityMixin, ABC):
         else:
             return value
 
+    @abstractmethod
     def load_artifact(self, name: str) -> Optional[BaseArtifact]:
-        return None
+        ...
+    
