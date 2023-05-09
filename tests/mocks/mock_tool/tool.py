@@ -20,8 +20,8 @@ class MockTool(BaseTool):
         ),
         "foo": "bar"
     })
-    def test(self, value: str) -> BaseArtifact:
-        return TextArtifact(f"ack {value}")
+    def test(self, value: dict) -> BaseArtifact:
+        return TextArtifact(f"ack {value['test']}")
 
     @activity(config={
         "name": "test_error",
@@ -33,8 +33,8 @@ class MockTool(BaseTool):
         ),
         "foo": "bar"
     })
-    def test_error(self, value: str) -> BaseArtifact:
-        return ErrorArtifact(f"error {value}")
+    def test_error(self, value: dict) -> BaseArtifact:
+        return ErrorArtifact(f"error {value['test']}")
 
     @activity(config={
         "name": "test_str_output",
@@ -46,8 +46,8 @@ class MockTool(BaseTool):
         ),
         "foo": "bar"
     })
-    def test_str_output(self, value: str) -> str:
-        return f"ack {value}"
+    def test_str_output(self, value: dict) -> str:
+        return f"ack {value['test']}"
 
     @activity(config={
         "name": "test_no_schema",
@@ -64,10 +64,10 @@ class MockTool(BaseTool):
             },
             description="Test input"
         ),
-        "pass_artifact": True
+        "pass_artifacts": True
     })
-    def test_with_required_ramp(self, value: str) -> str:
-        return f"ack {value}"
+    def test_with_required_ramp(self, value: dict) -> str:
+        return f"ack {value['test']}"
 
     @property
     def schema_template_args(self) -> dict:

@@ -7,7 +7,7 @@ CONFIG_SCHEMA = Schema({
     "name": str,
     "description": str,
     schema.Optional("schema"): Schema,
-    schema.Optional("pass_artifact"): bool
+    schema.Optional("pass_artifacts"): bool
 }, ignore_extra_keys=True)
 
 

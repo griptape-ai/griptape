@@ -2,7 +2,7 @@ from __future__ import annotations
 import ast
 import json
 import re
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
@@ -43,9 +43,9 @@ class ActionSubtask(PromptTask):
             schema.Optional(
                 Literal(
                     "input",
-                    description="Optional action activity input value"
+                    description="Optional action activity input object"
                 )
-            ): schema.Or(str, list, {object: object})
+            ): dict
         }
     )
 
@@ -54,10 +54,10 @@ class ActionSubtask(PromptTask):
     action_type: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_activity: Optional[str] = field(default=None, kw_only=True)
-    action_input: Optional[Union[str, list, dict]] = field(default=None, kw_only=True)
+    action_input: dict = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
-    _ramps: Optional[BaseRamp] = None
+    _ramp: Optional[BaseRamp] = None
 
     def attach(self, parent_task: ToolkitTask):
         self.parent_task_id = parent_task.id
@@ -82,23 +82,23 @@ class ActionSubtask(PromptTask):
     def run(self) -> BaseArtifact:
         try:
             if self.action_name == "error":
-                self.output = ErrorArtifact(self.action_input)
+                self.output = ErrorArtifact(str(self.action_input))
             else:
                 if self.action_type == "tool":
                     if self._tool:
                         observation = self.task.executor.execute(
                             getattr(self._tool, self.action_activity),
-                            TextArtifact(self.action_input) if self.action_input else None
+                            self.action_input if self.action_input else None
                         )
                     else:
                         observation = ErrorArtifact("tool not found")
                 elif self.action_type == "ramp":
-                    if self._ramps:
-                        observation = getattr(self._ramps, self.action_activity)(
+                    if self._ramp:
+                        observation = getattr(self._ramp, self.action_activity)(
                             self.action_input if self.action_input else None
                         )
                     else:
-                        observation = ErrorArtifact("ramps not found")
+                        observation = ErrorArtifact("ramp not found")
                 else:
                     observation = ErrorArtifact("invalid action type")
 
@@ -195,25 +195,25 @@ class ActionSubtask(PromptTask):
                         self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "ramp":
                     if self.action_name:
-                        self._ramps = self.task.find_ramp(self.action_name)
+                        self._ramp = self.task.find_ramp(self.action_name)
 
-                    if self._ramps:
-                        self.__validate_activity_mixin(self._ramps)
+                    if self._ramp:
+                        self.__validate_activity_mixin(self._ramp)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 
                 self.action_name = "error"
-                self.action_input = f"syntax error: {e}"
+                self.action_input = {"error": f"syntax error: {e}"}
             except ValidationError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nInvalid action JSON: {e}")
 
                 self.action_name = "error"
-                self.action_input = f"Action JSON validation error: {e}"
+                self.action_input = {"error": f"Action JSON validation error: {e}"}
             except Exception as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nError parsing tool action: {e}")
 
                 self.action_name = "error"
-                self.action_input = f"error: {self.INVALID_ACTION_ERROR_MSG}"
+                self.action_input = {"error": f"error: {self.INVALID_ACTION_ERROR_MSG}"}
         elif self.output is None and len(output_matches) > 0:
             self.output = TextArtifact(output_matches[-1])
 
@@ -230,4 +230,4 @@ class ActionSubtask(PromptTask):
             self.structure.logger.error(f"Subtask {self.task.id}\nInvalid activity input JSON: {e}")
 
             self.action_name = "error"
-            self.action_input = f"Activity input JSON validation error: {e}"
+            self.action_input = {"error": f"Activity input JSON validation error: {e}"}

@@ -33,7 +33,7 @@ class DockerExecutor(BaseExecutor):
 
             return None
 
-    def try_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> Union[BaseArtifact, str]:
+    def try_execute(self, tool_activity: callable, value: Optional[dict]) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
         self.build_image(tool)
@@ -41,12 +41,11 @@ class DockerExecutor(BaseExecutor):
 
         return self.run_container(tool_activity, value)
 
-    def run_container(self, tool_activity: callable, value: Optional[BaseArtifact]) -> str:
+    def run_container(self, tool_activity: callable, value: Optional[dict]) -> str:
         tool = tool_activity.__self__
         workdir = "/tool"
         tool_name = tool.class_name
-        text_value = value.to_text()
-        input_value = (f'"{text_value}"' if isinstance(text_value, str) else text_value) if value else ""
+        input_value = value if value else ""
         command = [
             "python",
             "-c",

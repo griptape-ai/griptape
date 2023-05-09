@@ -3,6 +3,8 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
+
+from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import MemoryStorageDriver
 from griptape.ramps import StorageRamp
 from tests.mocks.mock_tool.tool import MockTool
@@ -134,3 +136,17 @@ class TestBaseTool:
                     ]
                 }
             )
+
+    def test_load_artifacts(self, tool):
+        artifact1 = TextArtifact("test")
+        artifact2 = BlobArtifact("blob.txt", value=b"foobar")
+        params = {
+            "artifacts": {
+                "values": [artifact1.to_dict(), artifact2.to_dict()]
+            }
+        }
+        artifacts = tool.load_artifacts(params)
+
+        assert len(artifacts) == 2
+        assert artifacts[0] == artifact1
+        assert artifacts[1] == artifact2

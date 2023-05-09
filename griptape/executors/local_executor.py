@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class LocalExecutor(BaseExecutor):
     verbose: int = field(default=False, kw_only=True)
 
-    def try_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> Union[BaseArtifact, str]:
+    def try_execute(self, tool_activity: callable, value: Optional[dict]) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
         logging.warning(f"You are executing the {tool.name} tool in the local environment. Make sure to "
@@ -52,11 +52,10 @@ class LocalExecutor(BaseExecutor):
             stderr=None if self.verbose else subprocess.DEVNULL
         )
 
-    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: Optional[BaseArtifact]) -> subprocess.CompletedProcess:
+    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: Optional[dict]) -> subprocess.CompletedProcess:
         tool = tool_activity.__self__
         tool_name = tool.class_name
-        text_value = value.to_text()
-        input_value = (f'"{text_value}"' if isinstance(text_value, str) else text_value) if value else ""
+        input_value = value if value else ""
         command = [
             "python",
             "-c",

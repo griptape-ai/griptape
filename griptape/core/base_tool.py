@@ -9,6 +9,7 @@ import yaml
 from attr import define, fields, Attribute, field, Factory
 import attrs
 from decouple import config
+from griptape.artifacts import BaseArtifact
 from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
@@ -127,3 +128,6 @@ class BaseTool(ActivityMixin, ABC):
         ManifestValidator().validate(self.manifest)
 
         return True
+
+    def load_artifacts(self, params: dict) -> list[BaseArtifact]:
+        return [BaseArtifact.from_dict(artifact_dict) for artifact_dict in params.get("artifacts", {}).get("values")]

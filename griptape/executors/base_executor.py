@@ -12,29 +12,29 @@ if TYPE_CHECKING:
 
 
 class BaseExecutor(ABC):
-    def execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
-        result = self.before_execute(tool_activity, value)
-        result = self.executor_result_to_artifact(
-            self.try_execute(tool_activity, result)
+    def execute(self, tool_activity: callable, value: Optional[dict]) -> BaseArtifact:
+        preprocessed_value = self.before_execute(tool_activity, value)
+
+        artifact = self.executor_result_to_artifact(
+            self.try_execute(tool_activity, preprocessed_value)
         )
-        result = self.after_execute(tool_activity, result)
 
-        return result
+        return self.after_execute(tool_activity, artifact)
 
-    def before_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
-        for ramps in tool_activity.__self__.ramps.get(tool_activity.config["name"], []):
-            value = ramps.process_input(tool_activity, value)
+    def before_execute(self, tool_activity: callable, value: Optional[dict]) -> Optional[dict]:
+        for ramp in tool_activity.__self__.ramps.get(tool_activity.config["name"], []):
+            value = ramp.process_input(tool_activity, value)
 
         return value
 
     def after_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
-        for ramps in tool_activity.__self__.ramps.get(tool_activity.config["name"], []):
-            value = ramps.process_output(tool_activity, value)
+        for ramp in tool_activity.__self__.ramps.get(tool_activity.config["name"], []):
+            value = ramp.process_output(tool_activity, value)
 
         return value
 
     @abstractmethod
-    def try_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> Union[BaseArtifact, str]:
+    def try_execute(self, tool_activity: callable, value: Optional[dict]) -> Union[BaseArtifact, str]:
         ...
 
     def executor_result_to_artifact(self, result: Union[BaseArtifact, str]) -> BaseArtifact:

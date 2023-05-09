@@ -8,14 +8,20 @@ from schema import Schema, Literal
 @define
 class ActivityMixin:
     RAMP_SCHEMA = {
-        Literal(
-            "ramp_name",
-            description="Ramp to should be used to load blob or text into the tool"
-        ): str,
-        Literal(
-            "ramp_item_id",
-            description="ID of the item to load from the ramp and pass to the tool"
-        ): str
+        "artifacts": {
+            "sources": [
+                {
+                    Literal(
+                        "ramp_name",
+                        description="Name of the ramp that should be used to load artifacts into the tool"
+                    ): str,
+                    Literal(
+                        "artifact_names",
+                        description="Names of the artifacts to load from the ramp and pass to the tool"
+                    ): []
+                }
+            ]
+        }
     }
 
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
@@ -87,7 +93,7 @@ class ActivityMixin:
     def activity_schema(self, activity: callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
-        elif self.should_pass_artifact(activity):
+        elif self.should_pass_artifacts(activity):
             base_schema = activity.config["schema"]
             schema_with_ramp = base_schema.schema if base_schema else {}
 
@@ -99,8 +105,8 @@ class ActivityMixin:
         else:
             return None
 
-    def should_pass_artifact(self, activity: callable) -> bool:
+    def should_pass_artifacts(self, activity: callable) -> bool:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
-            return activity.config.get("pass_artifact", False)
+            return activity.config.get("pass_artifacts", False)
