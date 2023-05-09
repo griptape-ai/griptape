@@ -28,7 +28,8 @@ class BaseRamp(ActivityMixin, ABC):
         if len(artifact_names) > 0:
             new_value = value.copy()
 
-            new_value.update({"artifacts": {"values": []}})
+            if not new_value.get("artifacts", {}).get("values"):
+                new_value.update({"artifacts": {"values": []}})
 
             for artifact_name in artifact_names:
                 artifact = self.load_artifact(artifact_name)

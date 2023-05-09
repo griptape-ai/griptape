@@ -130,4 +130,6 @@ class BaseTool(ActivityMixin, ABC):
         return True
 
     def load_artifacts(self, params: dict) -> list[BaseArtifact]:
-        return [BaseArtifact.from_dict(artifact_dict) for artifact_dict in params.get("artifacts", {}).get("values")]
+        artifacts = params.get("artifacts", {}).get("values", [])
+
+        return [BaseArtifact.from_dict(artifact_dict) for artifact_dict in artifacts]
