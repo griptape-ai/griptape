@@ -3,6 +3,7 @@ from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
 from griptape.schemas.artifacts.artifact_schema import ArtifactSchema
+from griptape.schemas.artifacts.info_artifact_schema import InfoArtifactSchema
 from griptape.schemas.artifacts.text_artifact_schema import TextArtifactSchema
 from griptape.schemas.artifacts.error_artifact_schema import ErrorArtifactSchema
 from griptape.schemas.artifacts.blob_artifact_schema import BlobArtifactSchema
@@ -18,6 +19,7 @@ __all__ = [
     "PolymorphicSchema",
 
     "ArtifactSchema",
+    "InfoArtifactSchema",
     "TextArtifactSchema",
     "ErrorArtifactSchema",
     "BlobArtifactSchema",

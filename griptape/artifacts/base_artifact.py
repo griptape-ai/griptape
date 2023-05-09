@@ -3,6 +3,8 @@ import json
 from abc import ABC, abstractmethod
 from typing import Union
 from attr import define, field, Factory
+from marshmallow import class_registry
+from marshmallow.exceptions import RegistryError
 
 
 @define
@@ -12,15 +14,16 @@ class BaseArtifact(ABC):
 
     @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:
-        from griptape.schemas import TextArtifactSchema, ErrorArtifactSchema, BlobArtifactSchema
+        from griptape.schemas import TextArtifactSchema, InfoArtifactSchema, ErrorArtifactSchema, BlobArtifactSchema
 
-        if artifact_dict["type"] == "TextArtifact":
-            return TextArtifactSchema().load(artifact_dict)
-        elif artifact_dict["type"] == "ErrorArtifact":
-            return ErrorArtifactSchema().load(artifact_dict)
-        elif artifact_dict["type"] == "BlobArtifact":
-            return BlobArtifactSchema().load(artifact_dict)
-        else:
+        class_registry.register("TextArtifact", TextArtifactSchema)
+        class_registry.register("InfoArtifact", InfoArtifactSchema)
+        class_registry.register("ErrorArtifact", ErrorArtifactSchema)
+        class_registry.register("BlobArtifact", BlobArtifactSchema)
+
+        try:
+            return class_registry.get_class(artifact_dict["type"])().load(artifact_dict)
+        except RegistryError:
             raise ValueError("Unsupported artifact type")
 
     def __str__(self):
