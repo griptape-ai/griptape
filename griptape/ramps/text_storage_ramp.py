@@ -8,7 +8,7 @@ from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
 
 
 @define
-class TextManagerRamp(BaseRamp):
+class TextStorageRamp(BaseRamp):
     driver: BaseTextStorageDriver = field(default=MemoryTextStorageDriver(), kw_only=True)
 
     def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:

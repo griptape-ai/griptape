@@ -1,21 +1,21 @@
 from griptape.artifacts import BlobArtifact
 from griptape.drivers import MemoryBlobStorageDriver
-from griptape.ramps import BlobManagerRamp
+from griptape.ramps import BlobStorageRamp
 from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestBlobManagerRamp:
+class TestBlobStorageRamp:
     def test_constructor(self):
-        ramp = BlobManagerRamp(driver=MemoryBlobStorageDriver())
+        ramp = BlobStorageRamp(driver=MemoryBlobStorageDriver())
 
-        assert ramp.name == "BlobManagerRamp"
+        assert ramp.name == BlobStorageRamp.__name__
 
-        ramp = BlobManagerRamp(name="MyRamp", driver=MemoryBlobStorageDriver())
+        ramp = BlobStorageRamp(name="MyRamp", driver=MemoryBlobStorageDriver())
 
         assert ramp.name == "MyRamp"
 
     def test_process_output(self):
-        ramp = BlobManagerRamp(name="MyRamp", driver=MemoryBlobStorageDriver())
+        ramp = BlobStorageRamp(name="MyRamp", driver=MemoryBlobStorageDriver())
         artifact = BlobArtifact("foo", value=b"foo")
         output = ramp.process_output(MockTool().test, artifact)
 

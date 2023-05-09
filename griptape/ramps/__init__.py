@@ -1,10 +1,10 @@
 from .base_ramp import BaseRamp
-from .text_manager_ramp import TextManagerRamp
-from .blob_manager_ramp import BlobManagerRamp
+from .text_storage_ramp import TextStorageRamp
+from .blob_storage_ramp import BlobStorageRamp
 
 
 __all__ = [
     "BaseRamp",
-    "TextManagerRamp",
-    "BlobManagerRamp"
+    "TextStorageRamp",
+    "BlobStorageRamp"
 ]

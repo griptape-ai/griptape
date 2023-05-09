@@ -6,7 +6,7 @@ from griptape.ramps import BaseRamp
 
 
 @define
-class BlobManagerRamp(BaseRamp):
+class BlobStorageRamp(BaseRamp):
     driver: BaseBlobStorageDriver = field(default=MemoryBlobStorageDriver(), kw_only=True)
 
     def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:

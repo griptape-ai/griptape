@@ -6,7 +6,7 @@ from schema import SchemaMissingKeyError
 
 from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import MemoryTextStorageDriver
-from griptape.ramps import TextManagerRamp
+from griptape.ramps import TextStorageRamp
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -84,10 +84,10 @@ class TestBaseTool:
         tool = MockTool(
             ramps={
                 "test": [
-                    TextManagerRamp(
+                    TextStorageRamp(
                         name="Ramp1", driver=MemoryTextStorageDriver()
                     ),
-                    TextManagerRamp(
+                    TextStorageRamp(
                         name="Ramp2", driver=MemoryTextStorageDriver()
                     )
                 ]
@@ -101,10 +101,10 @@ class TestBaseTool:
             MockTool(
                 ramps={
                     "test": [
-                        TextManagerRamp(
+                        TextStorageRamp(
                             name="Ramp1", driver=MemoryTextStorageDriver()
                         ),
-                        TextManagerRamp(
+                        TextStorageRamp(
                             name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ]
@@ -115,7 +115,7 @@ class TestBaseTool:
             MockTool(
                 ramps={
                     "fake_activity": [
-                        TextManagerRamp(
+                        TextStorageRamp(
                             name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ]
@@ -125,12 +125,12 @@ class TestBaseTool:
         assert MockTool(
                 ramps={
                     "test": [
-                        TextManagerRamp(
+                        TextStorageRamp(
                             name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ],
                     "test_str_output": [
-                        TextManagerRamp(
+                        TextStorageRamp(
                             name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ]
