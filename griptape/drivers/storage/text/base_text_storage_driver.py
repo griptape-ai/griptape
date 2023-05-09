@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 
-class BaseStorageDriver(ABC):
+class BaseTextStorageDriver(ABC):
     @abstractmethod
     def save(self, value: any) -> str:
         ...

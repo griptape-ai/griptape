@@ -5,9 +5,9 @@ from griptape.drivers.prompt.hugging_face_pipeline_prompt_driver import HuggingF
 from griptape.drivers.prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from griptape.drivers.memory.memory_driver import MemoryDriver
 from griptape.drivers.memory.disk_memory_driver import DiskMemoryDriver
-from griptape.drivers.storage.base_storage_driver import BaseStorageDriver
-from griptape.drivers.storage.memory_storage_driver import MemoryStorageDriver
-from griptape.drivers.storage.dynamodb_storage_driver import DynamoDbStorageDriver
+from griptape.drivers.storage.text.base_text_storage_driver import BaseTextStorageDriver
+from griptape.drivers.storage.text.memory_text_storage_driver import MemoryStorageDriver
+from griptape.drivers.storage.text.dynamodb_text_storage_driver import DynamoDbStorageDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -19,7 +19,7 @@ __all__ = [
     "MemoryDriver",
     "DiskMemoryDriver",
 
-    "BaseStorageDriver",
+    "BaseTextStorageDriver",
     "MemoryStorageDriver",
     "DynamoDbStorageDriver"
 ]

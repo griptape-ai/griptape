@@ -2,11 +2,11 @@ from uuid import uuid4
 from typing import Optional
 from boto3 import resource
 from attr import define, field
-from griptape.drivers import BaseStorageDriver
+from griptape.drivers import BaseTextStorageDriver
 
 
 @define
-class DynamoDbStorageDriver(BaseStorageDriver):
+class DynamoDbStorageDriver(BaseTextStorageDriver):
     aws_region: str = field(default=None, kw_only=True)
     table_name: str = field(default=None, kw_only=True)
     partition_key: str = field(default=None, kw_only=True)

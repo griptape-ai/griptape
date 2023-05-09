@@ -4,7 +4,7 @@ from moto import mock_dynamodb
 from griptape.drivers import DynamoDbStorageDriver
 
 
-class TestDynamoDbStorageDriver:
+class TestDynamoDbTextStorageDriver:
     @pytest.fixture(autouse=True)
     @mock_dynamodb
     def driver_gen(self):

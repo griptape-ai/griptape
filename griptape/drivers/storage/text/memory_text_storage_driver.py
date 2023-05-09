@@ -1,11 +1,11 @@
 import uuid
 from typing import Optional
-from griptape.drivers import BaseStorageDriver
+from griptape.drivers import BaseTextStorageDriver
 from attr import define, field
 
 
 @define
-class MemoryStorageDriver(BaseStorageDriver):
+class MemoryStorageDriver(BaseTextStorageDriver):
     memory: dict[str, any] = field(factory=dict, kw_only=True)
 
     def save(self, value: any) -> str:

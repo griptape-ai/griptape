@@ -10,12 +10,12 @@ from griptape.summarizers import PromptDriverSummarizer
 from griptape.drivers import OpenAiPromptDriver
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseStorageDriver, BasePromptDriver
+    from griptape.drivers import BaseTextStorageDriver, BasePromptDriver
 
 
 @define
 class TextManagerRamp(BaseRamp):
-    driver: BaseStorageDriver = field(kw_only=True)
+    driver: BaseTextStorageDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(default=OpenAiPromptDriver(), kw_only=True)
 
     def process_output(self, tool_activity: callable, value: BaseArtifact) -> BaseArtifact:

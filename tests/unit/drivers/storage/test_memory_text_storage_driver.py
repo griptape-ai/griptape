@@ -2,7 +2,7 @@ import pytest
 from griptape.drivers import MemoryStorageDriver
 
 
-class TestMemoryStorageDriver:
+class TestMemoryTextStorageDriver:
     @pytest.fixture
     def driver(self):
         return MemoryStorageDriver()
