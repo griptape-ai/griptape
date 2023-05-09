@@ -28,7 +28,12 @@ class TextManagerRamp(BaseRamp):
             return artifact
 
     def load_artifact(self, name: str) -> Optional[BaseArtifact]:
-        return self.driver.load(name)
+        value = self.driver.load(name)
+
+        if value:
+            return TextArtifact(value)
+        else:
+            return ErrorArtifact(f"can't find record {name}")
 
     @activity(config={
         "name": "query_record",
