@@ -20,5 +20,5 @@ class TestTextManagerRamp:
         )
 
         assert ramp.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
-            'Output of "MockTool.test" was stored in ramp "MyRamp" with entry ID'
+            'Output of "MockTool.test" was stored in ramp "MyRamp" with record ID'
         )
