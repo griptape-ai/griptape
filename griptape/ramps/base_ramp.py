@@ -12,5 +12,5 @@ class BaseRamp(ActivityMixin, ABC):
     def process_input(self, tool_activity: callable, value: Optional[dict]) -> Optional[dict]:
         return value
 
-    def process_output(self, tool_activity: callable, value: BaseArtifact) -> BaseArtifact:
-        return value
+    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
+        return artifact

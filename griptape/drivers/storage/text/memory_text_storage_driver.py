@@ -5,7 +5,7 @@ from attr import define, field
 
 
 @define
-class MemoryStorageDriver(BaseTextStorageDriver):
+class MemoryTextStorageDriver(BaseTextStorageDriver):
     memory: dict[str, any] = field(factory=dict, kw_only=True)
 
     def save(self, value: any) -> str:

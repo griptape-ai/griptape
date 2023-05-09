@@ -5,7 +5,7 @@ import yaml
 from schema import SchemaMissingKeyError
 
 from griptape.artifacts import TextArtifact, BlobArtifact
-from griptape.drivers import MemoryStorageDriver
+from griptape.drivers import MemoryTextStorageDriver
 from griptape.ramps import TextManagerRamp
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -85,10 +85,10 @@ class TestBaseTool:
             ramps={
                 "test": [
                     TextManagerRamp(
-                        name="Ramp1", driver=MemoryStorageDriver()
+                        name="Ramp1", driver=MemoryTextStorageDriver()
                     ),
                     TextManagerRamp(
-                        name="Ramp2", driver=MemoryStorageDriver()
+                        name="Ramp2", driver=MemoryTextStorageDriver()
                     )
                 ]
             }
@@ -102,10 +102,10 @@ class TestBaseTool:
                 ramps={
                     "test": [
                         TextManagerRamp(
-                            name="Ramp1", driver=MemoryStorageDriver()
+                            name="Ramp1", driver=MemoryTextStorageDriver()
                         ),
                         TextManagerRamp(
-                            name="Ramp1", driver=MemoryStorageDriver()
+                            name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ]
                 }
@@ -116,7 +116,7 @@ class TestBaseTool:
                 ramps={
                     "fake_activity": [
                         TextManagerRamp(
-                            name="Ramp1", driver=MemoryStorageDriver()
+                            name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ]
                 }
@@ -126,12 +126,12 @@ class TestBaseTool:
                 ramps={
                     "test": [
                         TextManagerRamp(
-                            name="Ramp1", driver=MemoryStorageDriver()
+                            name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ],
                     "test_str_output": [
                         TextManagerRamp(
-                            name="Ramp1", driver=MemoryStorageDriver()
+                            name="Ramp1", driver=MemoryTextStorageDriver()
                         )
                     ]
                 }
@@ -141,7 +141,7 @@ class TestBaseTool:
         artifact1 = TextArtifact("test")
         artifact2 = BlobArtifact("blob.txt", value=b"foobar")
         params = {
-            "artifacts": {
+            "records": {
                 "values": [artifact1.to_dict(), artifact2.to_dict()]
             }
         }

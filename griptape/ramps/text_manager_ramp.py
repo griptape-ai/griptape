@@ -1,24 +1,21 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING, Union
+from typing import Union
 from attr import define, field
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.core.decorators import activity
 from griptape.ramps import BaseRamp
-
-if TYPE_CHECKING:
-    from griptape.drivers import BaseTextStorageDriver
+from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
 
 
 @define
 class TextManagerRamp(BaseRamp):
-    driver: BaseTextStorageDriver = field(kw_only=True)
+    driver: BaseTextStorageDriver = field(default=MemoryTextStorageDriver(), kw_only=True)
 
-    def process_output(self, tool_activity: callable, value: BaseArtifact) -> BaseArtifact:
+    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
         from griptape.utils import J2
 
-        if isinstance(value, TextArtifact):
-            key = self.driver.save(value.to_text())
+        if isinstance(artifact, TextArtifact):
+            key = self.driver.save(artifact.to_text())
             output = J2("ramps/storage.j2").render(
                 storage_name=self.name,
                 tool_name=tool_activity.__self__.name,
@@ -28,7 +25,7 @@ class TextManagerRamp(BaseRamp):
 
             return TextArtifact(output)
         else:
-            return value
+            return artifact
 
     @activity(config={
         "name": "query_record",

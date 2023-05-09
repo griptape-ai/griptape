@@ -1,4 +1,4 @@
-from griptape.drivers import MemoryStorageDriver
+from griptape.drivers import MemoryTextStorageDriver
 from griptape.ramps import TextManagerRamp
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
@@ -126,8 +126,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_ramp(self):
-        m1 = TextManagerRamp(name="Ramp1", driver=MemoryStorageDriver())
-        m2 = TextManagerRamp(name="Ramp2", driver=MemoryStorageDriver())
+        m1 = TextManagerRamp(name="Ramp1", driver=MemoryTextStorageDriver())
+        m2 = TextManagerRamp(name="Ramp2", driver=MemoryTextStorageDriver())
 
         tool = MockTool(
             name="Tool1",
@@ -147,8 +147,8 @@ class TestToolkitSubtask:
             name="Tool1",
             ramps={
                 "test": [
-                    TextManagerRamp(name="Ramp1", driver=MemoryStorageDriver()),
-                    TextManagerRamp(name="Ramp2", driver=MemoryStorageDriver())
+                    TextManagerRamp(name="Ramp1", driver=MemoryTextStorageDriver()),
+                    TextManagerRamp(name="Ramp2", driver=MemoryTextStorageDriver())
                 ]
             }
         )
@@ -157,8 +157,8 @@ class TestToolkitSubtask:
             name="Tool2",
             ramps={
                 "test": [
-                    TextManagerRamp(name="Ramp2", driver=MemoryStorageDriver()),
-                    TextManagerRamp(name="Ramp3", driver=MemoryStorageDriver())
+                    TextManagerRamp(name="Ramp2", driver=MemoryTextStorageDriver()),
+                    TextManagerRamp(name="Ramp3", driver=MemoryTextStorageDriver())
                 ]
             }
         )
