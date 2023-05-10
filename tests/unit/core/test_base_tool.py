@@ -136,17 +136,3 @@ class TestBaseTool:
                     ]
                 }
             )
-
-    def test_load_artifacts(self, tool):
-        artifact1 = TextArtifact("test")
-        artifact2 = BlobArtifact(b"foobar", name="blob.txt")
-        params = {
-            "artifacts": {
-                "values": [artifact1.to_dict(), artifact2.to_dict()]
-            }
-        }
-        artifacts = tool.load_artifacts(params)
-
-        assert len(artifacts) == 2
-        assert artifacts[0] == artifact1
-        assert artifacts[1] == artifact2

@@ -1,10 +1,8 @@
-from typing import Union, Optional
+from typing import Optional
 from attr import define, field
-from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
-from griptape.core.decorators import activity
-from griptape.ramps import BaseRamp
 from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
+from griptape.ramps import BaseRamp
 
 
 @define
@@ -40,31 +38,3 @@ class TextStorageRamp(BaseRamp):
             return TextArtifact(value)
         else:
             return ErrorArtifact(f"can't find artifact {name}")
-
-    @activity(config={
-        "name": "query_artifact",
-        "description": "Can be used to query an artifact in the ramp for any content",
-        "schema": Schema({
-            Literal(
-                "id",
-                description="Storage artifact ID"
-            ): str,
-            Literal(
-                "query",
-                description="Query to run against the artifact"
-            ): str
-        })
-    })
-    def query_artifact(self, value: dict) -> Union[TextArtifact, ErrorArtifact]:
-        return self.driver.query_record(value["id"], value['query'])
-
-    @activity(config={
-        "name": "summarize_artifact",
-        "description": "Can be used to generate a summary of a ramp artifact",
-        "schema": Schema(
-            str,
-            description="Ramp artifact ID"
-        )
-    })
-    def summarize_artifact(self, value: str) -> Union[TextArtifact, ErrorArtifact]:
-        return self.driver.summarize_record(value)

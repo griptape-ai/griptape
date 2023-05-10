@@ -129,8 +129,3 @@ class BaseTool(ActivityMixin, ABC):
         ManifestValidator().validate(self.manifest)
 
         return True
-
-    def load_artifacts(self, params: dict) -> list[BaseArtifact]:
-        artifacts = params.get("artifacts", {}).get("values", [])
-
-        return [BaseArtifact.from_dict(artifact_dict) for artifact_dict in artifacts]
