@@ -7,7 +7,7 @@ class ArtifactSchema(BaseSchema):
     class Meta:
         ordered = True
 
-    type = fields.Str(required=True)
+    type = fields.Str()
 
     @abstractmethod
     def make_obj(self, data, **kwargs):

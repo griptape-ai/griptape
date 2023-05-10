@@ -6,7 +6,7 @@ class MemorySchema(BaseSchema):
     class Meta:
         ordered = True
 
-    type = fields.Str(required=True)
+    type = fields.Str()
     runs = fields.List(fields.Nested(RunSchema()))
 
     @post_load
