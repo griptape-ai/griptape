@@ -79,7 +79,7 @@ class ActivityMixin:
             raise Exception("This method is not an activity.")
         elif activity.config["schema"]:
             full_schema = {
-                "input": activity.config["schema"].schema if activity.config["schema"] else {}
+                "values": activity.config["schema"].schema if activity.config["schema"] else {}
             }
 
             if self.should_pass_artifacts(activity):
