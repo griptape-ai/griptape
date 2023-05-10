@@ -9,7 +9,7 @@
 
 1. 🤖 Build **AI agents**, sequential **LLM pipelines** and sprawling **DAG workflows** for complex use cases.
 2. ⛓️ Augment LLMs with **chain of thought** capabilities.
-3. 🧰️ Integrate other services and functionality into LLMs as [tools](https://github.com/griptape-ai/griptape-tools) (e.g., calculators, web scrapers, spreadsheet editors, and API connectors); run tools in any environment (local, containerized, cloud, etc.); use tools directly in **griptape** or convert them into ramps abstractions, such as ChatGPT Plugins, LangChain tools, or Fixie.ai agents.
+3. 🧰️ Integrate other services and functionality into LLMs as [tools](https://github.com/griptape-ai/griptape-tools) (e.g., calculators, web scrapers, spreadsheet editors, and API connectors); run tools in any environment (local, containerized, cloud, etc.); and wrap tools with off prompt data storage that prevents LLMs from accessing your data directly.
 4. 💾 Add **memory** to AI pipelines for context preservation and summarization.
 
 ## Documentation
@@ -31,63 +31,69 @@ pip install griptape griptape-tools -U
 
 Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts and to work with [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/index.html) data structures.
 
-With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. You can also define structures as JSON objects and load them into **griptape** dynamically. Let's define a simple two-task pipeline that uses tools:
+With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. You can also define structures as JSON objects and load them into **griptape** dynamically. Let's define a simple two-task pipeline that uses tools and ramps:
 
 ```python
-from griptape.core import ToolLoader
-from griptape.drivers import OpenAiPromptDriver, MemoryStorageDriver
-from griptape.executors import LocalExecutor
 from griptape.memory import Memory
-from griptape.ramps import TextManagerRamp
+from griptape.ramps import TextStorageRamp, BlobStorageRamp
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, PromptTask
-from griptape.tools import WebScraper
+from griptape.tools import WebScraper, TextProcessor, FileManager
 
-storage = TextManagerRamp(
-    driver=MemoryStorageDriver()
-)
+# Ramps enable LLMs to store and manipulate data without ever looking at it directly.
+text_storage = TextStorageRamp()
+blob_storage = BlobStorageRamp()
 
-scraper = WebScraper(
+# Connect a web scraper to load web pages.
+web_scraper = WebScraper(
     ramps={
-        "get_content": [storage]
+        "get_content": [text_storage]
     }
 )
 
+# TextProcessor enables LLMs to summarize and query text.
+text_processor = TextProcessor(
+    ramps={
+        "summarize": [text_storage],
+        "query": [text_storage]
+    }
+)
+
+# File manager can load and store files locally.
+file_manager = FileManager(
+    ramps={
+        "load": [blob_storage],
+        "save": [text_storage, blob_storage]
+    }
+)
+
+# Pipelines represent sequences of tasks.
 pipeline = Pipeline(
-    memory=Memory(),
-    tool_loader=ToolLoader(
-        tools=[scraper],
-        executor=LocalExecutor()
-    )
+    memory=Memory()
 )
 
 pipeline.add_tasks(
+    # Load up the first argument from `pipeline.run`.
     ToolkitTask(
-        tool_names=[scraper.name]
+        "{{ args[0] }}",
+        tools=[web_scraper, text_processor, file_manager]
     ),
+    # Augment `input` from the previous task.
     PromptTask(
         "Say the following in spanish: {{ input }}"
     )
 )
 
-result = pipeline.run("Give me a summary of https://en.wikipedia.org/wiki/Large_language_model")
+result = pipeline.run("Load https://griptape.readthedocs.io, summarize it, and store it in griptape.txt")
 
 print(result.output.to_text())
-
-
 ```
 
 Boom! Our first LLM pipeline with two sequential tasks generated the following exchange:
 
 ```
-Q: Give me a summary of https://en.wikipedia.org/wiki/Large_language_model
-[chain of thought output... will vary depending on the model driver you're using]
-A: Los modelos de lenguaje de gran tamaño son herramientas utilizadas para tareas de 
-procesamiento del lenguaje natural, como detectar falsedades, completar oraciones y comprender 
-el lenguaje. Algunos modelos notables incluyen BERT, GPT-2, GPT-3, GPT-Neo y GLaM. The Pile es 
-un conjunto de datos extenso utilizado para el modelado del lenguaje. Estos modelos han sido 
-desarrollados e investigados en trabajos como TruthfulQA, HellaSwag y BERT: Pre-entrenamiento 
-de transformadores bidireccionales profundos para la comprensión del lenguaje.
+Q: Load https://griptape.readthedocs.io, summarize it, and store it in griptape.txt
+A: El contenido de https://griptape.readthedocs.io ha sido resumido y almacenado en griptape.txt.
 ```
 
 ## Versioning
