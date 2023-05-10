@@ -1,7 +1,7 @@
 from typing import Union, Optional
 from attr import define, field
 from schema import Schema, Literal
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.core.decorators import activity
 from griptape.ramps import BaseRamp
 from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
@@ -15,12 +15,18 @@ class TextStorageRamp(BaseRamp):
         from griptape.utils import J2
 
         if isinstance(artifact, TextArtifact):
-            key = self.driver.save(artifact.to_text())
-            output = J2("ramps/storage.j2").render(
-                storage_name=self.name,
+            artifact_names = [self.driver.save(artifact.to_text())]
+        elif isinstance(artifact, ListArtifact):
+            artifact_names = [self.driver.save(a.to_text()) for a in artifact.value if isinstance(a, TextArtifact)]
+        else:
+            artifact_names = []
+
+        if len(artifact_names) > 0:
+            output = J2("ramps/text_storage.j2").render(
+                ramp_name=self.name,
                 tool_name=tool_activity.__self__.name,
                 activity_name=tool_activity.config["name"],
-                key=key
+                names=str.join(", ", artifact_names)
             )
 
             return InfoArtifact(output)

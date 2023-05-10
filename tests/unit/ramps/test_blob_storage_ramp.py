@@ -1,4 +1,4 @@
-from griptape.artifacts import BlobArtifact
+from griptape.artifacts import BlobArtifact, ListArtifact
 from griptape.drivers import MemoryBlobStorageDriver
 from griptape.ramps import BlobStorageRamp
 from tests.mocks.mock_tool.tool import MockTool
@@ -20,7 +20,14 @@ class TestBlobStorageRamp:
         output = ramp.process_output(MockTool().test, artifact)
 
         assert output.to_text().startswith(
-            'Output of "MockTool.test" was stored in ramp "MyRamp" as artifact'
+            'Output of "MockTool.test" was stored in ramp "MyRamp" with the following artifact names: foo'
         )
 
         assert ramp.driver.load(artifact.full_path) == artifact
+
+    def test_process_output_with_many_artifacts(self):
+        ramp = BlobStorageRamp(name="MyRamp", driver=MemoryBlobStorageDriver())
+
+        assert ramp.process_output(MockTool().test, ListArtifact([BlobArtifact(b"foo", name="foo")])).to_text().startswith(
+            'Output of "MockTool.test" was stored in ramp "MyRamp" with the following artifact names'
+        )
