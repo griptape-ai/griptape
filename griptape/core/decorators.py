@@ -1,7 +1,7 @@
 import functools
 import schema
 from schema import Schema
-
+from griptape.artifacts import BaseArtifact
 
 CONFIG_SCHEMA = Schema({
     "name": str,
@@ -24,6 +24,10 @@ def activity(config: dict):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
+            artifacts = args[0].get("artifacts", {}).get("values", [])
+
+            self.artifacts = self.artifacts + [BaseArtifact.from_dict(artifact) for artifact in artifacts]
+
             return func(self, *args, **kwargs)
 
         wrapper.config = validated_config

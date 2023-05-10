@@ -7,7 +7,7 @@ from schema import Schema, Literal
 
 @define
 class ActivityMixin:
-    RAMP_SCHEMA = {
+    ARTIFACTS_SCHEMA = {
         "artifacts": {
             "sources": [
                 {
@@ -77,17 +77,20 @@ class ActivityMixin:
     def activity_schema(self, activity: callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
-        elif self.should_pass_artifacts(activity):
-            base_schema = activity.config["schema"]
-            schema_with_ramp = base_schema.schema if base_schema else {}
-
-            schema_with_ramp.update(self.RAMP_SCHEMA)
-
-            return Schema(schema_with_ramp).json_schema("InputSchema")
         elif activity.config["schema"]:
-            return activity.config["schema"].json_schema("InputSchema")
+            full_schema = {
+                "input": activity.config["schema"].schema if activity.config["schema"] else {}
+            }
+
+            if self.should_pass_artifacts(activity):
+                full_schema.update(self.ARTIFACTS_SCHEMA)
+
+            return Schema(full_schema).json_schema("InputSchema")
         else:
-            return None
+            if self.should_pass_artifacts(activity):
+                return Schema(self.ARTIFACTS_SCHEMA).json_schema("InputSchema")
+            else:
+                return None
 
     def should_pass_artifacts(self, activity: callable) -> bool:
         if activity is None or not getattr(activity, "is_activity", False):

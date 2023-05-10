@@ -24,6 +24,7 @@ class BaseTool(ActivityMixin, ABC):
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     ramps: dict[str, list[BaseRamp]] = field(factory=dict, kw_only=True)
+    artifacts: list[BaseArtifact] = field(factory=list, kw_only=True)
 
     # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
     logging.basicConfig(level=logging.ERROR)

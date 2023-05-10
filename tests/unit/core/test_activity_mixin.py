@@ -1,4 +1,6 @@
 import pytest
+from schema import Schema
+
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -21,16 +23,15 @@ class TestActivityMixin:
 
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test)
-        assert schema == \
-               tool.test.config["schema"].json_schema("InputSchema")
 
+        assert schema == Schema({"input": tool.test.config["schema"].schema}).json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
 
     def test_activity_schema_with_ramp(self, tool):
-        props = tool.activity_schema(tool.test_with_required_ramp)["properties"]
+        activity_input = tool.activity_schema(tool.test_with_required_ramp)
 
-        assert props["test"]
-        assert isinstance(props["artifacts"], dict)
+        assert activity_input["properties"]["input"]
+        assert isinstance(activity_input["properties"]["artifacts"], dict)
 
     def test_activity_with_no_schema(self, tool):
         assert tool.activity_schema(tool.test_no_schema) is None
