@@ -16,7 +16,7 @@ class TestBlobStorageRamp:
 
     def test_process_output(self):
         ramp = BlobStorageRamp(name="MyRamp", driver=MemoryBlobStorageDriver())
-        artifact = BlobArtifact("foo", value=b"foo")
+        artifact = BlobArtifact(b"foo", name="foo")
         output = ramp.process_output(MockTool().test, artifact)
 
         assert output.to_text().startswith(

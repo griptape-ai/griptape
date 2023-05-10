@@ -9,20 +9,20 @@ class TestMemoryBlobStorageDriver:
         return MemoryBlobStorageDriver()
 
     def test_save(self, driver):
-        artifact = BlobArtifact("foo", value=b"foo")
+        artifact = BlobArtifact(b"foo", name="foo")
         key = driver.save(artifact)
 
         assert driver.load(key) == artifact
 
     def test_load(self, driver):
-        artifact = BlobArtifact("foo", value=b"foo")
+        artifact = BlobArtifact(b"foo", name="foo")
         key = driver.save(artifact)
 
         assert driver.load(key) == artifact
         assert driver.load("empty") is None
 
     def test_delete(self, driver):
-        artifact = BlobArtifact("foo", value=b"foo")
+        artifact = BlobArtifact(b"foo", name="foo")
         key = driver.save(artifact)
 
         driver.delete(key)

@@ -6,8 +6,8 @@ from griptape.artifacts import BaseArtifact
 
 @define(frozen=True)
 class BlobArtifact(BaseArtifact):
-    name: str = field()
-    value: bytes = field(kw_only=True)
+    value: bytes = field()
+    name: str = field(kw_only=True)
     dir: Optional[str] = field(default=None, kw_only=True)
 
     @dir.validator

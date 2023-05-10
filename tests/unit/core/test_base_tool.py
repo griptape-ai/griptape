@@ -139,7 +139,7 @@ class TestBaseTool:
 
     def test_load_artifacts(self, tool):
         artifact1 = TextArtifact("test")
-        artifact2 = BlobArtifact("blob.txt", value=b"foobar")
+        artifact2 = BlobArtifact(b"foobar", name="blob.txt")
         params = {
             "artifacts": {
                 "values": [artifact1.to_dict(), artifact2.to_dict()]
