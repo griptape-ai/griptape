@@ -38,10 +38,9 @@ class LocalExecutor(BaseExecutor):
         command = [
             "pip",
             "install",
-            "--trusted-host",
-            "pypi.python.org",
             "-r",
-            "requirements.txt"
+            "requirements.txt",
+            "-U"
         ]
 
         subprocess.run(

@@ -4,4 +4,4 @@ WORKDIR /tool
 
 COPY requirements.txt /tool
 
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install -r requirements.txt -U
