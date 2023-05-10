@@ -74,22 +74,6 @@ class ActivityMixin:
         else:
             return Template(activity.config["description"]).render(self.schema_template_args)
 
-    def full_activity_description(self, activity: callable) -> str:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not an activity.")
-        else:
-            activity_schema = self.activity_schema(activity)
-            description_lines = [
-                self.activity_description(activity)
-            ]
-
-            if activity_schema:
-                description_lines.append(
-                    f"Method input schema: {activity_schema}"
-                )
-
-            return str.join("\n", description_lines)
-
     def activity_schema(self, activity: callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")

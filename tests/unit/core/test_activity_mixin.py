@@ -19,12 +19,6 @@ class TestActivityMixin:
         assert "bar" in description
         assert "baz" not in description
 
-    def test_full_activity_description(self, tool):
-        description = tool.full_activity_description(tool.test)
-
-        assert "bar" in description
-        assert "baz" not in description
-
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test)
         assert schema == \
