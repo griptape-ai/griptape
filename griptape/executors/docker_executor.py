@@ -36,7 +36,6 @@ class DockerExecutor(BaseExecutor):
     def try_execute(self, tool_activity: callable, value: Optional[dict]) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
-        self.build_image(tool)
         self.remove_existing_container(self.container_name(tool))
 
         return self.run_container(tool_activity, value)
@@ -78,7 +77,7 @@ class DockerExecutor(BaseExecutor):
         except NotFound:
             pass
 
-    def build_image(self, tool: BaseTool) -> None:
+    def install_dependencies_on_execute(self, env: dict[str, str], tool: BaseTool) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             shutil.rmtree(temp_dir)
             shutil.copytree(self.tool_dir(tool), temp_dir)
