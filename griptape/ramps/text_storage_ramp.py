@@ -1,6 +1,9 @@
-from typing import Optional
+from typing import Optional, Union
 from attr import define, field
+from schema import Schema, Literal
+
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
+from griptape.core.decorators import activity
 from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
 from griptape.ramps import BaseRamp
 
@@ -9,7 +12,7 @@ from griptape.ramps import BaseRamp
 class TextStorageRamp(BaseRamp):
     driver: BaseTextStorageDriver = field(default=MemoryTextStorageDriver(), kw_only=True)
 
-    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
+    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> Union[InfoArtifact, ErrorArtifact]:
         from griptape.utils import J2
 
         if isinstance(artifact, TextArtifact):
@@ -31,10 +34,39 @@ class TextStorageRamp(BaseRamp):
         else:
             return artifact
 
-    def load_artifact(self, name: str) -> Optional[BaseArtifact]:
+    def load_artifact(self, name: str) -> Union[TextArtifact, ErrorArtifact]:
         value = self.driver.load(name)
 
         if value:
             return TextArtifact(value)
+        else:
+            return ErrorArtifact(f"can't find artifact {name}")
+
+    @activity(config={
+        "name": "save_value",
+        "description": "Can be used to save artifact values",
+        "schema": Schema({
+            "artifact_value": str
+        }),
+    })
+    def save_value(self, params: dict) -> Union[InfoArtifact, ErrorArtifact]:
+        value = params["values"]["artifact_value"]
+        name = self.driver.save(value)
+
+        return InfoArtifact(f"Value was successfully stored with the following name: {name}")
+
+    @activity(config={
+        "name": "get_value",
+        "description": "Can be used to load artifact values",
+        "schema": Schema({
+            "artifact_name": str
+        })
+    })
+    def load_value(self, params: dict) -> Union[InfoArtifact, ErrorArtifact]:
+        name = params["values"]["artifact_name"]
+        value = self.driver.load(name)
+
+        if value:
+            return InfoArtifact(value)
         else:
             return ErrorArtifact(f"can't find artifact {name}")

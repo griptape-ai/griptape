@@ -32,3 +32,10 @@ class TestTextStorageRamp:
         assert ramp.process_output(MockTool().test, ListArtifact([TextArtifact("foo")])).to_text().startswith(
             'Output of "MockTool.test" was stored in ramp "MyRamp" with the following artifact names'
         )
+
+    def test_save_and_load_value(self):
+        ramp = TextStorageRamp()
+        output = ramp.save_value({"values": {"artifact_value": "foobar"}})
+        name = output.value.split(":")[-1].strip()
+
+        assert ramp.load_value({"values": {"artifact_name": name}}).value == "foobar"
