@@ -29,9 +29,9 @@ First, install **griptape** and **griptape-tools**:
 pip install griptape griptape-tools -U
 ```
 
-Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. **griptape** uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts and to work with [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/index.html) data structures.
+Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. **griptape** uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
 
-With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses tools and ramps:
+With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses several tools and ramps:
 
 ```python
 from griptape.memory import Memory
@@ -95,6 +95,8 @@ Boom! Our first LLM pipeline with two sequential tasks generated the following e
 Q: Load https://griptape.readthedocs.io, summarize it, and store it in griptape.txt
 A: El contenido de https://griptape.readthedocs.io ha sido resumido y almacenado en griptape.txt.
 ```
+
+During the run, **griptape** prompted the LLM to load a webpage, store its content in temporary memory, summarize the content, and, finally, save it `griptape.txt`.
 
 ## Versioning
 
