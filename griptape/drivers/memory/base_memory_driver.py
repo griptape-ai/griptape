@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from griptape.memory import Memory
 
 
-class MemoryDriver(ABC):
+class BaseMemoryDriver(ABC):
     @abstractmethod
     def store(self, memory: Memory) -> None:
         ...

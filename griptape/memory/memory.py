@@ -6,14 +6,14 @@ from griptape.memory import Run
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import MemoryDriver
+    from griptape.drivers import BaseMemoryDriver
     from griptape.structures import Structure
 
 
 @define
 class Memory:
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    driver: Optional[MemoryDriver] = field(default=None, kw_only=True)
+    driver: Optional[BaseMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True)
     structure: Structure = field(init=False)
 

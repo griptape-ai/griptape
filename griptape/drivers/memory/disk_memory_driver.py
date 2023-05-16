@@ -1,10 +1,10 @@
 from attr import define, field
-from griptape.drivers import MemoryDriver
+from griptape.drivers import BaseMemoryDriver
 from griptape.memory import Memory
 
 
 @define
-class DiskMemoryDriver(MemoryDriver):
+class DiskMemoryDriver(BaseMemoryDriver):
     file_path: str = field(default="griptape_memory.json", kw_only=True)
 
     def store(self, memory: Memory) -> None:
