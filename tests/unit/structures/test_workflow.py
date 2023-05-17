@@ -1,7 +1,7 @@
 import json
 
 from griptape.rules.ruleset import Ruleset
-from tests.mocks.mock_driver import MockDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule
 from griptape.tasks import PromptTask, BaseTask
 from griptape.structures import Workflow
@@ -10,7 +10,7 @@ from griptape.structures import Workflow
 class TestWorkflow:
     def test_constructor(self):
         rule = Rule("test")
-        driver = MockDriver()
+        driver = MockPromptDriver()
         workflow = Workflow(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert workflow.prompt_driver is driver
@@ -23,7 +23,7 @@ class TestWorkflow:
         second_task = PromptTask("test2")
 
         workflow = Workflow(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         workflow + first_task
@@ -44,7 +44,7 @@ class TestWorkflow:
         second_task = PromptTask("test2")
 
         workflow = Workflow(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         workflow + [first_task, second_task]
@@ -62,7 +62,7 @@ class TestWorkflow:
     def test_run(self):
         task1 = PromptTask("test")
         task2 = PromptTask("test")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
         workflow + [task1, task2]
 
         assert task1.state == BaseTask.State.PENDING
@@ -75,7 +75,7 @@ class TestWorkflow:
 
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
         workflow + task
 
         workflow._execution_args = ("test1", "test2")
@@ -90,7 +90,7 @@ class TestWorkflow:
         task1 = PromptTask("prompt1")
         task2 = PromptTask("prompt2")
         task3 = PromptTask("prompt3")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         # task1 splits into task2 and task3
         workflow + task1
@@ -107,7 +107,7 @@ class TestWorkflow:
         task1 = PromptTask("test1")
         task2 = PromptTask("test2")
         task3 = PromptTask("test3")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         # task1 and task2 converge into task3
         workflow + [task1, task2]
@@ -124,7 +124,7 @@ class TestWorkflow:
         task1 = PromptTask("prompt1")
         task2 = PromptTask("prompt2")
         task3 = PromptTask("prompt3")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         workflow + task1
         task1 >> task2
@@ -138,7 +138,7 @@ class TestWorkflow:
         task1 = PromptTask("prompt1", id="task1")
         task2 = PromptTask("prompt2", id="task2")
         task3 = PromptTask("prompt3", id="task3")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         workflow + task1
         task1 >> task2
@@ -153,7 +153,7 @@ class TestWorkflow:
         task1 = PromptTask("prompt1")
         task2 = PromptTask("prompt2")
         task3 = PromptTask("prompt3")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         workflow + task1
         task1 >> task2
@@ -169,7 +169,7 @@ class TestWorkflow:
         parent = PromptTask("parent")
         task = PromptTask("test")
         child = PromptTask("child")
-        workflow = Workflow(prompt_driver=MockDriver())
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         workflow + parent
 

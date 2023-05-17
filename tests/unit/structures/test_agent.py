@@ -3,12 +3,12 @@ from griptape.rules import Rule
 from griptape.rules.ruleset import Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask
-from tests.mocks.mock_driver import MockDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestAgent:
     def test_constructor(self):
-        driver = MockDriver()
+        driver = MockPromptDriver()
         agent = Agent(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert agent.prompt_driver is driver
@@ -19,7 +19,7 @@ class TestAgent:
 
     def test_with_memory(self):
         agent = Agent(
-            prompt_driver=MockDriver(),
+            prompt_driver=MockPromptDriver(),
             memory=Memory()
         )
 
@@ -37,7 +37,7 @@ class TestAgent:
         second_task = PromptTask("test2")
 
         agent = Agent(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         assert len(agent.tasks) == 1
@@ -57,7 +57,7 @@ class TestAgent:
         second_task = PromptTask("test2")
 
         agent = Agent(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         try:
@@ -68,7 +68,7 @@ class TestAgent:
 
     def test_prompt_stack_without_memory(self):
         agent = Agent(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         task1 = PromptTask("test")
@@ -84,7 +84,7 @@ class TestAgent:
 
     def test_prompt_stack_with_memory(self):
         agent = Agent(
-            prompt_driver=MockDriver(),
+            prompt_driver=MockPromptDriver(),
             memory=Memory()
         )
 
@@ -105,7 +105,7 @@ class TestAgent:
 
     def test_to_prompt_string(self):
         agent = Agent(
-            prompt_driver=MockDriver(),
+            prompt_driver=MockPromptDriver(),
         )
 
         task = PromptTask("test")
@@ -118,7 +118,7 @@ class TestAgent:
 
     def test_run(self):
         task = PromptTask("test")
-        agent = Agent(prompt_driver=MockDriver())
+        agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
 
         assert task.state == BaseTask.State.PENDING
@@ -130,7 +130,7 @@ class TestAgent:
 
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
-        agent = Agent(prompt_driver=MockDriver())
+        agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
 
         agent._execution_args = ("test1", "test2")
@@ -143,7 +143,7 @@ class TestAgent:
 
     def test_context(self):
         task = PromptTask("test prompt")
-        agent = Agent(prompt_driver=MockDriver())
+        agent = Agent(prompt_driver=MockPromptDriver())
 
         agent.add_task(task)
 

@@ -3,7 +3,7 @@ from griptape.ramps import TextStorageRamp
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
 from griptape.tasks import ToolkitTask, ActionSubtask
-from tests.mocks.mock_value_driver import MockValueDriver
+from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
 from griptape.structures import Pipeline
 
 
@@ -27,7 +27,7 @@ class TestToolkitSubtask:
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         pipeline = Pipeline(
-            prompt_driver=MockValueDriver(output)
+            prompt_driver=MockValuePromptDriver(output)
         )
 
         pipeline.add_task(task)
@@ -42,7 +42,7 @@ class TestToolkitSubtask:
         output = """Action: {"tool": "test"}"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        pipeline = Pipeline(prompt_driver=MockValueDriver(output))
+        pipeline = Pipeline(prompt_driver=MockValuePromptDriver(output))
 
         pipeline.add_task(task)
 

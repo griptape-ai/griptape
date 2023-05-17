@@ -1,12 +1,12 @@
 from griptape.tasks import PromptTask
-from tests.mocks.mock_driver import MockDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 
 
 class TestPromptSubtask:
     def test_run(self):
         subtask = PromptTask("test")
-        pipeline = Pipeline(prompt_driver=MockDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
 
         pipeline.add_task(subtask)
 
@@ -23,7 +23,7 @@ class TestPromptSubtask:
         parent = PromptTask("parent")
         subtask = PromptTask("test", context={"foo": "bar"})
         child = PromptTask("child")
-        pipeline = Pipeline(prompt_driver=MockDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
 
         pipeline.add_tasks(parent, subtask, child)
 

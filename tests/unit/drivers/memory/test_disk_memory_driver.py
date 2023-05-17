@@ -1,6 +1,6 @@
 import os
 import pytest
-from tests.mocks.mock_driver import MockDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.drivers import DiskMemoryDriver
 from griptape.memory import Memory
 from griptape.tasks import PromptTask
@@ -19,7 +19,7 @@ class TestPromptDriver:
         self.__delete_file(self.MEMORY_FILE_PATH)
 
     def test_store(self):
-        prompt_driver = MockDriver()
+        prompt_driver = MockPromptDriver()
         memory_driver = DiskMemoryDriver(file_path=self.MEMORY_FILE_PATH)
         memory = Memory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
@@ -40,7 +40,7 @@ class TestPromptDriver:
             assert True
 
     def test_load(self):
-        prompt_driver = MockDriver()
+        prompt_driver = MockPromptDriver()
         memory_driver = DiskMemoryDriver(file_path=self.MEMORY_FILE_PATH)
         memory = Memory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)

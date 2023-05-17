@@ -3,14 +3,14 @@ import json
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 from griptape.memory import BufferMemory, Run
-from tests.mocks.mock_driver import MockDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestBufferMemory:
     def test_after_run(self):
         memory = BufferMemory(buffer_size=2)
 
-        pipeline = Pipeline(memory=memory, prompt_driver=MockDriver())
+        pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
 
         pipeline.add_tasks(
             PromptTask("test"),

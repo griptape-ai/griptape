@@ -5,14 +5,14 @@ from griptape.rules.ruleset import Ruleset
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask
 from griptape.memory import Memory
-from tests.mocks.mock_driver import MockDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 
 
 class TestPipeline:
     def test_constructor(self):
         rule = Rule("test")
-        driver = MockDriver()
+        driver = MockPromptDriver()
         pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert pipeline.prompt_driver is driver
@@ -28,7 +28,7 @@ class TestPipeline:
         third_task = PromptTask("test3")
 
         pipeline = Pipeline(
-            prompt_driver=MockDriver(),
+            prompt_driver=MockPromptDriver(),
             memory=Memory()
         )
 
@@ -49,7 +49,7 @@ class TestPipeline:
         third_task = PromptTask("test3")
 
         pipeline = Pipeline(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         pipeline + first_task
@@ -66,7 +66,7 @@ class TestPipeline:
         second_task = PromptTask("test2")
 
         pipeline = Pipeline(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         pipeline + first_task
@@ -87,7 +87,7 @@ class TestPipeline:
         second_task = PromptTask("test2")
 
         pipeline = Pipeline(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         pipeline + [first_task, second_task]
@@ -104,7 +104,7 @@ class TestPipeline:
 
     def test_prompt_stack_without_memory(self):
         pipeline = Pipeline(
-            prompt_driver=MockDriver()
+            prompt_driver=MockPromptDriver()
         )
 
         task1 = PromptTask("test")
@@ -124,7 +124,7 @@ class TestPipeline:
 
     def test_prompt_stack_with_memory(self):
         pipeline = Pipeline(
-            prompt_driver=MockDriver(),
+            prompt_driver=MockPromptDriver(),
             memory=Memory()
         )
 
@@ -145,7 +145,7 @@ class TestPipeline:
 
     def test_to_prompt_string(self):
         pipeline = Pipeline(
-            prompt_driver=MockDriver(),
+            prompt_driver=MockPromptDriver(),
         )
 
         task = PromptTask("test")
@@ -163,7 +163,7 @@ class TestPipeline:
 
     def test_run(self):
         task = PromptTask("test")
-        pipeline = Pipeline(prompt_driver=MockDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
         pipeline + task
 
         assert task.state == BaseTask.State.PENDING
@@ -175,7 +175,7 @@ class TestPipeline:
 
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
-        pipeline = Pipeline(prompt_driver=MockDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
         pipeline + [task]
 
         pipeline._execution_args = ("test1", "test2")
@@ -190,7 +190,7 @@ class TestPipeline:
         parent = PromptTask("parent")
         task = PromptTask("test")
         child = PromptTask("child")
-        pipeline = Pipeline(prompt_driver=MockDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
 
         pipeline + [parent, task, child]
 

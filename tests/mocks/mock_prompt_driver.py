@@ -5,7 +5,7 @@ from griptape.artifacts import TextArtifact
 
 
 @define
-class MockDriver(BasePromptDriver):
+class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = TiktokenTokenizer()
 
