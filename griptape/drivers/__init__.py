@@ -14,6 +14,9 @@ from griptape.drivers.storage.text.dynamodb_text_storage_driver import DynamoDbS
 from griptape.drivers.storage.blob.base_blob_storage_driver import BaseBlobStorageDriver
 from griptape.drivers.storage.blob.memory_blob_storage_driver import MemoryBlobStorageDriver
 
+from griptape.drivers.embedding.base_embedding_driver import BaseEmbeddingDriver
+from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiPromptDriver",
@@ -29,5 +32,8 @@ __all__ = [
     "DynamoDbStorageDriver",
 
     "BaseBlobStorageDriver",
-    "MemoryBlobStorageDriver"
+    "MemoryBlobStorageDriver",
+
+    "BaseEmbeddingDriver",
+    "OpenAiEmbeddingDriver"
 ]

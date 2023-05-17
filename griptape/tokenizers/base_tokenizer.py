@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from itertools import islice
+from typing import Generator
+
 from attr import define, field
 
 
@@ -23,6 +26,12 @@ class BaseTokenizer(ABC):
 
     def token_count(self, text: str) -> int:
         return len(self.encode(text))
+
+    def chunk_tokens(self, tokens: list[int]) -> Generator:
+        it = iter(tokens)
+
+        while batch := tuple(islice(it, self.max_tokens)):
+            yield batch
 
     @abstractmethod
     def encode(self, text: str) -> list[int]:

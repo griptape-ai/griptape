@@ -21,3 +21,8 @@ class TestTiktokenTokenizer:
 
     def test_encoding(self, tokenizer):
         assert tokenizer.encoding.name == "cl100k_base"
+
+    def test_chunk_tokens(self, tokenizer):
+        tokens = tokenizer.encode("foo bar")
+
+        assert [chunk for chunk in tokenizer.chunk_tokens(tokens)] == [(8134, 3703)]
