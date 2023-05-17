@@ -1,3 +1,4 @@
+from tests.mocks.mock_driver import MockDriver
 from tests.mocks.mock_failing_driver import MockFailingDriver
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tasks import PromptTask
@@ -6,7 +7,7 @@ from griptape.structures import Pipeline
 
 class TestPromptDriver:
     def test_run_retries_success(self):
-        driver = MockFailingDriver(max_failures=1, max_retries=1, retry_delay=0.01)
+        driver = MockDriver(max_retries=1, retry_delay=0.01)
         pipeline = Pipeline(prompt_driver=driver)
 
         pipeline.add_task(
