@@ -7,6 +7,7 @@ from griptape.artifacts import TextArtifact, BaseArtifact
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
+    from griptape.structures import Structure
 
 
 @define
@@ -24,6 +25,14 @@ class PromptTask(BaseTask):
                 **self.full_context
             )
         )
+
+    @property
+    def full_context(self) -> dict[str, any]:
+        structure_context = self.structure.context(self)
+
+        structure_context.update(self.context)
+
+        return structure_context
 
     def before_run(self) -> None:
         super().before_run()
@@ -47,14 +56,15 @@ class PromptTask(BaseTask):
             return self.driver
 
     def render(self) -> str:
-        return J2("prompts/tasks/prompt.j2").render(
+        return J2("prompts/tasks/prompt/conversation.j2").render(
             task=self
         )
 
-    @property
-    def full_context(self) -> dict[str, any]:
-        structure_context = self.structure.context(self)
+    def prompt_stack(self, structure: Structure) -> list[str]:
+        stack = [
+            J2("prompts/tasks/prompt/base.j2").render(
+                rulesets=structure.rulesets,
+            )
+        ]
 
-        structure_context.update(self.context)
-
-        return structure_context
+        return stack

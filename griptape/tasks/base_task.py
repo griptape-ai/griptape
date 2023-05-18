@@ -131,3 +131,7 @@ class BaseTask(ABC):
     @abstractmethod
     def run(self) -> BaseArtifact:
         ...
+
+    @abstractmethod
+    def prompt_stack(self, structure: Structure) -> list[str]:
+        ...

@@ -114,7 +114,7 @@ class ActionSubtask(PromptTask):
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {self.output.to_text()}")
 
     def render(self) -> str:
-        return J2("prompts/tasks/tool/subtask.j2").render(
+        return J2("prompts/tasks/toolkit/subtask.j2").render(
             subtask=self
         )
 

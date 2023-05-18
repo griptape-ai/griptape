@@ -72,28 +72,7 @@ class Structure(ABC):
         return [self.add_task(s) for s in tasks]
 
     def prompt_stack(self, task: BaseTask) -> list[str]:
-        from griptape.tasks import ToolkitTask
-
-        tools = task.tools if isinstance(task, ToolkitTask) else []
-        ramps = [r for r in task.ramps if len(r.activities()) > 0] if isinstance(task, ToolkitTask) else []
-        action_schema = utils.minify_json(
-            json.dumps(
-                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
-            )
-        )
-
-        stack = [
-            J2("prompts/base.j2").render(
-                rulesets=self.rulesets,
-                action_schema=action_schema,
-                ramp_names=str.join(", ", [ramp.name for ramp in ramps]),
-                ramps=[J2("prompts/ramp.j2").render(ramp=ramp) for ramp in ramps],
-                tool_names=str.join(", ", [tool.name for tool in tools]),
-                tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]
-            )
-        ]
-
-        return stack
+        return task.prompt_stack(self)
 
     def to_prompt_string(self, task: BaseTask) -> str:
         return self.stack_to_prompt_string(self.prompt_stack(task))

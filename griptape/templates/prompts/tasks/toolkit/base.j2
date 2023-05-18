@@ -9,30 +9,28 @@ Output: <your final response>
 
 "Input:", "Thought:", "Action:", "Observation:", and "Output:" must ALWAYS start on a new line.
 
-Action must ALWAYS be a minified JSON object starting on the same line as "Action:"
+Action must ALWAYS be a single-line JSON object starting on the same line as "Action:"
 
 If you don't need to perform an action or if you don't know which action to perform, ignore Thought/Action/Observation and go straight to Output. NEVER make up action types.
 
-Actions of type "tool"
 {% if tool_names|length > 0 %}
-You can use tool activities to complete tasks. You have access to only the following tools: [{{ tool_names }}]. NEVER make up tools. If you encounter an error from a tool you should try to fix it. Don't request extra information from the user.
+Actions of Type "tool"
+
+Tools can help you complete tasks. You have access to the following tools ONLY: [{{ tool_names }}]. NEVER make up tools. NEVER use tools for tasks they are not designed for. If you encounter an error from a tool you should try to fix it. NEVER request extra information from the user.
 
 {% for tool in tools %}
 {{ tool }}
 {% endfor %}
-{% else %}
-You don't have access to any actions of type "tool"
 {% endif %}
 
-Actions of type "ramp"
 {% if ramp_names|length > 0 %}
-Ramp is used to pass data between tools. Some tools might use ramps for outputs. You can use ramp activities to complete tasks. You have access to only the following ramps: [{{ ramp_names }}]. NEVER make up ramps. If you encounter an error from a ramp you should try to fix it. Don't request extra information from the user.
+Actions of Type "ramp"
+
+Ramps are used to pass data between tools. Some tools might use ramps for outputs. You can use ramp activities to complete tasks. You have access to the following ramps ONLY: [{{ ramp_names }}]. NEVER make up ramps. If you encounter an error from a ramp you should try to fix it. NEVER request extra information from the user.
 
 {% for ramp in ramps %}
 {{ ramp }}
 {% endfor %}
-{% else %}
-You don't have access to any actions of type "ramp"
 {% endif %}
 
 {% if rulesets|length > 0 %}

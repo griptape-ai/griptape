@@ -1,6 +1,10 @@
 from __future__ import annotations
+
+import json
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
+from griptape.tasks import ActionSubtask
+from griptape import utils
 from griptape.core import BaseTool
 from griptape.executors import BaseExecutor, LocalExecutor
 from griptape.utils import J2
@@ -8,8 +12,8 @@ from griptape.tasks import PromptTask
 from griptape.artifacts import TextArtifact, ErrorArtifact
 
 if TYPE_CHECKING:
-    from griptape.tasks import ActionSubtask
     from griptape.ramps import BaseRamp
+    from griptape.structures import Structure
 
 
 @define
@@ -78,7 +82,7 @@ class ToolkitTask(PromptTask):
         return self.output
 
     def render(self) -> str:
-        return J2("prompts/tasks/tool/tool.j2").render(
+        return J2("prompts/tasks/toolkit/conversation.j2").render(
             subtask=self,
             subtasks=self._subtasks
         )
@@ -107,3 +111,27 @@ class ToolkitTask(PromptTask):
             (r for r in self.ramps if r.name == ramp_name),
             None
         )
+
+    def prompt_stack(self, structure: Structure) -> list[str]:
+        from griptape.tasks import ToolkitTask
+
+        tools = self.tools if isinstance(self, ToolkitTask) else []
+        ramps = [r for r in self.ramps if len(r.activities()) > 0] if isinstance(self, ToolkitTask) else []
+        action_schema = utils.minify_json(
+            json.dumps(
+                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
+            )
+        )
+
+        stack = [
+            J2("prompts/tasks/toolkit/base.j2").render(
+                rulesets=structure.rulesets,
+                action_schema=action_schema,
+                ramp_names=str.join(", ", [ramp.name for ramp in ramps]),
+                ramps=[J2("prompts/ramp.j2").render(ramp=ramp) for ramp in ramps],
+                tool_names=str.join(", ", [tool.name for tool in tools]),
+                tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]
+            )
+        ]
+
+        return stack
