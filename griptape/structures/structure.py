@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 import logging
 import uuid
 from abc import ABC, abstractmethod
@@ -7,14 +6,10 @@ from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape import utils
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.rules.ruleset import Ruleset
-from griptape.tasks import ActionSubtask
-from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.rules import Rule
     from griptape.tasks import BaseTask
 
 

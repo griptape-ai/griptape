@@ -17,6 +17,9 @@ from griptape.drivers.storage.blob.memory_blob_storage_driver import MemoryBlobS
 from griptape.drivers.embedding.base_embedding_driver import BaseEmbeddingDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 
+from griptape.drivers.storage.vector.base_vector_storage_driver import BaseVectorStorageDriver
+from griptape.drivers.storage.vector.pinecone_vector_storage_driver import PineconeVectorStorageDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiPromptDriver",
@@ -35,5 +38,8 @@ __all__ = [
     "MemoryBlobStorageDriver",
 
     "BaseEmbeddingDriver",
-    "OpenAiEmbeddingDriver"
+    "OpenAiEmbeddingDriver",
+
+    "BaseVectorStorageDriver",
+    "PineconeVectorStorageDriver"
 ]

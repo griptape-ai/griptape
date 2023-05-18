@@ -9,8 +9,10 @@ from griptape.tokenizers import TiktokenTokenizer
 @define
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "text-embedding-ada-002"
+    DEFAULT_DIMENSIONS = 1536
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    dimensions: int = field(default=DEFAULT_DIMENSIONS, kw_only=True)
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)

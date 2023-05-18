@@ -7,6 +7,7 @@ from griptape.artifacts import TextArtifact
 
 @define
 class BaseEmbeddingDriver(ABC):
+    dimensions: int = field(kw_only=True)
     min_retry_delay: float = field(default=2, kw_only=True)
     max_retry_delay: float = field(default=10, kw_only=True)
 

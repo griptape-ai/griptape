@@ -508,14 +508,14 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cohere"
-version = "4.5.0"
+version = "4.5.1"
 description = ""
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "cohere-4.5.0-py3-none-any.whl", hash = "sha256:741574386c8ca57d28fda6999ebd0c24055f8849ca46b5a9bd99165219d5ca32"},
-    {file = "cohere-4.5.0.tar.gz", hash = "sha256:4af38a8b31de5cfd811f4f44e61886200f7f21c4819e88fd0c4af72646bbc4a1"},
+    {file = "cohere-4.5.1-py3-none-any.whl", hash = "sha256:46e777d5b76c69f93c2f589b574786599c9a8f13c1bbc9a969e68c194ba7da29"},
+    {file = "cohere-4.5.1.tar.gz", hash = "sha256:fbfa1e6696320ab41abdad2512de6e2e549ceb95da042c88fc6fe5c00c5f0530"},
 ]
 
 [package.dependencies]
@@ -690,6 +690,27 @@ files = [
 
 [package.extras]
 graph = ["objgraph (>=1.7.2)"]
+
+[[package]]
+name = "dnspython"
+version = "2.3.0"
+description = "DNS toolkit"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "dnspython-2.3.0-py3-none-any.whl", hash = "sha256:89141536394f909066cabd112e3e1a37e4e654db00a25308b0f130bc3152eb46"},
+    {file = "dnspython-2.3.0.tar.gz", hash = "sha256:224e32b03eb46be70e12ef6d64e0be123a64e621ab4c0822ff6d450d52a540b9"},
+]
+
+[package.extras]
+curio = ["curio (>=1.2,<2.0)", "sniffio (>=1.1,<2.0)"]
+dnssec = ["cryptography (>=2.6,<40.0)"]
+doh = ["h2 (>=4.1.0)", "httpx (>=0.21.1)", "requests (>=2.23.0,<3.0.0)", "requests-toolbelt (>=0.9.1,<0.11.0)"]
+doq = ["aioquic (>=0.9.20)"]
+idna = ["idna (>=2.1,<4.0)"]
+trio = ["trio (>=0.14,<0.23)"]
+wmi = ["wmi (>=1.5.1,<2.0.0)"]
 
 [[package]]
 name = "docker"
@@ -1200,14 +1221,14 @@ testing = ["flake8 (<5)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-chec
 
 [[package]]
 name = "langchain"
-version = "0.0.171"
+version = "0.0.173"
 description = "Building applications with LLMs through composability"
 category = "main"
 optional = false
 python-versions = ">=3.8.1,<4.0"
 files = [
-    {file = "langchain-0.0.171-py3-none-any.whl", hash = "sha256:ac014d1912bdbadf608120b29981e4177f293bcdf50e0987f682c1f34f3d3b3e"},
-    {file = "langchain-0.0.171.tar.gz", hash = "sha256:d32dba400c35a71221bb7e903175ee5ea4e9decf4354cedd070adf95fb1e4d16"},
+    {file = "langchain-0.0.173-py3-none-any.whl", hash = "sha256:64cc052f3d8a821d76718bf09d6c7c07a8b57324f867bc50e225d2ac8348567a"},
+    {file = "langchain-0.0.173.tar.gz", hash = "sha256:a2db49c2ce024df7f5a742c9a312ca06a5a8d4982e65090eab58fa58c3ced022"},
 ]
 
 [package.dependencies]
@@ -1224,12 +1245,12 @@ SQLAlchemy = ">=1.4,<3"
 tenacity = ">=8.1.0,<9.0.0"
 
 [package.extras]
-all = ["O365 (>=2.0.26,<3.0.0)", "aleph-alpha-client (>=2.15.0,<3.0.0)", "anthropic (>=0.2.6,<0.3.0)", "arxiv (>=1.4,<2.0)", "atlassian-python-api (>=3.36.0,<4.0.0)", "azure-cosmos (>=4.4.0b1,<5.0.0)", "azure-identity (>=1.12.0,<2.0.0)", "beautifulsoup4 (>=4,<5)", "clickhouse-connect (>=0.5.14,<0.6.0)", "cohere (>=3,<4)", "deeplake (>=3.3.0,<4.0.0)", "docarray (>=0.31.0,<0.32.0)", "duckduckgo-search (>=2.8.6,<3.0.0)", "elasticsearch (>=8,<9)", "faiss-cpu (>=1,<2)", "google-api-python-client (==2.70.0)", "google-search-results (>=2,<3)", "gptcache (>=0.1.7)", "gql (>=3.4.1,<4.0.0)", "hnswlib (>=0.7.0,<0.8.0)", "html2text (>=2020.1.16,<2021.0.0)", "huggingface_hub (>=0,<1)", "jina (>=3.14,<4.0)", "jinja2 (>=3,<4)", "jq (>=1.4.1,<2.0.0)", "lancedb (>=0.1,<0.2)", "lark (>=1.1.5,<2.0.0)", "manifest-ml (>=0.0.1,<0.0.2)", "networkx (>=2.6.3,<3.0.0)", "nlpcloud (>=1,<2)", "nltk (>=3,<4)", "nomic (>=1.0.43,<2.0.0)", "openai (>=0,<1)", "opensearch-py (>=2.0.0,<3.0.0)", "pdfminer-six (>=20221105,<20221106)", "pexpect (>=4.8.0,<5.0.0)", "pgvector (>=0.1.6,<0.2.0)", "pinecone-client (>=2,<3)", "pinecone-text (>=0.4.2,<0.5.0)", "protobuf (==3.19)", "psycopg2-binary (>=2.9.5,<3.0.0)", "pyowm (>=3.3.0,<4.0.0)", "pypdf (>=3.4.0,<4.0.0)", "pytesseract (>=0.3.10,<0.4.0)", "pyvespa (>=0.33.0,<0.34.0)", "qdrant-client (>=1.1.2,<2.0.0)", "redis (>=4,<5)", "sentence-transformers (>=2,<3)", "spacy (>=3,<4)", "steamship (>=2.16.9,<3.0.0)", "tensorflow-text (>=2.11.0,<3.0.0)", "tiktoken (>=0.3.2,<0.4.0)", "torch (>=1,<3)", "transformers (>=4,<5)", "weaviate-client (>=3,<4)", "wikipedia (>=1,<2)", "wolframalpha (==5.0.0)"]
+all = ["O365 (>=2.0.26,<3.0.0)", "aleph-alpha-client (>=2.15.0,<3.0.0)", "anthropic (>=0.2.6,<0.3.0)", "arxiv (>=1.4,<2.0)", "atlassian-python-api (>=3.36.0,<4.0.0)", "azure-cosmos (>=4.4.0b1,<5.0.0)", "azure-identity (>=1.12.0,<2.0.0)", "beautifulsoup4 (>=4,<5)", "clickhouse-connect (>=0.5.14,<0.6.0)", "cohere (>=3,<4)", "deeplake (>=3.3.0,<4.0.0)", "docarray (>=0.31.0,<0.32.0)", "duckduckgo-search (>=2.8.6,<3.0.0)", "elasticsearch (>=8,<9)", "faiss-cpu (>=1,<2)", "google-api-python-client (==2.70.0)", "google-search-results (>=2,<3)", "gptcache (>=0.1.7)", "gql (>=3.4.1,<4.0.0)", "hnswlib (>=0.7.0,<0.8.0)", "html2text (>=2020.1.16,<2021.0.0)", "huggingface_hub (>=0,<1)", "jina (>=3.14,<4.0)", "jinja2 (>=3,<4)", "jq (>=1.4.1,<2.0.0)", "lancedb (>=0.1,<0.2)", "lark (>=1.1.5,<2.0.0)", "manifest-ml (>=0.0.1,<0.0.2)", "networkx (>=2.6.3,<3.0.0)", "nlpcloud (>=1,<2)", "nltk (>=3,<4)", "nomic (>=1.0.43,<2.0.0)", "openai (>=0,<1)", "opensearch-py (>=2.0.0,<3.0.0)", "pdfminer-six (>=20221105,<20221106)", "pexpect (>=4.8.0,<5.0.0)", "pgvector (>=0.1.6,<0.2.0)", "pinecone-client (>=2,<3)", "pinecone-text (>=0.4.2,<0.5.0)", "protobuf (==3.19.6)", "psycopg2-binary (>=2.9.5,<3.0.0)", "pyowm (>=3.3.0,<4.0.0)", "pypdf (>=3.4.0,<4.0.0)", "pytesseract (>=0.3.10,<0.4.0)", "pyvespa (>=0.33.0,<0.34.0)", "qdrant-client (>=1.1.2,<2.0.0)", "redis (>=4,<5)", "sentence-transformers (>=2,<3)", "spacy (>=3,<4)", "steamship (>=2.16.9,<3.0.0)", "tensorflow-text (>=2.11.0,<3.0.0)", "tiktoken (>=0.3.2,<0.4.0)", "torch (>=1,<3)", "transformers (>=4,<5)", "weaviate-client (>=3,<4)", "wikipedia (>=1,<2)", "wolframalpha (==5.0.0)"]
 azure = ["azure-core (>=1.26.4,<2.0.0)", "azure-cosmos (>=4.4.0b1,<5.0.0)", "azure-identity (>=1.12.0,<2.0.0)", "openai (>=0,<1)"]
 cohere = ["cohere (>=3,<4)"]
 embeddings = ["sentence-transformers (>=2,<3)"]
-extended-testing = ["jq (>=1.4.1,<2.0.0)", "lxml (>=4.9.2,<5.0.0)", "pdfminer-six (>=20221105,<20221106)", "pymupdf (>=1.22.3,<2.0.0)", "pypdf (>=3.4.0,<4.0.0)", "pypdfium2 (>=4.10.0,<5.0.0)", "tqdm (>=4.48.0)"]
-hnswlib = ["docarray (>=0.31.0,<0.32.0)", "hnswlib (>=0.7.0,<0.8.0)", "protobuf (==3.19)"]
+extended-testing = ["atlassian-python-api (>=3.36.0,<4.0.0)", "beautifulsoup4 (>=4,<5)", "jq (>=1.4.1,<2.0.0)", "lxml (>=4.9.2,<5.0.0)", "pandas (>=2.0.1,<3.0.0)", "pdfminer-six (>=20221105,<20221106)", "pymupdf (>=1.22.3,<2.0.0)", "pypdf (>=3.4.0,<4.0.0)", "pypdfium2 (>=4.10.0,<5.0.0)", "telethon (>=1.28.5,<2.0.0)", "tqdm (>=4.48.0)", "zep-python (>=0.25,<0.26)"]
+hnswlib = ["docarray (>=0.31.0,<0.32.0)", "hnswlib (>=0.7.0,<0.8.0)", "protobuf (==3.19.6)"]
 in-memory-store = ["docarray (>=0.31.0,<0.32.0)"]
 llms = ["anthropic (>=0.2.6,<0.3.0)", "cohere (>=3,<4)", "huggingface_hub (>=0,<1)", "manifest-ml (>=0.0.1,<0.0.2)", "nlpcloud (>=1,<2)", "openai (>=0,<1)", "torch (>=1,<3)", "transformers (>=4,<5)"]
 openai = ["openai (>=0,<1)", "tiktoken (>=0.3.2,<0.4.0)"]
@@ -1302,6 +1323,25 @@ pandas = "*"
 requests = "<2.30.0"
 tenacity = ">=8.2.0,<9.0.0"
 tiktoken = "*"
+
+[[package]]
+name = "loguru"
+version = "0.7.0"
+description = "Python logging made (stupidly) simple"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "loguru-0.7.0-py3-none-any.whl", hash = "sha256:b93aa30099fa6860d4727f1b81f8718e965bb96253fa190fab2077aaad6d15d3"},
+    {file = "loguru-0.7.0.tar.gz", hash = "sha256:1612053ced6ae84d7959dd7d5e431a0532642237ec21f7fd83ac73fe539e03e1"},
+]
+
+[package.dependencies]
+colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
+win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+dev = ["Sphinx (==5.3.0)", "colorama (==0.4.5)", "colorama (==0.4.6)", "freezegun (==1.1.0)", "freezegun (==1.2.2)", "mypy (==v0.910)", "mypy (==v0.971)", "mypy (==v0.990)", "pre-commit (==3.2.1)", "pytest (==6.1.2)", "pytest (==7.2.1)", "pytest-cov (==2.12.1)", "pytest-cov (==4.0.0)", "pytest-mypy-plugins (==1.10.1)", "pytest-mypy-plugins (==1.9.3)", "sphinx-autobuild (==2021.3.14)", "sphinx-rtd-theme (==1.2.0)", "tox (==3.27.1)", "tox (==4.4.6)"]
 
 [[package]]
 name = "markdown-it-py"
@@ -1815,6 +1855,32 @@ files = [
     {file = "pathspec-0.11.1-py3-none-any.whl", hash = "sha256:d8af70af76652554bd134c22b3e8a1cc46ed7d91edcdd721ef1a0c51a84a5293"},
     {file = "pathspec-0.11.1.tar.gz", hash = "sha256:2798de800fa92780e33acca925945e9a19a133b715067cf165b8866c15a31687"},
 ]
+
+[[package]]
+name = "pinecone-client"
+version = "2.2.1"
+description = "Pinecone client and SDK"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "pinecone-client-2.2.1.tar.gz", hash = "sha256:0878dcaee447c46c8d1b3d71c854689daa7e548e5009a171780907c7d4e74789"},
+    {file = "pinecone_client-2.2.1-py3-none-any.whl", hash = "sha256:6976a22aee57a9813378607506c8c36b0317dfa36a08a5397aaaeab2eef66c1b"},
+]
+
+[package.dependencies]
+dnspython = ">=2.0.0"
+loguru = ">=0.5.0"
+numpy = "*"
+python-dateutil = ">=2.5.3"
+pyyaml = ">=5.4"
+requests = ">=2.19.0"
+tqdm = ">=4.64.1"
+typing-extensions = ">=3.7.4"
+urllib3 = ">=1.21.1"
+
+[package.extras]
+grpc = ["googleapis-common-protos (>=1.53.0)", "grpc-gateway-protoc-gen-openapiv2 (==0.1.0)", "grpcio (>=1.44.0)", "lz4 (>=3.1.3)", "protobuf (==3.19.3)"]
 
 [[package]]
 name = "pkginfo"
@@ -3005,6 +3071,21 @@ MarkupSafe = ">=2.1.1"
 watchdog = ["watchdog (>=2.3)"]
 
 [[package]]
+name = "win32-setctime"
+version = "1.1.0"
+description = "A small Python utility to set file creation time on Windows"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad"},
+    {file = "win32_setctime-1.1.0.tar.gz", hash = "sha256:15cf5750465118d6929ae4de4eb46e8edae9a5634350c01ba582df868e932cb2"},
+]
+
+[package.extras]
+dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
+
+[[package]]
 name = "wrapt"
 version = "1.15.0"
 description = "Module for decorators, wrappers and monkey patching."
@@ -3208,4 +3289,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a90e45e6a98def648b92bad9f9e45d78e94e93919040adc7f5980c4b6e1e51bc"
+content-hash = "a9b98fb7dfa6aa3f2b681aaea2fae83d987439cb83e50cd54a5cb7f66527b01b"

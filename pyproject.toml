@@ -38,6 +38,7 @@ llama_index = "~0.6.0"
 boto3 = "^1.26.123"
 tenacity = ">=8.0"
 numpy = ">=1"
+pinecone-client = ">=2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
