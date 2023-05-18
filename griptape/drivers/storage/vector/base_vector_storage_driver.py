@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 from attr import define, field
+from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
 
 
@@ -18,6 +19,20 @@ class BaseVectorStorageDriver(ABC):
         default=OpenAiEmbeddingDriver(),
         kw_only=True
     )
+
+    def insert_text_artifact(
+            self,
+            artifact: TextArtifact,
+            vector_id: Optional[str] = None,
+            meta: Optional[dict] = None,
+            **kwargs
+    ) -> str:
+        return self.insert_vector(
+            artifact.embedding(self.embedding_driver),
+            vector_id=vector_id,
+            meta=meta if meta else {},
+            **kwargs
+        )
 
     def insert_text(
             self,

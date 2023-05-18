@@ -1,8 +1,12 @@
 from griptape.artifacts import TextArtifact
 from griptape.tokenizers import TiktokenTokenizer
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestTextArtifact:
+    def test_embedding(self):
+        assert TextArtifact("foobar").embedding(MockEmbeddingDriver()) == [0, 1]
+
     def test_to_text(self):
         assert TextArtifact("foobar").to_text() == "foobar"
 

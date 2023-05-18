@@ -1,5 +1,8 @@
 import pytest
+
+from griptape.artifacts import TextArtifact
 from griptape.drivers import PineconeVectorStorageDriver
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestOpenAiEmbeddingDriver:
@@ -29,6 +32,12 @@ class TestOpenAiEmbeddingDriver:
             api_key="foobar",
             index_name="test"
         )
+
+    def test_insert_test_artifact(self, driver):
+        assert driver.insert_text_artifact(
+            TextArtifact("foo"),
+            vector_id="foo"
+        ) == "foo"
 
     def test_insert_vector(self, driver):
         assert driver.insert_vector([0, 1, 2], vector_id="foo") == "foo"
