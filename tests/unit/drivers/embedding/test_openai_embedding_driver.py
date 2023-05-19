@@ -4,7 +4,7 @@ from griptape.drivers import OpenAiEmbeddingDriver
 
 class TestOpenAiEmbeddingDriver:
     @pytest.fixture(autouse=True)
-    def mock_openai_embedding_create(self, mocker):
+    def mock_openai(self, mocker):
         fake_response = {
             "data": [
                 {

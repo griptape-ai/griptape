@@ -10,7 +10,7 @@ class TestOpenAiEmbeddingDriver:
     """
 
     @pytest.fixture(autouse=True)
-    def mock_openai_embedding_create(self, mocker):
+    def mock_pinecone(self, mocker):
         # Create a fake response
         fake_query_response = {
             "matches": [
