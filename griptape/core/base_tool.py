@@ -93,6 +93,23 @@ class BaseTool(ActivityMixin, ABC):
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
 
+    def value(self, name: str) -> Optional[any]:
+        if hasattr(self, name):
+            value = getattr(self, name)
+            env_field = next(
+                (f for f in self.env_fields if f.name == name),
+                None
+            )
+
+            if value:
+                return value
+            elif env_field:
+                return self.env_value(env_field.metadata.get("env"))
+            else:
+                return None
+        else:
+            return None
+
     def env_value(self, name: str) -> Optional[any]:
         # First, check if there is a matching field with an environment variable in the metadata
         env_field = next(
