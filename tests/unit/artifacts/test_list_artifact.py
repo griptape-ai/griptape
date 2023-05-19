@@ -5,7 +5,7 @@ from griptape.schemas import ListArtifactSchema
 class TestListArtifact:
     def test_to_text(self):
         assert ListArtifact([TextArtifact("foobar")]).to_text() == \
-               "This artifact contains the following values: foobar"
+               "Artifact contains multiple values:\nfoobar"
 
         assert ListArtifact().to_text() == \
                "This artifact is empty"

@@ -9,8 +9,9 @@ class ListArtifact(BaseArtifact):
     def to_text(self) -> str:
         if len(self.value) > 0:
             values_texts = [value.to_text() for value in self.value]
+            string_value = str.join("\n\n", values_texts)
 
-            return f"This artifact contains the following values: {str.join(', ', values_texts)}"
+            return f"Artifact contains multiple values:\n{string_value}"
         else:
             return "This artifact is empty"
 
