@@ -4,6 +4,11 @@ from griptape.drivers import PineconeVectorStorageDriver
 
 
 class TestOpenAiEmbeddingDriver:
+    """
+    This should really be under `unit` but the Pinecone client results
+    in tests hanging on GitHub.
+    """
+
     @pytest.fixture(autouse=True)
     def mock_openai_embedding_create(self, mocker):
         # Create a fake response
