@@ -13,7 +13,7 @@ class TestOpenAiEmbeddingDriver:
             ]
         }
 
-        mocker.patch('openai.Embedding.create', return_value=fake_response)
+        mocker.patch("openai.Embedding.create", return_value=fake_response)
 
     def test_init(self):
         assert OpenAiEmbeddingDriver()

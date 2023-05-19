@@ -25,10 +25,10 @@ class TestOpenAiEmbeddingDriver:
             "namespace": "foobar"
         }
 
-        mocker.patch('pinecone.init', return_value=None)
-        mocker.patch('pinecone.Index.upsert', return_value=None)
-        mocker.patch('pinecone.Index.query', return_value=fake_query_response)
-        mocker.patch('pinecone.create_index', return_value=None)
+        mocker.patch("pinecone.init", return_value=None)
+        mocker.patch("pinecone.Index.upsert", return_value=None)
+        mocker.patch("pinecone.Index.query", return_value=fake_query_response)
+        mocker.patch("pinecone.create_index", return_value=None)
 
     @pytest.fixture
     def driver(self):
