@@ -41,15 +41,18 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
     def query(
             self,
             query: str,
-            top_k: int = 5,
+            count: int = 5,
+            namespace: Optional[str] = None,
+            include_vectors: bool = False,
+            # PineconeVectorStorageDriver-specific params:
             include_metadata=True,
             **kwargs
     ) -> list[BaseVectorStorageDriver.QueryResult]:
         vector = self.embedding_driver.embed_string(query)
 
         params = {
-            "top_k": top_k,
-            "include_values": False,
+            "top_k": count,
+            "include_values": include_vectors,
             "include_metadata": include_metadata
         } | kwargs
 

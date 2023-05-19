@@ -59,5 +59,12 @@ class BaseVectorStorageDriver(ABC):
         ...
 
     @abstractmethod
-    def query(self, query: str, **kwargs) -> list[QueryResult]:
+    def query(
+            self,
+            query: str,
+            count: int = 5,
+            namespace: Optional[str] = None,
+            include_vectors: bool = False,
+            **kwargs
+    ) -> list[QueryResult]:
         ...
