@@ -95,16 +95,16 @@ class BaseTool(ActivityMixin, ABC):
 
     def value(self, name: str) -> Optional[any]:
         if hasattr(self, name):
-            value = getattr(self, name)
             env_field = next(
                 (f for f in self.env_fields if f.name == name),
                 None
             )
+            value = getattr(self, name)
 
-            if value:
-                return value
-            elif env_field:
+            if env_field:
                 return self.env_value(env_field.metadata.get("env"))
+            elif value:
+                return value
             else:
                 return None
         else:
