@@ -1,4 +1,5 @@
 from __future__ import annotations
+import ast
 from typing import TYPE_CHECKING
 import inspect
 import logging
@@ -111,18 +112,19 @@ class BaseTool(ActivityMixin, ABC):
             return None
 
     def env_value(self, name: str) -> Optional[any]:
-        # First, check if there is a matching field with an environment variable in the metadata
+        config_var_value = config(name, default=None)
         env_field = next(
             (f for f in self.env_fields if f.metadata.get("env") == name),
             None
         )
 
-        if env_field:
-            # Try casting the environment variable value to a matching field type
-            type_hint = env_field.type.__args__[0] if hasattr(env_field.type, "__args__") else env_field.type
-            env_var_value = config(name, default=None, cast=type_hint) if config(name, default=None) else None
+        if config_var_value:
+            try:
+                env_var_value = ast.literal_eval(config_var_value)
+            except:
+                env_var_value = config_var_value
         else:
-            env_var_value = config(name, default=None)
+            env_var_value = None
 
         if env_var_value:
             # Return a non-None environment variable value

@@ -9,6 +9,7 @@ from griptape.core.decorators import activity
 class MockTool(BaseTool):
     test_field: str = field(default="test", kw_only=True, metadata={"env": "TEST_FIELD"})
     test_int: int = field(default=5, kw_only=True, metadata={"env": "TEST_INT"})
+    test_dict: dict = field(factory=dict, kw_only=True, metadata={"env": "TEST_DICT"})
 
     @activity(config={
         "description": "test description: {{ foo }}",

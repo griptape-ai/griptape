@@ -13,11 +13,12 @@ class TestBaseTool:
     def tool(self):
         return MockTool(
             test_field="hello",
-            test_int=5
+            test_int=5,
+            test_dict={"foo": "bar"}
         )
 
     def test_env_fields(self, tool):
-        assert len(tool.env_fields) == 2
+        assert len(tool.env_fields) == 3
 
     def test_env(self, tool):
         assert tool.env["TEST_FIELD"] == "hello"
@@ -46,14 +47,36 @@ class TestBaseTool:
     def test_abs_dir_path(self, tool):
         assert tool.abs_dir_path == os.path.dirname(tool.abs_file_path)
 
-    def test_value(self, tool):
+    def test_value_from_field(self, tool):
         assert tool.value("test_field") == "hello"
         assert tool.value("test_int") == 5
+        assert tool.value("test_dict")["foo"] == "bar"
         assert tool.value("no_test_field") is None
 
-    def test_env_value(self, tool):
+    def test_value_from_env(self, tool):
+        os.environ["TEST_FIELD"] = str(tool.value("test_field"))
+        os.environ["TEST_INT"] = str(tool.value("test_int"))
+        os.environ["TEST_DICT"] = str(tool.value("test_dict"))
+
+        assert tool.value("test_field") == "hello"
+        assert tool.value("test_int") == 5
+        assert tool.value("test_dict")["foo"] == "bar"
+        assert tool.value("no_test_field") is None
+
+    def test_env_value_from_field(self, tool):
         assert tool.env_value("TEST_FIELD") == "hello"
         assert tool.env_value("TEST_INT") == 5
+        assert tool.env_value("TEST_DICT")["foo"] == "bar"
+        assert tool.env_value("NO_TEST_FIELD") is None
+
+    def test_env_value_from_env(self, tool):
+        os.environ["TEST_FIELD"] = str(tool.value("test_field"))
+        os.environ["TEST_INT"] = str(tool.value("test_int"))
+        os.environ["TEST_DICT"] = str(tool.value("test_dict"))
+
+        assert tool.env_value("TEST_FIELD") == "hello"
+        assert tool.env_value("TEST_INT") == 5
+        assert tool.env_value("TEST_DICT")["foo"] == "bar"
         assert tool.env_value("NO_TEST_FIELD") is None
 
         os.environ["TEST_INT"] = "1"

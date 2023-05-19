@@ -34,7 +34,8 @@ class TestOpenAiEmbeddingDriver:
     def driver(self):
         return PineconeVectorStorageDriver(
             api_key="foobar",
-            index_name="test"
+            index_name="test",
+            environment="test"
         )
 
     def test_insert_test_artifact(self, driver):
