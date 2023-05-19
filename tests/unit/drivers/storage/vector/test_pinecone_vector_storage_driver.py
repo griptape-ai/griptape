@@ -1,8 +1,6 @@
 import pytest
-
 from griptape.artifacts import TextArtifact
 from griptape.drivers import PineconeVectorStorageDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestOpenAiEmbeddingDriver:
@@ -22,6 +20,7 @@ class TestOpenAiEmbeddingDriver:
             "namespace": "foobar"
         }
 
+        mocker.patch('pinecone.init', return_value=None)
         mocker.patch('pinecone.Index.upsert', return_value=None)
         mocker.patch('pinecone.Index.query', return_value=fake_query_response)
         mocker.patch('pinecone.create_index', return_value=None)
