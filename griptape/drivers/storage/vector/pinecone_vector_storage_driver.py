@@ -9,7 +9,7 @@ from attr import define, field
 class PineconeVectorStorageDriver(BaseVectorStorageDriver):
     api_key: str = field(kw_only=True)
     index_name: str = field(kw_only=True)
-    environment: Optional[str] = field(default=None, kw_only=True)
+    environment: str = field(kw_only=True)
     project_name: Optional[str] = field(default=None, kw_only=True)
     index: pinecone.Index = field(init=False)
 
