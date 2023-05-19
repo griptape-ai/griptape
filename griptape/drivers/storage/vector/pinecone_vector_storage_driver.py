@@ -49,7 +49,7 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
 
         params = {
             "top_k": top_k,
-            "include_values": True,
+            "include_values": False,
             "include_metadata": include_metadata
         } | kwargs
 
