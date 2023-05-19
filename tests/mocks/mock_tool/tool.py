@@ -11,7 +11,6 @@ class MockTool(BaseTool):
     test_int: int = field(default=5, kw_only=True, metadata={"env": "TEST_INT"})
 
     @activity(config={
-        "name": "test",
         "description": "test description: {{ foo }}",
         "schema": Schema({
                 Literal("test"): str

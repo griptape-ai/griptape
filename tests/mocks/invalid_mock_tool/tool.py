@@ -8,9 +8,8 @@ from griptape.core.decorators import activity
 class InvalidMockTool(BaseTool):
     configs = {
         "test": {
-            # no name should make this tool invalid
-            #"name": "test",
-            "description": "test description",
+            # no description should make this tool invalid
+            # "description": "test description",
             "schema": Schema({
                 Literal(
                     "input",

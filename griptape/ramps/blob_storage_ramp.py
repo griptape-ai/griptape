@@ -23,7 +23,7 @@ class BlobStorageRamp(BaseRamp):
             output = J2("ramps/blob_storage.j2").render(
                 ramp_name=self.name,
                 tool_name=tool_activity.__self__.name,
-                activity_name=tool_activity.config["name"],
+                activity_name=tool_activity.name,
                 names=str.join(", ", artifact_names)
             )
 

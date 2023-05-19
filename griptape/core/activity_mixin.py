@@ -57,7 +57,7 @@ class ActivityMixin:
 
     def find_activity(self, name: str) -> Optional[callable]:
         for method in self.activities():
-            if getattr(method, "is_activity", False) and method.config["name"] == name:
+            if getattr(method, "is_activity", False) and method.name == name:
                 return method
 
         return None
@@ -66,7 +66,7 @@ class ActivityMixin:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
-            return activity.config["name"]
+            return activity.name
 
     def activity_description(self, activity: callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):

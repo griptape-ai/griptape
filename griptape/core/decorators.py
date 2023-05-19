@@ -4,7 +4,6 @@ from schema import Schema
 from griptape.artifacts import BaseArtifact
 
 CONFIG_SCHEMA = Schema({
-    "name": str,
     "description": str,
     schema.Optional("schema"): Schema,
     schema.Optional("pass_artifacts"): bool
@@ -31,6 +30,7 @@ def activity(config: dict):
 
             return func(self, *args, **kwargs)
 
+        wrapper.name = func.__name__
         wrapper.config = validated_config
         wrapper.is_activity = True
 

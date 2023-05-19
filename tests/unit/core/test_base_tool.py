@@ -3,8 +3,6 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
-
-from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import MemoryTextStorageDriver
 from griptape.ramps import TextStorageRamp
 from tests.mocks.mock_tool.tool import MockTool
