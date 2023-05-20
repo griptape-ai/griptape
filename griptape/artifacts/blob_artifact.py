@@ -11,7 +11,7 @@ class BlobArtifact(BaseArtifact):
     dir: Optional[str] = field(default=None, kw_only=True)
 
     @dir.validator
-    def validate_tools(self, _, dir: Optional[str]) -> None:
+    def validate_dir(self, _, dir: Optional[str]) -> None:
         if dir and dir.startswith("/"):
             raise ValueError("path can't be absolute")
 
