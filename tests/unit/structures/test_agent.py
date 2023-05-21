@@ -1,6 +1,5 @@
 from griptape.memory import Memory
-from griptape.rules import Rule
-from griptape.rules.ruleset import Ruleset
+from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver

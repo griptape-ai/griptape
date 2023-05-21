@@ -1,5 +1,4 @@
-from griptape.rules import Rule
-from griptape.rules.ruleset import Ruleset
+from griptape.rules import Rule, Ruleset
 
 
 class TestRuleset:

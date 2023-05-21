@@ -7,7 +7,7 @@ from typing import Optional, Union, TYPE_CHECKING
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
-from griptape.rules.ruleset import Ruleset
+from griptape.rules import Ruleset
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask

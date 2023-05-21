@@ -1,8 +1,5 @@
-import json
-
-from griptape.rules.ruleset import Ruleset
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.rules import Rule
+from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask
 from griptape.structures import Workflow
 
