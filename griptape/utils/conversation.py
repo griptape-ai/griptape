@@ -19,5 +19,5 @@ class Conversation:
 
         return lines
 
-    def to_string(self) -> str:
+    def __str__(self) -> str:
         return str.join("\n", self.lines())
