@@ -23,7 +23,7 @@ class TestConversation:
         assert lines[2] == "Q: question 1"
         assert lines[3] == "A: mock output"
 
-    def test_to_string(self):
+    def test___str__(self):
         pipeline = Pipeline(prompt_driver=MockPromptDriver(), memory=Memory())
 
         pipeline.add_tasks(
@@ -32,6 +32,6 @@ class TestConversation:
 
         pipeline.run()
 
-        string = Conversation(pipeline.memory).to_string()
+        string = str(Conversation(pipeline.memory))
 
         assert string == "Q: question 1\nA: mock output"
