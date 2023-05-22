@@ -1,23 +1,21 @@
 import pytest
-
 from griptape.chunkers import TextChunker
 from griptape.tokenizers import BaseTokenizer
 
+MAX_TOKENS = 50
 
-def gen_paragraph(MAX_TOKENS: int, tokenizer: BaseTokenizer, sentence_separator: str) -> str:
+
+def gen_paragraph(max_tokens: int, tokenizer: BaseTokenizer, sentence_separator: str) -> str:
     all_text = ""
     word = "foo"
     index = 0
     add_word = lambda base, w, i: sentence_separator.join([base, f"{w}-{i}"])
 
-    while MAX_TOKENS >= tokenizer.token_count(add_word(all_text, word, index)):
+    while max_tokens >= tokenizer.token_count(add_word(all_text, word, index)):
         all_text = f"{word}-{index}" if all_text == "" else add_word(all_text, word, index)
         index += 1
 
     return all_text + sentence_separator
-
-
-MAX_TOKENS = 50
 
 
 class TestTextChunker:    
