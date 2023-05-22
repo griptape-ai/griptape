@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 class LocalExecutor(BaseExecutor):
     verbose: int = field(default=False, kw_only=True)
 
+    dependencies_install_directory = field(default=None, kw_only=True)
+
     def try_execute(self, tool_activity: callable, value: Optional[dict]) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
@@ -25,8 +27,6 @@ class LocalExecutor(BaseExecutor):
 
         env.update(tool.env)
 
-        self.install_dependencies(env, tool)
-
         output = self.run_subprocess(env, tool_activity, value)
 
         if output.stderr and not output.stdout:
@@ -35,13 +35,23 @@ class LocalExecutor(BaseExecutor):
             return output.stdout.strip()
 
     def install_dependencies(self, env: dict[str, str], tool: BaseTool) -> None:
-        command = [
-            "pip",
-            "install",
-            "-r",
-            "requirements.txt",
-            "-U"
-        ]
+        if self.dependencies_install_directory is not None:
+            command = [
+                "pip",
+                "install",
+                "-r",
+                "requirements.txt",
+                "-t", 
+                self.dependencies_install_directory
+            ]
+        else:
+            command = [
+                "pip",
+                "install",
+                "-r",
+                "requirements.txt",
+                "-U"
+            ]
 
         subprocess.run(
             command,
@@ -55,10 +65,23 @@ class LocalExecutor(BaseExecutor):
         tool = tool_activity.__self__
         tool_name = tool.class_name
         input_value = value if value else ""
+        code = []
+
+        if self.dependencies_install_directory is not None:
+            code.extend([
+                'from sys import path',
+                f'path.insert(1, "{self.dependencies_install_directory}")'
+            ])
+        code.extend([
+            f'from tool import {tool_name}',
+            f'print({tool_name}().{tool_activity.__name__}({input_value}))'
+        ])
+        code = str.join(';', code)
+
         command = [
             "python",
             "-c",
-            f'from tool import {tool_name}; print({tool_name}().{tool_activity.__name__}({input_value}))'
+            code
         ]
 
         return subprocess.run(

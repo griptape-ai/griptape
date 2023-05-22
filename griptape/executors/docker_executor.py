@@ -77,7 +77,7 @@ class DockerExecutor(BaseExecutor):
         except NotFound:
             pass
 
-    def install_dependencies_on_execute(self, env: dict[str, str], tool: BaseTool) -> None:
+    def install_dependencies(self, env: dict[str, str], tool: BaseTool) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             shutil.rmtree(temp_dir)
             shutil.copytree(self.tool_dir(tool), temp_dir)

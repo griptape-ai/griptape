@@ -8,7 +8,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestLocalExecutor:
     @pytest.fixture
     def executor(self):
-        return LocalExecutor()
+        return LocalExecutor(install_dependencies_on_execute=True)
 
     @pytest.fixture
     def tool(self):

@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from griptape.core import BaseTool
 
 
+@define
 class BaseExecutor(ABC):
     install_dependencies_on_execute: bool = field(default=True, kw_only=True)
 
