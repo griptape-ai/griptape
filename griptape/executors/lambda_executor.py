@@ -16,19 +16,11 @@ if TYPE_CHECKING:
 @define
 class LambdaExecutor(BaseExecutor):
     verbose: bool = field(default=False, kw_only=True)
-    install_dependencies: bool = field(default=True, kw_only=True)
 
     def try_execute(self, tool_activity: callable, value: Optional[dict]) -> Union[BaseArtifact, str]:
         tool = tool_activity.__self__
 
-        env = os.environ.copy()
-
-        env.update(tool.env)
-
-        if self.install_dependencies:
-            self.install_dependencies(env, tool)
-
-        output = self.run_subprocess(env, tool_activity, value)
+        output = self.run_subprocess(tool_activity, value)
 
         if output.stderr and not output.stdout:
             return ErrorArtifact(output.stderr.strip())
@@ -55,11 +47,11 @@ class LambdaExecutor(BaseExecutor):
             stderr=None if self.verbose else subprocess.DEVNULL
         )
 
-    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: Optional[dict]) -> subprocess.CompletedProcess:
+    def run_subprocess(self, tool_activity: callable, value: Optional[dict]) -> subprocess.CompletedProcess:
         tool = tool_activity.__self__
         tool_name = tool.class_name
         input_value = value if value else ""
-        deps_dir = f'/tmp/deps/{tool_name}/' if self.install_dependencies else '/var/task/'
+        deps_dir = f'/tmp/deps/{tool_name}/' if self.install_dependencies_on_execute else '/var/task/'
 
         command = [
             "python",
@@ -69,7 +61,7 @@ class LambdaExecutor(BaseExecutor):
 
         return subprocess.run(
             command,
-            env=env,
+            env=tool.env,
             cwd=self.tool_dir(tool),
             capture_output=True,
             text=True
