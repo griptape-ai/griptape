@@ -46,6 +46,7 @@ pytest-mock = "*"
 pytest-cover = "*"
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
+pinecone-client = "^2.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
