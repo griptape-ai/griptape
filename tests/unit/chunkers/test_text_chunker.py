@@ -34,8 +34,9 @@ class TestTextChunker:
         chunks = chunker.chunk("".join(text))
 
         assert len(chunks) == 2
-        assert chunker.tokenizer.token_count(chunks[0]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[1]) <= MAX_TOKENS
+
+        for chunk in chunks:
+            assert chunker.tokenizer.token_count(chunk) <= MAX_TOKENS
 
         assert chunks[0].startswith("foo-0?")
         assert chunks[1].startswith("foo-0.")
@@ -52,10 +53,9 @@ class TestTextChunker:
         chunks = chunker.chunk("".join(text))
 
         assert len(chunks) == 4
-        assert chunker.tokenizer.token_count(chunks[0]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[1]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[2]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[3]) <= MAX_TOKENS
+
+        for chunk in chunks:
+            assert chunker.tokenizer.token_count(chunk) <= MAX_TOKENS
 
         assert chunks[0].startswith("foo-0!")
         assert chunks[1].startswith("foo-10!")
@@ -79,28 +79,25 @@ class TestTextChunker:
         ]
         chunks = chunker.chunk("".join(text))
 
-        assert len(chunks) == 7
+        assert len(chunks) == 8
 
-        assert chunker.tokenizer.token_count(chunks[0]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[1]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[2]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[3]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[4]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[5]) <= MAX_TOKENS
-        assert chunker.tokenizer.token_count(chunks[6]) <= MAX_TOKENS
+        for chunk in chunks:
+            assert chunker.tokenizer.token_count(chunk) <= MAX_TOKENS
 
         assert chunks[0].startswith("foo-0!")
         assert chunks[1].startswith("foo-10!")
         assert chunks[2].startswith("foo-16!")
         assert chunks[3].startswith("foo-0.")
         assert chunks[4].startswith("foo-0?")
-        assert chunks[5].startswith("foo-10?")
-        assert chunks[6].startswith("foo-4")
+        assert chunks[5].startswith("foo-5?")
+        assert chunks[6].startswith("foo-0")
+        assert chunks[7].startswith("foo-6")
 
         assert chunks[0].endswith("! foo-9!")
         assert chunks[1].endswith("! foo-15!")
         assert chunks[2].endswith("! foo-24!")
         assert chunks[3].endswith(". foo-11.")
-        assert chunks[4].endswith("? foo-9?")
-        assert chunks[5].endswith(" foo-3")
-        assert chunks[6].endswith(" foo-16")
+        assert chunks[4].endswith("? foo-4?")
+        assert chunks[5].endswith("? foo-12?")
+        assert chunks[6].endswith(" foo-5")
+        assert chunks[7].endswith(" foo-16")
