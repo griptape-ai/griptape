@@ -39,6 +39,7 @@ boto3 = "^1.26.123"
 tenacity = ">=8.0"
 numpy = ">=1"
 pinecone-client = ">=2"
+PyPDF2 = ">=3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
