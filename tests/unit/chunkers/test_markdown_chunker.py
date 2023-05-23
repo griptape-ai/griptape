@@ -9,7 +9,7 @@ class TestTextChunker:
     @pytest.fixture
     def chunker(self):        
         return MarkdownChunker(
-            max_tokens_per_chunk=MAX_TOKENS
+            max_tokens=MAX_TOKENS
         )
     
     def test_chunk(self, chunker):

@@ -20,7 +20,7 @@ class BaseChunker(ABC):
         default=TiktokenTokenizer(),
         kw_only=True
     )
-    max_tokens_per_chunk: int = field(
+    max_tokens: int = field(
         default=Factory(lambda self: self.tokenizer.max_tokens, takes_self=True),
         kw_only=True
     )
@@ -33,7 +33,7 @@ class BaseChunker(ABC):
     def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:
         token_count = self.tokenizer.token_count(chunk)
 
-        if token_count <= self.max_tokens_per_chunk:
+        if token_count <= self.max_tokens:
             return [chunk]
         else:
             balance_index = -1
