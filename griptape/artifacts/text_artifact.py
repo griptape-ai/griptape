@@ -13,6 +13,9 @@ class TextArtifact(BaseArtifact):
     value: str = field()
     __embedding: list[float] = field(factory=list)
 
+    def __add__(self, other: TextArtifact) -> TextArtifact:
+        return TextArtifact(self.value + other.value)
+
     def embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
         if len(self.__embedding) == 0:
             self.__embedding.extend(driver.embed_string(self.value))

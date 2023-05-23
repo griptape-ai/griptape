@@ -4,6 +4,9 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestTextArtifact:
+    def test___add__(self):
+        assert (TextArtifact("foo") + TextArtifact("bar")).value == "foobar"
+        
     def test_embedding(self):
         assert TextArtifact("foobar").embedding(MockEmbeddingDriver()) == [0, 1]
 
