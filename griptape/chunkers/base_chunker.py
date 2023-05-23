@@ -44,11 +44,12 @@ class BaseChunker(ABC):
                 separators = self.separators
 
             for separator in separators:
-                split_string = list(filter(None, chunk.split(separator)))
+                subchanks = list(filter(None, chunk.split(separator)))
 
-                if len(split_string) > 1:
-                    for index, subchunk in enumerate(split_string):
-                        subchunk = subchunk + separator
+                if len(subchanks) > 1:
+                    for index, subchunk in enumerate(subchanks):
+                        if index < len(subchanks):
+                            subchunk = subchunk + separator
 
                         tokens_count += self.tokenizer.token_count(subchunk)
 
@@ -56,21 +57,21 @@ class BaseChunker(ABC):
                             balance_index = index
                             balance_diff = abs(tokens_count - half_token_count)
 
-                    first_chunk = self.chunk_recursively(
-                        (separator.join(split_string[:balance_index + 1]) + separator).strip(),
+                    first_subchunk = self.chunk_recursively(
+                        (separator.join(subchanks[:balance_index + 1]) + separator).strip(),
                         separator
                     )
-                    second_chunk = self.chunk_recursively(
-                        separator.join(split_string[balance_index + 1:]).strip(),
+                    second_subchunk = self.chunk_recursively(
+                        separator.join(subchanks[balance_index + 1:]).strip(),
                         separator
                     )
 
-                    if first_chunk and second_chunk:
-                        return first_chunk + second_chunk
-                    elif first_chunk:
-                        return first_chunk
-                    elif second_chunk:
-                        return second_chunk
+                    if first_subchunk and second_subchunk:
+                        return first_subchunk + second_subchunk
+                    elif first_subchunk:
+                        return first_subchunk
+                    elif second_subchunk:
+                        return second_subchunk
                     else:
                         return []
             return []
