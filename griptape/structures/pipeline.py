@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Generator
 from attr import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
@@ -45,12 +45,12 @@ class Pipeline(StructureWithMemory):
             )
         )
 
-    def run(self, *args) -> BaseTask:
+    def run(self, *args) -> Generator[BaseTask]:
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
 
-        self.__run_from_task(self.first_task())
+        yield from self.__run_from_task(self.first_task())
 
         if self.memory:
             run = Run(
@@ -61,8 +61,6 @@ class Pipeline(StructureWithMemory):
             self.memory.add_run(run)
 
         self._execution_args = ()
-
-        return self.last_task()
 
     def context(self, task: BaseTask) -> dict[str, any]:
         context = super().context(task)
@@ -77,11 +75,12 @@ class Pipeline(StructureWithMemory):
 
         return context
 
-    def __run_from_task(self, task: Optional[BaseTask]) -> None:
+    def __run_from_task(self, task: Optional[BaseTask]) -> Generator[BaseTask]:
         if task is None:
             return
+        task_result = task.execute()
+        yield task
+        if isinstance(task_result, ErrorArtifact):
+            yield task
         else:
-            if isinstance(task.execute(), ErrorArtifact):
-                return
-            else:
-                self.__run_from_task(next(iter(task.children), None))
+            yield from self.__run_from_task(next(iter(task.children), None))
