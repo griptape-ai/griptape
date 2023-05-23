@@ -26,16 +26,15 @@ class BaseChunker(ABC):
     )
 
     def chunk(self, chunk: Union[TextArtifact, str]) -> list[TextArtifact]:
-        return self._chunk_recursively(chunk)
-
-    def _chunk_recursively(
-            self, chunk: Union[TextArtifact, str], current_separator: Optional[ChunkSeparator] = None
-    ) -> list[TextArtifact]:
         chunk = chunk.value if isinstance(chunk, TextArtifact) else chunk
+
+        return [TextArtifact(c) for c in self._chunk_recursively(chunk)]
+
+    def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:
         token_count = self.tokenizer.token_count(chunk)
 
         if token_count <= self.max_tokens_per_chunk:
-            return [TextArtifact(chunk)]
+            return [chunk]
         else:
             balance_index = -1
             balance_diff = float("inf")
@@ -66,10 +65,10 @@ class BaseChunker(ABC):
 
                     if separator.is_prefix:
                         first_subchunk = separator.value + separator.value.join(subchanks[:balance_index + 1])
+                        second_subchunk = separator.value + separator.value.join(subchanks[balance_index + 1:])
                     else:
                         first_subchunk = separator.value.join(subchanks[:balance_index + 1]) + separator.value
-
-                    second_subchunk = separator.value.join(subchanks[balance_index + 1:])
+                        second_subchunk = separator.value.join(subchanks[balance_index + 1:])
 
                     first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
                     second_subchunk_rec = self._chunk_recursively(second_subchunk.strip(), separator)
