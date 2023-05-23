@@ -1,15 +1,12 @@
-import re
-from abc import ABC, abstractmethod
-from typing import Optional
-
+from abc import ABC
+from typing import Optional, Union
 from attr import define, field, Factory
+from griptape.artifacts import TextArtifact
 from griptape.tokenizers import TiktokenTokenizer
 
 
 @define
 class BaseChunker(ABC):
-    DEFAULT_SEPARATORS = ["\n\n", "\n", ". ", "! ", "? ", " "]
-
     separators: list[str] = field(
         default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True),
         kw_only=True
@@ -23,15 +20,17 @@ class BaseChunker(ABC):
         kw_only=True
     )
 
-    @abstractmethod
-    def chunk(self, *args, **kwargs) -> list[str]:
-        ...
+    def chunk(self, chunk: Union[TextArtifact, str]) -> list[TextArtifact]:
+        return self._chunk_recursively(chunk)
 
-    def chunk_recursively(self, chunk: str, current_separator: Optional[str] = None) -> list[str]:
+    def _chunk_recursively(
+            self, chunk: Union[TextArtifact, str], current_separator: Optional[str] = None
+    ) -> list[TextArtifact]:
+        chunk = chunk.value if isinstance(chunk, TextArtifact) else chunk
         token_count = self.tokenizer.token_count(chunk)
 
         if token_count <= self.max_tokens_per_chunk:
-            return [chunk]
+            return [TextArtifact(chunk)]
         else:
             balance_index = -1
             balance_diff = float("inf")
@@ -57,11 +56,11 @@ class BaseChunker(ABC):
                             balance_index = index
                             balance_diff = abs(tokens_count - half_token_count)
 
-                    first_subchunk = self.chunk_recursively(
+                    first_subchunk = self._chunk_recursively(
                         (separator.join(subchanks[:balance_index + 1]) + separator).strip(),
                         separator
                     )
-                    second_subchunk = self.chunk_recursively(
+                    second_subchunk = self._chunk_recursively(
                         separator.join(subchanks[balance_index + 1:]).strip(),
                         separator
                     )

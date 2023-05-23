@@ -3,7 +3,7 @@ import logging
 import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
-from attr import define, field, Factory
+from attr import define, field
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
