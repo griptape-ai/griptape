@@ -1,5 +1,5 @@
 from typing import Optional, Union
-from attr import define, field
+from attr import define, field, Factory
 from schema import Schema, Literal
 
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
@@ -10,7 +10,9 @@ from griptape.ramps import BaseRamp
 
 @define
 class TextStorageRamp(BaseRamp):
-    driver: BaseTextStorageDriver = field(default=MemoryTextStorageDriver(), kw_only=True)
+    driver: BaseTextStorageDriver = field(
+        default=Factory(lambda: MemoryTextStorageDriver()), kw_only=True
+    )
 
     def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> Union[InfoArtifact, ErrorArtifact]:
         from griptape.utils import J2

@@ -17,7 +17,7 @@ class BaseChunker(ABC):
         kw_only=True
     )
     tokenizer: TiktokenTokenizer = field(
-        default=TiktokenTokenizer(),
+        default=Factory(lambda: TiktokenTokenizer()),
         kw_only=True
     )
     max_tokens: int = field(

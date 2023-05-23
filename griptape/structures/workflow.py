@@ -1,8 +1,7 @@
 from __future__ import annotations
 import concurrent.futures as futures
-import json
 from graphlib import TopologicalSorter
-from attr import define, field
+from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.tasks import BaseTask
 from griptape.structures import Structure
@@ -11,7 +10,10 @@ from griptape.utils import J2
 
 @define
 class Workflow(Structure):
-    executor: futures.Executor = field(default=futures.ThreadPoolExecutor(), kw_only=True)
+    executor: futures.Executor = field(
+        default=Factory(lambda: futures.ThreadPoolExecutor()),
+        kw_only=True
+    )
 
     def __add__(self, other: BaseTask) -> BaseTask:
         return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from attr import define, field
+from attr import define, field, Factory
 from griptape.memory import Run
 from griptape.structures import StructureWithMemory
 from griptape.tasks import PromptTask
@@ -12,7 +12,10 @@ if TYPE_CHECKING:
 
 @define
 class Agent(StructureWithMemory):
-    task: BaseTask = field(default=PromptTask(), kw_only=True)
+    task: BaseTask = field(
+        default=Factory(lambda: PromptTask()),
+        kw_only=True
+    )
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()

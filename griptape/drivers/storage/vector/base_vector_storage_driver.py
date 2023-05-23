@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
-from attr import define, field
+from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
 
@@ -16,7 +16,7 @@ class BaseVectorStorageDriver(ABC):
         namespace: Optional[str] = None
 
     embedding_driver: BaseEmbeddingDriver = field(
-        default=OpenAiEmbeddingDriver(),
+        default=Factory(lambda: OpenAiEmbeddingDriver()),
         kw_only=True
     )
 

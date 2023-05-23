@@ -1,5 +1,5 @@
 from typing import Optional
-from attr import define, field
+from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact, ListArtifact
 from griptape.drivers import BaseBlobStorageDriver, MemoryBlobStorageDriver
 from griptape.ramps import BaseRamp
@@ -7,7 +7,10 @@ from griptape.ramps import BaseRamp
 
 @define
 class BlobStorageRamp(BaseRamp):
-    driver: BaseBlobStorageDriver = field(default=MemoryBlobStorageDriver(), kw_only=True)
+    driver: BaseBlobStorageDriver = field(
+        default=Factory(lambda: MemoryBlobStorageDriver()),
+        kw_only=True
+    )
 
     def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
         from griptape.utils import J2
