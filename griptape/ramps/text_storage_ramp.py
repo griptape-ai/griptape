@@ -1,7 +1,6 @@
-from typing import Optional, Union
+from typing import Union
 from attr import define, field, Factory
-from schema import Schema, Literal
-
+from schema import Schema
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.core.decorators import activity
 from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver

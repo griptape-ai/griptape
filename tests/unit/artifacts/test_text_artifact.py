@@ -6,9 +6,16 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 class TestTextArtifact:
     def test___add__(self):
         assert (TextArtifact("foo") + TextArtifact("bar")).value == "foobar"
-        
+
+    def test_generate_embedding(self):
+        assert TextArtifact("foobar").generate_embedding(MockEmbeddingDriver()) == [0, 1]
+
     def test_embedding(self):
-        assert TextArtifact("foobar").embedding(MockEmbeddingDriver()) == [0, 1]
+        artifact = TextArtifact("foobar")
+
+        assert artifact.embedding is None
+        assert artifact.generate_embedding(MockEmbeddingDriver()) == [0, 1]
+        assert artifact.embedding == [0, 1]
 
     def test_to_text(self):
         assert TextArtifact("foobar").to_text() == "foobar"

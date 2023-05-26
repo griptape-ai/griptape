@@ -28,7 +28,7 @@ class BaseVectorStorageDriver(ABC):
             **kwargs
     ) -> str:
         return self.insert_vector(
-            artifact.embedding(self.embedding_driver),
+            artifact.generate_embedding(self.embedding_driver),
             vector_id=vector_id,
             meta=meta if meta else {},
             **kwargs
