@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.artifacts import BaseArtifact
 
@@ -13,14 +13,18 @@ class TextArtifact(BaseArtifact):
     value: str = field()
     __embedding: list[float] = field(factory=list)
 
+    @property
+    def embedding(self) -> Optional[list[float]]:
+        return None if len(self.__embedding) == 0 else self.__embedding
+
     def __add__(self, other: TextArtifact) -> TextArtifact:
         return TextArtifact(self.value + other.value)
 
-    def embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
-        if len(self.__embedding) == 0:
-            self.__embedding.extend(driver.embed_string(self.value))
+    def generate_embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
+        self.__embedding.clear()
+        self.__embedding.extend(driver.embed_string(self.value))
 
-        return self.__embedding
+        return self.embedding
 
     def token_count(self, tokenizer: BaseTokenizer) -> int:
         return tokenizer.token_count(self.value)
