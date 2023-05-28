@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Union
 from attr import define
-from griptape.artifacts import ListArtifact, ErrorArtifact
+from griptape.artifacts import ListArtifact, ErrorArtifact, TextArtifact
 from griptape.loaders import TextLoader
 import trafilatura
 from trafilatura.settings import use_config
@@ -10,29 +10,13 @@ from trafilatura.settings import use_config
 
 @define
 class WebLoader(TextLoader):
-    def load(self, url: str, include_links: bool = True) -> Union[ListArtifact, ErrorArtifact]:
+    def load(self, url: str, include_links: bool = True) -> Union[TextArtifact, ListArtifact, ErrorArtifact]:
         page = self._load_page(url, include_links)
 
         if isinstance(page, ErrorArtifact):
             return page
         else:
-            return self.text_to_list_artifact(page.get("text"))
-
-    def load_title(self, url: str, include_links: bool = True) -> Union[ListArtifact, ErrorArtifact]:
-        page = self._load_page(url, include_links)
-
-        if isinstance(page, ErrorArtifact):
-            return page
-        else:
-            return self.text_to_list_artifact(page.get("title"))
-
-    def load_author(self, url: str, include_links: bool = True) -> Union[ListArtifact, ErrorArtifact]:
-        page = self._load_page(url, include_links)
-
-        if isinstance(page, ErrorArtifact):
-            return page
-        else:
-            return self.text_to_list_artifact(page.get("author"))
+            return self.text_to_artifact(page.get("text"))
 
     def _load_page(self, url: str, include_links: bool = True) -> Union[dict, ErrorArtifact]:
         config = use_config()
