@@ -19,4 +19,5 @@ class TestTextLoader:
         list_artifact = loader.load(text)
 
         assert len(list_artifact.value) == 3
+        assert list_artifact.value[0].value.startswith("foo-0 foo-1")
         assert list_artifact.value[0].embedding == [0, 1]
