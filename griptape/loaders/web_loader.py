@@ -4,8 +4,8 @@ from typing import Union
 from attr import define
 from griptape.artifacts import ListArtifact, ErrorArtifact
 from griptape.loaders import TextLoader
-# import trafilatura
-# from trafilatura.settings import use_config
+import trafilatura
+from trafilatura.settings import use_config
 
 
 @define
@@ -19,7 +19,7 @@ class WebLoader(TextLoader):
             return self.text_to_artifact(page.get("text"))
 
     def _load_page(self, url: str, include_links: bool = True) -> Union[dict, ErrorArtifact]:
-        config = use_config()
+        config = trafilatura.settings.use_config()
         page = trafilatura.fetch_url(url)
 
         # This disables signal, so that trafilatura can work on any thread:

@@ -5,7 +5,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 MAX_TOKENS = 50
 
 
-class TestPdfLoader:
+class TestWebLoader:
     @pytest.fixture
     def loader(self):
         return WebLoader(
