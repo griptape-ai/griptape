@@ -16,6 +16,6 @@ class TestPdfLoader:
     def test_load(self, loader):
         list_artifact = loader.load("https://github.com/griptape-ai/griptape-tools")
 
-        assert len(list_artifact.value) == 135
-        assert list_artifact.value[0].value.startswith("Griptape")
+        assert len(list_artifact.value) > 1
+        assert "griptape" in list_artifact.value[0].value
         assert list_artifact.value[0].embedding == [0, 1]

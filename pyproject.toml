@@ -40,8 +40,7 @@ tenacity = ">=8.0"
 numpy = ">=1"
 pinecone-client = ">=2"
 PyPDF2 = ">=3"
-trafilatura = "git+https://github.com/griptape-ai/trafilatura.git#egg=trafilatura"
-
+trafilatura = ">= 1.6"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
