@@ -5,7 +5,7 @@
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io/)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
-**griptape** is a modular Python framework for LLM workflows, tools, memory, and data that enables developers to:
+**Griptape** is a modular Python framework for LLM workflows, tools, memory, and data that enables developers to:
 
 1. 🤖 Build **AI agents**, sequential **LLM pipelines** and sprawling **DAG workflows** for complex use cases.
 2. ⛓️ Augment LLMs with **chain of thought** capabilities.
@@ -29,9 +29,9 @@ First, install **griptape** and **griptape-tools**:
 pip install griptape griptape-tools -U
 ```
 
-Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. **griptape** uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
+Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
 
-With **griptape**, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses several tools and ramps:
+With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses several tools and ramps:
 
 ```python
 from griptape.memory import Memory
@@ -84,23 +84,25 @@ pipeline.add_tasks(
     )
 )
 
-result = pipeline.run("Load https://griptape.readthedocs.io, summarize it, and store it in griptape.txt")
+result = pipeline.run(
+    "Load https://docs.griptape.ai, summarize it, and store it in griptape.txt"
+)
 
 print(result.output.to_text())
 ```
 
-Boom! Our first LLM pipeline with two sequential tasks generated the following exchange:
+Our first LLM pipeline with two sequential tasks generated the following exchange:
 
 ```
-Q: Load https://griptape.readthedocs.io, summarize it, and store it in griptape.txt
-A: El contenido de https://griptape.readthedocs.io ha sido resumido y almacenado en griptape.txt.
+Q: Load https://docs.griptape.ai, summarize it, and store it in griptape.txt
+A: El contenido de https://docs.griptape.ai ha sido resumido y almacenado en griptape.txt.
 ```
 
-During the run, **griptape** prompted the LLM to load a webpage, store its content in temporary memory, summarize the content, and, finally, save it `griptape.txt`.
+During the run, Griptape prompted the LLM to load a webpage, store its content in temporary memory, summarize the content, and, finally, save it in `griptape.txt`.
 
 ## Versioning
 
-**griptape** is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
+Griptape is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
 
 ## Contributing
 
@@ -108,4 +110,4 @@ Contributions in the form of bug reports, feature ideas, or pull requests are su
 
 ## License
 
-**griptape** is available under the Apache 2.0 License.
+Griptape is available under the Apache 2.0 License.
