@@ -21,6 +21,6 @@ class TestPdfLoader:
 
         list_artifact = loader.load(path)
 
-        assert len(list_artifact.value) == 135
+        assert len(list_artifact.value) == 149
         assert list_artifact.value[0].value.startswith("Bitcoin: A Peer-to-Peer")
         assert list_artifact.value[0].embedding == [0, 1]
