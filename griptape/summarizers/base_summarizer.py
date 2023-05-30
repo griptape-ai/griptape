@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
-from attr import define, field, Factory
+from attr import define
 
 if TYPE_CHECKING:
     from griptape.memory import Run

@@ -14,8 +14,8 @@ class TestWebLoader:
         )
 
     def test_load(self, loader):
-        list_artifact = loader.load("https://github.com/griptape-ai/griptape-tools")
+        artifacts = loader.load("https://github.com/griptape-ai/griptape-tools")
 
-        assert len(list_artifact.value) > 1
-        assert "griptape" in list_artifact.value[0].value
-        assert list_artifact.value[0].embedding == [0, 1]
+        assert len(artifacts) > 1
+        assert "griptape" in artifacts[0].value
+        assert artifacts[0].embedding == [0, 1]

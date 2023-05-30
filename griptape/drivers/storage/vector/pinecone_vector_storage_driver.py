@@ -26,22 +26,24 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
             self,
             vector: list[float],
             vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
         vector_id = vector_id if vector_id else uuid4().hex
 
-        self.index.upsert(
-            [(vector_id, vector, meta)],
-            **kwargs
-        )
+        params = {
+            "namespace": namespace
+        } | kwargs
+
+        self.index.upsert([(vector_id, vector, meta)], **params)
 
         return vector_id
 
     def query(
             self,
             query: str,
-            count: int = 5,
+            count: Optional[int] = None,
             namespace: Optional[str] = None,
             include_vectors: bool = False,
             # PineconeVectorStorageDriver-specific params:
@@ -51,7 +53,7 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
         vector = self.embedding_driver.embed_string(query)
 
         params = {
-            "top_k": count,
+            "top_k": count if count else BaseVectorStorageDriver.DEFAULT_QUERY_COUNT,
             "include_values": include_vectors,
             "include_metadata": include_metadata
         } | kwargs

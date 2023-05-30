@@ -18,6 +18,7 @@ from griptape.drivers.embedding.base_embedding_driver import BaseEmbeddingDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 
 from griptape.drivers.storage.vector.base_vector_storage_driver import BaseVectorStorageDriver
+from griptape.drivers.storage.vector.memory_vector_storage_driver import MemoryVectorStorageDriver
 from griptape.drivers.storage.vector.pinecone_vector_storage_driver import PineconeVectorStorageDriver
 
 __all__ = [
@@ -41,5 +42,6 @@ __all__ = [
     "OpenAiEmbeddingDriver",
 
     "BaseVectorStorageDriver",
+    "MemoryVectorStorageDriver",
     "PineconeVectorStorageDriver"
 ]

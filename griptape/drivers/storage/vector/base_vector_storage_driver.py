@@ -8,6 +8,8 @@ from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
 
 @define
 class BaseVectorStorageDriver(ABC):
+    DEFAULT_QUERY_COUNT = 5
+
     @dataclass
     class QueryResult:
         vector: list[float]
@@ -27,10 +29,15 @@ class BaseVectorStorageDriver(ABC):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
+        if not meta:
+            meta = {}
+
+        meta["artifact"] = artifact.to_dict()
+
         return self.insert_vector(
             artifact.generate_embedding(self.embedding_driver),
             vector_id=vector_id,
-            meta=meta if meta else {},
+            meta=meta,
             **kwargs
         )
 
@@ -53,6 +60,7 @@ class BaseVectorStorageDriver(ABC):
             self,
             vector: list[float],
             vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
@@ -62,7 +70,7 @@ class BaseVectorStorageDriver(ABC):
     def query(
             self,
             query: str,
-            count: int = 5,
+            count: Optional[int] = None,
             namespace: Optional[str] = None,
             include_vectors: bool = False,
             **kwargs

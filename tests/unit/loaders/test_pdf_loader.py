@@ -19,8 +19,8 @@ class TestPdfLoader:
             os.path.abspath(os.path.dirname(__file__)), "../../resources/bitcoin.pdf"
         )
 
-        list_artifact = loader.load(path)
+        artifacts = loader.load(path)
 
-        assert len(list_artifact.value) == 149
-        assert list_artifact.value[0].value.startswith("Bitcoin: A Peer-to-Peer")
-        assert list_artifact.value[0].embedding == [0, 1]
+        assert len(artifacts) == 149
+        assert artifacts[0].value.startswith("Bitcoin: A Peer-to-Peer")
+        assert artifacts[0].embedding == [0, 1]

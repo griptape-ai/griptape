@@ -4,5 +4,5 @@ from griptape.artifacts import BaseArtifact
 
 class BaseLoader(ABC):
     @abstractmethod
-    def load(self, *args, **kwargs) -> BaseArtifact:
+    def load(self, *args, **kwargs) -> list[BaseArtifact]:
         ...

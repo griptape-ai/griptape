@@ -16,8 +16,8 @@ class TestTextLoader:
 
     def test_load(self, loader):
         text = gen_paragraph(MAX_TOKENS * 2, loader.tokenizer, " ")
-        list_artifact = loader.load(text)
+        artifacts = loader.load(text)
 
-        assert len(list_artifact.value) == 3
-        assert list_artifact.value[0].value.startswith("foo-0 foo-1")
-        assert list_artifact.value[0].embedding == [0, 1]
+        assert len(artifacts) == 3
+        assert artifacts[0].value.startswith("foo-0 foo-1")
+        assert artifacts[0].embedding == [0, 1]

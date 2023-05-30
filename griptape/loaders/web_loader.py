@@ -1,8 +1,7 @@
 import json
 import logging
-from typing import Union
 from attr import define
-from griptape.artifacts import ListArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact
 from griptape.loaders import TextLoader
 import trafilatura
 from trafilatura.settings import use_config
@@ -10,15 +9,12 @@ from trafilatura.settings import use_config
 
 @define
 class WebLoader(TextLoader):
-    def load(self, url: str, include_links: bool = True) -> Union[ListArtifact, ErrorArtifact]:
+    def load(self, url: str, include_links: bool = True) -> list[TextArtifact]:
         page = self._load_page(url, include_links)
 
-        if isinstance(page, ErrorArtifact):
-            return page
-        else:
-            return self.text_to_artifact(page.get("text"))
+        return self.text_to_artifacts(page.get("text"))
 
-    def _load_page(self, url: str, include_links: bool = True) -> Union[dict, ErrorArtifact]:
+    def _load_page(self, url: str, include_links: bool = True) -> dict:
         config = trafilatura.settings.use_config()
         page = trafilatura.fetch_url(url)
 
@@ -31,7 +27,7 @@ class WebLoader(TextLoader):
         logging.getLogger("trafilatura").setLevel(logging.FATAL)
 
         if page is None:
-            return ErrorArtifact("error: can't access URL")
+            raise Exception("can't access URL")
         else:
             return json.loads(
                 trafilatura.extract(

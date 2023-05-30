@@ -12,7 +12,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.12"
 python-dotenv = ">=0.21"
 openai = ">=0.27"
 cohere = ">=4"
@@ -41,6 +41,7 @@ numpy = ">=1"
 pinecone-client = ">=2"
 PyPDF2 = ">=3"
 trafilatura = ">= 1.6"
+scipy = ">= 1.10"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
