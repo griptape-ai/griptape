@@ -1,5 +1,5 @@
 from griptape.drivers import MemoryTextStorageDriver
-from griptape.ramps import TextStorageRamp
+from griptape.memory.tool import TextMemory
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
 from griptape.tasks import ToolkitTask, ActionSubtask
@@ -125,13 +125,13 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_ramp(self):
-        m1 = TextStorageRamp(name="Ramp1", driver=MemoryTextStorageDriver())
-        m2 = TextStorageRamp(name="Ramp2", driver=MemoryTextStorageDriver())
+    def test_find_memory(self):
+        m1 = TextMemory(name="Memory1", driver=MemoryTextStorageDriver())
+        m2 = TextMemory(name="Memory2", driver=MemoryTextStorageDriver())
 
         tool = MockTool(
             name="Tool1",
-            ramps={
+            memory={
                 "test": [m1, m2]
             }
         )
@@ -139,26 +139,26 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        assert task.find_ramp("Ramp1") == m1
-        assert task.find_ramp("Ramp2") == m2
+        assert task.find_memory("Memory1") == m1
+        assert task.find_memory("Memory2") == m2
 
-    def test_ramps(self):
+    def test_memory(self):
         tool1 = MockTool(
             name="Tool1",
-            ramps={
+            memory={
                 "test": [
-                    TextStorageRamp(name="Ramp1", driver=MemoryTextStorageDriver()),
-                    TextStorageRamp(name="Ramp2", driver=MemoryTextStorageDriver())
+                    TextMemory(name="Memory1", driver=MemoryTextStorageDriver()),
+                    TextMemory(name="Memory2", driver=MemoryTextStorageDriver())
                 ]
             }
         )
 
         tool2 = MockTool(
             name="Tool2",
-            ramps={
+            memory={
                 "test": [
-                    TextStorageRamp(name="Ramp2", driver=MemoryTextStorageDriver()),
-                    TextStorageRamp(name="Ramp3", driver=MemoryTextStorageDriver())
+                    TextMemory(name="Memory2", driver=MemoryTextStorageDriver()),
+                    TextMemory(name="Memory3", driver=MemoryTextStorageDriver())
                 ]
             }
         )
@@ -167,7 +167,7 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        assert len(task.ramps) == 3
-        assert task.ramps[0].name == "Ramp1"
-        assert task.ramps[1].name == "Ramp2"
-        assert task.ramps[2].name == "Ramp3"
+        assert len(task.memory) == 3
+        assert task.memory[0].name == "Memory1"
+        assert task.memory[1].name == "Memory2"
+        assert task.memory[2].name == "Memory3"

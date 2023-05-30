@@ -57,7 +57,7 @@ class MockTool(BaseTool):
         return f"no schema"
 
     @activity(config={
-        "name": "test_with_required_ramp",
+        "name": "test_with_required_memory",
         "description": "test description",
         "schema": Schema({
                 Literal("test"): str
@@ -66,7 +66,7 @@ class MockTool(BaseTool):
         ),
         "pass_artifacts": True
     })
-    def test_with_required_ramp(self, value: dict) -> str:
+    def test_with_required_memory(self, value: dict) -> str:
         return f"ack {value['test']}"
 
     @property

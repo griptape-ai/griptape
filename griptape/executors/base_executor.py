@@ -22,14 +22,14 @@ class BaseExecutor(ABC):
         return self.after_execute(tool_activity, artifact)
 
     def before_execute(self, tool_activity: callable, value: Optional[dict]) -> Optional[dict]:
-        for ramp in tool_activity.__self__.ramps.get(tool_activity.name, []):
-            value = ramp.process_input(tool_activity, value)
+        for memory in tool_activity.__self__.memory.get(tool_activity.name, []):
+            value = memory.process_input(tool_activity, value)
 
         return value
 
     def after_execute(self, tool_activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
-        for ramp in tool_activity.__self__.ramps.get(tool_activity.name, []):
-            value = ramp.process_output(tool_activity, value)
+        for memory in tool_activity.__self__.memory.get(tool_activity.name, []):
+            value = memory.process_output(tool_activity, value)
 
         return value
 

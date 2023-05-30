@@ -31,29 +31,29 @@ pip install griptape griptape-tools -U
 
 Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses several tools and ramps:
+With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses several tools and memory:
 
 ```python
 from griptape.memory.structure import Memory
-from griptape.ramps import TextStorageRamp, BlobStorageRamp
+from griptape.memory.tool import TextMemory, BlobMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, PromptTask
 from griptape.tools import WebScraper, TextProcessor, FileManager
 
-# Ramps enable LLMs to store and manipulate data without ever looking at it directly.
-text_storage = TextStorageRamp()
-blob_storage = BlobStorageRamp()
+# Memory enable LLMs to store and manipulate data without ever looking at it directly.
+text_storage = TextMemory()
+blob_storage = BlobMemory()
 
 # Connect a web scraper to load web pages.
 web_scraper = WebScraper(
-    ramps={
+    memory={
         "get_content": [text_storage]
     }
 )
 
 # TextProcessor enables LLMs to summarize and query text.
 text_processor = TextProcessor(
-    ramps={
+    memory={
         "summarize": [text_storage],
         "query": [text_storage]
     }
@@ -61,7 +61,7 @@ text_processor = TextProcessor(
 
 # File manager can load and store files locally.
 file_manager = FileManager(
-    ramps={
+    memory={
         "load": [blob_storage],
         "save": [text_storage, blob_storage]
     }

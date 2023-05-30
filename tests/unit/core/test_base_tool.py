@@ -4,7 +4,7 @@ import pytest
 import yaml
 from schema import SchemaMissingKeyError
 from griptape.drivers import MemoryTextStorageDriver
-from griptape.ramps import TextStorageRamp
+from griptape.memory.tool import TextMemory
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -106,32 +106,32 @@ class TestBaseTool:
     def test_custom_config(self, tool):
         assert tool.test.config["foo"] == "bar"
 
-    def test_ramps(self):
+    def test_memory(self):
         tool = MockTool(
-            ramps={
+            memory={
                 "test": [
-                    TextStorageRamp(
-                        name="Ramp1", driver=MemoryTextStorageDriver()
+                    TextMemory(
+                        name="Memory1", driver=MemoryTextStorageDriver()
                     ),
-                    TextStorageRamp(
-                        name="Ramp2", driver=MemoryTextStorageDriver()
+                    TextMemory(
+                        name="Memory2", driver=MemoryTextStorageDriver()
                     )
                 ]
             }
         )
 
-        assert len(tool.ramps["test"]) == 2
+        assert len(tool.memory["test"]) == 2
 
-    def test_ramp_validation(self):
+    def test_memory_validation(self):
         with pytest.raises(ValueError):
             MockTool(
-                ramps={
+                memory={
                     "test": [
-                        TextStorageRamp(
-                            name="Ramp1", driver=MemoryTextStorageDriver()
+                        TextMemory(
+                            name="Memory1", driver=MemoryTextStorageDriver()
                         ),
-                        TextStorageRamp(
-                            name="Ramp1", driver=MemoryTextStorageDriver()
+                        TextMemory(
+                            name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ]
                 }
@@ -139,25 +139,25 @@ class TestBaseTool:
 
         with pytest.raises(ValueError):
             MockTool(
-                ramps={
+                memory={
                     "fake_activity": [
-                        TextStorageRamp(
-                            name="Ramp1", driver=MemoryTextStorageDriver()
+                        TextMemory(
+                            name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ]
                 }
             )
 
         assert MockTool(
-                ramps={
+                memory={
                     "test": [
-                        TextStorageRamp(
-                            name="Ramp1", driver=MemoryTextStorageDriver()
+                        TextMemory(
+                            name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ],
                     "test_str_output": [
-                        TextStorageRamp(
-                            name="Ramp1", driver=MemoryTextStorageDriver()
+                        TextMemory(
+                            name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ]
                 }

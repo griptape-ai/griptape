@@ -12,12 +12,12 @@ class ActivityMixin:
             "sources": [
                 {
                     Literal(
-                        "ramp_name",
-                        description="Name of the ramp that should be used to load artifacts into the tool"
+                        "memory_name",
+                        description="Name of the memory that should be used to load artifacts into the tool"
                     ): str,
                     Literal(
                         "artifact_names",
-                        description="Names of the artifacts to load from the ramp and pass to the tool"
+                        description="Names of the artifacts to load from the memory and pass to the tool"
                     ): []
                 }
             ]

@@ -2,11 +2,11 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact, ListArtifact
 from griptape.drivers import BaseBlobStorageDriver, MemoryBlobStorageDriver
-from griptape.ramps import BaseRamp
+from griptape.memory.tool import BaseMemory
 
 
 @define
-class BlobStorageRamp(BaseRamp):
+class BlobMemory(BaseMemory):
     driver: BaseBlobStorageDriver = field(
         default=Factory(lambda: MemoryBlobStorageDriver()),
         kw_only=True
@@ -23,8 +23,8 @@ class BlobStorageRamp(BaseRamp):
             artifact_names = []
 
         if len(artifact_names) > 0:
-            output = J2("ramps/blob_storage.j2").render(
-                ramp_name=self.name,
+            output = J2("memory/tool/blob.j2").render(
+                memory_name=self.name,
                 tool_name=tool_activity.__self__.name,
                 activity_name=tool_activity.name,
                 names=str.join(", ", artifact_names)

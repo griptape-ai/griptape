@@ -4,11 +4,11 @@ from schema import Schema
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.core.decorators import activity
 from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
-from griptape.ramps import BaseRamp
+from griptape.memory.tool import BaseMemory
 
 
 @define
-class TextStorageRamp(BaseRamp):
+class TextMemory(BaseMemory):
     driver: BaseTextStorageDriver = field(
         default=Factory(lambda: MemoryTextStorageDriver()), kw_only=True
     )
@@ -24,8 +24,8 @@ class TextStorageRamp(BaseRamp):
             artifact_names = []
 
         if len(artifact_names) > 0:
-            output = J2("ramps/text_storage.j2").render(
-                ramp_name=self.name,
+            output = J2("memory/tool/text.j2").render(
+                memory_name=self.name,
                 tool_name=tool_activity.__self__.name,
                 activity_name=tool_activity.name,
                 names=str.join(", ", artifact_names)

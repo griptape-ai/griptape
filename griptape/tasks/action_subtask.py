@@ -10,7 +10,7 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.core import BaseTool, ActivityMixin
-from griptape.ramps import BaseRamp
+from griptape.memory.tool import BaseMemory
 from griptape.tasks import PromptTask
 from griptape.utils import J2
 
@@ -31,7 +31,7 @@ class ActionSubtask(PromptTask):
             Literal(
                 "type",
                 description="Action type"
-            ): schema.Or("tool", "ramp"),
+            ): schema.Or("tool", "memory"),
             Literal(
                 "name",
                 description="Action name"
@@ -57,7 +57,7 @@ class ActionSubtask(PromptTask):
     action_input: dict = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
-    _ramp: Optional[BaseRamp] = None
+    _memory: Optional[BaseMemory] = None
 
     def attach(self, parent_task: ToolkitTask):
         self.parent_task_id = parent_task.id
@@ -92,13 +92,13 @@ class ActionSubtask(PromptTask):
                         )
                     else:
                         observation = ErrorArtifact("tool not found")
-                elif self.action_type == "ramp":
-                    if self._ramp:
-                        observation = getattr(self._ramp, self.action_activity)(
+                elif self.action_type == "memory":
+                    if self._memory:
+                        observation = getattr(self._memory, self.action_activity)(
                             self.action_input if self.action_input else None
                         )
                     else:
-                        observation = ErrorArtifact("ramp not found")
+                        observation = ErrorArtifact("memory not found")
                 else:
                     observation = ErrorArtifact("invalid action type")
 
@@ -193,12 +193,12 @@ class ActionSubtask(PromptTask):
 
                     if self._tool:
                         self.__validate_activity_mixin(self._tool)
-                elif self.action_type == "ramp":
+                elif self.action_type == "memory":
                     if self.action_name:
-                        self._ramp = self.task.find_ramp(self.action_name)
+                        self._memory = self.task.find_memory(self.action_name)
 
-                    if self._ramp:
-                        self.__validate_activity_mixin(self._ramp)
+                    if self._memory:
+                        self.__validate_activity_mixin(self._memory)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 

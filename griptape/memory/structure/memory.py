@@ -38,7 +38,7 @@ class Memory:
         return not self.runs
 
     def to_prompt_string(self, last_n: Optional[int] = None) -> str:
-        return J2("prompts/memory.j2").render(
+        return J2("prompts/memory/structure.j2").render(
             runs=self.runs if last_n is None else self.runs[-last_n:]
         )
 

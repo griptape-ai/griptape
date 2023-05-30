@@ -14,7 +14,7 @@ from griptape.artifacts import BaseArtifact
 from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.ramps import BaseRamp
+    from griptape.memory.tool import BaseMemory
 
 
 @define
@@ -24,28 +24,28 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    ramps: dict[str, list[BaseRamp]] = field(factory=dict, kw_only=True)
+    memory: dict[str, list[BaseMemory]] = field(factory=dict, kw_only=True)
     artifacts: list[BaseArtifact] = field(factory=list, kw_only=True)
 
     # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
     logging.basicConfig(level=logging.ERROR)
 
     def __attrs_post_init__(self):
-        from griptape.ramps import BaseRamp
+        from griptape.memory.tool import BaseMemory
 
         # https://www.attrs.org/en/stable/api.html#attrs.resolve_types
         attrs.resolve_types(self.__class__, globals(), locals())
 
-    @ramps.validator
-    def validate_ramps(self, _, ramps: dict[str, list[BaseRamp]]) -> None:
-        for activity_name, ramp_list in ramps.items():
-            ramp_names = [ramp.name for ramp in ramp_list]
+    @memory.validator
+    def validate_memory(self, _, memories: dict[str, list[BaseMemory]]) -> None:
+        for activity_name, memory_list in memories.items():
+            memory_names = [memory.name for memory in memory_list]
 
             if not self.find_activity(activity_name):
                 raise ValueError(f"activity {activity_name} doesn't exist")
 
-            if len(ramp_names) > len(set(ramp_names)):
-                raise ValueError(f"ramp names have to be unique in activity {activity_name}")
+            if len(memory_names) > len(set(memory_names)):
+                raise ValueError(f"memory names have to be unique in activity {activity_name}")
 
     @property
     def class_name(self):

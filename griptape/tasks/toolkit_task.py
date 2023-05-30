@@ -12,7 +12,7 @@ from griptape.tasks import PromptTask
 from griptape.artifacts import TextArtifact, ErrorArtifact
 
 if TYPE_CHECKING:
-    from griptape.ramps import BaseRamp
+    from griptape.memory.tool import BaseMemory
     from griptape.structures import Structure
 
 
@@ -33,16 +33,16 @@ class ToolkitTask(PromptTask):
             raise ValueError("tools have to be unique")
 
     @property
-    def ramps(self) -> list[BaseRamp]:
-        unique_ramps_dict = {}
+    def memory(self) -> list[BaseMemory]:
+        unique_memory_dict = {}
 
-        for ramps_dict in [tool.ramps for tool in self.tools]:
-            for ramps_list in ramps_dict.values():
-                for ramps in ramps_list:
-                    if ramps.name not in unique_ramps_dict:
-                        unique_ramps_dict[ramps.name] = ramps
+        for memory_dict in [tool.memory for tool in self.tools]:
+            for memory_list in memory_dict.values():
+                for memory in memory_list:
+                    if memory.name not in unique_memory_dict:
+                        unique_memory_dict[memory.name] = memory
 
-        return list(unique_ramps_dict.values())
+        return list(unique_memory_dict.values())
 
     def run(self) -> TextArtifact:
         from griptape.tasks import ActionSubtask
@@ -106,9 +106,9 @@ class ToolkitTask(PromptTask):
             None
         )
 
-    def find_ramp(self, ramp_name: str) -> Optional[BaseRamp]:
+    def find_memory(self, memory_name: str) -> Optional[BaseMemory]:
         return next(
-            (r for r in self.ramps if r.name == ramp_name),
+            (r for r in self.memory if r.name == memory_name),
             None
         )
 
@@ -116,7 +116,7 @@ class ToolkitTask(PromptTask):
         from griptape.tasks import ToolkitTask
 
         tools = self.tools if isinstance(self, ToolkitTask) else []
-        ramps = [r for r in self.ramps if len(r.activities()) > 0] if isinstance(self, ToolkitTask) else []
+        memories = [r for r in self.memory if len(r.activities()) > 0] if isinstance(self, ToolkitTask) else []
         action_schema = utils.minify_json(
             json.dumps(
                 ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
@@ -127,8 +127,8 @@ class ToolkitTask(PromptTask):
             J2("prompts/tasks/toolkit/base.j2").render(
                 rulesets=structure.rulesets,
                 action_schema=action_schema,
-                ramp_names=str.join(", ", [ramp.name for ramp in ramps]),
-                ramps=[J2("prompts/ramp.j2").render(ramp=ramp) for ramp in ramps],
+                memory_names=str.join(", ", [memory.name for memory in memories]),
+                memories=[J2("prompts/memory/tool.j2").render(memory=memory) for memory in memories],
                 tool_names=str.join(", ", [tool.name for tool in tools]),
                 tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]
             )

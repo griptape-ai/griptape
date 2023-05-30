@@ -1,0 +1,41 @@
+from griptape.artifacts import TextArtifact, ListArtifact
+from griptape.drivers import MemoryTextStorageDriver
+from griptape.memory.tool import TextMemory
+from tests.mocks.mock_tool.tool import MockTool
+
+
+class TestTextMemory:
+    def test_constructor(self):
+        memory = TextMemory(
+            name="MyMemory",
+            driver=MemoryTextStorageDriver()
+        )
+
+        assert memory.name == "MyMemory"
+
+    def test_process_output(self):
+        memory = TextMemory(
+            name="MyMemory",
+            driver=MemoryTextStorageDriver()
+        )
+
+        assert memory.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
+            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact names'
+        )
+
+    def test_process_output_with_many_artifacts(self):
+        memory = TextMemory(
+            name="MyMemory",
+            driver=MemoryTextStorageDriver()
+        )
+
+        assert memory.process_output(MockTool().test, ListArtifact([TextArtifact("foo")])).to_text().startswith(
+            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact names'
+        )
+
+    def test_save_and_load_value(self):
+        memory = TextMemory()
+        output = memory.save_value({"values": {"artifact_value": "foobar"}})
+        name = output.value.split(":")[-1].strip()
+
+        assert memory.load_value({"values": {"artifact_name": name}}).value == "foobar"

@@ -27,8 +27,8 @@ class TestActivityMixin:
         assert schema == Schema({"values": tool.test.config["schema"].schema}).json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
 
-    def test_activity_schema_with_ramp(self, tool):
-        activity_input = tool.activity_schema(tool.test_with_required_ramp)
+    def test_activity_schema_with_memory(self, tool):
+        activity_input = tool.activity_schema(tool.test_with_required_memory)
 
         assert activity_input["properties"]["values"]
         assert isinstance(activity_input["properties"]["artifacts"], dict)
@@ -78,4 +78,4 @@ class TestActivityMixin:
 
     def test_should_pass_artifacts(self, tool):
         assert tool.should_pass_artifacts(tool.test) is False
-        assert tool.should_pass_artifacts(tool.test_with_required_ramp) is True
+        assert tool.should_pass_artifacts(tool.test_with_required_memory) is True
