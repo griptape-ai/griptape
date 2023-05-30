@@ -8,7 +8,7 @@ from griptape.drivers import BasePromptDriver
 from griptape.summarizers.base_summarizer import BaseSummarizer
 
 if TYPE_CHECKING:
-    from griptape.memory import Run
+    from griptape.memory.structure import Run
 
 
 @define

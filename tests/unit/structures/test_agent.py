@@ -1,4 +1,4 @@
-from griptape.memory import Memory
+from griptape.memory.structure import Memory
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask

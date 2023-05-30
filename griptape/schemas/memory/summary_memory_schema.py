@@ -9,6 +9,6 @@ class SummaryMemorySchema(MemorySchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.memory import SummaryMemory
+        from griptape.memory.structure import SummaryMemory
 
         return SummaryMemory(**data)

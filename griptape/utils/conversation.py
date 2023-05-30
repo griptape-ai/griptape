@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from attr import define, field
 
 if TYPE_CHECKING:
-    from griptape.memory import Memory
+    from griptape.memory.structure import Memory
 
 
 @define(frozen=True)

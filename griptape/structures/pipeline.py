@@ -3,7 +3,7 @@ import json
 from typing import TYPE_CHECKING, Optional
 from attr import define
 from griptape.artifacts import ErrorArtifact
-from griptape.memory import Run
+from griptape.memory.structure import Run
 from griptape.structures import StructureWithMemory
 from griptape.utils import J2
 

@@ -11,6 +11,6 @@ class MemorySchema(BaseSchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.memory import Memory
+        from griptape.memory.structure import Memory
 
         return Memory(**data)

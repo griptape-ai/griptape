@@ -1,6 +1,6 @@
 from attr import define, field
 from griptape.drivers import BaseMemoryDriver
-from griptape.memory import Memory
+from griptape.memory.structure import Memory
 
 
 @define

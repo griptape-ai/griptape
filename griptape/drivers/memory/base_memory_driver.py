@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from griptape.memory import Memory
+from griptape.memory.structure import Memory
 
 
 class BaseMemoryDriver(ABC):

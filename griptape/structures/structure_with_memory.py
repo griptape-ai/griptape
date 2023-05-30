@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Optional
 from attr import define, field
-from griptape.memory import Memory
+from griptape.memory.structure import Memory
 from griptape.structures import Structure
 
 

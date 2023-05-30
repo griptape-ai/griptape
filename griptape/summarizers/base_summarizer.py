@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from attr import define
 
 if TYPE_CHECKING:
-    from griptape.memory import Run
+    from griptape.memory.structure import Run
 
 
 @define

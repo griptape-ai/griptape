@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from attr import define, field
-from griptape.memory import Memory, Run
+from griptape.memory.structure import Memory, Run
 from griptape.schemas import BufferMemorySchema
 
 

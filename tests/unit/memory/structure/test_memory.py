@@ -1,6 +1,5 @@
 import json
-
-from griptape.memory import Memory, Run
+from griptape.memory.structure import Memory, Run
 
 
 class TestMemory:

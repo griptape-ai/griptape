@@ -2,7 +2,7 @@ from griptape.artifacts import TextArtifact
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask
-from griptape.memory import Memory
+from griptape.memory.structure import Memory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 

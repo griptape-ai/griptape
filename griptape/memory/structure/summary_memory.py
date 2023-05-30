@@ -5,11 +5,11 @@ from typing import Optional
 from attr import define, field
 from griptape.schemas import SummaryMemorySchema
 from griptape.utils import J2
-from griptape.memory import Memory
+from griptape.memory.structure import Memory
 
 if TYPE_CHECKING:
     from griptape.summarizers import BaseSummarizer
-    from griptape.memory import Run
+    from griptape.memory.structure import Run
 
 
 @define

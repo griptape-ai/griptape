@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.memory import Run
+from griptape.memory.structure import Run
 from griptape.utils import J2
 
 if TYPE_CHECKING:

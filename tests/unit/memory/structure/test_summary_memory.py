@@ -1,7 +1,6 @@
 import json
-
 from griptape.summarizers import PromptDriverSummarizer
-from griptape.memory import SummaryMemory, Run
+from griptape.memory.structure import SummaryMemory, Run
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline

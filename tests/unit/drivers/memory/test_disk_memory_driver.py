@@ -2,7 +2,7 @@ import os
 import pytest
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.drivers import DiskMemoryDriver
-from griptape.memory import Memory
+from griptape.memory.structure import Memory
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 

@@ -12,6 +12,6 @@ class RunSchema(BaseSchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.memory import Run
+        from griptape.memory.structure import Run
 
         return Run(**data)

@@ -7,6 +7,6 @@ class BufferMemorySchema(MemorySchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.memory import BufferMemory
+        from griptape.memory.structure import BufferMemory
 
         return BufferMemory(**data)

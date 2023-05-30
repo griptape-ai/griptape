@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from attr import define, field, Factory
-from griptape.memory import Run
+from griptape.memory.structure import Run
 from griptape.structures import StructureWithMemory
 from griptape.tasks import PromptTask
 from griptape.utils import J2

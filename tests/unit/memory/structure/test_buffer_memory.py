@@ -1,8 +1,7 @@
 import json
-
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
-from griptape.memory import BufferMemory, Run
+from griptape.memory.structure import BufferMemory, Run
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
