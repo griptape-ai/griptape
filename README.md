@@ -40,7 +40,7 @@ from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, PromptTask
 from griptape.tools import WebScraper, TextProcessor, FileManager
 
-# Memory enable LLMs to store and manipulate data without ever looking at it directly.
+# Memory enables LLMs to store and manipulate data without ever looking at it directly.
 text_storage = TextMemory()
 blob_storage = BlobMemory()
 

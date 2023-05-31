@@ -10,13 +10,13 @@ class QueryEngine(BaseEngine):
     vector_storage_driver: BaseVectorStorageDriver = field(default=MemoryVectorStorageDriver(), kw_only=True)
     top_n: Optional[int] = field(default=None, kw_only=True)
 
-    def insert(self, artifacts: list[TextArtifact]) -> None:
-        [self.vector_storage_driver.insert_text_artifact(a) for a in artifacts]
+    def insert(self, artifacts: list[TextArtifact], namespace: Optional[str] = None) -> None:
+        [self.vector_storage_driver.insert_text_artifact(a, namespace=namespace) for a in artifacts]
 
     def query(self, query: str) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         artifacts = [
-            BaseArtifact.from_dict(r.meta["artifact"]) for r in self.vector_storage_driver.query(query, self.top_n)
+            BaseArtifact.from_json(r.meta["artifact"]) for r in self.vector_storage_driver.query(query, self.top_n)
         ]
 
         prefix = 'Use the below list of text segments to answer the subsequent question. ' \

@@ -22,4 +22,4 @@ class TestMemoryVectorStorageDriver:
         assert len(driver.query("foobar", namespace="bad-namespace")) == 0
         assert len(driver.query("foobar", namespace="test-namespace")) == 1
         assert driver.query("foobar")[0].vector == [0, 1]
-        assert BaseArtifact.from_dict(driver.query("foobar")[0].meta["artifact"]).value == "foobar"
+        assert BaseArtifact.from_json(driver.query("foobar")[0].meta["artifact"]).value == "foobar"

@@ -26,17 +26,19 @@ class BaseVectorStorageDriver(ABC):
             self,
             artifact: TextArtifact,
             vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
         if not meta:
             meta = {}
 
-        meta["artifact"] = artifact.to_dict()
+        meta["artifact"] = artifact.to_json()
 
         return self.insert_vector(
             artifact.generate_embedding(self.embedding_driver),
             vector_id=vector_id,
+            namespace=namespace,
             meta=meta,
             **kwargs
         )
@@ -45,12 +47,14 @@ class BaseVectorStorageDriver(ABC):
             self,
             string: str,
             vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
         return self.insert_vector(
             self.embedding_driver.embed_string(string),
             vector_id=vector_id,
+            namespace=namespace,
             meta=meta if meta else {},
             **kwargs
         )

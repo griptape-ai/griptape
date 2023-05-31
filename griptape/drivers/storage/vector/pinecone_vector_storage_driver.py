@@ -54,6 +54,7 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
 
         params = {
             "top_k": count if count else BaseVectorStorageDriver.DEFAULT_QUERY_COUNT,
+            "namespace": namespace,
             "include_values": include_vectors,
             "include_metadata": include_metadata
         } | kwargs
