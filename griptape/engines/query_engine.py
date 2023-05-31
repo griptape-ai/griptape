@@ -8,16 +8,14 @@ from griptape.engines import BaseEngine
 @define
 class QueryEngine(BaseEngine):
     vector_storage_driver: BaseVectorStorageDriver = field(default=MemoryVectorStorageDriver(), kw_only=True)
-    top_n: Optional[int] = field(default=None, kw_only=True)
 
     def insert(self, artifacts: list[TextArtifact], namespace: Optional[str] = None) -> None:
         [self.vector_storage_driver.insert_text_artifact(a, namespace=namespace) for a in artifacts]
 
-    def query(self, query: str) -> TextArtifact:
+    def query(self, query: str, top_n: Optional[int] = None, namespace: Optional[str] = None) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
-        artifacts = [
-            BaseArtifact.from_json(r.meta["artifact"]) for r in self.vector_storage_driver.query(query, self.top_n)
-        ]
+        result = self.vector_storage_driver.query(query, top_n, namespace)
+        artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result]
 
         prefix = 'Use the below list of text segments to answer the subsequent question. ' \
                  'If the answer cannot be found in the segments, write "I could not find an answer."'
