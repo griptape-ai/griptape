@@ -35,8 +35,13 @@ class BaseVectorStorageDriver(ABC):
 
         meta["artifact"] = artifact.to_json()
 
+        if artifact.embedding:
+            vector = artifact.embedding
+        else:
+            vector = artifact.generate_embedding(self.embedding_driver)
+
         return self.insert_vector(
-            artifact.generate_embedding(self.embedding_driver),
+            vector,
             vector_id=vector_id,
             namespace=namespace,
             meta=meta,
