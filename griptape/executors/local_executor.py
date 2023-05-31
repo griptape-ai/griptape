@@ -4,7 +4,7 @@ import os
 import subprocess
 from typing import TYPE_CHECKING, Union, Optional
 from attr import define, field
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.executors import BaseExecutor
 
 if TYPE_CHECKING:
@@ -35,14 +35,13 @@ class LocalExecutor(BaseExecutor):
             return output.stdout.strip()
 
     def install_dependencies(self, env: dict[str, str], tool: BaseTool) -> None:
-        if self.dependencies_install_directory is not None:
+        if self.dependencies_install_directory is None:
             command = [
                 "pip",
                 "install",
                 "-r",
                 "requirements.txt",
-                "-t", 
-                self.dependencies_install_directory
+                "-U"
             ]
         else:
             command = [
@@ -50,7 +49,8 @@ class LocalExecutor(BaseExecutor):
                 "install",
                 "-r",
                 "requirements.txt",
-                "-U"
+                "-t",
+                self.dependencies_install_directory
             ]
 
         subprocess.run(
@@ -61,7 +61,12 @@ class LocalExecutor(BaseExecutor):
             stderr=None if self.verbose else subprocess.DEVNULL
         )
 
-    def run_subprocess(self, env: dict[str, str], tool_activity: callable, value: Optional[dict]) -> subprocess.CompletedProcess:
+    def run_subprocess(
+            self,
+            env: dict[str, str],
+            tool_activity: callable,
+            value: Optional[dict]
+    ) -> subprocess.CompletedProcess:
         tool = tool_activity.__self__
         tool_name = tool.class_name
         input_value = value if value else ""
@@ -72,10 +77,12 @@ class LocalExecutor(BaseExecutor):
                 'from sys import path',
                 f'path.insert(1, "{self.dependencies_install_directory}")'
             ])
+
         code.extend([
             f'from tool import {tool_name}',
             f'print({tool_name}().{tool_activity.__name__}({input_value}))'
         ])
+
         code = str.join(';', code)
 
         command = [
