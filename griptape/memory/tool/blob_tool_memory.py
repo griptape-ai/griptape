@@ -2,11 +2,11 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact, ListArtifact
 from griptape.drivers import BaseBlobStorageDriver, MemoryBlobStorageDriver
-from griptape.memory.tool import BaseMemory
+from griptape.memory.tool import BaseToolMemory
 
 
 @define
-class BlobMemory(BaseMemory):
+class BlobToolMemory(BaseToolMemory):
     driver: BaseBlobStorageDriver = field(
         default=Factory(lambda: MemoryBlobStorageDriver()),
         kw_only=True

@@ -10,7 +10,7 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.core import BaseTool, ActivityMixin
-from griptape.memory.tool import BaseMemory
+from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
 from griptape.utils import J2
 
@@ -57,7 +57,7 @@ class ActionSubtask(PromptTask):
     action_input: dict = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
-    _memory: Optional[BaseMemory] = None
+    _memory: Optional[BaseToolMemory] = None
 
     def attach(self, parent_task: ToolkitTask):
         self.parent_task_id = parent_task.id

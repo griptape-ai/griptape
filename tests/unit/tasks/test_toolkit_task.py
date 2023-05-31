@@ -1,5 +1,5 @@
 from griptape.drivers import MemoryTextStorageDriver
-from griptape.memory.tool import TextMemory
+from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
 from griptape.tasks import ToolkitTask, ActionSubtask
@@ -126,8 +126,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_memory(self):
-        m1 = TextMemory(name="Memory1", driver=MemoryTextStorageDriver())
-        m2 = TextMemory(name="Memory2", driver=MemoryTextStorageDriver())
+        m1 = TextToolMemory(name="Memory1", driver=MemoryTextStorageDriver())
+        m2 = TextToolMemory(name="Memory2", driver=MemoryTextStorageDriver())
 
         tool = MockTool(
             name="Tool1",
@@ -147,8 +147,8 @@ class TestToolkitSubtask:
             name="Tool1",
             memory={
                 "test": [
-                    TextMemory(name="Memory1", driver=MemoryTextStorageDriver()),
-                    TextMemory(name="Memory2", driver=MemoryTextStorageDriver())
+                    TextToolMemory(name="Memory1", driver=MemoryTextStorageDriver()),
+                    TextToolMemory(name="Memory2", driver=MemoryTextStorageDriver())
                 ]
             }
         )
@@ -157,8 +157,8 @@ class TestToolkitSubtask:
             name="Tool2",
             memory={
                 "test": [
-                    TextMemory(name="Memory2", driver=MemoryTextStorageDriver()),
-                    TextMemory(name="Memory3", driver=MemoryTextStorageDriver())
+                    TextToolMemory(name="Memory2", driver=MemoryTextStorageDriver()),
+                    TextToolMemory(name="Memory3", driver=MemoryTextStorageDriver())
                 ]
             }
         )

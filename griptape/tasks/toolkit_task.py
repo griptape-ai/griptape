@@ -12,7 +12,7 @@ from griptape.tasks import PromptTask
 from griptape.artifacts import TextArtifact, ErrorArtifact
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import BaseMemory
+    from griptape.memory.tool import BaseToolMemory
     from griptape.structures import Structure
 
 
@@ -33,7 +33,7 @@ class ToolkitTask(PromptTask):
             raise ValueError("tools have to be unique")
 
     @property
-    def memory(self) -> list[BaseMemory]:
+    def memory(self) -> list[BaseToolMemory]:
         unique_memory_dict = {}
 
         for memory_dict in [tool.memory for tool in self.tools]:
@@ -106,7 +106,7 @@ class ToolkitTask(PromptTask):
             None
         )
 
-    def find_memory(self, memory_name: str) -> Optional[BaseMemory]:
+    def find_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
         return next(
             (r for r in self.memory if r.name == memory_name),
             None

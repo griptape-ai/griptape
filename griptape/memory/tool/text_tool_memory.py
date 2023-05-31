@@ -4,11 +4,11 @@ from schema import Schema
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.core.decorators import activity
 from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
-from griptape.memory.tool import BaseMemory
+from griptape.memory.tool import BaseToolMemory
 
 
 @define
-class TextMemory(BaseMemory):
+class TextToolMemory(BaseToolMemory):
     driver: BaseTextStorageDriver = field(
         default=Factory(lambda: MemoryTextStorageDriver()), kw_only=True
     )

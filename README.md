@@ -35,14 +35,14 @@ With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `
 
 ```python
 from griptape.memory.structure import Memory
-from griptape.memory.tool import TextMemory, BlobMemory
+from griptape.memory.tool import TextToolMemory, BlobToolMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, PromptTask
 from griptape.tools import WebScraper, TextProcessor, FileManager
 
 # Memory enables LLMs to store and manipulate data without ever looking at it directly.
-text_storage = TextMemory()
-blob_storage = BlobMemory()
+text_storage = TextToolMemory()
+blob_storage = BlobToolMemory()
 
 # Connect a web scraper to load web pages.
 web_scraper = WebScraper(

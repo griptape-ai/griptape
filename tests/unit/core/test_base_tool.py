@@ -4,7 +4,7 @@ import pytest
 import yaml
 from schema import SchemaMissingKeyError
 from griptape.drivers import MemoryTextStorageDriver
-from griptape.memory.tool import TextMemory
+from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -110,10 +110,10 @@ class TestBaseTool:
         tool = MockTool(
             memory={
                 "test": [
-                    TextMemory(
+                    TextToolMemory(
                         name="Memory1", driver=MemoryTextStorageDriver()
                     ),
-                    TextMemory(
+                    TextToolMemory(
                         name="Memory2", driver=MemoryTextStorageDriver()
                     )
                 ]
@@ -127,10 +127,10 @@ class TestBaseTool:
             MockTool(
                 memory={
                     "test": [
-                        TextMemory(
+                        TextToolMemory(
                             name="Memory1", driver=MemoryTextStorageDriver()
                         ),
-                        TextMemory(
+                        TextToolMemory(
                             name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ]
@@ -141,7 +141,7 @@ class TestBaseTool:
             MockTool(
                 memory={
                     "fake_activity": [
-                        TextMemory(
+                        TextToolMemory(
                             name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ]
@@ -151,12 +151,12 @@ class TestBaseTool:
         assert MockTool(
                 memory={
                     "test": [
-                        TextMemory(
+                        TextToolMemory(
                             name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ],
                     "test_str_output": [
-                        TextMemory(
+                        TextToolMemory(
                             name="Memory1", driver=MemoryTextStorageDriver()
                         )
                     ]

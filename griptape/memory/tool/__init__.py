@@ -1,10 +1,10 @@
-from .base_memory import BaseMemory
-from .text_memory import TextMemory
-from .blob_memory import BlobMemory
+from .base_tool_memory import BaseToolMemory
+from .text_tool_memory import TextToolMemory
+from .blob_tool_memory import BlobToolMemory
 
 
 __all__ = [
-    "BaseMemory",
-    "TextMemory",
-    "BlobMemory"
+    "BaseToolMemory",
+    "TextToolMemory",
+    "BlobToolMemory"
 ]

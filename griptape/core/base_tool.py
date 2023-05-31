@@ -14,7 +14,7 @@ from griptape.artifacts import BaseArtifact
 from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import BaseMemory
+    from griptape.memory.tool import BaseToolMemory
 
 
 @define
@@ -24,20 +24,20 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    memory: dict[str, list[BaseMemory]] = field(factory=dict, kw_only=True)
+    memory: dict[str, list[BaseToolMemory]] = field(factory=dict, kw_only=True)
     artifacts: list[BaseArtifact] = field(factory=list, kw_only=True)
 
     # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
     logging.basicConfig(level=logging.ERROR)
 
     def __attrs_post_init__(self):
-        from griptape.memory.tool import BaseMemory
+        from griptape.memory.tool import BaseToolMemory
 
         # https://www.attrs.org/en/stable/api.html#attrs.resolve_types
         attrs.resolve_types(self.__class__, globals(), locals())
 
     @memory.validator
-    def validate_memory(self, _, memories: dict[str, list[BaseMemory]]) -> None:
+    def validate_memory(self, _, memories: dict[str, list[BaseToolMemory]]) -> None:
         for activity_name, memory_list in memories.items():
             memory_names = [memory.name for memory in memory_list]
 
