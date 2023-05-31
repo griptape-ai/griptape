@@ -1,4 +1,6 @@
-from griptape.artifacts import TextArtifact
+import json
+
+from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.tokenizers import TiktokenTokenizer
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -25,3 +27,12 @@ class TestTextArtifact:
 
     def test_to_dict(self):
         assert TextArtifact("foobar").to_dict()["value"] == "foobar"
+
+    def test_from_dict(self):
+        assert BaseArtifact.from_dict(TextArtifact("foobar").to_dict()).value == "foobar"
+
+    def test_to_json(self):
+        assert json.loads(TextArtifact("foobar").to_json())["value"] == "foobar"
+
+    def test_from_json(self):
+        assert BaseArtifact.from_json(TextArtifact("foobar").to_json()).value == "foobar"

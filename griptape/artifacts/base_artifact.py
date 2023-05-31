@@ -29,7 +29,14 @@ class BaseArtifact(ABC):
         except RegistryError:
             raise ValueError("Unsupported artifact type")
 
+    @classmethod
+    def from_json(cls, artifact_str: str) -> BaseArtifact:
+        return cls.from_dict(json.loads(artifact_str))
+
     def __str__(self):
+        return json.dumps(self.to_dict())
+
+    def to_json(self) -> str:
         return json.dumps(self.to_dict())
 
     @abstractmethod
