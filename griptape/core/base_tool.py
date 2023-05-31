@@ -1,14 +1,14 @@
 from __future__ import annotations
 import ast
+import subprocess
+import sys
 from typing import TYPE_CHECKING
 import inspect
-import logging
 import os
 from abc import ABC
 from typing import Optional
 import yaml
 from attr import define, fields, Attribute, field, Factory
-import attrs
 from decouple import config
 from griptape.artifacts import BaseArtifact
 from griptape.core import ActivityMixin
@@ -20,21 +20,18 @@ if TYPE_CHECKING:
 @define
 class BaseTool(ActivityMixin, ABC):
     MANIFEST_FILE = "manifest.yml"
-    DOCKERFILE_FILE = "Dockerfile"
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     memory: dict[str, list[BaseToolMemory]] = field(factory=dict, kw_only=True)
+    install_dependencies_on_init: bool = field(default=True, kw_only=True)
+    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
+    verbose: bool = field(default=False, kw_only=True)
     artifacts: list[BaseArtifact] = field(factory=list, kw_only=True)
 
-    # Disable logging, unless it's an error, so that executors don't capture it as subprocess output.
-    logging.basicConfig(level=logging.ERROR)
-
     def __attrs_post_init__(self):
-        from griptape.memory.tool import BaseToolMemory
-
-        # https://www.attrs.org/en/stable/api.html#attrs.resolve_types
-        attrs.resolve_types(self.__class__, globals(), locals())
+        if self.install_dependencies_on_init:
+            self.install_dependencies(os.environ.copy())
 
     @memory.validator
     def validate_memory(self, _, memories: dict[str, list[BaseToolMemory]]) -> None:
@@ -52,22 +49,8 @@ class BaseTool(ActivityMixin, ABC):
         return self.__class__.__name__
 
     @property
-    def env_fields(self) -> list[Attribute]:
-        return [f for f in fields(self.__class__) if f.metadata.get("env")]
-
-    @property
-    def env(self) -> dict[str, str]:
-        return {
-            f.metadata["env"]: str(getattr(self, f.name)) for f in self.env_fields if getattr(self, f.name)
-        }
-
-    @property
     def manifest_path(self) -> str:
         return os.path.join(self.abs_dir_path, self.MANIFEST_FILE)
-
-    @property
-    def dockerfile_path(self) -> str:
-        return os.path.join(self.abs_dir_path, self.DOCKERFILE_FILE)
 
     @property
     def requirements_path(self) -> str:
@@ -79,62 +62,12 @@ class BaseTool(ActivityMixin, ABC):
             return yaml.safe_load(yaml_file)
 
     @property
-    def dockerfile(self) -> Optional[str]:
-        if os.path.exists(self.dockerfile_path):
-            with open(self.dockerfile_path, "r") as dockerfile:
-                return dockerfile.read()
-        else:
-            return None
-
-    @property
     def abs_file_path(self):
         return os.path.abspath(inspect.getfile(self.__class__))
 
     @property
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
-
-    def value(self, name: str) -> Optional[any]:
-        if hasattr(self, name):
-            env_field = next(
-                (f for f in self.env_fields if f.name == name),
-                None
-            )
-            value = getattr(self, name)
-
-            if env_field:
-                return self.env_value(env_field.metadata.get("env"))
-            elif value:
-                return value
-            else:
-                return None
-        else:
-            return None
-
-    def env_value(self, name: str) -> Optional[any]:
-        config_var_value = config(name, default=None)
-        env_field = next(
-            (f for f in self.env_fields if f.metadata.get("env") == name),
-            None
-        )
-
-        if config_var_value:
-            try:
-                env_var_value = ast.literal_eval(config_var_value)
-            except:
-                env_var_value = config_var_value
-        else:
-            env_var_value = None
-
-        if env_var_value:
-            # Return a non-None environment variable value
-            return env_var_value
-        elif env_field:
-            # Read field value directly
-            return getattr(self, env_field.name)
-        else:
-            # If all fails, return None
-            return None
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator
@@ -148,3 +81,33 @@ class BaseTool(ActivityMixin, ABC):
         ManifestValidator().validate(self.manifest)
 
         return True
+
+    def tool_dir(self):
+        class_file = inspect.getfile(self.__class__)
+
+        return os.path.dirname(os.path.abspath(class_file))
+
+    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
+        env = env if env else {}
+
+        command = [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "-r",
+            "requirements.txt"
+        ]
+
+        if self.dependencies_install_directory is None:
+            command.extend(["-U"])
+        else:
+            command.extend(["-t", self.dependencies_install_directory])
+
+        subprocess.run(
+            command,
+            env=env,
+            cwd=self.tool_dir(),
+            stdout=None if self.verbose else subprocess.DEVNULL,
+            stderr=None if self.verbose else subprocess.DEVNULL
+        )

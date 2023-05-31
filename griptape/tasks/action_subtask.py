@@ -86,8 +86,7 @@ class ActionSubtask(PromptTask):
             else:
                 if self.action_type == "tool":
                     if self._tool:
-                        observation = self.task.executor.execute(
-                            getattr(self._tool, self.action_activity),
+                        observation = getattr(self._tool, self.action_activity)(
                             self.action_input if self.action_input else None
                         )
                     else:

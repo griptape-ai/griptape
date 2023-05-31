@@ -1,12 +1,10 @@
 from __future__ import annotations
-
 import json
 from typing import TYPE_CHECKING, Optional
-from attr import define, field, Factory
+from attr import define, field
 from griptape.tasks import ActionSubtask
 from griptape import utils
 from griptape.core import BaseTool
-from griptape.executors import BaseExecutor, LocalExecutor
 from griptape.utils import J2
 from griptape.tasks import PromptTask
 from griptape.artifacts import TextArtifact, ErrorArtifact
@@ -21,7 +19,6 @@ class ToolkitTask(PromptTask):
     DEFAULT_MAX_STEPS = 20
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
-    executor: BaseExecutor = field(default=Factory(lambda: LocalExecutor()), kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     _subtasks: list[ActionSubtask] = field(factory=list)
 
