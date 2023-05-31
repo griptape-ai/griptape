@@ -1,19 +1,19 @@
 from attr import define, field
 from griptape.drivers import BaseMemoryDriver
-from griptape.memory.structure import Memory
+from griptape.memory.structure import ConversationMemory
 
 
 @define
 class DiskMemoryDriver(BaseMemoryDriver):
     file_path: str = field(default="griptape_memory.json", kw_only=True)
 
-    def store(self, memory: Memory) -> None:
+    def store(self, memory: ConversationMemory) -> None:
         with open(self.file_path, "w") as file:
             file.write(memory.to_json())
 
-    def load(self) -> Memory:
+    def load(self) -> ConversationMemory:
         with open(self.file_path, "r") as file:
-            memory = Memory.from_json(file.read())
+            memory = ConversationMemory.from_json(file.read())
 
             memory.driver = self
 

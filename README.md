@@ -34,7 +34,7 @@ Second, configure an OpenAI client by [getting an API key](https://beta.openai.c
 With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses several tools and memory:
 
 ```python
-from griptape.memory.structure import Memory
+from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import TextToolMemory, BlobToolMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, PromptTask
@@ -69,7 +69,7 @@ file_manager = FileManager(
 
 # Pipelines represent sequences of tasks.
 pipeline = Pipeline(
-    memory=Memory()
+    memory=ConversationMemory()
 )
 
 pipeline.add_tasks(

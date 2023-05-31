@@ -1,4 +1,4 @@
-from griptape.memory.structure import Memory
+from griptape.memory.structure import ConversationMemory
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask
@@ -19,7 +19,7 @@ class TestAgent:
     def test_with_memory(self):
         agent = Agent(
             prompt_driver=MockPromptDriver(),
-            memory=Memory()
+            memory=ConversationMemory()
         )
 
         assert agent.memory is not None
@@ -84,7 +84,7 @@ class TestAgent:
     def test_prompt_stack_with_memory(self):
         agent = Agent(
             prompt_driver=MockPromptDriver(),
-            memory=Memory()
+            memory=ConversationMemory()
         )
 
         task1 = PromptTask("test")

@@ -11,13 +11,13 @@ if TYPE_CHECKING:
 
 
 @define
-class Memory(BaseStructureMemory):
+class ConversationMemory(BaseStructureMemory):
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     driver: Optional[BaseMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True)
     structure: Structure = field(init=False)
 
-    def add_run(self, run: Run) -> Memory:
+    def add_run(self, run: Run) -> ConversationMemory:
         self.before_add_run()
         self.process_add_run(run)
         self.after_add_run()
@@ -46,16 +46,16 @@ class Memory(BaseStructureMemory):
         return json.dumps(self.to_dict(), indent=2)
 
     def to_dict(self) -> dict:
-        from griptape.schemas import MemorySchema
+        from griptape.schemas import ConversationMemorySchema
 
-        return dict(MemorySchema().dump(self))
-
-    @classmethod
-    def from_dict(cls, memory_dict: dict) -> Memory:
-        from griptape.schemas import MemorySchema
-
-        return MemorySchema().load(memory_dict)
+        return dict(ConversationMemorySchema().dump(self))
 
     @classmethod
-    def from_json(cls, memory_json: str) -> Memory:
-        return Memory.from_dict(json.loads(memory_json))
+    def from_dict(cls, memory_dict: dict) -> ConversationMemory:
+        from griptape.schemas import ConversationMemorySchema
+
+        return ConversationMemorySchema().load(memory_dict)
+
+    @classmethod
+    def from_json(cls, memory_json: str) -> ConversationMemory:
+        return ConversationMemory.from_dict(json.loads(memory_json))

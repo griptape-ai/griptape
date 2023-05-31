@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from griptape.memory.structure import Memory
+from griptape.memory.structure import ConversationMemory
 
 
 class BaseMemoryDriver(ABC):
     @abstractmethod
-    def store(self, memory: Memory) -> None:
+    def store(self, memory: ConversationMemory) -> None:
         ...
 
     @abstractmethod
-    def load(self) -> Memory:
+    def load(self) -> ConversationMemory:
         ...

@@ -10,9 +10,9 @@ from griptape.schemas.artifacts.blob_artifact_schema import BlobArtifactSchema
 from griptape.schemas.artifacts.list_artifact_schema import ListArtifactSchema
 
 from griptape.schemas.memory.run_schema import RunSchema
-from griptape.schemas.memory.memory_schema import MemorySchema
-from griptape.schemas.memory.buffer_memory_schema import BufferMemorySchema
-from griptape.schemas.memory.summary_memory_schema import SummaryMemorySchema
+from griptape.schemas.memory.conversation_memory_schema import ConversationMemorySchema
+from griptape.schemas.memory.buffer_conversation_memory_schema import BufferConversationMemorySchema
+from griptape.schemas.memory.summary_conversation_memory_schema import SummaryConversationMemorySchema
 
 __all__ = [
     "BaseSchema",
@@ -27,7 +27,7 @@ __all__ = [
     "ListArtifactSchema",
 
     "RunSchema",
-    "MemorySchema",
-    "BufferMemorySchema",
-    "SummaryMemorySchema"
+    "ConversationMemorySchema",
+    "BufferConversationMemorySchema",
+    "SummaryConversationMemorySchema"
 ]

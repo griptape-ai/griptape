@@ -2,7 +2,7 @@ from griptape.artifacts import TextArtifact
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask
-from griptape.memory.structure import Memory
+from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 
@@ -27,7 +27,7 @@ class TestPipeline:
 
         pipeline = Pipeline(
             prompt_driver=MockPromptDriver(),
-            memory=Memory()
+            memory=ConversationMemory()
         )
 
         pipeline + [first_task, second_task, third_task]
@@ -123,7 +123,7 @@ class TestPipeline:
     def test_prompt_stack_with_memory(self):
         pipeline = Pipeline(
             prompt_driver=MockPromptDriver(),
-            memory=Memory()
+            memory=ConversationMemory()
         )
 
         task1 = PromptTask("test")

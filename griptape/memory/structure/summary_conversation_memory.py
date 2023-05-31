@@ -3,9 +3,9 @@ import json
 from typing import TYPE_CHECKING
 from typing import Optional
 from attr import define, field
-from griptape.schemas import SummaryMemorySchema
+from griptape.schemas import SummaryConversationMemorySchema
 from griptape.utils import J2
-from griptape.memory.structure import Memory
+from griptape.memory.structure import ConversationMemory
 
 if TYPE_CHECKING:
     from griptape.summarizers import BaseSummarizer
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class SummaryMemory(Memory):
+class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True)
     summarizer: Optional[BaseSummarizer] = field(default=None, kw_only=True)
     summary: Optional[str] = field(default=None, kw_only=True)
@@ -50,12 +50,12 @@ class SummaryMemory(Memory):
         )
 
     def to_dict(self) -> dict:
-        return dict(SummaryMemorySchema().dump(self))
+        return dict(SummaryConversationMemorySchema().dump(self))
 
     @classmethod
-    def from_dict(cls, memory_dict: dict) -> SummaryMemory:
-        return SummaryMemorySchema().load(memory_dict)
+    def from_dict(cls, memory_dict: dict) -> SummaryConversationMemory:
+        return SummaryConversationMemorySchema().load(memory_dict)
 
     @classmethod
-    def from_json(cls, memory_json: str) -> SummaryMemory:
-        return SummaryMemory.from_dict(json.loads(memory_json))
+    def from_json(cls, memory_json: str) -> SummaryConversationMemory:
+        return SummaryConversationMemory.from_dict(json.loads(memory_json))

@@ -2,7 +2,7 @@ from marshmallow import fields, post_load
 from griptape.schemas import BaseSchema, RunSchema
 
 
-class MemorySchema(BaseSchema):
+class ConversationMemorySchema(BaseSchema):
     class Meta:
         ordered = True
 
@@ -11,6 +11,6 @@ class MemorySchema(BaseSchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.memory.structure import Memory
+        from griptape.memory.structure import ConversationMemory
 
-        return Memory(**data)
+        return ConversationMemory(**data)
