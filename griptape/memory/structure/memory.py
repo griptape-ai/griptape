@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.memory.structure import Run
+from griptape.memory.structure import Run, BaseStructureMemory
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Memory:
+class Memory(BaseStructureMemory):
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     driver: Optional[BaseMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True)
