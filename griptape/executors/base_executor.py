@@ -4,6 +4,7 @@ import logging
 from typing import TYPE_CHECKING, Union, Optional
 import inspect
 import os
+from attr import define, field
 from abc import ABC, abstractmethod
 from griptape.artifacts import BaseArtifact, InfoArtifact
 
@@ -11,9 +12,20 @@ if TYPE_CHECKING:
     from griptape.core import BaseTool
 
 
+@define
 class BaseExecutor(ABC):
+    install_dependencies_on_execute: bool = field(default=True, kw_only=True)
+
     def execute(self, tool_activity: callable, value: Optional[dict]) -> BaseArtifact:
         preprocessed_value = self.before_execute(tool_activity, value)
+
+        if self.install_dependencies_on_execute:
+            tool = tool_activity.__self__
+
+            env = os.environ.copy()
+            env.update(tool.env)
+            
+            self.install_dependencies(env, tool)
 
         artifact = self.executor_result_to_artifact(
             self.try_execute(tool_activity, preprocessed_value)
@@ -35,6 +47,10 @@ class BaseExecutor(ABC):
 
     @abstractmethod
     def try_execute(self, tool_activity: callable, value: Optional[dict]) -> Union[BaseArtifact, str]:
+        ...
+
+    @abstractmethod
+    def install_dependencies(self, env: dict[str, str], tool: BaseTool) -> None:
         ...
 
     def executor_result_to_artifact(self, result: Union[BaseArtifact, str]) -> BaseArtifact:
