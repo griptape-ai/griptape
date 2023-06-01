@@ -44,26 +44,24 @@ class TextToolMemory(BaseToolMemory):
             return ErrorArtifact(f"can't find artifact {name}")
 
     @activity(config={
-        "name": "save_value",
         "description": "Can be used to save artifact values",
         "schema": Schema({
             "artifact_value": str
         }),
     })
-    def save_value(self, params: dict) -> Union[InfoArtifact, ErrorArtifact]:
+    def save(self, params: dict) -> Union[InfoArtifact, ErrorArtifact]:
         value = params["values"]["artifact_value"]
         name = self.driver.save(value)
 
         return InfoArtifact(f"Value was successfully stored with the following name: {name}")
 
     @activity(config={
-        "name": "get_value",
         "description": "Can be used to load artifact values",
         "schema": Schema({
             "artifact_name": str
         })
     })
-    def load_value(self, params: dict) -> Union[InfoArtifact, ErrorArtifact]:
+    def load(self, params: dict) -> Union[InfoArtifact, ErrorArtifact]:
         name = params["values"]["artifact_name"]
         value = self.driver.load(name)
 
