@@ -13,6 +13,10 @@ class TestTextToolMemory:
 
         assert memory.name == "MyMemory"
 
+    def test_allowlist(self):
+        assert len(TextToolMemory().activities()) == 1
+        assert TextToolMemory().activities()[0].__name__ == "save"
+
     def test_process_output(self):
         memory = TextToolMemory(
             name="MyMemory",
@@ -39,3 +43,4 @@ class TestTextToolMemory:
         name = output.value.split(":")[-1].strip()
 
         assert memory.load({"values": {"artifact_name": name}}).value == "foobar"
+

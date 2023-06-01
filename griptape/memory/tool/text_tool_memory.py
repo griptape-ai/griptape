@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 from attr import define, field, Factory
 from schema import Schema
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
@@ -9,6 +9,7 @@ from griptape.memory.tool import BaseToolMemory
 
 @define
 class TextToolMemory(BaseToolMemory):
+    allowlist: Optional[list[str]] = field(default=Factory(lambda: ["save"]), kw_only=True)
     driver: BaseTextStorageDriver = field(
         default=Factory(lambda: MemoryTextStorageDriver()), kw_only=True
     )
