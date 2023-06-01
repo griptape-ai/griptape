@@ -35,7 +35,7 @@ class TestTextToolMemory:
 
     def test_save_and_load_value(self):
         memory = TextToolMemory()
-        output = memory.save_value({"values": {"artifact_value": "foobar"}})
+        output = memory.save({"values": {"artifact_value": "foobar"}})
         name = output.value.split(":")[-1].strip()
 
-        assert memory.load_value({"values": {"artifact_name": name}}).value == "foobar"
+        assert memory.load({"values": {"artifact_name": name}}).value == "foobar"
