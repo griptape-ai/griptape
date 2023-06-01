@@ -132,7 +132,7 @@ class TestToolkitSubtask:
         tool = MockTool(
             name="Tool1",
             memory={
-                "test": [m1, m2]
+                "test": { "input": [m1, m2] }
             }
         )
         task = ToolkitTask("test", tools=[tool])
@@ -146,20 +146,24 @@ class TestToolkitSubtask:
         tool1 = MockTool(
             name="Tool1",
             memory={
-                "test": [
-                    TextToolMemory(name="Memory1", driver=MemoryTextStorageDriver()),
-                    TextToolMemory(name="Memory2", driver=MemoryTextStorageDriver())
-                ]
+                "test": {
+                    "input": [
+                        TextToolMemory(name="Memory1", driver=MemoryTextStorageDriver()),
+                        TextToolMemory(name="Memory2", driver=MemoryTextStorageDriver())
+                    ]
+                }
             }
         )
 
         tool2 = MockTool(
             name="Tool2",
             memory={
-                "test": [
-                    TextToolMemory(name="Memory2", driver=MemoryTextStorageDriver()),
-                    TextToolMemory(name="Memory3", driver=MemoryTextStorageDriver())
-                ]
+                "test": {
+                    "output": [
+                        TextToolMemory(name="Memory2", driver=MemoryTextStorageDriver()),
+                        TextToolMemory(name="Memory3", driver=MemoryTextStorageDriver())
+                    ]
+                }
             }
         )
 

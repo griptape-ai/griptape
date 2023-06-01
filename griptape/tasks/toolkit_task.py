@@ -33,11 +33,12 @@ class ToolkitTask(PromptTask):
     def memory(self) -> list[BaseToolMemory]:
         unique_memory_dict = {}
 
-        for memory_dict in [tool.memory for tool in self.tools]:
-            for memory_list in memory_dict.values():
-                for memory in memory_list:
-                    if memory.name not in unique_memory_dict:
-                        unique_memory_dict[memory.name] = memory
+        for memories in [tool.memory for tool in self.tools]:
+            for memory_dict in memories.values():
+                for memory_list in memory_dict.values():
+                    for memory in memory_list:
+                        if memory.name not in unique_memory_dict:
+                            unique_memory_dict[memory.name] = memory
 
         return list(unique_memory_dict.values())
 

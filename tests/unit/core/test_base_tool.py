@@ -58,56 +58,77 @@ class TestBaseTool:
     def test_memory(self):
         tool = MockTool(
             memory={
-                "test": [
-                    TextToolMemory(
-                        name="Memory1", driver=MemoryTextStorageDriver()
-                    ),
-                    TextToolMemory(
-                        name="Memory2", driver=MemoryTextStorageDriver()
-                    )
-                ]
+                "test": {
+                    "input": [
+                        TextToolMemory(
+                            name="Memory1", driver=MemoryTextStorageDriver()
+                        ),
+                        TextToolMemory(
+                            name="Memory2", driver=MemoryTextStorageDriver()
+                        )
+                    ],
+                    "output": [
+                        TextToolMemory(
+                            name="Memory1", driver=MemoryTextStorageDriver()
+                        )
+                    ]
+                }
             }
         )
 
-        assert len(tool.memory["test"]) == 2
+        assert len(tool.memory["test"]["input"]) == 2
+        assert len(tool.memory["test"]["output"]) == 1
 
     def test_memory_validation(self):
         with pytest.raises(ValueError):
             MockTool(
                 memory={
-                    "test": [
-                        TextToolMemory(
-                            name="Memory1", driver=MemoryTextStorageDriver()
-                        ),
-                        TextToolMemory(
-                            name="Memory1", driver=MemoryTextStorageDriver()
-                        )
-                    ]
+                    "test": {
+                        "input": [
+                            TextToolMemory(
+                                name="Memory1", driver=MemoryTextStorageDriver()
+                            ),
+                            TextToolMemory(
+                                name="Memory1", driver=MemoryTextStorageDriver()
+                            )
+                        ],
+                        "output": [
+                            TextToolMemory(
+                                name="Memory1", driver=MemoryTextStorageDriver()
+                            )
+                        ]
+                    }
                 }
             )
 
         with pytest.raises(ValueError):
             MockTool(
                 memory={
-                    "fake_activity": [
-                        TextToolMemory(
-                            name="Memory1", driver=MemoryTextStorageDriver()
-                        )
-                    ]
+                    "fake_activity": {
+                        "input": [
+                            TextToolMemory(
+                                name="Memory1", driver=MemoryTextStorageDriver()
+                            )
+                        ]
+                    }
                 }
             )
 
         assert MockTool(
                 memory={
-                    "test": [
-                        TextToolMemory(
-                            name="Memory1", driver=MemoryTextStorageDriver()
-                        )
-                    ],
-                    "test_str_output": [
-                        TextToolMemory(
-                            name="Memory1", driver=MemoryTextStorageDriver()
-                        )
-                    ]
+                    "test": {
+                        "input": [
+                            TextToolMemory(
+                                name="Memory1", driver=MemoryTextStorageDriver()
+                            )
+                        ]
+                    },
+                    "test_str_output": {
+                        "input": [
+                            TextToolMemory(
+                                name="Memory1", driver=MemoryTextStorageDriver()
+                            )
+                        ]
+                    }
                 }
             )

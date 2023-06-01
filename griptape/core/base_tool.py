@@ -1,5 +1,4 @@
 from __future__ import annotations
-import ast
 import json
 import logging
 import subprocess
@@ -10,8 +9,7 @@ import os
 from abc import ABC
 from typing import Optional
 import yaml
-from attr import define, fields, Attribute, field, Factory
-from decouple import config
+from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact
 from griptape.core import ActivityMixin
 
@@ -25,7 +23,7 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    memory: dict[str, list[BaseToolMemory]] = field(factory=dict, kw_only=True)
+    memory: dict[str, dict[str, list[BaseToolMemory]]] = field(factory=dict, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
@@ -36,15 +34,20 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @memory.validator
-    def validate_memory(self, _, memories: dict[str, list[BaseToolMemory]]) -> None:
-        for activity_name, memory_list in memories.items():
-            memory_names = [memory.name for memory in memory_list]
-
+    def validate_memory(self, _, memory: dict[str, dict[str, list[BaseToolMemory]]]) -> None:
+        for activity_name, memory_dict in memory.items():
             if not self.find_activity(activity_name):
                 raise ValueError(f"activity {activity_name} doesn't exist")
 
-            if len(memory_names) > len(set(memory_names)):
-                raise ValueError(f"memory names have to be unique in activity {activity_name}")
+            input_memory_names = [memory.name for memory in memory_dict.get("input", [])]
+
+            if len(input_memory_names) > len(set(input_memory_names)):
+                raise ValueError(f"memory names have to be unique in activity '{activity_name}' input")
+
+            output_memory_names = [memory.name for memory in memory_dict.get("output", [])]
+
+            if len(output_memory_names) > len(set(output_memory_names)):
+                raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
 
     @property
     def class_name(self):
@@ -72,7 +75,7 @@ class BaseTool(ActivityMixin, ABC):
         return os.path.dirname(self.abs_file_path)
 
     def before_execute(self, activity: callable, value: Optional[dict]) -> Optional[dict]:
-        for memory in activity.__self__.memory.get(activity.name, []):
+        for memory in activity.__self__.memory.get(activity.name, {}).get("input", []):
             value = memory.process_input(activity, value)
 
         return value
@@ -95,7 +98,7 @@ class BaseTool(ActivityMixin, ABC):
         return self.after_execute(activity, result_artifact)
 
     def after_execute(self, activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
-        for memory in activity.__self__.memory.get(activity.name, []):
+        for memory in activity.__self__.memory.get(activity.name, {}).get("output", []):
             value = memory.process_output(activity, value)
 
         return value

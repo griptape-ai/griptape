@@ -47,23 +47,33 @@ blob_storage = BlobToolMemory()
 # Connect a web scraper to load web pages.
 web_scraper = WebScraper(
     memory={
-        "get_content": [text_storage]
+        "get_content": {
+            "output": [text_storage]
+        }
     }
 )
 
 # TextProcessor enables LLMs to summarize and query text.
 text_processor = TextProcessor(
     memory={
-        "summarize": [text_storage],
-        "query": [text_storage]
+        "summarize": {
+            "input": [text_storage]
+        },
+        "query": {
+            "input": [text_storage]
+        }
     }
 )
 
 # File manager can load and store files locally.
 file_manager = FileManager(
     memory={
-        "load": [blob_storage],
-        "save": [text_storage, blob_storage]
+        "load": {
+            "output": [blob_storage]
+        },
+        "save": {
+            "input": [text_storage, blob_storage]
+        }
     }
 )
 
@@ -85,7 +95,7 @@ pipeline.add_tasks(
 )
 
 result = pipeline.run(
-    "Load https://docs.griptape.ai, summarize it, and store it in griptape.txt"
+    "Load https://www.griptape.ai, summarize it, and store it in griptape.txt"
 )
 
 print(result.output.to_text())
