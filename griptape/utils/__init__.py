@@ -5,6 +5,7 @@ from .conversation import Conversation
 from .manifest_validator import ManifestValidator
 from .python_runner import PythonRunner
 from .command_runner import CommandRunner
+from .chat import Chat
 
 
 def minify_json(value: str) -> str:
@@ -18,4 +19,5 @@ __all__ = [
     "CommandRunner",
     "minify_json",
     "J2",
+    "Chat"
 ]
