@@ -1,5 +1,7 @@
 from __future__ import annotations
 import ast
+import json
+import logging
 import subprocess
 import sys
 from typing import TYPE_CHECKING
@@ -10,7 +12,7 @@ from typing import Optional
 import yaml
 from attr import define, fields, Attribute, field, Factory
 from decouple import config
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact
 from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
@@ -68,6 +70,35 @@ class BaseTool(ActivityMixin, ABC):
     @property
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
+
+    def before_execute(self, activity: callable, value: Optional[dict]) -> Optional[dict]:
+        for memory in activity.__self__.memory.get(activity.name, []):
+            value = memory.process_input(activity, value)
+
+        return value
+
+    def execute(self, activity: callable, value: Optional[dict]) -> BaseArtifact:
+        preprocessed_value = self.before_execute(activity, value)
+
+        activity_result = activity(preprocessed_value)
+
+        if isinstance(activity_result, BaseArtifact):
+            result_artifact = activity_result
+        else:
+            try:
+                result_artifact = BaseArtifact.from_dict(json.loads(activity_result))
+            except Exception:
+                logging.error("Error converting tool activity result to an artifact; defaulting to InfoArtifact")
+
+                result_artifact = InfoArtifact(activity_result)
+
+        return self.after_execute(activity, result_artifact)
+
+    def after_execute(self, activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
+        for memory in activity.__self__.memory.get(activity.name, []):
+            value = memory.process_output(activity, value)
+
+        return value
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator

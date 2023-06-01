@@ -54,7 +54,7 @@ class ActionSubtask(PromptTask):
     action_type: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_activity: Optional[str] = field(default=None, kw_only=True)
-    action_input: dict = field(default=None, kw_only=True)
+    action_input: Optional[dict] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
     _memory: Optional[BaseToolMemory] = None
@@ -86,16 +86,15 @@ class ActionSubtask(PromptTask):
             else:
                 if self.action_type == "tool":
                     if self._tool:
-                        observation = getattr(self._tool, self.action_activity)(
-                            self.action_input if self.action_input else None
+                        observation = self._tool.execute(
+                            getattr(self._tool, self.action_activity),
+                            self.action_input
                         )
                     else:
                         observation = ErrorArtifact("tool not found")
                 elif self.action_type == "memory":
                     if self._memory:
-                        observation = getattr(self._memory, self.action_activity)(
-                            self.action_input if self.action_input else None
-                        )
+                        observation = getattr(self._memory, self.action_activity)(self.action_input)
                     else:
                         observation = ErrorArtifact("memory not found")
                 else:
@@ -182,8 +181,8 @@ class ActionSubtask(PromptTask):
                     self.action_activity = action_object["activity"]
 
                 # Load optional input value; don't throw exceptions if key is not present
-                if self.action_input is None:
-                    self.action_input = action_object["input"] if "input" in action_object else None
+                if self.action_input is None and "input" in action_object:
+                    self.action_input = action_object["input"]
 
                 # Load the action itself
                 if self.action_type == "tool":
