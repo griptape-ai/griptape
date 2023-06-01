@@ -1,13 +1,13 @@
 from abc import ABC
 from typing import Optional
 from attr import define, field
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure import BaseStructureMemory
 from griptape.structures import Structure
 
 
 @define
 class StructureWithMemory(Structure, ABC):
-    memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
+    memory: Optional[BaseStructureMemory] = field(default=None, kw_only=True)
     autoprune_memory: bool = field(default=True, kw_only=True)
 
     def __attrs_post_init__(self):

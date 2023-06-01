@@ -24,7 +24,6 @@ class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"^Thought:\s*(.*)$"
     ACTION_PATTERN = r"^Action:\s*({.*})$"
     OUTPUT_PATTERN = r"^Output:\s?([\s\S]*)$"
-    INVALID_ACTION_ERROR_MSG = f"invalid action input, try again"
     ACTION_SCHEMA = Schema(
         description="Actions have type, name, activity, and input value.",
         schema={
@@ -211,7 +210,7 @@ class ActionSubtask(PromptTask):
                 self.structure.logger.error(f"Subtask {self.task.id}\nError parsing tool action: {e}")
 
                 self.action_name = "error"
-                self.action_input = {"error": f"error: {self.INVALID_ACTION_ERROR_MSG}"}
+                self.action_input = {"error": f"Action input parsing error: {e}"}
         elif self.output is None and len(output_matches) > 0:
             self.output = TextArtifact(output_matches[-1])
 

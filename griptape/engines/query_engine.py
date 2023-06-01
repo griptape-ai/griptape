@@ -1,5 +1,5 @@
 from typing import Optional
-from attr import define, field
+from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.drivers import BaseVectorStorageDriver, MemoryVectorStorageDriver
 from griptape.engines import BaseEngine
@@ -7,7 +7,10 @@ from griptape.engines import BaseEngine
 
 @define
 class QueryEngine(BaseEngine):
-    vector_storage_driver: BaseVectorStorageDriver = field(default=MemoryVectorStorageDriver(), kw_only=True)
+    vector_storage_driver: BaseVectorStorageDriver = field(
+        default=Factory(lambda: MemoryVectorStorageDriver()),
+        kw_only=True
+    )
 
     def insert(self, artifacts: list[TextArtifact], namespace: Optional[str] = None) -> None:
         [self.vector_storage_driver.insert_text_artifact(a, namespace=namespace) for a in artifacts]

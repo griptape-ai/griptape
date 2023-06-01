@@ -19,7 +19,7 @@ class TestAgent:
         assert isinstance(agent.task, PromptTask)
         assert agent.rulesets[0].name is "TestRuleset"
         assert agent.rulesets[0].rules[0].value is "test"
-        assert agent.memory is None
+        assert isinstance(agent.memory, ConversationMemory)
         assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
 
     def test_with_memory(self):
@@ -73,7 +73,8 @@ class TestAgent:
 
     def test_prompt_stack_without_memory(self):
         agent = Agent(
-            prompt_driver=MockPromptDriver()
+            prompt_driver=MockPromptDriver(),
+            memory=None
         )
 
         task1 = PromptTask("test")
