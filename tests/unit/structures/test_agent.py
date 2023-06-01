@@ -1,20 +1,26 @@
 from griptape.memory.structure import ConversationMemory
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
-from griptape.tasks import PromptTask, BaseTask
+from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestAgent:
-    def test_constructor(self):
+    def test_init(self):
         driver = MockPromptDriver()
-        agent = Agent(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
+        agent = Agent(
+            prompt_driver=driver,
+            rulesets=[Ruleset("TestRuleset", [Rule("test")])]
+        )
 
         assert agent.prompt_driver is driver
+        assert isinstance(agent.task, PromptTask)
         assert isinstance(agent.task, PromptTask)
         assert agent.rulesets[0].name is "TestRuleset"
         assert agent.rulesets[0].rules[0].value is "test"
         assert agent.memory is None
+        assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
 
     def test_with_memory(self):
         agent = Agent(

@@ -12,7 +12,9 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(BaseTask):
-    prompt_template: str = field(default="{{ args[0] }}")
+    DEFAULT_PROMPT_TEMPLATE = "{{ args[0] }}"
+
+    prompt_template: str = field(default=DEFAULT_PROMPT_TEMPLATE)
     context: dict[str, any] = field(factory=dict, kw_only=True)
     driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)

@@ -1,9 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from attr import define, field, Factory
+from attr import define, field
+from griptape.core import BaseTool
 from griptape.memory.structure import Run
 from griptape.structures import StructureWithMemory
-from griptape.tasks import PromptTask
+from griptape.tasks import PromptTask, ToolkitTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -12,21 +13,25 @@ if TYPE_CHECKING:
 
 @define
 class Agent(StructureWithMemory):
-    task: BaseTask = field(
-        default=Factory(lambda: PromptTask()),
-        kw_only=True
-    )
+    prompt_template: str = field(default=PromptTask.DEFAULT_PROMPT_TEMPLATE)
+    tools: list[BaseTool] = field(factory=list, kw_only=True)
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
 
-        if self.task:
-            self.add_task(self.task)
+        if self.tools:
+            task = ToolkitTask(self.prompt_template, tools=self.tools)
+        else:
+            task = PromptTask(self.prompt_template)
+
+        self.add_task(task)
+
+    @property
+    def task(self) -> BaseTask:
+        return self.tasks[0]
 
     def add_task(self, task: BaseTask) -> BaseTask:
         self.tasks.clear()
-
-        self.task = task
 
         task.structure = self
 
