@@ -5,7 +5,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestTextToolMemory:
-    def test_constructor(self):
+    def test_init(self):
         memory = TextToolMemory(
             name="MyMemory",
             driver=MemoryTextStorageDriver()

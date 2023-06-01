@@ -5,7 +5,7 @@ from griptape.structures import Workflow
 
 
 class TestWorkflow:
-    def test_constructor(self):
+    def test_init(self):
         rule = Rule("test")
         driver = MockPromptDriver()
         workflow = Workflow(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])

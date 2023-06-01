@@ -8,7 +8,7 @@ from griptape.structures import Pipeline
 
 
 class TestPipeline:
-    def test_constructor(self):
+    def test_init(self):
         rule = Rule("test")
         driver = MockPromptDriver()
         pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])

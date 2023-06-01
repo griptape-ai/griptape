@@ -5,7 +5,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestBlobToolMemory:
-    def test_constructor(self):
+    def test_init(self):
         memory = BlobToolMemory(driver=MemoryBlobStorageDriver())
 
         assert memory.name == BlobToolMemory.__name__
