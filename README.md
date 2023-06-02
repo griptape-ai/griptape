@@ -46,8 +46,7 @@ memory = TextToolMemory()
 WebScraper enables LLMs to load web pages.
 """
 web_scraper = WebScraper(
-    memory={"get_content": {"output": [memory]}},
-    install_dependencies_on_init=False
+    memory={"get_content": {"output": [memory]}}
 )
 
 """
@@ -55,8 +54,7 @@ TextProcessor enables LLMs to query
 large chunks of text stored in memory
 """
 text_processor = TextProcessor(
-    memory={"search": {"input": [memory]}},
-    install_dependencies_on_init=False
+    memory={"search": {"input": [memory]}}
 )
 
 """
