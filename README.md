@@ -5,16 +5,13 @@
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io/)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
-**Griptape** is a modular Python framework for LLM workflows, tools, memory, and data that enables developers to:
+**Griptape** offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity.
 
-1. 🤖 Build **AI agents**, sequential **LLM pipelines** and sprawling **DAG workflows** for complex use cases.
-2. ⛓️ Augment LLMs with **chain of thought** capabilities.
-3. 🧰️ Integrate other services and functionality into LLMs as [tools](https://github.com/griptape-ai/griptape-tools) (e.g., calculators, web scrapers, spreadsheet editors, and API connectors); run tools in any environment (local, containerized, cloud, etc.); and wrap tools with off prompt data storage that prevents LLMs from accessing your data directly.
-4. 💾 Add **memory** to AI pipelines for context preservation and summarization.
+For **predictability**, software structures like sequential pipelines and directed acyclic graphs (DAGs) are enforced. **Creativity**, on the other hand, is facilitated by safely prompting LLMs with [tools](https://github.com/griptape-ai/griptape-tools) that connect to external APIs and data sources. Developers can move between these two dimensions according to their use case.
 
 ## Documentation
 
-Please refer to [Griptape Docs](https://griptape.readthedocs.io) for:
+Please refer to [Griptape Docs](https://docs.griptape.ai/) for:
 
 - Getting started guides. 
 - Core concepts and design overviews.
@@ -29,88 +26,61 @@ First, install **griptape** and **griptape-tools**:
 pip install griptape griptape-tools -U
 ```
 
-Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
+Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's define a simple two-task pipeline that uses several tools and memory:
+With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses two tools with shared memory.
 
 ```python
-from griptape.memory.structure import ConversationMemory
-from griptape.memory.tool import TextToolMemory, BlobToolMemory
-from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask, PromptTask
-from griptape.tools import WebScraper, TextProcessor, FileManager
-from griptape import utils
+from griptape.memory.tool import TextToolMemory
+from griptape.structures import Agent
+from griptape.tools import TextProcessor, WebScraper
+from griptape.utils import Conversation
 
-# Tool memory enables LLMs to store and manipulate data
-# without ever looking at it directly.
-text_storage = TextToolMemory()
-blob_storage = BlobToolMemory()
 
-# Connect a web scraper to load web pages.
+"""
+Define memory to be shared between tools.
+"""
+memory = TextToolMemory()
+
+"""
+WebScraper enables LLMs to load web pages.
+"""
 web_scraper = WebScraper(
-    memory={
-        "get_content": {
-            "output": [text_storage]
-        }
-    }
+    memory={"get_content": {"output": [memory]}},
+    install_dependencies_on_init=False
 )
 
-# TextProcessor enables LLMs to summarize and query text.
+"""
+TextProcessor enables LLMs to query
+large chunks of text stored in memory
+"""
 text_processor = TextProcessor(
-    memory={
-        "summarize": {
-            "input": [text_storage]
-        },
-        "query": {
-            "input": [text_storage]
-        }
-    }
+    memory={"search": {"input": [memory]}},
+    install_dependencies_on_init=False
 )
 
-# File manager can load and store files locally.
-file_manager = FileManager(
-    memory={
-        "load": {
-            "output": [blob_storage]
-        },
-        "save": {
-            "input": [text_storage, blob_storage]
-        }
-    }
+"""
+Agents can use multiple tools to creatively solve problems
+"""
+agent = Agent(
+    tools=[web_scraper, text_processor]
 )
 
-# Pipelines represent sequences of tasks.
-pipeline = Pipeline(
-    memory=ConversationMemory()
+agent.run(
+    "based on https://www.griptape.ai/, tell me what Griptape is"
 )
 
-pipeline.add_tasks(
-    # Load up the first argument from `pipeline.run`.
-    ToolkitTask(
-        "{{ args[0] }}",
-        tools=[web_scraper, text_processor, file_manager]
-    ),
-    # Augment `input` from the previous task.
-    PromptTask(
-        "Say the following in spanish: {{ input }}"
-    )
+print(
+    Conversation(agent.memory)
 )
-
-result = pipeline.run(
-    "Load https://www.griptape.ai, summarize it, and store it in griptape.txt"
-)
-
-print(result.output.to_text())
 ```
 
-Our first LLM pipeline with two sequential tasks generated the following exchange:
+And here is the output:
 
-```
-Q: Load https://docs.griptape.ai, summarize it, and store it in griptape.txt
-A: El contenido de https://docs.griptape.ai ha sido resumido y almacenado en griptape.txt.
-```
+> Q: based on https://www.griptape.ai/, tell me what Griptape is  
+> A: Griptape is an opinionated Python framework that enables developers to fully harness the potential of LLMs while enforcing strict trust boundaries, schema validation, and activity-level permissions. It offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity. Griptape can be used to create conversational and autonomous agents.
 
-During the run, Griptape prompted the LLM to load a webpage, store its content in temporary memory, summarize the content, and, finally, save it in `griptape.txt`.
+During the run, the Griptape agent loaded a webpage, stored its content in temporary memory, and passed the memory to `TextProcessor` to query it.
 
 ## Versioning
 
