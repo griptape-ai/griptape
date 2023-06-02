@@ -1,5 +1,4 @@
 from __future__ import annotations
-import ast
 import json
 import re
 from typing import TYPE_CHECKING, Optional
@@ -160,7 +159,7 @@ class ActionSubtask(PromptTask):
 
         if len(action_matches) > 0:
             try:
-                action_object: dict = ast.literal_eval(action_matches[-1])
+                action_object: dict = json.loads(action_matches[-1])
 
                 validate(
                     instance=action_object,

@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.core import BaseTool
-from griptape.memory.structure import Run, BaseStructureMemory, ConversationMemory
+from griptape.memory.structure import Run, ConversationMemory
 from griptape.structures import StructureWithMemory
 from griptape.tasks import PromptTask, ToolkitTask
 from griptape.utils import J2
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define
 class Agent(StructureWithMemory):
     prompt_template: str = field(default=PromptTask.DEFAULT_PROMPT_TEMPLATE)
-    memory: Optional[BaseStructureMemory] = field(
+    memory: Optional[ConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True
     )
