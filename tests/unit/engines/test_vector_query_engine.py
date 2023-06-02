@@ -1,6 +1,6 @@
 import pytest
 from griptape.drivers import MemoryVectorStorageDriver
-from griptape.engines import QueryEngine
+from griptape.engines import VectorQueryEngine
 from griptape.loaders import TextLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -12,7 +12,7 @@ MAX_TOKENS = 50
 class TestQueryEngine:
     @pytest.fixture
     def engine(self):
-        return QueryEngine(
+        return VectorQueryEngine(
             vector_storage_driver=MemoryVectorStorageDriver(
                 embedding_driver=MockEmbeddingDriver(),
             ),

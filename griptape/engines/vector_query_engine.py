@@ -6,7 +6,7 @@ from griptape.engines import BaseEngine
 
 
 @define
-class QueryEngine(BaseEngine):
+class VectorQueryEngine(BaseEngine):
     vector_storage_driver: BaseVectorStorageDriver = field(
         default=Factory(lambda: MemoryVectorStorageDriver()),
         kw_only=True
