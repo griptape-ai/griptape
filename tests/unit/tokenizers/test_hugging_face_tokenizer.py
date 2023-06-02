@@ -1,3 +1,7 @@
+from os import environ
+
+environ["TRANSFORMERS_VERBOSITY"] = "error"
+
 import pytest
 from transformers import GPT2Tokenizer
 from griptape.tokenizers import HuggingFaceTokenizer

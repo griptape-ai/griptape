@@ -1,3 +1,7 @@
+from os import environ
+
+environ["TRANSFORMERS_VERBOSITY"] = "error"
+
 from attr import define, field, Factory
 from transformers import pipeline, AutoTokenizer
 from griptape.artifacts import TextArtifact
