@@ -3,7 +3,7 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
-from griptape.drivers import MemoryTextStorageDriver
+from griptape.drivers import MemoryTextToolMemoryDriver
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -61,15 +61,15 @@ class TestBaseTool:
                 "test": {
                     "input": [
                         TextToolMemory(
-                            name="Memory1", driver=MemoryTextStorageDriver()
+                            name="Memory1", driver=MemoryTextToolMemoryDriver()
                         ),
                         TextToolMemory(
-                            name="Memory2", driver=MemoryTextStorageDriver()
+                            name="Memory2", driver=MemoryTextToolMemoryDriver()
                         )
                     ],
                     "output": [
                         TextToolMemory(
-                            name="Memory1", driver=MemoryTextStorageDriver()
+                            name="Memory1", driver=MemoryTextToolMemoryDriver()
                         )
                     ]
                 }
@@ -86,15 +86,15 @@ class TestBaseTool:
                     "test": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextStorageDriver()
+                                name="Memory1", driver=MemoryTextToolMemoryDriver()
                             ),
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextStorageDriver()
+                                name="Memory1", driver=MemoryTextToolMemoryDriver()
                             )
                         ],
                         "output": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextStorageDriver()
+                                name="Memory1", driver=MemoryTextToolMemoryDriver()
                             )
                         ]
                     }
@@ -107,7 +107,7 @@ class TestBaseTool:
                     "fake_activity": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextStorageDriver()
+                                name="Memory1", driver=MemoryTextToolMemoryDriver()
                             )
                         ]
                     }
@@ -119,14 +119,14 @@ class TestBaseTool:
                     "test": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextStorageDriver()
+                                name="Memory1", driver=MemoryTextToolMemoryDriver()
                             )
                         ]
                     },
                     "test_str_output": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextStorageDriver()
+                                name="Memory1", driver=MemoryTextToolMemoryDriver()
                             )
                         ]
                     }

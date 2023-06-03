@@ -1,15 +1,15 @@
 import pytest
 from boto3 import resource
 from moto import mock_dynamodb
-from griptape.drivers import DynamoDbStorageDriver
+from griptape.drivers import DynamoDbTextToolMemoryDriver
 
 
-class TestDynamoDbTextStorageDriver:
+class TestDynamoDbTextToolMemoryDriver:
     @pytest.fixture(autouse=True)
     @mock_dynamodb
     def driver_gen(self):
         dynamodb = resource("dynamodb", region_name="us-west-2")
-        driver = DynamoDbStorageDriver(
+        driver = DynamoDbTextToolMemoryDriver(
             aws_region="us-west-2",
             table_name="griptape",
             partition_key="entryId",

@@ -1,5 +1,5 @@
 from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.drivers import MemoryTextStorageDriver
+from griptape.drivers import MemoryTextToolMemoryDriver
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -8,7 +8,7 @@ class TestTextToolMemory:
     def test_init(self):
         memory = TextToolMemory(
             name="MyMemory",
-            driver=MemoryTextStorageDriver()
+            driver=MemoryTextToolMemoryDriver()
         )
 
         assert memory.name == "MyMemory"
@@ -20,7 +20,7 @@ class TestTextToolMemory:
     def test_process_output(self):
         memory = TextToolMemory(
             name="MyMemory",
-            driver=MemoryTextStorageDriver()
+            driver=MemoryTextToolMemoryDriver()
         )
 
         assert memory.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
@@ -30,7 +30,7 @@ class TestTextToolMemory:
     def test_process_output_with_many_artifacts(self):
         memory = TextToolMemory(
             name="MyMemory",
-            driver=MemoryTextStorageDriver()
+            driver=MemoryTextToolMemoryDriver()
         )
 
         assert memory.process_output(MockTool().test, ListArtifact([TextArtifact("foo")])).to_text().startswith(

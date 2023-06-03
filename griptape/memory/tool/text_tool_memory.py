@@ -3,15 +3,15 @@ from attr import define, field, Factory
 from schema import Schema
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.core.decorators import activity
-from griptape.drivers import MemoryTextStorageDriver, BaseTextStorageDriver
+from griptape.drivers import MemoryTextToolMemoryDriver, BaseTextToolMemoryDriver
 from griptape.memory.tool import BaseToolMemory
 
 
 @define
 class TextToolMemory(BaseToolMemory):
     allowlist: Optional[list[str]] = field(default=Factory(lambda: ["save"]), kw_only=True)
-    driver: BaseTextStorageDriver = field(
-        default=Factory(lambda: MemoryTextStorageDriver()), kw_only=True
+    driver: BaseTextToolMemoryDriver = field(
+        default=Factory(lambda: MemoryTextToolMemoryDriver()), kw_only=True
     )
 
     def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> Union[InfoArtifact, ErrorArtifact]:

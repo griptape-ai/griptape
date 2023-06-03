@@ -1,11 +1,11 @@
 from typing import Optional
 from attr import define, field
 from griptape.artifacts import BlobArtifact
-from griptape.drivers import BaseBlobStorageDriver
+from griptape.drivers import BaseBlobToolMemoryDriver
 
 
 @define
-class MemoryBlobStorageDriver(BaseBlobStorageDriver):
+class MemoryBlobToolMemoryDriver(BaseBlobToolMemoryDriver):
     blobs: list[BlobArtifact] = field(factory=list, kw_only=True)
 
     def save(self, blob: BlobArtifact) -> str:

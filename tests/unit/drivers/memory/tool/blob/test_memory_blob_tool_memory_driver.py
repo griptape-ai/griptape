@@ -1,12 +1,12 @@
 import pytest
 from griptape.artifacts import BlobArtifact
-from griptape.drivers import MemoryBlobStorageDriver
+from griptape.drivers import MemoryBlobToolMemoryDriver
 
 
-class TestMemoryBlobStorageDriver:
+class TestMemoryBlobToolMemoryDriver:
     @pytest.fixture
     def driver(self):
-        return MemoryBlobStorageDriver()
+        return MemoryBlobToolMemoryDriver()
 
     def test_save(self, driver):
         artifact = BlobArtifact(b"foo", name="foo")
