@@ -21,6 +21,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     def __run_completion(self, value: str) -> TextArtifact:
         client = anthropic.Client(self.api_key)
 
+        # Anthropic requires specific prompt formatting: https://console.anthropic.com/docs/api
         response = client.completion(
             prompt=f"{anthropic.HUMAN_PROMPT}{value}{anthropic.AI_PROMPT}",
             stop_sequences = [anthropic.HUMAN_PROMPT, self.tokenizer.stop_sequence],
