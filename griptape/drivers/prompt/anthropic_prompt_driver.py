@@ -26,6 +26,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             stop_sequences = [anthropic.HUMAN_PROMPT, self.tokenizer.stop_sequence],
             model=self.model,
             max_tokens_to_sample=self.tokenizer.tokens_left(value),
+            temperature=self.temperature,
         )
 
         return TextArtifact(
