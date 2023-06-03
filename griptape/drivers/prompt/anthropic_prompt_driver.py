@@ -23,7 +23,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         response = client.completion(
             prompt=f"{anthropic.HUMAN_PROMPT}{value}{anthropic.AI_PROMPT}",
-            stop_sequences = [anthropic.HUMAN_PROMPT],
+            stop_sequences = [anthropic.HUMAN_PROMPT, self.tokenizer.stop_sequence],
             model=self.model,
             max_tokens_to_sample=self.tokenizer.max_tokens,
         )
