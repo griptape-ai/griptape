@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from typing import Optional, Callable
 from scipy import spatial
 from griptape import utils
-from griptape.drivers import BaseVectorStorageDriver, BaseEmbeddingDriver, OpenAiEmbeddingDriver
+from griptape.drivers import BaseVectorDriver, BaseEmbeddingDriver, OpenAiEmbeddingDriver
 from attr import define, field, Factory
 
 
 @define
-class MemoryVectorStorageDriver(BaseVectorStorageDriver):
+class MemoryVectorDriver(BaseVectorDriver):
     @dataclass
     class Entry:
         vector: list[float]
@@ -45,7 +45,7 @@ class MemoryVectorStorageDriver(BaseVectorStorageDriver):
             namespace: Optional[str] = None,
             include_vectors: bool = False,
             **kwargs
-    ) -> list[BaseVectorStorageDriver.QueryResult]:
+    ) -> list[BaseVectorDriver.QueryResult]:
         query_embedding = self.embedding_driver.embed_string(query)
 
         if namespace:
@@ -59,7 +59,7 @@ class MemoryVectorStorageDriver(BaseVectorStorageDriver):
         entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
 
         return [
-            BaseVectorStorageDriver.QueryResult(
+            BaseVectorDriver.QueryResult(
                 vector=er[0].vector,
                 score=er[1],
                 meta=er[0].meta

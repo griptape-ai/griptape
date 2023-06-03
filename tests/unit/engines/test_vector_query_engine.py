@@ -1,5 +1,5 @@
 import pytest
-from griptape.drivers import MemoryVectorStorageDriver
+from griptape.drivers import MemoryVectorDriver
 from griptape.engines import VectorQueryEngine
 from griptape.loaders import TextLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -13,7 +13,7 @@ class TestVectorQueryEngine:
     @pytest.fixture
     def engine(self):
         return VectorQueryEngine(
-            vector_storage_driver=MemoryVectorStorageDriver(
+            vector_storage_driver=MemoryVectorDriver(
                 embedding_driver=MockEmbeddingDriver(),
             ),
             prompt_driver=MockPromptDriver()

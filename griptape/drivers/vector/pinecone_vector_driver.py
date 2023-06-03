@@ -1,12 +1,12 @@
 from typing import Optional
 from griptape import utils
-from griptape.drivers import BaseVectorStorageDriver
+from griptape.drivers import BaseVectorDriver
 import pinecone
 from attr import define, field
 
 
 @define
-class PineconeVectorStorageDriver(BaseVectorStorageDriver):
+class PineconeVectorDriver(BaseVectorDriver):
     api_key: str = field(kw_only=True)
     index_name: str = field(kw_only=True)
     environment: str = field(kw_only=True)
@@ -49,11 +49,11 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
             # PineconeVectorStorageDriver-specific params:
             include_metadata=True,
             **kwargs
-    ) -> list[BaseVectorStorageDriver.QueryResult]:
+    ) -> list[BaseVectorDriver.QueryResult]:
         vector = self.embedding_driver.embed_string(query)
 
         params = {
-            "top_k": count if count else BaseVectorStorageDriver.DEFAULT_QUERY_COUNT,
+            "top_k": count if count else BaseVectorDriver.DEFAULT_QUERY_COUNT,
             "namespace": namespace,
             "include_values": include_vectors,
             "include_metadata": include_metadata
@@ -62,7 +62,7 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
         results = self.index.query(vector, **params)
 
         return [
-            BaseVectorStorageDriver.QueryResult(
+            BaseVectorDriver.QueryResult(
                 vector=r["values"],
                 score=r["score"],
                 meta=r["metadata"],
