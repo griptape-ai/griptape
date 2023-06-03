@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, Callable
-from uuid import uuid4
 from scipy import spatial
+from griptape import utils
 from griptape.drivers import BaseVectorStorageDriver, BaseEmbeddingDriver, OpenAiEmbeddingDriver
 from attr import define, field, Factory
 
@@ -31,7 +31,7 @@ class MemoryVectorStorageDriver(BaseVectorStorageDriver):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
-        vector_id = vector_id if vector_id else uuid4().hex
+        vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
         vector_id = f"{namespace}-{vector_id}" if namespace else vector_id
 
         self.entries[vector_id] = self.Entry(vector, meta)

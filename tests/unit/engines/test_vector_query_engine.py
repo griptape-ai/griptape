@@ -19,7 +19,7 @@ class TestVectorQueryEngine:
             prompt_driver=MockPromptDriver()
         )
 
-    def test_insert_and_query(self, engine):
+    def test_upsert_and_query(self, engine):
         artifacts = TextLoader(max_tokens=MAX_TOKENS).load(
             gen_paragraph(MAX_TOKENS, engine.prompt_driver.tokenizer, ". ")
         )

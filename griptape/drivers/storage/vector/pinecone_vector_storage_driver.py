@@ -1,5 +1,5 @@
 from typing import Optional
-from uuid import uuid4
+from griptape import utils
 from griptape.drivers import BaseVectorStorageDriver
 import pinecone
 from attr import define, field
@@ -30,7 +30,7 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
-        vector_id = vector_id if vector_id else uuid4().hex
+        vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
 
         params = {
             "namespace": namespace
