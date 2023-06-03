@@ -2,14 +2,14 @@ import pytest
 
 from griptape import utils
 from griptape.artifacts import TextArtifact, BaseArtifact
-from griptape.drivers import MemoryVectorStorageDriver
+from griptape.drivers import MemoryVectorDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestMemoryVectorStorageDriver:
+class TestMemoryVectorDriver:
     @pytest.fixture
     def driver(self):
-        return MemoryVectorStorageDriver(
+        return MemoryVectorDriver(
             embedding_driver=MockEmbeddingDriver(),
         )
 

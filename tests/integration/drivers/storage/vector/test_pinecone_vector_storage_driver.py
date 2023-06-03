@@ -1,6 +1,6 @@
 import pytest
 from griptape.artifacts import TextArtifact
-from griptape.drivers import PineconeVectorStorageDriver
+from griptape.drivers import PineconeVectorDriver
 
 
 class TestOpenAiEmbeddingDriver:
@@ -32,7 +32,7 @@ class TestOpenAiEmbeddingDriver:
 
     @pytest.fixture
     def driver(self):
-        return PineconeVectorStorageDriver(
+        return PineconeVectorDriver(
             api_key="foobar",
             index_name="test",
             environment="test"
