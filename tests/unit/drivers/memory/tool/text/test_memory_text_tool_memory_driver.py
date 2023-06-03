@@ -1,11 +1,11 @@
 import pytest
-from griptape.drivers import MemoryTextStorageDriver
+from griptape.drivers import MemoryTextToolMemoryDriver
 
 
-class TestMemoryTextStorageDriver:
+class TestMemoryTextToolMemoryDriver:
     @pytest.fixture
     def driver(self):
-        return MemoryTextStorageDriver()
+        return MemoryTextToolMemoryDriver()
 
     def test_save(self, driver):
         key = driver.save("foo")

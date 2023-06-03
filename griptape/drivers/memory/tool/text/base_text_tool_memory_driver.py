@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseTextStorageDriver(ABC):
+class BaseTextToolMemoryDriver(ABC):
     @abstractmethod
     def save(self, value: any) -> str:
         ...

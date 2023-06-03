@@ -5,7 +5,7 @@ from griptape.artifacts import BlobArtifact
 
 
 @define
-class BaseBlobStorageDriver(ABC):
+class BaseBlobToolMemoryDriver(ABC):
     @abstractmethod
     def save(self, blob: BlobArtifact) -> str:
         ...
