@@ -1,4 +1,6 @@
 import pytest
+
+from griptape import utils
 from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.drivers import MemoryVectorStorageDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -11,7 +13,17 @@ class TestMemoryVectorStorageDriver:
             embedding_driver=MockEmbeddingDriver(),
         )
 
-    def test_insert_and_query(self, driver):
+    def test_insert(self, driver):
+        driver.upsert_text_artifact(TextArtifact("foobar"))
+
+        assert len(driver.entries) == 1
+        assert list(driver.entries.keys())[0] == utils.str_to_hash(str([0, 1]))
+
+        driver.upsert_text_artifact(TextArtifact("foobar"))
+
+        assert len(driver.entries) == 1
+
+    def test_query(self, driver):
         driver.upsert_text_artifact(
             TextArtifact("foobar"),
             vector_id="test-id",
