@@ -9,7 +9,6 @@ from griptape.tokenizers import AnthropicTokenizer
 @define
 class AnthropicPromptDriver(BasePromptDriver):
     api_key: str = field(kw_only=True, metadata={"env": "ANTHROPIC_API_KEY"})
-    max_tokens_to_sample: int = field(default=100, kw_only=True)
 
     tokenizer: AnthropicTokenizer = field(
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
@@ -26,7 +25,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             prompt=f"{anthropic.HUMAN_PROMPT}{value}{anthropic.AI_PROMPT}",
             stop_sequences = [anthropic.HUMAN_PROMPT],
             model=self.model,
-            max_tokens_to_sample=self.max_tokens_to_sample,
+            max_tokens_to_sample=self.tokenizer.max_tokens,
         )
 
         return TextArtifact(

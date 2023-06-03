@@ -6,7 +6,7 @@ from griptape.tokenizers import BaseTokenizer
 @define(frozen=True)
 class AnthropicTokenizer(BaseTokenizer):
     DEFAULT_MODEL = "claude-v1"
-    MAX_TOKENS = 2048
+    MAX_TOKENS = 100
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
 
