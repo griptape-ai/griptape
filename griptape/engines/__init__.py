@@ -1,8 +1,8 @@
-from .base_engine import BaseEngine
+from .base_query_engine import BaseQueryEngine
 from .vector_query_engine import VectorQueryEngine
 
 
 __all__ = [
-    "BaseEngine",
+    "BaseQueryEngine",
     "VectorQueryEngine"
 ]
