@@ -39,15 +39,15 @@ class TestOpenAiEmbeddingDriver:
         )
 
     def test_insert_test_artifact(self, driver):
-        assert driver.insert_text_artifact(TextArtifact("foo"), vector_id="foo") == "foo"
+        assert driver.upsert_text_artifact(TextArtifact("foo"), vector_id="foo") == "foo"
 
-    def test_insert_vector(self, driver):
-        assert driver.insert_vector([0, 1, 2], vector_id="foo") == "foo"
-        assert isinstance(driver.insert_vector([0, 1, 2]), str)
+    def test_upsert_vector(self, driver):
+        assert driver.upsert_vector([0, 1, 2], vector_id="foo") == "foo"
+        assert isinstance(driver.upsert_vector([0, 1, 2]), str)
 
-    def test_insert_text(self, driver):
-        assert driver.insert_text("foo", vector_id="foo") == "foo"
-        assert isinstance(driver.insert_text("foo"), str)
+    def test_upsert_text(self, driver):
+        assert driver.upsert_text("foo", vector_id="foo") == "foo"
+        assert isinstance(driver.upsert_text("foo"), str)
 
     def test_query(self, driver):
         assert driver.query("test")[0].vector == [0, 1, 0]

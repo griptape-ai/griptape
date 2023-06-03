@@ -23,7 +23,7 @@ class MemoryVectorStorageDriver(BaseVectorStorageDriver):
         kw_only=True
     )
 
-    def insert_vector(
+    def upsert_vector(
             self,
             vector: list[float],
             vector_id: Optional[str] = None,
@@ -64,4 +64,4 @@ class MemoryVectorStorageDriver(BaseVectorStorageDriver):
                 score=er[1],
                 meta=er[0].meta
             ) for er in entries_and_relatednesses
-        ]
+        ][:count]

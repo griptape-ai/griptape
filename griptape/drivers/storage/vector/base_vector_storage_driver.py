@@ -22,7 +22,7 @@ class BaseVectorStorageDriver(ABC):
         kw_only=True
     )
 
-    def insert_text_artifact(
+    def upsert_text_artifact(
             self,
             artifact: TextArtifact,
             vector_id: Optional[str] = None,
@@ -40,7 +40,7 @@ class BaseVectorStorageDriver(ABC):
         else:
             vector = artifact.generate_embedding(self.embedding_driver)
 
-        return self.insert_vector(
+        return self.upsert_vector(
             vector,
             vector_id=vector_id,
             namespace=namespace,
@@ -48,7 +48,7 @@ class BaseVectorStorageDriver(ABC):
             **kwargs
         )
 
-    def insert_text(
+    def upsert_text(
             self,
             string: str,
             vector_id: Optional[str] = None,
@@ -56,7 +56,7 @@ class BaseVectorStorageDriver(ABC):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
-        return self.insert_vector(
+        return self.upsert_vector(
             self.embedding_driver.embed_string(string),
             vector_id=vector_id,
             namespace=namespace,
@@ -65,7 +65,7 @@ class BaseVectorStorageDriver(ABC):
         )
 
     @abstractmethod
-    def insert_vector(
+    def upsert_vector(
             self,
             vector: list[float],
             vector_id: Optional[str] = None,

@@ -22,7 +22,7 @@ class PineconeVectorStorageDriver(BaseVectorStorageDriver):
 
         self.index = pinecone.Index(self.index_name)
 
-    def insert_vector(
+    def upsert_vector(
             self,
             vector: list[float],
             vector_id: Optional[str] = None,

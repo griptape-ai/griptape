@@ -12,7 +12,7 @@ class TestMemoryVectorStorageDriver:
         )
 
     def test_insert_and_query(self, driver):
-        driver.insert_text_artifact(
+        driver.upsert_text_artifact(
             TextArtifact("foobar"),
             vector_id="test-id",
             namespace="test-namespace"
