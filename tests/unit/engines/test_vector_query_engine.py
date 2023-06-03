@@ -9,7 +9,7 @@ from tests.unit.chunkers.utils import gen_paragraph
 MAX_TOKENS = 50
 
 
-class TestQueryEngine:
+class TestVectorQueryEngine:
     @pytest.fixture
     def engine(self):
         return VectorQueryEngine(

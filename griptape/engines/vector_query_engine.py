@@ -1,14 +1,18 @@
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact
-from griptape.drivers import BaseVectorStorageDriver, MemoryVectorStorageDriver
-from griptape.engines import BaseEngine
+from griptape.drivers import BaseVectorStorageDriver, MemoryVectorStorageDriver, BasePromptDriver, OpenAiPromptDriver
+from griptape.engines import BaseQueryEngine
 
 
 @define
-class VectorQueryEngine(BaseEngine):
+class VectorQueryEngine(BaseQueryEngine):
     vector_storage_driver: BaseVectorStorageDriver = field(
         default=Factory(lambda: MemoryVectorStorageDriver()),
+        kw_only=True
+    )
+    prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda: OpenAiPromptDriver()),
         kw_only=True
     )
 
