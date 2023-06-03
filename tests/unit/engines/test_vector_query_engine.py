@@ -13,7 +13,7 @@ class TestVectorQueryEngine:
     @pytest.fixture
     def engine(self):
         return VectorQueryEngine(
-            vector_storage_driver=MemoryVectorDriver(
+            vector_driver=MemoryVectorDriver(
                 embedding_driver=MockEmbeddingDriver(),
             ),
             prompt_driver=MockPromptDriver()
