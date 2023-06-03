@@ -7,7 +7,7 @@ from griptape.engines import BaseQueryEngine
 
 @define
 class VectorQueryEngine(BaseQueryEngine):
-    vector_storage_driver: BaseVectorDriver = field(
+    vector_driver: BaseVectorDriver = field(
         default=Factory(lambda: MemoryVectorDriver()),
         kw_only=True
     )
@@ -17,11 +17,11 @@ class VectorQueryEngine(BaseQueryEngine):
     )
 
     def insert(self, artifacts: list[TextArtifact], namespace: Optional[str] = None) -> None:
-        [self.vector_storage_driver.upsert_text_artifact(a, namespace=namespace) for a in artifacts]
+        [self.vector_driver.upsert_text_artifact(a, namespace=namespace) for a in artifacts]
 
     def query(self, query: str, top_n: Optional[int] = None, namespace: Optional[str] = None) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
-        result = self.vector_storage_driver.query(query, top_n, namespace)
+        result = self.vector_driver.query(query, top_n, namespace)
         artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result]
 
         prefix = 'Use the below list of text segments to answer the subsequent question. ' \
