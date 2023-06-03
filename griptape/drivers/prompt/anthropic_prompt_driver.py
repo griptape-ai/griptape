@@ -3,15 +3,16 @@ import anthropic
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import AnthropicTokenizer
 
 
 @define
-class ClaudePromptDriver(BasePromptDriver):
-    api_key: str = field(kw_only=True, metadata={"env": "CLAUDE_API_KEY"})
+class AnthropicPromptDriver(BasePromptDriver):
+    api_key: str = field(kw_only=True, metadata={"env": "ANTHROPIC_API_KEY"})
+    max_tokens_to_sample: int = field(default=100, kw_only=True)
 
-    tokenizer: TiktokenTokenizer = field(
-        default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
+    tokenizer: AnthropicTokenizer = field(
+        default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
         kw_only=True
     )
 
@@ -25,7 +26,7 @@ class ClaudePromptDriver(BasePromptDriver):
             prompt=f"{anthropic.HUMAN_PROMPT}{value}{anthropic.AI_PROMPT}",
             stop_sequences = [anthropic.HUMAN_PROMPT],
             model=self.model,
-            max_tokens_to_sample=100,
+            max_tokens_to_sample=self.max_tokens_to_sample,
         )
 
         return TextArtifact(
