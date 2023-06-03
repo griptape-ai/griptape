@@ -21,4 +21,4 @@ class AnthropicTokenizer(BaseTokenizer):
         return anthropic.get_tokenizer().encode(text)
 
     def decode(self, tokens: list[int]) -> str:
-        return anthropic.get_tokenizer().detokenize(tokens=tokens)
+        return anthropic.get_tokenizer().decode(tokens)
