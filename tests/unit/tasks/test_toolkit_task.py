@@ -1,5 +1,5 @@
 import pytest
-from griptape.drivers import MemoryTextToolMemoryDriver, MemoryVectorDriver
+from griptape.drivers import MemoryVectorDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -30,11 +30,6 @@ class TestToolkitSubtask:
 
     def test_run(self):
         output = """Output: done"""
-
-        tools = [
-            MockTool(name="ToolOne"),
-            MockTool(name="ToolTwo")
-        ]
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         pipeline = Pipeline(
@@ -143,7 +138,7 @@ class TestToolkitSubtask:
         tool = MockTool(
             name="Tool1",
             memory={
-                "test": { "input": [m1, m2] }
+                "test": {"input": [m1, m2]}
             }
         )
         task = ToolkitTask("test", tools=[tool])

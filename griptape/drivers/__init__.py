@@ -7,10 +7,6 @@ from griptape.drivers.prompt.hugging_face_hub_prompt_driver import HuggingFaceHu
 from griptape.drivers.memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from griptape.drivers.memory.conversation.disk_conversation_memory_driver import DiskConversationMemoryDriver
 
-from griptape.drivers.memory.tool.text.base_text_tool_memory_driver import BaseTextToolMemoryDriver
-from griptape.drivers.memory.tool.text.memory_text_tool_memory_driver import MemoryTextToolMemoryDriver
-from griptape.drivers.memory.tool.text.dynamodb_text_tool_memory_driver import DynamoDbTextToolMemoryDriver
-
 from griptape.drivers.memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
 from griptape.drivers.memory.tool.blob.memory_blob_tool_memory_driver import MemoryBlobToolMemoryDriver
 
@@ -30,10 +26,6 @@ __all__ = [
 
     "BaseConversationMemoryDriver",
     "DiskConversationMemoryDriver",
-
-    "BaseTextToolMemoryDriver",
-    "MemoryTextToolMemoryDriver",
-    "DynamoDbTextToolMemoryDriver",
 
     "BaseBlobToolMemoryDriver",
     "MemoryBlobToolMemoryDriver",
