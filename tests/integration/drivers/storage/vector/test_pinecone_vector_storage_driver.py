@@ -39,7 +39,9 @@ class TestOpenAiEmbeddingDriver:
         )
 
     def test_upsert_text_artifact(self, driver):
-        assert driver.upsert_text_artifact(TextArtifact("foo"), vector_id="foo") == "foo"
+        artifact = TextArtifact("foo")
+
+        assert driver.upsert_text_artifact(artifact) == artifact.id
 
     def test_upsert_vector(self, driver):
         assert driver.upsert_vector([0, 1, 2], vector_id="foo") == "foo"

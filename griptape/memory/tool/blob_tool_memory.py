@@ -16,18 +16,18 @@ class BlobToolMemory(BaseToolMemory):
         from griptape.utils import J2
 
         if isinstance(artifact, BlobArtifact):
-            artifact_names = [self.driver.save(artifact)]
+            artifact_ids = [self.driver.save(artifact)]
         elif isinstance(artifact, ListArtifact):
-            artifact_names = [self.driver.save(a) for a in artifact.value if isinstance(a, BlobArtifact)]
+            artifact_ids = [self.driver.save(a) for a in artifact.value if isinstance(a, BlobArtifact)]
         else:
-            artifact_names = []
+            artifact_ids = []
 
-        if len(artifact_names) > 0:
+        if len(artifact_ids) > 0:
             output = J2("memory/tool/blob.j2").render(
                 memory_name=self.name,
                 tool_name=tool_activity.__self__.name,
                 activity_name=tool_activity.name,
-                names=str.join(", ", artifact_names)
+                artifact_ids=str.join(", ", artifact_ids)
             )
 
             return InfoArtifact(output)

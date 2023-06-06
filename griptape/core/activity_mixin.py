@@ -16,8 +16,8 @@ class ActivityMixin:
                         description="Name of the memory that should be used to load artifacts into the tool"
                     ): str,
                     Literal(
-                        "artifact_names",
-                        description="Names of the artifacts to load from the memory and pass to the tool"
+                        "artifact_ids",
+                        description="IDs of the artifacts to load from the memory and pass to the tool"
                     ): []
                 }
             ]

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import uuid
 from abc import ABC, abstractmethod
 from typing import Union
 from attr import define, field, Factory
@@ -9,6 +10,7 @@ from marshmallow.exceptions import RegistryError
 
 @define
 class BaseArtifact(ABC):
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     value: Union[str, bytes] = field()
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 

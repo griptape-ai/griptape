@@ -16,9 +16,6 @@ class VectorQueryEngine(BaseQueryEngine):
         kw_only=True
     )
 
-    def insert(self, artifacts: list[TextArtifact], namespace: Optional[str] = None) -> None:
-        [self.vector_driver.upsert_text_artifact(a, namespace=namespace) for a in artifacts]
-
     def query(self, query: str, top_n: Optional[int] = None, namespace: Optional[str] = None) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_driver.query(query, top_n, namespace)

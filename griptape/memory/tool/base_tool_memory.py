@@ -16,23 +16,23 @@ class BaseToolMemory(ActivityMixin, ABC):
         return artifact
 
     def load_artifacts(self, value: Optional[dict]) -> Optional[dict]:
-        artifact_names = []
+        artifact_ids = []
 
         if value:
             sources = value.get("artifacts", {}).get("sources", [])
 
             for source in sources:
                 if source["memory_name"] == self.name:
-                    artifact_names.extend(source["artifact_names"])
+                    artifact_ids.extend(source["artifact_ids"])
 
-        if len(artifact_names) > 0:
+        if len(artifact_ids) > 0:
             new_value = value.copy()
 
             if not new_value.get("artifacts", {}).get("values"):
                 new_value.update({"artifacts": {"values": []}})
 
-            for artifact_name in artifact_names:
-                artifact = self.load_artifact(artifact_name)
+            for artifact_id in artifact_ids:
+                artifact = self.load_artifact(artifact_id)
 
                 if artifact:
                     new_value["artifacts"]["values"].append(artifact.to_dict())

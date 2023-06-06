@@ -1,5 +1,8 @@
-from griptape.drivers import MemoryTextToolMemoryDriver
+import pytest
+from griptape.drivers import MemoryTextToolMemoryDriver, MemoryVectorDriver
+from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
 from griptape.tasks import ToolkitTask, ActionSubtask
@@ -8,6 +11,14 @@ from griptape.structures import Pipeline
 
 
 class TestToolkitSubtask:
+    @pytest.fixture
+    def query_engine(self):
+        return VectorQueryEngine(
+            vector_driver=MemoryVectorDriver(
+                embedding_driver=MockEmbeddingDriver()
+            )
+        )
+
     def test_init(self):
         assert len(ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]).tools) == 2
 
@@ -86,8 +97,8 @@ class TestToolkitSubtask:
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask("test1", action_name="test", action_activity="test", action_input="test")
-        subtask2 = ActionSubtask("test2", action_name="test", action_activity="test", action_input="test")
+        subtask1 = ActionSubtask("test1", action_name="test", action_activity="test", action_input={"values": {"f": "b"}})
+        subtask2 = ActionSubtask("test2", action_name="test", action_activity="test", action_input={"values": {"f": "b"}})
 
         Pipeline().add_task(task)
 
@@ -106,8 +117,8 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask("test1", action_name="test", action_activity="test", action_input="test")
-        subtask2 = ActionSubtask("test2", action_name="test", action_activity="test", action_input="test")
+        subtask1 = ActionSubtask("test1", action_name="test", action_activity="test", action_input={"values": {"f": "b"}})
+        subtask2 = ActionSubtask("test2", action_name="test", action_activity="test", action_input={"values": {"f": "b"}})
 
         Pipeline().add_task(task)
 
@@ -125,9 +136,9 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_memory(self):
-        m1 = TextToolMemory(name="Memory1", driver=MemoryTextToolMemoryDriver())
-        m2 = TextToolMemory(name="Memory2", driver=MemoryTextToolMemoryDriver())
+    def test_find_memory(self, query_engine):
+        m1 = TextToolMemory(name="Memory1", query_engine=query_engine)
+        m2 = TextToolMemory(name="Memory2", query_engine=query_engine)
 
         tool = MockTool(
             name="Tool1",
@@ -142,14 +153,14 @@ class TestToolkitSubtask:
         assert task.find_memory("Memory1") == m1
         assert task.find_memory("Memory2") == m2
 
-    def test_memory(self):
+    def test_memory(self, query_engine):
         tool1 = MockTool(
             name="Tool1",
             memory={
                 "test": {
                     "input": [
-                        TextToolMemory(name="Memory1", driver=MemoryTextToolMemoryDriver()),
-                        TextToolMemory(name="Memory2", driver=MemoryTextToolMemoryDriver())
+                        TextToolMemory(name="Memory1", query_engine=query_engine),
+                        TextToolMemory(name="Memory2", query_engine=query_engine)
                     ]
                 }
             }
@@ -160,8 +171,8 @@ class TestToolkitSubtask:
             memory={
                 "test": {
                     "output": [
-                        TextToolMemory(name="Memory2", driver=MemoryTextToolMemoryDriver()),
-                        TextToolMemory(name="Memory3", driver=MemoryTextToolMemoryDriver())
+                        TextToolMemory(name="Memory2", query_engine=query_engine),
+                        TextToolMemory(name="Memory3", query_engine=query_engine)
                     ]
                 }
             }

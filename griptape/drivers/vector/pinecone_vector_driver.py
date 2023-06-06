@@ -40,6 +40,44 @@ class PineconeVectorDriver(BaseVectorDriver):
 
         return vector_id
 
+    def load_vector(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorDriver.VectorEntry]:
+        result = self.index.fetch(ids=[vector_id], namespace=namespace).to_dict()
+        vectors = list(result["vectors"].values())
+
+        if len(vectors) > 0:
+            vector = vectors[0]
+
+            return BaseVectorDriver.VectorEntry(
+                id=vector["id"],
+                meta=vector["metadata"],
+                vector=vector["values"],
+                namespace=result["namespace"]
+            )
+        else:
+            return None
+
+    def load_vectors(self, namespace: Optional[str] = None) -> list[BaseVectorDriver.VectorEntry]:
+        # This is a hacky way to query up to 10,000 values from Pinecone. Waiting on an official API for fetching
+        # all values from a namespace:
+        # https://community.pinecone.io/t/is-there-a-way-to-query-all-the-vectors-and-or-metadata-from-a-namespace/797/5
+
+        results = self.index.query(
+            self.embedding_driver.embed_string(""),
+            top_k=10000,
+            include_metadata=True,
+            namespace=namespace
+        )
+
+        return [
+            BaseVectorDriver.VectorEntry(
+                id=r["id"],
+                vector=r["values"],
+                meta=r["metadata"],
+                namespace=results["namespace"]
+            )
+            for r in results["matches"]
+        ]
+
     def query(
             self,
             query: str,

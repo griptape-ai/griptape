@@ -3,8 +3,10 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
-from griptape.drivers import MemoryTextToolMemoryDriver
+from griptape.drivers import MemoryTextToolMemoryDriver, MemoryVectorDriver
+from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -56,20 +58,26 @@ class TestBaseTool:
         assert tool.test.config["foo"] == "bar"
 
     def test_memory(self):
+        query_engine = VectorQueryEngine(
+            vector_driver=MemoryVectorDriver(
+                embedding_driver=MockEmbeddingDriver()
+            )
+        )
+
         tool = MockTool(
             memory={
                 "test": {
                     "input": [
                         TextToolMemory(
-                            name="Memory1", driver=MemoryTextToolMemoryDriver()
+                            name="Memory1", query_engine=query_engine
                         ),
                         TextToolMemory(
-                            name="Memory2", driver=MemoryTextToolMemoryDriver()
+                            name="Memory2", query_engine=query_engine
                         )
                     ],
                     "output": [
                         TextToolMemory(
-                            name="Memory1", driver=MemoryTextToolMemoryDriver()
+                            name="Memory1", query_engine=query_engine
                         )
                     ]
                 }
@@ -80,21 +88,27 @@ class TestBaseTool:
         assert len(tool.memory["test"]["output"]) == 1
 
     def test_memory_validation(self):
+        query_engine = VectorQueryEngine(
+            vector_driver=MemoryVectorDriver(
+                embedding_driver=MockEmbeddingDriver()
+            )
+        )
+
         with pytest.raises(ValueError):
             MockTool(
                 memory={
                     "test": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextToolMemoryDriver()
+                                name="Memory1", query_engine=query_engine
                             ),
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextToolMemoryDriver()
+                                name="Memory1", query_engine=query_engine
                             )
                         ],
                         "output": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextToolMemoryDriver()
+                                name="Memory1", query_engine=query_engine
                             )
                         ]
                     }
@@ -107,7 +121,7 @@ class TestBaseTool:
                     "fake_activity": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextToolMemoryDriver()
+                                name="Memory1", query_engine=query_engine
                             )
                         ]
                     }
@@ -119,14 +133,14 @@ class TestBaseTool:
                     "test": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextToolMemoryDriver()
+                                name="Memory1", query_engine=query_engine
                             )
                         ]
                     },
                     "test_str_output": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", driver=MemoryTextToolMemoryDriver()
+                                name="Memory1", query_engine=query_engine
                             )
                         ]
                     }
