@@ -1,4 +1,3 @@
-from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact, ListArtifact
 from griptape.drivers import BaseBlobToolMemoryDriver, MemoryBlobToolMemoryDriver
@@ -34,5 +33,5 @@ class BlobToolMemory(BaseToolMemory):
         else:
             return artifact
 
-    def load_artifact(self, name: str) -> Optional[BaseArtifact]:
-        return self.driver.load(name)
+    def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
+        return [self.driver.load(namespace)]

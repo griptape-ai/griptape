@@ -32,16 +32,16 @@ class BaseToolMemory(ActivityMixin, ABC):
                 new_value.update({"artifacts": {"values": []}})
 
             for artifact_id in artifact_ids:
-                artifact = self.load_artifact(artifact_id)
-
-                if artifact:
-                    new_value["artifacts"]["values"].append(artifact.to_dict())
+                [
+                    new_value["artifacts"]["values"].append(a.to_dict())
+                    for a in self.load_namespace_artifacts(artifact_id)
+                ]
 
             return new_value
         else:
             return value
 
     @abstractmethod
-    def load_artifact(self, name: str) -> Optional[BaseArtifact]:
+    def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
         ...
     

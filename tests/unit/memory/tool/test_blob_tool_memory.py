@@ -29,5 +29,5 @@ class TestBlobToolMemory:
         memory = BlobToolMemory(name="MyMemory", driver=MemoryBlobToolMemoryDriver())
 
         assert memory.process_output(MockTool().test, ListArtifact([BlobArtifact(b"foo", name="foo")])).to_text().startswith(
-            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact IDs'
+            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact IDs:'
         )
