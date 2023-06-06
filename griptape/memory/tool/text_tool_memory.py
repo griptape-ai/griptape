@@ -22,23 +22,23 @@ class TextToolMemory(BaseToolMemory):
     def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> Union[InfoArtifact, ErrorArtifact]:
         from griptape.utils import J2
 
-        artifact_id = artifact.id if artifact else None
+        namespace = artifact.id if artifact else None
 
         if isinstance(artifact, TextArtifact):
-            self.query_engine.vector_driver.upsert_text_artifact(artifact, namespace=artifact_id)
+            self.query_engine.vector_driver.upsert_text_artifact(artifact, namespace=namespace)
         elif isinstance(artifact, ListArtifact):
             [
                 self.query_engine.vector_driver.upsert_text_artifact(
-                    a, namespace=artifact_id
+                    a, namespace=namespace
                 ) for a in artifact.value if isinstance(a, TextArtifact)
             ]
 
-        if len(artifact_id) > 0:
+        if namespace:
             output = J2("memory/tool/text.j2").render(
                 memory_name=self.name,
                 tool_name=tool_activity.__self__.name,
                 activity_name=tool_activity.name,
-                artifact_id=artifact_id
+                artifact_namespace=namespace
             )
 
             return InfoArtifact(output)
@@ -59,23 +59,23 @@ class TextToolMemory(BaseToolMemory):
     })
     def save(self, params: dict) -> Union[InfoArtifact, ErrorArtifact]:
         artifact = TextArtifact(params["values"]["artifact_value"])
-        artifact_id = self.query_engine.vector_driver.upsert_text_artifact(artifact, namespace=artifact.id)
+        namespace = self.query_engine.vector_driver.upsert_text_artifact(artifact, namespace=artifact.id)
 
-        return InfoArtifact(f"Value was successfully stored with the following ID: {artifact_id}")
+        return InfoArtifact(f"Value was successfully stored with the following namespace: {namespace}")
 
     @activity(config={
         "description": "Can be used to load artifact values",
         "schema": Schema({
-            "artifact_id": str
+            "artifact_namespace": str
         })
     })
     def load(self, params: dict) -> ListArtifact:
-        artifact_id = params["values"]["artifact_id"]
+        namespace = params["values"]["artifact_namespace"]
 
         return ListArtifact.from_list(
             [
                 BaseArtifact.from_json(e.meta["artifact"])
-                for e in self.query_engine.vector_driver.load_vectors(artifact_id)
+                for e in self.query_engine.vector_driver.load_vectors(namespace)
             ]
         )
 
@@ -86,11 +86,11 @@ class TextToolMemory(BaseToolMemory):
                 "query",
                 description="Search query"
             ): str,
-            "artifact_id": str
+            "artifact_namespace": str
         })
     })
     def query(self, params: dict) -> TextArtifact:
         query = params["values"]["query"]
-        artifact_id = params["values"]["artifact_id"]
+        namespace = params["values"]["namespace"]
 
-        return self.query_engine.query(query, namespace=artifact_id)
+        return self.query_engine.query(query, namespace=namespace)

@@ -12,10 +12,10 @@ class TestMemoryVectorDriver:
         )
 
     def test_insert(self, driver):
-        artifact_id = driver.upsert_text_artifact(TextArtifact("foobar"))
+        namespace = driver.upsert_text_artifact(TextArtifact("foobar"))
 
         assert len(driver.entries) == 1
-        assert list(driver.entries.keys())[0] == artifact_id
+        assert list(driver.entries.keys())[0] == namespace
 
         driver.upsert_text_artifact(TextArtifact("foobar"))
 
