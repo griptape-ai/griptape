@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Optional, Callable
 from scipy import spatial
 from griptape import utils
@@ -8,12 +7,7 @@ from attr import define, field, Factory
 
 @define
 class MemoryVectorDriver(BaseVectorDriver):
-    @dataclass
-    class Entry:
-        vector: list[float]
-        meta: Optional[dict] = None
-
-    entries: dict[str, Entry] = field(factory=dict, kw_only=True)
+    entries: dict[str, BaseVectorDriver.VectorEntry] = field(factory=dict, kw_only=True)
     relatedness_fn: Callable = field(
         default=lambda x, y: 1 - spatial.distance.cosine(x, y),
         kw_only=True
@@ -32,11 +26,21 @@ class MemoryVectorDriver(BaseVectorDriver):
             **kwargs
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
-        vector_id = f"{namespace}-{vector_id}" if namespace else vector_id
 
-        self.entries[vector_id] = self.Entry(vector, meta)
+        self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.VectorEntry(
+            id=vector_id,
+            vector=vector,
+            meta=meta,
+            namespace=namespace
+        )
 
         return vector_id
+
+    def load_vector(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorDriver.VectorEntry]:
+        return self.entries.get(self._namespaced_vector_id(vector_id, namespace), None)
+
+    def load_vectors(self, namespace: Optional[str] = None) -> list[BaseVectorDriver.VectorEntry]:
+        return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
     def query(
             self,
@@ -65,3 +69,6 @@ class MemoryVectorDriver(BaseVectorDriver):
                 meta=er[0].meta
             ) for er in entries_and_relatednesses
         ][:count]
+
+    def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):
+        return vector_id if namespace is None else f"{namespace}-{vector_id}"

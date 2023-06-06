@@ -19,11 +19,11 @@ class TestVectorQueryEngine:
             prompt_driver=MockPromptDriver()
         )
 
-    def test_upsert_and_query(self, engine):
+    def test_query(self, engine):
         artifacts = TextLoader(max_tokens=MAX_TOKENS).load(
             gen_paragraph(MAX_TOKENS, engine.prompt_driver.tokenizer, ". ")
         )
 
-        engine.insert(artifacts)
+        [engine.vector_driver.upsert_text_artifact(a) for a in artifacts]
 
         assert engine.query("foo").value.startswith("mock output")

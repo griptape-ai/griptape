@@ -17,6 +17,13 @@ class BaseVectorDriver(ABC):
         meta: Optional[dict] = None
         namespace: Optional[str] = None
 
+    @dataclass
+    class VectorEntry:
+        id: str
+        vector: list[float]
+        meta: Optional[dict] = None
+        namespace: Optional[str] = None
+
     embedding_driver: BaseEmbeddingDriver = field(
         default=Factory(lambda: OpenAiEmbeddingDriver()),
         kw_only=True
@@ -25,7 +32,6 @@ class BaseVectorDriver(ABC):
     def upsert_text_artifact(
             self,
             artifact: TextArtifact,
-            vector_id: Optional[str] = None,
             namespace: Optional[str] = None,
             meta: Optional[dict] = None,
             **kwargs
@@ -42,7 +48,7 @@ class BaseVectorDriver(ABC):
 
         return self.upsert_vector(
             vector,
-            vector_id=vector_id,
+            vector_id=artifact.id,
             namespace=namespace,
             meta=meta,
             **kwargs
@@ -73,6 +79,14 @@ class BaseVectorDriver(ABC):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
+        ...
+
+    @abstractmethod
+    def load_vector(self, vector_id: str, namespace: Optional[str] = None) -> VectorEntry:
+        ...
+
+    @abstractmethod
+    def load_vectors(self, namespace: Optional[str] = None) -> list[VectorEntry]:
         ...
 
     @abstractmethod
