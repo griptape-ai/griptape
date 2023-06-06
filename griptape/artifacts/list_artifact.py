@@ -1,3 +1,4 @@
+from __future__ import annotations
 from griptape.artifacts import BaseArtifact
 from attr import field, define
 
@@ -5,6 +6,10 @@ from attr import field, define
 @define(frozen=True)
 class ListArtifact(BaseArtifact):
     value: list[BaseArtifact] = field(factory=list)
+
+    @classmethod
+    def from_list(cls, artifacts: list[BaseArtifact]) -> ListArtifact:
+        return ListArtifact(value=artifacts)
 
     def to_text(self) -> str:
         if len(self.value) > 0:

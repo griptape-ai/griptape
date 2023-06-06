@@ -25,3 +25,6 @@ class TestListArtifact:
         deserialized_artifact: ListArtifact = BaseArtifact.from_dict(artifact_dict)
 
         assert deserialized_artifact.value[0].value == "foobar"
+
+    def test_from_list(self):
+        assert len(ListArtifact.from_list([TextArtifact("foo"), TextArtifact("bar")]).value) == 2

@@ -1,5 +1,4 @@
 import pytest
-
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.drivers import MemoryVectorDriver
 from griptape.engines import VectorQueryEngine
@@ -31,12 +30,12 @@ class TestTextToolMemory:
 
     def test_process_output(self, memory):
         assert memory.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
-            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact IDs'
+            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact ID:'
         )
 
     def test_process_output_with_many_artifacts(self, memory):
         assert memory.process_output(MockTool().test, ListArtifact([TextArtifact("foo")])).to_text().startswith(
-            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact IDs'
+            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact ID:'
         )
 
     def test_save_and_load_value(self):
@@ -44,5 +43,5 @@ class TestTextToolMemory:
         output = memory.save({"values": {"artifact_value": "foobar"}})
         name = output.value.split(":")[-1].strip()
 
-        assert memory.load({"values": {"artifact_id": name}}).value == "foobar"
+        assert memory.load({"values": {"artifact_id": name}}).value[0].value == "foobar"
 
