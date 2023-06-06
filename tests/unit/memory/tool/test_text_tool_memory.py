@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.drivers import MemoryTextToolMemoryDriver, MemoryVectorDriver
+from griptape.drivers import MemoryVectorDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
