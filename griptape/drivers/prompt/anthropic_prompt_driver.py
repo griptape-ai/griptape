@@ -13,8 +13,10 @@ class AnthropicPromptDriver(BasePromptDriver):
     model: str = field(default=AnthropicTokenizer.DEFAULT_MODEL, kw_only=True)
 
     tokenizer: AnthropicTokenizer = field(
-        default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
-        kw_only=True
+        default=Factory(
+            lambda self: AnthropicTokenizer(model=self.model), takes_self=True
+        ),
+        kw_only=True,
     )
 
     def try_run(self, value: any) -> TextArtifact:
@@ -26,12 +28,10 @@ class AnthropicPromptDriver(BasePromptDriver):
         # Anthropic requires specific prompt formatting: https://console.anthropic.com/docs/api
         response = client.completion(
             prompt=f"{anthropic.HUMAN_PROMPT}{value}{anthropic.AI_PROMPT}",
-            stop_sequences = [anthropic.HUMAN_PROMPT, self.tokenizer.stop_sequence],
+            stop_sequences=[anthropic.HUMAN_PROMPT, self.tokenizer.stop_sequence],
             model=self.model,
             max_tokens_to_sample=self.tokenizer.tokens_left(value),
             temperature=self.temperature,
         )
 
-        return TextArtifact(
-            value=response['completion']
-        )
+        return TextArtifact(value=response["completion"])
