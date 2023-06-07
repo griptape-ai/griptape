@@ -17,5 +17,17 @@ class TestWebLoader:
         artifacts = loader.load("https://github.com/griptape-ai/griptape-tools")
 
         assert len(artifacts) > 1
-        assert "griptape" in artifacts[0].value
+        assert "griptape" in artifacts[0].value.lower()
         assert artifacts[0].embedding == [0, 1]
+
+    def test_load_collection(self, loader):
+        artifacts = loader.load_collection([
+            "https://github.com/griptape-ai/griptape",
+            "https://github.com/griptape-ai/griptape-tools"
+        ])
+
+        assert list(artifacts.keys()) == [
+            "https://github.com/griptape-ai/griptape",
+            "https://github.com/griptape-ai/griptape-tools"
+        ]
+        assert "griptape" in [a.value for artifact_list in artifacts.values() for a in artifact_list][0].lower()

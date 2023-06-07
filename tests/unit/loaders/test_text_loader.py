@@ -21,3 +21,9 @@ class TestTextLoader:
         assert len(artifacts) == 3
         assert artifacts[0].value.startswith("foo-0 foo-1")
         assert artifacts[0].embedding == [0, 1]
+
+    def test_load_collection(self, loader):
+        artifacts = loader.load_collection({"foo": "bar", "baz": "bat"})
+
+        assert list(artifacts.keys()) == ["foo", "baz"]
+        assert [a.value for artifact_list in artifacts.values() for a in artifact_list] == ["bar", "bat"]
