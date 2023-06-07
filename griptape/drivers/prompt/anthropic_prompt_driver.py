@@ -10,6 +10,8 @@ from griptape.tokenizers import AnthropicTokenizer
 class AnthropicPromptDriver(BasePromptDriver):
     api_key: str = field(kw_only=True)
 
+    model: str = field(default=AnthropicTokenizer.DEFAULT_MODEL, kw_only=True)
+
     tokenizer: AnthropicTokenizer = field(
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
         kw_only=True
