@@ -20,10 +20,10 @@ class TestBlobToolMemory:
         output = memory.process_output(MockTool().test, artifact)
 
         assert output.to_text().startswith(
-            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespaces: foo'
+            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
 
-        assert memory.driver.load(artifact.full_path) == artifact
+        assert memory.driver.load(artifact.id) == [artifact]
 
     def test_process_output_with_many_artifacts(self):
         memory = BlobToolMemory(name="MyMemory", driver=MemoryBlobToolMemoryDriver())
@@ -31,5 +31,5 @@ class TestBlobToolMemory:
         assert memory.process_output(
             MockTool().test, ListArtifact([BlobArtifact(b"foo", name="foo")])
         ).to_text().startswith(
-            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespaces:'
+            'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )

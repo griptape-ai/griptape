@@ -1,4 +1,3 @@
-from typing import Optional
 from attr import define, field
 from griptape.artifacts import BlobArtifact
 from griptape.drivers import BaseBlobToolMemoryDriver
@@ -6,23 +5,20 @@ from griptape.drivers import BaseBlobToolMemoryDriver
 
 @define
 class MemoryBlobToolMemoryDriver(BaseBlobToolMemoryDriver):
-    blobs: list[BlobArtifact] = field(factory=list, kw_only=True)
+    blobs: dict[str, list[BlobArtifact]] = field(factory=dict, kw_only=True)
 
-    def save(self, blob: BlobArtifact) -> str:
-        self.blobs = [b for b in self.blobs if b.full_path != blob.full_path]
+    def save(self, namespace: str, blob: BlobArtifact) -> None:
+        if namespace not in self.blobs:
+            self.blobs[namespace] = []
 
-        self.blobs.append(blob)
+        self.blobs[namespace].append(blob)
 
-        return blob.full_path
-
-    def load(self, key: str) -> Optional[BlobArtifact]:
+    def load(self, namespace: str) -> list[BlobArtifact]:
         return next(
-            (r for r in self.blobs if r.full_path == key),
-            None
+            (blobs for key, blobs in self.blobs.items() if key == namespace),
+            []
         )
 
-    def delete(self, key: str) -> None:
-        blob = self.load(key)
-
-        if blob:
-            self.blobs.remove(blob)
+    def delete(self, namespace: str) -> None:
+        if namespace in self.blobs:
+            self.blobs.pop(namespace)
