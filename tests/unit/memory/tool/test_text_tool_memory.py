@@ -38,8 +38,7 @@ class TestTextToolMemory:
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
 
-    def test_save_and_load_value(self):
-        memory = TextToolMemory()
+    def test_save_and_load_value(self, memory):
         output = memory.save({"values": {"artifact_value": "foobar"}})
         name = output.value.split(":")[-1].strip()
 
