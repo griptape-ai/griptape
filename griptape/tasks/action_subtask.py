@@ -57,10 +57,9 @@ class ActionSubtask(PromptTask):
     _tool: Optional[BaseTool] = None
     _memory: Optional[BaseToolMemory] = None
 
-    def attach(self, parent_task: ToolkitTask):
-        self.parent_task_id = parent_task.id
-        self.structure = parent_task.structure
-        self.__init_from_prompt(self.input.to_text())
+    @property
+    def input(self) -> TextArtifact:
+        return TextArtifact(self.prompt_template)
 
     @property
     def task(self) -> Optional[ToolkitTask]:
@@ -73,6 +72,11 @@ class ActionSubtask(PromptTask):
     @property
     def children(self) -> list[ActionSubtask]:
         return [self.task.find_subtask(child_id) for child_id in self.child_ids]
+
+    def attach(self, parent_task: ToolkitTask):
+        self.parent_task_id = parent_task.id
+        self.structure = parent_task.structure
+        self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
