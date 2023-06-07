@@ -7,7 +7,7 @@ from attr import define, field, Factory
 
 @define
 class MemoryVectorDriver(BaseVectorDriver):
-    entries: dict[str, BaseVectorDriver.VectorEntry] = field(factory=dict, kw_only=True)
+    entries: dict[str, BaseVectorDriver.Entry] = field(factory=dict, kw_only=True)
     relatedness_fn: Callable = field(
         default=lambda x, y: 1 - spatial.distance.cosine(x, y),
         kw_only=True
@@ -27,7 +27,7 @@ class MemoryVectorDriver(BaseVectorDriver):
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
 
-        self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.VectorEntry(
+        self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
             id=vector_id,
             vector=vector,
             meta=meta,
@@ -36,10 +36,10 @@ class MemoryVectorDriver(BaseVectorDriver):
 
         return vector_id
 
-    def load_vector(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorDriver.VectorEntry]:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorDriver.Entry]:
         return self.entries.get(self._namespaced_vector_id(vector_id, namespace), None)
 
-    def load_vectors(self, namespace: Optional[str] = None) -> list[BaseVectorDriver.VectorEntry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorDriver.Entry]:
         return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
     def query(

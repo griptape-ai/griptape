@@ -18,7 +18,7 @@ class BaseVectorDriver(ABC):
         namespace: Optional[str] = None
 
     @dataclass
-    class VectorEntry:
+    class Entry:
         id: str
         vector: list[float]
         meta: Optional[dict] = None
@@ -82,11 +82,11 @@ class BaseVectorDriver(ABC):
         ...
 
     @abstractmethod
-    def load_vector(self, vector_id: str, namespace: Optional[str] = None) -> VectorEntry:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Entry:
         ...
 
     @abstractmethod
-    def load_vectors(self, namespace: Optional[str] = None) -> list[VectorEntry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[Entry]:
         ...
 
     @abstractmethod

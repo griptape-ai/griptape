@@ -55,7 +55,7 @@ class TextToolMemory(BaseToolMemory):
     def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
         return [
             BaseArtifact.from_json(e.meta["artifact"])
-            for e in self.query_engine.vector_driver.load_vectors(namespace)
+            for e in self.query_engine.vector_driver.load_entries(namespace)
         ]
 
     @activity(config={
@@ -82,7 +82,7 @@ class TextToolMemory(BaseToolMemory):
         return ListArtifact.from_list(
             [
                 BaseArtifact.from_json(e.meta["artifact"])
-                for e in self.query_engine.vector_driver.load_vectors(namespace)
+                for e in self.query_engine.vector_driver.load_entries(namespace)
             ]
         )
 
