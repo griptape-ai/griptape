@@ -7,7 +7,7 @@ from griptape.core import ActivityMixin
 
 @define
 class BaseToolMemory(ActivityMixin, ABC):
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    id: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     def process_input(self, tool_activity: callable, value: Optional[dict]) -> Optional[dict]:
         return self.load_artifacts(value)
@@ -22,7 +22,7 @@ class BaseToolMemory(ActivityMixin, ABC):
             sources = value.get("artifacts", {}).get("sources", [])
 
             for source in sources:
-                if source["memory_name"] == self.name:
+                if source["memory_id"] == self.id:
                     namespaces.extend(source["artifact_namespaces"])
 
         if len(namespaces) > 0:

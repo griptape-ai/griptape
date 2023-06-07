@@ -28,7 +28,7 @@ class BlobToolMemory(BaseToolMemory):
 
         if namespace:
             output = J2("memory/tool/blob.j2").render(
-                memory_name=self.name,
+                memory_id=self.id,
                 tool_name=tool_activity.__self__.name,
                 activity_name=tool_activity.name,
                 artifact_namespace=namespace
@@ -36,7 +36,7 @@ class BlobToolMemory(BaseToolMemory):
 
             return InfoArtifact(output)
         else:
-            logging.warning(f"Artifact {artifact.id} of type {artifact.type} can't be processed by memory {self.name}")
+            logging.warning(f"Artifact {artifact.id} of type {artifact.type} can't be processed by memory {self.id}")
 
             return artifact
 
