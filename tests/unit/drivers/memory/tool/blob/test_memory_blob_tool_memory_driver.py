@@ -10,22 +10,22 @@ class TestMemoryBlobToolMemoryDriver:
 
     def test_save(self, driver):
         artifact = BlobArtifact(b"foo", name="foo")
-        key = driver.save(artifact)
+        driver.save("test", artifact)
 
-        assert driver.load(key) == artifact
+        assert driver.load("test") == [artifact]
 
     def test_load(self, driver):
         artifact = BlobArtifact(b"foo", name="foo")
-        key = driver.save(artifact)
+        driver.save("test", artifact)
 
-        assert driver.load(key) == artifact
-        assert driver.load("empty") is None
+        assert driver.load("test") == [artifact]
+        assert driver.load("empty") == []
 
     def test_delete(self, driver):
         artifact = BlobArtifact(b"foo", name="foo")
-        key = driver.save(artifact)
+        driver.save("test", artifact)
 
-        driver.delete(key)
+        driver.delete('test')
 
-        assert driver.load(key) is None
-        assert driver.delete(key) is None
+        assert driver.load("test") == []
+        assert driver.delete("test") is None

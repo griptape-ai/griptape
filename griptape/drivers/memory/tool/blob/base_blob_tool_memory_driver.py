@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 from attr import define
 from griptape.artifacts import BlobArtifact
 
@@ -7,13 +6,13 @@ from griptape.artifacts import BlobArtifact
 @define
 class BaseBlobToolMemoryDriver(ABC):
     @abstractmethod
-    def save(self, blob: BlobArtifact) -> str:
+    def save(self, namespace: str, blob: BlobArtifact) -> None:
         ...
 
     @abstractmethod
-    def load(self, key: str) -> Optional[BlobArtifact]:
+    def load(self, namespace: str) -> list[BlobArtifact]:
         ...
 
     @abstractmethod
-    def delete(self, key: str) -> None:
+    def delete(self, namespace: str) -> None:
         ...
