@@ -1,3 +1,4 @@
+import logging
 from typing import Union, Optional
 from attr import define, field, Factory
 from schema import Schema, Literal
@@ -19,19 +20,23 @@ class TextToolMemory(BaseToolMemory):
     )
     top_n: int = field(default=5, kw_only=True)
 
-    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> Union[InfoArtifact, ErrorArtifact]:
+    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
         from griptape.utils import J2
 
-        namespace = artifact.id if artifact else None
-
         if isinstance(artifact, TextArtifact):
+            namespace = artifact.id
+
             self.query_engine.vector_driver.upsert_text_artifact(artifact, namespace=namespace)
         elif isinstance(artifact, ListArtifact):
+            namespace = artifact.id
+
             [
                 self.query_engine.vector_driver.upsert_text_artifact(
                     a, namespace=namespace
                 ) for a in artifact.value if isinstance(a, TextArtifact)
             ]
+        else:
+            namespace = None
 
         if namespace:
             output = J2("memory/tool/text.j2").render(
@@ -43,6 +48,8 @@ class TextToolMemory(BaseToolMemory):
 
             return InfoArtifact(output)
         else:
+            logging.warning(f"Artifact {artifact.id} of type {artifact.type} can't be processed by memory {self.name}")
+
             return artifact
 
     def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
