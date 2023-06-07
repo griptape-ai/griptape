@@ -180,7 +180,11 @@ class ActionSubtask(PromptTask):
 
                 # Load optional input value; don't throw exceptions if key is not present
                 if self.action_input is None and "input" in action_object:
-                    self.action_input = action_object["input"]
+                    # The schema library has a bug, where something like `Or(str, None)` doesn't get
+                    # correctly translated into JSON schema. For some optional input fields LLMs sometimes
+                    # still provide null value, which trips up the validator. The temporary solution that
+                    # works is to strip all key-values where value is null.
+                    self.action_input = self.remove_null_values_in_dict_recursively(action_object["input"])
 
                 # Load the action itself
                 if self.action_type == "tool":
@@ -227,3 +231,9 @@ class ActionSubtask(PromptTask):
 
             self.action_name = "error"
             self.action_input = {"error": f"Activity input JSON validation error: {e}"}
+
+    def remove_null_values_in_dict_recursively(self, d):
+        if isinstance(d, dict):
+            return {k: self.remove_null_values_in_dict_recursively(v) for k, v in d.items() if v is not None}
+        else:
+            return d
