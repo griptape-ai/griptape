@@ -132,8 +132,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_memory(self, query_engine):
-        m1 = TextToolMemory(name="Memory1", query_engine=query_engine)
-        m2 = TextToolMemory(name="Memory2", query_engine=query_engine)
+        m1 = TextToolMemory(id="Memory1", query_engine=query_engine)
+        m2 = TextToolMemory(id="Memory2", query_engine=query_engine)
 
         tool = MockTool(
             name="Tool1",
@@ -154,8 +154,8 @@ class TestToolkitSubtask:
             memory={
                 "test": {
                     "input": [
-                        TextToolMemory(name="Memory1", query_engine=query_engine),
-                        TextToolMemory(name="Memory2", query_engine=query_engine)
+                        TextToolMemory(id="Memory1", query_engine=query_engine),
+                        TextToolMemory(id="Memory2", query_engine=query_engine)
                     ]
                 }
             }
@@ -166,8 +166,8 @@ class TestToolkitSubtask:
             memory={
                 "test": {
                     "output": [
-                        TextToolMemory(name="Memory2", query_engine=query_engine),
-                        TextToolMemory(name="Memory3", query_engine=query_engine)
+                        TextToolMemory(id="Memory2", query_engine=query_engine),
+                        TextToolMemory(id="Memory3", query_engine=query_engine)
                     ]
                 }
             }
@@ -178,6 +178,6 @@ class TestToolkitSubtask:
         Pipeline().add_task(task)
 
         assert len(task.memory) == 3
-        assert task.memory[0].name == "Memory1"
-        assert task.memory[1].name == "Memory2"
-        assert task.memory[2].name == "Memory3"
+        assert task.memory[0].id == "Memory1"
+        assert task.memory[1].id == "Memory2"
+        assert task.memory[2].id == "Memory3"

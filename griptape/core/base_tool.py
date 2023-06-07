@@ -39,14 +39,14 @@ class BaseTool(ActivityMixin, ABC):
             if not self.find_activity(activity_name):
                 raise ValueError(f"activity {activity_name} doesn't exist")
 
-            input_memory_names = [memory.name for memory in memory_dict.get("input", [])]
+            input_memory_ids = [memory.id for memory in memory_dict.get("input", [])]
 
-            if len(input_memory_names) > len(set(input_memory_names)):
+            if len(input_memory_ids) > len(set(input_memory_ids)):
                 raise ValueError(f"memory names have to be unique in activity '{activity_name}' input")
 
-            output_memory_names = [memory.name for memory in memory_dict.get("output", [])]
+            output_memory_ids = [memory.id for memory in memory_dict.get("output", [])]
 
-            if len(output_memory_names) > len(set(output_memory_names)):
+            if len(output_memory_ids) > len(set(output_memory_ids)):
                 raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
 
     @property

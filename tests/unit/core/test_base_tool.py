@@ -69,15 +69,15 @@ class TestBaseTool:
                 "test": {
                     "input": [
                         TextToolMemory(
-                            name="Memory1", query_engine=query_engine
+                            id="Memory1", query_engine=query_engine
                         ),
                         TextToolMemory(
-                            name="Memory2", query_engine=query_engine
+                            id="Memory2", query_engine=query_engine
                         )
                     ],
                     "output": [
                         TextToolMemory(
-                            name="Memory1", query_engine=query_engine
+                            id="Memory1", query_engine=query_engine
                         )
                     ]
                 }
@@ -100,15 +100,15 @@ class TestBaseTool:
                     "test": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", query_engine=query_engine
+                                id="Memory1", query_engine=query_engine
                             ),
                             TextToolMemory(
-                                name="Memory1", query_engine=query_engine
+                                id="Memory1", query_engine=query_engine
                             )
                         ],
                         "output": [
                             TextToolMemory(
-                                name="Memory1", query_engine=query_engine
+                                id="Memory1", query_engine=query_engine
                             )
                         ]
                     }
@@ -121,7 +121,7 @@ class TestBaseTool:
                     "fake_activity": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", query_engine=query_engine
+                                id="Memory1", query_engine=query_engine
                             )
                         ]
                     }
@@ -133,14 +133,14 @@ class TestBaseTool:
                     "test": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", query_engine=query_engine
+                                id="Memory1", query_engine=query_engine
                             )
                         ]
                     },
                     "test_str_output": {
                         "input": [
                             TextToolMemory(
-                                name="Memory1", query_engine=query_engine
+                                id="Memory1", query_engine=query_engine
                             )
                         ]
                     }

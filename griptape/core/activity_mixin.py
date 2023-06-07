@@ -12,8 +12,8 @@ class ActivityMixin:
             "sources": [
                 {
                     Literal(
-                        "memory_name",
-                        description="Name of the memory that should be used to load artifacts into the tool"
+                        "memory_id",
+                        description="ID of the memory that should be used to load artifacts into the tool"
                     ): str,
                     Literal(
                         "artifact_namespaces",

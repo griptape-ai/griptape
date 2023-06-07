@@ -17,12 +17,12 @@ class TestTextToolMemory:
         )
 
         return TextToolMemory(
-            name="MyMemory",
+            id="MyMemory",
             query_engine=query_engine
         )
 
     def test_init(self, memory):
-        assert memory.name == "MyMemory"
+        assert memory.id == "MyMemory"
 
     def test_allowlist(self):
         assert len(TextToolMemory().activities()) == 1
