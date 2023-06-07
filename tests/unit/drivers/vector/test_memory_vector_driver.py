@@ -33,19 +33,19 @@ class TestMemoryVectorDriver:
         assert driver.query("foobar")[0].vector == [0, 1]
         assert BaseArtifact.from_json(driver.query("foobar")[0].meta["artifact"]).value == "foobar"
 
-    def test_load_vector(self, driver):
+    def test_load_entry(self, driver):
         vector_id = driver.upsert_text_artifact(
             TextArtifact("foobar"),
             namespace="test-namespace"
         )
 
-        assert driver.load_vector(vector_id, namespace="test-namespace").id == vector_id
+        assert driver.load_entry(vector_id, namespace="test-namespace").id == vector_id
 
-    def test_load_vectors(self, driver):
+    def test_load_entries(self, driver):
         driver.upsert_text_artifact(TextArtifact("foobar 1"), namespace="test-namespace-1")
         driver.upsert_text_artifact(TextArtifact("foobar 2"), namespace="test-namespace-1")
         driver.upsert_text_artifact(TextArtifact("foobar 3"), namespace="test-namespace-2")
 
-        assert len(driver.load_vectors()) == 3
-        assert len(driver.load_vectors("test-namespace-1")) == 2
-        assert len(driver.load_vectors("test-namespace-2")) == 1
+        assert len(driver.load_entries()) == 3
+        assert len(driver.load_entries("test-namespace-1")) == 2
+        assert len(driver.load_entries("test-namespace-2")) == 1
