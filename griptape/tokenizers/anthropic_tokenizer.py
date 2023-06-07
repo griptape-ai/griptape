@@ -24,7 +24,7 @@ class AnthropicTokenizer(BaseTokenizer):
         return len(self.encode(text))
 
     def encode(self, text: str) -> list[int]:
-        return anthropic.get_tokenizer().encode(text)
+        return anthropic.get_tokenizer().encode(text).ids
 
     def decode(self, tokens: list[int]) -> str:
         return anthropic.get_tokenizer().decode(tokens)
