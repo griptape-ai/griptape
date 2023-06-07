@@ -19,3 +19,24 @@ class TestActionSubtask:
         assert json_dict["name"] == "test"
         assert json_dict["activity"] == "test action"
         assert json_dict["input"] == "test input"
+
+    def test___remove_null_values_in_dict_recursively(self):
+        dict_with_nones = {
+            "foo": None,
+            "bar": {
+                "baz": {
+                    "foo": [1, 2, 3],
+                    "bar": None
+                }
+            }
+        }
+
+        dict_without_nones = {
+            "bar": {
+                "baz": {
+                    "foo": [1, 2, 3]
+                }
+            }
+        }
+
+        assert ActionSubtask().remove_null_values_in_dict_recursively(dict_with_nones) == dict_without_nones
