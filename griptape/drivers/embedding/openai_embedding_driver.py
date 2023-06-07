@@ -1,3 +1,4 @@
+import os
 from typing import Optional, Union
 import numpy as np
 import openai
@@ -5,19 +6,18 @@ from attr import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import TiktokenTokenizer
 
-
 @define
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "text-embedding-ada-002"
     DEFAULT_DIMENSIONS = 1536
 
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
     dimensions: int = field(default=DEFAULT_DIMENSIONS, kw_only=True)
-    api_type: str = field(default=openai.api_type, kw_only=True)
-    api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
-    api_base: str = field(default=openai.api_base, kw_only=True)
-    api_key: Optional[str] = field(default=openai.api_key, kw_only=True)
-    organization: Optional[str] = field(default=openai.organization, kw_only=True)
+    api_type: str = field(default=os.getenv("API_TYPE", openai.api_type), kw_only=True)  
+    api_version: Optional[str] = field(default=os.getenv("API_VERSION_EMBEDDING", openai.api_version), kw_only=True)  
+    api_base: str = field(default=os.getenv("API_BASE", openai.api_base), kw_only=True)  
+    api_key: Optional[str] = field(default=os.getenv("OPENAI_API_KEY", openai.api_key), kw_only=True)  
+    organization: Optional[str] = field(default=openai.organization, kw_only=True)  
+    model: str = field(default=os.getenv("ENGINE_EMBEDDING", TiktokenTokenizer.DEFAULT_MODEL), kw_only=True)  
     tokenizer: TiktokenTokenizer = field(
         default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
         kw_only=True
@@ -44,7 +44,8 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     def embed_chunk(self, chunk: Union[list[int], str]) -> list[float]:
         return openai.Embedding.create(
             input=chunk,
-            model=self.model
+            model=self.model,
+            engine=self.model
         )["data"][0]["embedding"]
 
     def embed_long_string(self, string: str) -> list[float]:
