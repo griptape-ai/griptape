@@ -1,3 +1,4 @@
+from concurrent import futures
 from typing import Optional
 from attr import field, define, Factory
 from griptape.artifacts import TextArtifact
@@ -33,6 +34,14 @@ class TextLoader(BaseLoader):
 
     def load(self, text: str) -> list[TextArtifact]:
         return self.text_to_artifacts(text)
+
+    def load_collection(self, texts: dict[str, str]) -> dict[str, list[TextArtifact]]:
+        with futures.ThreadPoolExecutor() as executor:
+            future_dict = {key: executor.submit(self.text_to_artifacts, text) for key, text in texts.items()}
+
+            futures.wait(future_dict.values(), timeout=None, return_when=futures.ALL_COMPLETED)
+
+            return {key: future.result() for key, future in future_dict.items()}
 
     def text_to_artifacts(self, text: str) -> list[TextArtifact]:
         artifacts = []

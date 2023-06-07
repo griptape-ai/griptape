@@ -6,3 +6,7 @@ class BaseLoader(ABC):
     @abstractmethod
     def load(self, *args, **kwargs) -> list[BaseArtifact]:
         ...
+
+    @abstractmethod
+    def load_collection(self, *args, **kwargs) -> dict[str, list[BaseArtifact]]:
+        ...

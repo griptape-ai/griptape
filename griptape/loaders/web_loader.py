@@ -14,6 +14,12 @@ class WebLoader(TextLoader):
 
         return self.text_to_artifacts(page.get("text"))
 
+    def load_collection(self, urls: list[str], include_links: bool = True) -> dict[str, list[TextArtifact]]:
+        return super().load_collection({
+            url: self._load_page(url, include_links).get("text")
+            for url in urls
+        })
+
     def _load_page(self, url: str, include_links: bool = True) -> dict:
         config = trafilatura.settings.use_config()
         page = trafilatura.fetch_url(url)

@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Union, IO, Optional
 from PyPDF2 import PdfReader
 from attr import define, field, Factory
+from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import PdfChunker
 from griptape.loaders import TextLoader
@@ -21,7 +22,19 @@ class PdfLoader(TextLoader):
     )
 
     def load(self, stream: Union[str, IO, Path], password: Optional[str] = None) -> list[TextArtifact]:
-        reader = PdfReader(stream, password=password)
-        text = "".join([p.extract_text() for p in reader.pages])
+        return self.text_to_artifacts(self._load_pdf(stream, password))
 
-        return self.text_to_artifacts(text)
+    def load_collection(
+            self,
+            streams: list[Union[str, IO, Path]],
+            password: Optional[str] = None
+    ) -> dict[str, list[TextArtifact]]:
+        return super().load_collection({
+            utils.str_to_hash(s.decode()) if isinstance(s, bytes) else s: self._load_pdf(s, password)
+            for s in streams
+        })
+
+    def _load_pdf(self, stream: Union[str, IO, Path], password: Optional[str]):
+        reader = PdfReader(stream, password=password)
+
+        return "".join([p.extract_text() for p in reader.pages])
