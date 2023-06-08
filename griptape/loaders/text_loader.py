@@ -1,7 +1,7 @@
 from concurrent import futures
-from concurrent.futures import Future
 from typing import Optional
 from attr import field, define, Factory
+from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import TextChunker
 from griptape.drivers import BaseEmbeddingDriver
@@ -42,7 +42,7 @@ class TextLoader(BaseLoader):
 
     def load_collection(self, texts: dict[str, str]) -> dict[str, list[TextArtifact]]:
         with self.executor as executor:
-            return self._execute_futures_dict({
+            return utils.execute_futures_dict({
                 key: executor.submit(self.text_to_artifacts, text) for key, text in texts.items()
             })
 
@@ -62,8 +62,3 @@ class TextLoader(BaseLoader):
             artifacts.append(chunk)
 
         return artifacts
-
-    def _execute_futures_dict(self, fs_dict: dict[str, Future[list[TextArtifact]]]) -> dict[str, list[TextArtifact]]:
-        futures.wait(fs_dict.values(), timeout=None, return_when=futures.ALL_COMPLETED)
-
-        return {key: future.result() for key, future in fs_dict.items()}

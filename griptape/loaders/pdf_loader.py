@@ -30,7 +30,7 @@ class PdfLoader(TextLoader):
             password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
         with self.executor as executor:
-            return self._execute_futures_dict({
+            return utils.execute_futures_dict({
                 utils.str_to_hash(s.decode()) if isinstance(s, bytes) else s:
                     executor.submit(self._load_pdf, s, password)
                 for s in streams
