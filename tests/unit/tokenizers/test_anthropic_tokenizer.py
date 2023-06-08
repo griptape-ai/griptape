@@ -17,4 +17,4 @@ class TestAnthropicTokenizer:
         assert tokenizer.token_count("foo bar huzzah") == 5
 
     def test_tokens_left(self, tokenizer):
-        assert tokenizer.tokens_left("foo bar huzzah") == 7995
+        assert tokenizer.tokens_left("foo bar huzzah") == 99995
