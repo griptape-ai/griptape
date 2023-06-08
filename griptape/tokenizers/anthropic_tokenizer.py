@@ -20,9 +20,6 @@ class AnthropicTokenizer(BaseTokenizer):
                 return token_limit
         return self.DEFAULT_MAX_TOKENS
 
-    def token_count(self, text: str) -> int:
-        return len(self.encode(text))
-
     def encode(self, text: str) -> list[int]:
         return anthropic.get_tokenizer().encode(text).ids
 
