@@ -11,7 +11,7 @@ class TestMemoryVectorDriver:
             embedding_driver=MockEmbeddingDriver(),
         )
 
-    def test_insert(self, driver):
+    def test_upsert(self, driver):
         namespace = driver.upsert_text_artifact(TextArtifact("foobar"))
 
         assert len(driver.entries) == 1
@@ -20,6 +20,19 @@ class TestMemoryVectorDriver:
         driver.upsert_text_artifact(TextArtifact("foobar"))
 
         assert len(driver.entries) == 2
+
+    def test_upsert_multiple(self, driver):
+        driver.upsert_text_artifacts({
+            "foo": [TextArtifact("foo")],
+            "bar": [TextArtifact("bar")]
+        })
+
+        foo_entries = driver.load_entries("foo")
+        bar_entries = driver.load_entries("bar")
+
+        assert len(driver.entries) == 2
+        assert BaseArtifact.from_json(foo_entries[0].meta["artifact"]).value == "foo"
+        assert BaseArtifact.from_json(bar_entries[0].meta["artifact"]).value == "bar"
 
     def test_query(self, driver):
         driver.upsert_text_artifact(

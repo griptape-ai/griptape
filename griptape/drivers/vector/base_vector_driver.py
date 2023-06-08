@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
+from concurrent import futures
 from dataclasses import dataclass
 from typing import Optional
 from attr import define, field, Factory
+
+from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
 
@@ -28,6 +31,23 @@ class BaseVectorDriver(ABC):
         default=Factory(lambda: OpenAiEmbeddingDriver()),
         kw_only=True
     )
+    futures_executor: futures.Executor = field(
+        default=Factory(lambda: futures.ThreadPoolExecutor()),
+        kw_only=True
+    )
+
+    def upsert_text_artifacts(
+            self,
+            artifacts: dict[str, list[TextArtifact]],
+            meta: Optional[dict] = None,
+            **kwargs
+    ) -> None:
+        with self.futures_executor as executor:
+            utils.execute_futures_dict({
+                key:
+                    executor.submit(self.upsert_text_artifact, a, key, meta, **kwargs)
+                for key, artifact_list in artifacts.items() for a in artifact_list
+            })
 
     def upsert_text_artifact(
             self,

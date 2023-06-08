@@ -10,7 +10,7 @@ from griptape.utils import J2
 
 @define
 class Workflow(Structure):
-    executor: futures.Executor = field(
+    futures_executor: futures.Executor = field(
         default=Factory(lambda: futures.ThreadPoolExecutor()),
         kw_only=True
     )
@@ -46,7 +46,7 @@ class Workflow(Structure):
 
             for task in ordered_tasks:
                 if task.can_execute():
-                    future = self.executor.submit(task.execute)
+                    future = self.futures_executor.submit(task.execute)
                     futures_list[future] = task
 
             # Wait for all tasks to complete
