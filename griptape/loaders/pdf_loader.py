@@ -22,19 +22,21 @@ class PdfLoader(TextLoader):
     )
 
     def load(self, stream: Union[str, IO, Path], password: Optional[str] = None) -> list[TextArtifact]:
-        return self.text_to_artifacts(self._load_pdf(stream, password))
+        return self._load_pdf(stream, password)
 
     def load_collection(
             self,
             streams: list[Union[str, IO, Path]],
             password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
-        return super().load_collection({
-            utils.str_to_hash(s.decode()) if isinstance(s, bytes) else s: self._load_pdf(s, password)
-            for s in streams
-        })
+        with self.executor as executor:
+            return self._execute_futures_dict({
+                utils.str_to_hash(s.decode()) if isinstance(s, bytes) else s:
+                    executor.submit(self._load_pdf, s, password)
+                for s in streams
+            })
 
-    def _load_pdf(self, stream: Union[str, IO, Path], password: Optional[str]):
+    def _load_pdf(self, stream: Union[str, IO, Path], password: Optional[str]) -> list[TextArtifact]:
         reader = PdfReader(stream, password=password)
 
-        return "".join([p.extract_text() for p in reader.pages])
+        return self.text_to_artifacts("".join([p.extract_text() for p in reader.pages]))
