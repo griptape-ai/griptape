@@ -32,6 +32,7 @@ __all__ = [
 
     "BaseConversationMemoryDriver",
     "DiskConversationMemoryDriver",
+    "DynamoDbConversationMemoryDriver",
 
     "BaseBlobToolMemoryDriver",
     "MemoryBlobToolMemoryDriver",
