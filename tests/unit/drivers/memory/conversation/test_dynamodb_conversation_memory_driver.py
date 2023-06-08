@@ -1,12 +1,12 @@
 import os
 import pytest
+from moto import mock_dynamodb
+from boto3 import resource, client
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 from griptape.drivers import DynamoDbConversationMemoryDriver
-from moto import mock_dynamodb
-from boto3 import resource, client
 
 
 class TestDynamoDbConversationMemoryDriver:
