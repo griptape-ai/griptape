@@ -1,4 +1,5 @@
 from concurrent import futures
+from concurrent.futures import Future
 from typing import Optional
 from attr import field, define, Factory
 from griptape.artifacts import TextArtifact
@@ -31,17 +32,19 @@ class TextLoader(BaseLoader):
         kw_only=True
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
+    executor: futures.Executor = field(
+        default=Factory(lambda: futures.ThreadPoolExecutor()),
+        kw_only=True
+    )
 
     def load(self, text: str) -> list[TextArtifact]:
         return self.text_to_artifacts(text)
 
     def load_collection(self, texts: dict[str, str]) -> dict[str, list[TextArtifact]]:
-        with futures.ThreadPoolExecutor() as executor:
-            future_dict = {key: executor.submit(self.text_to_artifacts, text) for key, text in texts.items()}
-
-            futures.wait(future_dict.values(), timeout=None, return_when=futures.ALL_COMPLETED)
-
-            return {key: future.result() for key, future in future_dict.items()}
+        with self.executor as executor:
+            return self._execute_futures_dict({
+                key: executor.submit(self.text_to_artifacts, text) for key, text in texts.items()
+            })
 
     def text_to_artifacts(self, text: str) -> list[TextArtifact]:
         artifacts = []
@@ -59,3 +62,8 @@ class TextLoader(BaseLoader):
             artifacts.append(chunk)
 
         return artifacts
+
+    def _execute_futures_dict(self, fs_dict: dict[str, Future[list[TextArtifact]]]) -> dict[str, list[TextArtifact]]:
+        futures.wait(fs_dict.values(), timeout=None, return_when=futures.ALL_COMPLETED)
+
+        return {key: future.result() for key, future in fs_dict.items()}

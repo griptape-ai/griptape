@@ -1,6 +1,8 @@
 import json
 import logging
 from attr import define
+
+from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.loaders import TextLoader
 import trafilatura
@@ -10,17 +12,17 @@ from trafilatura.settings import use_config
 @define
 class WebLoader(TextLoader):
     def load(self, url: str, include_links: bool = True) -> list[TextArtifact]:
-        page = self._load_page(url, include_links)
-
-        return self.text_to_artifacts(page.get("text"))
+        return self._load_page(url, include_links)
 
     def load_collection(self, urls: list[str], include_links: bool = True) -> dict[str, list[TextArtifact]]:
-        return super().load_collection({
-            url: self._load_page(url, include_links).get("text")
-            for url in urls
-        })
+        with self.executor as executor:
+            return self._execute_futures_dict({
+                utils.str_to_hash(u.decode()) if isinstance(u, bytes) else u:
+                    executor.submit(self._load_page, u, include_links)
+                for u in urls
+            })
 
-    def _load_page(self, url: str, include_links: bool = True) -> dict:
+    def _load_page(self, url: str, include_links: bool = True) -> list[TextArtifact]:
         config = trafilatura.settings.use_config()
         page = trafilatura.fetch_url(url)
 
@@ -35,7 +37,7 @@ class WebLoader(TextLoader):
         if page is None:
             raise Exception("can't access URL")
         else:
-            return json.loads(
+            result = json.loads(
                 trafilatura.extract(
                     page,
                     include_links=include_links,
@@ -43,3 +45,5 @@ class WebLoader(TextLoader):
                     config=config
                 )
             )
+
+            return self.text_to_artifacts(result.get("text"))
