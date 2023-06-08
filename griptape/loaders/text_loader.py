@@ -32,7 +32,7 @@ class TextLoader(BaseLoader):
         kw_only=True
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
-    executor: futures.Executor = field(
+    futures_executor: futures.Executor = field(
         default=Factory(lambda: futures.ThreadPoolExecutor()),
         kw_only=True
     )
@@ -41,7 +41,7 @@ class TextLoader(BaseLoader):
         return self.text_to_artifacts(text)
 
     def load_collection(self, texts: dict[str, str]) -> dict[str, list[TextArtifact]]:
-        with self.executor as executor:
+        with self.futures_executor as executor:
             return utils.execute_futures_dict({
                 key: executor.submit(self.text_to_artifacts, text) for key, text in texts.items()
             })

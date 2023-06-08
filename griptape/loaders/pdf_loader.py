@@ -29,7 +29,7 @@ class PdfLoader(TextLoader):
             streams: list[Union[str, IO, Path]],
             password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
-        with self.executor as executor:
+        with self.futures_executor as executor:
             return utils.execute_futures_dict({
                 utils.str_to_hash(s.decode()) if isinstance(s, bytes) else s:
                     executor.submit(self._load_pdf, s, password)
