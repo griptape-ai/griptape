@@ -17,7 +17,7 @@ class TestDynamoDbConversationMemoryDriver:
     PARTITION_KEY_VALUE = "bar"
 
     @pytest.fixture(autouse=True)
-    def table_gen(self):
+    def run_before_and_after_tests(self):
         self._mock_aws_credentials()
         self.mock_dynamodb = mock_dynamodb()
         self.mock_dynamodb.start()
