@@ -41,6 +41,7 @@ pinecone-client = ">=2"
 PyPDF2 = ">=3"
 trafilatura = ">= 1.6"
 scipy = ">= 1.10"
+anthropic = "^0.2.10"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"

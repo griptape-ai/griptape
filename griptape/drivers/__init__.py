@@ -3,6 +3,7 @@ from griptape.drivers.prompt.openai_prompt_driver import OpenAiPromptDriver
 from griptape.drivers.prompt.cohere_prompt_driver import CoherePromptDriver
 from griptape.drivers.prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
 from griptape.drivers.prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
+from griptape.drivers.prompt.anthropic_prompt_driver import AnthropicPromptDriver
 
 from griptape.drivers.memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from griptape.drivers.memory.conversation.disk_conversation_memory_driver import DiskConversationMemoryDriver
@@ -23,6 +24,7 @@ __all__ = [
     "CoherePromptDriver",
     "HuggingFacePipelinePromptDriver",
     "HuggingFaceHubPromptDriver",
+    "AnthropicPromptDriver",
 
     "BaseConversationMemoryDriver",
     "DiskConversationMemoryDriver",
