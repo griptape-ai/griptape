@@ -1,4 +1,3 @@
-from concurrent import futures
 from typing import Optional
 from attr import field, define, Factory
 from griptape import utils
@@ -32,10 +31,6 @@ class TextLoader(BaseLoader):
         kw_only=True
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
-    futures_executor: futures.Executor = field(
-        default=Factory(lambda: futures.ThreadPoolExecutor()),
-        kw_only=True
-    )
 
     def load(self, text: str) -> list[TextArtifact]:
         return self.text_to_artifacts(text)
