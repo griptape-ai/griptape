@@ -9,20 +9,20 @@ class TestSqlLoader:
     @pytest.fixture
     def loader(self):
         sql_loader = SqlLoader(
-            db_driver=SqlalchemySqlDriver(
+            sql_driver=SqlalchemySqlDriver(
                 engine_url="sqlite:///:memory:"
             )
         )
 
-        sql_loader.db_driver.execute_query(
+        sql_loader.sql_driver.execute_query(
             "CREATE TABLE test_table (id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INTEGER, city TEXT);")
-        sql_loader.db_driver.execute_query(
+        sql_loader.sql_driver.execute_query(
             "INSERT INTO test_table (name, age, city) VALUES ('Alice', 25, 'New York');"
         )
-        sql_loader.db_driver.execute_query(
+        sql_loader.sql_driver.execute_query(
             "INSERT INTO test_table (name, age, city) VALUES ('Bob', 30, 'Los Angeles');"
         )
-        sql_loader.db_driver.execute_query(
+        sql_loader.sql_driver.execute_query(
             "INSERT INTO test_table (name, age, city) VALUES ('Charlie', 22, 'Chicago');"
         )
 

@@ -1,6 +1,7 @@
 from typing import Optional
+from sqlalchemy.engine import Engine
 from griptape.drivers import BaseSqlDriver
-from sqlalchemy import create_engine, text, Engine
+from sqlalchemy import create_engine, text
 from attr import define, field
 
 

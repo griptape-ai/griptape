@@ -8,7 +8,7 @@ from griptape.loaders import BaseLoader
 
 @define
 class SqlLoader(BaseLoader):
-    db_driver: BaseSqlDriver = field(kw_only=True)
+    sql_driver: BaseSqlDriver = field(kw_only=True)
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
 
     def load(self, select_query: str) -> list[TextArtifact]:
@@ -23,7 +23,7 @@ class SqlLoader(BaseLoader):
             })
 
     def _load_query(self, query: str) -> list[TextArtifact]:
-        rows = self.db_driver.execute_query(query)
+        rows = self.sql_driver.execute_query(query)
         chunks = [TextArtifact(",".join([str(cell) for cell in row.cells])) for row in rows]
         artifacts = []
 
