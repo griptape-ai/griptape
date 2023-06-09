@@ -22,3 +22,6 @@ class TestSqlalchemySqlDriver:
 
     def test_execute_query(self, driver):
         assert driver.execute_query("SELECT count(*) FROM test_table")[0].cells == [1]
+
+    def test_execute_query_raw(self, driver):
+        assert driver.execute_query_raw("SELECT * FROM test_table") == "[(1, 'Alice', 25, 'New York')]"

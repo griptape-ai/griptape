@@ -21,3 +21,12 @@ class SqlalchemySqlDriver(BaseSqlDriver):
                 return [BaseSqlDriver.RowResult(list(row)) for row in results]
             else:
                 return None
+
+    def execute_query_raw(self, query: str) -> Optional[str]:
+        with self.engine.begin() as con:
+            results = con.execute(text(query))
+
+            if results.returns_rows:
+                return str([row for row in results])
+            else:
+                return None

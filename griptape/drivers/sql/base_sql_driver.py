@@ -13,3 +13,7 @@ class BaseSqlDriver(ABC):
     @abstractmethod
     def execute_query(self, query: str) -> Optional[list[RowResult]]:
         ...
+
+    @abstractmethod
+    def execute_query_raw(self, query: str) -> Optional[str]:
+        ...
