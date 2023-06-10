@@ -1,7 +1,8 @@
 from typing import Optional
+import sqlalchemy
 from sqlalchemy.engine import Engine
 from griptape.drivers import BaseSqlDriver
-from sqlalchemy import create_engine, text, MetaData
+from sqlalchemy import create_engine, text, MetaData, Table
 from attr import define, field
 
 
@@ -31,12 +32,15 @@ class SqlalchemySqlDriver(BaseSqlDriver):
             else:
                 return None
 
-    def get_schema(self, table: str) -> Optional[str]:
-        meta_data = MetaData(bind=self.engine)
-
-        meta_data.reflect()
-
-        if meta_data.tables.get(table) is None:
+    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
+        try:
+            table = Table(
+                table,
+                MetaData(bind=self.engine),
+                schema=schema,
+                autoload=True,
+                autoload_with=self.engine
+            )
+            return str([(c.name, c.type) for c in table.columns])
+        except sqlalchemy.exc.NoSuchTableError:
             return None
-        else:
-            return str([(c.name, c.type) for c in meta_data.tables[table].columns])
