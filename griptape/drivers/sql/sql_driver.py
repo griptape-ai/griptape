@@ -7,7 +7,7 @@ from attr import define, field
 
 
 @define
-class SqlalchemySqlDriver(BaseSqlDriver):
+class SqlDriver(BaseSqlDriver):
     engine_url: str = field(kw_only=True)
     engine: Engine = field(init=False)
 
@@ -15,20 +15,19 @@ class SqlalchemySqlDriver(BaseSqlDriver):
         self.engine = create_engine(self.engine_url)
 
     def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
+        results = self.execute_query_raw(query)
+
+        if results:
+            return [BaseSqlDriver.RowResult(list(row)) for row in results]
+        else:
+            return None
+
+    def execute_query_raw(self, query: str) -> Optional[list[str]]:
         with self.engine.begin() as con:
             results = con.execute(text(query))
 
             if results.returns_rows:
-                return [BaseSqlDriver.RowResult(list(row)) for row in results]
-            else:
-                return None
-
-    def execute_query_raw(self, query: str) -> Optional[str]:
-        with self.engine.begin() as con:
-            results = con.execute(text(query))
-
-            if results.returns_rows:
-                return str([row for row in results])
+                return [row for row in results]
             else:
                 return None
 

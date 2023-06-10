@@ -1,5 +1,5 @@
 import pytest
-from griptape.drivers import SqlalchemySqlDriver
+from griptape.drivers import SqlDriver
 from griptape.loaders import SqlLoader
 
 MAX_TOKENS = 50
@@ -9,7 +9,7 @@ class TestSqlLoader:
     @pytest.fixture
     def loader(self):
         sql_loader = SqlLoader(
-            sql_driver=SqlalchemySqlDriver(
+            sql_driver=SqlDriver(
                 engine_url="sqlite:///:memory:"
             )
         )

@@ -19,7 +19,8 @@ from .vector.memory_vector_driver import MemoryVectorDriver
 from .vector.pinecone_vector_driver import PineconeVectorDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
-from .sql.sqlalchemy_sql_driver import SqlalchemySqlDriver
+from .sql.sql_driver import SqlDriver
+
 
 __all__ = [
     "BasePromptDriver",
@@ -43,5 +44,5 @@ __all__ = [
     "PineconeVectorDriver",
 
     "BaseSqlDriver",
-    "SqlalchemySqlDriver"
+    "SqlDriver"
 ]
