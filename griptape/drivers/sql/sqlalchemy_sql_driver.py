@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlalchemy.engine import Engine
 from griptape.drivers import BaseSqlDriver
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, MetaData
 from attr import define, field
 
 
@@ -30,3 +30,13 @@ class SqlalchemySqlDriver(BaseSqlDriver):
                 return str([row for row in results])
             else:
                 return None
+
+    def get_schema(self, table: str) -> Optional[str]:
+        meta_data = MetaData(bind=self.engine)
+
+        meta_data.reflect()
+
+        if meta_data.tables.get(table) is None:
+            return None
+        else:
+            return str([(c.name, c.type) for c in meta_data.tables[table].columns])

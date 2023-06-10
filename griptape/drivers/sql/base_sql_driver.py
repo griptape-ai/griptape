@@ -17,3 +17,7 @@ class BaseSqlDriver(ABC):
     @abstractmethod
     def execute_query_raw(self, query: str) -> Optional[str]:
         ...
+
+    @abstractmethod
+    def get_schema(self, table: str) -> Optional[str]:
+        ...

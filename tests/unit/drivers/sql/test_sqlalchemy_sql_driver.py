@@ -25,3 +25,6 @@ class TestSqlalchemySqlDriver:
 
     def test_execute_query_raw(self, driver):
         assert driver.execute_query_raw("SELECT * FROM test_table") == "[(1, 'Alice', 25, 'New York')]"
+
+    def test_get_schema(self, driver):
+        assert driver.get_schema("test_table") == "[('id', INTEGER()), ('name', TEXT()), ('age', INTEGER()), ('city', TEXT())]"
