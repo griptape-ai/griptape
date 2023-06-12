@@ -6,11 +6,11 @@ from griptape.memory.structure import ConversationMemory
 
 @define
 class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
-    aws_region: str = field(default=None, kw_only=True)
-    table_name: str = field(default=None, kw_only=True)
-    partition_key: str = field(default=None, kw_only=True)
-    value_attribute_key: str = field(default=None, kw_only=True)
-    partition_key_value: str = field(default=None, kw_only=True)
+    aws_region: str = field(default="us-east-1", kw_only=True)
+    table_name: str = field(kw_only=True)
+    partition_key: str = field(kw_only=True)
+    value_attribute_key: str = field(kw_only=True)
+    partition_key_value: str = field(kw_only=True)
 
     table: any = field(init=False)
 
