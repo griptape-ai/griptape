@@ -49,4 +49,5 @@ class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
             memory.driver = self
 
             return memory
-        return None
+        else:
+            return None
