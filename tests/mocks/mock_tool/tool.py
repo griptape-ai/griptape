@@ -17,47 +17,40 @@ class MockTool(BaseTool):
                 Literal("test"): str
             },
             description="Test input"
-        ),
-        "foo": "bar"
+        )
     })
     def test(self, value: dict) -> BaseArtifact:
         return TextArtifact(f"ack {value['test']}")
 
     @activity(config={
-        "name": "test_error",
         "description": "test description: {{ foo }}",
         "schema": Schema({
                 Literal("test"): str
             },
             description="Test input"
-        ),
-        "foo": "bar"
+        )
     })
     def test_error(self, value: dict) -> BaseArtifact:
         return ErrorArtifact(f"error {value['test']}")
 
     @activity(config={
-        "name": "test_str_output",
         "description": "test description: {{ foo }}",
         "schema": Schema({
                 Literal("test"): str
             },
             description="Test input"
-        ),
-        "foo": "bar"
+        )
     })
     def test_str_output(self, value: dict) -> str:
         return f"ack {value['test']}"
 
     @activity(config={
-        "name": "test_no_schema",
         "description": "test description"
     })
     def test_no_schema(self) -> str:
         return f"no schema"
 
     @activity(config={
-        "name": "test_with_required_memory",
         "description": "test description",
         "schema": Schema({
                 Literal("test"): str

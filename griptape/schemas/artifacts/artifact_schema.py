@@ -8,6 +8,7 @@ class ArtifactSchema(BaseSchema):
         ordered = True
 
     id = fields.Str()
+    meta = fields.Dict(keys=fields.Str())
     type = fields.Str()
 
     @abstractmethod

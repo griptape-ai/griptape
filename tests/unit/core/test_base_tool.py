@@ -54,9 +54,6 @@ class TestBaseTool:
         except SchemaMissingKeyError as e:
             assert True
 
-    def test_custom_config(self, tool):
-        assert tool.test.config["foo"] == "bar"
-
     def test_memory(self):
         query_engine = VectorQueryEngine(
             vector_driver=MemoryVectorDriver(

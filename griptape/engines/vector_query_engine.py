@@ -25,11 +25,13 @@ class VectorQueryEngine(BaseQueryEngine):
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_driver.query(query, top_n, namespace)
-        artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result]
+        artifacts = [
+            a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
+        ]
 
         prefix_list = [
             "Use the below list of text segments to answer the subsequent question.",
-            'If the answer cannot be found in the segments, write "I could not find an answer."'
+            'If the answer cannot be found in the segments, say "I could not find an answer."'
         ]
 
         if context:
@@ -41,7 +43,7 @@ class VectorQueryEngine(BaseQueryEngine):
         question = f"\n\nQuestion: {query}"
 
         for artifact in artifacts:
-            next_segment = f'\n\nText segment:\n"""\n{artifact.value}\n"""'
+            next_segment = f'\n\nText segment:\n"""\n{artifact.value_and_meta}\n"""'
 
             if tokenizer.token_count(prefix + next_segment + question) > tokenizer.max_tokens:
                 break
