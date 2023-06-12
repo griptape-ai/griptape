@@ -15,19 +15,19 @@ class SqlDriver(BaseSqlDriver):
         self.engine = create_engine(self.engine_url)
 
     def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
-        results = self.execute_query_raw(query)
+        rows = self.execute_query_raw(query)
 
-        if results:
-            return [BaseSqlDriver.RowResult(list(row)) for row in results]
+        if rows:
+            return [BaseSqlDriver.RowResult(row) for row in rows]
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[str]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
         with self.engine.begin() as con:
             results = con.execute(text(query))
 
             if results.returns_rows:
-                return [row for row in results]
+                return [{column: value for column, value in result.items()} for result in results]
             else:
                 return None
 

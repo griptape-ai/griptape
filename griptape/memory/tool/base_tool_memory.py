@@ -2,11 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact
-from griptape.core import ActivityMixin
 
 
 @define
-class BaseToolMemory(ActivityMixin, ABC):
+class BaseToolMemory(ABC):
     id: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     def process_input(self, tool_activity: callable, value: Optional[dict]) -> Optional[dict]:
@@ -33,7 +32,7 @@ class BaseToolMemory(ActivityMixin, ABC):
 
             for namespace in namespaces:
                 [
-                    new_value["artifacts"]["values"].append(a.to_dict())
+                    new_value["artifacts"]["values"].append(a)
                     for a in self.load_namespace_artifacts(namespace)
                 ]
 

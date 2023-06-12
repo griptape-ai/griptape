@@ -8,14 +8,14 @@ from attr import define
 class BaseSqlDriver(ABC):
     @dataclass
     class RowResult:
-        cells: list[any]
+        cells: dict[str, any]
 
     @abstractmethod
     def execute_query(self, query: str) -> Optional[list[RowResult]]:
         ...
 
     @abstractmethod
-    def execute_query_raw(self, query: str) -> Optional[str]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
         ...
 
     @abstractmethod

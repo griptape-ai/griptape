@@ -36,7 +36,7 @@ class BlobToolMemory(BaseToolMemory):
 
             return InfoArtifact(output)
         else:
-            logging.warning(f"Artifact {artifact.id} of type {artifact.type} can't be processed by memory {self.id}")
+            logging.info(f"Artifact {artifact.id} of type {artifact.type} can't be processed by memory {self.id}")
 
             return artifact
 

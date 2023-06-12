@@ -26,7 +26,7 @@ def activity(config: dict):
             if hasattr(self, "artifacts"):
                 artifacts = args[0].get("artifacts", {}).get("values", []) if len(args) > 0 else []
 
-                self.artifacts = self.artifacts + [BaseArtifact.from_dict(artifact) for artifact in artifacts]
+                self.artifacts = self.artifacts + [artifact for artifact in artifacts]
 
             return func(self, *args, **kwargs)
 

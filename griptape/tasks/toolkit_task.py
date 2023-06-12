@@ -114,7 +114,6 @@ class ToolkitTask(PromptTask):
         from griptape.tasks import ToolkitTask
 
         tools = self.tools if isinstance(self, ToolkitTask) else []
-        memories = [r for r in self.memory if len(r.activities()) > 0] if isinstance(self, ToolkitTask) else []
         action_schema = utils.minify_json(
             json.dumps(
                 ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
@@ -125,8 +124,6 @@ class ToolkitTask(PromptTask):
             J2("prompts/tasks/toolkit/base.j2").render(
                 rulesets=structure.rulesets,
                 action_schema=action_schema,
-                memory_ids=str.join(", ", [memory.id for memory in memories]),
-                memories=[J2("prompts/memory/tool.j2").render(memory=memory) for memory in memories],
                 tool_names=str.join(", ", [tool.name for tool in tools]),
                 tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]
             )

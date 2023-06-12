@@ -24,10 +24,6 @@ class TestTextToolMemory:
     def test_init(self, memory):
         assert memory.id == "MyMemory"
 
-    def test_allowlist(self):
-        assert len(TextToolMemory().activities()) == 1
-        assert TextToolMemory().activities()[0].__name__ == "save"
-
     def test_process_output(self, memory):
         assert memory.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
@@ -37,10 +33,3 @@ class TestTextToolMemory:
         assert memory.process_output(MockTool().test, ListArtifact([TextArtifact("foo")])).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
-
-    def test_save_and_load_value(self, memory):
-        output = memory.save({"values": {"artifact_value": "foobar"}})
-        name = output.value.split(":")[-1].strip()
-
-        assert memory.load({"values": {"artifact_namespace": name}}).value[0].value == "foobar"
-

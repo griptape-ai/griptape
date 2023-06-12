@@ -16,13 +16,28 @@ class VectorQueryEngine(BaseQueryEngine):
         kw_only=True
     )
 
-    def query(self, query: str, top_n: Optional[int] = None, namespace: Optional[str] = None) -> TextArtifact:
+    def query(
+            self,
+            query: str,
+            context: Optional[str] = None,
+            top_n: Optional[int] = None,
+            namespace: Optional[str] = None
+    ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_driver.query(query, top_n, namespace)
         artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result]
 
-        prefix = 'Use the below list of text segments to answer the subsequent question. ' \
-                 'If the answer cannot be found in the segments, write "I could not find an answer."'
+        prefix_list = [
+            "Use the below list of text segments to answer the subsequent question.",
+            'If the answer cannot be found in the segments, write "I could not find an answer."'
+        ]
+
+        if context:
+            prefix_list.append(
+                f"Additional context for the question: {context}."
+            )
+
+        prefix = " ".join(prefix_list)
         question = f"\n\nQuestion: {query}"
 
         for artifact in artifacts:

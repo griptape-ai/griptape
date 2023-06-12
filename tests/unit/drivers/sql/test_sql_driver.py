@@ -20,10 +20,11 @@ class TestSqlDriver:
         return new_driver
 
     def test_execute_query(self, driver):
-        assert driver.execute_query("SELECT count(*) FROM test_table")[0].cells == [1]
+        assert driver.execute_query("SELECT count(*) FROM test_table")[0].cells == {"count(*)": 1}
 
     def test_execute_query_raw(self, driver):
-        assert driver.execute_query_raw("SELECT * FROM test_table") == [(1, 'Alice', 25, 'New York')]
+        assert driver.execute_query_raw("SELECT * FROM test_table") == \
+               [{"age": 25, "city": "New York", "id": 1, "name": "Alice"}]
 
     def test_get_table_schema(self, driver):
         assert driver.get_table_schema("test_table") == \

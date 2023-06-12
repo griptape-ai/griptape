@@ -24,8 +24,12 @@ class SqlLoader(BaseLoader):
 
     def _load_query(self, query: str) -> list[TextArtifact]:
         rows = self.sql_driver.execute_query(query)
-        chunks = [TextArtifact(",".join([str(cell) for cell in row.cells])) for row in rows]
         artifacts = []
+
+        if rows:
+            chunks = [TextArtifact(str(row.cells)) for row in rows]
+        else:
+            chunks = []
 
         if self.embedding_driver:
             for chunk in chunks:
