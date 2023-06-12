@@ -1,13 +1,13 @@
 import functools
 import schema
 from schema import Schema
-from griptape.artifacts import BaseArtifact
+
 
 CONFIG_SCHEMA = Schema({
     "description": str,
     schema.Optional("schema"): Schema,
-    schema.Optional("pass_artifacts"): bool
-}, ignore_extra_keys=True)
+    schema.Optional("load_artifacts"): bool
+})
 
 
 def activity(config: dict):

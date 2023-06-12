@@ -7,20 +7,18 @@ from schema import Schema, Literal
 
 @define
 class ActivityMixin:
-    ARTIFACTS_SCHEMA = {
-        "artifacts": {
-            "sources": [
-                {
-                    Literal(
-                        "memory_id",
-                        description="ID of the memory that should be used to load artifacts into the tool"
-                    ): str,
-                    Literal(
-                        "artifact_namespaces",
-                        description="Namespaces of the artifacts to load from the memory and pass to the tool"
-                    ): []
-                }
-            ]
+    ARTIFACT_SCHEMA = {
+        "artifact": {
+            "source": {
+                Literal(
+                    "memory_id",
+                    description="Memory ID to load an artifact from"
+                ): str,
+                Literal(
+                    "artifact_namespace",
+                    description="Artifact namespace to load the artifact from and pass it to a tool"
+                ): str
+            }
         }
     }
 
@@ -82,18 +80,18 @@ class ActivityMixin:
                 "values": activity.config["schema"].schema if activity.config["schema"] else {}
             }
 
-            if self.should_pass_artifacts(activity):
-                full_schema.update(self.ARTIFACTS_SCHEMA)
+            if self.should_load_artifacts(activity):
+                full_schema.update(self.ARTIFACT_SCHEMA)
 
             return Schema(full_schema).json_schema("InputSchema")
         else:
-            if self.should_pass_artifacts(activity):
-                return Schema(self.ARTIFACTS_SCHEMA).json_schema("InputSchema")
+            if self.should_load_artifacts(activity):
+                return Schema(self.ARTIFACT_SCHEMA).json_schema("InputSchema")
             else:
                 return None
 
-    def should_pass_artifacts(self, activity: callable) -> bool:
+    def should_load_artifacts(self, activity: callable) -> bool:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
-            return activity.config.get("pass_artifacts", False)
+            return activity.config.get("load_artifacts", False)

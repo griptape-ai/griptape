@@ -31,7 +31,7 @@ class TestActivityMixin:
         activity_input = tool.activity_schema(tool.test_with_required_memory)
 
         assert activity_input["properties"]["values"]
-        assert isinstance(activity_input["properties"]["artifacts"], dict)
+        assert isinstance(activity_input["properties"]["artifact"], dict)
 
     def test_activity_with_no_schema(self, tool):
         assert tool.activity_schema(tool.test_no_schema) is None
@@ -76,6 +76,6 @@ class TestActivityMixin:
 
         assert len(tool.activities()) == 4
 
-    def test_should_pass_artifacts(self, tool):
-        assert tool.should_pass_artifacts(tool.test) is False
-        assert tool.should_pass_artifacts(tool.test_with_required_memory) is True
+    def test_should_load_artifacts(self, tool):
+        assert tool.should_load_artifacts(tool.test) is False
+        assert tool.should_load_artifacts(tool.test_with_required_memory) is True

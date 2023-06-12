@@ -15,28 +15,22 @@ class BaseToolMemory(ABC):
         return artifact
 
     def load_artifacts(self, value: Optional[dict]) -> Optional[dict]:
-        namespaces = []
-
         if value:
-            sources = value.get("artifacts", {}).get("sources", [])
+            source = value.get("artifact", {}).get("source", {})
 
-            for source in sources:
-                if source["memory_id"] == self.id:
-                    namespaces.extend(source["artifact_namespaces"])
+            if source.get("memory_id") == self.id:
+                namespace = source["artifact_namespace"]
+                new_value = value.copy()
 
-        if len(namespaces) > 0:
-            new_value = value.copy()
+                if not new_value.get("artifacts", {}).get("values"):
+                    new_value.update({"artifacts": {"values": []}})
 
-            if not new_value.get("artifacts", {}).get("values"):
-                new_value.update({"artifacts": {"values": []}})
-
-            for namespace in namespaces:
-                [
+                for a in self.load_namespace_artifacts(namespace):
                     new_value["artifacts"]["values"].append(a)
-                    for a in self.load_namespace_artifacts(namespace)
-                ]
 
-            return new_value
+                return new_value
+            else:
+                return value
         else:
             return value
 
