@@ -1,5 +1,6 @@
 from typing import Optional, Callable
-from scipy import spatial
+from numpy import dot
+from numpy.linalg import norm
 from griptape import utils
 from griptape.drivers import BaseVectorDriver, BaseEmbeddingDriver, OpenAiEmbeddingDriver
 from attr import define, field, Factory
@@ -9,7 +10,7 @@ from attr import define, field, Factory
 class MemoryVectorDriver(BaseVectorDriver):
     entries: dict[str, BaseVectorDriver.Entry] = field(factory=dict, kw_only=True)
     relatedness_fn: Callable = field(
-        default=lambda x, y: 1 - spatial.distance.cosine(x, y),
+        default=lambda x, y: dot(x, y) / (norm(x) * norm(y)),
         kw_only=True
     )
     embedding_driver: BaseEmbeddingDriver = field(
