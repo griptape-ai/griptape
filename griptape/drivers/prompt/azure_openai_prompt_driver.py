@@ -2,15 +2,22 @@ from attr import define, field, Factory
 import openai
 from griptape.artifacts import TextArtifact
 from griptape.drivers import OpenAiPromptDriver
+from griptape.tokenizers import TiktokenTokenizer
 
 @define
 class AzureOpenAiPromptDriver(OpenAiPromptDriver):
+    # The model is used for token max. It is not passed to Azure OpenAI
+    model: str = field(kw_only=True)
+
     # This is the Deployment Name. You can find it in the Azure Portal.
     # Azure AI Studio -> Deployments -> Deployment Name
     deployment_id: str = field(kw_only=True)
 
-    # The model is used for token max. It is not passed to Azure OpenAI
-    model: str = field(kw_only=True)
+    tokenizer: TiktokenTokenizer = field(
+        default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
+        kw_only=True
+    )
+
     def try_run(self, value: any) -> TextArtifact:
         if self.tokenizer.is_chat():
             return self.__run_chat(value)
