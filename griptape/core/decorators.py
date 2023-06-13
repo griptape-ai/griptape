@@ -24,9 +24,7 @@ def activity(config: dict):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
             if hasattr(self, "artifacts"):
-                artifacts = args[0].get("artifacts", {}).get("values", []) if len(args) > 0 else []
-
-                self.artifacts = self.artifacts + [artifact for artifact in artifacts]
+                self.artifacts.extend(args[0].get("artifacts", {}).get("values", []) if len(args) > 0 else [])
 
             return func(self, *args, **kwargs)
 
