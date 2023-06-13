@@ -18,7 +18,9 @@ class TiktokenTokenizer(BaseTokenizer):
         "text-davinci-002": 4097,
         "code-davinci-002": 8001,
         "text-embedding-ada-002": 8191,
-        "text-embedding-ada-001": 2046
+        "text-embedding-ada-001": 2046,
+        # Azure OpenAI
+        "gpt-35-turbo": 4096
     }
 
     EMBEDDING_MODELS = [
@@ -28,7 +30,9 @@ class TiktokenTokenizer(BaseTokenizer):
 
     CHAT_API_PREFIXES = [
         "gpt-3.5-turbo",
-        "gpt-4"
+        "gpt-4",
+        # Azure OpenAI
+        "gpt-35-turbo"
     ]
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
