@@ -63,13 +63,20 @@ class MemoryVectorDriver(BaseVectorDriver):
         ]
         entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
 
-        return [
+        result = [
             BaseVectorDriver.QueryResult(
                 vector=er[0].vector,
                 score=er[1],
                 meta=er[0].meta
             ) for er in entries_and_relatednesses
         ][:count]
+
+        if include_vectors:
+            return result
+        else:
+            return [
+                BaseVectorDriver.QueryResult([], r.score, r.meta, r.namespace) for r in result
+            ]
 
     def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):
         return vector_id if namespace is None else f"{namespace}-{vector_id}"
