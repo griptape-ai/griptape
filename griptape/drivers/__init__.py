@@ -1,5 +1,6 @@
 from .prompt.base_prompt_driver import BasePromptDriver
 from .prompt.openai_prompt_driver import OpenAiPromptDriver
+from .prompt.azure_openai_prompt_driver import AzureOpenAiPromptDriver
 from .prompt.cohere_prompt_driver import CoherePromptDriver
 from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
 from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
@@ -26,6 +27,7 @@ from .sql.sql_driver import SqlDriver
 __all__ = [
     "BasePromptDriver",
     "OpenAiPromptDriver",
+    "AzureOpenAiPromptDriver",
     "CoherePromptDriver",
     "HuggingFacePipelinePromptDriver",
     "HuggingFaceHubPromptDriver",
