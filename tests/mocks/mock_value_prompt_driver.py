@@ -10,5 +10,5 @@ class MockValuePromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = TiktokenTokenizer()
 
-    def try_run(self, **kwargs) -> TextArtifact:
+    def try_run(self) -> TextArtifact:
         return TextArtifact(value=self.value)

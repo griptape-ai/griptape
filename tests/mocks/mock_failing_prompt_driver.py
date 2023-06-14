@@ -11,7 +11,7 @@ class MockFailingPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = TiktokenTokenizer()
 
-    def try_run(self, **kwargs) -> TextArtifact:
+    def try_run(self) -> TextArtifact:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
