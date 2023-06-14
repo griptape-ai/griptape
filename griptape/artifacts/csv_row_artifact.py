@@ -12,7 +12,7 @@ class CsvRowArtifact(TextArtifact):
         return CsvRowArtifact(self.value | other.value)
 
     def to_text(self) -> str:
-        return self.separator.join([v for v in self.value.values()])
+        return self.separator.join([str(v) for v in self.value.values()])
 
     def to_dict(self) -> dict:
         from griptape.schemas import CsvRowArtifactSchema
