@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 import logging
 import subprocess
 import sys
@@ -27,7 +26,6 @@ class BaseTool(ActivityMixin, ABC):
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
-    artifacts: list[BaseArtifact] = field(factory=list, kw_only=True)
 
     def __attrs_post_init__(self):
         if self.install_dependencies_on_init:

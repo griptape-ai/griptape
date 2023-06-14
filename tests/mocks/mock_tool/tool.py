@@ -56,8 +56,7 @@ class MockTool(BaseTool):
                 Literal("test"): str
             },
             description="Test input"
-        ),
-        "load_artifacts": True
+        )
     })
     def test_with_required_memory(self, value: dict) -> str:
         return f"ack {value['test']}"

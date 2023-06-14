@@ -2,26 +2,11 @@ import inspect
 from typing import Optional
 from attr import define, field
 from jinja2 import Template
-from schema import Schema, Literal
+from schema import Schema
 
 
 @define
 class ActivityMixin:
-    ARTIFACT_SCHEMA = {
-        "artifact": {
-            "source": {
-                Literal(
-                    "memory_id",
-                    description="Memory ID to load an artifact from"
-                ): str,
-                Literal(
-                    "artifact_namespace",
-                    description="Artifact namespace to load the artifact from and pass it to a tool"
-                ): str
-            }
-        }
-    }
-
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
 
@@ -80,18 +65,6 @@ class ActivityMixin:
                 "values": activity.config["schema"].schema if activity.config["schema"] else {}
             }
 
-            if self.should_load_artifacts(activity):
-                full_schema.update(self.ARTIFACT_SCHEMA)
-
             return Schema(full_schema).json_schema("InputSchema")
         else:
-            if self.should_load_artifacts(activity):
-                return Schema(self.ARTIFACT_SCHEMA).json_schema("InputSchema")
-            else:
-                return None
-
-    def should_load_artifacts(self, activity: callable) -> bool:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not an activity.")
-        else:
-            return activity.config.get("load_artifacts", False)
+            return None

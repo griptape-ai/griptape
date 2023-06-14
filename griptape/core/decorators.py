@@ -5,8 +5,7 @@ from schema import Schema
 
 CONFIG_SCHEMA = Schema({
     "description": str,
-    schema.Optional("schema"): Schema,
-    schema.Optional("load_artifacts"): bool
+    schema.Optional("schema"): Schema
 })
 
 
@@ -23,9 +22,6 @@ def activity(config: dict):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            if hasattr(self, "artifacts"):
-                self.artifacts.extend(args[0].get("artifacts", {}).get("values", []) if len(args) > 0 else [])
-
             return func(self, *args, **kwargs)
 
         wrapper.name = func.__name__
