@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Union
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact
 
@@ -11,7 +11,11 @@ class BaseToolMemory(ABC):
     def process_input(self, tool_activity: callable, value: Optional[dict]) -> Optional[dict]:
         return self.load_artifacts(value)
 
-    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
+    def process_output(
+            self,
+            tool_activity: callable,
+            artifact: Union[BaseArtifact, list[BaseArtifact]]
+    ) -> BaseArtifact:
         return artifact
 
     def load_artifacts(self, value: Optional[dict]) -> Optional[dict]:

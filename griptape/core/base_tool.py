@@ -85,17 +85,14 @@ class BaseTool(ActivityMixin, ABC):
 
         activity_result = activity(preprocessed_value)
 
-        if isinstance(activity_result, BaseArtifact):
-            result_artifact = activity_result
+        if isinstance(activity_result, BaseArtifact) or isinstance(activity_result, list):
+            result = activity_result
         else:
-            try:
-                result_artifact = BaseArtifact.from_dict(json.loads(activity_result))
-            except Exception:
-                logging.error("Error converting tool activity result to an artifact; defaulting to InfoArtifact")
+            logging.error("Error converting tool activity result to an artifact; defaulting to InfoArtifact")
 
-                result_artifact = InfoArtifact(activity_result)
+            result = InfoArtifact(activity_result)
 
-        return self.after_execute(activity, result_artifact)
+        return self.after_execute(activity, result)
 
     def after_execute(self, activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
         for memory in activity.__self__.memory.get(activity.name, {}).get("output", []):

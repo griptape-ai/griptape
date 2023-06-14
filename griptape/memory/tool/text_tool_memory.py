@@ -1,6 +1,8 @@
 import logging
+from typing import Union
+
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import BaseToolMemory
 
@@ -13,21 +15,28 @@ class TextToolMemory(BaseToolMemory):
     )
     top_n: int = field(default=5, kw_only=True)
 
-    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
+    def process_output(
+            self,
+            tool_activity: callable,
+            value: Union[BaseArtifact, list[BaseArtifact]]
+    ) -> BaseArtifact:
         from griptape.utils import J2
 
-        if isinstance(artifact, TextArtifact):
-            namespace = artifact.id
+        if isinstance(value, TextArtifact):
+            namespace = value.id
 
-            self.query_engine.vector_driver.upsert_text_artifact(artifact, namespace=namespace)
-        elif isinstance(artifact, ListArtifact):
-            namespace = artifact.id
+            self.query_engine.vector_driver.upsert_text_artifact(value, namespace=namespace)
+        elif isinstance(value, list):
+            artifacts = [a for a in value if isinstance(a, TextArtifact)]
 
-            [
-                self.query_engine.vector_driver.upsert_text_artifact(
+            if len(artifacts) > 0:
+                namespace = artifacts[0].id
+
+                [self.query_engine.vector_driver.upsert_text_artifact(
                     a, namespace=namespace
-                ) for a in artifact.value if isinstance(a, TextArtifact)
-            ]
+                ) for a in artifacts]
+            else:
+                namespace = None
         else:
             namespace = None
 
@@ -41,9 +50,9 @@ class TextToolMemory(BaseToolMemory):
 
             return InfoArtifact(output)
         else:
-            logging.info(f"Artifact {artifact.id} of type {artifact.type} can't be processed by memory {self.id}")
+            logging.info(f"Artifact {value.id} of type {value.type} can't be processed by memory {self.id}")
 
-            return artifact
+            return value
 
     def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
         return [

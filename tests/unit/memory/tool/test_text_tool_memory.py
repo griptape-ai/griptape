@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import TextArtifact, ListArtifact
+from griptape.artifacts import TextArtifact
 from griptape.drivers import MemoryVectorDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
@@ -30,6 +30,6 @@ class TestTextToolMemory:
         )
 
     def test_process_output_with_many_artifacts(self, memory):
-        assert memory.process_output(MockTool().test, ListArtifact([TextArtifact("foo")])).to_text().startswith(
+        assert memory.process_output(MockTool().test, [TextArtifact("foo")]).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )

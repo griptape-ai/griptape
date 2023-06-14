@@ -7,7 +7,6 @@ from griptape.schemas.artifacts.info_artifact_schema import InfoArtifactSchema
 from griptape.schemas.artifacts.text_artifact_schema import TextArtifactSchema
 from griptape.schemas.artifacts.error_artifact_schema import ErrorArtifactSchema
 from griptape.schemas.artifacts.blob_artifact_schema import BlobArtifactSchema
-from griptape.schemas.artifacts.list_artifact_schema import ListArtifactSchema
 
 from griptape.schemas.memory.run_schema import RunSchema
 from griptape.schemas.memory.conversation_memory_schema import ConversationMemorySchema
@@ -24,7 +23,6 @@ __all__ = [
     "TextArtifactSchema",
     "ErrorArtifactSchema",
     "BlobArtifactSchema",
-    "ListArtifactSchema",
 
     "RunSchema",
     "ConversationMemorySchema",

@@ -1,4 +1,4 @@
-from griptape.artifacts import BlobArtifact, ListArtifact
+from griptape.artifacts import BlobArtifact
 from griptape.drivers import MemoryBlobToolMemoryDriver
 from griptape.memory.tool import BlobToolMemory
 from tests.mocks.mock_tool.tool import MockTool
@@ -29,7 +29,7 @@ class TestBlobToolMemory:
         memory = BlobToolMemory(id="MyMemory", driver=MemoryBlobToolMemoryDriver())
 
         assert memory.process_output(
-            MockTool().test, ListArtifact([BlobArtifact(b"foo", name="foo")])
+            MockTool().test, [BlobArtifact(b"foo", name="foo")]
         ).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )

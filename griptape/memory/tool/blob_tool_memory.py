@@ -1,6 +1,8 @@
 import logging
+from typing import Union
+
 from attr import define, field, Factory
-from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact
 from griptape.drivers import BaseBlobToolMemoryDriver, MemoryBlobToolMemoryDriver
 from griptape.memory.tool import BaseToolMemory
 
@@ -12,17 +14,26 @@ class BlobToolMemory(BaseToolMemory):
         kw_only=True
     )
 
-    def process_output(self, tool_activity: callable, artifact: BaseArtifact) -> BaseArtifact:
+    def process_output(
+            self,
+            tool_activity: callable,
+            value: Union[BaseArtifact, list[BaseArtifact]]
+    ) -> BaseArtifact:
         from griptape.utils import J2
 
-        if isinstance(artifact, BlobArtifact):
-            namespace = artifact.id
+        if isinstance(value, BlobArtifact):
+            namespace = value.id
 
-            self.driver.save(namespace, artifact)
-        elif isinstance(artifact, ListArtifact):
-            namespace = artifact.id
+            self.driver.save(namespace, value)
+        elif isinstance(value, list):
+            artifacts = [a for a in value if isinstance(a, BlobArtifact)]
 
-            [self.driver.save(namespace, a) for a in artifact.value if isinstance(a, BlobArtifact)]
+            if len(artifacts) > 0:
+                namespace = artifacts[0].id
+
+                [self.driver.save(namespace, a) for a in artifacts]
+            else:
+                namespace = None
         else:
             namespace = None
 
@@ -36,9 +47,9 @@ class BlobToolMemory(BaseToolMemory):
 
             return InfoArtifact(output)
         else:
-            logging.info(f"Artifact {artifact.id} of type {artifact.type} can't be processed by memory {self.id}")
+            logging.info(f"Artifact {value.id} of type {value.type} can't be processed by memory {self.id}")
 
-            return artifact
+            return value
 
     def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
         return self.driver.load(namespace)
