@@ -6,8 +6,6 @@ from griptape.artifacts import TextArtifact
 
 @define
 class MockFailingPromptDriver(BasePromptDriver):
-    min_retry_delay: int
-    max_retry_delay: int
     max_failures: int = 2
     current_attempt: int = 0
     model: str = "test-model"
