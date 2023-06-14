@@ -1,17 +1,18 @@
-from griptape.schemas.base_schema import BaseSchema
+from .base_schema import BaseSchema
 
-from griptape.schemas.polymorphic_schema import PolymorphicSchema
+from .polymorphic_schema import PolymorphicSchema
 
-from griptape.schemas.artifacts.artifact_schema import ArtifactSchema
-from griptape.schemas.artifacts.info_artifact_schema import InfoArtifactSchema
-from griptape.schemas.artifacts.text_artifact_schema import TextArtifactSchema
-from griptape.schemas.artifacts.error_artifact_schema import ErrorArtifactSchema
-from griptape.schemas.artifacts.blob_artifact_schema import BlobArtifactSchema
+from .artifacts.artifact_schema import ArtifactSchema
+from .artifacts.info_artifact_schema import InfoArtifactSchema
+from .artifacts.text_artifact_schema import TextArtifactSchema
+from .artifacts.error_artifact_schema import ErrorArtifactSchema
+from .artifacts.blob_artifact_schema import BlobArtifactSchema
+from .artifacts.csv_row_artifact_schema import CsvRowArtifactSchema
 
-from griptape.schemas.memory.run_schema import RunSchema
-from griptape.schemas.memory.conversation_memory_schema import ConversationMemorySchema
-from griptape.schemas.memory.buffer_conversation_memory_schema import BufferConversationMemorySchema
-from griptape.schemas.memory.summary_conversation_memory_schema import SummaryConversationMemorySchema
+from .memory.run_schema import RunSchema
+from .memory.conversation_memory_schema import ConversationMemorySchema
+from .memory.buffer_conversation_memory_schema import BufferConversationMemorySchema
+from .memory.summary_conversation_memory_schema import SummaryConversationMemorySchema
 
 __all__ = [
     "BaseSchema",
@@ -23,6 +24,7 @@ __all__ = [
     "TextArtifactSchema",
     "ErrorArtifactSchema",
     "BlobArtifactSchema",
+    "CsvRowArtifactSchema",
 
     "RunSchema",
     "ConversationMemorySchema",

@@ -1,8 +1,9 @@
-from griptape.artifacts.base_artifact import BaseArtifact
-from griptape.artifacts.error_artifact import ErrorArtifact
-from griptape.artifacts.info_artifact import InfoArtifact
-from griptape.artifacts.text_artifact import TextArtifact
-from griptape.artifacts.blob_artifact import BlobArtifact
+from .base_artifact import BaseArtifact
+from .error_artifact import ErrorArtifact
+from .info_artifact import InfoArtifact
+from .text_artifact import TextArtifact
+from .blob_artifact import BlobArtifact
+from .csv_row_artifact import CsvRowArtifact
 
 
 __all__ = [
@@ -10,5 +11,6 @@ __all__ = [
     "ErrorArtifact",
     "InfoArtifact",
     "TextArtifact",
-    "BlobArtifact"
+    "BlobArtifact",
+    "CsvRowArtifact"
 ]

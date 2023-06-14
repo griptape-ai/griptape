@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 @define(frozen=True)
 class TextArtifact(BaseArtifact):
     value: str = field()
-    __embedding: list[float] = field(factory=list)
+    __embedding: list[float] = field(factory=list, kw_only=True)
 
     @property
     def embedding(self) -> Optional[list[float]]:
@@ -30,15 +30,15 @@ class TextArtifact(BaseArtifact):
 
     def generate_embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
         self.__embedding.clear()
-        self.__embedding.extend(driver.embed_string(self.value))
+        self.__embedding.extend(driver.embed_string(str(self.value)))
 
         return self.embedding
 
     def token_count(self, tokenizer: BaseTokenizer) -> int:
-        return tokenizer.token_count(self.value)
+        return tokenizer.token_count(str(self.value))
 
     def to_text(self) -> str:
-        return self.value
+        return str(self.value)
 
     def to_dict(self) -> dict:
         from griptape.schemas import TextArtifactSchema
