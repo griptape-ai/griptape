@@ -19,7 +19,6 @@ class VectorQueryEngine(BaseQueryEngine):
     def query(
             self,
             query: str,
-            context: Optional[str] = None,
             top_n: Optional[int] = None,
             namespace: Optional[str] = None
     ) -> TextArtifact:
@@ -33,11 +32,6 @@ class VectorQueryEngine(BaseQueryEngine):
             "Use the below list of text segments to answer the subsequent question.",
             'If the answer cannot be found in the segments, say "I could not find an answer."'
         ]
-
-        if context:
-            prefix_list.append(
-                f"Additional context for the question: {context}."
-            )
 
         prefix = " ".join(prefix_list)
         question = f"\n\nQuestion: {query}"
