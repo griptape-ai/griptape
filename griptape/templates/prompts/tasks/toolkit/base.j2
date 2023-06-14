@@ -16,7 +16,7 @@ If you don't need to perform an action or if you don't know which action to perf
 {% if tool_names|length > 0 %}
 Actions of Type "tool"
 
-Tools can help you complete tasks. You have access to the following tools ONLY: [{{ tool_names }}]. NEVER make up tools. NEVER use tools for tasks they are not designed for. If the observation contains an error, you should ALWAYS try to fix it in with action. NEVER request extra information from the user. If you don't need to use a tool, ignore Thought/Action/Observation and go straight to Output.
+Tools can help you complete tasks. You have access to the following tools ONLY: [{{ tool_names }}]. NEVER make up tools. NEVER use tools for tasks they are not designed for. If the observation contains an error, you MUST ALWAYS try to fix the error with another Thought and Action. NEVER request extra information from the user. If you don't need to use a tool, ignore Thought/Action/Observation and go straight to Output.
 
 Memory is used to pass data between tools. Some tools might output memory artifact namespaces. Some tools might accept memory artifact namespaces as inputs. Memory artifacts are ephemeral. ALWAYS make sure to do something with memory artifacts relevant yo your current task.
 
