@@ -18,13 +18,14 @@ class BaseArtifact(ABC):
     @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:
         from griptape.schemas import (
-            TextArtifactSchema, InfoArtifactSchema, ErrorArtifactSchema, BlobArtifactSchema
+            TextArtifactSchema, InfoArtifactSchema, ErrorArtifactSchema, BlobArtifactSchema, CsvRowArtifactSchema
         )
 
         class_registry.register("TextArtifact", TextArtifactSchema)
         class_registry.register("InfoArtifact", InfoArtifactSchema)
         class_registry.register("ErrorArtifact", ErrorArtifactSchema)
         class_registry.register("BlobArtifact", BlobArtifactSchema)
+        class_registry.register("CsvRowArtifact", CsvRowArtifactSchema)
 
         try:
             return class_registry.get_class(artifact_dict["type"])().load(artifact_dict)
