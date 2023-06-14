@@ -44,9 +44,9 @@ class BaseVectorDriver(ABC):
     ) -> None:
         with self.futures_executor as executor:
             utils.execute_futures_dict({
-                key:
-                    executor.submit(self.upsert_text_artifact, a, key, meta, **kwargs)
-                for key, artifact_list in artifacts.items() for a in artifact_list
+                namespace:
+                    executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
+                for namespace, artifact_list in artifacts.items() for a in artifact_list
             })
 
     def upsert_text_artifact(
