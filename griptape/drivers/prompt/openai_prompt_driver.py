@@ -13,7 +13,7 @@ class OpenAiPromptDriver(BasePromptDriver):
     api_base: str = field(default=openai.api_base, kw_only=True)
     api_key: Optional[str] = field(default=openai.api_key, kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True)
-    model: str = field(default=TiktokenTokenizer.DEFAULT_MODEL, kw_only=True)
+    model: str = field(default=TiktokenTokenizer.DEFAULT_OPENAI_MODEL, kw_only=True)
     tokenizer: TiktokenTokenizer = field(
         default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
         kw_only=True
@@ -33,20 +33,33 @@ class OpenAiPromptDriver(BasePromptDriver):
         else:
             return self.__run_completion(value)
 
-    def __run_chat(self, value: str) -> TextArtifact:
-        result = openai.ChatCompletion.create(
-            model=self.tokenizer.model,
-            messages=[
+    def _chat_params(self, value: str) -> dict:
+        return {
+            "model": self.tokenizer.model,
+            "messages":  [
                 {
                     "role": "user",
                     "content": value
                 }
             ],
-            max_tokens=self.tokenizer.tokens_left(value),
-            temperature=self.temperature,
-            stop=self.tokenizer.stop_sequence,
-            user=self.user
-        )
+            "max_tokens":  self.tokenizer.tokens_left(value),
+            "temperature":  self.temperature,
+            "stop":  self.tokenizer.stop_sequence,
+            "user":  self.user
+        }
+
+    def _completion_params(self, value: str) -> dict:
+        return {
+            "model": self.tokenizer.model,
+            "prompt":  value,
+            "max_tokens":  self.tokenizer.tokens_left(value),
+            "temperature":  self.temperature,
+            "stop":  self.tokenizer.stop_sequence,
+            "user":  self.user
+        }
+
+    def __run_chat(self, value: str) -> TextArtifact:
+        result = openai.ChatCompletion.create(**self._chat_params(value))
 
         if len(result.choices) == 1:
             return TextArtifact(
@@ -56,14 +69,7 @@ class OpenAiPromptDriver(BasePromptDriver):
             raise Exception("Completion with more than one choice is not supported yet.")
 
     def __run_completion(self, value: str) -> TextArtifact:
-        result = openai.Completion.create(
-            model=self.tokenizer.model,
-            prompt=value,
-            max_tokens=self.tokenizer.tokens_left(value),
-            temperature=self.temperature,
-            stop=self.tokenizer.stop_sequence,
-            user=self.user
-        )
+        result = openai.Completion.create(**self._completion_params(value))
 
         if len(result.choices) == 1:
             return TextArtifact(

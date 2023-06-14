@@ -5,7 +5,8 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class TiktokenTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = "gpt-3.5-turbo"
+    DEFAULT_OPENAI_MODEL = "gpt-3.5-turbo"
+    DEFAULT_AZURE_OPENAI_MODEL = "gpt-35-turbo"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
     TOKEN_OFFSET = 8
@@ -13,14 +14,15 @@ class TiktokenTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_TOKENS = {
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
+        "gpt-3.5-turbo-16k": 16384,
         "gpt-3.5-turbo": 4096,
+        "gpt-35-turbo-16k": 16384,  # Azure OpenAI
+        "gpt-35-turbo": 4096,  # Azure OpenAI
         "text-davinci-003": 4097,
         "text-davinci-002": 4097,
         "code-davinci-002": 8001,
         "text-embedding-ada-002": 8191,
-        "text-embedding-ada-001": 2046,
-        # Azure OpenAI
-        "gpt-35-turbo": 4096
+        "text-embedding-ada-001": 2046
     }
 
     EMBEDDING_MODELS = [
@@ -29,13 +31,12 @@ class TiktokenTokenizer(BaseTokenizer):
     ]
 
     CHAT_API_PREFIXES = [
-        "gpt-3.5-turbo",
         "gpt-4",
-        # Azure OpenAI
-        "gpt-35-turbo"
+        "gpt-3.5-turbo",
+        "gpt-35-turbo"  # Azure OpenAI
     ]
 
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    model: str = field(default=DEFAULT_OPENAI_MODEL, kw_only=True)
 
     @property
     def encoding(self) -> tiktoken.Encoding:

@@ -15,6 +15,7 @@ from .memory.tool.blob.memory_blob_tool_memory_driver import MemoryBlobToolMemor
 
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
+from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
 
 from .vector.base_vector_driver import BaseVectorDriver
 from .vector.memory_vector_driver import MemoryVectorDriver
@@ -42,6 +43,7 @@ __all__ = [
 
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
+    "AzureOpenAiEmbeddingDriver",
 
     "BaseVectorDriver",
     "MemoryVectorDriver",
