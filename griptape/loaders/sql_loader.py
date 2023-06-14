@@ -1,7 +1,7 @@
 from typing import Optional
 from attr import define, field
 from griptape import utils
-from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseSqlDriver, BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
 
@@ -11,10 +11,10 @@ class SqlLoader(BaseLoader):
     sql_driver: BaseSqlDriver = field(kw_only=True)
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
 
-    def load(self, select_query: str) -> list[TextArtifact]:
+    def load(self, select_query: str) -> list[CsvRowArtifact]:
         return self._load_query(select_query)
 
-    def load_collection(self, select_queries: dict[str, str]) -> dict[str, list[BaseArtifact]]:
+    def load_collection(self, select_queries: dict[str, str]) -> dict[str, list[CsvRowArtifact]]:
         with self.futures_executor as executor:
             return utils.execute_futures_dict({
                 key:
@@ -22,12 +22,12 @@ class SqlLoader(BaseLoader):
                 for key, query in select_queries.items()
             })
 
-    def _load_query(self, query: str) -> list[TextArtifact]:
+    def _load_query(self, query: str) -> list[CsvRowArtifact]:
         rows = self.sql_driver.execute_query(query)
         artifacts = []
 
         if rows:
-            chunks = [TextArtifact(str(row.cells)) for row in rows]
+            chunks = [CsvRowArtifact(row.cells) for row in rows]
         else:
             chunks = []
 
