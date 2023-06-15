@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy.pool import StaticPool
-
+from griptape import utils
 from griptape.drivers import SqlDriver
 from griptape.loaders import SqlLoader
 
@@ -51,8 +51,8 @@ class TestSqlLoader:
         ])
 
         assert list(artifacts.keys()) == [
-            "ba3fcb8dd94ef32ae7e01c25a5b05ee455df1451c998448df5ebf25551cb79b1",
-            "c5098fcfcacf5ba1497fcbda7ec4dcc3e43ca37747f34072d0817d277cc6950a"
+            utils.str_to_hash("SELECT * FROM test_table LIMIT 1;"),
+            utils.str_to_hash("SELECT * FROM test_table LIMIT 2;")
         ]
 
         assert [a.value for artifact_list in artifacts.values() for a in artifact_list] == [

@@ -1,4 +1,5 @@
 import pytest
+from griptape import utils
 from griptape.loaders.text_loader import TextLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.unit.chunkers.utils import gen_paragraph
@@ -26,7 +27,7 @@ class TestTextLoader:
         artifacts = loader.load_collection(["bar", "bat"])
 
         assert list(artifacts.keys()) == [
-            "fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9",
-            "ca5bcec12f716f44d9745d349cc80422f0d14cbab09329caf533bef7c2d952eb"
+            utils.str_to_hash("bar"),
+            utils.str_to_hash("bat")
         ]
         assert [a.value for artifact_list in artifacts.values() for a in artifact_list] == ["bar", "bat"]
