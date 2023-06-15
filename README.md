@@ -71,7 +71,6 @@ agent.run(
 print(
     Conversation(agent.memory)
 )
-
 ```
 
 And here is the output:
