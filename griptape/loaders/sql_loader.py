@@ -14,12 +14,11 @@ class SqlLoader(BaseLoader):
     def load(self, select_query: str) -> list[CsvRowArtifact]:
         return self._load_query(select_query)
 
-    def load_collection(self, select_queries: dict[str, str]) -> dict[str, list[CsvRowArtifact]]:
+    def load_collection(self, select_queries: list[str]) -> dict[str, list[CsvRowArtifact]]:
         with self.futures_executor as executor:
             return utils.execute_futures_dict({
-                key:
-                    executor.submit(self._load_query, query)
-                for key, query in select_queries.items()
+                utils.str_to_hash(query): executor.submit(self._load_query, query)
+                for query in select_queries
             })
 
     def _load_query(self, query: str) -> list[CsvRowArtifact]:

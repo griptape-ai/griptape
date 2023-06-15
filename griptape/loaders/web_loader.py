@@ -16,8 +16,7 @@ class WebLoader(TextLoader):
     def load_collection(self, urls: list[str], include_links: bool = True) -> dict[str, list[TextArtifact]]:
         with self.futures_executor as executor:
             return utils.execute_futures_dict({
-                utils.str_to_hash(u.decode()) if isinstance(u, bytes) else u:
-                    executor.submit(self._load_page, u, include_links)
+                utils.str_to_hash(u): executor.submit(self._load_page, u, include_links)
                 for u in urls
             })
 

@@ -23,7 +23,10 @@ class TestTextLoader:
         assert artifacts[0].embedding == [0, 1]
 
     def test_load_collection(self, loader):
-        artifacts = loader.load_collection({"foo": "bar", "baz": "bat"})
+        artifacts = loader.load_collection(["bar", "bat"])
 
-        assert list(artifacts.keys()) == ["foo", "baz"]
+        assert list(artifacts.keys()) == [
+            "fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9",
+            "ca5bcec12f716f44d9745d349cc80422f0d14cbab09329caf533bef7c2d952eb"
+        ]
         assert [a.value for artifact_list in artifacts.values() for a in artifact_list] == ["bar", "bat"]

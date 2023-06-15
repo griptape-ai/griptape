@@ -9,10 +9,11 @@ from attr import define, field
 @define
 class SqlDriver(BaseSqlDriver):
     engine_url: str = field(kw_only=True)
+    create_engine_params: dict = field(factory=dict, kw_only=True)
     engine: Engine = field(init=False)
 
     def __attrs_post_init__(self):
-        self.engine = create_engine(self.engine_url)
+        self.engine = create_engine(self.engine_url, **self.create_engine_params)
 
     def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)

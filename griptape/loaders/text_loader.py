@@ -35,10 +35,11 @@ class TextLoader(BaseLoader):
     def load(self, text: str) -> list[TextArtifact]:
         return self.text_to_artifacts(text)
 
-    def load_collection(self, texts: dict[str, str]) -> dict[str, list[TextArtifact]]:
+    def load_collection(self, texts: list[str]) -> dict[str, list[TextArtifact]]:
         with self.futures_executor as executor:
             return utils.execute_futures_dict({
-                key: executor.submit(self.text_to_artifacts, text) for key, text in texts.items()
+                utils.str_to_hash(text): executor.submit(self.text_to_artifacts, text)
+                for text in texts
             })
 
     def text_to_artifacts(self, text: str) -> list[TextArtifact]:
