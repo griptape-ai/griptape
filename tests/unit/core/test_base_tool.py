@@ -62,27 +62,15 @@ class TestBaseTool:
         )
 
         tool = MockTool(
-            memory={
-                "test": {
-                    "input": [
-                        TextToolMemory(
-                            id="Memory1", query_engine=query_engine
-                        ),
-                        TextToolMemory(
-                            id="Memory2", query_engine=query_engine
-                        )
-                    ],
-                    "output": [
-                        TextToolMemory(
-                            id="Memory1", query_engine=query_engine
-                        )
-                    ]
-                }
+            output_memory={
+                "test": [
+                    TextToolMemory(id="Memory1", query_engine=query_engine),
+                    TextToolMemory(id="Memory2", query_engine=query_engine)
+                ]
             }
         )
 
-        assert len(tool.memory["test"]["input"]) == 2
-        assert len(tool.memory["test"]["output"]) == 1
+        assert len(tool.output_memory["test"]) == 2
 
     def test_memory_validation(self):
         query_engine = VectorQueryEngine(
@@ -93,53 +81,34 @@ class TestBaseTool:
 
         with pytest.raises(ValueError):
             MockTool(
-                memory={
-                    "test": {
-                        "input": [
-                            TextToolMemory(
-                                id="Memory1", query_engine=query_engine
-                            ),
-                            TextToolMemory(
-                                id="Memory1", query_engine=query_engine
-                            )
-                        ],
-                        "output": [
-                            TextToolMemory(
-                                id="Memory1", query_engine=query_engine
-                            )
-                        ]
-                    }
+                output_memory={
+                    "test": [
+                        TextToolMemory(id="Memory1", query_engine=query_engine),
+                        TextToolMemory(id="Memory1", query_engine=query_engine)
+                    ]
                 }
             )
 
         with pytest.raises(ValueError):
             MockTool(
-                memory={
-                    "fake_activity": {
-                        "input": [
-                            TextToolMemory(
-                                id="Memory1", query_engine=query_engine
-                            )
-                        ]
-                    }
+                output_memory={
+                    "output_memory": [
+                        TextToolMemory(id="Memory1", query_engine=query_engine)
+                    ]
                 }
             )
 
         assert MockTool(
-                memory={
-                    "test": {
-                        "input": [
-                            TextToolMemory(
-                                id="Memory1", query_engine=query_engine
-                            )
-                        ]
-                    },
-                    "test_str_output": {
-                        "input": [
-                            TextToolMemory(
-                                id="Memory1", query_engine=query_engine
-                            )
-                        ]
-                    }
+                output_memory={
+                    "test": [
+                        TextToolMemory(
+                            id="Memory1", query_engine=query_engine
+                        )
+                    ],
+                    "test_str_output": [
+                        TextToolMemory(
+                            id="Memory1", query_engine=query_engine
+                        )
+                    ]
                 }
             )

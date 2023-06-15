@@ -137,8 +137,8 @@ class TestToolkitSubtask:
 
         tool = MockTool(
             name="Tool1",
-            memory={
-                "test": {"input": [m1, m2]}
+            output_memory={
+                "test": [m1, m2]
             }
         )
         task = ToolkitTask("test", tools=[tool])
@@ -151,25 +151,21 @@ class TestToolkitSubtask:
     def test_memory(self, query_engine):
         tool1 = MockTool(
             name="Tool1",
-            memory={
-                "test": {
-                    "input": [
-                        TextToolMemory(id="Memory1", query_engine=query_engine),
-                        TextToolMemory(id="Memory2", query_engine=query_engine)
-                    ]
-                }
+            output_memory={
+                "test": [
+                    TextToolMemory(id="Memory1", query_engine=query_engine),
+                    TextToolMemory(id="Memory2", query_engine=query_engine)
+                ]
             }
         )
 
         tool2 = MockTool(
             name="Tool2",
-            memory={
-                "test": {
-                    "output": [
-                        TextToolMemory(id="Memory2", query_engine=query_engine),
-                        TextToolMemory(id="Memory3", query_engine=query_engine)
-                    ]
-                }
+            output_memory={
+                "test": [
+                    TextToolMemory(id="Memory2", query_engine=query_engine),
+                    TextToolMemory(id="Memory3", query_engine=query_engine)
+                ]
             }
         )
 
