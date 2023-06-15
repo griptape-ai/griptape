@@ -1,6 +1,6 @@
 import logging
+import uuid
 from typing import Union
-
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact
 from griptape.engines import VectorQueryEngine
@@ -30,7 +30,7 @@ class TextToolMemory(BaseToolMemory):
             artifacts = [a for a in value if isinstance(a, TextArtifact)]
 
             if len(artifacts) > 0:
-                namespace = artifacts[0].id
+                namespace = uuid.uuid4().hex
 
                 [self.query_engine.vector_driver.upsert_text_artifact(
                     a, namespace=namespace

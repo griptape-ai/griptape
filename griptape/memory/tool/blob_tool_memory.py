@@ -1,6 +1,6 @@
 import logging
+import uuid
 from typing import Union
-
 from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact
 from griptape.drivers import BaseBlobToolMemoryDriver, MemoryBlobToolMemoryDriver
@@ -29,7 +29,7 @@ class BlobToolMemory(BaseToolMemory):
             artifacts = [a for a in value if isinstance(a, BlobArtifact)]
 
             if len(artifacts) > 0:
-                namespace = artifacts[0].id
+                namespace = uuid.uuid4().hex
 
                 [self.driver.save(namespace, a) for a in artifacts]
             else:
