@@ -25,6 +25,16 @@ Memory is used to pass data between tools. Some tools might output memory artifa
 {% endfor %}
 {% endif %}
 
+{% if memory_ids|length > 0 %}
+Actions of Type "memory"
+
+Memory is used to pass data between tools. Some tools might use memory for outputs. You can use memory activities to complete tasks. You have access to the following memory ONLY: [{{ memory_ids }}]. NEVER make up memory. If you encounter an error from a memory you should ALWAYS try to fix it in another action. NEVER request extra information from the user. If you don't need to use memory, ignore Thought/Action/Observation and go straight to Output.
+
+{% for memory in memories %}
+{{ memory }}
+{% endfor %}
+{% endif %}
+
 {% if rulesets|length > 0 %}
 When responding, always use rules from the following rulesets. Rulesets can override and complement each other:
 

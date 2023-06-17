@@ -8,6 +8,18 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestTextToolMemory:
+    @pytest.fixture(autouse=True)
+    def mock_griptape(self, mocker):
+        mocker.patch(
+            "griptape.summarizers.PromptDriverSummarizer.summarize_text",
+            return_value="foobar summary"
+        )
+
+        mocker.patch(
+            "griptape.engines.VectorQueryEngine.query",
+            return_value=TextArtifact("foobar")
+        )
+
     @pytest.fixture
     def memory(self):
         query_engine = VectorQueryEngine(
@@ -33,3 +45,17 @@ class TestTextToolMemory:
         assert memory.process_output(MockTool().test, [TextArtifact("foo")]).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
+
+    def test_summarize(self, memory):
+        memory.query_engine.vector_store_driver.upsert_text_artifact(
+            TextArtifact("foobar"), namespace="foobar"
+        )
+
+        assert memory.summarize(
+            {"values": {"artifact_namespace": "foobar"}}
+        )[0].value == "foobar summary"
+
+    def test_query(self, memory):
+        assert memory.search(
+            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+        ).value == "foobar"
