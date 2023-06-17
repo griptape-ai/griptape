@@ -25,26 +25,23 @@ class TextToolMemory(BaseToolMemory):
             "artifact_namespace": str
         })
     })
-    def summarize(self, params: dict) -> Union[list[TextArtifact], ErrorArtifact]:
+    def summarize(self, params: dict) -> Union[TextArtifact, ErrorArtifact]:
         artifact_namespace = params["values"]["artifact_namespace"]
         artifacts = self.load_namespace_artifacts(artifact_namespace)
 
         if len(artifacts) == 0:
             return ErrorArtifact("no artifacts found")
         else:
-            artifact_list = []
+            artifact_list = " ".join([a.to_text() for a in artifacts])
 
-            for artifact in artifacts:
-                try:
-                    summary = PromptDriverSummarizer(
-                        driver=OpenAiPromptDriver()
-                    ).summarize_text(artifact.value)
+            try:
+                summary = PromptDriverSummarizer(
+                    driver=OpenAiPromptDriver()
+                ).summarize_text(artifact_list)
 
-                    artifact_list.append(TextArtifact(summary))
-                except Exception as e:
-                    return ErrorArtifact(f"error summarizing text: {e}")
-
-            return artifact_list
+                return TextArtifact(summary)
+            except Exception as e:
+                return ErrorArtifact(f"error summarizing text: {e}")
 
     @activity(config={
         "description": "Can be used to search and query memory artifacts in a namespace",
