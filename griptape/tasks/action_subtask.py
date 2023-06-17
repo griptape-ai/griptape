@@ -111,7 +111,9 @@ class ActionSubtask(PromptTask):
             return self.output
 
     def after_run(self) -> None:
-        self.structure.logger.info(f"Subtask {self.id}\nObservation: {self.output.to_text()}")
+        observation = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
+
+        self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
     def render(self) -> str:
         return J2("prompts/tasks/toolkit/subtask.j2").render(
