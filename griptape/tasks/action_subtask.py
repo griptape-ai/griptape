@@ -12,9 +12,9 @@ from griptape.core import BaseTool, ActivityMixin
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
 from griptape.utils import J2
+from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact
     from griptape.tasks import ToolkitTask
 
 
