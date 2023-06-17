@@ -33,7 +33,7 @@ With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `
 ```python
 from griptape.memory.tool import TextToolMemory
 from griptape.structures import Agent
-from griptape.tools import TextMemoryExtractor, WebScraper
+from griptape.tools import WebScraper
 from griptape.utils import Conversation
 
 
@@ -47,14 +47,6 @@ WebScraper enables LLMs to load web pages.
 """
 web_scraper = WebScraper(
     output_memory={"get_content": [memory]}
-)
-
-"""
-TextProcessor enables LLMs to query
-large chunks of text stored in memory
-"""
-memory_extractor = TextMemoryExtractor(
-    input_memory=memory
 )
 
 """
@@ -78,7 +70,7 @@ And here is the output:
 > Q: based on https://www.griptape.ai/, tell me what Griptape is  
 > A: Griptape is an opinionated Python framework that enables developers to fully harness the potential of LLMs while enforcing strict trust boundaries, schema validation, and activity-level permissions. It offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity. Griptape can be used to create conversational and autonomous agents.
 
-During the run, the Griptape agent loaded a webpage, stored its content in temporary memory, and passed the memory to the `TextMemoryExtractor` to query it.
+During the run, the Griptape agent loaded a webpage, stored its full content in temporary memory, and finally queried it to answer the original question.
 
 ## Versioning
 
