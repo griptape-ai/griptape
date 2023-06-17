@@ -59,3 +59,10 @@ class TestTextToolMemory:
         assert memory.search(
             {"values": {"query": "foobar", "artifact_namespace": "foo"}}
         ).value == "foobar"
+
+    def test_load_namespace_artifacts(self, memory):
+        memory.query_engine.vector_store_driver.upsert_text_artifacts(
+            {"test": [TextArtifact("foo"), TextArtifact("bar")]}
+        )
+
+        assert len(memory.load_namespace_artifacts("test")) == 2

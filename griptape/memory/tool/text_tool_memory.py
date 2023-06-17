@@ -54,7 +54,7 @@ class TextToolMemory(BaseToolMemory):
             ): str
         })
     })
-    def search(self, params: dict) -> BaseArtifact:
+    def search(self, params: dict) -> TextArtifact:
         artifact_namespace = params["values"]["artifact_namespace"]
         query = params["values"]["query"]
 
@@ -102,8 +102,10 @@ class TextToolMemory(BaseToolMemory):
 
             return value
 
-    def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
-        return [
+    def load_namespace_artifacts(self, namespace: str) -> list[TextArtifact]:
+        artifacts = [
             BaseArtifact.from_json(e.meta["artifact"])
             for e in self.query_engine.vector_store_driver.load_entries(namespace)
         ]
+
+        return [a for a in artifacts if isinstance(a, TextArtifact)]
