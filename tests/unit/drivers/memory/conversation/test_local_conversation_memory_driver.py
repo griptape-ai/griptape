@@ -1,13 +1,13 @@
 import os
 import pytest
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.drivers import DiskConversationMemoryDriver
+from griptape.drivers import LocalConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
 
 
-class TestDiskConversationMemoryDriver:
+class TestLocalConversationMemoryDriver:
     MEMORY_FILE_PATH = "test_memory.json"
 
     @pytest.fixture(autouse=True)
@@ -20,7 +20,7 @@ class TestDiskConversationMemoryDriver:
 
     def test_store(self):
         prompt_driver = MockPromptDriver()
-        memory_driver = DiskConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
+        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
         memory = ConversationMemory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
@@ -41,7 +41,7 @@ class TestDiskConversationMemoryDriver:
 
     def test_load(self):
         prompt_driver = MockPromptDriver()
-        memory_driver = DiskConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
+        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
         memory = ConversationMemory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 

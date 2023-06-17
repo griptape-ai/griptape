@@ -4,7 +4,7 @@ from griptape.memory.structure import ConversationMemory
 
 
 @define
-class DiskConversationMemoryDriver(BaseConversationMemoryDriver):
+class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
     file_path: str = field(default="griptape_memory.json", kw_only=True)
 
     def store(self, memory: ConversationMemory) -> None:

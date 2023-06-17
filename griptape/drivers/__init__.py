@@ -7,7 +7,7 @@ from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
-from .memory.conversation.disk_conversation_memory_driver import DiskConversationMemoryDriver
+from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
 from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
 
 from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
@@ -35,7 +35,7 @@ __all__ = [
     "AnthropicPromptDriver",
 
     "BaseConversationMemoryDriver",
-    "DiskConversationMemoryDriver",
+    "LocalConversationMemoryDriver",
     "DynamoDbConversationMemoryDriver",
 
     "BaseBlobToolMemoryDriver",
