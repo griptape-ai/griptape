@@ -3,14 +3,14 @@ import uuid
 from typing import Union
 from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact
-from griptape.drivers import BaseBlobToolMemoryDriver, MemoryBlobToolMemoryDriver
+from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
 from griptape.memory.tool import BaseToolMemory
 
 
 @define
 class BlobToolMemory(BaseToolMemory):
     driver: BaseBlobToolMemoryDriver = field(
-        default=Factory(lambda: MemoryBlobToolMemoryDriver()),
+        default=Factory(lambda: LocalBlobToolMemoryDriver()),
         kw_only=True
     )
 

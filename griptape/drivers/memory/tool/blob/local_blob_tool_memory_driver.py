@@ -4,7 +4,7 @@ from griptape.drivers import BaseBlobToolMemoryDriver
 
 
 @define
-class MemoryBlobToolMemoryDriver(BaseBlobToolMemoryDriver):
+class LocalBlobToolMemoryDriver(BaseBlobToolMemoryDriver):
     blobs: dict[str, list[BlobArtifact]] = field(factory=dict, kw_only=True)
 
     def save(self, namespace: str, blob: BlobArtifact) -> None:

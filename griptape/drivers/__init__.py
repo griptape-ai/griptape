@@ -11,7 +11,7 @@ from .memory.conversation.disk_conversation_memory_driver import DiskConversatio
 from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
 
 from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
-from .memory.tool.blob.memory_blob_tool_memory_driver import MemoryBlobToolMemoryDriver
+from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
 
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
@@ -39,7 +39,7 @@ __all__ = [
     "DynamoDbConversationMemoryDriver",
 
     "BaseBlobToolMemoryDriver",
-    "MemoryBlobToolMemoryDriver",
+    "LocalBlobToolMemoryDriver",
 
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
