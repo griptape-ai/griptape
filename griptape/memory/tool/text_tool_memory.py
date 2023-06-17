@@ -25,14 +25,14 @@ class TextToolMemory(BaseToolMemory):
         if isinstance(value, TextArtifact):
             namespace = value.id
 
-            self.query_engine.vector_driver.upsert_text_artifact(value, namespace=namespace)
+            self.query_engine.vector_store_driver.upsert_text_artifact(value, namespace=namespace)
         elif isinstance(value, list):
             artifacts = [a for a in value if isinstance(a, TextArtifact)]
 
             if len(artifacts) > 0:
                 namespace = uuid.uuid4().hex
 
-                [self.query_engine.vector_driver.upsert_text_artifact(
+                [self.query_engine.vector_store_driver.upsert_text_artifact(
                     a, namespace=namespace
                 ) for a in artifacts]
             else:
@@ -57,5 +57,5 @@ class TextToolMemory(BaseToolMemory):
     def load_namespace_artifacts(self, namespace: str) -> list[BaseArtifact]:
         return [
             BaseArtifact.from_json(e.meta["artifact"])
-            for e in self.query_engine.vector_driver.load_entries(namespace)
+            for e in self.query_engine.vector_store_driver.load_entries(namespace)
         ]

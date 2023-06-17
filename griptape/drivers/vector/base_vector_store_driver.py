@@ -10,7 +10,7 @@ from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
 
 
 @define
-class BaseVectorDriver(ABC):
+class BaseVectorStoreDriver(ABC):
     DEFAULT_QUERY_COUNT = 5
 
     @dataclass

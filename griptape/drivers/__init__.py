@@ -17,9 +17,9 @@ from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
 
-from .vector.base_vector_driver import BaseVectorDriver
-from .vector.memory_vector_driver import MemoryVectorDriver
-from .vector.pinecone_vector_driver import PineconeVectorDriver
+from .vector.base_vector_store_driver import BaseVectorStoreDriver
+from .vector.local_vector_store_driver import LocalVectorStoreDriver
+from .vector.pinecone_vector_store_driver import PineconeVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.sql_driver import SqlDriver
@@ -45,9 +45,9 @@ __all__ = [
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
 
-    "BaseVectorDriver",
-    "MemoryVectorDriver",
-    "PineconeVectorDriver",
+    "BaseVectorStoreDriver",
+    "LocalVectorStoreDriver",
+    "PineconeVectorStoreDriver",
 
     "BaseSqlDriver",
     "SqlDriver"

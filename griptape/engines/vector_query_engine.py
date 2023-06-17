@@ -1,14 +1,14 @@
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact
-from griptape.drivers import BaseVectorDriver, MemoryVectorDriver, BasePromptDriver, OpenAiPromptDriver
+from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver, BasePromptDriver, OpenAiPromptDriver
 from griptape.engines import BaseQueryEngine
 
 
 @define
 class VectorQueryEngine(BaseQueryEngine):
-    vector_driver: BaseVectorDriver = field(
-        default=Factory(lambda: MemoryVectorDriver()),
+    vector_store_driver: BaseVectorStoreDriver = field(
+        default=Factory(lambda: LocalVectorStoreDriver()),
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(
@@ -23,7 +23,7 @@ class VectorQueryEngine(BaseQueryEngine):
             namespace: Optional[str] = None
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
-        result = self.vector_driver.query(query, top_n, namespace)
+        result = self.vector_store_driver.query(query, top_n, namespace)
         artifacts = [
             a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
         ]

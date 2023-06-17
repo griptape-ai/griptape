@@ -2,13 +2,13 @@ from typing import Optional, Callable
 from numpy import dot
 from numpy.linalg import norm
 from griptape import utils
-from griptape.drivers import BaseVectorDriver, BaseEmbeddingDriver, OpenAiEmbeddingDriver
+from griptape.drivers import BaseVectorStoreDriver, BaseEmbeddingDriver, OpenAiEmbeddingDriver
 from attr import define, field, Factory
 
 
 @define
-class MemoryVectorDriver(BaseVectorDriver):
-    entries: dict[str, BaseVectorDriver.Entry] = field(factory=dict, kw_only=True)
+class LocalVectorStoreDriver(BaseVectorStoreDriver):
+    entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict, kw_only=True)
     relatedness_fn: Callable = field(
         default=lambda x, y: dot(x, y) / (norm(x) * norm(y)),
         kw_only=True
@@ -37,10 +37,10 @@ class MemoryVectorDriver(BaseVectorDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorDriver.Entry]:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         return self.entries.get(self._namespaced_vector_id(vector_id, namespace), None)
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
     def query(
@@ -50,7 +50,7 @@ class MemoryVectorDriver(BaseVectorDriver):
             namespace: Optional[str] = None,
             include_vectors: bool = False,
             **kwargs
-    ) -> list[BaseVectorDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         query_embedding = self.embedding_driver.embed_string(query)
 
         if namespace:
@@ -64,7 +64,7 @@ class MemoryVectorDriver(BaseVectorDriver):
         entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
 
         result = [
-            BaseVectorDriver.QueryResult(
+            BaseVectorStoreDriver.QueryResult(
                 vector=er[0].vector,
                 score=er[1],
                 meta=er[0].meta
@@ -75,7 +75,7 @@ class MemoryVectorDriver(BaseVectorDriver):
             return result
         else:
             return [
-                BaseVectorDriver.QueryResult([], r.score, r.meta, r.namespace) for r in result
+                BaseVectorStoreDriver.QueryResult([], r.score, r.meta, r.namespace) for r in result
             ]
 
     def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):

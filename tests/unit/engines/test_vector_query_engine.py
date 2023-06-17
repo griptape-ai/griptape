@@ -1,5 +1,5 @@
 import pytest
-from griptape.drivers import MemoryVectorDriver
+from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.loaders import TextLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -13,7 +13,7 @@ class TestVectorQueryEngine:
     @pytest.fixture
     def engine(self):
         return VectorQueryEngine(
-            vector_driver=MemoryVectorDriver(
+            vector_store_driver=LocalVectorStoreDriver(
                 embedding_driver=MockEmbeddingDriver(),
             ),
             prompt_driver=MockPromptDriver()
@@ -24,6 +24,6 @@ class TestVectorQueryEngine:
             gen_paragraph(MAX_TOKENS, engine.prompt_driver.tokenizer, ". ")
         )
 
-        [engine.vector_driver.upsert_text_artifact(a) for a in artifacts]
+        [engine.vector_store_driver.upsert_text_artifact(a) for a in artifacts]
 
         assert engine.query("foo").value.startswith("mock output")
