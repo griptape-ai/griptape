@@ -4,7 +4,7 @@ from griptape.drivers import LocalVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestMemoryVectorStoreDriver:
+class TestLocalVectorStoreDriver:
     @pytest.fixture
     def driver(self):
         return LocalVectorStoreDriver(
