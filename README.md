@@ -53,7 +53,7 @@ web_scraper = WebScraper(
 Agents can use multiple tools to creatively solve problems
 """
 agent = Agent(
-    tools=[web_scraper, memory_extractor]
+    tools=[web_scraper]
 )
 
 agent.run(
