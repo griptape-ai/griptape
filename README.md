@@ -34,7 +34,7 @@ With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `
 from griptape.memory.tool import TextToolMemory
 from griptape.structures import Agent
 from griptape.tools import WebScraper
-from griptape.utils import Conversation
+from griptape import utils
 
 
 """
@@ -60,9 +60,7 @@ agent.run(
     "based on https://www.griptape.ai/, tell me what Griptape is"
 )
 
-print(
-    Conversation(agent.memory)
-)
+utils.Chat(agent).start()
 ```
 
 And here is the output:
