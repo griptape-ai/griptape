@@ -1,9 +1,7 @@
-from typing import Optional
 from attr import field, define, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import TextChunker
-from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
 from griptape.tokenizers import TiktokenTokenizer
 
@@ -30,7 +28,6 @@ class TextLoader(BaseLoader):
         ),
         kw_only=True
     )
-    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
 
     def load(self, text: str) -> list[TextArtifact]:
         return self.text_to_artifacts(text)
@@ -49,10 +46,6 @@ class TextLoader(BaseLoader):
             chunks = self.chunker.chunk(text)
         else:
             chunks = [TextArtifact(text)]
-
-        if self.embedding_driver:
-            for chunk in chunks:
-                chunk.generate_embedding(self.embedding_driver)
 
         for chunk in chunks:
             artifacts.append(chunk)

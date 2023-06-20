@@ -1,7 +1,6 @@
 import pytest
 from griptape import utils
 from griptape.loaders import WebLoader
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 MAX_TOKENS = 50
 
@@ -10,7 +9,6 @@ class TestWebLoader:
     @pytest.fixture
     def loader(self):
         return WebLoader(
-            embedding_driver=MockEmbeddingDriver(),
             max_tokens=MAX_TOKENS
         )
 
@@ -19,7 +17,6 @@ class TestWebLoader:
 
         assert len(artifacts) > 1
         assert "griptape" in artifacts[0].value.lower()
-        assert artifacts[0].embedding == [0, 1]
 
     def test_load_collection(self, loader):
         artifacts = loader.load_collection([

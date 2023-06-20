@@ -2,7 +2,6 @@ import os
 import pytest
 from griptape import utils
 from griptape.loaders import PdfLoader
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 MAX_TOKENS = 50
 
@@ -11,7 +10,6 @@ class TestPdfLoader:
     @pytest.fixture
     def loader(self):
         return PdfLoader(
-            embedding_driver=MockEmbeddingDriver(),
             max_tokens=MAX_TOKENS
         )
 
@@ -24,7 +22,6 @@ class TestPdfLoader:
 
         assert len(artifacts) == 149
         assert artifacts[0].value.startswith("Bitcoin: A Peer-to-Peer")
-        assert artifacts[0].embedding == [0, 1]
 
     def test_load_collection(self, loader):
         path1 = os.path.join(
@@ -41,7 +38,5 @@ class TestPdfLoader:
         assert list(artifacts.keys()) == [key1, key2]
         assert len(artifacts[key1]) == 149
         assert artifacts[key1][0].value.startswith("Bitcoin: A Peer-to-Peer")
-        assert artifacts[key1][0].embedding == [0, 1]
         assert len(artifacts[key2]) == 149
         assert artifacts[key2][0].value.startswith("Bitcoin: A Peer-to-Peer")
-        assert artifacts[key2][0].embedding == [0, 1]

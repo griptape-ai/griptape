@@ -1,7 +1,6 @@
 import pytest
 from griptape import utils
 from griptape.loaders.text_loader import TextLoader
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.unit.chunkers.utils import gen_paragraph
 
 MAX_TOKENS = 50
@@ -11,7 +10,6 @@ class TestTextLoader:
     @pytest.fixture
     def loader(self):
         return TextLoader(
-            embedding_driver=MockEmbeddingDriver(),
             max_tokens=MAX_TOKENS
         )
 
@@ -21,7 +19,6 @@ class TestTextLoader:
 
         assert len(artifacts) == 3
         assert artifacts[0].value.startswith("foo-0 foo-1")
-        assert artifacts[0].embedding == [0, 1]
 
     def test_load_collection(self, loader):
         artifacts = loader.load_collection(["bar", "bat"])
