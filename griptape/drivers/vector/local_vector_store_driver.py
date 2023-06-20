@@ -2,8 +2,8 @@ from typing import Optional, Callable
 from numpy import dot
 from numpy.linalg import norm
 from griptape import utils
-from griptape.drivers import BaseVectorStoreDriver, BaseEmbeddingDriver, OpenAiEmbeddingDriver
-from attr import define, field, Factory
+from griptape.drivers import BaseVectorStoreDriver
+from attr import define, field
 
 
 @define
@@ -11,10 +11,6 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict, kw_only=True)
     relatedness_fn: Callable = field(
         default=lambda x, y: dot(x, y) / (norm(x) * norm(y)),
-        kw_only=True
-    )
-    embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: OpenAiEmbeddingDriver()),
         kw_only=True
     )
 
