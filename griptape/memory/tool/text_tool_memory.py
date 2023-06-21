@@ -70,6 +70,9 @@ class TextToolMemory(BaseToolMemory):
     ) -> BaseArtifact:
         from griptape.utils import J2
 
+        tool_name = tool_activity.__self__.name
+        activity_name = tool_activity.name
+
         if isinstance(value, TextArtifact):
             namespace = value.id
 
@@ -91,14 +94,14 @@ class TextToolMemory(BaseToolMemory):
         if namespace:
             output = J2("memory/tool/text.j2").render(
                 memory_id=self.id,
-                tool_name=tool_activity.__self__.name,
-                activity_name=tool_activity.name,
+                tool_name=tool_name,
+                activity_name=activity_name,
                 artifact_namespace=namespace
             )
 
             return InfoArtifact(output)
         else:
-            logging.info(f"Artifact {value.id} of type {value.type} can't be processed by memory {self.id}")
+            logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.id}")
 
             return value
 
