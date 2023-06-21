@@ -30,7 +30,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
         prefix_list = [
             "You are a helpful assistant who can answer questions by searching through text segments.",
-            "Always be thruthful. Don't make up facts.",
+            "Always be truthful. Don't make up facts.",
             "Use the below list of text segments to answer the subsequent question.",
             'If the answer cannot be found in the segments, say "I could not find an answer."'
         ]
