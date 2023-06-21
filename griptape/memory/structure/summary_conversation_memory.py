@@ -2,10 +2,12 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 from typing import Optional
-from attr import define, field
+from attr import define, field, Factory
+from griptape.drivers import OpenAiPromptDriver
 from griptape.schemas import SummaryConversationMemorySchema
 from griptape.utils import J2
 from griptape.memory.structure import ConversationMemory
+from griptape.summarizers import PromptDriverSummarizer
 
 if TYPE_CHECKING:
     from griptape.summarizers import BaseSummarizer
@@ -15,7 +17,10 @@ if TYPE_CHECKING:
 @define
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True)
-    summarizer: Optional[BaseSummarizer] = field(default=None, kw_only=True)
+    summarizer: Optional[BaseSummarizer] = field(
+        default=Factory(lambda: PromptDriverSummarizer(driver=OpenAiPromptDriver())),
+        kw_only=True
+    )
     summary: Optional[str] = field(default=None, kw_only=True)
     summary_index: int = field(default=0, kw_only=True)
 

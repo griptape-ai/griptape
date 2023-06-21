@@ -4,11 +4,11 @@ import logging
 from attr import define, field
 from llama_index import Document, GPTVectorStoreIndex
 from griptape.utils import J2
-from griptape.drivers import BasePromptDriver
 from griptape.summarizers.base_summarizer import BaseSummarizer
 
 if TYPE_CHECKING:
     from griptape.memory.structure import Run
+    from griptape.drivers import BasePromptDriver
 
 
 @define
