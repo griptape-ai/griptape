@@ -114,7 +114,6 @@ class ActionSubtask(PromptTask):
         self.structure.event_queue.put(BaseEvent(event_type=BaseEvent.FinishSubtaskEventType))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
-
     def render(self) -> str:
         return J2("prompts/tasks/toolkit/subtask.j2").render(
             subtask=self
