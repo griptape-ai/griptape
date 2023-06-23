@@ -9,7 +9,6 @@ from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.rules import Ruleset
-from griptape.events.base_event import BaseEvent
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -28,7 +27,7 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_queue: SimpleQueue[BaseEvent] = field(default=SimpleQueue(), kw_only=True)
+    event_queue: SimpleQueue = field(default=SimpleQueue(), kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 

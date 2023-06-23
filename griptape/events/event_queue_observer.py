@@ -4,12 +4,13 @@ from typing import Callable
 import logging
 from attr import define, field, Factory
 from time import sleep
+from griptape.structures import Structure
 from griptape.events.base_event import BaseEvent
 
 
 @define
 class EventQueueObserver:
-    event_queue: SimpleQueue = field(kw_only=True)
+    structure: Structure = field(kw_only=True)
 
     observables: dict[BaseEvent.BaseEventType, list[Callable[BaseEvent, None]]] = field(
         default={}, kw_only=True
@@ -23,7 +24,7 @@ class EventQueueObserver:
 
     def watch_events(self):
         while True:
-            event = self.event_queue.get()
+            event = self.structure.event_queue.get()
             event_handlers = self.observables.get(event.event_type, [])
 
             for event_handler in event_handlers:
