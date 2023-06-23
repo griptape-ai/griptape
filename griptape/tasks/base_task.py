@@ -5,6 +5,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
+from griptape.events import BaseEvent
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -105,11 +106,13 @@ class BaseTask(ABC):
         try:
             self.state = BaseTask.State.EXECUTING
 
+            self.structure.event_queue.put(BaseEvent(event_type=BaseEvent.StartTaskEventType))
             self.before_run()
 
             self.output = self.run()
 
             self.after_run()
+            self.structure.event_queue.put(BaseEvent(event_type=BaseEvent.FinishTaskEventType))
         except Exception as e:
             self.structure.logger.error(f"Task {self.id}\n{e}", exc_info=True)
 
