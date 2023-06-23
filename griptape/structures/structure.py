@@ -1,7 +1,7 @@
 from __future__ import annotations
 import logging
 import uuid
-from queue import SimpleQueue
+from queue import Queue
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING
@@ -27,17 +27,24 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_queue: SimpleQueue = field(default=SimpleQueue(), kw_only=True)
+    event_queue_max_size: int = field(default=30, kw_only=True)
+    _event_queue: Queue = field(init=False, kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
     def __attrs_post_init__(self):
+        self._event_queue = Queue(maxsize=self.event_queue_max_size)
+
         for task in self.tasks:
             task.structure = self
 
     @property
     def execution_args(self) -> tuple:
         return self._execution_args
+
+    @property
+    def event_queue(self) -> Queue:
+        return self._event_queue
 
     @property
     def logger(self) -> Logger:
