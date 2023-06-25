@@ -1,5 +1,4 @@
 import json
-from griptape.summarizers import PromptDriverSummarizer
 from griptape.memory.structure import SummaryConversationMemory, Run
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.tasks import PromptTask
@@ -8,7 +7,7 @@ from griptape.structures import Pipeline
 
 class TestSummaryConversationMemory:
     def test_unsummarized_subtasks(self):
-        memory = SummaryConversationMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockPromptDriver()))
+        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
 
@@ -24,7 +23,7 @@ class TestSummaryConversationMemory:
         assert len(memory.unsummarized_runs()) == 1
 
     def test_after_run(self):
-        memory = SummaryConversationMemory(offset=1, summarizer=PromptDriverSummarizer(driver=MockPromptDriver()))
+        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
 

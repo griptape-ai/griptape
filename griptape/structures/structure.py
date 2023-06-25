@@ -18,7 +18,10 @@ class Structure(ABC):
     LOGGER_NAME = "griptape-flow"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: OpenAiPromptDriver()), kw_only=True)
+    prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda: OpenAiPromptDriver()),
+        kw_only=True
+    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)

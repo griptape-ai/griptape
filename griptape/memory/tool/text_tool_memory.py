@@ -4,16 +4,13 @@ import uuid
 from typing import TYPE_CHECKING, Union
 from attr import define, field, Factory
 from schema import Schema, Literal
-from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact
 from griptape.core.decorators import activity
-from griptape.drivers import OpenAiPromptDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import BaseToolMemory
-from griptape.summarizers import PromptDriverSummarizer
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
-
 
 
 @define
@@ -23,30 +20,6 @@ class TextToolMemory(BaseToolMemory):
         default=Factory(lambda: VectorQueryEngine())
     )
     top_n: int = field(default=5, kw_only=True)
-
-    @activity(config={
-        "description": "Can be used to generate summaries of memory artifacts",
-        "schema": Schema({
-            "artifact_namespace": str
-        })
-    })
-    def summarize(self, params: dict) -> Union[TextArtifact, ErrorArtifact]:
-        artifact_namespace = params["values"]["artifact_namespace"]
-        artifacts = self.load_artifacts(artifact_namespace)
-
-        if len(artifacts) == 0:
-            return ErrorArtifact("no artifacts found")
-        else:
-            artifact_list = " ".join([a.to_text() for a in artifacts])
-
-            try:
-                summary = PromptDriverSummarizer(
-                    driver=OpenAiPromptDriver()
-                ).summarize_text(artifact_list)
-
-                return TextArtifact(summary)
-            except Exception as e:
-                return ErrorArtifact(f"error summarizing text: {e}")
 
     @activity(config={
         "description": "Can be used to search and query memory artifacts in a namespace",

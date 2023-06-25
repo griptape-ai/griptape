@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import logging
 from typing import TYPE_CHECKING
 from typing import Optional
 from attr import define, field, Factory
@@ -7,22 +8,32 @@ from griptape.drivers import OpenAiPromptDriver
 from griptape.schemas import SummaryConversationMemorySchema
 from griptape.utils import J2
 from griptape.memory.structure import ConversationMemory
-from griptape.summarizers import PromptDriverSummarizer
 
 if TYPE_CHECKING:
-    from griptape.summarizers import BaseSummarizer
+    from griptape.drivers import BasePromptDriver
     from griptape.memory.structure import Run
 
 
 @define
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True)
-    summarizer: Optional[BaseSummarizer] = field(
-        default=Factory(lambda: PromptDriverSummarizer(driver=OpenAiPromptDriver())),
+    prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda: OpenAiPromptDriver()),
         kw_only=True
     )
     summary: Optional[str] = field(default=None, kw_only=True)
     summary_index: int = field(default=0, kw_only=True)
+
+    @classmethod
+    def from_dict(cls, memory_dict: dict) -> SummaryConversationMemory:
+        return SummaryConversationMemorySchema().load(memory_dict)
+
+    @classmethod
+    def from_json(cls, memory_json: str) -> SummaryConversationMemory:
+        return SummaryConversationMemory.from_dict(json.loads(memory_json))
+
+    def to_dict(self) -> dict:
+        return dict(SummaryConversationMemorySchema().dump(self))
 
     def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
         summary_index_runs = self.runs[self.summary_index:]
@@ -40,13 +51,12 @@ class SummaryConversationMemory(ConversationMemory):
     def process_add_run(self, run: Run) -> None:
         super().process_add_run(run)
 
-        if self.summarizer:
-            unsummarized_runs = self.unsummarized_runs()
-            runs_to_summarize = unsummarized_runs[:max(0, len(unsummarized_runs) - self.offset)]
+        unsummarized_runs = self.unsummarized_runs()
+        runs_to_summarize = unsummarized_runs[:max(0, len(unsummarized_runs) - self.offset)]
 
-            if len(runs_to_summarize) > 0:
-                self.summary = self.summarizer.summarize_runs(self.summary, runs_to_summarize)
-                self.summary_index = 1 + self.runs.index(runs_to_summarize[-1])
+        if len(runs_to_summarize) > 0:
+            self.summary = self.summarize_runs(self.summary, runs_to_summarize)
+            self.summary_index = 1 + self.runs.index(runs_to_summarize[-1])
 
     def to_prompt_string(self, last_n: Optional[int] = None):
         return J2("prompts/memory/structure.j2").render(
@@ -54,13 +64,18 @@ class SummaryConversationMemory(ConversationMemory):
             runs=self.unsummarized_runs(last_n)
         )
 
-    def to_dict(self) -> dict:
-        return dict(SummaryConversationMemorySchema().dump(self))
+    def summarize_runs(self, previous_summary: str, runs: list[Run]) -> str:
+        try:
+            if len(runs) > 0:
+                return self.prompt_driver.run(
+                    value=J2("prompts/summarize.j2").render(
+                        summary=previous_summary,
+                        runs=runs
+                    )
+                ).to_text()
+            else:
+                return previous_summary
+        except Exception as e:
+            logging.error(f"Error summarizing memory: {type(e).__name__}({e})")
 
-    @classmethod
-    def from_dict(cls, memory_dict: dict) -> SummaryConversationMemory:
-        return SummaryConversationMemorySchema().load(memory_dict)
-
-    @classmethod
-    def from_json(cls, memory_json: str) -> SummaryConversationMemory:
-        return SummaryConversationMemory.from_dict(json.loads(memory_json))
+            return previous_summary
