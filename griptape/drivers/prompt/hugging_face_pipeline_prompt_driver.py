@@ -28,7 +28,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: any) -> TextArtifact:
+    def try_run(self, value: str) -> TextArtifact:
         generator = pipeline(
             tokenizer=self.tokenizer.tokenizer,
             model=self.model,

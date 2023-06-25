@@ -27,7 +27,7 @@ class OpenAiPromptDriver(BasePromptDriver):
         openai.api_key = self.api_key
         openai.organization = self.organization
 
-    def try_run(self, value: any) -> TextArtifact:
+    def try_run(self, value: str) -> TextArtifact:
         if self.tokenizer.is_chat():
             return self.__run_chat(value)
         else:

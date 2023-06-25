@@ -12,16 +12,18 @@ if TYPE_CHECKING:
 
 @define
 class BasePromptDriver(ABC):
+    prompt_prefix: str = field(default="", kw_only=True)
+    prompt_suffix: str = field(default="", kw_only=True)
     max_retries: int = field(default=8, kw_only=True)
     retry_delay: float = field(default=1, kw_only=True)
     temperature: float = field(default=0.1, kw_only=True)
     model: str
     tokenizer: BaseTokenizer
 
-    def run(self, **kwargs) -> TextArtifact:
+    def run(self, value: str) -> TextArtifact:
         for attempt in range(0, self.max_retries + 1):
             try:
-                return self.try_run(**kwargs)
+                return self.try_run(self.full_prompt(value))
             except Exception as e:
                 logging.error(f"PromptDriver.run attempt {attempt} failed: {e}\nRetrying in {self.retry_delay} seconds")
 
@@ -30,6 +32,9 @@ class BasePromptDriver(ABC):
                 else:
                     raise e
 
+    def full_prompt(self, value: str) -> str:
+        return f"{self.prompt_prefix}{value}{self.prompt_suffix}"
+
     @abstractmethod
-    def try_run(self, **kwargs) -> TextArtifact:
+    def try_run(self, value: str) -> TextArtifact:
         ...

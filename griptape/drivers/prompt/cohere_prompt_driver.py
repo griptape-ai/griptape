@@ -17,7 +17,7 @@ class CoherePromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: any) -> TextArtifact:
+    def try_run(self, value: str) -> TextArtifact:
         result = self.client.generate(
             value,
             model=self.model,

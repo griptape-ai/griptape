@@ -40,7 +40,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: any) -> TextArtifact:
+    def try_run(self, value: str) -> TextArtifact:
         if self.client.task in self.SUPPORTED_TASKS:
             response = self.client(
                 inputs=value,
