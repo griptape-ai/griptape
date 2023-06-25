@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.artifacts import BaseArtifact
@@ -17,13 +16,6 @@ class TextArtifact(BaseArtifact):
     @property
     def embedding(self) -> Optional[list[float]]:
         return None if len(self.__embedding) == 0 else self.__embedding
-
-    @property
-    def value_and_meta(self) -> str:
-        return json.dumps({
-            "value": self.value,
-            "meta": self.meta
-        })
 
     def __add__(self, other: TextArtifact) -> TextArtifact:
         return TextArtifact(self.value + other.value)

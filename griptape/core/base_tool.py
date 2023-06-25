@@ -14,6 +14,7 @@ from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.memory.tool import BaseToolMemory
+    from griptape.tasks import ActionSubtask
 
 
 @define
@@ -71,23 +72,23 @@ class BaseTool(ActivityMixin, ABC):
     def before_execute(self, activity: callable, value: Optional[dict]) -> Optional[dict]:
         return value
 
-    def execute(self, activity: callable, value: Optional[dict]) -> BaseArtifact:
-        preprocessed_value = self.before_execute(activity, value)
+    def execute(self, activity: callable, subtask: ActionSubtask) -> BaseArtifact:
+        preprocessed_value = self.before_execute(activity, subtask.action_input)
 
         activity_result = activity(preprocessed_value)
 
         if isinstance(activity_result, BaseArtifact) or isinstance(activity_result, list):
             result = activity_result
         else:
-            logging.error("Error converting tool activity result to an artifact; defaulting to InfoArtifact")
+            logging.warning("Activity result is not an artifact or a list; converting result to InfoArtifact")
 
             result = InfoArtifact(activity_result)
 
-        return self.after_execute(activity, result)
+        return self.after_execute(activity, subtask, result)
 
-    def after_execute(self, activity: callable, value: Optional[BaseArtifact]) -> BaseArtifact:
+    def after_execute(self, activity: callable, subtask: ActionSubtask, value: Optional[BaseArtifact]) -> BaseArtifact:
         for memory in activity.__self__.output_memory.get(activity.name, []):
-            value = memory.process_output(activity, value)
+            value = memory.process_output(activity, subtask, value)
 
         return value
 

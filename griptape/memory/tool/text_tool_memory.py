@@ -1,6 +1,7 @@
+from __future__ import annotations
 import logging
 import uuid
-from typing import Union
+from typing import TYPE_CHECKING, Union
 from attr import define, field, Factory
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact
@@ -9,6 +10,10 @@ from griptape.drivers import OpenAiPromptDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import BaseToolMemory
 from griptape.summarizers import PromptDriverSummarizer
+
+if TYPE_CHECKING:
+    from griptape.tasks import ActionSubtask
+
 
 
 @define
@@ -27,7 +32,7 @@ class TextToolMemory(BaseToolMemory):
     })
     def summarize(self, params: dict) -> Union[TextArtifact, ErrorArtifact]:
         artifact_namespace = params["values"]["artifact_namespace"]
-        artifacts = self.load_namespace_artifacts(artifact_namespace)
+        artifacts = self.load_artifacts(artifact_namespace)
 
         if len(artifacts) == 0:
             return ErrorArtifact("no artifacts found")
@@ -60,31 +65,40 @@ class TextToolMemory(BaseToolMemory):
 
         return self.query_engine.query(
             query,
+            metadata=self.query_engine.namespace_metadata.get(artifact_namespace),
             namespace=artifact_namespace
         )
 
     def process_output(
             self,
             tool_activity: callable,
+            subtask: ActionSubtask,
             value: Union[BaseArtifact, list[BaseArtifact]]
     ) -> BaseArtifact:
         from griptape.utils import J2
 
         tool_name = tool_activity.__self__.name
         activity_name = tool_activity.name
+        metadata = subtask.to_json()
 
         if isinstance(value, TextArtifact):
             namespace = value.id
 
-            self.query_engine.vector_store_driver.upsert_text_artifact(value, namespace=namespace)
+            self.query_engine.upsert_text_artifact(
+                value,
+                namespace=namespace,
+                metadata=metadata
+            )
         elif isinstance(value, list):
             artifacts = [a for a in value if isinstance(a, TextArtifact)]
 
             if len(artifacts) > 0:
                 namespace = uuid.uuid4().hex
 
-                [self.query_engine.vector_store_driver.upsert_text_artifact(
-                    a, namespace=namespace
+                [self.query_engine.upsert_text_artifact(
+                    a,
+                    namespace=namespace,
+                    metadata=metadata
                 ) for a in artifacts]
             else:
                 namespace = None
@@ -105,7 +119,7 @@ class TextToolMemory(BaseToolMemory):
 
             return value
 
-    def load_namespace_artifacts(self, namespace: str) -> list[TextArtifact]:
+    def load_artifacts(self, namespace: str) -> list[TextArtifact]:
         artifacts = [
             BaseArtifact.from_json(e.meta["artifact"])
             for e in self.query_engine.vector_store_driver.load_entries(namespace)

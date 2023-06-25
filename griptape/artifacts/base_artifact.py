@@ -12,7 +12,6 @@ from marshmallow.exceptions import RegistryError
 class BaseArtifact(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     value: Union[str, bytes] = field()
-    meta: dict[str, any] = field(factory=dict, kw_only=True)
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     @classmethod

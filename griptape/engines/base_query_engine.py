@@ -6,5 +6,5 @@ from griptape.artifacts import TextArtifact
 @define
 class BaseQueryEngine(ABC):
     @abstractmethod
-    def query(self, query: str, *args, **kwargs) -> TextArtifact:
+    def query(self, *args, **kwargs) -> TextArtifact:
         ...

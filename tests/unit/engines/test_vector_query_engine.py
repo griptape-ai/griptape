@@ -1,4 +1,5 @@
 import pytest
+from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.loaders import TextLoader
@@ -24,6 +25,16 @@ class TestVectorQueryEngine:
             gen_paragraph(MAX_TOKENS, engine.prompt_driver.tokenizer, ". ")
         )
 
-        [engine.vector_store_driver.upsert_text_artifact(a) for a in artifacts]
+        [engine.upsert_text_artifact(a) for a in artifacts]
 
         assert engine.query("foo").value.startswith("mock output")
+
+    def test_upsert_text_artifact(self, engine):
+        engine.upsert_text_artifact(
+            TextArtifact("foobar"),
+            namespace="test",
+            metadata="foobar"
+        )
+
+        assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[0].meta["artifact"]).value == "foobar"
+        assert engine.namespace_metadata["test"] == "foobar"

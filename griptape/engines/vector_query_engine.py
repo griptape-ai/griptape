@@ -7,6 +7,7 @@ from griptape.engines import BaseQueryEngine
 
 @define
 class VectorQueryEngine(BaseQueryEngine):
+    namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(lambda: LocalVectorStoreDriver()),
         kw_only=True
@@ -19,6 +20,7 @@ class VectorQueryEngine(BaseQueryEngine):
     def query(
             self,
             query: str,
+            metadata: Optional[str] = None,
             top_n: Optional[int] = None,
             namespace: Optional[str] = None
     ) -> TextArtifact:
@@ -31,15 +33,16 @@ class VectorQueryEngine(BaseQueryEngine):
         prefix_list = [
             "You are a helpful assistant who can answer questions by searching through text segments.",
             "Always be truthful. Don't make up facts.",
-            "Use the below list of text segments to answer the subsequent question.",
+            "Use the below list of text segments and optional metadata to answer the subsequent question.",
             'If the answer cannot be found in the segments, say "I could not find an answer."'
         ]
 
-        prefix = " ".join(prefix_list)
+        metadata = f"Metadata: {metadata if metadata else 'no metadata available'}"
+        prefix = f"{' '.join(prefix_list)}\n\n{metadata}"
         question = f"\n\nQuestion: {query}"
 
         for artifact in artifacts:
-            next_segment = f'\n\nText segment:\n"""\n{artifact.value_and_meta}\n"""'
+            next_segment = f'\n\nText segment:\n"""\n{artifact.value}\n"""'
 
             if tokenizer.token_count(prefix + next_segment + question) > tokenizer.max_tokens:
                 break
@@ -47,3 +50,19 @@ class VectorQueryEngine(BaseQueryEngine):
                 prefix += next_segment
 
         return self.prompt_driver.run(value=prefix + question)
+
+    def upsert_text_artifact(
+            self,
+            artifact: TextArtifact,
+            namespace: Optional[str] = None,
+            metadata: Optional[str] = None
+    ) -> str:
+        result = self.vector_store_driver.upsert_text_artifact(
+            artifact,
+            namespace=namespace
+        )
+
+        if metadata:
+            self.namespace_metadata[namespace] = metadata
+
+        return result

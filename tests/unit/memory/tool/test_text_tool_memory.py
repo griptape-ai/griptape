@@ -3,6 +3,7 @@ from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
+from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -37,17 +38,17 @@ class TestTextToolMemory:
         assert memory.id == "MyMemory"
 
     def test_process_output(self, memory):
-        assert memory.process_output(MockTool().test, TextArtifact("foo")).to_text().startswith(
+        assert memory.process_output(MockTool().test, ActionSubtask(), TextArtifact("foo")).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
 
     def test_process_output_with_many_artifacts(self, memory):
-        assert memory.process_output(MockTool().test, [TextArtifact("foo")]).to_text().startswith(
+        assert memory.process_output(MockTool().test, ActionSubtask(), [TextArtifact("foo")]).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
 
     def test_summarize(self, memory):
-        memory.query_engine.vector_store_driver.upsert_text_artifact(
+        memory.query_engine.upsert_text_artifact(
             TextArtifact("foobar"), namespace="foobar"
         )
 
@@ -60,9 +61,14 @@ class TestTextToolMemory:
             {"values": {"query": "foobar", "artifact_namespace": "foo"}}
         ).value == "foobar"
 
-    def test_load_namespace_artifacts(self, memory):
+    def test_upsert_namespace_artifact(self, memory):
+        memory.query_engine.vector_store_driver.upsert_text_artifact(TextArtifact("foo"), namespace="test")
+
+        assert len(memory.load_artifacts("test")) == 1
+
+    def test_upsert_namespace_artifacts(self, memory):
         memory.query_engine.vector_store_driver.upsert_text_artifacts(
             {"test": [TextArtifact("foo"), TextArtifact("bar")]}
         )
 
-        assert len(memory.load_namespace_artifacts("test")) == 2
+        assert len(memory.load_artifacts("test")) == 2

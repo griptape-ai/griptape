@@ -88,10 +88,7 @@ class ActionSubtask(PromptTask):
             else:
                 if self.action_type == "tool":
                     if self._tool:
-                        observation = self._tool.execute(
-                            getattr(self._tool, self.action_activity),
-                            self.action_input
-                        )
+                        observation = self._tool.execute(getattr(self._tool, self.action_activity), self)
                     else:
                         observation = ErrorArtifact("tool not found")
                 elif self.action_type == "memory":
