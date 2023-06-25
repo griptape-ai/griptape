@@ -1,4 +1,3 @@
-from typing import Optional
 import anthropic
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact

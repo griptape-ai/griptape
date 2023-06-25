@@ -1,12 +1,10 @@
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact
 from griptape.drivers import OpenAiPromptDriver
 from griptape.tokenizers import TiktokenTokenizer
 
 
 @define
 class AzureOpenAiPromptDriver(OpenAiPromptDriver):
-    # The model is used to configure the tokenizer below
     api_base: str = field(kw_only=True)
     model: str = field(kw_only=True)
     deployment_id: str = field(kw_only=True)
