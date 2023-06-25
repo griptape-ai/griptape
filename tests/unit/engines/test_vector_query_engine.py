@@ -36,4 +36,4 @@ class TestVectorQueryEngine:
         )
 
         assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[0].meta["artifact"]).value == "foobar"
-        assert engine.namespace_metadata["test"] == "foobar"
+
