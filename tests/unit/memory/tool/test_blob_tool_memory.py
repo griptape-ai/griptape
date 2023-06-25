@@ -18,11 +18,13 @@ class TestBlobToolMemory:
     def test_process_output(self):
         memory = BlobToolMemory(id="MyMemory", driver=LocalBlobToolMemoryDriver())
         artifact = BlobArtifact(b"foo", name="foo")
-        output = memory.process_output(MockTool().test, ActionSubtask(), artifact)
+        subtask = ActionSubtask()
+        output = memory.process_output(MockTool().test, subtask, artifact)
 
         assert output.to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
+        assert memory.namespace_metadata[artifact.id] == subtask.to_json()
 
         assert memory.driver.load(artifact.id) == [artifact]
 
