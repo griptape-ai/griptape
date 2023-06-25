@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.memory.structure import Run, BaseStructureMemory
+from griptape.memory.structure import Run
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ConversationMemory(BaseStructureMemory):
+class ConversationMemory:
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     driver: Optional[BaseConversationMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True)
@@ -38,7 +38,7 @@ class ConversationMemory(BaseStructureMemory):
         return not self.runs
 
     def to_prompt_string(self, last_n: Optional[int] = None) -> str:
-        return J2("prompts/memory/structure.j2").render(
+        return J2("prompts/memory/conversation.j2").render(
             runs=self.runs if last_n is None else self.runs[-last_n:]
         )
 

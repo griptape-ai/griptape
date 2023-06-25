@@ -59,7 +59,7 @@ class SummaryConversationMemory(ConversationMemory):
             self.summary_index = 1 + self.runs.index(runs_to_summarize[-1])
 
     def to_prompt_string(self, last_n: Optional[int] = None):
-        return J2("prompts/memory/structure.j2").render(
+        return J2("prompts/memory/summary.j2").render(
             summary=self.summary,
             runs=self.unsummarized_runs(last_n)
         )
