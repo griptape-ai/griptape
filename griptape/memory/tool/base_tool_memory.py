@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 @define
 class BaseToolMemory(ActivityMixin, ABC):
     id: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
 
     def process_output(
             self,

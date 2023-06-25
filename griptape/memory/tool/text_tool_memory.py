@@ -65,7 +65,7 @@ class TextToolMemory(BaseToolMemory):
 
         return self.query_engine.query(
             query,
-            metadata=self.query_engine.namespace_metadata.get(artifact_namespace),
+            metadata=self.namespace_metadata.get(artifact_namespace),
             namespace=artifact_namespace
         )
 
@@ -79,15 +79,13 @@ class TextToolMemory(BaseToolMemory):
 
         tool_name = tool_activity.__self__.name
         activity_name = tool_activity.name
-        metadata = subtask.to_json()
 
         if isinstance(value, TextArtifact):
             namespace = value.id
 
             self.query_engine.upsert_text_artifact(
                 value,
-                namespace=namespace,
-                metadata=metadata
+                namespace=namespace
             )
         elif isinstance(value, list):
             artifacts = [a for a in value if isinstance(a, TextArtifact)]
@@ -97,8 +95,7 @@ class TextToolMemory(BaseToolMemory):
 
                 [self.query_engine.upsert_text_artifact(
                     a,
-                    namespace=namespace,
-                    metadata=metadata
+                    namespace=namespace
                 ) for a in artifacts]
             else:
                 namespace = None
@@ -106,6 +103,8 @@ class TextToolMemory(BaseToolMemory):
             namespace = None
 
         if namespace:
+            self.namespace_metadata[namespace] = subtask.to_json()
+
             output = J2("memory/tool/text.j2").render(
                 memory_id=self.id,
                 tool_name=tool_name,

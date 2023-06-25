@@ -7,7 +7,6 @@ from griptape.engines import BaseQueryEngine
 
 @define
 class VectorQueryEngine(BaseQueryEngine):
-    namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(lambda: LocalVectorStoreDriver()),
         kw_only=True
@@ -54,15 +53,11 @@ class VectorQueryEngine(BaseQueryEngine):
     def upsert_text_artifact(
             self,
             artifact: TextArtifact,
-            namespace: Optional[str] = None,
-            metadata: Optional[str] = None
+            namespace: Optional[str] = None
     ) -> str:
         result = self.vector_store_driver.upsert_text_artifact(
             artifact,
             namespace=namespace
         )
-
-        if metadata:
-            self.namespace_metadata[namespace] = metadata
 
         return result
