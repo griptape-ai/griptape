@@ -66,10 +66,7 @@ class TextToolMemory(BaseToolMemory):
             if len(artifacts) > 0:
                 namespace = uuid.uuid4().hex
 
-                [self.query_engine.upsert_text_artifact(
-                    a,
-                    namespace=namespace
-                ) for a in artifacts]
+                self.query_engine.upsert_text_artifacts(artifacts, namespace)
             else:
                 namespace = None
         else:

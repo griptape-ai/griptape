@@ -3,7 +3,6 @@ from concurrent import futures
 from dataclasses import dataclass
 from typing import Optional
 from attr import define, field, Factory
-
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver

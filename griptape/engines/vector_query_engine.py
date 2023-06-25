@@ -61,3 +61,12 @@ class VectorQueryEngine(BaseQueryEngine):
         )
 
         return result
+
+    def upsert_text_artifacts(
+            self,
+            artifacts: list[TextArtifact],
+            namespace: str
+    ) -> None:
+        self.vector_store_driver.upsert_text_artifacts({
+            namespace: artifacts
+        })

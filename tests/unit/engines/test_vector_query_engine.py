@@ -37,3 +37,13 @@ class TestVectorQueryEngine:
 
         assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[0].meta["artifact"]).value == "foobar"
 
+
+    def test_upsert_text_artifacts(self, engine):
+        engine.upsert_text_artifacts(
+            artifacts=[TextArtifact("foobar1"), TextArtifact("foobar2")],
+            namespace="test"
+        )
+
+        assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[0].meta["artifact"]).value == "foobar1"
+        assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[1].meta["artifact"]).value == "foobar2"
+
