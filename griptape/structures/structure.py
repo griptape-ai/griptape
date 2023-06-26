@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @define
 class Structure(ABC):
-    LOGGER_NAME = "griptape-flow"
+    LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
