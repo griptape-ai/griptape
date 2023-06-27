@@ -291,17 +291,17 @@ css = ["tinycss2 (>=1.1.0,<1.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.26.160"
+version = "1.26.162"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.26.160-py3-none-any.whl", hash = "sha256:d12643d6c18caa79b385a0c4251698391da7a6f5ffa0879b4c10c5d64e5c8b31"},
-    {file = "boto3-1.26.160.tar.gz", hash = "sha256:5218869eddeeb70efead1dd01037c3553dc7b268de3b80a0c3a2baeec2b97fc9"},
+    {file = "boto3-1.26.162-py3-none-any.whl", hash = "sha256:d42c7b88a2080850481ca124250e4868f27fdd6181b3bdb79498d6742d894db1"},
+    {file = "boto3-1.26.162.tar.gz", hash = "sha256:30bc198f7d4e01c3fec8e8470b9c228625e792e3de7c6aa2d4cfaf72c4f873d7"},
 ]
 
 [package.dependencies]
-botocore = ">=1.29.160,<1.30.0"
+botocore = ">=1.29.162,<1.30.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -310,13 +310,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.29.160"
+version = "1.29.162"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.29.160-py3-none-any.whl", hash = "sha256:15d38dae978aba829daaf8d1b02ba2f2b73d4c1e4edc75234163d65a1328c1b5"},
-    {file = "botocore-1.29.160.tar.gz", hash = "sha256:dacf41787978c0d550321d334e0001a488145200f8a6c9bd893fb8e281b25cf7"},
+    {file = "botocore-1.29.162-py3-none-any.whl", hash = "sha256:dadb7d793891274905511cdf8a06bea7d8f797c5e0824f06fbc70c7d1a5fdd17"},
+    {file = "botocore-1.29.162.tar.gz", hash = "sha256:18fd92768b5d554d27b1adce5fad6317a303d3e133abe4adfbf4059a776bcdf7"},
 ]
 
 [package.dependencies]
@@ -2233,13 +2233,13 @@ files = [
 
 [[package]]
 name = "pywin32-ctypes"
-version = "0.2.1"
+version = "0.2.2"
 description = "A (partial) reimplementation of pywin32 using ctypes/cffi"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "pywin32-ctypes-0.2.1.tar.gz", hash = "sha256:934a2def1e5cbc472b2b6bf80680c0f03cd87df65dfd58bfd1846969de095b03"},
-    {file = "pywin32_ctypes-0.2.1-py3-none-any.whl", hash = "sha256:b9a53ef754c894a525469933ab2a447c74ec1ea6b9d2ef446f40ec50d3dcec9f"},
+    {file = "pywin32-ctypes-0.2.2.tar.gz", hash = "sha256:3426e063bdd5fd4df74a14fa3cf80a0b42845a87e1d1e81f6549f9daec593a60"},
+    {file = "pywin32_ctypes-0.2.2-py3-none-any.whl", hash = "sha256:bf490a1a709baf35d688fe0ecf980ed4de11d2b3e37b51e5442587a75d9957e7"},
 ]
 
 [[package]]
@@ -2737,16 +2737,6 @@ optional = false
 python-versions = "*"
 files = [
     {file = "stopit-1.1.2.tar.gz", hash = "sha256:f7f39c583fd92027bd9d06127b259aee7a5b7945c1f1fa56263811e1e766996d"},
-]
-
-[[package]]
-name = "stringcase"
-version = "1.2.0"
-description = "String case converter."
-optional = false
-python-versions = "*"
-files = [
-    {file = "stringcase-1.2.0.tar.gz", hash = "sha256:48a06980661908efe8d9d34eab2b6c13aefa2163b3ced26972902e3bdfd87008"},
 ]
 
 [[package]]
@@ -3372,4 +3362,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "1d8006fba44ec273b66203959e718d25f8937b43b37d28cc2452e7b0ccca600c"
+content-hash = "0f334939a6759e7419f976c12cfd2ecbf8452df93d1a4f51dc256a58d4c7dc3c"
