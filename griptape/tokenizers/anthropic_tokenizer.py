@@ -5,6 +5,8 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class AnthropicTokenizer(BaseTokenizer):
+    DEFAULT_STOP_SEQUENCES = ["Observation:", "Input:", anthropic.HUMAN_PROMPT]
+
     DEFAULT_MODEL = "claude-v1-100k"
     DEFAULT_MAX_TOKENS = 8000
     MODEL_SUFFIXES_TO_MAX_TOKENS = {

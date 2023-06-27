@@ -45,7 +45,7 @@ class OpenAiPromptDriver(BasePromptDriver):
             ],
             "max_tokens":  self.tokenizer.tokens_left(value),
             "temperature":  self.temperature,
-            "stop":  self.tokenizer.stop_sequence,
+            "stop":  self.tokenizer.stop_sequences,
             "user":  self.user
         }
 
@@ -55,7 +55,7 @@ class OpenAiPromptDriver(BasePromptDriver):
             "prompt":  value,
             "max_tokens":  self.tokenizer.tokens_left(value),
             "temperature":  self.temperature,
-            "stop":  self.tokenizer.stop_sequence,
+            "stop":  self.tokenizer.stop_sequences,
             "user":  self.user
         }
 

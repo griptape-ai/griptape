@@ -1,9 +1,10 @@
 import pytest
 from griptape.artifacts import TextArtifact
 from griptape.drivers import PineconeVectorStoreDriver
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestOpenAiEmbeddingDriver:
+class TestPineconeVectorStorageDriver:
     """
     This should really be under `unit` but the Pinecone client results
     in tests hanging on GitHub.
@@ -35,7 +36,8 @@ class TestOpenAiEmbeddingDriver:
         return PineconeVectorStoreDriver(
             api_key="foobar",
             index_name="test",
-            environment="test"
+            environment="test",
+            embedding_driver=MockEmbeddingDriver()
         )
 
     def test_upsert_text_artifact(self, driver):

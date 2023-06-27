@@ -2,14 +2,17 @@ from abc import ABC, abstractmethod
 from itertools import islice
 from typing import Generator
 
-from attr import define, field
+from attr import define, field, Factory
 
 
 @define
 class BaseTokenizer(ABC):
-    DEFAULT_STOP_SEQUENCE = "Observation:"
+    DEFAULT_STOP_SEQUENCES = ["Observation:", "Input:"]
 
-    stop_sequence: str = field(default=DEFAULT_STOP_SEQUENCE, kw_only=True)
+    stop_sequences: list[str] = field(
+        default=Factory(lambda: BaseTokenizer.DEFAULT_STOP_SEQUENCES),
+        kw_only=True
+    )
 
     @property
     @abstractmethod

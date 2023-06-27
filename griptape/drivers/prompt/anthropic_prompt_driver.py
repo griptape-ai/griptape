@@ -27,7 +27,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         # Anthropic requires specific prompt formatting: https://console.anthropic.com/docs/api
         response = client.completion(
             prompt=value,
-            stop_sequences=[anthropic.HUMAN_PROMPT, self.tokenizer.stop_sequence],
+            stop_sequences=self.tokenizer.stop_sequences,
             model=self.model,
             max_tokens_to_sample=self.tokenizer.tokens_left(value),
             temperature=self.temperature,

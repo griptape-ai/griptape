@@ -22,7 +22,7 @@ class CoherePromptDriver(BasePromptDriver):
             value,
             model=self.model,
             temperature=self.temperature,
-            end_sequences=[self.tokenizer.stop_sequence, "Input:"],
+            end_sequences=self.tokenizer.stop_sequences,
             max_tokens=self.tokenizer.tokens_left(value)
         )
 

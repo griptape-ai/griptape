@@ -53,7 +53,7 @@ class TiktokenTokenizer(BaseTokenizer):
         return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
 
     def encode(self, text: str) -> list[int]:
-        return self.encoding.encode(text, allowed_special={self.stop_sequence})
+        return self.encoding.encode(text, allowed_special=set(self.stop_sequences))
 
     def decode(self, tokens: list[int]) -> str:
         return self.encoding.decode(tokens)
