@@ -1,3 +1,4 @@
+import os
 from typing import Optional, Union
 import numpy as np
 import openai
@@ -16,7 +17,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)
-    api_key: Optional[str] = field(default=openai.api_key, kw_only=True)
+    api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True)
     tokenizer: TiktokenTokenizer = field(
         default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
