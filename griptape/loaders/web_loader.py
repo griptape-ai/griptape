@@ -14,11 +14,10 @@ class WebLoader(TextLoader):
         return self._load_page(url, include_links)
 
     def load_collection(self, urls: list[str], include_links: bool = True) -> dict[str, list[TextArtifact]]:
-        with self.futures_executor as executor:
-            return utils.execute_futures_dict({
-                utils.str_to_hash(u): executor.submit(self._load_page, u, include_links)
-                for u in urls
-            })
+        return utils.execute_futures_dict({
+            utils.str_to_hash(u): self.futures_executor.submit(self._load_page, u, include_links)
+            for u in urls
+        })
 
     def _load_page(self, url: str, include_links: bool = True) -> list[TextArtifact]:
         config = trafilatura.settings.use_config()

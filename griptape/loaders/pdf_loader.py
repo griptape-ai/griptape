@@ -29,12 +29,11 @@ class PdfLoader(TextLoader):
             streams: list[Union[str, IO, Path]],
             password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
-        with self.futures_executor as executor:
-            return utils.execute_futures_dict({
-                utils.str_to_hash(s.decode()) if isinstance(s, bytes) else utils.str_to_hash(str(s)):
-                    executor.submit(self._load_pdf, s, password)
-                for s in streams
-            })
+        return utils.execute_futures_dict({
+            utils.str_to_hash(s.decode()) if isinstance(s, bytes) else utils.str_to_hash(str(s)):
+                self.futures_executor.submit(self._load_pdf, s, password)
+            for s in streams
+        })
 
     def _load_pdf(self, stream: Union[str, IO, Path], password: Optional[str]) -> list[TextArtifact]:
         reader = PdfReader(stream, password=password)

@@ -41,12 +41,11 @@ class BaseVectorStoreDriver(ABC):
             meta: Optional[dict] = None,
             **kwargs
     ) -> None:
-        with self.futures_executor as executor:
-            utils.execute_futures_dict({
-                namespace:
-                    executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
-                for namespace, artifact_list in artifacts.items() for a in artifact_list
-            })
+        utils.execute_futures_dict({
+            namespace:
+                self.futures_executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
+            for namespace, artifact_list in artifacts.items() for a in artifact_list
+        })
 
     def upsert_text_artifact(
             self,
