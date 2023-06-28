@@ -59,4 +59,4 @@ class TiktokenTokenizer(BaseTokenizer):
         return self.encoding.decode(tokens)
 
     def is_chat(self) -> bool:
-        return next(p for p in self.CHAT_API_PREFIXES if self.model.startswith(p)) is not None
+        return any(self.model.startswith(p) for p in self.CHAT_API_PREFIXES)
