@@ -8,4 +8,4 @@ if TYPE_CHECKING:
 
 @define
 class StartTaskEvent(BaseEvent):
-    task = field(kw_only=True)
+    task: BaseTask = field(kw_only=True)

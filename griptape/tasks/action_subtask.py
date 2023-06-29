@@ -80,7 +80,7 @@ class ActionSubtask(PromptTask):
         self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
-        self.structure.publish_event_to_listeners(StartSubtaskEvent(subtask=self))
+        self.structure.publish_event(StartSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
@@ -111,7 +111,7 @@ class ActionSubtask(PromptTask):
 
     def after_run(self) -> None:
         observation = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
-        self.structure.publish_event_to_listeners(FinishSubtaskEvent(subtask=self))
+        self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
     def render(self) -> str:

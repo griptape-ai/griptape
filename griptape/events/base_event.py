@@ -1,6 +1,7 @@
+from abc import ABC
 from attr import define
 
 
 @define
-class BaseEvent:
-    pass
+class BaseEvent(ABC):
+    ...

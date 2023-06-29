@@ -28,7 +28,7 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: Union[list[Callable], dict[str, Callable]] = field(default={}, kw_only=True)
+    event_listeners: Union[list[Callable], dict[str, Callable]] = field(factory=dict, kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
@@ -81,12 +81,11 @@ class Structure(ABC):
     def stack_to_prompt_string(self, stack: list[str]) -> str:
         return str.join("\n", stack)
 
-    def publish_event_to_listeners(self, event: BaseEvent):
+    def publish_event(self, event: BaseEvent) -> None:
         listeners = self.event_listeners.get(type(event), []) if isinstance(self.event_listeners, dict) else self.event_listeners
 
         for listener in listeners:
             listener(event)
-
 
     def context(self, task: BaseTask) -> dict[str, any]:
         return {
