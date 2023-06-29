@@ -13,7 +13,7 @@ from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
 from griptape.utils import J2
 from griptape.artifacts import BaseArtifact
-from griptape.events import BaseEvent
+from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 
 if TYPE_CHECKING:
     from griptape.tasks import ToolkitTask
@@ -80,7 +80,7 @@ class ActionSubtask(PromptTask):
         self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
-        self.structure.event_queue.put(BaseEvent(event_type=BaseEvent.StartSubtaskEventType))
+        self.structure.publish_event_to_listeners(StartSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
@@ -111,7 +111,7 @@ class ActionSubtask(PromptTask):
 
     def after_run(self) -> None:
         observation = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
-        self.structure.event_queue.put(BaseEvent(event_type=BaseEvent.FinishSubtaskEventType))
+        self.structure.publish_event_to_listeners(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
     def render(self) -> str:

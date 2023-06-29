@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
+from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
-from griptape.events import BaseEvent
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -106,19 +106,19 @@ class BaseTask(ABC):
         try:
             self.state = BaseTask.State.EXECUTING
 
-            self.structure.event_queue.put(BaseEvent(event_type=BaseEvent.StartTaskEventType))
+            self.structure.publish_event_to_listeners(StartTaskEvent(task=self))
             self.before_run()
 
             self.output = self.run()
 
             self.after_run()
-            self.structure.event_queue.put(BaseEvent(event_type=BaseEvent.FinishTaskEventType))
         except Exception as e:
             self.structure.logger.error(f"Task {self.id}\n{e}", exc_info=True)
 
             self.output = ErrorArtifact(str(e))
         finally:
             self.state = BaseTask.State.FINISHED
+            self.structure.publish_event_to_listeners(FinishTaskEvent(task=self))
 
             return self.output
 

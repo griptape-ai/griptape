@@ -2,12 +2,14 @@ from __future__ import annotations
 import logging
 import time
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.tokenizers import BaseTokenizer
+from griptape.events import PromptEvent
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextArtifact
+    from griptape.structures import Structure
 
 
 @define
@@ -19,11 +21,15 @@ class BasePromptDriver(ABC):
     temperature: float = field(default=0.1, kw_only=True)
     model: str
     tokenizer: BaseTokenizer
+    structure: Optional[Structure] = field(default=None, init=False)
 
     def run(self, value: str) -> TextArtifact:
         for attempt in range(0, self.max_retries + 1):
             try:
-                return self.try_run(self.full_prompt(value))
+                token_count = self.tokenizer.token_count(kwargs["value"])
+                if self.structure is not None:
+                    self.structure.publish_event_to_listeners(PromptEvent(token_count=token_count))
+                return self.try_run(**kwargs)
             except Exception as e:
                 logging.error(f"PromptDriver.run attempt {attempt} failed: {e}\nRetrying in {self.retry_delay} seconds")
 
