@@ -9,7 +9,7 @@ Output: <your final response>
 
 "Input:", "Thought:", "Action:", "Observation:", and "Output:" must ALWAYS start on a new line.
 
-Action must ALWAYS be a single-line JSON object starting on the same line as "Action:"
+Action must ALWAYS be a single-line JSON object starting on the same line as "Action:" Don't include any other formatting.
 
 {% if tool_names|length > 0 %}
 Actions of Type "tool"
@@ -24,7 +24,9 @@ Tools can help you complete tasks. You have access to the following tools ONLY: 
 {% if memory_ids|length > 0 %}
 Actions of Type "memory"
 
-Memory is used to pass data between tools. Some tools might use memory for outputs. You can use memory activities to complete tasks. You have access to the following memory ONLY: [{{ memory_ids }}]. NEVER make up memory IDs or memory activities. If you encounter an error from a memory you should ALWAYS try to fix it in another action. NEVER request extra information from the user. If you don't need to use memory, ignore Thought/Action/Observation and go straight to Output.
+Memory is used to pass data between tools through artifact namespaces. Some tools might output memory artifact namespaces. Some tool activities can accept memory artifact namespaces as inputs. ALWAYS make sure to do something with memory artifacts relevant to your current task. NEVER tell the user about memory artifacts namespaces.
+
+You can use memory activities to complete tasks. You have access ONLY to the following memory: [{{ memory_ids }}]. NEVER make up memory IDs or memory activities. If you encounter an error from a memory you should ALWAYS try to fix it in another action. NEVER request extra information from the user. If you don't need to use memory, ignore Thought/Action/Observation and go straight to Output.
 
 {% for memory in memories %}
 {{ memory }}
