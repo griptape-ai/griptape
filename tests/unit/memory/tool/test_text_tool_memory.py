@@ -25,7 +25,6 @@ class TestTextToolMemory:
 
         return TextToolMemory(
             id="MyMemory",
-            vector_store_driver=vector_store_driver,
             query_engine=VectorQueryEngine(
                 vector_store_driver=vector_store_driver
             ),

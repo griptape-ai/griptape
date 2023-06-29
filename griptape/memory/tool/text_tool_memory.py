@@ -6,7 +6,6 @@ from attr import define, field, Factory
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact
 from griptape.core.decorators import activity
-from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine
 from griptape.memory.tool import BaseToolMemory
 
@@ -16,14 +15,10 @@ if TYPE_CHECKING:
 
 @define
 class TextToolMemory(BaseToolMemory):
-    vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda: LocalVectorStoreDriver()),
-        kw_only=True
-    )
     query_engine: VectorQueryEngine = field(
         kw_only=True,
         default=Factory(
-            lambda self: VectorQueryEngine(vector_store_driver=self.vector_store_driver),
+            lambda self: VectorQueryEngine(),
             takes_self=True
         )
     )
@@ -42,7 +37,7 @@ class TextToolMemory(BaseToolMemory):
         artifact_namespace = params["values"]["artifact_namespace"]
 
         return self.summary_engine.summarize_artifacts(
-            self.vector_store_driver.load_entries(artifact_namespace)
+            self.load_artifacts(artifact_namespace)
         )
 
     @activity(config={
@@ -115,7 +110,7 @@ class TextToolMemory(BaseToolMemory):
     def load_artifacts(self, namespace: str) -> list[TextArtifact]:
         artifacts = [
             BaseArtifact.from_json(e.meta["artifact"])
-            for e in self.vector_store_driver.load_entries(namespace)
+            for e in self.query_engine.vector_store_driver.load_entries(namespace)
         ]
 
         return [a for a in artifacts if isinstance(a, TextArtifact)]
