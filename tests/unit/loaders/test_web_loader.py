@@ -44,4 +44,4 @@ class TestWebLoader:
             utils.str_to_hash("https://github.com/griptape-ai/griptape"),
             utils.str_to_hash("https://github.com/griptape-ai/griptape-tools")
         ]
-        assert "griptape" in [a.value for artifact_list in artifacts.values() for a in artifact_list][0].lower()
+        assert "foobar" in [a.value for artifact_list in artifacts.values() for a in artifact_list][0].lower()

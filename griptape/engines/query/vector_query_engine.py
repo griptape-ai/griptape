@@ -39,16 +39,17 @@ class VectorQueryEngine(BaseQueryEngine):
         metadata = f"Metadata: {metadata if metadata else 'no metadata available'}"
         prefix = f"{' '.join(prefix_list)}\n\n{metadata}"
         question = f"\n\nQuestion: {query}"
+        answer = "\n\nAnswer: "
 
         for artifact in artifacts:
             next_segment = f'\n\nText segment:\n"""\n{artifact.value}\n"""'
 
-            if tokenizer.token_count(prefix + next_segment + question) > tokenizer.max_tokens:
+            if tokenizer.token_count(prefix + next_segment + question + answer) > tokenizer.max_tokens:
                 break
             else:
                 prefix += next_segment
 
-        return self.prompt_driver.run(value=prefix + question)
+        return self.prompt_driver.run(value=prefix + question + answer)
 
     def upsert_text_artifact(
             self,

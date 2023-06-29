@@ -1,0 +1,17 @@
+{% if summary %}
+Current text summary: """
+{{ summary }}
+"""
+
+Additional text: """
+{{ text }}
+"""
+
+Rewrite the current text summary to include additional text:
+{% else %}
+Summarize the following text: """
+{{ text }}
+"""
+
+Summary:
+{% endif %}

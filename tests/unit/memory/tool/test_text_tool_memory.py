@@ -1,10 +1,11 @@
 import pytest
 from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -18,15 +19,19 @@ class TestTextToolMemory:
 
     @pytest.fixture
     def memory(self):
-        query_engine = VectorQueryEngine(
-            vector_store_driver=LocalVectorStoreDriver(
-                embedding_driver=MockEmbeddingDriver()
-            )
+        vector_store_driver = LocalVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver()
         )
 
         return TextToolMemory(
             id="MyMemory",
-            query_engine=query_engine
+            vector_store_driver=vector_store_driver,
+            query_engine=VectorQueryEngine(
+                vector_store_driver=vector_store_driver
+            ),
+            summary_engine=PromptSummaryEngine(
+                prompt_driver=MockPromptDriver()
+            )
         )
 
     def test_init(self, memory):
@@ -46,6 +51,11 @@ class TestTextToolMemory:
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
 
+    def test_summarize(self, memory):
+        assert memory.summarize(
+            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+        ).value == "mock output"
+
     def test_query(self, memory):
         assert memory.search(
             {"values": {"query": "foobar", "artifact_namespace": "foo"}}
@@ -57,8 +67,9 @@ class TestTextToolMemory:
         assert len(memory.load_artifacts("test")) == 1
 
     def test_upsert_namespace_artifacts(self, memory):
-        memory.query_engine.vector_store_driver.upsert_text_artifacts(
-            {"test": [TextArtifact("foo"), TextArtifact("bar")]}
+        memory.query_engine.upsert_text_artifacts(
+            [TextArtifact("foo"), TextArtifact("bar")],
+            "test"
         )
 
         assert len(memory.load_artifacts("test")) == 2
