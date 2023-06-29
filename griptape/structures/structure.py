@@ -83,7 +83,6 @@ class Structure(ABC):
 
     def publish_event_to_listeners(self, event: BaseEvent):
         listeners = self.event_listeners.get(type(event), []) if isinstance(self.event_listeners, dict) else self.event_listeners
-        self.logger.debug("")
 
         for listener in listeners:
             listener(event)
