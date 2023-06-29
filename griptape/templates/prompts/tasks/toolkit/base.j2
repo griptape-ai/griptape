@@ -16,6 +16,10 @@ Actions of Type "tool"
 
 Tools can help you complete tasks. You have access to the following tools ONLY: [{{ tool_names }}]. NEVER make up tool names or tool activities. NEVER use tools for tasks they are not designed for. If the observation contains an error, you MUST ALWAYS try to fix the error with another Thought and Action. NEVER request extra information from the user. If you don't need to use a tool, ignore Thought/Action/Observation and go straight to Output.
 
+{% if memory_ids|length > 0 %}
+Memory is used to pass data between tools with artifact namespaces. Some tools might output memory artifact namespaces. Some tool activities can accept memory artifact namespaces as inputs. ALWAYS make sure to do something with memory artifacts relevant to your current task.
+{% endif %}
+
 {% for tool in tools %}
 {{ tool }}
 {% endfor %}
@@ -23,8 +27,6 @@ Tools can help you complete tasks. You have access to the following tools ONLY: 
 
 {% if memory_ids|length > 0 %}
 Actions of Type "memory"
-
-Memory is used to pass data between tools through artifact namespaces. Some tools might output memory artifact namespaces. Some tool activities can accept memory artifact namespaces as inputs. ALWAYS make sure to do something with memory artifacts relevant to your current task. NEVER tell the user about memory artifacts namespaces.
 
 You can use memory activities to complete tasks. You have access ONLY to the following memory: [{{ memory_ids }}]. NEVER make up memory IDs or memory activities. If you encounter an error from a memory you should ALWAYS try to fix it in another action. NEVER request extra information from the user. If you don't need to use memory, ignore Thought/Action/Observation and go straight to Output.
 
