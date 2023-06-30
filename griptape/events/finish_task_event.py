@@ -6,6 +6,7 @@ from griptape.events.base_event import BaseEvent
 if TYPE_CHECKING:
     from griptape.tasks.base_task import BaseTask
 
+
 @define
 class FinishTaskEvent(BaseEvent):
     task: BaseTask = field(kw_only=True)

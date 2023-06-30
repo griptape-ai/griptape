@@ -1,10 +1,9 @@
 from __future__ import annotations
 import logging
 import uuid
-from queue import Queue
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, Union, TYPE_CHECKING, Callable
+from typing import Optional, Union, TYPE_CHECKING, Callable, Type, Any, Dict
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
@@ -28,7 +27,7 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: Union[list[Callable], dict[str, Callable]] = field(factory=dict, kw_only=True)
+    event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
@@ -82,7 +81,10 @@ class Structure(ABC):
         return str.join("\n", stack)
 
     def publish_event(self, event: BaseEvent) -> None:
-        listeners = self.event_listeners.get(type(event), []) if isinstance(self.event_listeners, dict) else self.event_listeners
+        if isinstance(self.event_listeners, dict):
+            listeners = self.event_listeners.get(type(event), [])
+        else:
+            listeners = self.event_listeners
 
         for listener in listeners:
             listener(event)

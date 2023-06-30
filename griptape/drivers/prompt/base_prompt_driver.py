@@ -26,10 +26,23 @@ class BasePromptDriver(ABC):
     def run(self, value: str) -> TextArtifact:
         for attempt in range(0, self.max_retries + 1):
             try:
-                if self.structure is not None:
-                    token_count = self.tokenizer.token_count(value)
-                    self.structure.publish_event(StartPromptEvent(token_count=token_count))
-                return self.try_run(self.full_prompt(value))
+                if self.structure:
+                    self.structure.publish_event(
+                        StartPromptEvent(
+                            token_count=self.tokenizer.token_count(value)
+                        )
+                    )
+
+                result = self.try_run(self.full_prompt(value))
+
+                if self.structure:
+                    self.structure.publish_event(
+                        FinishPromptEvent(
+                            token_count=result.token_count(self.tokenizer)
+                        )
+                    )
+
+                return result
             except Exception as e:
                 logging.error(f"PromptDriver.run attempt {attempt} failed: {e}\nRetrying in {self.retry_delay} seconds")
 
@@ -37,9 +50,6 @@ class BasePromptDriver(ABC):
                     time.sleep(self.retry_delay)
                 else:
                     raise e
-            finally:
-                if self.structure is not None:
-                    self.structure.publish_event(FinishPromptEvent())
 
     def full_prompt(self, value: str) -> str:
         return f"{self.prompt_prefix}{value}{self.prompt_suffix}"

@@ -1,6 +1,5 @@
 from unittest.mock import Mock
 import pytest
-from griptape.events import BaseEvent
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, ActionSubtask
 from griptape.events import (
