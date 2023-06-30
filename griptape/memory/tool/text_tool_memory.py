@@ -26,6 +26,7 @@ class TextToolMemory(BaseToolMemory):
         kw_only=True,
         default=Factory(lambda: PromptSummaryEngine())
     )
+    top_n: int = field(default=5, kw_only=True)
 
     @activity(config={
         "description": "Can be used to summarize memory artifacts in a namespace",
@@ -57,6 +58,7 @@ class TextToolMemory(BaseToolMemory):
 
         return self.query_engine.query(
             query,
+            top_n=self.top_n,
             metadata=self.namespace_metadata.get(artifact_namespace),
             namespace=artifact_namespace
         )
