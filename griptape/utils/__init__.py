@@ -8,6 +8,7 @@ from .python_runner import PythonRunner
 from .command_runner import CommandRunner
 from .chat import Chat
 from .futures import execute_futures_dict
+from .token_counter import TokenCounter
 
 
 def minify_json(value: str) -> str:
@@ -23,5 +24,6 @@ __all__ = [
     "J2",
     "Chat",
     "str_to_hash",
-    "execute_futures_dict"
+    "execute_futures_dict",
+    "TokenCounter"
 ]
