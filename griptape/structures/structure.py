@@ -1,13 +1,15 @@
 from __future__ import annotations
 import logging
 import uuid
+from queue import Queue
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union, TYPE_CHECKING, Callable
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.rules import Ruleset
+from griptape.events import BaseEvent
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -26,12 +28,14 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
+    event_listeners: Union[list[Callable], dict[str, Callable]] = field(factory=dict, kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
     def __attrs_post_init__(self):
         for task in self.tasks:
             task.structure = self
+        self.prompt_driver.structure = self
 
     @property
     def execution_args(self) -> tuple:
@@ -54,7 +58,6 @@ class Structure(ABC):
                         show_path=False
                     )
                 ]
-
             return self._logger
 
     def is_finished(self) -> bool:
@@ -77,6 +80,12 @@ class Structure(ABC):
 
     def stack_to_prompt_string(self, stack: list[str]) -> str:
         return str.join("\n", stack)
+
+    def publish_event(self, event: BaseEvent) -> None:
+        listeners = self.event_listeners.get(type(event), []) if isinstance(self.event_listeners, dict) else self.event_listeners
+
+        for listener in listeners:
+            listener(event)
 
     def context(self, task: BaseTask) -> dict[str, any]:
         return {

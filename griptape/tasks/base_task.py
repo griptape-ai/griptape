@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
+from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
 
 if TYPE_CHECKING:
@@ -105,6 +106,7 @@ class BaseTask(ABC):
         try:
             self.state = BaseTask.State.EXECUTING
 
+            self.structure.publish_event(StartTaskEvent(task=self))
             self.before_run()
 
             self.output = self.run()
@@ -116,6 +118,7 @@ class BaseTask(ABC):
             self.output = ErrorArtifact(str(e))
         finally:
             self.state = BaseTask.State.FINISHED
+            self.structure.publish_event(FinishTaskEvent(task=self))
 
             return self.output
 
