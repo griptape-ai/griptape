@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import pytest
 from griptape import utils
 from griptape.loaders.text_loader import TextLoader
@@ -13,12 +15,22 @@ class TestTextLoader:
             max_tokens=MAX_TOKENS
         )
 
-    def test_load(self, loader):
+    def test_load_with_str(self, loader):
         text = gen_paragraph(MAX_TOKENS * 2, loader.tokenizer, " ")
         artifacts = loader.load(text)
 
         assert len(artifacts) == 3
         assert artifacts[0].value.startswith("foo-0 foo-1")
+
+    def test_load_with_path(self, loader):
+        path = Path(os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "../../resources/test.txt"
+        ))
+
+        artifacts = loader.load(path)
+
+        assert len(artifacts) == 39
+        assert artifacts[0].value.startswith("foobar foobar foobar")
 
     def test_load_collection(self, loader):
         artifacts = loader.load_collection(["bar", "bat"])
