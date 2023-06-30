@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Union
-
 from attr import field, define, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact
@@ -37,7 +36,7 @@ class TextLoader(BaseLoader):
 
     def load_collection(self, texts: list[Union[str, Path]]) -> dict[str, list[TextArtifact]]:
         return utils.execute_futures_dict({
-            utils.str_to_hash(text): self.futures_executor.submit(self.text_to_artifacts, text)
+            utils.str_to_hash(str(text)): self.futures_executor.submit(self.text_to_artifacts, text)
             for text in texts
         })
 
