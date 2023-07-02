@@ -3,14 +3,13 @@ from typing import TYPE_CHECKING, Union
 from abc import ABC, abstractmethod
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact
-from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
 
 
 @define
-class BaseToolMemory(ActivityMixin, ABC):
+class BaseToolMemory(ABC):
     id: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
 

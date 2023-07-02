@@ -3,10 +3,8 @@ import logging
 import uuid
 from typing import TYPE_CHECKING, Union
 from attr import define, field, Factory
-from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact
-from griptape.core.decorators import activity
-from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine
+from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import BaseToolMemory
 
 if TYPE_CHECKING:
@@ -17,51 +15,8 @@ if TYPE_CHECKING:
 class TextToolMemory(BaseToolMemory):
     query_engine: VectorQueryEngine = field(
         kw_only=True,
-        default=Factory(
-            lambda self: VectorQueryEngine(),
-            takes_self=True
-        )
+        default=Factory(lambda: VectorQueryEngine())
     )
-    summary_engine: BaseSummaryEngine = field(
-        kw_only=True,
-        default=Factory(lambda: PromptSummaryEngine())
-    )
-    top_n: int = field(default=5, kw_only=True)
-
-    @activity(config={
-        "description": "Can be used to summarize memory artifacts in a namespace",
-        "schema": Schema({
-            "artifact_namespace": str
-        })
-    })
-    def summarize(self, params: dict) -> TextArtifact:
-        artifact_namespace = params["values"]["artifact_namespace"]
-
-        return self.summary_engine.summarize_artifacts(
-            self.load_artifacts(artifact_namespace)
-        )
-
-    @activity(config={
-        "description": "Can be used to search and query memory artifacts in a namespace",
-        "schema": Schema({
-            "artifact_namespace": str,
-            Literal(
-                "query",
-                description="A natural language search query in the form of a question with enough "
-                            "contextual information for another person to understand what the query is about"
-            ): str
-        })
-    })
-    def search(self, params: dict) -> TextArtifact:
-        artifact_namespace = params["values"]["artifact_namespace"]
-        query = params["values"]["query"]
-
-        return self.query_engine.query(
-            query,
-            top_n=self.top_n,
-            metadata=self.namespace_metadata.get(artifact_namespace),
-            namespace=artifact_namespace
-        )
 
     def process_output(
             self,
