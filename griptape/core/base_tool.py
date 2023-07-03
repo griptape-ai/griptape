@@ -9,7 +9,7 @@ from abc import ABC
 from typing import Optional
 import yaml
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
@@ -90,7 +90,10 @@ class BaseTool(ActivityMixin, ABC):
         for memory in activity.__self__.output_memory.get(activity.name, []):
             value = memory.process_output(activity, subtask, value)
 
-        return value
+        if isinstance(value, BaseArtifact):
+            return value
+        else:
+            return TextArtifact(str(value))
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator
