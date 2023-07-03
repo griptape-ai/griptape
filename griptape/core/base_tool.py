@@ -137,3 +137,6 @@ class BaseTool(ActivityMixin, ABC):
             stdout=None if self.verbose else subprocess.DEVNULL,
             stderr=None if self.verbose else subprocess.DEVNULL
         )
+
+    def find_input_memory(self, memory_id: str) -> Optional[BaseToolMemory]:
+        return next((m for m in self.input_memory if m.id == memory_id), None)

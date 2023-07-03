@@ -112,3 +112,7 @@ class TestBaseTool:
                     ]
                 }
             )
+
+    def test_find_input_memory(self):
+        assert MockTool().find_input_memory("foo") is None
+        assert MockTool(input_memory=[TextToolMemory(id="foo")]).find_input_memory("foo") is not None
