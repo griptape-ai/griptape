@@ -25,16 +25,6 @@ Memory is used to pass data between tools with artifact namespaces. Some tools m
 {% endfor %}
 {% endif %}
 
-{% if memory_ids|length > 0 %}
-Actions of Type "memory"
-
-You can use memory activities to complete tasks. You have access ONLY to the following memory: [{{ memory_ids }}]. NEVER make up memory IDs or memory activities. If you encounter an error from a memory you should ALWAYS try to fix it in another action. NEVER request extra information from the user. If you don't need to use memory, ignore Thought/Action/Observation and go straight to Output.
-
-{% for memory in memories %}
-{{ memory }}
-{% endfor %}
-{% endif %}
-
 If you don't need to perform an action or if you don't know which action to perform, ignore Thought/Action/Observation and go straight to Output. NEVER make up action types.
 
 {% if rulesets|length > 0 %}
