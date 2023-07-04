@@ -5,7 +5,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class CohereTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = "xlarge"
+    DEFAULT_MODEL = "command"
     MAX_TOKENS = 2048
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
