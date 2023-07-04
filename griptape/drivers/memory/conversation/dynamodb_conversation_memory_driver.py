@@ -1,5 +1,6 @@
 from attr import define, field
 from boto3 import resource
+from typing import Optional
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 
@@ -36,7 +37,7 @@ class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
             },
         )
 
-    def load(self) -> ConversationMemory:
+    def load(self) -> Optional[ConversationMemory]:
         response = self.table.get_item(
             Key={self.partition_key: self.partition_key_value}
         )

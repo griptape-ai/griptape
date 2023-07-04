@@ -1,4 +1,5 @@
 from attr import define, field
+from typing import Optional
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 
@@ -11,7 +12,7 @@ class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
         with open(self.file_path, "w") as file:
             file.write(memory.to_json())
 
-    def load(self) -> ConversationMemory:
+    def load(self) -> Optional[ConversationMemory]:
         with open(self.file_path, "r") as file:
             memory = ConversationMemory.from_json(file.read())
 

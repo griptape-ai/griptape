@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
@@ -12,5 +12,5 @@ class BaseConversationMemoryDriver(ABC):
         ...
 
     @abstractmethod
-    def load(self, *args, **kwargs) -> ConversationMemory:
+    def load(self, *args, **kwargs) -> Optional[ConversationMemory]:
         ...
