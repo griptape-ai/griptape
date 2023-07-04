@@ -16,7 +16,7 @@ class ConversationMemory:
     driver: Optional[BaseConversationMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True)
     structure: Structure = field(init=False)
-    autoload = field(default=False, kw_only=True)
+    autoload: bool = field(default=True, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.driver and self.autoload:
