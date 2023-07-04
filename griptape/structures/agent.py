@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.core import BaseTool
-from griptape.memory.structure import Run, ConversationMemory
+from griptape.memory.structure import Run, SubtaskRun, ConversationMemory
 from griptape.structures import StructureWithMemory
 from griptape.tasks import PromptTask, ToolkitTask
 from griptape.utils import J2
@@ -63,9 +63,13 @@ class Agent(StructureWithMemory):
         self.task.execute()
 
         if self.memory:
+            subtasks = self.task._subtasks if isinstance(self.task, ToolkitTask) else None
+            subtask_runs = [SubtaskRun(input=subtask.input.to_text(), output=subtask.output.to_text()) for subtask in subtasks]
+
             run = Run(
                 input=self.task.input.to_text(),
-                output=self.task.output.to_text()
+                output=self.task.output.to_text(),
+                subtask_runs=subtask_runs
             )
 
             self.memory.add_run(run)

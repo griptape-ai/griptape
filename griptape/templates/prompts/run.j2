@@ -1,2 +1,5 @@
 Input: {{ run.input }}
+{% for subtask_run in subtask_run %}
+{{ subtask_run.render() }}
+{% endfor %}
 Output: {{ run.output }}

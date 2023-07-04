@@ -10,6 +10,7 @@ from .artifacts.blob_artifact_schema import BlobArtifactSchema
 from .artifacts.csv_row_artifact_schema import CsvRowArtifactSchema
 
 from .memory.run_schema import RunSchema
+from .memory.subtask_run_schema import SubtaskRunSchema
 from .memory.conversation_memory_schema import ConversationMemorySchema
 from .memory.buffer_conversation_memory_schema import BufferConversationMemorySchema
 from .memory.summary_conversation_memory_schema import SummaryConversationMemorySchema
@@ -27,6 +28,7 @@ __all__ = [
     "CsvRowArtifactSchema",
 
     "RunSchema",
+    "SubtaskRunSchema",
     "ConversationMemorySchema",
     "BufferConversationMemorySchema",
     "SummaryConversationMemorySchema"
