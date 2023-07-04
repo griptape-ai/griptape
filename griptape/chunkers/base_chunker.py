@@ -25,10 +25,10 @@ class BaseChunker(ABC):
         kw_only=True
     )
 
-    def chunk(self, chunk: Union[TextArtifact, str]) -> list[TextArtifact]:
-        chunk = chunk.value if isinstance(chunk, TextArtifact) else chunk
+    def chunk(self, text: Union[TextArtifact, str]) -> list[TextArtifact]:
+        text = text.value if isinstance(text, TextArtifact) else text
 
-        return [TextArtifact(c) for c in self._chunk_recursively(chunk)]
+        return [TextArtifact(c) for c in self._chunk_recursively(text)]
 
     def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:
         token_count = self.tokenizer.token_count(chunk)
