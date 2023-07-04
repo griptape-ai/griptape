@@ -1,8 +1,8 @@
 tool name: {{ tool.name }}
-{{ tool.name }} activities
+{{ tool.name }} activities:
 {% for activity in tool.activities() %}
 activity name: {{ tool.activity_name(activity) }}
-{{ tool.activity_name(activity) }} activity description: {{ tool.activity_description(activity) }}
+{{ tool.name }}.{{ tool.activity_name(activity) }} activity description: {{ tool.activity_description(activity) }}
 {% if tool.activity_schema(activity) %}
 {{ tool.activity_name(activity) }} activity input value schema: {{ tool.activity_schema(activity) }}
 {% else %}
