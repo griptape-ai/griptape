@@ -20,7 +20,9 @@ class ConversationMemory:
 
     def __attrs_post_init__(self) -> None:
         if self.driver and self.autoload:
-            [self.add_run(r) for r in self.driver.load().runs]
+            memory = self.driver.load()
+            if memory is not None:
+                [self.add_run(r) for r in memory.runs]
 
     def add_run(self, run: Run) -> ConversationMemory:
         self.before_add_run()
