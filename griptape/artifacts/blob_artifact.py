@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os.path
 from typing import Optional
 from attr import field, define
@@ -10,9 +11,12 @@ class BlobArtifact(BaseArtifact):
     name: str = field(kw_only=True)
     dir: Optional[str] = field(default=None, kw_only=True)
 
+    def __add__(self, other: BlobArtifact) -> BlobArtifact:
+        return BlobArtifact(self.value + other.value, name=self.name)
+
     @dir.validator
-    def validate_dir(self, _, dir: Optional[str]) -> None:
-        if dir and dir.startswith("/"):
+    def validate_dir(self, _, directory: Optional[str]) -> None:
+        if directory and directory.startswith("/"):
             raise ValueError("path can't be absolute")
 
     @property

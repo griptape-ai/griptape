@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Union
+
+from functools import reduce
+from typing import TYPE_CHECKING, Union, Optional
 from abc import ABC, abstractmethod
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
     from griptape.tasks import ActionSubtask
 
 
@@ -24,4 +26,11 @@ class BaseToolMemory(ABC):
     @abstractmethod
     def load_artifacts(self, namespace: str) -> list[BaseArtifact]:
         ...
-    
+
+    def load_and_combine_artifacts(self, namespace: str) -> Optional[BaseArtifact]:
+        artifacts = self.load_artifacts(namespace)
+
+        if len(artifacts) > 0:
+            return reduce(lambda a, b: a + b, artifacts[1:], artifacts[0])
+        else:
+            return None

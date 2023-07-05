@@ -1,3 +1,4 @@
+from __future__ import annotations
 from attr import define, field
 from griptape.artifacts import BaseArtifact
 
@@ -5,6 +6,9 @@ from griptape.artifacts import BaseArtifact
 @define(frozen=True)
 class InfoArtifact(BaseArtifact):
     value: str = field()
+
+    def __add__(self, other: InfoArtifact) -> InfoArtifact:
+        return InfoArtifact(self.value + other.value)
 
     def to_text(self) -> str:
         return self.value

@@ -48,3 +48,7 @@ class BaseArtifact(ABC):
     @abstractmethod
     def to_dict(self) -> dict:
         ...
+
+    @abstractmethod
+    def __add__(self, other: BaseArtifact) -> BaseArtifact:
+        ...

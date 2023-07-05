@@ -58,3 +58,23 @@ class TestTextToolMemory:
         )
 
         assert len(memory.load_artifacts("test")) == 2
+
+    def test_load_artifacts(self, memory):
+        memory.query_engine.upsert_text_artifacts(
+            [TextArtifact("foo"), TextArtifact("bar")],
+            "test"
+        )
+
+        assert len(memory.load_artifacts("test")) == 2
+
+    def test_load_and_combine_artifacts(self, memory):
+        memory.query_engine.upsert_text_artifacts(
+            [TextArtifact("foo"), TextArtifact("bar")],
+            "test"
+        )
+
+        artifact = memory.load_and_combine_artifacts("test")
+
+        assert isinstance(artifact, TextArtifact)
+        assert artifact.value == "foobar"
+

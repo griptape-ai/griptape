@@ -1,3 +1,5 @@
+import pytest
+
 from griptape.artifacts import BlobArtifact
 from griptape.drivers import LocalBlobToolMemoryDriver
 from griptape.memory.tool import BlobToolMemory
@@ -6,17 +8,21 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestBlobToolMemory:
-    def test_init(self):
+    @pytest.fixture
+    def memory(self):
+        return BlobToolMemory(
+            id="MyMemory",
+            driver=LocalBlobToolMemoryDriver()
+        )
+
+    def test_init(self, memory):
+        assert memory.id == "MyMemory"
+
         memory = BlobToolMemory(driver=LocalBlobToolMemoryDriver())
 
         assert memory.id == BlobToolMemory.__name__
 
-        memory = BlobToolMemory(id="MyMemory", driver=LocalBlobToolMemoryDriver())
-
-        assert memory.id == "MyMemory"
-
-    def test_process_output(self):
-        memory = BlobToolMemory(id="MyMemory", driver=LocalBlobToolMemoryDriver())
+    def test_process_output(self, memory):
         artifact = BlobArtifact(b"foo", name="foo")
         subtask = ActionSubtask()
         output = memory.process_output(MockTool().test, subtask, artifact)
@@ -28,11 +34,25 @@ class TestBlobToolMemory:
 
         assert memory.driver.load(artifact.id) == [artifact]
 
-    def test_process_output_with_many_artifacts(self):
-        memory = BlobToolMemory(id="MyMemory", driver=LocalBlobToolMemoryDriver())
-
+    def test_process_output_with_many_artifacts(self, memory):
         assert memory.process_output(
             MockTool().test, ActionSubtask(), [BlobArtifact(b"foo", name="foo")]
         ).to_text().startswith(
             'Output of "MockTool.test" was stored in memory "MyMemory" with the following artifact namespace:'
         )
+
+    def test_load_artifacts(self, memory):
+        for a in [BlobArtifact(b"foo", name="fooname"), BlobArtifact(b"bar", name="barname")]:
+            memory.driver.save("test", a)
+
+        assert len(memory.load_artifacts("test")) == 2
+
+    def test_load_and_combine_artifacts(self, memory):
+        for a in [BlobArtifact(b"foo", name="fooname"), BlobArtifact(b"bar", name="barname")]:
+            memory.driver.save("test", a)
+
+        artifact = memory.load_and_combine_artifacts("test")
+
+        assert isinstance(artifact, BlobArtifact)
+        assert artifact.value == b"foobar"
+
