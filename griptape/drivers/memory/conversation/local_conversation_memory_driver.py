@@ -13,9 +13,12 @@ class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
             file.write(memory.to_json())
 
     def load(self) -> Optional[ConversationMemory]:
-        with open(self.file_path, "r") as file:
-            memory = ConversationMemory.from_json(file.read())
+        try:
+            with open(self.file_path, "r") as file:
+                memory = ConversationMemory.from_json(file.read())
 
-            memory.driver = self
+                memory.driver = self
 
-            return memory
+                return memory
+        except FileNotFoundError:
+            return None
