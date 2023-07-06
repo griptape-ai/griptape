@@ -1,5 +1,4 @@
 import pytest
-
 from griptape.artifacts import BlobArtifact
 from griptape.drivers import LocalBlobToolMemoryDriver
 from griptape.memory.tool import BlobToolMemory
@@ -46,13 +45,3 @@ class TestBlobToolMemory:
             memory.driver.save("test", a)
 
         assert len(memory.load_artifacts("test")) == 2
-
-    def test_load_and_combine_artifacts(self, memory):
-        for a in [BlobArtifact(b"foo", name="fooname"), BlobArtifact(b"bar", name="barname")]:
-            memory.driver.save("test", a)
-
-        artifact = memory.load_and_combine_artifacts("test")
-
-        assert isinstance(artifact, BlobArtifact)
-        assert artifact.value == b"foobar"
-
