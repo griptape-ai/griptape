@@ -8,7 +8,6 @@ from griptape.artifacts import BaseArtifact
 @define(frozen=True)
 class BlobArtifact(BaseArtifact):
     value: bytes = field()
-    name: str = field(kw_only=True)
     dir: Optional[str] = field(default=None, kw_only=True)
 
     def __add__(self, other: BlobArtifact) -> BlobArtifact:

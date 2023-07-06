@@ -37,3 +37,6 @@ class TestBlobArtifact:
         assert deserialized_artifact.name == "foobar.txt"
         assert deserialized_artifact.dir == "foo"
         assert deserialized_artifact.value == b"foobar"
+
+    def test_name(self):
+        assert BlobArtifact(b"foo", name="bar").name == "bar"

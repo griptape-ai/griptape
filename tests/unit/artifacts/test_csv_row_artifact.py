@@ -18,3 +18,9 @@ class TestCsvRowArtifact:
 
     def test_to_dict(self):
         assert CsvRowArtifact({"test1": "foo"}).to_dict()["value"] == {'test1': 'foo'}
+
+    def test_name(self):
+        artifact = CsvRowArtifact({})
+
+        assert artifact.name == artifact.id
+        assert CsvRowArtifact({}, name="bar").name == "bar"

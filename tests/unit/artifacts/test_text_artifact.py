@@ -35,3 +35,9 @@ class TestTextArtifact:
 
     def test_from_json(self):
         assert BaseArtifact.from_json(TextArtifact("foobar").to_json()).value == "foobar"
+
+    def test_name(self):
+        artifact = TextArtifact("foo")
+
+        assert artifact.name == artifact.id
+        assert TextArtifact("foo", name="bar").name == "bar"
