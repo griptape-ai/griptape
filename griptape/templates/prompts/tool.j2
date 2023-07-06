@@ -4,8 +4,8 @@ tool name: {{ tool.name }}
 activity name: {{ tool.activity_name(activity) }}
 {{ tool.name }}.{{ tool.activity_name(activity) }} activity description: {{ tool.activity_description(activity) }}
 {% if tool.activity_schema(activity) %}
-{{ tool.activity_name(activity) }} activity input value schema: {{ tool.activity_schema(activity) }}
+{{ tool.name }}.{{ tool.activity_name(activity) }} activity input value schema: {{ tool.activity_schema(activity) }}
 {% else %}
-{{ tool.activity_name(activity) }} activity has no input value
+{{ tool.name }}.{{ tool.activity_name(activity) }} activity has no input value
 {% endif %}
 {% endfor %}
