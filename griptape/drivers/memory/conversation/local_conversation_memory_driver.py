@@ -1,3 +1,4 @@
+import os
 from attr import define, field
 from typing import Optional
 from griptape.drivers import BaseConversationMemoryDriver
@@ -13,6 +14,8 @@ class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
             file.write(memory.to_json())
 
     def load(self) -> Optional[ConversationMemory]:
+        if not os.path.exists(self.file_path):
+            return None
         with open(self.file_path, "r") as file:
             memory = ConversationMemory.from_json(file.read())
 
