@@ -1,7 +1,8 @@
 import copy
 import requests
 from attr import define, field
-
+from typing import Optional
+from urllib.parse import urljoin
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 
@@ -14,7 +15,7 @@ class TextGenPromptDriver(BasePromptDriver):
     params usage example:
     https://github.com/oobabooga/text-generation-webui/blob/main/api-examples/api-example.py
     """
-    preset: str = field(default=None, kw_only=True)
+    preset: Optional[str] = field(default=None, kw_only=True)
     params: dict = field(factory=dict, kw_only=True)
 
     model_url: str = field(default="http://localhost:5000", kw_only=True)
@@ -25,7 +26,7 @@ class TextGenPromptDriver(BasePromptDriver):
 
     def try_run(self, value: str) -> TextArtifact:
 
-        url = f"{self.model_url}{self.generate_uri}"
+        url = urljoin(self.model_url, self.generate_uri)
 
         if self.preset is None:
             request = copy.deepcopy(self.params)
