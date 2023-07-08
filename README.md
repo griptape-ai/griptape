@@ -33,26 +33,25 @@ With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `
 ```python
 from griptape.memory.tool import TextToolMemory
 from griptape.structures import Agent
-from griptape.tools import WebScraper
+from griptape.tools import WebScraper, TextMemoryBrowser
 
 
-"""
-Define memory to be shared between tools.
-"""
+# Define memory to be shared between tools.
 memory = TextToolMemory()
 
-"""
-WebScraper enables LLMs to load web pages.
-"""
+# WebScraper enables LLMs to load web pages.
 web_scraper = WebScraper(
     output_memory={"get_content": [memory]}
 )
 
-"""
-Agents can use multiple tools to creatively solve problems
-"""
+# TextMemoryBrowser enables LLMs to query, summarize and extract data from memory.
+memory_browser = TextMemoryBrowser(
+    input_memory=[memory]
+)
+
+# Agents can use multiple tools to creatively solve problems
 agent = Agent(
-    tools=[web_scraper]
+    tools=[web_scraper, memory_browser]
 )
 
 agent.run(
