@@ -9,7 +9,7 @@ Output: <your final response>
 
 "Input:", "Thought:", "Action:", "Observation:", and "Output:" must ALWAYS start on a new line.
 
-Action value must ALWAYS be a single-line unformatted JSON object starting on the same line as "Action:" Don't include any other formatting.
+Action value must ALWAYS be a single-line unformatted JSON object starting on the same line as "Action:" NEVER use markdown for Actions.
 
 {% if tool_names|length > 0 %}
 Actions of Type "tool"
