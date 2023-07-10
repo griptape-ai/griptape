@@ -43,7 +43,7 @@ class TestAmazonRedshiftSqlDriver:
 
     @pytest.fixture
     def statement_driver(self):
-        client = boto3.client("redshift-data")
+        client = boto3.client("redshift-data", region_name="us-east-1")
         stubber = Stubber(client)
         expected_params = {"Sql": "query", "Database": "dev", "WorkgroupName": "dev"}
         response = {"Id": "responseId"}
@@ -109,7 +109,7 @@ class TestAmazonRedshiftSqlDriver:
 
     @pytest.fixture
     def describe_table_driver(self):
-        client = boto3.client("redshift-data")
+        client = boto3.client("redshift-data", region_name="us-east-1")
         stubber = Stubber(client)
         describe_table_response = {
             "ColumnList": TestAmazonRedshiftSqlDriver.TEST_COLUMN_METADATA
