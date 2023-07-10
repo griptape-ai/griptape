@@ -43,7 +43,8 @@ class TestAmazonRedshiftSqlDriver:
 
     @pytest.fixture
     def statement_driver(self):
-        client = boto3.client("redshift-data", region_name="us-east-1")
+        session = boto3.Session(region_name="us-east-1")
+        client = session.client("redshift-data")
         stubber = Stubber(client)
         expected_params = {"Sql": "query", "Database": "dev", "WorkgroupName": "dev"}
         response = {"Id": "responseId"}
@@ -105,11 +106,14 @@ class TestAmazonRedshiftSqlDriver:
         stubber.add_response("get_statement_result", response, expected_params)
         stubber.activate()
 
-        return AmazonRedshiftSqlDriver(database="dev", workgroup_name="dev", client=client)
+        return AmazonRedshiftSqlDriver(
+            database="dev", session=session, workgroup_name="dev", client=client
+        )
 
     @pytest.fixture
     def describe_table_driver(self):
-        client = boto3.client("redshift-data", region_name="us-east-1")
+        session = boto3.Session(region_name="us-east-1")
+        client = session.client("redshift-data")
         stubber = Stubber(client)
         describe_table_response = {
             "ColumnList": TestAmazonRedshiftSqlDriver.TEST_COLUMN_METADATA
@@ -119,7 +123,31 @@ class TestAmazonRedshiftSqlDriver:
 
         stubber.activate()
 
-        return AmazonRedshiftSqlDriver(database="dev", workgroup_name="dev", client=client)
+        return AmazonRedshiftSqlDriver(
+            database="dev", session=session, workgroup_name="dev", client=client
+        )
+
+    def test_amazon_redshift_sql_driver_parameter_validation_correct_params(self):
+        AmazonRedshiftSqlDriver(
+            database="dev",
+            session=boto3.Session(region_name="us-east-1"),
+            workgroup_name="dev",
+        )
+
+    def test_amazon_redshift_sql_driver_parameter_validation_missing_params(self):
+        with pytest.raises(ValueError):
+            AmazonRedshiftSqlDriver(
+                database="dev", session=boto3.Session(region_name="us-east-1")
+            )
+
+    def test_amazon_redshift_sql_driver_parameter_validation_conflicting_params(self):
+        with pytest.raises(ValueError):
+            AmazonRedshiftSqlDriver(
+                database="dev",
+                session=boto3.Session(region_name="us-east-1"),
+                workgroup_name="dev",
+                cluster_identifier="dev",
+            )
 
     def test_process_rows_from_records(self):
         assert AmazonRedshiftSqlDriver._process_rows_from_records(
