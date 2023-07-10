@@ -22,6 +22,7 @@ from .vector.local_vector_store_driver import LocalVectorStoreDriver
 from .vector.pinecone_vector_store_driver import PineconeVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
+from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
 from .sql.sql_driver import SqlDriver
 
 
@@ -50,5 +51,6 @@ __all__ = [
     "PineconeVectorStoreDriver",
 
     "BaseSqlDriver",
+    "AmazonRedshiftSqlDriver",
     "SqlDriver"
 ]
