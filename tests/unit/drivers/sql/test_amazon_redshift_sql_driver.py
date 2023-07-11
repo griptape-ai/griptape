@@ -22,7 +22,7 @@ class TestAmazonRedshiftSqlDriver:
             "precision": 256,
             "scale": 0,
             "schemaName": "public",
-            "tableName": "revenue_contacts",
+            "tableName": "griptape_enthusiasts",
             "typeName": "varchar",
         },
         {
@@ -36,7 +36,7 @@ class TestAmazonRedshiftSqlDriver:
             "precision": 256,
             "scale": 0,
             "schemaName": "public",
-            "tableName": "revenue_contacts",
+            "tableName": "griptape_enthusiasts",
             "typeName": "varchar",
         },
     ]
@@ -68,7 +68,7 @@ class TestAmazonRedshiftSqlDriver:
                     "precision": 256,
                     "scale": 0,
                     "schemaName": "public",
-                    "tableName": "revenue_contacts",
+                    "tableName": "griptape_enthusiasts",
                     "typeName": "varchar",
                 },
                 {
@@ -82,7 +82,7 @@ class TestAmazonRedshiftSqlDriver:
                     "precision": 256,
                     "scale": 0,
                     "schemaName": "public",
-                    "tableName": "revenue_contacts",
+                    "tableName": "griptape_enthusiasts",
                     "typeName": "varchar",
                 },
             ],
