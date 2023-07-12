@@ -85,7 +85,7 @@ class TestSnowflakeSqlDriver:
             return mock_snowflake_connection
 
         new_driver = SnowflakeSqlDriver(
-            snowflake_connection_function=get_connection, engine=mock_snowflake_engine
+            connection_func=get_connection, engine=mock_snowflake_engine
         )
 
         return new_driver
@@ -96,7 +96,7 @@ class TestSnowflakeSqlDriver:
 
         with pytest.raises(ValueError):
             SnowflakeSqlDriver(
-                snowflake_connection_function=get_connection,
+                connection_func=get_connection,
             )
 
     def test_connection_validation_no_schema(self, mock_snowflake_connection_no_schema):
@@ -105,7 +105,7 @@ class TestSnowflakeSqlDriver:
 
         with pytest.raises(ValueError):
             SnowflakeSqlDriver(
-                snowflake_connection_function=get_connection,
+                connection_func=get_connection,
             )
 
     def test_connection_validation_no_database(
@@ -116,13 +116,13 @@ class TestSnowflakeSqlDriver:
 
         with pytest.raises(ValueError):
             SnowflakeSqlDriver(
-                snowflake_connection_function=get_connection,
+                connection_func=get_connection,
             )
 
     def test_engine_url_validation_wrong_engine(self, mock_snowflake_connection):
         with pytest.raises(ValueError):
             SnowflakeSqlDriver(
-                snowflake_connection_function=mock_snowflake_connection,
+                connection_func=mock_snowflake_connection,
                 engine=create_engine("sqlite:///:memory:"),
             )
 

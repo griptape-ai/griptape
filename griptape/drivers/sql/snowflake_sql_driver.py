@@ -9,30 +9,26 @@ from snowflake.connector import SnowflakeConnection
 
 @define
 class SnowflakeSqlDriver(BaseSqlDriver):
-    snowflake_connection_function: Callable[[], SnowflakeConnection] = field(
-        kw_only=True
-    )
+    connection_func: Callable[[], SnowflakeConnection] = field(kw_only=True)
     engine: Engine = field(
         default=Factory(
             # Creator bypasses the URL param
             # https://docs.sqlalchemy.org/en/14/core/engines.html#sqlalchemy.create_engine.params.creator
             lambda self: create_engine(
-                "snowflake://not@used/db", creator=self.snowflake_connection_function
+                "snowflake://not@used/db", creator=self.connection_func
             ),
             takes_self=True,
         ),
         kw_only=True,
     )
 
-    @snowflake_connection_function.validator
-    def validate_snowflake_connection_function(
-        self, _, snowflake_connection_function: Callable[[], SnowflakeConnection]
+    @connection_func.validator
+    def validate_connection_func(
+        self, _, connection_func: Callable[[], SnowflakeConnection]
     ) -> None:
-        snowflake_connection = snowflake_connection_function()
+        snowflake_connection = connection_func()
         if not isinstance(snowflake_connection, SnowflakeConnection):
-            raise ValueError(
-                "The snowflake_connection_function must return a SnowflakeConnection"
-            )
+            raise ValueError("The connection_func must return a SnowflakeConnection")
         if not snowflake_connection.schema or not snowflake_connection.database:
             raise ValueError(
                 "Provide a schema and database for the Snowflake connection"
@@ -52,20 +48,16 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
-        results = None
         with self.engine.connect() as con:
-            try:
-                results = con.execute(text(query))
+            results = con.execute(text(query))
 
-                if results.returns_rows:
-                    results = [
-                        {column: value for column, value in result.items()}
-                        for result in results
-                    ]
-            finally:
-                con.close()
-        self.engine.dispose()
-        return results
+            if results.returns_rows:
+                return [
+                    {column: value for column, value in result.items()}
+                    for result in results
+                ]
+            else:
+                return None
 
     def get_table_schema(
         self, table: str, schema: Optional[str] = None
