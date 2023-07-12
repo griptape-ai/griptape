@@ -1,27 +1,47 @@
-from typing import Optional
+from typing import Callable, Optional
 from griptape.drivers import BaseSqlDriver
 from attr import Factory, define, field
 from sqlalchemy import create_engine, text, MetaData, Table
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import NoSuchTableError
+from snowflake.connector import SnowflakeConnection
 
 
 @define
 class SnowflakeSqlDriver(BaseSqlDriver):
-    engine_url: str = field(kw_only=True)
-    create_engine_params: dict = field(factory=dict, kw_only=True)
+    snowflake_connection_function: Callable[[], SnowflakeConnection] = field(
+        kw_only=True
+    )
     engine: Engine = field(
         default=Factory(
-            lambda self: create_engine(self.engine_url, **self.create_engine_params),
+            # Creator bypasses the URL param
+            # https://docs.sqlalchemy.org/en/14/core/engines.html#sqlalchemy.create_engine.params.creator
+            lambda self: create_engine(
+                "snowflake://not@used/db", creator=self.snowflake_connection_function
+            ),
             takes_self=True,
         ),
         kw_only=True,
     )
 
-    @engine_url.validator
-    def validate_engine_url(self, _, engine_url: str) -> None:
-        if not engine_url.startswith("snowflake://"):
-            raise ValueError("Provide a Snowflake engine URL")
+    @snowflake_connection_function.validator
+    def validate_snowflake_connection_function(
+        self, _, snowflake_connection_function: Callable[[], SnowflakeConnection]
+    ) -> None:
+        snowflake_connection = snowflake_connection_function()
+        if not isinstance(snowflake_connection, SnowflakeConnection):
+            raise ValueError(
+                "The snowflake_connection_function must return a SnowflakeConnection"
+            )
+        if not snowflake_connection.schema or not snowflake_connection.database:
+            raise ValueError(
+                "Provide a schema and database for the Snowflake connection"
+            )
+
+    @engine.validator
+    def validate_engine_url(self, _, engine: Engine) -> None:
+        if not engine.url.render_as_string().startswith("snowflake://"):
+            raise ValueError("Provide a Snowflake connection")
 
     def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)

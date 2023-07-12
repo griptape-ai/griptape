@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from unittest import mock
 import pytest
+from sqlalchemy import create_engine
+from snowflake.connector import SnowflakeConnection
 from griptape.drivers import BaseSqlDriver, SnowflakeSqlDriver
 
 
 class TestSnowflakeSqlDriver:
-
     TEST_ROWS = [
         {"first_name": "Tony", "last_name": "Hawk"},
         {"first_name": "Bob", "last_name": "Ross"},
@@ -31,10 +32,9 @@ class TestSnowflakeSqlDriver:
             ],
         )
         return mock_table
-    
+
     @pytest.fixture
     def mock_metadata(self, mocker):
-
         mock_meta = mocker.MagicMock(
             name="metadata",
         )
@@ -61,14 +61,70 @@ class TestSnowflakeSqlDriver:
         return mock_engine
 
     @pytest.fixture
-    def driver(self, mock_snowflake_engine):
-        new_driver = SnowflakeSqlDriver(engine_url="snowflake://", engine=mock_snowflake_engine)
+    def mock_snowflake_connection(self, mocker):
+        mock_connection = mocker.MagicMock(spec=SnowflakeConnection, name="connection")
+        return mock_connection
+
+    @pytest.fixture
+    def mock_snowflake_connection_no_schema(self, mocker):
+        mock_connection = mocker.MagicMock(
+            spec=SnowflakeConnection, name="connection_no_schema", schema=None
+        )
+        return mock_connection
+
+    @pytest.fixture
+    def mock_snowflake_connection_no_database(self, mocker):
+        mock_connection = mocker.MagicMock(
+            spec=SnowflakeConnection, name="connection_no_database", database=None
+        )
+        return mock_connection
+
+    @pytest.fixture
+    def driver(self, mock_snowflake_engine, mock_snowflake_connection):
+        def get_connection():
+            return mock_snowflake_connection
+
+        new_driver = SnowflakeSqlDriver(
+            snowflake_connection_function=get_connection, engine=mock_snowflake_engine
+        )
 
         return new_driver
-    
-    def test_engine_url_validation(self):
+
+    def test_connection_function_wrong_return_type(self):
+        def get_connection():
+            return object
+
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(engine_url="sqlite:///:memory:")
+            SnowflakeSqlDriver(
+                snowflake_connection_function=get_connection,
+            )
+
+    def test_connection_validation_no_schema(self, mock_snowflake_connection_no_schema):
+        def get_connection():
+            return mock_snowflake_connection_no_schema
+
+        with pytest.raises(ValueError):
+            SnowflakeSqlDriver(
+                snowflake_connection_function=get_connection,
+            )
+
+    def test_connection_validation_no_database(
+        self, mock_snowflake_connection_no_database
+    ):
+        def get_connection():
+            return mock_snowflake_connection_no_database
+
+        with pytest.raises(ValueError):
+            SnowflakeSqlDriver(
+                snowflake_connection_function=get_connection,
+            )
+
+    def test_engine_url_validation_wrong_engine(self, mock_snowflake_connection):
+        with pytest.raises(ValueError):
+            SnowflakeSqlDriver(
+                snowflake_connection_function=mock_snowflake_connection,
+                engine=create_engine("sqlite:///:memory:"),
+            )
 
     def test_execute_query(self, driver):
         assert driver.execute_query("query") == [
@@ -82,7 +138,8 @@ class TestSnowflakeSqlDriver:
         with mock.patch(
             "griptape.drivers.sql.snowflake_sql_driver.Table", return_value=mock_table
         ), mock.patch(
-            "griptape.drivers.sql.snowflake_sql_driver.MetaData", return_value=mock_metadata
+            "griptape.drivers.sql.snowflake_sql_driver.MetaData",
+            return_value=mock_metadata,
         ):
             assert driver.get_table_schema("table") == str(
                 TestSnowflakeSqlDriver.TEST_COLUMNS
