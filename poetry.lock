@@ -1555,6 +1555,22 @@ files = [
 ]
 
 [[package]]
+name = "marqo"
+version = "0.11.0"
+description = "Tensor search for humans"
+optional = false
+python-versions = ">=3"
+files = [
+    {file = "marqo-0.11.0-py3-none-any.whl", hash = "sha256:e1a5409beeb02dcec725566cfbc5fd88a84ce65ca7bce08a1120f8082badeab4"},
+    {file = "marqo-0.11.0.tar.gz", hash = "sha256:808e691cf06f5f7d67d422dc7f5f6fcc53b9acc6a4bc000abbcae8a817fd765d"},
+]
+
+[package.dependencies]
+pydantic = "*"
+requests = "*"
+urllib3 = "*"
+
+[[package]]
 name = "marshmallow"
 version = "3.19.0"
 description = "A lightweight library for converting complex datatypes to and from native Python datatypes."
@@ -3362,4 +3378,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "0f334939a6759e7419f976c12cfd2ecbf8452df93d1a4f51dc256a58d4c7dc3c"
+content-hash = "4c400580b86269eb70826387f2753784ba3be13dc9246a684a49e515fce33641"

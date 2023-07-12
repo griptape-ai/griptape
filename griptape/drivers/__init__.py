@@ -20,6 +20,7 @@ from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
 from .vector.pinecone_vector_store_driver import PineconeVectorStoreDriver
+from .vector.marqo_vector_store_driver import MarqoVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -49,6 +50,7 @@ __all__ = [
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
+    "MarqoVectorStoreDriver",
 
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
