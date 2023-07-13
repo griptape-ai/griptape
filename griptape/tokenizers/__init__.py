@@ -3,7 +3,7 @@ from griptape.tokenizers.tiktoken_tokenizer import TiktokenTokenizer
 from griptape.tokenizers.cohere_tokenizer import CohereTokenizer
 from griptape.tokenizers.hugging_face_tokenizer import HuggingFaceTokenizer
 from griptape.tokenizers.anthropic_tokenizer import AnthropicTokenizer
-from griptape.tokenizers.textgen_tokenizer import TextGenTokenizer
+from griptape.tokenizers.text_gen_tokenizer import TextGenTokenizer
 
 
 __all__ = [
