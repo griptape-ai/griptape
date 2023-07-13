@@ -3,8 +3,9 @@ from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact
 import marqo
-from attr import define, field
+from attr import define, field, Factory
 import json
+import logging
 
 
 @define
@@ -12,11 +13,16 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     api_key: str = field(kw_only=True)
     url: str = field(kw_only=True)
     mq: marqo.Client = field(kw_only=True)
+    mq: marqo.Client = field(
+        default=Factory(
+            lambda self: marqo.Client(self.url, self.api_key), takes_self=True
+        ),
+        kw_only=True,
+    )
     index: str = field(kw_only=True)
 
     def __attrs_post_init__(self):
         """Initialize the Marqo client with the given API key and URL."""
-        self.mq = marqo.Client(self.url, self.api_key)
         self.set_index(self.index)
 
     def set_index(self, index):
@@ -29,6 +35,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
 
         if index not in indexes:
             self.create_index(index)
+            logging.info(f"Created index '{index}'")
 
         self.index = index
 
