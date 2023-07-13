@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, BlobArtifact, CsvRowArtifact
 from griptape.engines import PromptSummaryEngine
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
@@ -16,4 +16,8 @@ class TestPromptSummaryEngine:
         assert engine.summarize_text("foobar") == "mock output"
 
     def test_summarize_artifacts(self, engine):
-        assert engine.summarize_artifacts([TextArtifact("foobar")]).value == "mock output"
+        assert engine.summarize_artifacts([
+            TextArtifact("foobar"),
+            BlobArtifact(b"foobar"),
+            CsvRowArtifact({"foo": "bar"})
+        ]).value == "mock output"

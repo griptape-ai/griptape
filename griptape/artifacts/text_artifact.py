@@ -30,7 +30,7 @@ class TextArtifact(BaseArtifact):
         return tokenizer.token_count(str(self.value))
 
     def to_text(self) -> str:
-        return str(self.value)
+        return self.value
 
     def to_dict(self) -> dict:
         from griptape.schemas import TextArtifactSchema
