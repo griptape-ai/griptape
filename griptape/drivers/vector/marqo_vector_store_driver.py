@@ -190,7 +190,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.QueryResult(
-                vector=None,  # update this line depending on how you access the vector
+                vector=[],
                 score=r["_score"],
                 meta={k: v for k, v in r.items() if k not in ["_score"]},
             )
