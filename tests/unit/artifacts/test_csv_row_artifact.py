@@ -3,6 +3,10 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestCsvRowArtifact:
+    def test_value_type_conversion(self):
+        assert CsvRowArtifact({"foo": "bar"}).value == {"foo": "bar"}
+        assert CsvRowArtifact('{"foo": "bar"}').value == {"foo": "bar"}
+
     def test___add__(self):
         assert (CsvRowArtifact({"test1": "foo"}) + CsvRowArtifact({"test2": "bar"})).value == \
                {"test1": "foo", "test2": "bar"}
