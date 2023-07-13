@@ -1,6 +1,7 @@
 from attr import define, field, Factory
 from griptape.tokenizers import BaseTokenizer
-from transformers import PreTrainedTokenizerFast
+from transformers import PreTrainedTokenizerBase
+
 
 @define(frozen=True)
 class TextGenTokenizer(BaseTokenizer):
@@ -16,17 +17,13 @@ class TextGenTokenizer(BaseTokenizer):
 
     """
 
+    tokenizer: PreTrainedTokenizerBase = field(
+        kw_only=True
+    )
     max_tokens: int = field(
-        default=200,
+        default=Factory(lambda self: self.tokenizer.model_max_length, takes_self=True),
         kw_only=True
     )
-    tokenizer: PreTrainedTokenizerFast = field(
-        default=None,
-        kw_only=True
-    )
-
-    def max_tokens(self) -> int:
-        return self.max_tokens
 
     def encode(self, text: str) -> list[int]:
         return self.tokenizer.encode(text=text)
