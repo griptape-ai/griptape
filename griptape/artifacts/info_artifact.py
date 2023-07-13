@@ -5,7 +5,7 @@ from griptape.artifacts import BaseArtifact
 
 @define(frozen=True)
 class InfoArtifact(BaseArtifact):
-    value: str = field()
+    value: str = field(converter=str)
 
     def __add__(self, other: InfoArtifact) -> InfoArtifact:
         return InfoArtifact(self.value + other.value)

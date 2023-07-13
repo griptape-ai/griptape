@@ -5,7 +5,7 @@ from griptape.artifacts import BaseArtifact
 
 @define(frozen=True)
 class ErrorArtifact(BaseArtifact):
-    value: str = field()
+    value: str = field(converter=str)
 
     def __add__(self, other: ErrorArtifact) -> ErrorArtifact:
         return ErrorArtifact(self.value + other.value)

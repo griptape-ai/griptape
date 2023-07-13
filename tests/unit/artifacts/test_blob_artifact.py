@@ -5,6 +5,9 @@ from griptape.schemas import BlobArtifactSchema
 
 
 class TestBlobArtifact:
+    def test_value_type_conversion(self):
+        assert BlobArtifact(1).value == b"1"
+
     def test_to_text(self):
         assert BlobArtifact(b"foobar", name="foobar.txt", dir="foo").to_text() == "foo/foobar.txt"
 

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class TextArtifact(BaseArtifact):
-    value: str = field()
+    value: str = field(converter=str)
     __embedding: list[float] = field(factory=list, kw_only=True)
 
     @property
