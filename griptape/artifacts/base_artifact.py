@@ -25,9 +25,11 @@ class BaseArtifact(ABC):
     @classmethod
     def value_to_dict(cls, value: any) -> dict:
         if isinstance(value, dict):
-            return value
+            dict_value = value
         else:
-            return json.loads(value)
+            dict_value = json.loads(value)
+
+        return {k: str(v) for k, v in dict_value.items()}
 
     @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:

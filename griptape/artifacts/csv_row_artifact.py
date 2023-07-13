@@ -7,7 +7,7 @@ from griptape.artifacts import TextArtifact, BaseArtifact
 
 @define(frozen=True)
 class CsvRowArtifact(TextArtifact):
-    value: dict[str, any] = field(converter=BaseArtifact.value_to_dict)
+    value: dict[str, str] = field(converter=BaseArtifact.value_to_dict)
     delimiter: str = field(default=",", kw_only=True)
 
     def __add__(self, other: CsvRowArtifact) -> CsvRowArtifact:
