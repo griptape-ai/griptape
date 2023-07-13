@@ -5,6 +5,7 @@ from typing import Optional
 from urllib.parse import urljoin
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
+from griptape.tokenizers import BaseTokenizer
 
 
 @define
@@ -21,8 +22,8 @@ class TextGenPromptDriver(BasePromptDriver):
     model_url: str = field(default="http://localhost:5000", kw_only=True)
     generate_uri: str = field(default="/api/v1/generate", kw_only=True)
 
-    model = field(default=None, kw_only=True)
-    tokenizer = field(default=None, kw_only=True)
+    model: Optional[str] = field(default=None, kw_only=True)
+    tokenizer: BaseTokenizer = field(kw_only=True)
 
     def try_run(self, value: str) -> TextArtifact:
 
