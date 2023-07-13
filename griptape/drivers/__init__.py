@@ -24,6 +24,7 @@ from .vector.marqo_vector_store_driver import MarqoVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
+from .sql.snowflake_sql_driver import SnowflakeSqlDriver
 from .sql.sql_driver import SqlDriver
 
 
@@ -54,5 +55,6 @@ __all__ = [
 
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
+    "SnowflakeSqlDriver",
     "SqlDriver"
 ]
