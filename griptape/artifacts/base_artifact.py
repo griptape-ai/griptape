@@ -16,6 +16,22 @@ class BaseArtifact(ABC):
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     @classmethod
+    def value_to_bytes(cls, value: any) -> bytes:
+        if isinstance(value, bytes):
+            return value
+        else:
+            return str(value).encode()
+
+    @classmethod
+    def value_to_dict(cls, value: any) -> dict:
+        if isinstance(value, dict):
+            dict_value = value
+        else:
+            dict_value = json.loads(value)
+
+        return {k: str(v) for k, v in dict_value.items()}
+
+    @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:
         from griptape.schemas import (
             TextArtifactSchema, InfoArtifactSchema, ErrorArtifactSchema, BlobArtifactSchema, CsvRowArtifactSchema
