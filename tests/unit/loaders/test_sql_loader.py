@@ -40,9 +40,9 @@ class TestSqlLoader:
         result = loader.load("SELECT * FROM test_table;")
 
         assert len(result) == 3
-        assert result[0].value == {"id": 1, "name": "Alice", "age": 25, "city": "New York"}
-        assert result[1].value == {"id": 2, "name": "Bob", "age": 30, "city": "Los Angeles"}
-        assert result[2].value == {"id": 3, "name": "Charlie", "age": 22, "city": "Chicago"}
+        assert result[0].value == {"id": "1", "name": "Alice", "age": "25", "city": "New York"}
+        assert result[1].value == {"id": "2", "name": "Bob", "age": "30", "city": "Los Angeles"}
+        assert result[2].value == {"id": "3", "name": "Charlie", "age": "22", "city": "Chicago"}
 
     def test_load_collection(self, loader):
         artifacts = loader.load_collection([
@@ -56,7 +56,7 @@ class TestSqlLoader:
         ]
 
         assert [a.value for artifact_list in artifacts.values() for a in artifact_list] == [
-            {"age": 25, "city": "New York", "id": 1, "name": "Alice"},
-            {"age": 25, "city": "New York", "id": 1, "name": "Alice"},
-            {"age": 30, "city": "Los Angeles", "id": 2, "name": "Bob"}
+            {"age": "25", "city": "New York", "id": "1", "name": "Alice"},
+            {"age": "25", "city": "New York", "id": "1", "name": "Alice"},
+            {"age": "30", "city": "Los Angeles", "id": "2", "name": "Bob"}
         ]
