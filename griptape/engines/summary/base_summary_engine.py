@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from attr import define
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact
 
 
 @define
@@ -9,5 +9,5 @@ class BaseSummaryEngine(ABC):
         return self.summarize_artifacts([TextArtifact(text)]).value
 
     @abstractmethod
-    def summarize_artifacts(self, artifacts: list[TextArtifact]) -> TextArtifact:
+    def summarize_artifacts(self, artifacts: list[BaseArtifact]) -> TextArtifact:
         ...

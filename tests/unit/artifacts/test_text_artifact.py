@@ -5,6 +5,10 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestTextArtifact:
+    def test_value_type_conversion(self):
+        assert TextArtifact("1").value == "1"
+        assert TextArtifact(1).value == "1"
+
     def test___add__(self):
         assert (TextArtifact("foo") + TextArtifact("bar")).value == "foobar"
 

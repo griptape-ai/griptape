@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class TextArtifact(BaseArtifact):
-    value: str = field()
+    value: str = field(converter=str)
     __embedding: list[float] = field(factory=list, kw_only=True)
 
     @property
@@ -30,7 +30,7 @@ class TextArtifact(BaseArtifact):
         return tokenizer.token_count(str(self.value))
 
     def to_text(self) -> str:
-        return str(self.value)
+        return self.value
 
     def to_dict(self) -> dict:
         from griptape.schemas import TextArtifactSchema

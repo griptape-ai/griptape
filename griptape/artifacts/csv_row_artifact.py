@@ -2,12 +2,12 @@ from __future__ import annotations
 import csv
 import io
 from attr import define, field
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact
 
 
 @define(frozen=True)
 class CsvRowArtifact(TextArtifact):
-    value: dict[str, any] = field()
+    value: dict[str, str] = field(converter=BaseArtifact.value_to_dict)
     delimiter: str = field(default=",", kw_only=True)
 
     def __add__(self, other: CsvRowArtifact) -> CsvRowArtifact:
