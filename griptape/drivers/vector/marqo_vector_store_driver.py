@@ -186,13 +186,14 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         results = self.mq.index(self.index).search(query, **params)
 
         if include_vectors:
-            results["hits"] = list(map(lambda r: self.mq.index(self.index).get_document(r["_id"]), results["hits"]))
-
+            #results["hits"] = list(map(lambda r: self.mq.index(self.index).get_document(r["_id"], expose_facets=True), results["hits"]))
+            results["hits"] = [ {**r, **self.mq.index(self.index).get_document(r["_id"], expose_facets=True)} for r in results["hits"] ]
+            
         return [
             BaseVectorStoreDriver.QueryResult(
-                vector=[],
+                vector=r["_tensor_facets"][0]["_embedding"] if include_vectors else [],
                 score=r["_score"],
-                meta={k: v for k, v in r.items() if k not in ["_score"]},
+                meta={k: v for k, v in r.items() if k not in ["_score", "_tensor_facets"]},
             )
             for r in results["hits"]
         ]
