@@ -49,18 +49,16 @@ class TestMarqoVectorStorageDriver:
 
 
         fake_get_document_response = {
-            'Blurb': 'A rocket car is a car powered by a rocket engine.',
-            'Title': 'Treatise on the viability of rocket cars',
-            '_id': 'article_152',
-            '_tensor_facets': [{'Title': 'Treatise on the viability of rocket cars',
+            'Blurb': 'Test description',
+            'Title': 'Test Title',
+            #'_id': 'article_152',
+            '_id': '5aed93eb-3878-4f12-bc92-0fda01c7d23d',
+            '_tensor_facets': [{'Title': 'Test Title',
                                 '_embedding': [-0.10393160581588745,
                                                 0.0465407557785511,
                                                 -0.01760256476700306,
                                                 ]},
-                                {'Blurb': 'A rocket car is a car powered by a rocket '
-                                        'engine. This treatise proposes that rocket cars '
-                                        'are the inevitable future of land-based '
-                                        'transport.',
+                                {'Blurb': 'Test description',
                                 '_embedding': [-0.045681700110435486,
                                                 0.056278493255376816,
                                                 0.022254955023527145,]
@@ -168,14 +166,31 @@ class TestMarqoVectorStorageDriver:
         assert results[0].meta["Title"] == "Test Title"
         assert results[0].meta["Description"] == "Test description"
 
+    def test_search_with_include_vectors(self, driver, mock_marqo):
+
+        #mock_marqo.index().search.return_value = fake_search_response
+        #mock_marqo.index().get_document.return_value = fake_get_document_response
+
+        # Act
+        results = driver.query("Test query", include_vectors=True)
+
+        # Assert
+        mock_marqo.index().search.assert_called_once_with("Test query", limit=5, attributes_to_retrieve=["*"], filter_string=None)
+        mock_marqo.index().get_document.assert_called_once_with('5aed93eb-3878-4f12-bc92-0fda01c7d23d', expose_facets=True)
+        assert len(results) == 1
+        assert results[0].score == 0.6047464
+        assert results[0].meta["Title"] == "Test Title"
+        assert results[0].meta["Description"] == "Test description"
+        assert results[0].vector == [-0.10393160581588745, 0.0465407557785511, -0.01760256476700306]  # The vector values should match the "_embedding" values of title in mock response
+
 
     def test_laod_entry(self, driver, mock_marqo):
         # Mock 'get_document' method to return a dictionary
-        entry = driver.load_entry("article_152")
-        mock_marqo.index().get_document.assert_called_once_with(document_id="article_152", expose_facets=True)
-        assert entry.id == "article_152"
-        assert entry.meta["Title"] == "Treatise on the viability of rocket cars"
-        assert entry.meta["Blurb"] == "A rocket car is a car powered by a rocket engine."
+        entry = driver.load_entry("5aed93eb-3878-4f12-bc92-0fda01c7d23d")
+        mock_marqo.index().get_document.assert_called_once_with(document_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d", expose_facets=True)
+        assert entry.id == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
+        assert entry.meta["Title"] == "Test Title"
+        assert entry.meta["Blurb"] == "Test description"
         assert entry.vector == [-0.10393160581588745,
                                 0.0465407557785511,
                                 -0.01760256476700306]  # The vector values should match the "_embedding" values of title in mock response
