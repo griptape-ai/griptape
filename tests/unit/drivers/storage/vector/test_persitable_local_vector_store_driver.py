@@ -18,7 +18,7 @@ class Tests:
             )  # need to overwrite since tempfile created the file
             old_vector_store_entries = vector_store.entries
             del vector_store
-            new_vector_store = PersistableLocalVectorStoreDriver().from_saved(
+            new_vector_store = PersistableLocalVectorStoreDriver.from_saved(
                 file_path=f.name
             )
             k, v = old_vector_store_entries.popitem()

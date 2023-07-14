@@ -1,6 +1,7 @@
 import pathlib
 import pickle
 from pathlib import Path
+from typing import Union
 
 from attr import define, field
 from griptape.drivers import LocalVectorStoreDriver
@@ -14,7 +15,7 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
     :param file_path: `pathlib.Path` or path as string. Intended location of the pickle.
     """
 
-    file_path: Path | str = field(kw_only=True)
+    file_path: Union[Path, str] = field(kw_only=True)
 
     def store(self, overwrite=False):
         """Serialize the entries of the vectorstore. Will not overwrite an existing file unless overwrite=True"""
