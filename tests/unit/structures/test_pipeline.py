@@ -1,15 +1,15 @@
 from griptape.artifacts import TextArtifact
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import TiktokenTokenizer
-from griptape.tasks import PromptTask, BaseTask
+from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestPipeline:
     def test_init(self):
-        rule = Rule("test")
         driver = MockPromptDriver()
         pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
@@ -19,6 +19,20 @@ class TestPipeline:
         assert pipeline.rulesets[0].name is "TestRuleset"
         assert pipeline.rulesets[0].rules[0].value is "test"
         assert pipeline.memory is None
+
+    def test_default_tool_memory(self):
+        pipeline = Pipeline(
+            tasks=[ToolkitTask(tools=[MockTool()])]
+        )
+
+        assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
+
+        pipeline = Pipeline(
+            tool_memory=None,
+            tasks=[ToolkitTask(tools=[MockTool()])]
+        )
+
+        assert pipeline.tasks[0].tools[0].output_memory == {}
 
     def test_with_memory(self):
         first_task = PromptTask("test1")

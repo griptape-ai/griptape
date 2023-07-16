@@ -18,7 +18,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     )
     index: str = field(kw_only=True)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         """Initialize the Marqo client with the given API key and URL."""
         self.set_index(self.index)
 

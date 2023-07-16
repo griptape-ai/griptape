@@ -10,11 +10,11 @@ class StructureWithMemory(Structure, ABC):
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
     autoprune_memory: bool = field(default=True, kw_only=True)
 
-    def __attrs_post_init__(self):
-        super().__attrs_post_init__()
-
+    def __attrs_post_init__(self) -> None:
         if self.memory:
             self.memory.structure = self
+
+        super().__attrs_post_init__()
 
     def add_memory_to_prompt_stack(self, stack: list[str], task_prompt: str) -> list[str]:
         if self.memory:

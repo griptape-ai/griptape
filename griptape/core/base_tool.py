@@ -29,7 +29,7 @@ class BaseTool(ActivityMixin, ABC):
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:
             self.install_dependencies(os.environ.copy())
 

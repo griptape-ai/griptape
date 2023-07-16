@@ -12,7 +12,7 @@ class SqlDriver(BaseSqlDriver):
     create_engine_params: dict = field(factory=dict, kw_only=True)
     engine: Engine = field(init=False)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         self.engine = create_engine(self.engine_url, **self.create_engine_params)
 
     def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:

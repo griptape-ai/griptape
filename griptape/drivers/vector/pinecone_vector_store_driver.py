@@ -13,7 +13,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     project_name: Optional[str] = field(default=None, kw_only=True)
     index: pinecone.Index = field(init=False)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         pinecone.init(
             api_key=self.api_key,
             environment=self.environment,

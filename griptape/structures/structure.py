@@ -3,12 +3,14 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, Union, TYPE_CHECKING, Callable, Type, Any, Dict
+from typing import Optional, Union, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
+from griptape.tasks import ToolkitTask
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -28,12 +30,20 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
+    tool_memory: Optional[BaseToolMemory] = field(
+        default=Factory(lambda: TextToolMemory()),
+        kw_only=True
+    )
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         for task in self.tasks:
             task.structure = self
+
+            if isinstance(task, ToolkitTask) and task.tool_memory is None:
+                task.set_default_tools_memory(self.tool_memory)
+
         self.prompt_driver.structure = self
 
     @property

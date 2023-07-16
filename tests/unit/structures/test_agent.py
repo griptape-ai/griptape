@@ -22,6 +22,20 @@ class TestAgent:
         assert isinstance(agent.memory, ConversationMemory)
         assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
 
+    def test_default_tool_memory(self):
+        agent = Agent(
+            tools=[MockTool()]
+        )
+
+        assert agent.tools[0].output_memory["test"][0] == agent.tool_memory
+
+        agent = Agent(
+            tool_memory=None,
+            tools=[MockTool()]
+        )
+
+        assert agent.tools[0].output_memory == {}
+
     def test_with_memory(self):
         agent = Agent(
             prompt_driver=MockPromptDriver(),

@@ -1,12 +1,12 @@
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.tasks import PromptTask, BaseTask
+from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.structures import Workflow
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestWorkflow:
     def test_init(self):
-        rule = Rule("test")
         driver = MockPromptDriver()
         workflow = Workflow(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
@@ -14,6 +14,20 @@ class TestWorkflow:
         assert len(workflow.tasks) == 0
         assert workflow.rulesets[0].name is "TestRuleset"
         assert workflow.rulesets[0].rules[0].value is "test"
+
+    def test_default_tool_memory(self):
+        workflow = Workflow(
+            tasks=[ToolkitTask(tools=[MockTool()])]
+        )
+
+        assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
+
+        workflow = Workflow(
+            tool_memory=None,
+            tasks=[ToolkitTask(tools=[MockTool()])]
+        )
+
+        assert workflow.tasks[0].tools[0].output_memory == {}
 
     def test_add_task(self):
         first_task = PromptTask("test1")
