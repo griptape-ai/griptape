@@ -22,6 +22,7 @@ class TestWorkflow:
 
         assert workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
         assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
+        assert workflow.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
 
         workflow = Workflow(
             tool_memory=None,

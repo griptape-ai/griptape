@@ -27,6 +27,7 @@ class TestPipeline:
 
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
+        assert pipeline.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
 
         pipeline = Pipeline(
             tool_memory=None,

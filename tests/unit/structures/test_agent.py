@@ -29,6 +29,7 @@ class TestAgent:
 
         assert agent.tools[0].input_memory[0] == agent.tool_memory
         assert agent.tools[0].output_memory["test"][0] == agent.tool_memory
+        assert agent.tools[0].output_memory.get("test_without_default_memory") is None
 
         agent = Agent(
             tool_memory=None,
