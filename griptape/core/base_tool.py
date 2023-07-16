@@ -24,7 +24,7 @@ class BaseTool(ActivityMixin, ABC):
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     input_memory: list[BaseToolMemory] = field(factory=list, kw_only=True)
-    output_memory: dict[str, list[BaseToolMemory]] = field(factory=dict, kw_only=True)
+    output_memory: Optional[dict[str, list[BaseToolMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
@@ -34,15 +34,16 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator
-    def validate_memory(self, _, output_memory: dict[str, list[BaseToolMemory]]) -> None:
-        for activity_name, memory_list in output_memory.items():
-            if not self.find_activity(activity_name):
-                raise ValueError(f"activity {activity_name} doesn't exist")
+    def validate_output_memory(self, _, output_memory: Optional[dict[str, list[BaseToolMemory]]]) -> None:
+        if output_memory:
+            for activity_name, memory_list in output_memory.items():
+                if not self.find_activity(activity_name):
+                    raise ValueError(f"activity {activity_name} doesn't exist")
 
-            output_memory_ids = [memory.id for memory in memory_list]
+                output_memory_ids = [memory.id for memory in memory_list]
 
-            if len(output_memory_ids) > len(set(output_memory_ids)):
-                raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
+                if len(output_memory_ids) > len(set(output_memory_ids)):
+                    raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
 
     @property
     def class_name(self):
@@ -87,13 +88,16 @@ class BaseTool(ActivityMixin, ABC):
         return self.after_execute(activity, subtask, result)
 
     def after_execute(self, activity: callable, subtask: ActionSubtask, value: Optional[BaseArtifact]) -> BaseArtifact:
-        for memory in activity.__self__.output_memory.get(activity.name, []):
-            value = memory.process_output(activity, subtask, value)
+        if self.output_memory:
+            for memory in activity.__self__.output_memory.get(activity.name, []):
+                value = memory.process_output(activity, subtask, value)
 
-        if isinstance(value, BaseArtifact):
-            return value
+            if isinstance(value, BaseArtifact):
+                return value
+            else:
+                return TextArtifact(str(value))
         else:
-            return TextArtifact(str(value))
+            return value
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator

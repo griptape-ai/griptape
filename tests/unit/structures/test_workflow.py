@@ -15,7 +15,7 @@ class TestWorkflow:
         assert workflow.rulesets[0].name is "TestRuleset"
         assert workflow.rulesets[0].rules[0].value is "test"
 
-    def test_default_tool_memory(self):
+    def test_with_default_tool_memory(self):
         workflow = Workflow(
             tasks=[ToolkitTask(tools=[MockTool()])]
         )
@@ -24,6 +24,14 @@ class TestWorkflow:
         assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
         assert workflow.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
 
+    def test_with_default_tool_memory_and_empty_tool_output_memory(self):
+        workflow = Workflow(
+            tasks=[ToolkitTask(tools=[MockTool(output_memory={})])]
+        )
+
+        assert workflow.tasks[0].tools[0].output_memory == {}
+
+    def test_without_default_tool_memory(self):
         workflow = Workflow(
             tool_memory=None,
             tasks=[ToolkitTask(tools=[MockTool()])]
