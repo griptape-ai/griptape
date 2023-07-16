@@ -27,6 +27,7 @@ class TestAgent:
             tools=[MockTool()]
         )
 
+        assert agent.tools[0].input_memory[0] == agent.tool_memory
         assert agent.tools[0].output_memory["test"][0] == agent.tool_memory
 
         agent = Agent(
@@ -34,6 +35,7 @@ class TestAgent:
             tools=[MockTool()]
         )
 
+        assert agent.tools[0].input_memory == []
         assert agent.tools[0].output_memory == {}
 
     def test_with_memory(self):

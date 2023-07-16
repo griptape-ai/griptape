@@ -49,11 +49,14 @@ class ToolkitTask(PromptTask):
         self.tool_memory = memory
 
         for tool in self.tools:
-            if not tool.output_memory and self.tool_memory:
-                tool.output_memory = {
-                    a.name: [self.tool_memory]
-                    for a in tool.activities()
-                }
+            if self.tool_memory:
+                if not tool.input_memory:
+                    tool.input_memory = [self.tool_memory]
+                if not tool.output_memory:
+                    tool.output_memory = {
+                        a.name: [self.tool_memory]
+                        for a in tool.activities()
+                    }
 
     def run(self) -> TextArtifact:
         from griptape.tasks import ActionSubtask
