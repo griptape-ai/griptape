@@ -21,16 +21,15 @@ class TestActivityMixin:
         assert "bar" in description
         assert "baz" not in description
 
+    def test_activity_uses_default_memory(self, tool):
+        assert tool.activity_uses_default_memory(tool.test) is True
+        assert tool.activity_uses_default_memory(tool.test_without_default_memory) is False
+
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test)
 
         assert schema == Schema({"values": tool.test.config["schema"].schema}).json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
-
-    def test_activity_schema_with_memory(self, tool):
-        activity_input = tool.activity_schema(tool.test_with_required_memory)
-
-        assert activity_input["properties"]["values"]
 
     def test_activity_with_no_schema(self, tool):
         assert tool.activity_schema(tool.test_no_schema) is None

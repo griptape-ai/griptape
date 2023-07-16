@@ -52,13 +52,14 @@ class MockTool(BaseTool):
 
     @activity(config={
         "description": "test description",
+        "uses_default_memory": False,
         "schema": Schema({
                 Literal("test"): str
             },
             description="Test input"
         )
     })
-    def test_with_required_memory(self, value: dict) -> str:
+    def test_without_default_memory(self, value: dict) -> str:
         return f"ack {value['test']}"
 
     @property
