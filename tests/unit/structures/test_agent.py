@@ -1,4 +1,5 @@
 from griptape.memory.structure import ConversationMemory
+from griptape.memory.tool import TextToolMemory
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -21,6 +22,32 @@ class TestAgent:
         assert agent.rulesets[0].rules[0].value is "test"
         assert isinstance(agent.memory, ConversationMemory)
         assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
+
+    def test_with_default_tool_memory(self):
+        agent = Agent(
+            tools=[MockTool()]
+        )
+
+        assert isinstance(agent.tool_memory, TextToolMemory)
+        assert agent.tools[0].input_memory[0] == agent.tool_memory
+        assert agent.tools[0].output_memory["test"][0] == agent.tool_memory
+        assert agent.tools[0].output_memory.get("test_without_default_memory") is None
+
+    def test_with_default_tool_memory_and_empty_tool_output_memory(self):
+        agent = Agent(
+            tools=[MockTool(output_memory={})]
+        )
+
+        assert agent.tools[0].output_memory == {}
+
+    def test_without_default_tool_memory(self):
+        agent = Agent(
+            tool_memory=None,
+            tools=[MockTool()]
+        )
+
+        assert agent.tools[0].input_memory is None
+        assert agent.tools[0].output_memory is None
 
     def test_with_memory(self):
         agent = Agent(

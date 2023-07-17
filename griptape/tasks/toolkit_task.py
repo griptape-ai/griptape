@@ -20,7 +20,11 @@ class ToolkitTask(PromptTask):
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
+    tool_memory: Optional[BaseToolMemory] = field(default=None, kw_only=True)
     _subtasks: list[ActionSubtask] = field(factory=list)
+
+    def __attrs_post_init__(self) -> None:
+        self.set_default_tools_memory(self.tool_memory)
 
     @tools.validator
     def validate_tools(self, _, tools: list[BaseTool]) -> None:
@@ -33,13 +37,26 @@ class ToolkitTask(PromptTask):
     def memory(self) -> list[BaseToolMemory]:
         unique_memory_dict = {}
 
-        for memories in [tool.output_memory for tool in self.tools]:
+        for memories in [tool.output_memory for tool in self.tools if tool.output_memory]:
             for memory_list in memories.values():
                 for memory in memory_list:
                     if memory.id not in unique_memory_dict:
                         unique_memory_dict[memory.id] = memory
 
         return list(unique_memory_dict.values())
+
+    def set_default_tools_memory(self, memory: BaseToolMemory) -> None:
+        self.tool_memory = memory
+
+        for tool in self.tools:
+            if self.tool_memory:
+                if tool.input_memory is None:
+                    tool.input_memory = [self.tool_memory]
+                if tool.output_memory is None:
+                    tool.output_memory = {
+                        a.name: [self.tool_memory]
+                        for a in tool.activities() if tool.activity_uses_default_memory(a)
+                    }
 
     def run(self) -> TextArtifact:
         from griptape.tasks import ActionSubtask

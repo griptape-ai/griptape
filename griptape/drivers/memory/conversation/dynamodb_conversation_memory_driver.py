@@ -15,7 +15,7 @@ class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
 
     table: any = field(init=False)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         dynamodb = resource(
             "dynamodb",
             region_name=self.aws_region,

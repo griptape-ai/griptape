@@ -28,30 +28,14 @@ pip install griptape griptape-tools -U
 
 Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses two tools with shared memory.
+With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses two tools with shared short-term memory.
 
 ```python
-from griptape.memory.tool import TextToolMemory
 from griptape.structures import Agent
-from griptape.tools import WebScraper, TextMemoryBrowser
+from griptape.tools import WebScraper, ToolOutputProcessor
 
-
-# Define memory to be shared between tools.
-memory = TextToolMemory()
-
-# WebScraper enables LLMs to load web pages.
-web_scraper = WebScraper(
-    output_memory={"get_content": [memory]}
-)
-
-# TextMemoryBrowser enables LLMs to query, summarize and extract data from memory.
-memory_browser = TextMemoryBrowser(
-    input_memory=[memory]
-)
-
-# Agents can use multiple tools to creatively solve problems
 agent = Agent(
-    tools=[web_scraper, memory_browser]
+    tools=[WebScraper(), ToolOutputProcessor()]
 )
 
 agent.run(
@@ -64,7 +48,7 @@ And here is the output:
 > Q: based on https://www.griptape.ai/, tell me what Griptape is  
 > A: Griptape is an opinionated Python framework that enables developers to fully harness the potential of LLMs while enforcing strict trust boundaries, schema validation, and activity-level permissions. It offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity. Griptape can be used to create conversational and autonomous agents.
 
-During the run, the Griptape agent loaded a webpage, stored its full content in temporary memory, and finally queried it to answer the original question.
+During the run, the Griptape agent loaded a webpage, stored its full content in the short-term memory, and queried it to answer the original question.
 
 ## Versioning
 

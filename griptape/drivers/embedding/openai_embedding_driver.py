@@ -24,7 +24,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         kw_only=True
     )
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         openai.api_type = self.api_type
         openai.api_version = self.api_version
         openai.api_base = self.api_base
