@@ -1,3 +1,4 @@
+from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -20,6 +21,7 @@ class TestWorkflow:
             tasks=[ToolkitTask(tools=[MockTool()])]
         )
 
+        assert isinstance(workflow.tool_memory, TextToolMemory)
         assert workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
         assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
         assert workflow.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None

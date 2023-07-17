@@ -1,4 +1,5 @@
 from griptape.artifacts import TextArtifact
+from griptape.memory.tool import TextToolMemory
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -25,6 +26,7 @@ class TestPipeline:
             tasks=[ToolkitTask(tools=[MockTool()])]
         )
 
+        assert isinstance(pipeline.tool_memory, TextToolMemory)
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
