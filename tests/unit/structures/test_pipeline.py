@@ -43,7 +43,7 @@ class TestPipeline:
         )
 
         assert pipeline.tasks[0].tools[0].input_memory == []
-        assert pipeline.tasks[0].tools[0].output_memory == {}
+        assert pipeline.tasks[0].tools[0].output_memory is None
 
     def test_with_memory(self):
         first_task = PromptTask("test1")
