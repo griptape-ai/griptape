@@ -42,7 +42,7 @@ class TestPipeline:
             tasks=[ToolkitTask(tools=[MockTool()])]
         )
 
-        assert pipeline.tasks[0].tools[0].input_memory == []
+        assert pipeline.tasks[0].tools[0].input_memory is None
         assert pipeline.tasks[0].tools[0].output_memory is None
 
     def test_with_memory(self):

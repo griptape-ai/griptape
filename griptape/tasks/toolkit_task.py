@@ -50,7 +50,7 @@ class ToolkitTask(PromptTask):
 
         for tool in self.tools:
             if self.tool_memory:
-                if not tool.input_memory:
+                if tool.input_memory is None:
                     tool.input_memory = [self.tool_memory]
                 if tool.output_memory is None:
                     tool.output_memory = {

@@ -37,7 +37,7 @@ class TestWorkflow:
             tasks=[ToolkitTask(tools=[MockTool()])]
         )
 
-        assert workflow.tasks[0].tools[0].input_memory == []
+        assert workflow.tasks[0].tools[0].input_memory is None
         assert workflow.tasks[0].tools[0].output_memory is None
 
     def test_add_task(self):

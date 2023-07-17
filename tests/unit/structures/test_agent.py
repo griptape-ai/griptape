@@ -44,7 +44,7 @@ class TestAgent:
             tools=[MockTool()]
         )
 
-        assert agent.tools[0].input_memory == []
+        assert agent.tools[0].input_memory is None
         assert agent.tools[0].output_memory is None
 
     def test_with_memory(self):
