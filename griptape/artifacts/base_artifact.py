@@ -29,7 +29,7 @@ class BaseArtifact(ABC):
         else:
             dict_value = json.loads(value)
 
-        return {k: str(v) for k, v in dict_value.items()}
+        return {k: v for k, v in dict_value.items()}
 
     @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:
