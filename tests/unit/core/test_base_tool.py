@@ -3,9 +3,12 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
+
+from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
+from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -116,3 +119,9 @@ class TestBaseTool:
     def test_find_input_memory(self):
         assert MockTool().find_input_memory("foo") is None
         assert MockTool(input_memory=[TextToolMemory(id="foo")]).find_input_memory("foo") is not None
+
+    def test_execute(self, tool):
+        assert tool.execute(
+            tool.test_list_output,
+            ActionSubtask("foo")
+        ).value == "foo\nbar"

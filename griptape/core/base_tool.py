@@ -2,7 +2,8 @@ from __future__ import annotations
 import logging
 import subprocess
 import sys
-from typing import TYPE_CHECKING
+from functools import reduce
+from typing import TYPE_CHECKING, Union
 import inspect
 import os
 from abc import ABC
@@ -87,7 +88,9 @@ class BaseTool(ActivityMixin, ABC):
 
         return self.after_execute(activity, subtask, result)
 
-    def after_execute(self, activity: callable, subtask: ActionSubtask, value: Optional[BaseArtifact]) -> BaseArtifact:
+    def after_execute(
+            self, activity: callable, subtask: ActionSubtask, value: Union[BaseArtifact, list[BaseArtifact]]
+    ) -> BaseArtifact:
         if self.output_memory:
             for memory in activity.__self__.output_memory.get(activity.name, []):
                 value = memory.process_output(activity, subtask, value)
@@ -97,7 +100,19 @@ class BaseTool(ActivityMixin, ABC):
             else:
                 return TextArtifact(str(value))
         else:
-            return value
+            if isinstance(value, BaseArtifact):
+                return value
+            elif isinstance(value, list):
+                if len(value) == 0:
+                    return InfoArtifact("[]")
+                elif len(value) == 1:
+                    return value[0]
+                else:
+                    return reduce(
+                        lambda a, b: TextArtifact(f"{a.to_text()}\n{b.to_text()}"), value[1:], value[0]
+                    )
+            else:
+                return TextArtifact(str(value))
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator
