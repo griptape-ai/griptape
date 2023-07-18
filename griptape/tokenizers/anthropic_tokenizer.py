@@ -7,19 +7,13 @@ from griptape.tokenizers import BaseTokenizer
 class AnthropicTokenizer(BaseTokenizer):
     DEFAULT_STOP_SEQUENCES = ["Observation:", "Input:", anthropic.HUMAN_PROMPT]
 
-    DEFAULT_MODEL = "claude-v1-100k"
-    DEFAULT_MAX_TOKENS = 8000
-    MODEL_SUFFIXES_TO_MAX_TOKENS = {
-        "100k": 100000,
-    }
+    DEFAULT_MODEL = "claude-2"
+    DEFAULT_MAX_TOKENS = 100000
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
 
     @property
     def max_tokens(self) -> int:
-        for suffix, token_limit in self.MODEL_SUFFIXES_TO_MAX_TOKENS.items():
-            if self.model.endswith(suffix):
-                return token_limit
         return self.DEFAULT_MAX_TOKENS
 
     def encode(self, text: str) -> list[int]:

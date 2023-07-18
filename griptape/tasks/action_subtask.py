@@ -106,6 +106,7 @@ class ActionSubtask(PromptTask):
 
     def after_run(self) -> None:
         observation = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
+
         self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 

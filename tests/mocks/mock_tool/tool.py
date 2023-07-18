@@ -47,8 +47,17 @@ class MockTool(BaseTool):
     @activity(config={
         "description": "test description"
     })
-    def test_no_schema(self) -> str:
+    def test_no_schema(self, value: dict) -> str:
         return f"no schema"
+
+    @activity(config={
+        "description": "test description"
+    })
+    def test_list_output(self, value: dict) -> list[BaseArtifact]:
+        return [
+            TextArtifact("foo"),
+            TextArtifact("bar")
+        ]
 
     @activity(config={
         "description": "test description",
