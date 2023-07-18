@@ -44,7 +44,7 @@ class TestActivityMixin:
         assert tool.find_activity("test_str_output") is None
 
     def test_activities(self, tool):
-        assert len(tool.activities()) == 5
+        assert len(tool.activities()) == 6
         assert tool.activities()[0] == tool.test
 
     def test_allowlist_and_denylist_validation(self):
@@ -72,4 +72,4 @@ class TestActivityMixin:
             denylist=["test"]
         )
 
-        assert len(tool.activities()) == 4
+        assert len(tool.activities()) == 5
