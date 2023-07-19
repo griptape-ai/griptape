@@ -135,11 +135,17 @@ class ToolkitTask(PromptTask):
                 ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
             )
         )
+        memory_schema = utils.minify_json(
+            json.dumps(
+                BaseTool.OUTPUT_MEMORY_SCHEMA.json_schema("MemorySchema")
+            )
+        )
 
         stack = [
             J2("prompts/tasks/toolkit/base.j2").render(
                 rulesets=structure.rulesets,
                 action_schema=action_schema,
+                memory_schema=memory_schema,
                 tool_names=str.join(", ", [tool.name for tool in tools]),
                 tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools],
                 memory_ids=[m.id for m in self.memory]
