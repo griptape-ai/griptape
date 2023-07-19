@@ -141,7 +141,8 @@ class ToolkitTask(PromptTask):
                 rulesets=structure.rulesets,
                 action_schema=action_schema,
                 tool_names=str.join(", ", [tool.name for tool in tools]),
-                tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools]
+                tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools],
+                memory_ids=[m.id for m in self.memory]
             )
         ]
 
