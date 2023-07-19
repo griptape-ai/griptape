@@ -10,6 +10,7 @@ from abc import ABC
 from typing import Optional
 import yaml
 from attr import define, field, Factory
+from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.core import ActivityMixin
 
@@ -22,6 +23,18 @@ if TYPE_CHECKING:
 class BaseTool(ActivityMixin, ABC):
     MANIFEST_FILE = "manifest.yml"
     REQUIREMENTS_FILE = "requirements.txt"
+    OUTPUT_MEMORY_SCHEMA = Schema(
+        schema={
+            Literal(
+                "memory_id",
+                description="Memory ID that you know about. Don't make up memory IDs."
+            ): str,
+            Literal(
+                "artifact_namespace",
+                description="Memory artifact namespace that you know about. Don't make up artifact namespaces."
+            ): str
+        }
+    )
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     input_memory: Optional[list[BaseToolMemory]] = field(default=None, kw_only=True)
