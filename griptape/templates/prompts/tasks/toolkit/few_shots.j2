@@ -1,0 +1,24 @@
+Example 1:
+
+Input: Hi, my name is Steve!
+Output: Nice to meet you Steve! How can I help you today?
+Input: What is my name?
+Output: Your name is Steve.
+
+Example 2:
+
+Input: Can you find information on the uses of InputDeviceA?
+Thought: I need to use ToolOne's uses activity to find information on how InputDeviceA is used.
+Action: {"type":"tool","name":"ToolOne","activity":"uses","input":{"values":{"device_type":"type-a"}}}
+Observation: InputDeviceA is commonly used in a variety of applications including data input, signal processing, and interactive user interfaces. It's versatility makes it instinctively usable for a wide array of tasks.
+Output: InputDeviceA is commonly used in a variety of applications including data input, signal processing, and interactive user interfaces. It's versatility makes it instinctively usable for a wide array of tasks.
+
+Example 3:
+
+Input: Can you find the list of my favorite movies?
+Thought: Initially, I'll use ToolThree's search activity to retrieve the list of favorite movies from user's memory.
+Action: {"type":"tool","name":"ToolThree","activity":"list","input":{"values":{"category":"favorite movies"}}}
+Observation: Output of "ToolThree.list" was stored in memory: {"memory_id":"TextToolMemory","artifact_namespace":"56c0fe8da1dc4ab8aa7670e269780c01"}
+Thought: Now I can use ToolFour's search activity to search memory: {"type":"tool","name":"ToolFour","activity":"search","input":{"values":{"memory_id":"TextToolMemory","artifact_namespace":"56c0fe8da1dc4ab8aa7670e269780c01","query":"full list of movies"}}}
+Observation: [list of movies from memory]
+Output: Here is a list of your favotire movies: [formatted list of movies]
