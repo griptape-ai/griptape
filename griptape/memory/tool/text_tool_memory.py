@@ -41,7 +41,7 @@ class TextToolMemory(BaseToolMemory):
         return InfoArtifact("text was successfully inserted")
 
     @activity(config={
-        "description": "Can be used to summarize memory content",
+        "description": "Can be used to summarize memory",
         "uses_default_memory": False,
         "schema": Schema({
             "memory_id": str,
@@ -56,7 +56,7 @@ class TextToolMemory(BaseToolMemory):
         )
 
     @activity(config={
-        "description": "Can be used to search and query memory content",
+        "description": "Can be used to search memory",
         "uses_default_memory": False,
         "schema": Schema({
             "memory_id": str,
