@@ -33,8 +33,7 @@ class StructureWithMemory(Structure, ABC):
                     else:
                         last_n -= 1
 
-                if last_n > 0:
-                    stack.append(self.memory.to_prompt_string(last_n))
+                stack.append(self.memory.to_prompt_string(last_n))
             else:
                 stack.append(self.memory.to_prompt_string())
 

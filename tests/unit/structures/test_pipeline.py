@@ -159,7 +159,7 @@ class TestPipeline:
         pipeline + [task1]
 
         # context and first input
-        assert len(pipeline.prompt_stack(task1)) == 2
+        assert len(pipeline.prompt_stack(task1)) == 3
 
         pipeline.run()
 
