@@ -21,9 +21,9 @@ if TYPE_CHECKING:
 
 @define
 class ActionSubtask(PromptTask):
-    THOUGHT_PATTERN = r"^Thought:\s*(.*)$"
-    ACTION_PATTERN = r"^Action:\s*({.*})$"
-    OUTPUT_PATTERN = r"^Output:\s?([\s\S]*)$"
+    THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
+    ACTION_PATTERN = r"(?s)^Action:\s*({.*})$"
+    OUTPUT_PATTERN = r"(?s)^Output:\s?([\s\S]*)$"
     ACTION_SCHEMA = Schema(
         description="Actions have type, name, activity, and input value.",
         schema={
@@ -160,7 +160,9 @@ class ActionSubtask(PromptTask):
 
         if len(action_matches) > 0:
             try:
-                action_object: dict = json.loads(action_matches[-1])
+                data = action_matches[-1]
+                data = data.replace('\n', '')
+                action_object: dict = json.loads(data)
 
                 validate(
                     instance=action_object,
