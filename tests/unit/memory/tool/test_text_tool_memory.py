@@ -66,3 +66,13 @@ class TestTextToolMemory:
         )
 
         assert len(memory.load_artifacts("test")) == 2
+
+    def test_summarize(self, memory):
+        assert memory.summarize(
+            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+        ).value == "mock output"
+
+    def test_query(self, memory):
+        assert memory.search(
+            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+        ).value == "foobar"

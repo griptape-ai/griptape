@@ -1,0 +1,11 @@
+memory ID: {{ memory.id }}
+{{ memory.id }} activities
+{% for activity in memory.activities() %}
+activity name: {{ memory.activity_name(activity) }}
+{{ memory.id }}.{{ memory.activity_name(activity) }} activity description: {{ memory.activity_description(activity) }}
+{% if memory.activity_schema(activity) %}
+{{ memory.id }}.{{ memory.activity_name(activity) }} activity input value schema: {{ memory.activity_schema(activity) }}
+{% else %}
+{{ memory.id }}.{{ memory.activity_name(activity) }} activity has no input value
+{% endif %}
+{% endfor %}

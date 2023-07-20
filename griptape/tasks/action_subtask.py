@@ -30,7 +30,7 @@ class ActionSubtask(PromptTask):
             Literal(
                 "type",
                 description="Action type"
-            ): schema.Or("tool"),
+            ): schema.Or("tool", "memory"),
             Literal(
                 "name",
                 description="Action name"
@@ -93,6 +93,11 @@ class ActionSubtask(PromptTask):
                         observation = self._tool.execute(getattr(self._tool, self.action_activity), self)
                     else:
                         observation = ErrorArtifact("tool not found")
+                elif self.action_type == "memory":
+                    if self._memory:
+                        observation = getattr(self._memory, self.action_activity)(self.action_input)
+                    else:
+                        observation = ErrorArtifact("memory not found")
                 else:
                     observation = ErrorArtifact("invalid action type")
 
@@ -196,6 +201,12 @@ class ActionSubtask(PromptTask):
 
                     if self._tool:
                         self.__validate_activity_mixin(self._tool)
+                elif self.action_type == "memory":
+                    if self.action_name:
+                        self._memory = self.task.find_memory(self.action_name)
+
+                    if self._memory:
+                        self.__validate_activity_mixin(self._memory)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 
