@@ -105,7 +105,7 @@ class ToolkitTask(PromptTask):
         return next((subtask for subtask in self._subtasks if subtask.id == task_id), None)
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
-        subtask.attach(self)
+        subtask.attach_to(self)
 
         if len(self._subtasks) > 0:
             self._subtasks[-1].add_child(subtask)
