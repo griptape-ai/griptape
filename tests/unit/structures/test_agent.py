@@ -127,7 +127,7 @@ class TestAgent:
         agent.add_task(task1)
 
         # context and first input
-        assert len(agent.prompt_stack(task1)) == 2
+        assert len(agent.prompt_stack(task1)) == 3
 
         agent.run()
 
