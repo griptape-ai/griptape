@@ -148,6 +148,7 @@ class ToolkitTask(PromptTask):
                 memory_schema=memory_schema,
                 tool_names=str.join(", ", [tool.name for tool in tools]),
                 tools=[J2("prompts/tool.j2").render(tool=tool) for tool in tools],
+                few_shots=J2("prompts/tasks/toolkit/few_shots.j2").render(),
                 memory_ids=[m.id for m in self.memory]
             )
         ]
