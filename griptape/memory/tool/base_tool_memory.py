@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Union
 from attr import define, field, Factory
+from griptape.core import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -9,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseToolMemory(ABC):
+class BaseToolMemory(ActivityMixin, ABC):
     id: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
 

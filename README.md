@@ -32,10 +32,10 @@ With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, ToolOutputProcessor
+from griptape.tools import WebScraper
 
 agent = Agent(
-    tools=[WebScraper(), ToolOutputProcessor()]
+    tools=[WebScraper()]
 )
 
 agent.run(
@@ -48,7 +48,7 @@ And here is the output:
 > Q: based on https://www.griptape.ai/, tell me what Griptape is  
 > A: Griptape is an opinionated Python framework that enables developers to fully harness the potential of LLMs while enforcing strict trust boundaries, schema validation, and activity-level permissions. It offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity. Griptape can be used to create conversational and autonomous agents.
 
-During the run, the Griptape agent loaded a webpage, stored its full content in the short-term memory, and queried it to answer the original question.
+During the run, the Griptape agent loaded a webpage, stored its full content in the short-term memory, and finally queried it to answer the original question.
 
 ## Versioning
 

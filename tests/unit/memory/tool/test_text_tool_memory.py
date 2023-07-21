@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, CsvRowArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
@@ -14,6 +14,16 @@ class TestTextToolMemory:
         mocker.patch(
             "griptape.engines.VectorQueryEngine.query",
             return_value=TextArtifact("foobar")
+        )
+
+        mocker.patch(
+            "griptape.engines.PromptSummaryEngine.summarize_artifacts",
+            return_value=TextArtifact("foobar summary")
+        )
+
+        mocker.patch(
+            "griptape.engines.CsvExtractionEngine.extract",
+            return_value=[CsvRowArtifact({"foo": "bar"})]
         )
 
     @pytest.fixture
@@ -66,3 +76,13 @@ class TestTextToolMemory:
         )
 
         assert len(memory.load_artifacts("test")) == 2
+
+    def test_summarize(self, memory):
+        assert memory.summarize(
+            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+        ).value == "foobar summary"
+
+    def test_query(self, memory):
+        assert memory.search(
+            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+        ).value == "foobar"
