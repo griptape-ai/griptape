@@ -24,6 +24,12 @@ class Pipeline(StructureWithMemory):
 
     def __add__(self, other: BaseTask) -> BaseTask:
         return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
+        
+    def __attrs_post_init__(self) -> None:
+        if self.tasks:
+            [self.add_task(task) for task in self.tasks]
+
+        super().__attrs_post_init__()
 
     def add_task(self, task: BaseTask) -> BaseTask:
         self.init_task(task)
