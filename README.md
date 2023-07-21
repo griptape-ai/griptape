@@ -48,11 +48,34 @@ And here is the output:
 > Q: based on https://www.griptape.ai/, tell me what Griptape is  
 > A: Griptape is an opinionated Python framework that enables developers to fully harness the potential of LLMs while enforcing strict trust boundaries, schema validation, and activity-level permissions. It offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity. Griptape can be used to create conversational and autonomous agents.
 
-During the run, the Griptape agent loaded a webpage, stored its full content in the short-term memory, and finally queried it to answer the original question.
+During the run, the Griptape agent loaded a webpage, stored its full content in the short-term memory, and finally queried it to answer the original question. The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the content never goes to memory instead of the main prompt.
+
+## Using a Different LLM
+
+By default, Griptape uses OpenAI's `gpt-4` to drive the core agent logic. Other framework components responsible for summarization, querying, and text extraction use `gpt-3.5-turbo`. All of them are customizable and if you don't have access to `gpt-4`, you can change the quick start example like this:
+
+```python
+from griptape.drivers import OpenAiPromptDriver
+from griptape.structures import Agent
+from griptape.tools import WebScraper
+
+agent = Agent(
+    prompt_driver=OpenAiPromptDriver(
+        model="gpt-3.5-turbo"
+    ),
+    tools=[WebScraper()]
+)
+
+agent.run(
+    "based on https://www.griptape.ai/, tell me what Griptape is"
+)
+```
+
+[Check out our docs](https://docs.griptape.ai/en/latest/griptape-framework/structures/prompt-drivers/) to learn how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
 ## Versioning
 
-Griptape is in early development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
+Griptape is in constant development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
 
 ## Contributing
 

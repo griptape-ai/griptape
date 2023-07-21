@@ -14,7 +14,7 @@ class OpenAiPromptDriver(BasePromptDriver):
     api_base: str = field(default=openai.api_base, kw_only=True)
     api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True)
-    model: str = field(default=TiktokenTokenizer.DEFAULT_OPENAI_MODEL, kw_only=True)
+    model: str = field(default=TiktokenTokenizer.DEFAULT_OPENAI_GPT_3_MODEL, kw_only=True)
     tokenizer: TiktokenTokenizer = field(
         default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
         kw_only=True

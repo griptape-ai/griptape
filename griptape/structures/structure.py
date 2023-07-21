@@ -11,6 +11,7 @@ from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
 from griptape.tasks import ToolkitTask
+from griptape.tokenizers import TiktokenTokenizer
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -22,7 +23,9 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver()),
+        default=Factory(lambda: OpenAiPromptDriver(
+            model=TiktokenTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
+        )),
         kw_only=True
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)

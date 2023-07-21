@@ -5,8 +5,10 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class TiktokenTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_MODEL = "gpt-3.5-turbo"
-    DEFAULT_AZURE_OPENAI_MODEL = "gpt-35-turbo"
+    DEFAULT_OPENAI_GPT_3_MODEL = "gpt-3.5-turbo"
+    DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
+    DEFAULT_AZURE_OPENAI_GPT_3_MODEL = "gpt-35-turbo"
+    DEFAULT_AZURE_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
     TOKEN_OFFSET = 8
@@ -36,7 +38,7 @@ class TiktokenTokenizer(BaseTokenizer):
         "gpt-35-turbo"  # Azure OpenAI
     ]
 
-    model: str = field(default=DEFAULT_OPENAI_MODEL, kw_only=True)
+    model: str = field(default=DEFAULT_OPENAI_GPT_3_MODEL, kw_only=True)
 
     @property
     def encoding(self) -> tiktoken.Encoding:
