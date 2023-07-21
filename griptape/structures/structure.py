@@ -41,12 +41,7 @@ class Structure(ABC):
     _logger: Optional[Logger] = None
 
     def __attrs_post_init__(self) -> None:
-        for task in self.tasks:
-            task.structure = self
-
-            if isinstance(task, ToolkitTask) and task.tool_memory is None:
-                task.set_default_tools_memory(self.tool_memory)
-
+        [self.init_task(task) for task in self.tasks]
         self.prompt_driver.structure = self
 
     @property
@@ -77,6 +72,13 @@ class Structure(ABC):
 
     def is_executing(self) -> bool:
         return any(s for s in self.tasks if s.is_executing())
+
+    def init_task(self, task: BaseTask) -> BaseTask:
+        task.structure = self
+
+        if isinstance(task, ToolkitTask) and task.tool_memory is None:
+            task.set_default_tools_memory(self.tool_memory)
+        return task
 
     def find_task(self, task_id: str) -> Optional[BaseTask]:
         return next((task for task in self.tasks if task.id == task_id), None)
