@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape.utils import ExponentialBackoffMixin, PromptStack
-from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
+    from griptape.tokenizers import BaseTokenizer
     from griptape.artifacts import TextArtifact
     from griptape.structures import Structure
 

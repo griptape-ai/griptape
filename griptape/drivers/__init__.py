@@ -9,6 +9,7 @@ from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.text_gen_driver import TextGenPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSagemakerPromptDriver
+from .prompt.ai21_prompt_driver import Ai21PromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
@@ -50,6 +51,7 @@ __all__ = [
     "AnthropicPromptDriver",
     "TextGenPromptDriver",
     "AmazonSagemakerPromptDriver",
+    "Ai21PromptDriver",
 
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
