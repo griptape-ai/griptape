@@ -8,6 +8,7 @@ from griptape.tokenizers.bedrock_jurassic_tokenizer import (
     BedrockJurassicTokenizer,
 )
 from griptape.tokenizers.bedrock_claude_tokenizer import BedrockClaudeTokenizer
+from griptape.tokenizers.ai21_tokenizer import Ai21Tokenizer
 
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "BedrockTitanTokenizer",
     "BedrockJurassicTokenizer",
     "BedrockClaudeTokenizer",
+    "Ai21Tokenizer",
 ]

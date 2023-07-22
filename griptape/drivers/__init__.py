@@ -14,6 +14,7 @@ from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
+from .prompt.ai21_prompt_driver import Ai21PromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import (
     BaseConversationMemoryDriver,
@@ -80,6 +81,8 @@ __all__ = [
     "AmazonSageMakerPromptDriver",
     "AmazonBedrockPromptDriver",
     "BaseMultiModelPromptDriver",
+    "Ai21PromptDriver",
+
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "DynamoDbConversationMemoryDriver",
