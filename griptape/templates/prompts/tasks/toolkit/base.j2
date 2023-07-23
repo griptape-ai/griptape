@@ -46,11 +46,6 @@ Memory Descriptions:
 {% endif %}
 {% endif %}
 
-{% if few_shots %}
-Conversation Format Examples:
-{{ few_shots }}
-{% endif %}
-
 {% if tool_names|length > 0 and memory_ids|length > 0 %}
 If tool output is stored in memory, ALWAYS pass it to another tool OR use memory activities to access it.
 {% endif %}

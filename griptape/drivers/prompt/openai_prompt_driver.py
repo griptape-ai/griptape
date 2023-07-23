@@ -19,14 +19,8 @@ class OpenAiPromptDriver(BasePromptDriver):
         default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
         kw_only=True
     )
+    max_tokens: Optional[int] = field(default=None, kw_only=True)
     user: str = field(default="", kw_only=True)
-
-    def __attrs_post_init__(self) -> None:
-        openai.api_type = self.api_type
-        openai.api_version = self.api_version
-        openai.api_base = self.api_base
-        openai.api_key = self.api_key
-        openai.organization = self.organization
 
     def try_run(self, value: str) -> TextArtifact:
         if self.tokenizer.is_chat():
@@ -34,29 +28,33 @@ class OpenAiPromptDriver(BasePromptDriver):
         else:
             return self.__run_completion(value)
 
-    def _chat_params(self, value: str) -> dict:
+    def _base_params(self, value: str) -> dict:
         return {
             "model": self.tokenizer.model,
+            "max_tokens": self.max_tokens if self.max_tokens else self.tokenizer.tokens_left(value),
+            "temperature": self.temperature,
+            "stop": self.tokenizer.stop_sequences,
+            "user": self.user,
+            "api_key": self.api_key,
+            "organization": self.organization,
+            "api_version": self.api_version,
+            "api_base": self.api_base,
+            "api_type": self.api_type
+        }
+
+    def _chat_params(self, value: str) -> dict:
+        return self._base_params(value) | {
             "messages":  [
                 {
                     "role": "user",
                     "content": value
                 }
-            ],
-            "max_tokens":  self.tokenizer.tokens_left(value),
-            "temperature":  self.temperature,
-            "stop":  self.tokenizer.stop_sequences,
-            "user":  self.user
+            ]
         }
 
     def _completion_params(self, value: str) -> dict:
-        return {
-            "model": self.tokenizer.model,
+        return self._base_params(value) | {
             "prompt":  value,
-            "max_tokens":  self.tokenizer.tokens_left(value),
-            "temperature":  self.temperature,
-            "stop":  self.tokenizer.stop_sequences,
-            "user":  self.user
         }
 
     def __run_chat(self, value: str) -> TextArtifact:
