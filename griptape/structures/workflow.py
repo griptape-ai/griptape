@@ -19,7 +19,7 @@ class Workflow(Structure):
         return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
 
     def add_task(self, task: BaseTask) -> BaseTask:
-        task.structure = self
+        self._init_task(task)
 
         self.tasks.append(task)
 
