@@ -50,9 +50,9 @@ And here is the output:
 
 During the run, the Griptape agent loaded a webpage, stored its full content in the short-term memory, and finally queried it to answer the original question. The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the content never goes to memory instead of the main prompt.
 
-## Using a Different LLM
+## Using Other LLMs
 
-By default, Griptape uses OpenAI's `gpt-4` to drive the core agent logic. Other framework components responsible for summarization, querying, and text extraction use `gpt-3.5-turbo`. All of them are customizable and if you don't have access to `gpt-4`, you can change the quick start example like this:
+By default, Griptape uses OpenAI's `gpt-4` to drive the core agent logic. Other framework components responsible for summarization, querying, and text extraction use `gpt-3.5-turbo`. All of those are customizable through _prompt drivers_. For example, if you don't have access to `gpt-4`, you can change the quick start snippet like this:
 
 ```python
 from griptape.drivers import OpenAiPromptDriver
@@ -71,7 +71,7 @@ agent.run(
 )
 ```
 
-If you are running into rate limiting issues with OpenAI, specify a custom number of `max_tokens` in the driver:
+If you are running into `gpt-4` rate limiting issues, specify a custom number of `max_tokens` in the driver:
 
 ```python
 OpenAiPromptDriver(
