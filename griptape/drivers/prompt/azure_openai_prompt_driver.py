@@ -15,12 +15,7 @@ class AzureOpenAiPromptDriver(OpenAiPromptDriver):
         kw_only=True
     )
 
-    def _chat_params(self, value: str) -> dict:
-        return super()._chat_params(value) | {
-            "deployment_id": self.deployment_id
-        }
-
-    def _completion_params(self, value: str) -> dict:
-        return super()._chat_params(value) | {
+    def _base_params(self, value: str) -> dict:
+        return super()._base_params(value) | {
             "deployment_id": self.deployment_id
         }

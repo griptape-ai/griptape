@@ -71,7 +71,15 @@ agent.run(
 )
 ```
 
-[Check out our docs](https://docs.griptape.ai/en/latest/griptape-framework/structures/prompt-drivers/) to learn how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
+If you are running into rate limiting issues with OpenAI, specify a custom number of `max_tokens` in the driver:
+
+```python
+OpenAiPromptDriver(
+    max_tokens=200
+)
+```
+
+[Check out our docs](https://docs.griptape.ai/en/latest/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
 ## Versioning
 
