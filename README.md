@@ -75,6 +75,7 @@ If you are running into `gpt-4` rate limiting issues, specify a custom number of
 
 ```python
 OpenAiPromptDriver(
+    model="gpt-4",
     max_tokens=200
 )
 ```
