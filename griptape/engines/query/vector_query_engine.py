@@ -33,24 +33,25 @@ class VectorQueryEngine(BaseQueryEngine):
         artifacts = [
             a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
         ]
-        prefix = []
+        text_segments = []
 
         for artifact in artifacts:
-            next_segment = f'\n\nText segment:\n"""\n{artifact.value}\n"""'
+            text_segments.append(artifact.value)
 
             message = self.template_generator.render(
-                metadata=metadata or "-",
+                metadata=metadata,
                 question=query,
-                text_segments="".join(prefix) + next_segment,
+                text_segments=text_segments,
             )
 
             if tokenizer.token_count(message) > tokenizer.max_tokens:
+                text_segments.pop()
                 break
-            else:
-                prefix += next_segment
 
         message = self.template_generator.render(
-            metadata=metadata or "-", question=query, text_segments="".join(prefix)
+            metadata=metadata,
+            question=query,
+            text_segments=text_segments,
         )
         return self.prompt_driver.run(value=message)
 
