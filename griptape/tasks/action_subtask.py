@@ -115,11 +115,6 @@ class ActionSubtask(PromptTask):
         self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
-    def render(self) -> str:
-        return J2("prompts/tasks/toolkit/subtask.j2").render(
-            subtask=self
-        )
-
     def to_json(self) -> str:
         json_dict = {}
 

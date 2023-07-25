@@ -2,6 +2,9 @@ Input: {{ subtask.input.to_text() }}
 {% if subtask.output %}
 Output: {{ subtask.output.to_text() }}
 {% else %}
-{% for subtask in subtasks %}{{ subtask.render() }}
+{% for subtask in subtasks %}
+{% if subtask.thought %}Thought: {{ subtask.thought }}{% endif %}
+Action: {{ subtask.to_json() }}
+{% if subtask.output %}Observation: {{ subtask.output.to_text() }}{% endif %}
 {% endfor %}
 {% endif %}
