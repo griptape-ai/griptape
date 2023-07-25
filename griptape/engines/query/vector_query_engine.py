@@ -3,6 +3,7 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver, BasePromptDriver, OpenAiPromptDriver
 from griptape.engines import BaseQueryEngine
+from griptape.utils.j2 import J2
 
 
 @define
@@ -13,6 +14,10 @@ class VectorQueryEngine(BaseQueryEngine):
     )
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiPromptDriver()),
+        kw_only=True
+    )
+    template_generator: J2 = field(
+        default=Factory(lambda: J2("engines/vector_query.j2")),
         kw_only=True
     )
 
@@ -28,28 +33,26 @@ class VectorQueryEngine(BaseQueryEngine):
         artifacts = [
             a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
         ]
-
-        prefix_list = [
-            "You are a helpful assistant who can answer questions by searching through text segments.",
-            "Always be truthful. Don't make up facts.",
-            "Use the below list of text segments and optional metadata to answer the subsequent question.",
-            'If the answer cannot be found in the segments, say "I could not find an answer."'
-        ]
-
-        metadata = f"Metadata: {metadata if metadata else 'no metadata available'}"
-        prefix = f"{' '.join(prefix_list)}\n\n{metadata}"
-        question = f"\n\nQuestion: {query}"
-        answer = "\n\nAnswer: "
+        prefix = []
 
         for artifact in artifacts:
             next_segment = f'\n\nText segment:\n"""\n{artifact.value}\n"""'
 
-            if tokenizer.token_count(prefix + next_segment + question + answer) > tokenizer.max_tokens:
+            message = self.template_generator.render(
+                metadata=metadata or "-",
+                question=query,
+                text_segments="".join(prefix) + next_segment,
+            )
+
+            if tokenizer.token_count(message) > tokenizer.max_tokens:
                 break
             else:
                 prefix += next_segment
 
-        return self.prompt_driver.run(value=prefix + question + answer)
+        message = self.template_generator.render(
+            metadata=metadata or "-", question=query, text_segments="".join(prefix)
+        )
+        return self.prompt_driver.run(value=message)
 
     def upsert_text_artifact(
             self,
