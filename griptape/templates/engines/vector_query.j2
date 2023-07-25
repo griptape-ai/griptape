@@ -3,7 +3,9 @@ Always be truthful. Don't make up facts.
 Use the below list of text segments and optional metadata to answer the subsequent question.
 If the answer cannot be found in the segments, say "I could not find an answer."
 
-{% if metadata %}Metadata: {{ metadata }}{% endif %}
+{% if metadata %}
+Metadata: {{ metadata }}
+{% endif %}
 {% for segment in text_segments %}
 Text segment: {{ segment }}
 {% endfor %}
