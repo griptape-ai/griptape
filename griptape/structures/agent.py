@@ -56,7 +56,7 @@ class Agent(StructureWithMemory):
             super().prompt_stack(task),
             J2("prompts/agent.j2").render(
                 has_memory=self.memory is not None,
-                task=self.task
+                task=task
             )
         )
 

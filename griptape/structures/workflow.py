@@ -26,7 +26,7 @@ class Workflow(Structure):
         return task
 
     def prompt_stack(self, task: BaseTask) -> list[str]:
-        stack = Structure.prompt_stack(self, task)
+        stack = super().prompt_stack(task)
 
         stack.append(
             J2("prompts/workflow.j2").render(
