@@ -1,26 +1,16 @@
-from typing import Optional, Dict, Any, List
-from griptape.drivers import BaseVectorStoreDriver
+from typing import Optional
 from pymongo import MongoClient
+from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field, Factory
-import logging
-
 
 @define
 class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     connection_string: str = field(kw_only=True)
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
-    client: MongoClient = field(init=False)
-    collection = field(init=False)
 
-    def __attrs_post_init__(self) -> None:
-        try:
-            self.client = MongoClient(self.connection_string)
-            self.collection = self.client[self.database_name][self.collection_name]
-            logging.info("Connected to MongoDB Atlas successfully!")
-        except Exception as e:
-            logging.error("Could not connect to MongoDB Atlas!")
-            logging.error(str(e))
+    client: MongoClient = field(default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True), init=False)
+    collection: any = field(default=Factory(lambda self: self.client[self.database_name][self.collection_name], takes_self=True), init=False)
 
     def upsert_vector(
             self,
@@ -30,48 +20,51 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
-        try:
-            document = {"vector": vector, "meta": meta, "namespace": namespace}
-            if vector_id:
-                document["_id"] = vector_id
-            result = self.collection.replace_one({"_id": vector_id}, document, upsert=True)
-            return result.upserted_id or vector_id
-        except Exception as e:
-            logging.error("Error during vector upsert!")
-            logging.error(str(e))
+        if vector_id is None:
+            result = self.collection.insert_one({
+                'vector': vector,
+                'namespace': namespace,
+                'meta': meta,
+            })
+            vector_id = result.inserted_id
+        else:
+            self.collection.replace_one(
+                {'_id': vector_id},
+                {
+                    'vector': vector,
+                    'namespace': namespace,
+                    'meta': meta,
+                },
+                upsert=True
+            )
+        return vector_id
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        try:
-            document = self.collection.find_one({"_id": vector_id})
-            if document:
-                return BaseVectorStoreDriver.Entry(
-                    id=document["_id"],
-                    vector=document["vector"],
-                    meta=document["meta"],
-                    namespace=document["namespace"]
-                )
-            else:
-                return None
-        except Exception as e:
-            logging.error(f"Error loading vector {vector_id}!")
-            logging.error(str(e))
+        doc = self.collection.find_one({'_id': vector_id})
+        if doc is None:
+            return None
+        else:
+            return BaseVectorStoreDriver.Entry(
+                id=doc['_id'],
+                vector=doc['vector'],
+                namespace=doc['namespace'],
+                meta=doc['meta'],
+            )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        try:
-            query = {"namespace": namespace} if namespace else {}
-            documents = self.collection.find(query)
-            return [
-                BaseVectorStoreDriver.Entry(
-                    id=doc["_id"],
-                    vector=doc["vector"],
-                    meta=doc["meta"],
-                    namespace=doc["namespace"]
-                )
-                for doc in documents
-            ]
-        except Exception as e:
-            logging.error(f"Error loading entries!")
-            logging.error(str(e))
+        if namespace is None:
+            cursor = self.collection.find()
+        else:
+            cursor = self.collection.find({'namespace': namespace})
+        return [
+            BaseVectorStoreDriver.Entry(
+                id=doc['_id'],
+                vector=doc['vector'],
+                namespace=doc['namespace'],
+                meta=doc['meta'],
+            )
+            for doc in cursor
+        ]
 
     def query(
             self,
@@ -81,5 +74,5 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             include_vectors: bool = False,
             **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        logging.error("Vector similarity search is not supported by MongoDB.")
-        return []
+        raise NotImplementedError('Vector search not supported in MongoDB')
+
