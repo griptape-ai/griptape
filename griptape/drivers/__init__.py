@@ -55,7 +55,7 @@ __all__ = [
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
     "MarqoVectorStoreDriver",
-    "MongoDbAtlasVectorStoreDriver"
+    "MongoDbAtlasVectorStoreDriver",
 
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",

@@ -25,6 +25,7 @@ graphlib = "*"
 tiktoken = ">=0.3"
 rich = ">=13"
 stopit = "*"
+mongomock = "*"
 transformers = ">=4"
 huggingface-hub = ">=0.13"
 schema = ">=0.7"
@@ -49,6 +50,7 @@ pytest = "~=7.1"
 pytest-mock = "*"
 pytest-cover = "*"
 pymongo= "*"
+
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
 
