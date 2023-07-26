@@ -1,6 +1,6 @@
-Input: {{ subtask.input.to_text() }}
-{% if subtask.output %}
-Output: {{ subtask.output.to_text() }}
+Input: {{ task.input.to_text() }}
+{% if task.output %}
+Output: {{ task.output.to_text() }}
 {% else %}
 {% for subtask in subtasks %}
 {% if subtask.thought %}Thought: {{ subtask.thought }}{% endif %}

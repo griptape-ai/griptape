@@ -97,7 +97,7 @@ class ToolkitTask(PromptTask):
 
     def render(self) -> str:
         return J2("prompts/tasks/toolkit/conversation.j2").render(
-            subtask=self,
+            task=self,
             subtasks=self._subtasks
         )
 
