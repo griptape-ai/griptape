@@ -41,12 +41,12 @@ class TestVectorQueryEngine:
         message = engine.template_generator.render(
                 metadata="*META*",
                 question="*QUESTION*",
-                text_segments=["*TEXT SEGMENT*", "*TEXT SEGMENT 2*"],
+                text_segments=["*TEXT SEGMENT 1*", "*TEXT SEGMENT 2*"],
         )
 
         assert "*META*" in message
         assert "*QUESTION*" in message
-        assert "*TEXT SEGMENT*" in message
+        assert "*TEXT SEGMENT 1*" in message
         assert "*TEXT SEGMENT 2*" in message
 
     def test_upsert_text_artifacts(self, engine):
