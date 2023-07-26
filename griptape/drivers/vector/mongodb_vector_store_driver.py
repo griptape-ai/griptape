@@ -9,8 +9,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
 
-    client: MongoClient = field(default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True), init=False)
-    collection: any = field(default=Factory(lambda self: self.client[self.database_name][self.collection_name], takes_self=True), init=False)
+    mg: MongoClient = field(default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True), kw_only=True)
+    collection: any = field(default=Factory(lambda self: self.client[self.database_name][self.collection_name], takes_self=True), kw_only=True)
 
     def upsert_vector(
             self,

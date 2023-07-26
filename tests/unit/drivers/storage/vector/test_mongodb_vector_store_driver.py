@@ -14,8 +14,9 @@ class TestMongoDbAtlasVectorStoreDriver:
             {"vector": [0.5, 0.5, 0.5], "_id": "123", "meta": {"foo": "bar"}}
         ]
 
+        # Use a dummy connection string
         return MongoDbAtlasVectorStoreDriver(
-            connection_string="mongodb+srv://test:test@cluster0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+            connection_string="dummy_connection_string",
             database_name="test",
             collection_name="test",
             embedding_driver=MockEmbeddingDriver()
