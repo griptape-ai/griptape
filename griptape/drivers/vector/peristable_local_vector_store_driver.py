@@ -1,19 +1,17 @@
-import os.path
-import pathlib
 import json
+import dataclasses
 from pathlib import Path
-from typing import Union, Literal, NewType, cast, Dict
+from typing import Union, Literal, cast, Dict
 from zipfile import ZipFile
 
 from attr import define, field
-from griptape.drivers import LocalVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers import LocalVectorStoreDriver
 
-import dataclasses, json
 
 
 class EntryAwareJSONEncoder(json.JSONEncoder):
     def default(self, o):
-        if isinstance(o, BaseVectorStoreDriver.Entry):
+        if isinstance(o, PersistableLocalVectorStoreDriver.Entry):
             d_dict = dataclasses.asdict(o)
             d_dict["__Entry__"] = True
             return d_dict
@@ -24,7 +22,7 @@ def as_entry(dct: Dict):
 
     if "__Entry__" in dct:
         dct.pop("__Entry__")
-        return BaseVectorStoreDriver.Entry(**dct)
+        return PersistableLocalVectorStoreDriver.Entry(**dct)
 
     return dct
 
