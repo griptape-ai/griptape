@@ -2,16 +2,15 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
-from griptape.tasks import ActionSubtask
 from griptape import utils
-from griptape.core import BaseTool
-from griptape.utils import J2
-from griptape.tasks import PromptTask
 from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.core import BaseTool
+from griptape.tasks import ActionSubtask
+from griptape.tasks import PromptTask
+from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.memory.tool import BaseToolMemory
-    from griptape.structures import Structure
 
 
 @define
@@ -126,7 +125,7 @@ class ToolkitTask(PromptTask):
             None
         )
 
-    def prompt_stack(self, structure: Structure) -> list[str]:
+    def default_system_prompt(self) -> str:
         memories = [r for r in self.memory if len(r.activities()) > 0]
         action_schema = utils.minify_json(
             json.dumps(
@@ -134,15 +133,11 @@ class ToolkitTask(PromptTask):
             )
         )
 
-        stack = [
-            J2("prompts/tasks/toolkit/base.j2").render(
-                rulesets=structure.rulesets,
-                action_schema=action_schema,
-                tool_names=str.join(", ", [tool.name for tool in self.tools]),
-                tools=[J2("prompts/tool.j2").render(tool=tool) for tool in self.tools],
-                memory_ids=str.join(", ", [memory.id for memory in memories]),
-                memories=[J2("prompts/memory/tool.j2").render(memory=memory) for memory in memories]
-            )
-        ]
-
-        return stack
+        return J2("tasks/toolkit_task/system.j2").render(
+            rulesets=self.structure.rulesets,
+            action_schema=action_schema,
+            tool_names=str.join(", ", [tool.name for tool in self.tools]),
+            tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
+            memory_ids=str.join(", ", [memory.id for memory in memories]),
+            memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
+        )

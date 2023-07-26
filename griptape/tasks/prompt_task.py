@@ -1,13 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
-from attr import define, field
+from typing import TYPE_CHECKING, Optional, Callable
+from attr import define, field, Factory
 from griptape.utils import J2
 from griptape.tasks import BaseTask
 from griptape.artifacts import TextArtifact, BaseArtifact
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
-    from griptape.structures import Structure
 
 
 @define
@@ -17,6 +16,11 @@ class PromptTask(BaseTask):
     prompt_template: str = field(default=DEFAULT_PROMPT_TEMPLATE)
     context: dict[str, any] = field(factory=dict, kw_only=True)
     driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
+    render_system_prompt: Callable[[], str] = field(
+        default=Factory(lambda self: self.default_system_prompt, takes_self=True),
+        kw_only=True
+    )
+
     output: Optional[BaseArtifact] = field(default=None, init=False)
 
     @property
@@ -62,11 +66,7 @@ class PromptTask(BaseTask):
             task=self
         )
 
-    def prompt_stack(self, structure: Structure) -> list[str]:
-        stack = [
-            J2("prompts/tasks/prompt/base.j2").render(
-                rulesets=structure.rulesets,
-            )
-        ]
-
-        return stack
+    def default_system_prompt(self) -> str:
+        return J2("tasks/prompt_task/system.j2").render(
+            rulesets=self.structure.rulesets,
+        )

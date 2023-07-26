@@ -51,9 +51,9 @@ class Agent(StructureWithMemory):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         raise NotImplementedError("Method is not implemented: agents can only have one task.")
 
-    def prompt_stack(self, task: BaseTask) -> list[str]:
+    def prompt_stack(self, task: PromptTask) -> list[str]:
         return self.add_memory_to_prompt_stack(
-            super().prompt_stack(task),
+            task.render_system_prompt(),
             J2("prompts/agent.j2").render(
                 has_memory=self.memory is not None,
                 task=task

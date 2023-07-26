@@ -3,7 +3,7 @@ import concurrent.futures as futures
 from graphlib import TopologicalSorter
 from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
-from griptape.tasks import BaseTask
+from griptape.tasks import BaseTask, PromptTask
 from griptape.structures import Structure
 from griptape.utils import J2
 
@@ -25,16 +25,11 @@ class Workflow(Structure):
 
         return task
 
-    def prompt_stack(self, task: BaseTask) -> list[str]:
-        stack = super().prompt_stack(task)
-
-        stack.append(
-            J2("prompts/workflow.j2").render(
-                task=task
-            )
-        )
-
-        return stack
+    def prompt_stack(self, task: PromptTask) -> list[str]:
+        return [
+            task.render_system_prompt(),
+            J2("prompts/workflow.j2").render(task=task)
+        ]
 
     def run(self, *args) -> list[BaseTask]:
         self._execution_args = args

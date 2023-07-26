@@ -10,7 +10,7 @@ from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
-from griptape.tasks import ToolkitTask
+from griptape.tasks import ToolkitTask, PromptTask
 from griptape.tokenizers import TiktokenTokenizer
 
 if TYPE_CHECKING:
@@ -86,10 +86,12 @@ class Structure(ABC):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
-    def prompt_stack(self, task: BaseTask) -> list[str]:
-        return task.prompt_stack(self)
+    def prompt_stack(self, task: PromptTask) -> list[str]:
+        return [
+            task.render_system_prompt()
+        ]
 
-    def to_prompt_string(self, task: BaseTask) -> str:
+    def to_prompt_string(self, task: PromptTask) -> str:
         return self.stack_to_prompt_string(self.prompt_stack(task))
 
     def stack_to_prompt_string(self, stack: list[str]) -> str:
