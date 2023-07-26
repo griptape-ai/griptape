@@ -44,6 +44,7 @@ sqlalchemy = "~=1.0"
 sqlalchemy-redshift = "*"
 snowflake-sqlalchemy = "^1.4.7"
 pymongo= "*"
+bson= "*"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"

@@ -1,5 +1,6 @@
 import pytest
 import mongomock
+from bson import ObjectId
 from griptape.artifacts import TextArtifact
 from griptape.drivers import MongoDbAtlasVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -9,7 +10,7 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     @pytest.fixture
     def driver(self, monkeypatch):
-        def mock_mongo_client(*args, **kwargs):
+        def mock_mongo_client():
             return mongomock.MongoClient()
 
         monkeypatch.setattr('pymongo.MongoClient', mock_mongo_client)
@@ -23,7 +24,7 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     def test_upsert_vector(self, driver):
         vector = [0.5, 0.5, 0.5]
-        vector_id_str = "123"
+        vector_id_str = str(ObjectId())  # generating a valid ObjectId
         test_id = driver.upsert_vector(vector, vector_id=vector_id_str)
         assert test_id is not None
 
@@ -57,4 +58,3 @@ class TestMongoDbAtlasVectorStoreDriver:
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = driver.load_entries()
         assert results is not None and len(results) > 0
-
