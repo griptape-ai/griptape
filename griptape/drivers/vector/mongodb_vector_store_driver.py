@@ -1,7 +1,6 @@
 from typing import Optional
 from pymongo import MongoClient
 from attr import define, field, Factory
-from bson import ObjectId  # needed for ObjectId to str conversion
 from griptape.drivers import BaseVectorStoreDriver
 
 @define
@@ -40,10 +39,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "meta": meta,
                 }
             )
-            vector_id = str(result.inserted_id)  # convert ObjectId to str
+            vector_id = str(result.inserted_id)
         else:
             self.collection.replace_one(
-                {"_id": ObjectId(vector_id)},  # convert str to ObjectId
+                {"_id": vector_id},
                 {
                     "vector": vector,
                     "namespace": namespace,
@@ -56,7 +55,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entry(
         self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
-        doc = self.collection.find_one({"_id": ObjectId(vector_id)})
+        doc = self.collection.find_one({"_id": vector_id})
         if doc is None:
             return None
         return BaseVectorStoreDriver.Entry(

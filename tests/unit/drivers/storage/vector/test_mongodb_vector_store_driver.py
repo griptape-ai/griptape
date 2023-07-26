@@ -1,6 +1,5 @@
 import pytest
 import mongomock
-from bson import ObjectId
 from griptape.artifacts import TextArtifact
 from griptape.drivers import MongoDbAtlasVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -24,7 +23,7 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     def test_upsert_vector(self, driver):
         vector = [0.5, 0.5, 0.5]
-        vector_id_str = str(ObjectId())  # generating a valid ObjectId
+        vector_id_str = "fake_id"  # using string instead of ObjectId
         test_id = driver.upsert_vector(vector, vector_id=vector_id_str)
         assert test_id is not None
 
@@ -46,14 +45,14 @@ class TestMongoDbAtlasVectorStoreDriver:
         assert result is not None
 
     def test_load_entry(self, driver):
-        vector_id_str = "123"
+        vector_id_str = "fake_id"  # using string instead of ObjectId
         vector = [0.5, 0.5, 0.5]
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure the entry exists
         result = driver.load_entry(vector_id_str)
         assert result is not None
 
     def test_load_entries(self, driver):
-        vector_id_str = "123"
+        vector_id_str = "fake_id"  # using string instead of ObjectId
         vector = [0.5, 0.5, 0.5]
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = driver.load_entries()
