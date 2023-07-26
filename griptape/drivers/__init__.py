@@ -9,7 +9,10 @@ from .prompt.text_gen_driver import TextGenPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
-from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
+from .memory.conversation.dynamodb_conversation_memory_driver import (
+    DynamoDbConversationMemoryDriver
+)
+
 
 from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
 from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver

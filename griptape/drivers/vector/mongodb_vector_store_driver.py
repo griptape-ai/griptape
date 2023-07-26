@@ -1,9 +1,8 @@
 from typing import Optional
 from pymongo import MongoClient
 from attr import define, field, Factory
-
+from bson import ObjectId  # needed for ObjectId to str conversion
 from griptape.drivers import BaseVectorStoreDriver
-
 
 @define
 class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
@@ -41,10 +40,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "meta": meta,
                 }
             )
-            vector_id = result.inserted_id
+            vector_id = str(result.inserted_id)  # convert ObjectId to str
         else:
             self.collection.replace_one(
-                {"_id": vector_id},
+                {"_id": ObjectId(vector_id)},  # convert str to ObjectId
                 {
                     "vector": vector,
                     "namespace": namespace,
@@ -57,11 +56,11 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entry(
         self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
-        doc = self.collection.find_one({"_id": vector_id})
+        doc = self.collection.find_one({"_id": ObjectId(vector_id)})
         if doc is None:
             return None
         return BaseVectorStoreDriver.Entry(
-            id=doc["_id"],
+            id=str(doc["_id"]),
             vector=doc["vector"],
             namespace=doc["namespace"],
             meta=doc["meta"],
@@ -74,15 +73,14 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             cursor = self.collection.find()
         else:
             cursor = self.collection.find({"namespace": namespace})
-        return [
-            BaseVectorStoreDriver.Entry(
-                id=doc["_id"],
+
+        for doc in cursor:
+            yield BaseVectorStoreDriver.Entry(
+                id=str(doc["_id"]),
                 vector=doc["vector"],
                 namespace=doc["namespace"],
                 meta=doc["meta"],
             )
-            for doc in cursor
-        ]
 
     def query(
         self,
