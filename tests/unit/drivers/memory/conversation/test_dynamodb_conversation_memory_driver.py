@@ -1,7 +1,7 @@
 import os
 import pytest
 from moto import mock_dynamodb
-from boto3 import resource, client
+import boto3
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.tasks import PromptTask
@@ -22,7 +22,7 @@ class TestDynamoDbConversationMemoryDriver:
         self.mock_dynamodb = mock_dynamodb()
         self.mock_dynamodb.start()
 
-        dynamodb = client("dynamodb", region_name=self.AWS_REGION)
+        dynamodb = boto3.Session(region_name=self.AWS_REGION).client("dynamodb")
         dynamodb.create_table(
             TableName=self.DYNAMODB_TABLE_NAME,
             KeySchema=[
@@ -40,11 +40,12 @@ class TestDynamoDbConversationMemoryDriver:
         self.mock_dynamodb.stop()
 
     def test_store(self):
-        dynamodb = resource("dynamodb", region_name=self.AWS_REGION)
+        session = boto3.Session(region_name=self.AWS_REGION)
+        dynamodb = session.resource("dynamodb")
         table = dynamodb.Table(self.DYNAMODB_TABLE_NAME)
         prompt_driver = MockPromptDriver()
         memory_driver = DynamoDbConversationMemoryDriver(
-            aws_region=self.AWS_REGION,
+            session=session,
             table_name=self.DYNAMODB_TABLE_NAME,
             partition_key=self.DYNAMODB_PARTITION_KEY,
             value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
@@ -70,7 +71,7 @@ class TestDynamoDbConversationMemoryDriver:
     def test_load(self):
         prompt_driver = MockPromptDriver()
         memory_driver = DynamoDbConversationMemoryDriver(
-            aws_region=self.AWS_REGION,
+            session=boto3.Session(region_name=self.AWS_REGION),
             table_name=self.DYNAMODB_TABLE_NAME,
             partition_key=self.DYNAMODB_PARTITION_KEY,
             value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
