@@ -55,9 +55,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return vector_id
 
     def load_entry(
-        self, vector_id_str: str, namespace: Optional[str] = None
+        self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
-        doc = self.collection.find_one({"_id": vector_id_str})
+        doc = self.collection.find_one({"_id": vector_id})
         if doc is None:
             return None
         return BaseVectorStoreDriver.Entry(

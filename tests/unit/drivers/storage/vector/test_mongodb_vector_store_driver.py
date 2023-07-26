@@ -9,13 +9,16 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     @pytest.fixture
     def driver(self, monkeypatch):
-        monkeypatch.setattr('pymongo.MongoClient', mongomock.MongoClient)
+        def mock_mongo_client(*args, **kwargs):
+            return mongomock.MongoClient()
+
+        monkeypatch.setattr('pymongo.MongoClient', mock_mongo_client)
         embedding_driver = MockEmbeddingDriver()
         return MongoDbAtlasVectorStoreDriver(
             embedding_driver=embedding_driver,
-            connection_string="mongodb+srv://mock:mock@mockcluster.mongodb.net/test",  # Mock Connection String
-            database_name="test_database",  # Mock Database Name
-            collection_name="test_collection"  # Mock Collection Name
+            connection_string="mongodb://mock_connection_string",
+            database_name="mock_database_name",
+            collection_name="mock_collection_name"
         )
 
     def test_upsert_vector(self, driver):
