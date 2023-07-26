@@ -6,12 +6,13 @@ from griptape.artifacts import TextArtifact
 from griptape.drivers import PersistableLocalVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
+
 class Tests:
     def t_persistable_vector_store(self,suffix : str):
         with tempfile.NamedTemporaryFile() as f:
-            fn = f.name+f".{suffix}"
+            file_name = f.name+f".{suffix}"
             vector_store = PersistableLocalVectorStoreDriver(
-                file_path=fn, embedding_driver=MockEmbeddingDriver()
+                file_path=file_name, embedding_driver=MockEmbeddingDriver()
             )
             artifact = TextArtifact(value="Long live the queen!")
             vector_store.upsert_text_artifact(artifact)
@@ -21,11 +22,11 @@ class Tests:
             old_vector_store_entries = vector_store.entries
             del vector_store
             new_vector_store = PersistableLocalVectorStoreDriver.from_saved(
-                file_path=fn
+                file_path=file_name
             )
-            k, v = old_vector_store_entries.popitem()
-            kn, vn = new_vector_store.entries.popitem()
-            assert v == vn
+            _, value = old_vector_store_entries.popitem()
+            _, new_value = new_vector_store.entries.popitem()
+            assert value == new_value
 
     def test_save_load_json(self):
         self.t_persistable_vector_store("json")

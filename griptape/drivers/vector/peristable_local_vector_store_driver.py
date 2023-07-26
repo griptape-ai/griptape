@@ -1,12 +1,12 @@
-import json
 import dataclasses
+import json
 from pathlib import Path
 from typing import Union, Literal, cast, Dict
 from zipfile import ZipFile
 
 from attr import define, field
-from griptape.drivers import LocalVectorStoreDriver
 
+from griptape.drivers import LocalVectorStoreDriver
 
 
 class EntryAwareJSONEncoder(json.JSONEncoder):
@@ -33,8 +33,8 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
     Version of the LocalVectorStoreDriver that allows to serialize to a local file using either json or a zip containing
     depending on the suffix of the given file path.
 
-    :param file_path: `pathlib.Path` or path as string. Name and location of the save file. Extension must be zip or json,
-     if zip the generated file is compressed.
+    :param file_path: `pathlib.Path` or path as string. Name and location of the save file. Extension must be zip or
+    json, if zip the generated file is compressed.
     """
 
     file_path: Union[Path, str] = field(kw_only=True, converter=Path)
@@ -56,9 +56,9 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
         write_mode = cast(Literal["w", "x"], "x" if not overwrite else "w")
 
         if self.file_is_zip:
-            with ZipFile(self.file_path, write_mode) as zf:
+            with ZipFile(self.file_path, write_mode) as z_f:
                 json_data = json.dumps(self.entries, cls=EntryAwareJSONEncoder)
-                zf.writestr("data.json", json_data)
+                z_f.writestr("data.json", json_data)
         else:
             with open(self.file_path, write_mode) as f:
                 json.dump(self.entries, f, cls=EntryAwareJSONEncoder)
