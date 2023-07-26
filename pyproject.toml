@@ -48,7 +48,7 @@ snowflake-sqlalchemy = "^1.4.7"
 pytest = "~=7.1"
 pytest-mock = "*"
 pytest-cover = "*"
-pymango= "*"
+pymongo= "*"
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
 
