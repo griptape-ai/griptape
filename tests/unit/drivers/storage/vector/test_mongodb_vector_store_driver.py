@@ -2,65 +2,66 @@ import pytest
 from griptape.artifacts import TextArtifact
 from griptape.drivers import MongoDbAtlasVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+from unittest.mock import MagicMock
 
 class TestMongoDbAtlasVectorStoreDriver:
     @pytest.fixture
-    def driver(self):
-        # assuming you have these environment variables set
-        # (they shouldn't be hardcoded for security reasons)
-        connection_string = "mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority"
+    def driver(self, mocker):
+        # Mock the pymongo.MongoClient
+        mock_mongo_client = mocker.patch('pymongo.MongoClient', autospec=True)
+        mock_mongo_client.return_value.__getitem__.return_value.__getitem__.return_value.insert_one.return_value = MagicMock()
+        mock_mongo_client.return_value.__getitem__.return_value.__getitem__.return_value.find.return_value = [
+            {"vector": [0.5, 0.5, 0.5], "_id": "123", "meta": {"foo": "bar"}}
+        ]
+
         return MongoDbAtlasVectorStoreDriver(
-            connection_string=connection_string,
-            database_name="test_db",
-            collection_name="test_collection",
-            embedding_driver=MockEmbeddingDriver(),
+            connection_string="mongodb+srv://test:test@cluster0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+            database_name="test",
+            collection_name="test",
+            embedding_driver=MockEmbeddingDriver()
         )
+
+    def test_upsert_vector(self, driver):
+        vector = [0.5, 0.5, 0.5]
+        vector_id = "123"
+        id = driver.upsert_vector(vector, vector_id=vector_id)
+        assert id == vector_id
+        driver.collection.insert_one.assert_called_once()
 
     def test_upsert_text_artifact(self, driver):
         artifact = TextArtifact("foo")
-        vector_id = driver.upsert_text_artifact(artifact)
-        assert vector_id == artifact.id
-
-        # verify it exists in the database
-        client = MongoClient(driver.connection_string)
-        doc = client[driver.database_name][driver.collection_name].find_one({'_id': ObjectId(vector_id)})
-        assert doc is not None
-        assert doc['artifact'] == artifact.to_json()
-
-    def test_upsert_vector(self, driver):
-        vector_id = driver.upsert_vector([0, 1, 2], vector_id="foo")
-        assert vector_id == "foo"
-
-        # verify it exists in the database
-        client = MongoClient(driver.connection_string)
-        doc = client[driver.database_name][driver.collection_name].find_one({'_id': ObjectId(vector_id)})
-        assert doc is not None
-        assert doc['vector'] == [0, 1, 2]
+        id = driver.upsert_text_artifact(artifact)
+        assert id == artifact.id
+        driver.collection.insert_one.assert_called_once()
 
     def test_upsert_text(self, driver):
-        vector_id = driver.upsert_text("foo", vector_id="foo")
-        assert vector_id == "foo"
+        text = "foo"
+        vector_id = "foo"
+        id = driver.upsert_text(text, vector_id=vector_id)
+        assert id == vector_id
+        driver.collection.insert_one.assert_called_once()
 
-        # verify it exists in the database
-        client = MongoClient(driver.connection_string)
-        doc = client[driver.database_name][driver.collection_name].find_one({'_id': ObjectId(vector_id)})
-        assert doc is not None
-        assert doc['Description'] == "foo"
+    def test_query(self, driver):
+        query = "test"
+        result = driver.query(query)
+        assert len(result) == 1
+        assert result[0].vector == [0.5, 0.5, 0.5]
+        assert result[0].score is None
+        assert result[0].meta == {"foo": "bar"}
+        driver.collection.find.assert_called_once()
 
     def test_load_entry(self, driver):
-        vector_id = driver.upsert_text("foo", vector_id="foo")
-        entry = driver.load_entry(vector_id)
-        assert entry.id == vector_id
-        assert entry.vector == [0, 1, 2]
-        assert entry.meta['Description'] == "foo"
+        vector_id = "123"
+        result = driver.load_entry(vector_id)
+        assert result.id == "123"
+        assert result.vector == [0.5, 0.5, 0.5]
+        assert result.meta == {"foo": "bar"}
+        driver.collection.find.assert_called_once()
 
     def test_load_entries(self, driver):
-        driver.upsert_text("foo", vector_id="foo")
-        driver.upsert_text("bar", vector_id="bar")
-        entries = driver.load_entries()
-        assert len(entries) == 2
-        ids = [entry.id for entry in entries]
-        assert "foo" in ids
-        assert "bar" in ids
+        results = driver.load_entries()
+        assert len(results) == 1
+        assert results[0].id == "123"
+        assert results[0].vector == [0.5, 0.5, 0.5]
+        assert results[0].meta == {"foo": "bar"}
+        driver.collection.find.assert_called_once()
