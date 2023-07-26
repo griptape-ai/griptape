@@ -42,7 +42,7 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
 
     @file_path.validator
     def _check_file_path(self, attribute, value):
-        if not (value.suffix == ".json" or value.suffix == ".zip"):
+        if not value.suffix in (".json", ".zip"):
             raise ValueError(
                 f"file must either be a json or a zip but file name is {self.file_path}"
             )
@@ -65,7 +65,7 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
 
     def load(self) -> None:
         """Read entries that have been serialized, automaticaly recognizes ziped saves by suffix.
-         Will overwrite internal entries with the loaded ones"""
+        Will overwrite internal entries with the loaded ones"""
         if self.file_is_zip:
             with ZipFile(self.file_path) as zf:
                 json_data = zf.read("data.json")
