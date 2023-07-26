@@ -1,7 +1,8 @@
 from typing import Optional
 from pymongo import MongoClient
-from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field, Factory
+
+from griptape.drivers import BaseVectorStoreDriver
 
 
 @define
@@ -10,7 +11,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
 
-    mg: MongoClient = field(
+    mongo_client: MongoClient = field(
         default=Factory(
             lambda self: MongoClient(self.connection_string), takes_self=True
         ),
@@ -18,7 +19,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     )
     collection: any = field(
         default=Factory(
-            lambda self: self.mg[self.database_name][self.collection_name],
+            lambda self: self.mongo_client[self.database_name][self.collection_name],
             takes_self=True,
         ),
         init=False,
@@ -54,18 +55,17 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return vector_id
 
     def load_entry(
-        self, vector_id: str, namespace: Optional[str] = None
+        self, vector_id_str: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
-        doc = self.collection.find_one({"_id": vector_id})
+        doc = self.collection.find_one({"_id": vector_id_str})
         if doc is None:
             return None
-        else:
-            return BaseVectorStoreDriver.Entry(
-                id=doc["_id"],
-                vector=doc["vector"],
-                namespace=doc["namespace"],
-                meta=doc["meta"],
-            )
+        return BaseVectorStoreDriver.Entry(
+            id=doc["_id"],
+            vector=doc["vector"],
+            namespace=doc["namespace"],
+            meta=doc["meta"],
+        )
 
     def load_entries(
         self, namespace: Optional[str] = None
