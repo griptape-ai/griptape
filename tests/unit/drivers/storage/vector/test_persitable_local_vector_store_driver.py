@@ -32,7 +32,7 @@ class Tests:
         self.t_persistable_vector_store("json")
 
     def test_save_load_zip(self):
-        self.t_persistable_vector_store("json")
+        self.t_persistable_vector_store("zip")
     def test_suffix_raises(self):
         with pytest.raises(ValueError) as e_info:
             with tempfile.NamedTemporaryFile() as f:

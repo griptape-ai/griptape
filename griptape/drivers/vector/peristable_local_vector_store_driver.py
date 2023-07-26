@@ -64,7 +64,8 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
                 json.dump(self.entries, f, cls=EntryAwareJSONEncoder)
 
     def load(self) -> None:
-        """Read entries that have been serialized using pickle. Will overwrite internal entries with the loaded ones"""
+        """Read entries that have been serialized, automaticaly recognizes ziped saves by suffix.
+         Will overwrite internal entries with the loaded ones"""
         if self.file_is_zip:
             with ZipFile(self.file_path) as zf:
                 json_data = zf.read("data.json")
