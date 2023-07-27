@@ -30,7 +30,7 @@ def as_entry(dct: Dict):
 @define
 class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
     """
-    Version of the LocalVectorStoreDriver that allows to serialize to a local file using either json or a zip containing
+    Version of the LocalVectorStoreDriver that allows to serialize to a local file using either json or a zip 
     depending on the suffix of the given file path.
 
     :param file_path: `pathlib.Path` or path as string. Name and location of the save file. Extension must be zip or
