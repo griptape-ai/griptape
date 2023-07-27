@@ -1,13 +1,14 @@
 repos:
   - repo: local
     hooks:
-    - id: pylint
-      name: pylint
-      entry: poetry run pylint
-      language: system
-      types: [python]
-      require_serial: true
-  - repo: https://github.com/psf/black
-    rev: 22.10.0
-    hooks:
-    - id: black
+      - id: pylint
+        name: pylint
+        entry: poetry run pylint
+        language: system
+        types: [python]
+        require_serial: true
+      - id: black
+        name: black
+        entry: poetry run black
+        language: system
+        types: [python]
