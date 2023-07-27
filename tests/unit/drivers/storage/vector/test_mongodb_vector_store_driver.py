@@ -1,10 +1,10 @@
-import pytest
 from typing import TYPE_CHECKING
+import pytest
 import mongomock
 from griptape.artifacts import TextArtifact
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 if TYPE_CHECKING:
     from griptape.drivers import MongoDbAtlasVectorStoreDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestMongoDbAtlasVectorStoreDriver:
@@ -59,4 +59,3 @@ class TestMongoDbAtlasVectorStoreDriver:
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = driver.load_entries()
         assert results is not None and len(results) > 0
-
