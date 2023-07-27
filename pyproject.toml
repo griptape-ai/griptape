@@ -55,6 +55,7 @@ moto = {extras = ["dynamodb"], version = "^4.1.8"}
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.17.3"
 black = "^23.3.0"
+pre-commit = "^3.3.3"
 
 [build-system]
 requires = ["poetry-core"]
