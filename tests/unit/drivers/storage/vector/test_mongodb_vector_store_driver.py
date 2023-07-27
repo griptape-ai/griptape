@@ -12,7 +12,8 @@ class TestMongoDbAtlasVectorStoreDriver:
         def mock_mongo_client(*args, **kwargs):
             return mongomock.MongoClient(*args, **kwargs)
 
-        monkeypatch.setattr('griptape.drivers.MongoDbAtlasVectorStoreDriver._get_mongo_client', mock_mongo_client)
+        monkeypatch.setattr('griptape.drivers.MongoDbAtlasVectorStoreDriver._get_mongo_client',
+                            mock_mongo_client)
 
         embedding_driver = MockEmbeddingDriver()
         return MongoDbAtlasVectorStoreDriver(
@@ -56,5 +57,6 @@ class TestMongoDbAtlasVectorStoreDriver:
         vector_id_str = "123"
         vector = [0.5, 0.5, 0.5]
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
-        results = driver.load_entries()
+        results = list(driver.load_entries())
         assert results is not None and len(results) > 0
+
