@@ -1,20 +1,21 @@
 from typing import Optional
 from pymongo import MongoClient
-from attr import define, field
+from attr import define, field, Factory
+from pymongo.collection import Collection
 from griptape.drivers import BaseVectorStoreDriver
+
 
 @define
 class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     connection_string: str = field(kw_only=True)
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
+    client: MongoClient = field(
+        default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True)
+    )
 
-    def _get_mongo_client(self) -> MongoClient:
-        return MongoClient(self.connection_string)
-
-    def _get_collection(self) -> any:
-        mongo_client = self._get_mongo_client()
-        return mongo_client[self.database_name][self.collection_name]
+    def get_collection(self) -> Collection:
+        return self.client[self.database_name][self.collection_name]
 
     def upsert_vector(
         self,
@@ -24,7 +25,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs
     ) -> str:
-        collection = self._get_collection()
+        collection = self.get_collection()
+
         if vector_id is None:
             result = collection.insert_one(
                 {
@@ -49,7 +51,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entry(
         self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
-        collection = self._get_collection()
+        collection = self.get_collection()
         doc = collection.find_one({"_id": vector_id})
         if doc is None:
             return None
@@ -63,7 +65,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(
         self, namespace: Optional[str] = None
     ) -> list[BaseVectorStoreDriver.Entry]:
-        collection = self._get_collection()
+        collection = self.get_collection()
         if namespace is None:
             cursor = collection.find()
         else:
