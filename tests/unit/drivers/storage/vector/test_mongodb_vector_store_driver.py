@@ -9,7 +9,10 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     @pytest.fixture
     def driver(self, monkeypatch):
-        monkeypatch.setattr('pymongo.MongoClient', mongomock.MongoClient)
+        def mock_mongo_client(*args, **kwargs):
+            return mongomock.MongoClient(*args, **kwargs)
+
+        monkeypatch.setattr('griptape.drivers.MongoDbAtlasVectorStoreDriver._get_mongo_client', mock_mongo_client)
 
         embedding_driver = MockEmbeddingDriver()
         return MongoDbAtlasVectorStoreDriver(

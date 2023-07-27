@@ -1,6 +1,6 @@
 from typing import Optional
 from pymongo import MongoClient
-from attr import define, field, Factory
+from attr import define, field
 from griptape.drivers import BaseVectorStoreDriver
 
 @define
@@ -9,19 +9,12 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
 
-    mongo_client: MongoClient = field(
-        default=Factory(
-            lambda self: MongoClient(self.connection_string), takes_self=True
-        ),
-        init=False,
-    )
-    collection: any = field(
-        default=Factory(
-            lambda self: self.mongo_client[self.database_name][self.collection_name],
-            takes_self=True,
-        ),
-        init=False,
-    )
+    def _get_mongo_client(self) -> MongoClient:
+        return MongoClient(self.connection_string)
+
+    def _get_collection(self) -> any:
+        mongo_client = self._get_mongo_client()
+        return mongo_client[self.database_name][self.collection_name]
 
     def upsert_vector(
         self,
@@ -31,8 +24,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs
     ) -> str:
+        collection = self._get_collection()
         if vector_id is None:
-            result = self.collection.insert_one(
+            result = collection.insert_one(
                 {
                     "vector": vector,
                     "namespace": namespace,
@@ -41,7 +35,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
             vector_id = str(result.inserted_id)
         else:
-            self.collection.replace_one(
+            collection.replace_one(
                 {"_id": vector_id},
                 {
                     "vector": vector,
@@ -55,7 +49,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entry(
         self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
-        doc = self.collection.find_one({"_id": vector_id})
+        collection = self._get_collection()
+        doc = collection.find_one({"_id": vector_id})
         if doc is None:
             return None
         return BaseVectorStoreDriver.Entry(
@@ -68,10 +63,11 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(
         self, namespace: Optional[str] = None
     ) -> list[BaseVectorStoreDriver.Entry]:
+        collection = self._get_collection()
         if namespace is None:
-            cursor = self.collection.find()
+            cursor = collection.find()
         else:
-            cursor = self.collection.find({"namespace": namespace})
+            cursor = collection.find({"namespace": namespace})
 
         for doc in cursor:
             yield BaseVectorStoreDriver.Entry(
