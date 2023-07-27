@@ -1,10 +1,8 @@
-from typing import TYPE_CHECKING
 import pytest
 import mongomock
 from griptape.artifacts import TextArtifact
+from griptape.drivers import MongoDbAtlasVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-if TYPE_CHECKING:
-    from griptape.drivers import MongoDbAtlasVectorStoreDriver
 
 
 class TestMongoDbAtlasVectorStoreDriver:
