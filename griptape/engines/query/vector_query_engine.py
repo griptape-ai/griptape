@@ -36,7 +36,6 @@ class VectorQueryEngine(BaseQueryEngine):
         ]
         text_segments = []
         message = ""
-        prompt_stack = PromptStack()
 
         for artifact in artifacts:
             text_segments.append(artifact.value)
@@ -51,9 +50,11 @@ class VectorQueryEngine(BaseQueryEngine):
                 text_segments.pop()
                 break
 
-        prompt_stack.add_assistant_input(message)
-
-        return self.prompt_driver.run(prompt_stack=prompt_stack)
+        return self.prompt_driver.run(
+            PromptStack(
+                PromptStack.Input(message, role=PromptStack.USER_ROLE)
+            )
+        )
 
     def upsert_text_artifact(
             self,

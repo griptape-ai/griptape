@@ -66,7 +66,9 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
         if self.prompt_driver.tokenizer.tokens_left(full_text) >= self.min_response_tokens:
             return self.prompt_driver.run(
-                PromptStack(PromptStack.Input(full_text, role=PromptStack.USER_ROLE))
+                PromptStack(
+                    PromptStack.Input(full_text, role=PromptStack.USER_ROLE)
+                )
             )
         else:
             chunks = self.chunker.chunk(artifacts_text)
@@ -79,6 +81,8 @@ class PromptSummaryEngine(BaseSummaryEngine):
             return self.summarize_artifacts_rec(
                 chunks[1:],
                 self.prompt_driver.run(
-                    PromptStack(PromptStack.Input(partial_text, role=PromptStack.USER_ROLE))
+                    PromptStack(
+                        PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)
+                    )
                 ).value
             )
