@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
-from griptape.core import ExponentialBackoffMixin
+from griptape.core import ExponentialBackoffMixin, PromptStack
 from griptape.events import StartPromptEvent, FinishPromptEvent
 from griptape.tokenizers import BaseTokenizer
 
@@ -21,24 +21,23 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     model: str
     tokenizer: BaseTokenizer
 
-    def run(self, value: str) -> TextArtifact:
+    def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:
-                if self.structure:
-                    self.structure.publish_event(
-                        StartPromptEvent(
-                            token_count=self.tokenizer.token_count(value)
-                        )
-                    )
+                result = self.try_run(prompt_stack)
 
-                result = self.try_run(self.full_prompt(value))
-
-                if self.structure:
-                    self.structure.publish_event(
-                        FinishPromptEvent(
-                            token_count=result.token_count(self.tokenizer)
-                        )
-                    )
+                # TODO: grab input and output tokens from the API response
+                # if self.structure:
+                #     self.structure.publish_event(
+                #         StartPromptEvent(
+                #             token_count=result.token_count(self.tokenizer)
+                #         )
+                #     )
+                #     self.structure.publish_event(
+                #         FinishPromptEvent(
+                #             token_count=result.token_count(self.tokenizer)
+                #         )
+                #     )
 
                 return result
 
@@ -46,5 +45,5 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         return f"{self.prompt_prefix}{value}{self.prompt_suffix}"
 
     @abstractmethod
-    def try_run(self, value: str) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         ...

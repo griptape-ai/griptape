@@ -68,7 +68,7 @@ class SummaryConversationMemory(ConversationMemory):
         try:
             if len(runs) > 0:
                 return self.prompt_driver.run(
-                    value=J2("prompts/summarize.j2").render(
+                    prompt_stack=J2("prompts/summarize.j2").render(
                         summary=previous_summary,
                         runs=runs
                     )

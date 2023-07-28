@@ -49,7 +49,7 @@ class VectorQueryEngine(BaseQueryEngine):
             else:
                 prefix += next_segment
 
-        return self.prompt_driver.run(value=prefix + question + answer)
+        return self.prompt_driver.run(prompt_stack=prefix + question + answer)
 
     def upsert_text_artifact(
             self,

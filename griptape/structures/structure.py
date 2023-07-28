@@ -7,10 +7,11 @@ from typing import Optional, Union, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
-from griptape.tasks import ToolkitTask, PromptTask
+from griptape.tasks import ToolkitTask
 from griptape.tokenizers import TiktokenTokenizer
 
 if TYPE_CHECKING:
@@ -33,6 +34,8 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
+    memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
+    autoprune_memory: bool = field(default=True, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(
         default=Factory(lambda: TextToolMemory()),
         kw_only=True
@@ -41,7 +44,11 @@ class Structure(ABC):
     _logger: Optional[Logger] = None
 
     def __attrs_post_init__(self) -> None:
+        if self.memory:
+            self.memory.structure = self
+
         [self._init_task(task) for task in self.tasks]
+
         self.prompt_driver.structure = self
 
     @property
@@ -86,17 +93,6 @@ class Structure(ABC):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
-    def prompt_stack(self, task: PromptTask) -> list[str]:
-        return [
-            task.render_system_prompt()
-        ]
-
-    def to_prompt_string(self, task: PromptTask) -> str:
-        return self.stack_to_prompt_string(self.prompt_stack(task))
-
-    def stack_to_prompt_string(self, stack: list[str]) -> str:
-        return str.join("\n", stack)
-
     def publish_event(self, event: BaseEvent) -> None:
         if isinstance(self.event_listeners, dict):
             listeners = self.event_listeners.get(type(event), [])
@@ -111,6 +107,39 @@ class Structure(ABC):
             "args": self.execution_args,
             "structure": self,
         }
+
+    def add_memory_to_prompt_stack(self, system_prompt: str, task_prompt: str) -> list[str]:
+        prompt_stack = [
+            system_prompt
+        ]
+
+        if self.memory:
+            if self.autoprune_memory:
+                last_n = len(self.memory.runs)
+                should_prune = True
+
+                while should_prune and last_n > 0:
+                    temp_prompt_stack = prompt_stack.copy()
+                    temp_prompt_stack.append(task_prompt)
+
+                    temp_prompt_stack.append(self.memory.to_prompt_string(last_n))
+
+                    if self.prompt_driver.tokenizer.tokens_left(self.stack_to_prompt_string(temp_prompt_stack)) > 0:
+                        should_prune = False
+                    else:
+                        last_n -= 1
+
+                prompt_stack.append(self.memory.to_prompt_string(last_n))
+            else:
+                prompt_stack.append(self.memory.to_prompt_string())
+
+        prompt_stack.append(task_prompt)
+
+        return prompt_stack
+
+
+    def has_memory(self) -> bool:
+        return False
 
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask:

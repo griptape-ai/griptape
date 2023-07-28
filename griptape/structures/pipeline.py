@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional, Union
 from attr import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
-from griptape.structures import StructureWithMemory
+from griptape.structures import Structure
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Pipeline(StructureWithMemory):
+class Pipeline(Structure):
     def first_task(self) -> Optional[BaseTask]:
         return self.tasks[0] if self.tasks else None
 

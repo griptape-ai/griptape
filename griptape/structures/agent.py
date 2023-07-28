@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.core import BaseTool
 from griptape.memory.structure import Run, ConversationMemory
-from griptape.structures import StructureWithMemory
+from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
 from griptape.utils import J2
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Agent(StructureWithMemory):
+class Agent(Structure):
     prompt_template: str = field(default=PromptTask.DEFAULT_PROMPT_TEMPLATE)
     memory: Optional[ConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),

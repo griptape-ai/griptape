@@ -3,6 +3,7 @@ from typing import Optional
 import openai
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
+from griptape.core import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import TiktokenTokenizer
 
@@ -22,16 +23,16 @@ class OpenAiPromptDriver(BasePromptDriver):
     max_tokens: Optional[int] = field(default=None, kw_only=True)
     user: str = field(default="", kw_only=True)
 
-    def try_run(self, value: str) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         if self.tokenizer.is_chat():
-            return self.__run_chat(value)
+            return self.__run_chat(prompt_stack)
         else:
-            return self.__run_completion(value)
+            return self.__run_completion(prompt_stack)
 
-    def _base_params(self, value: str) -> dict:
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
         return {
             "model": self.tokenizer.model,
-            "max_tokens": self.max_tokens if self.max_tokens else self.tokenizer.tokens_left(value),
+            "max_tokens": self.max_tokens,
             "temperature": self.temperature,
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
@@ -42,23 +43,28 @@ class OpenAiPromptDriver(BasePromptDriver):
             "api_type": self.api_type
         }
 
-    def _chat_params(self, value: str) -> dict:
-        return self._base_params(value) | {
-            "messages":  [
-                {
-                    "role": "user",
-                    "content": value
-                }
-            ]
+    def _chat_params(self, prompt_stack: PromptStack) -> dict:
+        return self._base_params(prompt_stack) | {
+            "messages":  [{"role": i.role, "content": i.content} for i in prompt_stack.inputs]
         }
 
-    def _completion_params(self, value: str) -> dict:
-        return self._base_params(value) | {
-            "prompt":  value,
+    def _completion_params(self, prompt_stack: PromptStack) -> dict:
+        prompt_lines = []
+
+        for i in prompt_stack.inputs:
+            if i.is_system():
+                prompt_lines.append(i.content)
+            elif i.is_user():
+                prompt_lines.append(f"User: {i.content}")
+            elif i.is_assistant():
+                prompt_lines.append(f"Assistant: {i.content}")
+
+        return self._base_params(prompt_stack) | {
+            "prompt": "\n".join(prompt_lines),
         }
 
-    def __run_chat(self, value: str) -> TextArtifact:
-        result = openai.ChatCompletion.create(**self._chat_params(value))
+    def __run_chat(self, prompt_stack: PromptStack) -> TextArtifact:
+        result = openai.ChatCompletion.create(**self._chat_params(prompt_stack))
 
         if len(result.choices) == 1:
             return TextArtifact(
@@ -67,8 +73,8 @@ class OpenAiPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def __run_completion(self, value: str) -> TextArtifact:
-        result = openai.Completion.create(**self._completion_params(value))
+    def __run_completion(self, prompt_stack: PromptStack) -> TextArtifact:
+        result = openai.Completion.create(**self._completion_params(prompt_stack))
 
         if len(result.choices) == 1:
             return TextArtifact(

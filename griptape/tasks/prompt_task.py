@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
+from griptape.core import PromptStack
 from griptape.utils import J2
 from griptape.tasks import BaseTask
 from griptape.artifacts import TextArtifact
@@ -46,7 +47,21 @@ class PromptTask(BaseTask):
         self.structure.logger.info(f"Task {self.id}\nInput: {self.input.to_text()}")
 
     def run(self) -> TextArtifact:
-        self.output = self.active_driver().run(value=self.structure.to_prompt_string(self))
+        prompt_stack = PromptStack()
+
+        prompt_stack.add_system_input(self.render_system_prompt())
+
+        if self.structure.memory:
+            for r in self.structure.memory.runs:
+                prompt_stack.add_user_input(r.input)
+                prompt_stack.add_assistant_input(r.output)
+
+        prompt_stack.add_user_input(self.input.to_text())
+
+        if self.output:
+            prompt_stack.add_assistant_input(self.output.to_text())
+
+        self.output = self.active_driver().run(prompt_stack)
 
         return self.output
 
@@ -60,11 +75,6 @@ class PromptTask(BaseTask):
             return self.structure.prompt_driver
         else:
             return self.driver
-
-    def render(self) -> str:
-        return J2("prompts/tasks/prompt/conversation.j2").render(
-            task=self
-        )
 
     def default_system_prompt(self) -> str:
         return J2("tasks/prompt_task/system.j2").render(

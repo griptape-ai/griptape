@@ -64,7 +64,7 @@ class ToolkitTask(PromptTask):
 
         subtask = self.add_subtask(
             ActionSubtask(
-                self.active_driver().run(value=self.structure.to_prompt_string(self)).to_text()
+                self.active_driver().run(prompt_stack=self.structure.to_prompt_string(self)).to_text()
             )
         )
 
@@ -84,7 +84,7 @@ class ToolkitTask(PromptTask):
 
                     subtask = self.add_subtask(
                         ActionSubtask(
-                            self.active_driver().run(value=self.structure.to_prompt_string(self)).to_text()
+                            self.active_driver().run(prompt_stack=self.structure.to_prompt_string(self)).to_text()
                         )
                     )
             else:
