@@ -5,7 +5,7 @@ from attr import define, field
 @define
 class PromptStack:
     USER_ROLE = "user"
-    ASSISTANT_ROLE = "user"
+    ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
     @dataclass
