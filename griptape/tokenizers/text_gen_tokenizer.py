@@ -20,10 +20,10 @@ class TextGenTokenizer(BaseTokenizer):
     tokenizer: PreTrainedTokenizerBase = field(
         kw_only=True
     )
-    max_tokens: int = field(
-        default=Factory(lambda self: self.tokenizer.model_max_length, takes_self=True),
-        kw_only=True
-    )
+
+    @property
+    def max_tokens(self) -> int:
+        return self.tokenizer.model_max_length
 
     def encode(self, text: str) -> list[int]:
         return self.tokenizer.encode(text=text)
