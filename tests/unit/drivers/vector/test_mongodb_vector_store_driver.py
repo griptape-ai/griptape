@@ -2,15 +2,12 @@ import pytest
 import mongomock
 from griptape.artifacts import TextArtifact
 from griptape.drivers import MongoDbAtlasVectorStoreDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestMongoDbAtlasVectorStoreDriver:
     @pytest.fixture
-    def driver(self, monkeypatch):
-        embedding_driver = MockEmbeddingDriver()
+    def driver(self):
         return MongoDbAtlasVectorStoreDriver(
-            embedding_driver=embedding_driver,
             connection_string="mongodb://mock_connection_string",
             database_name="mock_database_name",
             collection_name="mock_collection_name",
