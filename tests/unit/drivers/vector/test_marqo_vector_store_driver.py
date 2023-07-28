@@ -4,7 +4,6 @@ from griptape.drivers import MarqoVectorStoreDriver
 from griptape.artifacts import TextArtifact
 
 
-
 class TestMarqoVectorStorageDriver:
 
     @pytest.fixture(autouse=True)
