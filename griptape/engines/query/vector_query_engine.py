@@ -1,6 +1,7 @@
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.core import PromptStack
 from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver, BasePromptDriver, OpenAiPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
@@ -34,6 +35,8 @@ class VectorQueryEngine(BaseQueryEngine):
             a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
         ]
         text_segments = []
+        message = ""
+        prompt_stack = PromptStack()
 
         for artifact in artifacts:
             text_segments.append(artifact.value)
@@ -48,12 +51,9 @@ class VectorQueryEngine(BaseQueryEngine):
                 text_segments.pop()
                 break
 
-        message = self.template_generator.render(
-            metadata=metadata,
-            question=query,
-            text_segments=text_segments,
-        )
-        return self.prompt_driver.run(value=message)
+        prompt_stack.add_assistant_input(message)
+
+        return self.prompt_driver.run(prompt_stack=prompt_stack)
 
     def upsert_text_artifact(
             self,
