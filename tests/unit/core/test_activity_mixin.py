@@ -73,3 +73,19 @@ class TestActivityMixin:
         )
 
         assert len(tool.activities()) == 5
+
+    def test_invalid_allowlist(self):
+        with pytest.raises(ValueError):
+            MockTool(
+                test_field="hello",
+                test_int=5,
+                allowlist=["test_foo"]
+            )
+
+    def test_invalid_denylist(self):
+        with pytest.raises(ValueError):
+            MockTool(
+                test_field="hello",
+                test_int=5,
+                denylist=["test_foo"]
+            )
