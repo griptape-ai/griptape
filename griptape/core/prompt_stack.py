@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from attr import define, field
+from typing import Optional
+from attr import define, field, Factory
 
 
 @define
@@ -22,7 +23,11 @@ class PromptStack:
         def is_assistant(self) -> bool:
             return self.role == PromptStack.ASSISTANT_ROLE
 
-    inputs: list[Input] = field(factory=list, kw_only=True)
+    initial_input: Optional[Input] = field(default=None)
+    inputs: list[Input] = field(
+        default=Factory(lambda self: [self.initial_input] if self.initial_input else []),
+        kw_only=True
+    )
 
     def add_input(self, content: str, role: str) -> Input:
         self.inputs.append(
