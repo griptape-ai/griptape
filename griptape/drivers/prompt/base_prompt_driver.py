@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.core import ExponentialBackoffMixin, PromptStack
-from griptape.events import StartPromptEvent, FinishPromptEvent
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
@@ -26,19 +25,6 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         for attempt in self.retrying():
             with attempt:
                 result = self.try_run(prompt_stack)
-
-                # TODO: grab input and output tokens from the API response
-                # if self.structure:
-                #     self.structure.publish_event(
-                #         StartPromptEvent(
-                #             token_count=result.token_count(self.tokenizer)
-                #         )
-                #     )
-                #     self.structure.publish_event(
-                #         FinishPromptEvent(
-                #             token_count=result.token_count(self.tokenizer)
-                #         )
-                #     )
 
                 return result
 
