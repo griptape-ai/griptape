@@ -1,5 +1,5 @@
+import boto3
 from attr import define, field
-from boto3 import resource
 from typing import Optional
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
@@ -7,7 +7,7 @@ from griptape.memory.structure import ConversationMemory
 
 @define
 class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
-    aws_region: str = field(default="us-east-1", kw_only=True)
+    session: boto3.Session = field(default=boto3.Session(), kw_only=True)
     table_name: str = field(kw_only=True)
     partition_key: str = field(kw_only=True)
     value_attribute_key: str = field(kw_only=True)
@@ -16,9 +16,8 @@ class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     table: any = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        dynamodb = resource(
+        dynamodb = self.session.resource(
             "dynamodb",
-            region_name=self.aws_region,
         )
 
         self.table = dynamodb.Table(self.table_name)
