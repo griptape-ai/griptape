@@ -19,7 +19,7 @@ class ActivityMixin:
             raise ValueError("can't have both allowlist and denylist specified")
 
         for activity_name in allowlist:
-            self._validate_tool_activity(self.__class__, activity_name)
+            self._validate_tool_activity( activity_name)
 
     @denylist.validator
     def validate_denylist(self, _, denylist: Optional[list[str]]) -> None:
@@ -30,7 +30,7 @@ class ActivityMixin:
             raise ValueError("can't have both allowlist and denylist specified")
 
         for activity_name in denylist:
-            self._validate_tool_activity(self.__class__, activity_name)
+            self._validate_tool_activity(activity_name)
 
     @property
     def schema_template_args(self) -> dict:
@@ -87,8 +87,12 @@ class ActivityMixin:
         else:
             return None
 
-    def _validate_tool_activity(self, tool_class, activity_name):
-        if not callable(getattr(tool_class, activity_name, None)):
+    def _validate_tool_activity(self, activity_name):
+        tool = self.__class__
+
+        activity = getattr(tool, activity_name, None)
+
+        if not activity or not getattr(activity, "is_activity", False):
             raise ValueError(
-                f"activity {activity_name} is not a valid activity for {tool_class}"
+                f"activity {activity_name} is not a valid activity for {tool}"
             )
