@@ -3,6 +3,7 @@ import io
 from attr import field, Factory, define
 from griptape.artifacts import TextArtifact, CsvRowArtifact
 from griptape.chunkers import BaseChunker, TextChunker
+from griptape.core import PromptStack
 from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -72,7 +73,11 @@ class CsvExtractionEngine(BaseExtractionEngine):
             rows.extend(
                 self.text_to_csv_rows(
                     column_names,
-                    self.prompt_driver.run(full_text).value
+                    self.prompt_driver.run(
+                        PromptStack(
+                            PromptStack.Input(full_text, role=PromptStack.USER_ROLE)
+                        )
+                    ).value
                 )
             )
 
@@ -87,7 +92,11 @@ class CsvExtractionEngine(BaseExtractionEngine):
             rows.extend(
                 self.text_to_csv_rows(
                     column_names,
-                    self.prompt_driver.run(partial_text).value
+                    self.prompt_driver.run(
+                        PromptStack(
+                            PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)
+                        )
+                    ).value
                 )
             )
 
