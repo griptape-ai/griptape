@@ -24,9 +24,7 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver(
-            model=TiktokenTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
-        )),
+        default=Factory(lambda: OpenAiPromptDriver()),
         kw_only=True
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
