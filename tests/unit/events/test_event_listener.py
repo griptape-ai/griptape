@@ -34,8 +34,8 @@ class TestEventListener:
             event_handler_2,
         ]
         # can't mock subtask events, so must manually call 
-        pipeline.tasks[0]._subtasks[0].before_run()
-        pipeline.tasks[0]._subtasks[0].after_run()
+        pipeline.tasks[0].subtasks[0].before_run()
+        pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
         assert event_handler_1.call_count == 6
@@ -59,8 +59,8 @@ class TestEventListener:
         }
 
         # can't mock subtask events, so must manually call 
-        pipeline.tasks[0]._subtasks[0].before_run()
-        pipeline.tasks[0]._subtasks[0].after_run()
+        pipeline.tasks[0].subtasks[0].before_run()
+        pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
         start_task_event_handler.assert_called_once()

@@ -41,27 +41,31 @@ class PromptTask(BaseTask):
 
         return structure_context
 
+    @property
+    def prompt_stack(self) -> PromptStack:
+        stack = PromptStack()
+
+        stack.add_system_input(self.render_system_prompt())
+
+        if self.structure.memory:
+            for r in self.structure.memory.runs:
+                stack.add_user_input(r.input)
+                stack.add_assistant_input(r.output)
+
+        stack.add_user_input(self.input.to_text())
+
+        if self.output:
+            stack.add_assistant_input(self.output.to_text())
+
+        return stack
+
     def before_run(self) -> None:
         super().before_run()
 
         self.structure.logger.info(f"Task {self.id}\nInput: {self.input.to_text()}")
 
     def run(self) -> TextArtifact:
-        prompt_stack = PromptStack()
-
-        prompt_stack.add_system_input(self.render_system_prompt())
-
-        if self.structure.memory:
-            for r in self.structure.memory.runs:
-                prompt_stack.add_user_input(r.input)
-                prompt_stack.add_assistant_input(r.output)
-
-        prompt_stack.add_user_input(self.input.to_text())
-
-        if self.output:
-            prompt_stack.add_assistant_input(self.output.to_text())
-
-        self.output = self.active_driver().run(prompt_stack)
+        self.output = self.active_driver().run(self.prompt_stack)
 
         return self.output
 

@@ -115,7 +115,7 @@ class ActionSubtask(PromptTask):
         self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
-    def to_json(self) -> str:
+    def action_to_json(self) -> str:
         json_dict = {}
 
         if self.action_type:
