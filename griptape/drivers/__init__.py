@@ -9,7 +9,10 @@ from .prompt.text_gen_driver import TextGenPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
-from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
+from .memory.conversation.dynamodb_conversation_memory_driver import (
+    DynamoDbConversationMemoryDriver
+)
+
 
 from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
 from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
@@ -23,6 +26,7 @@ from .vector.local_vector_store_driver import LocalVectorStoreDriver
 from .vector.pinecone_vector_store_driver import PineconeVectorStoreDriver
 from .vector.marqo_vector_store_driver import MarqoVectorStoreDriver
 from .vector.peristable_local_vector_store_driver import PersistableLocalVectorStoreDriver
+from .vector.mongodb_vector_store_driver import MongoDbAtlasVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -55,6 +59,7 @@ __all__ = [
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
     "MarqoVectorStoreDriver",
+    "MongoDbAtlasVectorStoreDriver",
 
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
