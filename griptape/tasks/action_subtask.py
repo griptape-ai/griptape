@@ -11,7 +11,6 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.core import BaseTool, ActivityMixin
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
-from griptape.utils import J2
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 
@@ -198,7 +197,7 @@ class ActionSubtask(PromptTask):
                         self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
-                        self._memory = self.task.find_memory(self.action_name)
+                        self._memory = self.task.find_memory(self.action_input["values"]["memory_id"])
 
                     if self._memory:
                         self.__validate_activity_mixin(self._memory)
