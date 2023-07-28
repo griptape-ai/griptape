@@ -17,12 +17,21 @@ class PromptTask(BaseTask):
     prompt_template: str = field(default=DEFAULT_PROMPT_TEMPLATE)
     context: dict[str, any] = field(factory=dict, kw_only=True)
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
-    render_system_prompt: Callable[[], str] = field(
-        default=Factory(lambda self: self.default_system_prompt, takes_self=True),
+    system_template_generator: Callable[[], str] = field(
+        default=Factory(
+            lambda self: self.default_system_template_generator,
+            takes_self=True
+        ),
         kw_only=True
     )
 
     output: Optional[Union[TextArtifact, ErrorArtifact, InfoArtifact]] = field(default=None, init=False)
+
+    @property
+    def default_system_template_generator(self) -> Callable[[], str]:
+        return lambda: J2("tasks/prompt_task/system.j2").render(
+            rulesets=self.structure.rulesets
+        )
 
     @property
     def input(self) -> TextArtifact:
@@ -80,7 +89,5 @@ class PromptTask(BaseTask):
         else:
             return self.prompt_driver
 
-    def default_system_prompt(self) -> str:
-        return J2("tasks/prompt_task/system.j2").render(
-            rulesets=self.structure.rulesets,
-        )
+    def render_system_prompt(self) -> str:
+        return self.system_template_generator()

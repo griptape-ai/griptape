@@ -21,8 +21,11 @@ class ToolkitTask(PromptTask):
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
-    render_subtask_prompt: Callable[[ActionSubtask], str] = field(
-        default=Factory(lambda self: self.default_subtask_prompt, takes_self=True),
+    subtask_template_generator: Callable[[ActionSubtask], str] = field(
+        default=Factory(
+            lambda self: self.default_subtask_template_generator,
+            takes_self=True
+        ),
         kw_only=True
     )
 
@@ -35,6 +38,33 @@ class ToolkitTask(PromptTask):
 
         if len(tool_names) > len(set(tool_names)):
             raise ValueError("tools have to be unique")
+
+    @property
+    def default_system_template_generator(self) -> Callable[[], str]:
+        def template() -> str:
+            memories = [r for r in self.memory if len(r.activities()) > 0]
+            action_schema = utils.minify_json(
+                json.dumps(
+                    ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
+                )
+            )
+
+            return J2("tasks/toolkit_task/system.j2").render(
+                rulesets=self.structure.rulesets,
+                action_schema=action_schema,
+                tool_names=str.join(", ", [tool.name for tool in self.tools]),
+                tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
+                memory_ids=str.join(", ", [memory.id for memory in memories]),
+                memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
+            )
+
+        return template
+
+    @property
+    def default_subtask_template_generator(self) -> Callable[[ActionSubtask], str]:
+        return lambda subtask: J2("tasks/toolkit_task/subtask.j2").render(
+                subtask=subtask
+            )
 
     @property
     def memory(self) -> list[BaseToolMemory]:
@@ -53,7 +83,7 @@ class ToolkitTask(PromptTask):
         stack = super().prompt_stack
 
         if not self.output:
-            [stack.add_assistant_input(self.render_subtask_prompt(s)) for s in self.subtasks]
+            [stack.add_assistant_input(self.subtask_template_generator(s)) for s in self.subtasks]
 
         return stack
 
@@ -130,26 +160,4 @@ class ToolkitTask(PromptTask):
         return next(
             (r for r in self.memory if r.id == memory_id),
             None
-        )
-
-    def default_system_prompt(self) -> str:
-        memories = [r for r in self.memory if len(r.activities()) > 0]
-        action_schema = utils.minify_json(
-            json.dumps(
-                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
-            )
-        )
-
-        return J2("tasks/toolkit_task/system.j2").render(
-            rulesets=self.structure.rulesets,
-            action_schema=action_schema,
-            tool_names=str.join(", ", [tool.name for tool in self.tools]),
-            tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
-            memory_ids=str.join(", ", [memory.id for memory in memories]),
-            memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
-        )
-
-    def default_subtask_prompt(self, subtask: ActionSubtask) -> str:
-        return J2("tasks/toolkit_task/subtask.j2").render(
-            subtask=subtask
         )
