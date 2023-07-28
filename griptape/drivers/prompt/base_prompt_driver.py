@@ -16,6 +16,7 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     prompt_prefix: str = field(default="", kw_only=True)
     prompt_suffix: str = field(default="", kw_only=True)
     temperature: float = field(default=0.1, kw_only=True)
+    max_tokens: Optional[int] = field(default=None, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
     model: str

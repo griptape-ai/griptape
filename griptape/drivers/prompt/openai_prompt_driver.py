@@ -20,7 +20,6 @@ class OpenAiPromptDriver(BasePromptDriver):
         default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
         kw_only=True
     )
-    max_tokens: Optional[int] = field(default=None, kw_only=True)
     user: str = field(default="", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
