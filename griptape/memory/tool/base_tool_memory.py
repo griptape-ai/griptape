@@ -11,14 +11,17 @@ if TYPE_CHECKING:
 
 @define
 class BaseToolMemory(ActivityMixin, ABC):
-    id: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    id: str = field(
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
+        kw_only=True,
+    )
     namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
 
     def process_output(
-            self,
-            tool_activity: callable,
-            subtask: ActionSubtask,
-            artifact: Union[BaseArtifact, list[BaseArtifact]]
+        self,
+        _tool_activity: callable,
+        _subtask: ActionSubtask,
+        artifact: Union[BaseArtifact, list[BaseArtifact]],
     ) -> BaseArtifact:
         return artifact
 

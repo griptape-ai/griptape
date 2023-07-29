@@ -81,39 +81,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
     def query(
         self,
-        vector: list[float],
+        query: str,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        skip: Optional[int] = 0,
         **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        collection = self.get_collection()
-
-        knn_k = skip + (count if count else 10)
-        pipeline = [
-            {
-                "$search": {
-                    "knnBeta": {
-                        "vector": vector,
-                        "path": "vector",
-                        "k": knn_k
-                    }
-                }
-            },
-            {"$skip": skip},
-        ]
-
-        if count is not None:
-            pipeline.append({"$limit": count})
-
-        cursor = collection.aggregate(pipeline)
-
-        for doc in cursor:
-            yield BaseVectorStoreDriver.QueryResult(
-                vector=doc["vector"] if include_vectors else None,
-                score=None,  # Score is not directly provided by knnBeta
-                meta=doc["meta"],
-                namespace=namespace,  # Added namespace to QueryResult
-            )
-
+        raise NotImplementedError("Vector search not supported in MongoDB")

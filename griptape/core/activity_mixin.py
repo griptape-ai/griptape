@@ -12,13 +12,25 @@ class ActivityMixin:
 
     @allowlist.validator
     def validate_allowlist(self, _, allowlist: Optional[list[str]]) -> None:
-        if self.denylist is not None and allowlist is not None:
+        if allowlist is None:
+            return
+
+        if self.denylist is not None:
             raise ValueError("can't have both allowlist and denylist specified")
 
+        for activity_name in allowlist:
+            self._validate_tool_activity( activity_name)
+
     @denylist.validator
-    def validate_allowlist(self, _, denylist: Optional[list[str]]) -> None:
-        if self.allowlist is not None and denylist is not None:
+    def validate_denylist(self, _, denylist: Optional[list[str]]) -> None:
+        if denylist is None:
+            return
+
+        if self.allowlist is not None:
             raise ValueError("can't have both allowlist and denylist specified")
+
+        for activity_name in denylist:
+            self._validate_tool_activity(activity_name)
 
     @property
     def schema_template_args(self) -> dict:
@@ -74,3 +86,13 @@ class ActivityMixin:
             return Schema(full_schema).json_schema("InputSchema")
         else:
             return None
+
+    def _validate_tool_activity(self, activity_name):
+        tool = self.__class__
+
+        activity = getattr(tool, activity_name, None)
+
+        if not activity or not getattr(activity, "is_activity", False):
+            raise ValueError(
+                f"activity {activity_name} is not a valid activity for {tool}"
+            )
