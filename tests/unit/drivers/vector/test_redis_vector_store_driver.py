@@ -1,7 +1,15 @@
+import json
 import pytest
-import redis
 from griptape.drivers import RedisVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+
+
+class MockFTResult:
+    def __init__(self, docs):
+        self.docs = docs
+
+    def search(self, *args, **kwargs):
+        return self
 
 
 class TestRedisVectorStoreDriver:
@@ -9,8 +17,11 @@ class TestRedisVectorStoreDriver:
     @pytest.fixture(autouse=True)
     def mock_redis(self, mocker):
         mocker.patch("redis.StrictRedis.set", return_value=None)
-        mocker.patch("redis.StrictRedis.get", return_value='{"vector": [0, 1, 2], "metadata": {"foo": "bar"}}')
+        mocker.patch("redis.StrictRedis.get",
+                     return_value=json.dumps({"vector": [0, 1, 2], "metadata": {"foo": "bar"}}))
         mocker.patch("redis.StrictRedis.keys", return_value=[b'test:foo'])
+        # Mocking the query response for testing the query method
+        mocker.patch("redis.StrictRedis.ft", return_value=MockFTResult([{'id': 'foo', 'score': 0.9}]))
 
     @pytest.fixture
     def driver(self):
@@ -38,5 +49,12 @@ class TestRedisVectorStoreDriver:
         assert entries[0].vector == [0, 1, 2]
         assert entries[0].meta == {"foo": "bar"}
 
-    def test_create_index(self, driver):
-        assert driver.create_index("test") is None
+    def test_query(self, driver):
+        query_result = driver.query("test query", count=1)
+
+        # Verifying the expected properties of the query result
+        assert len(query_result) == 1
+        assert query_result[0].vector == 'foo'
+        assert query_result[0].score == 0.9
+        assert query_result[0].meta is None
+        assert query_result[0].namespace is None

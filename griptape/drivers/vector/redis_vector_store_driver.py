@@ -1,13 +1,15 @@
-from typing import Optional
+from typing import Optional, List
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 import redis
 from attr import define, field
 import json
+from redis.commands.search.query import Query
 
 
 @define
 class RedisVectorStoreDriver(BaseVectorStoreDriver):
+    INDEX_NAME = "your_index_name_here"
     host: str = field(kw_only=True)
     port: int = field(kw_only=True)
     db: int = field(kw_only=True, default=0)
@@ -68,9 +70,38 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             ))
         return entries
 
-    def query(self, query: str, count: Optional[int] = None, namespace: Optional[str] = None,
-              include_vectors: bool = False, **kwargs) -> list[BaseVectorStoreDriver.QueryResult]:
-        raise NotImplementedError("Vector similarity queries are not directly supported by Redis.")
+    def query(
+            self,
+            query: str, # change to match your specific query type
+            count: Optional[int] = None,
+            namespace: Optional[str] = None,
+            include_vectors: bool = False,
+            include_metadata: bool = True, # You can remove this if it's not needed
+            **kwargs
+    ) -> List[BaseVectorStoreDriver.QueryResult]:
+        # Transform the query string into a query_vector suitable for Redis
+        query_vector = self.embedding_driver.embed_string(query)
+        params = {
+            "vec": query_vector,
+            "radius": 0.8 # or other logic to define the radius
+        }
 
-    def create_index(self, name: str, **kwargs) -> None:
-        pass
+        query_expression = (
+            Query("@vector:[VECTOR_RANGE $radius $vec]=>{$YIELD_DISTANCE_AS: score}")
+            .sort_by("score")
+            .return_fields("id", "score")
+            .paging(0, count if count else 3)
+            .dialect(2)
+        )
+
+        results = self.client.ft(self.INDEX_NAME).search(query_expression, params).docs
+
+        return [
+            BaseVectorStoreDriver.QueryResult(
+                vector=document['id'],  # Change as needed
+                score=document['score'],
+                meta=None,  # Modify as needed
+                namespace=None  # Modify as needed
+            )
+            for document in results
+        ]
