@@ -18,12 +18,12 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return self.client[self.database_name][self.collection_name]
 
     def upsert_vector(
-        self,
-        vector: list[float],
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        **kwargs
+            self,
+            vector: list[float],
+            vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
+            meta: Optional[dict] = None,
+            **kwargs
     ) -> str:
         collection = self.get_collection()
 
@@ -49,7 +49,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return vector_id
 
     def load_entry(
-        self, vector_id: str, namespace: Optional[str] = None
+            self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
         collection = self.get_collection()
         doc = collection.find_one({"_id": vector_id})
@@ -63,7 +63,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         )
 
     def load_entries(
-        self, namespace: Optional[str] = None
+            self, namespace: Optional[str] = None
     ) -> list[BaseVectorStoreDriver.Entry]:
         collection = self.get_collection()
         if namespace is None:
@@ -80,39 +80,58 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
 
     def query(
-        self,
-        vector: list[float],
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        include_vectors: bool = False,
-        skip: Optional[int] = 0,
-        **kwargs
+            self,
+            query: str,
+            count: Optional[int] = None,
+            namespace: Optional[str] = None,
+            include_vectors: bool = False,
+            offset: Optional[int] = 0,
+            **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         collection = self.get_collection()
 
-        knn_k = skip + (count if count else 10)
+        # Using the embedding driver to convert the query string into a vector
+        vector = self.embedding_driver.embed_string(query)
+        print("Vector for query:", vector)
+
+        knn_k = count if count else 10
         pipeline = [
             {
                 "$search": {
+                    "index": "knn",  # Use the name of the k-NN index you created
                     "knnBeta": {
                         "vector": vector,
                         "path": "vector",
-                        "k": knn_k
+                        "k": knn_k + offset
                     }
                 }
             },
-            {"$skip": skip},
+            {
+                "$project": {
+                    "_id": 1,
+                    "vector": 1,
+                    "namespace": 1,
+                    "meta": 1
+                }
+            },
+            {"$skip": offset},
+            {"$limit": knn_k}
         ]
 
-        if count is not None:
-            pipeline.append({"$limit": count})
-
         cursor = collection.aggregate(pipeline)
-
-        for doc in cursor:
-            yield BaseVectorStoreDriver.QueryResult(
+        #print("Pipeline:", pipeline)
+        #print("Cursor:", list(cursor))
+        list_cursor = list(cursor)
+        for doc in list_cursor:
+            print(doc)
+        results = [
+            BaseVectorStoreDriver.QueryResult(
                 vector=doc["vector"] if include_vectors else None,
                 score=None,  # Score is not directly provided by knnBeta
                 meta=doc["meta"],
                 namespace=namespace,  # Added namespace to QueryResult
             )
+            for doc in list_cursor
+        ]
+        #print("In Driver results: ", results)
+        return results

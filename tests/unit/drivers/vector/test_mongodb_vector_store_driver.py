@@ -19,8 +19,8 @@ class TestMongoDbAtlasVectorStoreDriver:
         )
 
     def test_upsert_vector(self, driver):
-        vector = [0.5, 0.5, 0.5]
-        vector_id_str = "some_random_string_id"  # generating a string id
+        vector = [0.1, 0.2]
+        vector_id_str = "qtest"  # generating a string id
         test_id = driver.upsert_vector(vector, vector_id=vector_id_str)
         assert test_id == vector_id_str
 
@@ -37,8 +37,8 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     def test_query(self, driver, monkeypatch):
         mock_query_result = [
-            BaseVectorStoreDriver.QueryResult("123", [0.5, 0.5, 0.5], {}),
-            BaseVectorStoreDriver.QueryResult("456", [0.5, 0.5, 0.5], {})
+            BaseVectorStoreDriver.QueryResult(vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None),
+            BaseVectorStoreDriver.QueryResult(vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None)
         ]
 
         monkeypatch.setattr(
@@ -47,12 +47,32 @@ class TestMongoDbAtlasVectorStoreDriver:
             lambda *args, **kwargs: mock_query_result
         )
 
-        vector = [0.4, 0.9, 0.7]
-        results = list(driver.query(vector, include_vectors=True))
+        query_str = "some query string"
+        results = driver.query(query_str, include_vectors=True)
+        print(results)
         assert len(results) == len(mock_query_result)
         for result, expected in zip(results, mock_query_result):
             assert result.vector == expected.vector
             assert isinstance(result, BaseVectorStoreDriver.QueryResult)
+
+    # def test_query(self, driver):
+    #     # Querying the vector
+    #     query_str = "example_query"  # This should be representative of your actual query string
+    #     include_vectors = True
+    #     results = list(driver.query(query_str, include_vectors=include_vectors))  # Include vector in results
+    #
+    #     assert len(results) > 0  # Check that we got at least one result
+    #
+    #     # Example expected result (you'll want to define this based on your actual expected results)
+    #     expected_vector = [0, 1]
+    #     expected_meta = {
+    #         'artifact': '{"id": "cde2849dec2b41d2a9d73112945012d6", "type": "TextArtifact", "value": "foo"}'}
+    #
+    #     # Check the first result
+    #     result = results[0]
+    #     assert isinstance(result, BaseVectorStoreDriver.QueryResult)
+    #     assert result.vector == expected_vector if include_vectors else result.vector is None
+    #     assert result.meta == expected_meta
 
     def test_load_entry(self, driver):
         vector_id_str = "123"
