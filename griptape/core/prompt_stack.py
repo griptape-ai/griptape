@@ -25,7 +25,10 @@ class PromptStack:
 
     initial_input: Optional[Input] = field(default=None)
     inputs: list[Input] = field(
-        default=Factory(lambda self: [self.initial_input] if self.initial_input else []),
+        default=Factory(
+            lambda self: [self.initial_input] if self.initial_input else [],
+            takes_self=True
+        ),
         kw_only=True
     )
 
