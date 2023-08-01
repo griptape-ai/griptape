@@ -86,19 +86,19 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             namespace: Optional[str] = None,
             include_vectors: bool = False,
             offset: Optional[int] = 0,
+            index: Optional[str] = None,
             **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         collection = self.get_collection()
 
         # Using the embedding driver to convert the query string into a vector
         vector = self.embedding_driver.embed_string(query)
-        print("Vector for query:", vector)
 
         knn_k = count if count else 10
         pipeline = [
             {
                 "$search": {
-                    "index": "knn",  # Use the name of the k-NN index you created
+                    "index": index if index else "default",
                     "knnBeta": {
                         "vector": vector,
                         "path": "vector",
@@ -111,7 +111,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "_id": 1,
                     "vector": 1,
                     "namespace": 1,
-                    "meta": 1
+                    "meta": 1,
+                    "score": {"$meta": "searchScore"}  # Include the score in the projection
                 }
             },
             {"$skip": offset},
@@ -119,19 +120,16 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         ]
 
         cursor = collection.aggregate(pipeline)
-        #print("Pipeline:", pipeline)
-        #print("Cursor:", list(cursor))
         list_cursor = list(cursor)
-        for doc in list_cursor:
-            print(doc)
         results = [
             BaseVectorStoreDriver.QueryResult(
                 vector=doc["vector"] if include_vectors else None,
-                score=None,  # Score is not directly provided by knnBeta
+                score=doc["score"],  # Include the score in the result
                 meta=doc["meta"],
-                namespace=namespace,  # Added namespace to QueryResult
+                namespace=namespace,
             )
             for doc in list_cursor
         ]
-        #print("In Driver results: ", results)
         return results
+
+
