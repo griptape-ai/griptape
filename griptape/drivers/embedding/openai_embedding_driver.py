@@ -43,10 +43,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
             return self.embed_chunk(string)
 
     def embed_chunk(self, chunk: Union[list[int], str]) -> list[float]:
-        return openai.Embedding.create(
-            input=chunk,
-            model=self.model
-        )["data"][0]["embedding"]
+        return openai.Embedding.create(**self._params(chunk))["data"][0]["embedding"]
 
     def embed_long_string(self, string: str) -> list[float]:
         tokens = self.tokenizer.encode(string)
@@ -65,3 +62,14 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         embedding_chunks = embedding_chunks / np.linalg.norm(embedding_chunks)
 
         return embedding_chunks.tolist()
+
+    def _params(self, chunk: Union[list[int], str]) -> dict:
+        return {
+            "input": chunk,
+            "model": self.model,
+            "api_key": self.api_key,
+            "organization": self.organization,
+            "api_version": self.api_version,
+            "api_base": self.api_base,
+            "api_type": self.api_type
+        }
