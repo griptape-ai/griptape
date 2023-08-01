@@ -1,3 +1,5 @@
+from typing import Union
+
 from attr import define, field, Factory
 from griptape.drivers import OpenAiEmbeddingDriver
 from griptape.tokenizers import TiktokenTokenizer
@@ -14,3 +16,8 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
         kw_only=True
     )
+
+    def _params(self, chunk: Union[list[int], str]) -> dict:
+        return super()._params(chunk) | {
+            "deployment_id": self.deployment_id
+        }

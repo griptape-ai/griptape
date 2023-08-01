@@ -1,0 +1,56 @@
+import pytest
+import mongomock
+from griptape.artifacts import TextArtifact
+from griptape.drivers import MongoDbAtlasVectorStoreDriver
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+
+
+class TestMongoDbAtlasVectorStoreDriver:
+    @pytest.fixture
+    def driver(self):
+        embedding_driver = MockEmbeddingDriver()
+        return MongoDbAtlasVectorStoreDriver(
+            embedding_driver=embedding_driver,
+            connection_string="mongodb://mock_connection_string",
+            database_name="mock_database_name",
+            collection_name="mock_collection_name",
+            client=mongomock.MongoClient()
+        )
+
+    def test_upsert_vector(self, driver):
+        vector = [0.5, 0.5, 0.5]
+        vector_id_str = "some_random_string_id"  # generating a string id
+        test_id = driver.upsert_vector(vector, vector_id=vector_id_str)
+
+        assert test_id is vector_id_str
+
+    def test_upsert_text_artifact(self, driver):
+        artifact = TextArtifact("foo")
+        test_id = driver.upsert_text_artifact(artifact)
+        assert test_id is not None
+
+    def test_upsert_text(self, driver):
+        text = "foo"
+        vector_id_str = "foo"
+        test_id = driver.upsert_text(text, vector_id=vector_id_str)
+        assert test_id is not None
+
+    @pytest.mark.xfail(reason="Vector search not supported in MongoDB")
+    def test_query(self, driver):
+        query = "test"
+        result = driver.query(query)
+        assert result is not None
+
+    def test_load_entry(self, driver):
+        vector_id_str = "123"
+        vector = [0.5, 0.5, 0.5]
+        driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure the entry exists
+        result = driver.load_entry(vector_id_str)
+        assert result is not None
+
+    def test_load_entries(self, driver):
+        vector_id_str = "123"
+        vector = [0.5, 0.5, 0.5]
+        driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
+        results = list(driver.load_entries())
+        assert results is not None and len(results) > 0

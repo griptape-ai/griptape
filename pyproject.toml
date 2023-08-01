@@ -43,11 +43,14 @@ anthropic = "^0.2.10"
 sqlalchemy = "~=1.0"
 sqlalchemy-redshift = "*"
 snowflake-sqlalchemy = "^1.4.7"
+pymongo= "*"
 
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
 pytest-mock = "*"
 pytest-cover = "*"
+mongomock = "*"
+
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
 
