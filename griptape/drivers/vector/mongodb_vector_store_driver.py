@@ -98,7 +98,6 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         pipeline = [
             {
                 "$search": {
-                    "index": index if index else "default",
                     "knnBeta": {
                         "vector": vector,
                         "path": "vector",
@@ -119,8 +118,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             {"$limit": knn_k}
         ]
 
-        cursor = collection.aggregate(pipeline)
-        list_cursor = list(cursor)
+        if index:
+            pipeline[0]["$search"]["index"] = index
+
         results = [
             BaseVectorStoreDriver.QueryResult(
                 vector=doc["vector"] if include_vectors else None,
@@ -128,8 +128,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                 meta=doc["meta"],
                 namespace=namespace,
             )
-            for doc in list_cursor
+            for doc in list(collection.aggregate(pipeline))
         ]
+
         return results
-
-
