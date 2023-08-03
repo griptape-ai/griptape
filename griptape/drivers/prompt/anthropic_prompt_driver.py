@@ -8,8 +8,6 @@ from griptape.tokenizers import AnthropicTokenizer
 
 @define
 class AnthropicPromptDriver(BasePromptDriver):
-    prompt_prefix: str = field(default=anthropic.HUMAN_PROMPT, kw_only=True)
-    prompt_suffix: str = field(default=anthropic.AI_PROMPT, kw_only=True)
     api_key: str = field(kw_only=True)
     model: str = field(default=AnthropicTokenizer.DEFAULT_MODEL, kw_only=True)
     tokenizer: AnthropicTokenizer = field(

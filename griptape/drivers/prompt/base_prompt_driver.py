@@ -12,8 +12,6 @@ if TYPE_CHECKING:
 
 @define
 class BasePromptDriver(ExponentialBackoffMixin, ABC):
-    prompt_prefix: str = field(default="", kw_only=True)
-    prompt_suffix: str = field(default="", kw_only=True)
     temperature: float = field(default=0.1, kw_only=True)
     max_tokens: Optional[int] = field(default=None, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
@@ -27,9 +25,6 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
                 result = self.try_run(prompt_stack)
 
                 return result
-
-    def full_prompt(self, value: str) -> str:
-        return f"{self.prompt_prefix}{value}{self.prompt_suffix}"
 
     @abstractmethod
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
