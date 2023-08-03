@@ -4,10 +4,9 @@ from attr import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
 from griptape.structures import Structure
-from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.tasks import BaseTask, PromptTask
+    from griptape.tasks import BaseTask
 
 
 @define

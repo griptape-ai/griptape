@@ -5,7 +5,6 @@ from griptape.core import BaseTool
 from griptape.memory.structure import Run, ConversationMemory
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
-from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
