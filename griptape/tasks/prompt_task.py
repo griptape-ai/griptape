@@ -60,7 +60,7 @@ class PromptTask(BaseTask):
         if memory and len(memory.runs) > 0:
             # Don't include the latest run since it's already included
             # in the current task.
-            for r in memory.runs[1:]:
+            for r in memory.runs:
                 stack.add_user_input(r.input)
                 stack.add_assistant_input(r.output)
 

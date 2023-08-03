@@ -167,13 +167,13 @@ class TestPipeline:
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
-        assert len(task2.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.inputs) == 5
+        assert len(task2.prompt_stack.inputs) == 5
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.inputs) == 5
-        assert len(task2.prompt_stack.inputs) == 5
+        assert len(task1.prompt_stack.inputs) == 7
+        assert len(task2.prompt_stack.inputs) == 7
 
     def test_text_artifact_token_count(self):
         text = "foobar"

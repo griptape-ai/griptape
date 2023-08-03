@@ -132,11 +132,11 @@ class TestAgent:
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.inputs) == 5
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 5
+        assert len(task1.prompt_stack.inputs) == 7
 
     def test_run(self):
         task = PromptTask("test")
