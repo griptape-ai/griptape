@@ -1,13 +1,14 @@
 import pytest
 import mongomock
+from pymongo import MongoClient
 from griptape.artifacts import TextArtifact
-from griptape.drivers import MongoDbAtlasVectorStoreDriver
+from griptape.drivers import MongoDbAtlasVectorStoreDriver, BaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestMongoDbAtlasVectorStoreDriver:
     @pytest.fixture
-    def driver(self):
+    def driver(self, monkeypatch):
         embedding_driver = MockEmbeddingDriver()
         return MongoDbAtlasVectorStoreDriver(
             embedding_driver=embedding_driver,
@@ -18,11 +19,10 @@ class TestMongoDbAtlasVectorStoreDriver:
         )
 
     def test_upsert_vector(self, driver):
-        vector = [0.5, 0.5, 0.5]
-        vector_id_str = "some_random_string_id"  # generating a string id
+        vector = [0.1, 0.2]
+        vector_id_str = "qtest"  # generating a string id
         test_id = driver.upsert_vector(vector, vector_id=vector_id_str)
-
-        assert test_id is vector_id_str
+        assert test_id == vector_id_str
 
     def test_upsert_text_artifact(self, driver):
         artifact = TextArtifact("foo")
@@ -33,13 +33,26 @@ class TestMongoDbAtlasVectorStoreDriver:
         text = "foo"
         vector_id_str = "foo"
         test_id = driver.upsert_text(text, vector_id=vector_id_str)
-        assert test_id is not None
+        assert test_id == vector_id_str
 
-    @pytest.mark.xfail(reason="Vector search not supported in MongoDB")
-    def test_query(self, driver):
-        query = "test"
-        result = driver.query(query)
-        assert result is not None
+    def test_query(self, driver, monkeypatch):
+        mock_query_result = [
+            BaseVectorStoreDriver.QueryResult(vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None),
+            BaseVectorStoreDriver.QueryResult(vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None)
+        ]
+
+        monkeypatch.setattr(
+            MongoDbAtlasVectorStoreDriver,
+            "query",
+            lambda *args, **kwargs: mock_query_result
+        )
+
+        query_str = "some query string"
+        results = driver.query(query_str, include_vectors=True)
+        assert len(results) == len(mock_query_result)
+        for result, expected in zip(results, mock_query_result):
+            assert result.vector == expected.vector
+            assert isinstance(result, BaseVectorStoreDriver.QueryResult)
 
     def test_load_entry(self, driver):
         vector_id_str = "123"

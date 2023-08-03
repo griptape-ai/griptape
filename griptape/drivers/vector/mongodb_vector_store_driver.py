@@ -18,12 +18,12 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return self.client[self.database_name][self.collection_name]
 
     def upsert_vector(
-        self,
-        vector: list[float],
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        **kwargs
+            self,
+            vector: list[float],
+            vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
+            meta: Optional[dict] = None,
+            **kwargs
     ) -> str:
         collection = self.get_collection()
 
@@ -49,7 +49,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return vector_id
 
     def load_entry(
-        self, vector_id: str, namespace: Optional[str] = None
+            self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
         collection = self.get_collection()
         doc = collection.find_one({"_id": vector_id})
@@ -63,7 +63,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         )
 
     def load_entries(
-        self, namespace: Optional[str] = None
+            self, namespace: Optional[str] = None
     ) -> list[BaseVectorStoreDriver.Entry]:
         collection = self.get_collection()
         if namespace is None:
@@ -80,11 +80,55 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
 
     def query(
-        self,
-        query: str,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        include_vectors: bool = False,
-        **kwargs
+            self,
+            query: str,
+            count: Optional[int] = None,
+            namespace: Optional[str] = None,
+            include_vectors: bool = False,
+            offset: Optional[int] = 0,
+            index: Optional[str] = None,
+            **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        raise NotImplementedError("Vector search not supported in MongoDB")
+        collection = self.get_collection()
+
+        # Using the embedding driver to convert the query string into a vector
+        vector = self.embedding_driver.embed_string(query)
+
+        knn_k = count if count else 10
+        pipeline = [
+            {
+                "$search": {
+                    "knnBeta": {
+                        "vector": vector,
+                        "path": "vector",
+                        "k": knn_k + offset
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "_id": 1,
+                    "vector": 1,
+                    "namespace": 1,
+                    "meta": 1,
+                    "score": {"$meta": "searchScore"}  # Include the score in the projection
+                }
+            },
+            {"$skip": offset},
+            {"$limit": knn_k}
+        ]
+
+        if index:
+            pipeline[0]["$search"]["index"] = index
+
+        results = [
+            BaseVectorStoreDriver.QueryResult(
+                vector=doc["vector"] if include_vectors else None,
+                score=doc["score"],  # Include the score in the result
+                meta=doc["meta"],
+                namespace=namespace,
+            )
+            for doc in list(collection.aggregate(pipeline))
+        ]
+
+        return results
