@@ -136,17 +136,20 @@ class TestPipeline:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
 
-        pipeline + [task1]
+        pipeline.add_tasks(task1, task2)
 
-        # context and first input
-        assert len(pipeline.prompt_stack(task1)) == 2
+        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task2.prompt_stack.inputs) == 2
 
         pipeline.run()
 
-        pipeline + [task2]
+        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task2.prompt_stack.inputs) == 3
 
-        # context and second input
-        assert len(pipeline.prompt_stack(task2)) == 2
+        pipeline.run()
+
+        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task2.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
         pipeline = Pipeline(
@@ -157,17 +160,20 @@ class TestPipeline:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
 
-        pipeline + [task1]
+        pipeline.add_tasks(task1, task2)
 
-        # context and first input
-        assert len(pipeline.prompt_stack(task1)) == 3
+        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task2.prompt_stack.inputs) == 2
 
         pipeline.run()
 
-        pipeline + task2
+        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task2.prompt_stack.inputs) == 3
 
-        # context, memory, and second input
-        assert len(pipeline.prompt_stack(task2)) == 3
+        pipeline.run()
+
+        assert len(task1.prompt_stack.inputs) == 5
+        assert len(task2.prompt_stack.inputs) == 5
 
     def test_text_artifact_token_count(self):
         text = "foobar"
