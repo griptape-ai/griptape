@@ -135,10 +135,6 @@ class Structure(ABC):
 
         return prompt_stack
 
-
-    def has_memory(self) -> bool:
-        return False
-
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask:
         ...

@@ -108,12 +108,15 @@ class TestAgent:
 
         agent.add_task(task1)
 
-        # context and first input
-        assert len(agent.prompt_stack(task1)) == 2
+        assert len(task1.prompt_stack.inputs) == 2
 
         agent.run()
 
-        assert len(agent.prompt_stack(task1)) == 2
+        assert len(task1.prompt_stack.inputs) == 3
+
+        agent.run()
+
+        assert len(task1.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
         agent = Agent(
@@ -122,32 +125,18 @@ class TestAgent:
         )
 
         task1 = PromptTask("test")
-        task2 = PromptTask("test")
 
         agent.add_task(task1)
 
-        # context and first input
-        assert len(agent.prompt_stack(task1)) == 3
+        assert len(task1.prompt_stack.inputs) == 2
 
         agent.run()
 
-        agent.add_task(task2)
-
-        # context, memory, and second input
-        assert len(agent.prompt_stack(task2)) == 3
-
-    def test_to_prompt_string(self):
-        agent = Agent(
-            prompt_driver=MockPromptDriver(),
-        )
-
-        task = PromptTask("test")
-
-        agent.add_task(task)
+        assert len(task1.prompt_stack.inputs) == 3
 
         agent.run()
 
-        assert "mock output" in agent.to_prompt_string(task)
+        assert len(task1.prompt_stack.inputs) == 5
 
     def test_run(self):
         task = PromptTask("test")

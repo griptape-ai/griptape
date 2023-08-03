@@ -25,12 +25,6 @@ class Workflow(Structure):
 
         return task
 
-    def prompt_stack(self, task: PromptTask) -> list[str]:
-        return [
-            task.render_system_prompt(),
-            J2("prompts/workflow.j2").render(task=task)
-        ]
-
     def run(self, *args) -> list[BaseTask]:
         self._execution_args = args
         ordered_tasks = self.order_tasks()

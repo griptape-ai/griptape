@@ -36,16 +36,6 @@ class Pipeline(Structure):
 
         return task
 
-    def prompt_stack(self, task: PromptTask) -> list[str]:
-        return self.add_memory_to_prompt_stack(
-            task.render_system_prompt(),
-            J2("prompts/pipeline.j2").render(
-                has_memory=self.memory is not None,
-                finished_tasks=self.finished_tasks(),
-                current_task=task
-            )
-        )
-
     def run(self, *args) -> BaseTask:
         self._execution_args = args
 

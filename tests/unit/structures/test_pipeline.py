@@ -169,19 +169,6 @@ class TestPipeline:
         # context, memory, and second input
         assert len(pipeline.prompt_stack(task2)) == 3
 
-    def test_to_prompt_string(self):
-        pipeline = Pipeline(
-            prompt_driver=MockPromptDriver(),
-        )
-
-        task = PromptTask("test")
-
-        pipeline + task
-
-        pipeline.run()
-
-        assert "mock output" in pipeline.to_prompt_string(task)
-
     def test_text_artifact_token_count(self):
         text = "foobar"
 
