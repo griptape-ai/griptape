@@ -49,6 +49,7 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
             "parameters": {
                 "max_new_tokens": self.tokenizer.tokens_left(value),
                 "temperature": self.temperature,
+                "stop": self.tokenizer.stop_sequences
             },
         }
         response = self.sagemaker_client.invoke_endpoint(
