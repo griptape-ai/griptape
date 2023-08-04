@@ -1,7 +1,7 @@
 import json
 import boto3
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.drivers import BasePromptDriver
 
 
@@ -17,7 +17,7 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def _get_input(self, prompt: str) -> any:
+    def _build_model_input(self, prompt: str) -> any:
         if self.model.startswith("llama"):
             return [
                 [
@@ -26,11 +26,26 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
             ]
         elif self.model.startswith("falcon"):
             return prompt
-        return prompt
+        raise ValueError("unknown model type")
+
+    def _parse_model_output(self, response: any) -> BaseArtifact:
+        generations = json.loads(response["Body"].read().decode("utf8"))
+
+        if not generations:
+            return ErrorArtifact("no generations from model")
+
+        generation = generations[0]
+
+        if self.model.startswith("llama"):
+            return TextArtifact(generation["generation"]["content"])
+        elif self.model.startswith("falcon"):
+            return TextArtifact(generation["generated_text"])
+        else:
+            return ErrorArtifact("unknown model type")
 
     def try_run(self, value: str) -> TextArtifact:
         payload = {
-            "inputs": self._get_input(value),
+            "inputs": self._build_model_input(value),
             "parameters": {
                 "max_new_tokens": self.tokenizer.tokens_left(value),
                 "temperature": self.temperature,
@@ -43,10 +58,4 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
             CustomAttributes="accept_eula=true",
         )
 
-        generations = json.loads(response["Body"].read().decode("utf8"))
-        if generations:
-            content = generations[0]["generation"]["content"]
-
-            return TextArtifact(content)
-        else:
-            return ErrorArtifact("no generations from model")
+        return self._parse_model_output(response)
