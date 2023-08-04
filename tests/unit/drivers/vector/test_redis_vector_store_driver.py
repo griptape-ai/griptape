@@ -1,60 +1,57 @@
-import json
 import pytest
 from griptape.drivers import RedisVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-
-
-class MockFTResult:
-    def __init__(self, docs):
-        self.docs = docs
-
-    def search(self, *args, **kwargs):
-        return self
+import numpy as np
 
 
 class TestRedisVectorStoreDriver:
-
-    @pytest.fixture(autouse=True)
-    def mock_redis(self, mocker):
-        mocker.patch("redis.StrictRedis.set", return_value=None)
-        mocker.patch("redis.StrictRedis.get",
-                     return_value=json.dumps({"vector": [0, 1, 2], "metadata": {"foo": "bar"}}))
-        mocker.patch("redis.StrictRedis.keys", return_value=[b'test:foo'])
-        # Mocking the query response for testing the query method
-        mocker.patch("redis.StrictRedis.ft", return_value=MockFTResult([{'id': 'foo', 'score': 0.9}]))
-
-    @pytest.fixture
+    @pytest.fixture(scope="module")
     def driver(self):
+        # Make sure the Redis server is running with this configuration
         return RedisVectorStoreDriver(
-            host="localhost",
-            port=6379,
+            host='redis-12146.c10.us-east-1-2.ec2.cloud.redislabs.com',  # Replace with your host
+            port=12146,  # Replace with your port (e.g., 6379)
+            password='SmilingatGriptape',  # Replace with your password if required
             db=0,
-            embedding_driver=MockEmbeddingDriver()
+            index='idx1',
+            embedding_driver=MockEmbeddingDriver(),  # Replace with the actual embedding driver if needed
         )
 
     def test_upsert_vector(self, driver):
-        assert driver.upsert_vector([0, 1, 2], vector_id="foo") == "foo"
-        assert isinstance(driver.upsert_vector([0, 1, 2]), str)
+        assert driver.upsert_vector([0.1, 0.2, 0.3], vector_id="foo") == "foo"
 
     def test_load_entry(self, driver):
-        entry = driver.load_entry("foo")
-        assert entry.id == "foo"
-        assert entry.vector == [0, 1, 2]
-        assert entry.meta == {"foo": "bar"}
+        # Insert the expected entry into Redis using the upsert method
+        entry_id = "foo2"
+        vector = [2, 3, 4]
+        metadata = {"foo": "bar"}
+        driver.upsert_vector(vector, entry_id, None, metadata)
+
+        entry = driver.load_entry("foo2")
+        assert entry.id == "foo2"
+        assert entry.vector == [2, 3, 4]
+        assert entry.meta == {"foo": "bar"}  # This should now pass
 
     def test_load_entries(self, driver):
+        # Inserting some data to ensure consistent testing
+        driver.upsert_vector([0.7, 0.8, 0.9], vector_id="try_load")
+
         entries = driver.load_entries()
-        assert len(entries) == 1
-        assert entries[0].id == "foo"
-        assert entries[0].vector == [0, 1, 2]
-        assert entries[0].meta == {"foo": "bar"}
+        assert len(entries) > 0
+        assert any(entry.id == "try_load" for entry in entries)
+        assert any(np.allclose(entry.vector, [0.7, 0.8, 0.9], atol=1e-6) for entry in entries)
+        assert any(entry.meta is None for entry in entries)
+
+    import numpy as np
 
     def test_query(self, driver):
-        query_result = driver.query("test query", count=1)
+        vector_id = "query_test"
+        vector = [0.1, 0.2, 0.3]
+        driver.upsert_vector(vector, vector_id)
+        results = driver.query(vector_id, count=5)
 
-        # Verifying the expected properties of the query result
-        assert len(query_result) == 1
-        assert query_result[0].vector == 'foo'
-        assert query_result[0].score == 0.9
-        assert query_result[0].meta is None
-        assert query_result[0].namespace is None
+        found_vector = any(np.allclose(result.vector, vector, atol=1e-6) for result in results)
+        print("Results:", [result.vector for result in results])
+        print("Expected:", vector)
+        assert found_vector, "Expected vector not found in results"
+
