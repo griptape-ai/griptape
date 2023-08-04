@@ -17,13 +17,20 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
+    def _get_input(self, prompt: str) -> any:
+        if self.model.startswith("llama"):
+            return [
+                [
+                    {"role": "user", "content": prompt},
+                ]
+            ]
+        elif self.model.startswith("falcon"):
+            return prompt
+        return prompt
+
     def try_run(self, value: str) -> TextArtifact:
         payload = {
-            "inputs": [
-                [
-                    {"role": "user", "content": value},
-                ]
-            ],
+            "inputs": self._get_input(value),
             "parameters": {
                 "max_new_tokens": self.tokenizer.tokens_left(value),
                 "temperature": self.temperature,
