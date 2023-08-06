@@ -25,7 +25,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         for i in prompt_stack.inputs:
             if i.is_system():
-                prompt_lines.append(f"\n\nHuman: {i.content}")
+                prompt_lines.append(f"Human: {i.content}")
             elif i.is_user():
                 prompt_lines.append(f"Human: {i.content}")
             elif i.is_assistant():
@@ -33,7 +33,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         prompt_lines.append("Assistant:")
 
-        return "\n\n".join(prompt_lines)
+        return "\n\n" + "\n\n".join(prompt_lines)
 
     def __run_completion(self, prompt_stack: PromptStack) -> TextArtifact:
         client = anthropic.Client(self.api_key)
