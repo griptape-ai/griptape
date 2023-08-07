@@ -32,7 +32,7 @@ class TestPromptSubtask:
         context = subtask.full_context
 
         assert context["foo"] == "bar"
-        assert context["input"] == parent.output.to_text()
+        assert context["parent_output"] == parent.output.to_text()
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child
