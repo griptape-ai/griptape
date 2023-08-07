@@ -222,13 +222,13 @@ class TestPipeline:
 
         context = pipeline.context(task)
 
-        assert context["input"] is None
+        assert context["parent_output"] is None
 
         pipeline.run()
 
         context = pipeline.context(task)
 
-        assert context["input"] == parent.output.to_text()
+        assert context["parent_output"] == parent.output.to_text()
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child
