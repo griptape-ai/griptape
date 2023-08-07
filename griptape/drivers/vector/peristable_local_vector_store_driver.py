@@ -12,7 +12,7 @@ from griptape.drivers import LocalVectorStoreDriver
 @define
 class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
     """
-    Version of the LocalVectorStoreDriver that allows to serialize to a local file using either json or a zip 
+    Version of the LocalVectorStoreDriver that allows to serialize to a local file using either json or a zip
     depending on the suffix of the given file path.
 
     :param file_path: `pathlib.Path` or path as string. Name and location of the save file. Extension must be zip or
@@ -21,6 +21,13 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
 
     file_path: Union[Path, str] = field(kw_only=True, converter=Path)
     file_is_zip: bool = field(init=False)
+
+    @classmethod
+    def from_saved(cls, file_path) -> "PersistableLocalVectorStoreDriver":
+        """Named Constructor that initialises an instance from a serialized one"""
+        instance = cls(file_path=file_path)
+        instance.load()
+        return instance
 
     @file_path.validator
     def _check_file_path(self, attribute, value):
@@ -55,7 +62,7 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
     def store(self, overwrite=False):
         """Serialize the entries of the vectorstore. Will not overwrite an existing file unless overwrite=True"""
 
-        write_mode = cast(Literal["w", "x"], "x" if not overwrite else "w")
+        write_mode = cast(Literal["w", "x"], "w" if overwrite else "x")
 
         if self.file_is_zip:
             with ZipFile(self.file_path, write_mode) as z_f:
@@ -83,9 +90,4 @@ class PersistableLocalVectorStoreDriver(LocalVectorStoreDriver):
                     object_hook=self._EntryAwareJSONEncoder.json_deserialize_vector_store_entry,
                 )
 
-    @classmethod
-    def from_saved(cls, file_path) -> "PersistableLocalVectorStoreDriver":
-        """Named Constructor that initialises an instance from a serialized one"""
-        instance = cls(file_path=file_path)
-        instance.load()
-        return instance
+
