@@ -30,7 +30,7 @@ class OpenAiPromptDriver(BasePromptDriver):
 
     def _base_params(self, value: str) -> dict:
         return {
-            "model": self.tokenizer.model,
+            "model": self.model,
             "max_tokens": self.max_tokens if self.max_tokens else self.tokenizer.tokens_left(value),
             "temperature": self.temperature,
             "stop": self.tokenizer.stop_sequences,

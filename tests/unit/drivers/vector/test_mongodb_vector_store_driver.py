@@ -54,34 +54,6 @@ class TestMongoDbAtlasVectorStoreDriver:
             assert result.vector == expected.vector
             assert isinstance(result, BaseVectorStoreDriver.QueryResult)
 
-    # def test_query(self, driver):
-    #     query_str = "foo"  # Your query string here
-    #     count = 5
-    #     namespace = "optional namespace"
-    #     include_vectors = False
-    #     offset = 0
-    #     index = "knn"  # Optional index name, change if you've set a different one
-    #
-    #     # You can replace the following with actual insertion or make sure the required data is in your database
-    #     vector = [0.1, 0.2]
-    #     vector_id_str = "query_test_vector"
-    #     driver.upsert_vector(vector, vector_id=vector_id_str)
-    #
-    #     # Query the database
-    #     results = driver.query(
-    #         query=query_str,
-    #         count=count,
-    #         namespace=namespace,
-    #         include_vectors=include_vectors,
-    #         offset=offset,
-    #         index=index
-    #     )
-    #
-    #     # Check the results
-    #     assert results is not None and len(results) > 0
-    #     for result in results:
-    #         assert result.vector == vector if include_vectors else result.vector is None
-
     def test_load_entry(self, driver):
         vector_id_str = "123"
         vector = [0.5, 0.5, 0.5]
