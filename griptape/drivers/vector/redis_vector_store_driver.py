@@ -22,7 +22,8 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             host=self.host,
             port=self.port,
             db=self.db,
-            password=self.password
+            password=self.password,
+            decode_responses=False
         )
 
     def upsert_vector(
@@ -35,22 +36,29 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
         key = f'{namespace}:{vector_id}' if namespace else vector_id
-        bytes_vector = np.array(vector, dtype=np.float32).tobytes()
+
+        # Convert the vector to a JSON-encoded UTF-8 byte string
+        bytes_vector = json.dumps(vector).encode('utf-8')
+
         mapping_obj = {
-            "vector": bytes_vector
+            "vector": np.array(vector, dtype=np.float32).tobytes(),
+            "vec_string": bytes_vector
         }
         if meta:
             mapping_obj["metadata"] = json.dumps(meta)
+
         self.client.hset(key, mapping=mapping_obj)
         return vector_id
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         key = f'{namespace}:{vector_id}' if namespace else vector_id
         result = self.client.hgetall(key)
-        #print("Load result:", result)
-        #reversed_vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()
+        print("Load Result vector: ", result)
+
         reversed_vector = np.frombuffer(result[b"vector"], dtype=np.float32)
+        print("Reversed vector: ", reversed_vector)
         reversed_vector_list = reversed_vector.tolist()
+        print("Reversed vector List: ", reversed_vector_list)
 
         if result:
             value = {
@@ -66,49 +74,53 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return None
 
-    # decode("utf-8")
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         pattern = f'{namespace}:*' if namespace else '*'
         keys = self.client.keys(pattern)
-        #print("Keys: ", keys)
+        # print("Keys: ", keys)
         entries = []
         for key in keys:
             entries.append(self.load_entry(key.decode("utf-8"), namespace=namespace))
-        #print("Entries: ", entries)
+        # print("Entries: ", entries)
         return entries
 
-    def query(self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, **kwargs) -> \
+    def query(self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs) -> \
             List[BaseVectorStoreDriver.QueryResult]:
-
         # Define the query expression
+
         query_expression = (
-            Query(f"*=>[KNN {count or 10} @vector $vec as score]")
+            Query(f"*=>[KNN {count or 10} @vector $vector as score]")
             .sort_by("score")
-            .return_fields("vector", "score")
+            .return_fields("id", "score", "vector", "vec_string")
             .paging(0, count or 10)
             .dialect(2)
         )
 
         query_params = {
-            "vector": query
+            "vector": np.array(vector, dtype=np.float32).tobytes()
         }
 
         # Execute the search
         results = self.client.ft(self.index).search(query_expression, query_params).docs
+        print("Results in Driver: ", results)
 
         query_results = []
         for document in results:
-            vector_float = np.frombuffer(document['vector'], dtype=np.float32)
-            vector_float_list = vector_float.tolist()
-            print("Document:", document)
+            print("Type:", type(document['vector']))
+            print("Content:", document['vector'])
+            #print("Bytes data: ", bytes_data)
+            # vector_float = np.frombuffer(document["vector"], dtype=np.float32)
+            # vector_float_list = vector_float.tolist()
+            vector_float_list = json.loads(document["vec_string"])
+            #print("Document:", document)
 
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
                     vector=vector_float_list,
                     score=float(document['score']),
-                    meta=None,  # Adjust if metadata is available
-                    namespace=None  # Adjust if namespace is needed
+                    meta=None,
+                    namespace=None
                 )
             )
-
         return query_results
+
