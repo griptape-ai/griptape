@@ -57,9 +57,7 @@ class PromptTask(BaseTask):
 
         stack.add_system_input(self.render_system_prompt())
 
-        if memory and len(memory.runs) > 0:
-            # Don't include the latest run since it's already included
-            # in the current task.
+        if memory:
             for r in memory.runs:
                 stack.add_user_input(r.input)
                 stack.add_assistant_input(r.output)
