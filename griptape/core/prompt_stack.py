@@ -23,14 +23,7 @@ class PromptStack:
         def is_assistant(self) -> bool:
             return self.role == PromptStack.ASSISTANT_ROLE
 
-    initial_input: Optional[Input] = field(default=None)
-    inputs: list[Input] = field(
-        default=Factory(
-            lambda self: [self.initial_input] if self.initial_input else [],
-            takes_self=True
-        ),
-        kw_only=True
-    )
+    inputs: list[Input] = field(factory=list, kw_only=True)
 
     def add_input(self, content: str, role: str) -> Input:
         self.inputs.append(

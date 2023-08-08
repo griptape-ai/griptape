@@ -75,7 +75,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                     column_names,
                     self.prompt_driver.run(
                         PromptStack(
-                            PromptStack.Input(full_text, role=PromptStack.USER_ROLE)
+                            inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)]
                         )
                     ).value
                 )
@@ -94,7 +94,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                     column_names,
                     self.prompt_driver.run(
                         PromptStack(
-                            PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)
+                            inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)]
                         )
                     ).value
                 )

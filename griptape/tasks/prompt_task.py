@@ -60,9 +60,7 @@ class PromptTask(BaseTask):
         )
 
         if memory:
-            for r in memory.runs:
-                stack.add_user_input(r.input)
-                stack.add_assistant_input(r.output)
+            memory.add_to_prompt_stack(stack)
 
         stack.add_user_input(self.input.to_text())
 

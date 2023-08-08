@@ -52,7 +52,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
         return self.prompt_driver.run(
             PromptStack(
-                PromptStack.Input(message, role=PromptStack.USER_ROLE)
+                inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)]
             )
         )
 

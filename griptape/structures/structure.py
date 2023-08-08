@@ -12,7 +12,6 @@ from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
 from griptape.tasks import ToolkitTask
-from griptape.tokenizers import TiktokenTokenizer
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -105,35 +104,6 @@ class Structure(ABC):
             "args": self.execution_args,
             "structure": self,
         }
-
-    def add_memory_to_prompt_stack(self, system_prompt: str, task_prompt: str) -> list[str]:
-        prompt_stack = [
-            system_prompt
-        ]
-
-        if self.memory:
-            if self.autoprune_memory:
-                last_n = len(self.memory.runs)
-                should_prune = True
-
-                while should_prune and last_n > 0:
-                    temp_prompt_stack = prompt_stack.copy()
-                    temp_prompt_stack.append(task_prompt)
-
-                    temp_prompt_stack.append(self.memory.to_prompt_string(last_n))
-
-                    if self.prompt_driver.tokenizer.tokens_left(self.stack_to_prompt_string(temp_prompt_stack)) > 0:
-                        should_prune = False
-                    else:
-                        last_n -= 1
-
-                prompt_stack.append(self.memory.to_prompt_string(last_n))
-            else:
-                prompt_stack.append(self.memory.to_prompt_string())
-
-        prompt_stack.append(task_prompt)
-
-        return prompt_stack
 
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask:

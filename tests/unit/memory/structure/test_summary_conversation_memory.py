@@ -1,4 +1,6 @@
 import json
+
+from griptape.core import PromptStack
 from griptape.memory.structure import SummaryConversationMemory, Run
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.tasks import PromptTask
@@ -38,6 +40,18 @@ class TestSummaryConversationMemory:
 
         assert memory.summary is not None
         assert memory.summary_index == 3
+
+    def test_add_to_prompt_stack(self):
+        memory = SummaryConversationMemory(summary="foobar")
+        run = Run(input="foo", output="bar")
+        prompt_stack = PromptStack()
+
+        memory.add_run(run)
+        memory.add_to_prompt_stack(prompt_stack)
+
+        assert prompt_stack.inputs[0].content == "Summary of the conversation so far: foobar"
+        assert prompt_stack.inputs[1].content == "foo"
+        assert prompt_stack.inputs[2].content == "bar"
 
     def test_to_json(self):
         memory = SummaryConversationMemory()
