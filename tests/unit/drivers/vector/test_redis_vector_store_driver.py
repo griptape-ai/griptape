@@ -1,57 +1,58 @@
 import pytest
-from griptape.drivers import RedisVectorStoreDriver
+import redis
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-import numpy as np
+from griptape.drivers import RedisVectorStoreDriver
 
 
-class TestRedisVectorStoreDriver:
-    @pytest.fixture(scope="module")
+class TestRedisVectorStorageDriver:
+
+    @pytest.fixture(autouse=True)
+    def mock_redis(self, mocker):
+        # Create a fake hgetall response for our mock Redis client
+        fake_hgetall_response = {
+            b"vector": b'\x00\x00\x80?\x00\x00\x00@\x00\x00@@',
+            b"vec_string": b'[1.0, 2.0, 3.0]',
+            b"metadata": b'{"foo": "bar"}'
+        }
+
+        # Mock Redis methods that our driver will call
+        mocker.patch.object(redis.StrictRedis, "hset", return_value=None)
+        mocker.patch.object(redis.StrictRedis, "hgetall", return_value=fake_hgetall_response)
+        mocker.patch.object(redis.StrictRedis, "keys", return_value=[b"some_namespace:some_vector_id"])
+
+        # If the ft method is being used, mock it directly, but avoid using autospec on the whole Redis object.
+        mocker.patch.object(redis.StrictRedis, "ft", return_value=mocker.MagicMock(
+            search=mocker.MagicMock(return_value=mocker.MagicMock(docs=[]))))
+
+    @pytest.fixture
     def driver(self):
-        # Make sure the Redis server is running with this configuration
         return RedisVectorStoreDriver(
-            host='redis-12146.c10.us-east-1-2.ec2.cloud.redislabs.com',  # Replace with your host
-            port=12146,  # Replace with your port (e.g., 6379)
-            password='SmilingatGriptape',  # Replace with your password if required
+            host="localhost",
+            port=6379,
+            index="test_index",
             db=0,
-            index='idx1',
-            embedding_driver=MockEmbeddingDriver(),  # Replace with the actual embedding driver if needed
+            embedding_driver=MockEmbeddingDriver()
         )
 
     def test_upsert_vector(self, driver):
-        assert driver.upsert_vector([0.1, 0.2, 0.3], vector_id="foo") == "foo"
+        assert driver.upsert_vector([1.0, 2.0, 3.0], vector_id="some_vector_id") == "some_vector_id"
 
     def test_load_entry(self, driver):
-        # Insert the expected entry into Redis using the upsert method
-        entry_id = "foo2"
-        vector = [2, 3, 4]
-        metadata = {"foo": "bar"}
-        driver.upsert_vector(vector, entry_id, None, metadata)
-
-        entry = driver.load_entry("foo2")
-        assert entry.id == "foo2"
-        assert entry.vector == [2, 3, 4]
-        assert entry.meta == {"foo": "bar"}  # This should now pass
+        entry = driver.load_entry("some_vector_id")
+        assert entry.id == "some_vector_id"
+        assert entry.vector == [1.0, 2.0, 3.0]
+        assert entry.meta == {"foo": "bar"}
 
     def test_load_entries(self, driver):
-        # Inserting some data to ensure consistent testing
-        driver.upsert_vector([0.7, 0.8, 0.9], vector_id="try_load")
-
         entries = driver.load_entries()
-        assert len(entries) > 0
-        assert any(entry.id == "try_load" for entry in entries)
-        assert any(np.allclose(entry.vector, [0.7, 0.8, 0.9], atol=1e-6) for entry in entries)
-        assert any(entry.meta is None for entry in entries)
-
-    import numpy as np
+        assert len(entries) == 1
+        assert entries[0].vector == [1.0, 2.0, 3.0]
+        assert entries[0].meta == {"foo": "bar"}
 
     def test_query(self, driver):
-        vector_id = "query_test"
-        vector = [0.1, 0.2, 0.3]
-        driver.upsert_vector(vector, vector_id)
-        results = driver.query(vector_id, count=5)
+        # Since the mock search result returns empty docs, this should be an empty list
+        assert driver.query([1.0, 2.0, 3.0]) == []
 
-        found_vector = any(np.allclose(result.vector, vector, atol=1e-6) for result in results)
-        print("Results:", [result.vector for result in results])
-        print("Expected:", vector)
-        assert found_vector, "Expected vector not found in results"
+
+
 

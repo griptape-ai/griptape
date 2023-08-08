@@ -53,12 +53,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         key = f'{namespace}:{vector_id}' if namespace else vector_id
         result = self.client.hgetall(key)
-        print("Load Result vector: ", result)
 
         reversed_vector = np.frombuffer(result[b"vector"], dtype=np.float32)
-        print("Reversed vector: ", reversed_vector)
         reversed_vector_list = reversed_vector.tolist()
-        print("Reversed vector List: ", reversed_vector_list)
 
         if result:
             value = {
@@ -77,11 +74,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         pattern = f'{namespace}:*' if namespace else '*'
         keys = self.client.keys(pattern)
-        # print("Keys: ", keys)
         entries = []
         for key in keys:
             entries.append(self.load_entry(key.decode("utf-8"), namespace=namespace))
-        # print("Entries: ", entries)
         return entries
 
     def query(self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs) -> \
@@ -102,17 +97,10 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         # Execute the search
         results = self.client.ft(self.index).search(query_expression, query_params).docs
-        print("Results in Driver: ", results)
 
         query_results = []
         for document in results:
-            print("Type:", type(document['vector']))
-            print("Content:", document['vector'])
-            #print("Bytes data: ", bytes_data)
-            # vector_float = np.frombuffer(document["vector"], dtype=np.float32)
-            # vector_float_list = vector_float.tolist()
             vector_float_list = json.loads(document["vec_string"])
-            #print("Document:", document)
 
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
@@ -123,4 +111,3 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
                 )
             )
         return query_results
-
