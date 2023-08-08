@@ -55,7 +55,9 @@ class PromptTask(BaseTask):
         stack = PromptStack()
         memory = self.structure.memory
 
-        stack.add_system_input(self.render_system_prompt())
+        stack.add_system_input(
+            self.system_template_generator()
+        )
 
         if memory:
             for r in memory.runs:
@@ -89,6 +91,3 @@ class PromptTask(BaseTask):
             return self.structure.prompt_driver
         else:
             return self.prompt_driver
-
-    def render_system_prompt(self) -> str:
-        return self.system_template_generator()
