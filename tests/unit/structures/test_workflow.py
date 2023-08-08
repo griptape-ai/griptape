@@ -202,13 +202,13 @@ class TestWorkflow:
 
         context = workflow.context(task)
 
-        assert context["inputs"] == {parent.id: ""}
+        assert context["parent_outputs"] == {parent.id: ""}
 
         workflow.run()
 
         context = workflow.context(task)
 
-        assert context["inputs"] == {parent.id: parent.output.to_text()}
+        assert context["parent_outputs"] == {parent.id: parent.output.to_text()}
         assert context["structure"] == workflow
         assert context["parents"] == {parent.id: parent}
         assert context["children"] == {child.id: child}
