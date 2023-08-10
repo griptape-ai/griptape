@@ -26,6 +26,19 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
 
                 return result
 
+    def default_prompt(self, prompt_stack: PromptStack) -> str:
+        prompt_lines = []
+
+        for i in prompt_stack.inputs:
+            if i.is_system():
+                prompt_lines.append(i.content)
+            elif i.is_user():
+                prompt_lines.append(f"User: {i.content}")
+            elif i.is_assistant():
+                prompt_lines.append(f"Assistant: {i.content}")
+
+        return "\n\n".join(prompt_lines)
+
     @abstractmethod
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         ...
