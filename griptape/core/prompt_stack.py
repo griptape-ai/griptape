@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import Optional
-from attr import define, field, Factory
+from attr import define, field
 
 
 @define
 class PromptStack:
+    GENERIC_ROLE = "generic"
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
@@ -13,6 +13,9 @@ class PromptStack:
     class Input:
         content: str
         role: str
+
+        def is_generic(self) -> bool:
+            return self.role == PromptStack.GENERIC_ROLE
 
         def is_system(self) -> bool:
             return self.role == PromptStack.SYSTEM_ROLE
@@ -34,6 +37,9 @@ class PromptStack:
         )
 
         return self.inputs[-1]
+
+    def add_generic_input(self, content: str) -> Input:
+        return self.add_input(content, self.GENERIC_ROLE)
 
     def add_system_input(self, content: str) -> Input:
         return self.add_input(content, self.SYSTEM_ROLE)

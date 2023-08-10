@@ -30,12 +30,12 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
-            if i.is_system():
-                prompt_lines.append(i.content)
-            elif i.is_user():
+            if i.is_user():
                 prompt_lines.append(f"User: {i.content}")
             elif i.is_assistant():
                 prompt_lines.append(f"Assistant: {i.content}")
+            else:
+                prompt_lines.append(i.content)
 
         return "\n\n".join(prompt_lines)
 

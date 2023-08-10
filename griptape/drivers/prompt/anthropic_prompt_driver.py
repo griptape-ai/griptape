@@ -21,12 +21,10 @@ class AnthropicPromptDriver(BasePromptDriver):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
-            if i.is_system():
-                prompt_lines.append(f"Human: {i.content}")
-            elif i.is_user():
-                prompt_lines.append(f"Human: {i.content}")
-            elif i.is_assistant():
+            if i.is_assistant():
                 prompt_lines.append(f"Assistant: {i.content}")
+            else:
+                prompt_lines.append(f"Human: {i.content}")
 
         prompt_lines.append("Assistant:")
 

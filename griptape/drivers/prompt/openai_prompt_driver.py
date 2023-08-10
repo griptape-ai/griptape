@@ -44,13 +44,26 @@ class OpenAiPromptDriver(BasePromptDriver):
 
     def _chat_params(self, prompt_stack: PromptStack) -> dict:
         return self._base_params(prompt_stack) | {
-            "messages":  [{"role": i.role, "content": i.content} for i in prompt_stack.inputs]
+            "messages":  [
+                {
+                    "role": self.__to_openai_role(i),
+                    "content": i.content
+                } for i in prompt_stack.inputs
+            ]
         }
 
     def _completion_params(self, prompt_stack: PromptStack) -> dict:
         return self._base_params(prompt_stack) | {
             "prompt": self.default_prompt(prompt_stack),
         }
+
+    def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
+        if prompt_input.is_system():
+            return "system"
+        elif prompt_input.is_assistant():
+            return "assistant"
+        else:
+            return "user"
 
     def __run_chat(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.ChatCompletion.create(**self._chat_params(prompt_stack))
