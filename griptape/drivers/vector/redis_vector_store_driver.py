@@ -2,7 +2,7 @@ from typing import Optional, List
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 import redis
-from attr import define, field
+from attr import define, field, Factory
 import json
 from redis.commands.search.query import Query
 import numpy as np
@@ -14,17 +14,20 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     port: int = field(kw_only=True)
     db: int = field(kw_only=True, default=0)
     password: Optional[str] = field(default=None, kw_only=True)
-    client: redis.StrictRedis = field(init=False)
     index: str = field(kw_only=True)
 
-    def __attrs_post_init__(self) -> None:
-        self.client = redis.StrictRedis(
+    client: redis.StrictRedis = field(
+        default=Factory(lambda self: redis.Redis(
             host=self.host,
             port=self.port,
             db=self.db,
             password=self.password,
             decode_responses=False
-        )
+        ), takes_self=True)
+    )
+
+    def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
+        return f'{namespace}:{vector_id}' if namespace else vector_id
 
     def upsert_vector(
             self,
@@ -35,9 +38,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             **kwargs
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
-        key = f'{namespace}:{vector_id}' if namespace else vector_id
-
-        # Convert the vector to a JSON-encoded UTF-8 byte string
+        key = self._generate_key(vector_id, namespace)
         bytes_vector = json.dumps(vector).encode('utf-8')
 
         mapping_obj = {
@@ -51,7 +52,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         return vector_id
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        key = f'{namespace}:{vector_id}' if namespace else vector_id
+        key = self._generate_key(vector_id, namespace)
         result = self.client.hgetall(key)
 
         reversed_vector = np.frombuffer(result[b"vector"], dtype=np.float32)
@@ -81,7 +82,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
     def query(self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs) -> \
             List[BaseVectorStoreDriver.QueryResult]:
-        # Define the query expression
 
         query_expression = (
             Query(f"*=>[KNN {count or 10} @vector $vector as score]")
@@ -95,13 +95,11 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             "vector": np.array(vector, dtype=np.float32).tobytes()
         }
 
-        # Execute the search
         results = self.client.ft(self.index).search(query_expression, query_params).docs
 
         query_results = []
         for document in results:
             vector_float_list = json.loads(document["vec_string"])
-
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
                     vector=vector_float_list,

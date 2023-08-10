@@ -52,7 +52,3 @@ class TestRedisVectorStorageDriver:
     def test_query(self, driver):
         # Since the mock search result returns empty docs, this should be an empty list
         assert driver.query([1.0, 2.0, 3.0]) == []
-
-
-
-
