@@ -48,18 +48,8 @@ class OpenAiPromptDriver(BasePromptDriver):
         }
 
     def _completion_params(self, prompt_stack: PromptStack) -> dict:
-        prompt_lines = []
-
-        for i in prompt_stack.inputs:
-            if i.is_system():
-                prompt_lines.append(i.content)
-            elif i.is_user():
-                prompt_lines.append(f"User: {i.content}")
-            elif i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
-
         return self._base_params(prompt_stack) | {
-            "prompt": "\n".join(prompt_lines),
+            "prompt": self.default_prompt(prompt_stack),
         }
 
     def __run_chat(self, prompt_stack: PromptStack) -> TextArtifact:
