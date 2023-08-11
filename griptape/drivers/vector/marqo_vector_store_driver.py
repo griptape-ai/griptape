@@ -67,7 +67,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         if namespace:
             doc['namespace'] = namespace
 
-        response = self.mq.index(self.index).add_documents([doc], non_tensor_fields=["meta", "namespace"])
+        response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description"])
         return response["items"][0]["_id"]
 
     def upsert_text_artifact(
@@ -97,7 +97,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             "namespace": namespace
         }
 
-        response = self.mq.index(self.index).add_documents([doc], non_tensor_fields=["meta", "namespace", "artifact"])
+        response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
         return response["items"][0]["_id"]
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
