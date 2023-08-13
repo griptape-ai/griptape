@@ -29,7 +29,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         prompt_lines.append("Assistant:")
 
         prompt = "\n\n" + "\n\n".join(prompt_lines)
-        response = anthropic.Client(self.api_key).completion(
+        response = anthropic.Anthropic(api_key=self.api_key).completions.create(
             prompt=prompt,
             stop_sequences=self.tokenizer.stop_sequences,
             model=self.model,
@@ -37,4 +37,4 @@ class AnthropicPromptDriver(BasePromptDriver):
             temperature=self.temperature,
         )
 
-        return TextArtifact(value=response["completion"])
+        return TextArtifact(value=response.completion)

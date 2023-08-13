@@ -17,7 +17,7 @@ class AnthropicTokenizer(BaseTokenizer):
         return self.DEFAULT_MAX_TOKENS
 
     def encode(self, text: str) -> list[int]:
-        return anthropic.get_tokenizer().encode(text).ids
+        return anthropic._client.sync_get_tokenizer().encode(text).ids
 
     def decode(self, tokens: list[int]) -> str:
-        return anthropic.get_tokenizer().decode(tokens)
+        return anthropic._client.sync_get_tokenizer().decode(tokens)
