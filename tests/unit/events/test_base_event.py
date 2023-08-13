@@ -1,11 +1,10 @@
-import datetime
+import time
 from tests.mocks.mock_event import MockEvent
 
 
 class TestBaseEvent:
     def test_timestamp(self):
-        dt = datetime.datetime.now()
+        dt = time.time()
 
-        assert MockEvent().timestamp is not None
         assert MockEvent(timestamp=dt).timestamp == dt
-        
+        assert MockEvent().timestamp >= dt
