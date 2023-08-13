@@ -5,10 +5,9 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class TiktokenTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_GPT_3_MODEL = "gpt-3.5-turbo"
+    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "davinci"
+    DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
     DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
-    DEFAULT_AZURE_OPENAI_GPT_3_MODEL = "gpt-35-turbo"
-    DEFAULT_AZURE_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
     TOKEN_OFFSET = 8
@@ -18,8 +17,8 @@ class TiktokenTokenizer(BaseTokenizer):
         "gpt-4": 8192,
         "gpt-3.5-turbo-16k": 16384,
         "gpt-3.5-turbo": 4096,
-        "gpt-35-turbo-16k": 16384,  # Azure OpenAI
-        "gpt-35-turbo": 4096,  # Azure OpenAI
+        "gpt-35-turbo-16k": 16384,
+        "gpt-35-turbo": 4096,
         "text-davinci-003": 4097,
         "text-davinci-002": 4097,
         "code-davinci-002": 8001,
@@ -32,13 +31,7 @@ class TiktokenTokenizer(BaseTokenizer):
         "text-embedding-ada-001"
     ]
 
-    CHAT_API_PREFIXES = [
-        "gpt-4",
-        "gpt-3.5-turbo",
-        "gpt-35-turbo"  # Azure OpenAI
-    ]
-
-    model: str = field(default=DEFAULT_OPENAI_GPT_3_MODEL, kw_only=True)
+    model: str = field(default=DEFAULT_OPENAI_GPT_3_CHAT_MODEL, kw_only=True)
 
     @property
     def encoding(self) -> tiktoken.Encoding:
@@ -59,6 +52,3 @@ class TiktokenTokenizer(BaseTokenizer):
 
     def decode(self, tokens: list[int]) -> str:
         return self.encoding.decode(tokens)
-
-    def is_chat(self) -> bool:
-        return any(self.model.startswith(p) for p in self.CHAT_API_PREFIXES)

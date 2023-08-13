@@ -3,7 +3,7 @@ from attr import define, Factory, field
 from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.core import PromptStack
-from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 
@@ -23,7 +23,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver()),
         kw_only=True
     )
     chunker: BaseChunker = field(

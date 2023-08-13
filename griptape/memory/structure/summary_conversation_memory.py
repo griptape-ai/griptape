@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING
 from typing import Optional
 from attr import define, field, Factory
-from griptape.drivers import OpenAiPromptDriver
+from griptape.drivers import OpenAiChatPromptDriver
 from griptape.schemas import SummaryConversationMemorySchema
 from griptape.utils import J2
 from griptape.memory.structure import ConversationMemory
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver()),
         kw_only=True
     )
     summary: Optional[str] = field(default=None, kw_only=True)

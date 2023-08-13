@@ -55,12 +55,12 @@ During the run, the Griptape agent loaded a webpage, stored its full content in 
 By default, Griptape uses OpenAI's `gpt-4` to drive the core agent logic. Other framework components responsible for summarization, querying, and text extraction use `gpt-3.5-turbo`. All of those are customizable through _prompt drivers_. For example, if you don't have access to `gpt-4`, you can change the quick start snippet like this:
 
 ```python
-from griptape.drivers import OpenAiPromptDriver
+from griptape.drivers import OpenAiChatPromptDriver
 from griptape.structures import Agent
 from griptape.tools import WebScraper
 
 agent = Agent(
-    prompt_driver=OpenAiPromptDriver(
+    prompt_driver=OpenAiChatPromptDriver(
         model="gpt-3.5-turbo"
     ),
     tools=[WebScraper()]
@@ -74,7 +74,7 @@ agent.run(
 If you are running into `gpt-4` rate limiting issues, specify a custom number of `max_tokens` in the driver:
 
 ```python
-OpenAiPromptDriver(
+OpenAiChatPromptDriver(
     model="gpt-4",
     max_tokens=200
 )

@@ -6,7 +6,7 @@ from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
@@ -23,7 +23,7 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver()),
         kw_only=True
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)

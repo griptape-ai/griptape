@@ -4,7 +4,7 @@ from attr import field, Factory, define
 from griptape.artifacts import TextArtifact, CsvRowArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.core import PromptStack
-from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 
@@ -24,7 +24,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver()),
         kw_only=True
     )
     chunker: BaseChunker = field(
