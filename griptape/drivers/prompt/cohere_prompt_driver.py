@@ -19,12 +19,13 @@ class CoherePromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        prompt = self.default_prompt(prompt_stack)
         result = self.client.generate(
-            prompt=self.default_prompt(prompt_stack),
+            prompt=prompt,
             model=self.model,
             temperature=self.temperature,
             end_sequences=self.tokenizer.stop_sequences,
-            max_tokens=self.max_tokens
+            max_tokens=self.max_output_tokens(prompt)
         )
 
         if len(result.generations) == 1:

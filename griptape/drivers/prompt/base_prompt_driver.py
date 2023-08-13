@@ -19,6 +19,12 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     model: str
     tokenizer: BaseTokenizer
 
+    def max_output_tokens(self, prompt: str) -> int:
+        if self.max_tokens:
+            return self.max_tokens
+        else:
+            return self.tokenizer.tokens_left(prompt)
+
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:

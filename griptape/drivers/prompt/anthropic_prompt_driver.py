@@ -33,7 +33,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             prompt=prompt,
             stop_sequences=self.tokenizer.stop_sequences,
             model=self.model,
-            max_tokens_to_sample=self.tokenizer.tokens_left(prompt),
+            max_tokens_to_sample=self.max_output_tokens(prompt),
             temperature=self.temperature,
         )
 
