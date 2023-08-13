@@ -1,7 +1,11 @@
-import pytest
-from griptape.events import BaseEvent
+import datetime
+from tests.mocks.mock_event import MockEvent
+
 
 class TestBaseEvent:
-    @pytest.fixture
-    def base_event(self):
-        return BaseEvent()
+    def test_timestamp(self):
+        dt = datetime.datetime.now()
+
+        assert MockEvent().timestamp is not None
+        assert MockEvent(timestamp=dt).timestamp == dt
+        
