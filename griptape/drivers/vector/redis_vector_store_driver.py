@@ -55,10 +55,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         key = self._generate_key(vector_id, namespace)
         result = self.client.hgetall(key)
 
-        reversed_vector = np.frombuffer(result[b"vector"], dtype=np.float32)
-        reversed_vector_list = reversed_vector.tolist()
-
         if result:
+            reversed_vector = np.frombuffer(result[b"vector"], dtype=np.float32)
+            reversed_vector_list = reversed_vector.tolist()
             value = {
                 "vector": reversed_vector_list,
                 "metadata": json.loads(result[b"metadata"]) if b"metadata" in result else None
@@ -87,7 +86,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         query_expression = (
             Query(f"*=>[KNN {count or 10} @vector $vector as score]")
             .sort_by("score")
-            .return_fields("id", "score", "namespace", "metadata", "vec_string")
+            .return_fields("id", "score", "metadata", "vec_string")
             .paging(0, count or 10)
             .dialect(2)
         )
@@ -100,13 +99,15 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_results = []
         for document in results:
+            metadata = getattr(document, "metadata", None)
+            namespace = document.id.split(":")[0] if ":" in document.id else None
             vector_float_list = json.loads(document["vec_string"])
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
                     vector=vector_float_list,
                     score=float(document['score']),
-                    meta=None,
-                    namespace=None
+                    meta=metadata,
+                    namespace=namespace
                 )
             )
         return query_results

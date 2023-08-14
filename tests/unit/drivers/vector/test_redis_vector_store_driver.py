@@ -35,7 +35,7 @@ class TestRedisVectorStorageDriver:
         )
 
     def test_upsert_vector(self, driver):
-        assert driver.upsert_vector([1.0, 2.0, 3.0], vector_id="some_vector_id") == "some_vector_id"
+        assert driver.upsert_vector([1.0, 2.0, 3.0], vector_id="some_vector_id", namespace="trial") == "some_vector_id"
 
     def test_load_entry(self, driver):
         entry = driver.load_entry("some_vector_id")
