@@ -16,7 +16,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     password: Optional[str] = field(default=None, kw_only=True)
     index: str = field(kw_only=True)
 
-    client: redis.StrictRedis = field(
+    client: redis.Redis = field(
         default=Factory(lambda self: redis.Redis(
             host=self.host,
             port=self.port,
