@@ -33,7 +33,7 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
             raise Exception("Completion with more than one choice is not supported yet.")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        prompt = self.default_prompt(prompt_stack)
+        prompt = self.prompt_stack_to_string(prompt_stack)
 
         return {
             "model": self.model,

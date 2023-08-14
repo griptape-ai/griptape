@@ -35,7 +35,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         return {
             "model": self.model,
-            "max_tokens": self.max_tokens,
+            "max_tokens": self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
             "temperature": self.temperature,
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
@@ -51,6 +51,17 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 } for i in prompt_stack.inputs
             ]
         }
+
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        prompt_lines = []
+
+        for i in prompt_stack.inputs:
+            if i.is_assistant():
+                prompt_lines.append(f"Assistant: {i.content}")
+            else:
+                prompt_lines.append(f"User: {i.content}")
+
+        return "\n\n".join(prompt_lines)
 
     def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
         if prompt_input.is_system():

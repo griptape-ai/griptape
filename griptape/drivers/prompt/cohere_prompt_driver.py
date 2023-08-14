@@ -19,7 +19,7 @@ class CoherePromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        prompt = self.default_prompt(prompt_stack)
+        prompt = self.prompt_stack_to_string(prompt_stack)
         result = self.client.generate(
             prompt=prompt,
             model=self.model,

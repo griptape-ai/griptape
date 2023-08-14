@@ -32,7 +32,7 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
 
                 return result
 
-    def default_prompt(self, prompt_stack: PromptStack) -> str:
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         prompt_lines = []
 
         for i in prompt_stack.inputs:
