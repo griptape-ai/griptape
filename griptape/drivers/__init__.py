@@ -26,6 +26,7 @@ from .vector.local_vector_store_driver import LocalVectorStoreDriver
 from .vector.pinecone_vector_store_driver import PineconeVectorStoreDriver
 from .vector.marqo_vector_store_driver import MarqoVectorStoreDriver
 from .vector.mongodb_vector_store_driver import MongoDbAtlasVectorStoreDriver
+from .vector.redis_vector_store_driver import RedisVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -59,6 +60,7 @@ __all__ = [
     "PineconeVectorStoreDriver",
     "MarqoVectorStoreDriver",
     "MongoDbAtlasVectorStoreDriver",
+    "RedisVectorStoreDriver",
 
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
