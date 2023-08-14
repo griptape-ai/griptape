@@ -80,8 +80,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             entries.append(self.load_entry(key.decode("utf-8"), namespace=namespace))
         return entries
 
-    def query(self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs) -> \
-            List[BaseVectorStoreDriver.QueryResult]:
+    def query(
+            self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
+    ) -> List[BaseVectorStoreDriver.QueryResult]:
 
         query_expression = (
             Query(f"*=>[KNN {count or 10} @vector $vector as score]")
@@ -96,6 +97,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         }
 
         results = self.client.ft(self.index).search(query_expression, query_params).docs
+        print("Results: ", results)
 
         query_results = []
         for document in results:
