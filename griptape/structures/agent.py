@@ -20,17 +20,18 @@ class Agent(Structure):
     tools: list[BaseTool] = field(factory=list, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
-        if self.tools:
-            task = ToolkitTask(
-                self.input_template,
-                tools=self.tools
-            )
-        else:
-            task = PromptTask(
-                self.input_template
-            )
+        if len(self.tasks) == 0:
+            if self.tools:
+                task = ToolkitTask(
+                    self.input_template,
+                    tools=self.tools
+                )
+            else:
+                task = PromptTask(
+                    self.input_template
+                )
 
-        self.add_task(task)
+            self.add_task(task)
 
         super().__attrs_post_init__()
 

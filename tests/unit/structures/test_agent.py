@@ -84,6 +84,11 @@ class TestAgent:
         assert len(agent.tasks) == 1
         assert agent.task == second_task
 
+    def test_custom_task(self):
+        task = PromptTask()
+
+        assert Agent(tasks=[task]).task == task
+
     def test_add_tasks(self):
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
