@@ -119,7 +119,7 @@ class ToolkitTask(PromptTask):
                     )
                 elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
-                    subtask.output = TextArtifact(subtask.prompt_template)
+                    subtask.output = TextArtifact(subtask.input_template)
                 else:
                     subtask.before_run()
                     subtask.run()
