@@ -40,33 +40,6 @@ class ToolkitTask(PromptTask):
             raise ValueError("tools have to be unique")
 
     @property
-    def default_system_template_generator(self) -> Callable[[], str]:
-        def template() -> str:
-            memories = [r for r in self.memory if len(r.activities()) > 0]
-            action_schema = utils.minify_json(
-                json.dumps(
-                    ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
-                )
-            )
-
-            return J2("tasks/toolkit_task/system.j2").render(
-                rulesets=self.structure.rulesets,
-                action_schema=action_schema,
-                tool_names=str.join(", ", [tool.name for tool in self.tools]),
-                tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
-                memory_ids=str.join(", ", [memory.id for memory in memories]),
-                memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
-            )
-
-        return template
-
-    @property
-    def default_subtask_template_generator(self) -> Callable[[ActionSubtask], str]:
-        return lambda subtask: J2("tasks/toolkit_task/subtask.j2").render(
-                subtask=subtask
-            )
-
-    @property
     def memory(self) -> list[BaseToolMemory]:
         unique_memory_dict = {}
 
@@ -86,6 +59,28 @@ class ToolkitTask(PromptTask):
             [stack.add_assistant_input(self.subtask_template_generator(s)) for s in self.subtasks]
 
         return stack
+
+    def default_system_template_generator(self, _: PromptTask) -> str:
+        memories = [r for r in self.memory if len(r.activities()) > 0]
+        action_schema = utils.minify_json(
+            json.dumps(
+                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
+            )
+        )
+
+        return J2("tasks/toolkit_task/system.j2").render(
+            rulesets=self.structure.rulesets,
+            action_schema=action_schema,
+            tool_names=str.join(", ", [tool.name for tool in self.tools]),
+            tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
+            memory_ids=str.join(", ", [memory.id for memory in memories]),
+            memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
+        )
+
+    def default_subtask_template_generator(self, subtask: ActionSubtask) -> str:
+        return J2("tasks/toolkit_task/subtask.j2").render(
+            subtask=subtask
+        )
 
     def set_default_tools_memory(self, memory: BaseToolMemory) -> None:
         self.tool_memory = memory
