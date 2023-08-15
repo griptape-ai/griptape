@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @define
 class Agent(StructureWithMemory):
-    prompt_template: str = field(default=PromptTask.DEFAULT_PROMPT_TEMPLATE)
+    input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
     memory: Optional[ConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True
@@ -23,12 +23,12 @@ class Agent(StructureWithMemory):
     def __attrs_post_init__(self) -> None:
         if self.tools:
             task = ToolkitTask(
-                self.prompt_template,
+                self.input_template,
                 tools=self.tools
             )
         else:
             task = PromptTask(
-                self.prompt_template
+                self.input_template
             )
 
         self.add_task(task)
