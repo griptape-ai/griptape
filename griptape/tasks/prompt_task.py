@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(BaseTask):
-    DEFAULT_PROMPT_TEMPLATE = "{{ args[0] }}"
+    DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    prompt_template: str = field(default=DEFAULT_PROMPT_TEMPLATE)
+    input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, any] = field(factory=dict, kw_only=True)
     driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
@@ -23,7 +23,7 @@ class PromptTask(BaseTask):
     def input(self) -> TextArtifact:
         return TextArtifact(
             J2().render_from_string(
-                self.prompt_template,
+                self.input_template,
                 **self.full_context
             )
         )

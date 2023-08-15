@@ -60,7 +60,7 @@ class ActionSubtask(PromptTask):
 
     @property
     def input(self) -> TextArtifact:
-        return TextArtifact(self.prompt_template)
+        return TextArtifact(self.input_template)
 
     @property
     def task(self) -> Optional[ToolkitTask]:
