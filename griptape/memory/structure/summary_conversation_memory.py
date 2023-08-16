@@ -65,8 +65,8 @@ class SummaryConversationMemory(ConversationMemory):
         else:
             return summary_index_runs
 
-    def process_add_run(self, run: Run) -> None:
-        super().process_add_run(run)
+    def try_add_run(self, run: Run) -> None:
+        super().try_add_run(run)
 
         unsummarized_runs = self.unsummarized_runs()
         runs_to_summarize = unsummarized_runs[:max(0, len(unsummarized_runs) - self.offset)]

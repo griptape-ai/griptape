@@ -31,7 +31,7 @@ class ConversationMemory:
 
     def add_run(self, run: Run) -> ConversationMemory:
         self.before_add_run()
-        self.process_add_run(run)
+        self.try_add_run(run)
         self.after_add_run()
 
         return self
@@ -39,7 +39,7 @@ class ConversationMemory:
     def before_add_run(self) -> None:
         pass
 
-    def process_add_run(self, run: Run) -> None:
+    def try_add_run(self, run: Run) -> None:
         self.runs.append(run)
 
     def after_add_run(self) -> None:
