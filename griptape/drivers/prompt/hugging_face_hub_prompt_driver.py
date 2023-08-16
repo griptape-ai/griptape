@@ -1,5 +1,7 @@
 from os import environ
 
+from griptape.core import PromptStack
+
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 
 from attr import define, field, Factory
@@ -26,7 +28,12 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     model: str = field(default=Factory(lambda self: self.repo_id, takes_self=True), kw_only=True)
     client: InferenceApi = field(
         default=Factory(
-            lambda self: InferenceApi(repo_id=self.repo_id, token=self.api_token, gpu=self.use_gpu), takes_self=True
+            lambda self: InferenceApi(
+                repo_id=self.repo_id,
+                token=self.api_token,
+                gpu=self.use_gpu
+            ),
+            takes_self=True
         ),
         kw_only=True
     )
@@ -40,10 +47,12 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: str) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        prompt = self.prompt_stack_to_string(prompt_stack)
+
         if self.client.task in self.SUPPORTED_TASKS:
             response = self.client(
-                inputs=value,
+                inputs=prompt,
                 params=self.DEFAULT_PARAMS | self.params
             )
 
