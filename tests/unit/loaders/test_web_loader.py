@@ -29,7 +29,7 @@ class TestWebLoader:
         )
 
     def test_load(self, loader):
-        artifacts = loader.load("https://github.com/griptape-ai/griptape-tools")
+        artifacts = loader.load("https://github.com/griptape-ai/griptape")
 
         assert len(artifacts) >= 1
         assert "foobar" in artifacts[0].value.lower()
@@ -37,11 +37,11 @@ class TestWebLoader:
     def test_load_collection(self, loader):
         artifacts = loader.load_collection([
             "https://github.com/griptape-ai/griptape",
-            "https://github.com/griptape-ai/griptape-tools"
+            "https://github.com/griptape-ai/griptape-docs"
         ])
 
         assert list(artifacts.keys()) == [
             utils.str_to_hash("https://github.com/griptape-ai/griptape"),
-            utils.str_to_hash("https://github.com/griptape-ai/griptape-tools")
+            utils.str_to_hash("https://github.com/griptape-ai/griptape-docs")
         ]
         assert "foobar" in [a.value for artifact_list in artifacts.values() for a in artifact_list][0].lower()
