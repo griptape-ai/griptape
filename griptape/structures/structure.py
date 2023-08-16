@@ -35,7 +35,6 @@ class Structure(ABC):
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
-    autoprune_memory: bool = field(default=True, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(
         default=Factory(lambda: TextToolMemory()),
         kw_only=True
