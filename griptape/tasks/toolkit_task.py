@@ -21,7 +21,7 @@ class ToolkitTask(PromptTask):
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
-    subtask_template_generator: Callable[[ActionSubtask], str] = field(
+    generate_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(
             lambda self: self.default_subtask_template_generator,
             takes_self=True
@@ -56,7 +56,7 @@ class ToolkitTask(PromptTask):
         stack = super().prompt_stack
 
         if not self.output:
-            [stack.add_assistant_input(self.subtask_template_generator(s)) for s in self.subtasks]
+            [stack.add_assistant_input(self.generate_subtask_template(s)) for s in self.subtasks]
 
         return stack
 

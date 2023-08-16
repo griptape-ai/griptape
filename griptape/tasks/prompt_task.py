@@ -17,7 +17,7 @@ class PromptTask(BaseTask):
     input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, any] = field(factory=dict, kw_only=True)
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
-    system_template_generator: Callable[[PromptTask], str] = field(
+    generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(
             lambda self: self.default_system_template_generator,
             takes_self=True
@@ -50,7 +50,7 @@ class PromptTask(BaseTask):
         memory = self.structure.memory
 
         stack.add_system_input(
-            self.system_template_generator(self)
+            self.generate_system_template(self)
         )
 
         if memory:
