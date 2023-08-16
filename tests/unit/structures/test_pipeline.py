@@ -1,3 +1,5 @@
+import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.memory.tool import TextToolMemory
 from griptape.rules import Rule, Ruleset
@@ -22,9 +24,9 @@ class TestPipeline:
         assert pipeline.memory is None
 
     def test_with_default_tool_memory(self):
-        pipeline = Pipeline(
-            tasks=[ToolkitTask(tools=[MockTool()])]
-        )
+        pipeline = Pipeline()
+
+        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(pipeline.tool_memory, TextToolMemory)
         assert pipeline.tasks[0].tool_memory == pipeline.tool_memory
@@ -33,17 +35,18 @@ class TestPipeline:
         assert pipeline.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
-        pipeline = Pipeline(
-            tasks=[ToolkitTask(tools=[MockTool(output_memory={})])]
-        )
+        pipeline = Pipeline()
+
+        pipeline.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
 
         assert pipeline.tasks[0].tools[0].output_memory == {}
 
     def test_without_default_tool_memory(self):
         pipeline = Pipeline(
             tool_memory=None,
-            tasks=[ToolkitTask(tools=[MockTool()])]
         )
+
+        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert pipeline.tasks[0].tools[0].input_memory is None
         assert pipeline.tasks[0].tools[0].output_memory is None
@@ -68,6 +71,10 @@ class TestPipeline:
         pipeline.run()
 
         assert len(pipeline.memory.runs) == 3
+
+    def test_tasks_validation(self):
+        with pytest.raises(ValueError):
+            Pipeline(tasks=[PromptTask()])
 
     def test_tasks_order(self):
         first_task = PromptTask("test1")

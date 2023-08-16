@@ -1,3 +1,5 @@
+import pytest
+
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import TextToolMemory
 from griptape.rules import Rule, Ruleset
@@ -64,6 +66,10 @@ class TestAgent:
 
         assert len(agent.memory.runs) == 3
 
+    def test_tasks_validation(self):
+        with pytest.raises(ValueError):
+            Agent(tasks=[PromptTask()])
+
     def test_add_task(self):
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
@@ -86,8 +92,11 @@ class TestAgent:
 
     def test_custom_task(self):
         task = PromptTask()
+        agent = Agent()
 
-        assert Agent(tasks=[task]).task == task
+        agent.add_task(task)
+
+        assert agent.task == task
 
     def test_add_tasks(self):
         first_task = PromptTask("test1")

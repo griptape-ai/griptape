@@ -1,3 +1,5 @@
+import pytest
+
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
@@ -17,9 +19,9 @@ class TestWorkflow:
         assert workflow.rulesets[0].rules[0].value is "test"
 
     def test_with_default_tool_memory(self):
-        workflow = Workflow(
-            tasks=[ToolkitTask(tools=[MockTool()])]
-        )
+        workflow = Workflow()
+
+        workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(workflow.tool_memory, TextToolMemory)
         assert workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
@@ -27,20 +29,25 @@ class TestWorkflow:
         assert workflow.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
-        workflow = Workflow(
-            tasks=[ToolkitTask(tools=[MockTool(output_memory={})])]
-        )
+        workflow = Workflow()
+
+        workflow.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
 
         assert workflow.tasks[0].tools[0].output_memory == {}
 
     def test_without_default_tool_memory(self):
         workflow = Workflow(
             tool_memory=None,
-            tasks=[ToolkitTask(tools=[MockTool()])]
         )
+
+        workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert workflow.tasks[0].tools[0].input_memory is None
         assert workflow.tasks[0].tools[0].output_memory is None
+
+    def test_tasks_validation(self):
+        with pytest.raises(ValueError):
+            Workflow(tasks=[PromptTask()])
 
     def test_add_task(self):
         first_task = PromptTask("test1")

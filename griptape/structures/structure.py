@@ -42,6 +42,11 @@ class Structure(ABC):
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
+    @tasks.validator
+    def validate_tasks(self, _, tasks: list[BaseTask]) -> None:
+        if len(tasks) > 0:
+            raise ValueError("Tasks can't be initialized directly. Use add_task or add_tasks method instead")
+
     def __attrs_post_init__(self) -> None:
         if self.memory:
             self.memory.structure = self
