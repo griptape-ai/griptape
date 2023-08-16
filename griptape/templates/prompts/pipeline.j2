@@ -1,7 +1,0 @@
-{% if not has_memory %}
-Conversation begins:
-{% endif %}
-{% for task in finished_tasks %}
-{{ task.render() }}
-{% endfor %}
-{{ current_task.render() }}

@@ -109,7 +109,7 @@ class TextToolMemory(BaseToolMemory):
             namespace = None
 
         if namespace:
-            self.namespace_metadata[namespace] = subtask.to_json()
+            self.namespace_metadata[namespace] = subtask.action_to_json()
 
             output = J2("memory/tool/text.j2").render(
                 memory_id=self.id,

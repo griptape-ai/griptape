@@ -29,7 +29,7 @@ class TestBlobToolMemory:
         assert output.to_text().startswith(
             'Output of "MockTool.test" was stored in memory:'
         )
-        assert memory.namespace_metadata[artifact.id] == subtask.to_json()
+        assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
         assert memory.driver.load(artifact.id) == [artifact]
 

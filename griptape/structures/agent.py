@@ -3,16 +3,15 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.core import BaseTool
 from griptape.memory.structure import Run, ConversationMemory
-from griptape.structures import StructureWithMemory
+from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
-from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
 
 
 @define
-class Agent(StructureWithMemory):
+class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
     memory: Optional[ConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
@@ -21,17 +20,18 @@ class Agent(StructureWithMemory):
     tools: list[BaseTool] = field(factory=list, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
-        if self.tools:
-            task = ToolkitTask(
-                self.input_template,
-                tools=self.tools
-            )
-        else:
-            task = PromptTask(
-                self.input_template
-            )
+        if len(self.tasks) == 0:
+            if self.tools:
+                task = ToolkitTask(
+                    self.input_template,
+                    tools=self.tools
+                )
+            else:
+                task = PromptTask(
+                    self.input_template
+                )
 
-        self.add_task(task)
+            self.add_task(task)
 
         super().__attrs_post_init__()
 
@@ -50,15 +50,6 @@ class Agent(StructureWithMemory):
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         raise NotImplementedError("Method is not implemented: agents can only have one task.")
-
-    def prompt_stack(self, task: BaseTask) -> list[str]:
-        return self.add_memory_to_prompt_stack(
-            super().prompt_stack(task),
-            J2("prompts/agent.j2").render(
-                has_memory=self.memory is not None,
-                task=self.task
-            )
-        )
 
     def run(self, *args) -> BaseTask:
         self._execution_args = args

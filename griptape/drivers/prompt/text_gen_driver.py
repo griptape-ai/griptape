@@ -4,6 +4,7 @@ from attr import define, field
 from typing import Optional
 from urllib.parse import urljoin
 from griptape.artifacts import TextArtifact
+from griptape.core import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import TextGenTokenizer
 
@@ -25,8 +26,8 @@ class TextGenPromptDriver(BasePromptDriver):
     model: Optional[str] = field(default=None, kw_only=True)
     tokenizer: TextGenTokenizer = field(kw_only=True)
 
-    def try_run(self, value: str) -> TextArtifact:
-
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        prompt = self.prompt_stack_to_string(prompt_stack)
         url = urljoin(self.model_url, self.generate_uri)
 
         if self.preset is None:
@@ -34,7 +35,7 @@ class TextGenPromptDriver(BasePromptDriver):
         else:
             request = {"preset": self.preset}
 
-        request["prompt"] = value
+        request["prompt"] = prompt
         response = requests.post(url, json=request)
 
         if response.status_code == 200:

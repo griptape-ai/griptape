@@ -34,38 +34,32 @@ class TestEventListener:
             event_handler_2,
         ]
         # can't mock subtask events, so must manually call 
-        pipeline.tasks[0]._subtasks[0].before_run()
-        pipeline.tasks[0]._subtasks[0].after_run()
+        pipeline.tasks[0].subtasks[0].before_run()
+        pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
-        assert event_handler_1.call_count == 6
-        assert event_handler_2.call_count == 6
+        assert event_handler_1.call_count == 4
+        assert event_handler_2.call_count == 4
 
     def test_dict_listeners(self, pipeline):
         start_task_event_handler = Mock()
         finish_task_event_handler = Mock()
         start_subtask_event_handler = Mock()
         finish_subtask_event_handler = Mock()
-        start_prompt_event_handler = Mock()
-        finish_prompt_event_handler = Mock()
 
         pipeline.event_listeners = {
             StartTaskEvent: [start_task_event_handler],
             FinishTaskEvent: [finish_task_event_handler],
             StartSubtaskEvent: [start_subtask_event_handler],
             FinishSubtaskEvent: [finish_subtask_event_handler],
-            StartPromptEvent: [start_prompt_event_handler],
-            FinishPromptEvent: [finish_prompt_event_handler],
         }
 
         # can't mock subtask events, so must manually call 
-        pipeline.tasks[0]._subtasks[0].before_run()
-        pipeline.tasks[0]._subtasks[0].after_run()
+        pipeline.tasks[0].subtasks[0].before_run()
+        pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
         start_task_event_handler.assert_called_once()
         finish_task_event_handler.assert_called_once()
         start_subtask_event_handler.assert_called_once()
         finish_subtask_event_handler.assert_called_once()
-        start_prompt_event_handler.assert_called_once()
-        finish_prompt_event_handler.assert_called_once()

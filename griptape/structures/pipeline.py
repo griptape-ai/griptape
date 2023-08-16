@@ -1,18 +1,16 @@
 from __future__ import annotations
-import json
 from typing import TYPE_CHECKING, Optional, Union
 from attr import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
-from griptape.structures import StructureWithMemory
-from griptape.utils import J2
+from griptape.structures import Structure
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
 
 
 @define
-class Pipeline(StructureWithMemory):
+class Pipeline(Structure):
     def first_task(self) -> Optional[BaseTask]:
         return self.tasks[0] if self.tasks else None
 
@@ -36,16 +34,6 @@ class Pipeline(StructureWithMemory):
             self.tasks.append(task)
 
         return task
-
-    def prompt_stack(self, task: BaseTask) -> list[str]:
-        return self.add_memory_to_prompt_stack(
-            super().prompt_stack(task),
-            J2("prompts/pipeline.j2").render(
-                has_memory=self.memory is not None,
-                finished_tasks=self.finished_tasks(),
-                current_task=task
-            )
-        )
 
     def run(self, *args) -> BaseTask:
         self._execution_args = args

@@ -11,7 +11,6 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.core import BaseTool, ActivityMixin
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
-from griptape.utils import J2
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 
@@ -115,12 +114,7 @@ class ActionSubtask(PromptTask):
         self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
-    def render(self) -> str:
-        return J2("prompts/tasks/toolkit/subtask.j2").render(
-            subtask=self
-        )
-
-    def to_json(self) -> str:
+    def action_to_json(self) -> str:
         json_dict = {}
 
         if self.action_type:
@@ -203,7 +197,7 @@ class ActionSubtask(PromptTask):
                         self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
-                        self._memory = self.task.find_memory(self.action_name)
+                        self._memory = self.task.find_memory(self.action_input["values"]["memory_id"])
 
                     if self._memory:
                         self.__validate_activity_mixin(self._memory)

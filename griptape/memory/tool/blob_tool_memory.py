@@ -46,7 +46,7 @@ class BlobToolMemory(BaseToolMemory):
             namespace = None
 
         if namespace:
-            self.namespace_metadata[namespace] = subtask.to_json()
+            self.namespace_metadata[namespace] = subtask.action_to_json()
 
             output = J2("memory/tool/blob.j2").render(
                 memory_id=self.id,

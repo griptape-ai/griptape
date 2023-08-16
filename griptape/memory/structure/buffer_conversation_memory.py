@@ -9,8 +9,8 @@ from griptape.schemas import BufferConversationMemorySchema
 class BufferConversationMemory(ConversationMemory):
     buffer_size: int = field(default=1, kw_only=True)
 
-    def process_add_run(self, run: Run) -> None:
-        super().process_add_run(run)
+    def try_add_run(self, run: Run) -> None:
+        super().try_add_run(run)
 
         while len(self.runs) > self.buffer_size:
             self.runs.pop(0)

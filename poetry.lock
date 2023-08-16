@@ -124,23 +124,22 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "anthropic"
-version = "0.2.10"
-description = "Library for accessing the anthropic API"
+version = "0.3.9"
+description = "Client library for the anthropic API"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7,<4.0"
 files = [
-    {file = "anthropic-0.2.10-py3-none-any.whl", hash = "sha256:a007496207fd186b0bcb9592b00ca130069d2a427f3d6f602a61dbbd1ac6316e"},
-    {file = "anthropic-0.2.10.tar.gz", hash = "sha256:e4da061a86d8ffb86072c0b0feaf219a3a4f7dfddd4224df9ba769e469498c19"},
+    {file = "anthropic-0.3.9-py3-none-any.whl", hash = "sha256:23e8daf266c707faa0b85328ada03dcf885e62c2f236eb0159352e29b9c4e2e3"},
+    {file = "anthropic-0.3.9.tar.gz", hash = "sha256:c19b75308c07cb1ecbea03ffcdde9ba68e5ca22a22479217712396385678bde3"},
 ]
 
 [package.dependencies]
-aiohttp = "*"
-httpx = "*"
-requests = "*"
-tokenizers = "*"
-
-[package.extras]
-dev = ["black (>=22.3.0)", "pytest"]
+anyio = ">=3.5.0,<4"
+distro = ">=1.7.0,<2"
+httpx = ">=0.23.0,<1"
+pydantic = ">=1.9.0,<2.0.0"
+tokenizers = ">=0.13.0"
+typing-extensions = ">=4.5,<5"
 
 [[package]]
 name = "anyio"
@@ -299,17 +298,17 @@ css = ["tinycss2 (>=1.1.0,<1.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.28.26"
+version = "1.28.27"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.28.26-py3-none-any.whl", hash = "sha256:63619ffa44bc7f799b525c86d73bdb7f7a70994942bbff78253585bf64084e6e"},
-    {file = "boto3-1.28.26.tar.gz", hash = "sha256:a15841c7d04f87c63c9f2587b2b48198bec04d307d7b9950cbe4a021f845a5ba"},
+    {file = "boto3-1.28.27-py3-none-any.whl", hash = "sha256:8da9621931291b6c261fdaae465f05737c16519b9667d8463181cb8b88444572"},
+    {file = "boto3-1.28.27.tar.gz", hash = "sha256:a336cf53a6d86ee6d27b2f6d8b78ec9b320209127e5126359881bbd68f33d0b9"},
 ]
 
 [package.dependencies]
-botocore = ">=1.31.26,<1.32.0"
+botocore = ">=1.31.27,<1.32.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -318,13 +317,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.31.26"
+version = "1.31.27"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.31.26-py3-none-any.whl", hash = "sha256:74d1c26144915312004a9f0232cdbe08946dfec9fc7dcd854456d2b73be9bfd9"},
-    {file = "botocore-1.31.26.tar.gz", hash = "sha256:e68a50ba76425ede8693fdf1f95b8411e283bc7619c03d7eb666db9f1de48153"},
+    {file = "botocore-1.31.27-py3-none-any.whl", hash = "sha256:13af1588023750c9bc66d202bb5a934c9412a7dc52587532264ab725c42c2c50"},
+    {file = "botocore-1.31.27.tar.gz", hash = "sha256:739d09e13751e3b9b0f341b5ffe5bf8d0452b8769d435c4084ee88739d42b7f7"},
 ]
 
 [package.dependencies]
@@ -522,13 +521,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cohere"
-version = "4.20.0"
+version = "4.20.1"
 description = ""
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "cohere-4.20.0-py3-none-any.whl", hash = "sha256:bebe4b1d21da0719aaa7db2cc180b5f3d0a802c19ad2d893d627971286e50497"},
-    {file = "cohere-4.20.0.tar.gz", hash = "sha256:a16e86981945c201bab67ad6d47e57f42a37bf2a774f6ac6b8b12233aae6409a"},
+    {file = "cohere-4.20.1-py3-none-any.whl", hash = "sha256:4466c7abdbb168fe2893e5b5123882fe91691d0e3fe43ee254b411917f780dfc"},
+    {file = "cohere-4.20.1.tar.gz", hash = "sha256:533e4a45b38dc338f8a27f24e098b652b4f5ed9f9fbb4719780d1a9fcd1af39e"},
 ]
 
 [package.dependencies]
@@ -720,6 +719,17 @@ files = [
 
 [package.extras]
 graph = ["objgraph (>=1.7.2)"]
+
+[[package]]
+name = "distro"
+version = "1.8.0"
+description = "Distro - an OS platform information API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "distro-1.8.0-py3-none-any.whl", hash = "sha256:99522ca3e365cac527b44bde033f64c6945d90eb9f769703caaec52b09bbd3ff"},
+    {file = "distro-1.8.0.tar.gz", hash = "sha256:02e111d1dc6a50abb8eed6bf31c3e48ed8b0830d1ea2a1b78c61765c2513fdd8"},
+]
 
 [[package]]
 name = "dnspython"
@@ -1617,13 +1627,13 @@ files = [
 
 [[package]]
 name = "marqo"
-version = "1.2.3"
+version = "1.2.4"
 description = "Tensor search for humans"
 optional = false
 python-versions = ">=3"
 files = [
-    {file = "marqo-1.2.3-py3-none-any.whl", hash = "sha256:c743c1016f05feb43cff5db3e9e7dc6366fa7db882c63c6bf24f836beb92060c"},
-    {file = "marqo-1.2.3.tar.gz", hash = "sha256:6510f9e7058484d351e5f8f17a7752f36916dd923e059e472077244a04082532"},
+    {file = "marqo-1.2.4-py3-none-any.whl", hash = "sha256:aaf59ca35214febaa893e102828a50ab9e53fe57201cd43714ab7c0515166068"},
+    {file = "marqo-1.2.4.tar.gz", hash = "sha256:3fe0eb8e1ed73883fd8e6001582d18dab6e149d79e41b92a1403b2ff52d18c43"},
 ]
 
 [package.dependencies]
@@ -2878,13 +2888,13 @@ files = [
 
 [[package]]
 name = "s3transfer"
-version = "0.6.1"
+version = "0.6.2"
 description = "An Amazon S3 Transfer Manager"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "s3transfer-0.6.1-py3-none-any.whl", hash = "sha256:3c0da2d074bf35d6870ef157158641178a4204a6e689e82546083e31e0311346"},
-    {file = "s3transfer-0.6.1.tar.gz", hash = "sha256:640bb492711f4c0c0905e1f62b6aaeb771881935ad27884852411f8e9cacbca9"},
+    {file = "s3transfer-0.6.2-py3-none-any.whl", hash = "sha256:b014be3a8a2aab98cfe1abc7229cc5a9a0cf05eb9c1f2b86b230fd8df3f78084"},
+    {file = "s3transfer-0.6.2.tar.gz", hash = "sha256:cab66d3380cca3e70939ef2255d01cd8aece6a4907a9528740f668c4b0611861"},
 ]
 
 [package.dependencies]
@@ -3843,4 +3853,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "4a6f515c33e60d1b999a1c06bd87c47675272f86bca6861f0785920afadf34be"
+content-hash = "b3e298f544b9a4360069469ad4666d644d069b2cba6c8cecf533d977c7485620"

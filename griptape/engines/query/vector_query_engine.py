@@ -1,7 +1,8 @@
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact
-from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver, BasePromptDriver, OpenAiPromptDriver
+from griptape.core import PromptStack
+from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver, BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
 
@@ -13,7 +14,7 @@ class VectorQueryEngine(BaseQueryEngine):
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver()),
         kw_only=True
     )
     template_generator: J2 = field(
@@ -34,6 +35,7 @@ class VectorQueryEngine(BaseQueryEngine):
             a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
         ]
         text_segments = []
+        message = ""
 
         for artifact in artifacts:
             text_segments.append(artifact.value)
@@ -48,12 +50,11 @@ class VectorQueryEngine(BaseQueryEngine):
                 text_segments.pop()
                 break
 
-        message = self.template_generator.render(
-            metadata=metadata,
-            question=query,
-            text_segments=text_segments,
+        return self.prompt_driver.run(
+            PromptStack(
+                inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)]
+            )
         )
-        return self.prompt_driver.run(value=message)
 
     def upsert_text_artifact(
             self,

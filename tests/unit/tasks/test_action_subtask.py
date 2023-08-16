@@ -13,7 +13,7 @@ class TestActionSubtask:
         task = ToolkitTask(tools=[])
         Pipeline().add_task(task)
         subtask = task.add_subtask(ActionSubtask(valid_input))
-        json_dict = json.loads(subtask.to_json())
+        json_dict = json.loads(subtask.action_to_json())
 
         assert json_dict["type"] == "tool"
         assert json_dict["name"] == "test"

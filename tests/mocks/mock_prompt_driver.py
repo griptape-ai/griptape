@@ -1,4 +1,5 @@
 from attr import define
+from griptape.core import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import TiktokenTokenizer, BaseTokenizer
 from griptape.artifacts import TextArtifact
@@ -9,5 +10,5 @@ class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = TiktokenTokenizer()
 
-    def try_run(self, value: str) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         return TextArtifact(value=f"mock output")
