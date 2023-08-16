@@ -26,9 +26,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         ), takes_self=True)
     )
 
-    def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
-        return f'{namespace}:{vector_id}' if namespace else vector_id
-
     def upsert_vector(
             self,
             vector: list[float],
@@ -39,45 +36,41 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
         key = self._generate_key(vector_id, namespace)
-        bytes_vector = json.dumps(vector).encode('utf-8')
+        bytes_vector = json.dumps(vector).encode("utf-8")
 
-        mapping_obj = {
+        mapping = {
             "vector": np.array(vector, dtype=np.float32).tobytes(),
             "vec_string": bytes_vector
         }
-        if meta:
-            mapping_obj["metadata"] = json.dumps(meta)
 
-        self.client.hset(key, mapping=mapping_obj)
+        if meta:
+            mapping["metadata"] = json.dumps(meta)
+
+        self.client.hset(key, mapping=mapping)
+
         return vector_id
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         key = self._generate_key(vector_id, namespace)
         result = self.client.hgetall(key)
+        vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()
+        meta = json.loads(result[b"metadata"]) if b"metadata" in result else None
 
-        if result:
-            reversed_vector = np.frombuffer(result[b"vector"], dtype=np.float32)
-            reversed_vector_list = reversed_vector.tolist()
-            value = {
-                "vector": reversed_vector_list,
-                "metadata": json.loads(result[b"metadata"]) if b"metadata" in result else None
-            }
-            return BaseVectorStoreDriver.Entry(
-                id=vector_id,
-                meta=value["metadata"],
-                vector=value["vector"],
-                namespace=namespace
-            )
-        else:
-            return None
+        return BaseVectorStoreDriver.Entry(
+            id=vector_id,
+            meta=meta,
+            vector=vector,
+            namespace=namespace
+        )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         pattern = f'{namespace}:*' if namespace else '*'
         keys = self.client.keys(pattern)
-        entries = []
-        for key in keys:
-            entries.append(self.load_entry(key.decode("utf-8"), namespace=namespace))
-        return entries
+
+        return [
+            self.load_entry(key.decode("utf-8"), namespace=namespace)
+            for key in keys
+        ]
 
     def query(
             self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
@@ -111,3 +104,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
                 )
             )
         return query_results
+
+    def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
+        return f'{namespace}:{vector_id}' if namespace else vector_id
