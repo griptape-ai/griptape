@@ -29,7 +29,7 @@ class TestToolkitSubtask:
             assert True
 
     def test_run(self):
-        output = """Output: done"""
+        output = """Answer: done"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         pipeline = Pipeline(
@@ -61,7 +61,7 @@ class TestToolkitSubtask:
         valid_input = 'Thought: need to test\n' \
                       'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test input"}\n' \
                       'Observation: test observation\n' \
-                      'Output: test output'
+                      'Answer: test output'
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         Pipeline().add_task(task)
@@ -77,7 +77,7 @@ class TestToolkitSubtask:
 
     def test_init_from_prompt_2(self):
         valid_input = """Thought: need to test\nObservation: test 
-        observation\nOutput: test output"""
+        observation\nAnswer: test output"""
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         Pipeline().add_task(task)

@@ -81,7 +81,7 @@ class PromptTask(BaseTask):
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info(f"Task {self.id}\nOutput: {self.output.to_text()}")
+        self.structure.logger.info(f"Task {self.id}\nAnswer: {self.output.to_text()}")
 
     def active_driver(self) -> BasePromptDriver:
         if self.prompt_driver is None:

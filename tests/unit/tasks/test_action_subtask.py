@@ -8,7 +8,7 @@ class TestActionSubtask:
         valid_input = 'Thought: need to test\n' \
                       'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test input"}\n' \
                       'Observation: test observation\n' \
-                      'Output: test output'
+                      'Answer: test output'
 
         task = ToolkitTask(tools=[])
         Pipeline().add_task(task)

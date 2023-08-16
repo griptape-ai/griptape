@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTION_PATTERN = r"(?s)^Action:\s*({.*})$"
-    OUTPUT_PATTERN = r"(?s)^Output:\s?([\s\S]*)$"
+    ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
     ACTION_SCHEMA = Schema(
         description="Actions have type, name, activity, and input value.",
         schema={
@@ -152,7 +152,7 @@ class ActionSubtask(PromptTask):
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
         action_matches = re.findall(self.ACTION_PATTERN, value, re.MULTILINE)
-        output_matches = re.findall(self.OUTPUT_PATTERN, value, re.MULTILINE)
+        answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
         if self.thought is None and len(thought_matches) > 0:
             self.thought = thought_matches[-1]
@@ -216,8 +216,8 @@ class ActionSubtask(PromptTask):
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action input parsing error: {e}"}
-        elif self.output is None and len(output_matches) > 0:
-            self.output = TextArtifact(output_matches[-1])
+        elif self.output is None and len(answer_matches) > 0:
+            self.output = TextArtifact(answer_matches[-1])
 
     def __validate_activity_mixin(self, mixin: ActivityMixin) -> None:
         try:
