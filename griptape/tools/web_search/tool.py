@@ -2,7 +2,7 @@ from __future__ import annotations
 from attr import define, field
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from schema import Schema, Literal
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 
 

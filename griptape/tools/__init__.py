@@ -1,3 +1,4 @@
+from .base_tool import BaseTool
 from .calculator.tool import Calculator
 from .web_search.tool import WebSearch
 from .web_scraper.tool import WebScraper
@@ -18,6 +19,7 @@ from .google_gmail.tool import GoogleGmailClient
 from .google_cal.tool import GoogleCalendarClient
 
 __all__ = [
+    "BaseTool",
     "BaseAwsClient",
     "AwsIamClient",
     "AwsS3Client",

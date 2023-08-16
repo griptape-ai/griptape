@@ -8,7 +8,7 @@ from typing import Optional
 import schema
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 from schema import Schema, Literal
 

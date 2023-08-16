@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional
 from attr import define, field
 from griptape.artifacts import InfoArtifact, CsvRowArtifact
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 from griptape.loaders import SqlLoader
 from schema import Schema

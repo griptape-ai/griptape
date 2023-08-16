@@ -1,6 +1,6 @@
 
 from griptape.artifacts import TextArtifact, ErrorArtifact
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 from schema import Schema, Literal
 from attr import define, field

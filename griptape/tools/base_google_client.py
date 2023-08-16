@@ -1,6 +1,6 @@
 from abc import ABC
 from attr import define, field
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 
 @define
 class BaseGoogleClient(BaseTool, ABC):

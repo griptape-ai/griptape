@@ -2,7 +2,7 @@ from abc import ABC
 import boto3
 from attr import define, field
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 
 @define

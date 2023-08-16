@@ -3,7 +3,7 @@ from griptape.engines import VectorQueryEngine
 from schema import Schema, Literal
 from attr import define, field
 from griptape.artifacts import BaseArtifact, ErrorArtifact
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 
 

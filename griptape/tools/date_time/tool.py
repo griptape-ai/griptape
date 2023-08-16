@@ -1,6 +1,6 @@
 from datetime import datetime
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 
 

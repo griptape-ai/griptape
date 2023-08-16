@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 import schema
 from schema import Schema, Literal
 from attr import define, field
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.core.decorators import activity
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 
