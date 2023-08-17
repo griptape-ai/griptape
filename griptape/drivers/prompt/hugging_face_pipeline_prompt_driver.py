@@ -1,5 +1,7 @@
 from os import environ
 
+from griptape.core import PromptStack
+
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 
 from attr import define, field, Factory
@@ -28,11 +30,13 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: str) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        prompt = self.prompt_stack_to_string(prompt_stack)
+
         generator = pipeline(
             tokenizer=self.tokenizer.tokenizer,
             model=self.model,
-            max_new_tokens=self.tokenizer.tokens_left(value)
+            max_new_tokens=self.tokenizer.tokens_left(prompt)
         )
 
         if generator.task in self.SUPPORTED_TASKS:
@@ -41,7 +45,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
             }
 
             response = generator(
-                value,
+                prompt,
                 **(self.DEFAULT_PARAMS | extra_params | self.params)
             )
 

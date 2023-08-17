@@ -29,7 +29,7 @@ class TestToolkitSubtask:
             assert True
 
     def test_run(self):
-        output = """Output: done"""
+        output = """Answer: done"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         pipeline = Pipeline(
@@ -41,7 +41,7 @@ class TestToolkitSubtask:
         result = pipeline.run()
 
         assert len(task.tools) == 2
-        assert len(task._subtasks) == 1
+        assert len(task.subtasks) == 1
         assert result.output.to_text() == "done"
     
     def test_run_max_subtasks(self):
@@ -54,14 +54,14 @@ class TestToolkitSubtask:
 
         pipeline.run()
 
-        assert len(task._subtasks) == 3
+        assert len(task.subtasks) == 3
         assert isinstance(task.output, ErrorArtifact)
 
     def test_init_from_prompt_1(self):
         valid_input = 'Thought: need to test\n' \
                       'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test input"}\n' \
                       'Observation: test observation\n' \
-                      'Output: test output'
+                      'Answer: test output'
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         Pipeline().add_task(task)
@@ -77,7 +77,7 @@ class TestToolkitSubtask:
 
     def test_init_from_prompt_2(self):
         valid_input = """Thought: need to test\nObservation: test 
-        observation\nOutput: test output"""
+        observation\nAnswer: test output"""
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         Pipeline().add_task(task)
@@ -100,7 +100,7 @@ class TestToolkitSubtask:
         task.add_subtask(subtask1)
         task.add_subtask(subtask2)
 
-        assert len(task._subtasks) == 2
+        assert len(task.subtasks) == 2
 
         assert len(subtask1.children) == 1
         assert len(subtask1.parents) == 0

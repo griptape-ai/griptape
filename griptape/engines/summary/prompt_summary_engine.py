@@ -2,7 +2,8 @@ from typing import Optional
 from attr import define, Factory, field
 from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.core import PromptStack
+from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 
@@ -22,7 +23,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver()),
         kw_only=True
     )
     chunker: BaseChunker = field(
@@ -64,7 +65,11 @@ class PromptSummaryEngine(BaseSummaryEngine):
         )
 
         if self.prompt_driver.tokenizer.tokens_left(full_text) >= self.min_response_tokens:
-            return self.prompt_driver.run(full_text)
+            return self.prompt_driver.run(
+                PromptStack(
+                    inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)]
+                )
+            )
         else:
             chunks = self.chunker.chunk(artifacts_text)
 
@@ -75,5 +80,9 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
             return self.summarize_artifacts_rec(
                 chunks[1:],
-                self.prompt_driver.run(partial_text).value
+                self.prompt_driver.run(
+                    PromptStack(
+                        inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)]
+                    )
+                ).value
             )

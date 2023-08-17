@@ -3,11 +3,11 @@ import json
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.memory.structure import Run
-from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver
     from griptape.structures import Structure
+    from griptape.core import PromptStack
 
 
 @define
@@ -24,9 +24,14 @@ class ConversationMemory:
             if memory is not None:
                 [self.add_run(r) for r in memory.runs]
 
+    def add_to_prompt_stack(self, stack: PromptStack) -> None:
+        for r in self.runs:
+            stack.add_user_input(r.input)
+            stack.add_assistant_input(r.output)
+
     def add_run(self, run: Run) -> ConversationMemory:
         self.before_add_run()
-        self.process_add_run(run)
+        self.try_add_run(run)
         self.after_add_run()
 
         return self
@@ -34,7 +39,7 @@ class ConversationMemory:
     def before_add_run(self) -> None:
         pass
 
-    def process_add_run(self, run: Run) -> None:
+    def try_add_run(self, run: Run) -> None:
         self.runs.append(run)
 
     def after_add_run(self) -> None:
@@ -43,11 +48,6 @@ class ConversationMemory:
 
     def is_empty(self) -> bool:
         return not self.runs
-
-    def to_prompt_string(self, last_n: Optional[int] = None) -> str:
-        return J2("prompts/memory/conversation.j2").render(
-            runs=self.runs if last_n is None else self.runs[-last_n:]
-        )
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)

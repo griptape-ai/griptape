@@ -1,7 +1,0 @@
-Input: {{ subtask.input.to_text() }}
-{% if subtask.output %}
-Output: {{ subtask.output.to_text() }}
-{% else %}
-{% for subtask in subtasks %}{{ subtask.render() }}
-{% endfor %}
-{% endif %}

@@ -11,7 +11,6 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.core import BaseTool, ActivityMixin
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
-from griptape.utils import J2
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 
@@ -23,7 +22,7 @@ if TYPE_CHECKING:
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTION_PATTERN = r"(?s)^Action:\s*({.*})$"
-    OUTPUT_PATTERN = r"(?s)^Output:\s?([\s\S]*)$"
+    ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
     ACTION_SCHEMA = Schema(
         description="Actions have type, name, activity, and input value.",
         schema={
@@ -115,12 +114,7 @@ class ActionSubtask(PromptTask):
         self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(f"Subtask {self.id}\nObservation: {observation}")
 
-    def render(self) -> str:
-        return J2("prompts/tasks/toolkit/subtask.j2").render(
-            subtask=self
-        )
-
-    def to_json(self) -> str:
+    def action_to_json(self) -> str:
         json_dict = {}
 
         if self.action_type:
@@ -158,7 +152,7 @@ class ActionSubtask(PromptTask):
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
         action_matches = re.findall(self.ACTION_PATTERN, value, re.MULTILINE)
-        output_matches = re.findall(self.OUTPUT_PATTERN, value, re.MULTILINE)
+        answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
         if self.thought is None and len(thought_matches) > 0:
             self.thought = thought_matches[-1]
@@ -203,7 +197,7 @@ class ActionSubtask(PromptTask):
                         self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
-                        self._memory = self.task.find_memory(self.action_name)
+                        self._memory = self.task.find_memory(self.action_input["values"]["memory_id"])
 
                     if self._memory:
                         self.__validate_activity_mixin(self._memory)
@@ -222,8 +216,8 @@ class ActionSubtask(PromptTask):
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action input parsing error: {e}"}
-        elif self.output is None and len(output_matches) > 0:
-            self.output = TextArtifact(output_matches[-1])
+        elif self.output is None and len(answer_matches) > 0:
+            self.output = TextArtifact(answer_matches[-1])
 
     def __validate_activity_mixin(self, mixin: ActivityMixin) -> None:
         try:

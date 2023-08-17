@@ -6,7 +6,8 @@ from logging import Logger
 from typing import Optional, Union, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape.drivers import BasePromptDriver, OpenAiPromptDriver
+from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
+from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
@@ -23,7 +24,7 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiPromptDriver(
+        default=Factory(lambda: OpenAiChatPromptDriver(
             model=TiktokenTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
         )),
         kw_only=True
@@ -33,6 +34,7 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
+    memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(
         default=Factory(lambda: TextToolMemory()),
         kw_only=True
@@ -40,8 +42,17 @@ class Structure(ABC):
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
+    @tasks.validator
+    def validate_tasks(self, _, tasks: list[BaseTask]) -> None:
+        if len(tasks) > 0:
+            raise ValueError("Tasks can't be initialized directly. Use add_task or add_tasks method instead")
+
     def __attrs_post_init__(self) -> None:
+        if self.memory:
+            self.memory.structure = self
+
         [self._init_task(task) for task in self.tasks]
+
         self.prompt_driver.structure = self
 
     @property
@@ -85,15 +96,6 @@ class Structure(ABC):
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
-
-    def prompt_stack(self, task: BaseTask) -> list[str]:
-        return task.prompt_stack(self)
-
-    def to_prompt_string(self, task: BaseTask) -> str:
-        return self.stack_to_prompt_string(self.prompt_stack(task))
-
-    def stack_to_prompt_string(self, stack: list[str]) -> str:
-        return str.join("\n", stack)
 
     def publish_event(self, event: BaseEvent) -> None:
         if isinstance(self.event_listeners, dict):

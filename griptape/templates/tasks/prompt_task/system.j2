@@ -1,9 +1,6 @@
-Act like a conversational bot. Use this conversation format:
+Act like a friendly conversational assistant.
 
-Input: <original request>
-Output: <your response>
-
-{% if rulesets|length > 0 %}
+{% if rulesets and rulesets|length > 0 %}
 When responding, always use rules from the following rulesets. Rulesets can override and complement each other:
 
 {% for ruleset in rulesets %}

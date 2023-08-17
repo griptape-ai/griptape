@@ -3,6 +3,7 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
+from griptape.core import PromptStack
 
 
 @define
@@ -17,13 +18,14 @@ class CoherePromptDriver(BasePromptDriver):
         kw_only=True
     )
 
-    def try_run(self, value: str) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        prompt = self.prompt_stack_to_string(prompt_stack)
         result = self.client.generate(
-            value,
+            prompt=prompt,
             model=self.model,
             temperature=self.temperature,
             end_sequences=self.tokenizer.stop_sequences,
-            max_tokens=self.tokenizer.tokens_left(value)
+            max_tokens=self.max_output_tokens(prompt)
         )
 
         if len(result.generations) == 1:

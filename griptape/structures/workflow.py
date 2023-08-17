@@ -1,11 +1,11 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
+from typing import Union
 from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
-from griptape.tasks import BaseTask
 from griptape.structures import Structure
-from griptape.utils import J2
+from griptape.tasks import BaseTask
 
 
 @define
@@ -15,7 +15,7 @@ class Workflow(Structure):
         kw_only=True
     )
 
-    def __add__(self, other: BaseTask) -> BaseTask:
+    def __add__(self, other: Union[BaseTask, list[BaseTask]]) -> BaseTask:
         return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
 
     def add_task(self, task: BaseTask) -> BaseTask:
@@ -24,17 +24,6 @@ class Workflow(Structure):
         self.tasks.append(task)
 
         return task
-
-    def prompt_stack(self, task: BaseTask) -> list[str]:
-        stack = Structure.prompt_stack(self, task)
-
-        stack.append(
-            J2("prompts/workflow.j2").render(
-                task=task
-            )
-        )
-
-        return stack
 
     def run(self, *args) -> list[BaseTask]:
         self._execution_args = args
