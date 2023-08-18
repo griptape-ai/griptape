@@ -1,0 +1,5 @@
+version: "v1"
+name: Web Scraper
+description: Tool for scraping web pages for content, titles, authors, and keywords.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

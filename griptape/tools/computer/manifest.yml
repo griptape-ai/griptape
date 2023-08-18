@@ -1,0 +1,5 @@
+version: "v1"
+name: Computer
+description: Tool that allows LLMs to run Python code and access the shell
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

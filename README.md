@@ -7,7 +7,7 @@
 
 **Griptape** offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity.
 
-For **predictability**, software structures like sequential pipelines and directed acyclic graphs (DAGs) are enforced. **Creativity**, on the other hand, is facilitated by safely prompting LLMs with [tools](https://github.com/griptape-ai/griptape-tools) that connect to external APIs and data sources. Developers can move between these two dimensions according to their use case.
+For **predictability**, software structures like sequential pipelines and directed acyclic graphs (DAGs) are enforced. **Creativity**, on the other hand, is facilitated by safely prompting LLMs with Griptape Tools that connect to external APIs and data sources. Developers can move between these two dimensions according to their use case.
 
 ## Documentation
 
@@ -20,10 +20,10 @@ Please refer to [Griptape Docs](https://docs.griptape.ai/) for:
 
 ## Quick Start
 
-First, install **griptape** and **griptape-tools**:
+First, install **griptape**:
 
 ```
-pip install griptape griptape-tools -U
+pip install griptape -U
 ```
 
 Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.

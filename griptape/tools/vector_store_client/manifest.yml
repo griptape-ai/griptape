@@ -1,0 +1,5 @@
+version: "v1"
+name: Vector Store Client
+description: Tool for storing and accessing data in vector stores
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

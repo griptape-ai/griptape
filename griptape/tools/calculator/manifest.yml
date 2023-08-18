@@ -1,0 +1,5 @@
+version: "v1"
+name: Calculator
+description: Tool for making simple calculations in Python.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
