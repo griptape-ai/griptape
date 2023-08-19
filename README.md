@@ -11,6 +11,7 @@ For **predictability**, software structures like sequential pipelines and direct
 
 > [!IMPORTANT]
 > **Migrating from v0.14 to v0.15**
+> 
 > Griptape introduced several breaking changes in `v0.15`. Please update your code moving forward.
 > - `griptape-tools` was merged into `griptape`. You can remove `griptape-tools` from your dependencies.
 > - `PromptTask.prompt_template` was renamed to `PromptTask.input_template`.
