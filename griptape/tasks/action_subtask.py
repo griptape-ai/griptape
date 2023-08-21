@@ -198,7 +198,7 @@ class ActionSubtask(PromptTask):
                         self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
-                        self._memory = self.task.find_memory(self.action_input["values"]["memory_id"])
+                        self._memory = self.task.find_memory(self.action_input["values"]["memory_name"])
 
                     if self._memory:
                         self.__validate_activity_mixin(self._memory)

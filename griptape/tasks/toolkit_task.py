@@ -74,7 +74,7 @@ class ToolkitTask(PromptTask):
             action_schema=action_schema,
             tool_names=str.join(", ", [tool.name for tool in self.tools]),
             tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
-            memory_ids=str.join(", ", [memory.id for memory in memories]),
+            memory_names=str.join(", ", [memory.id for memory in memories]),
             memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
         )
 
@@ -152,8 +152,8 @@ class ToolkitTask(PromptTask):
             None
         )
 
-    def find_memory(self, memory_id: str) -> Optional[BaseToolMemory]:
+    def find_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
         return next(
-            (r for r in self.memory if r.id == memory_id),
+            (r for r in self.memory if r.id == memory_name),
             None
         )

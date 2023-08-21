@@ -43,7 +43,7 @@ class TestAwsS3Client:
 
     def test_upload_objects(self):
         value = {
-            "memory_id": "foobar",
+            "memory_name": "foobar",
             "bucket_name": "bucket_test",
             "artifact_namespace": "foo",
             "object_names": [],

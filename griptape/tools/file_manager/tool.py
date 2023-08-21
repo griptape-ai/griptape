@@ -47,7 +47,7 @@ class FileManager(BaseTool):
     @activity(config={
         "description": "Can be used to save an artifact namespace to disk",
         "schema": Schema({
-            "memory_id": str,
+            "memory_name": str,
             "artifact_namespace": str,
             Literal(
                 "path",
@@ -58,7 +58,7 @@ class FileManager(BaseTool):
     def save_file_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
         artifact_namespace = params["values"]["artifact_namespace"]
         new_path = params["values"]["path"]
-        memory = self.find_input_memory(params["values"]["memory_id"])
+        memory = self.find_input_memory(params["values"]["memory_name"])
 
         if memory:
             artifacts = memory.load_artifacts(artifact_namespace)
