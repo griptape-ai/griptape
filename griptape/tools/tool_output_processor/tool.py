@@ -119,6 +119,6 @@ class ToolOutputProcessor(BaseTool):
 
     def find_input_memory(self, memory_name: str) -> Optional[TextToolMemory]:
         if self.input_memory:
-            return next((m for m in self.input_memory if isinstance(m, TextToolMemory) and m.id == memory_name), None)
+            return next((m for m in self.input_memory if isinstance(m, TextToolMemory) and m.name == memory_name), None)
         else:
             return None

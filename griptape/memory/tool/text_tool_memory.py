@@ -90,7 +90,7 @@ class TextToolMemory(BaseToolMemory):
         activity_name = tool_activity.name
 
         if isinstance(value, TextArtifact):
-            namespace = value.id
+            namespace = value.name
 
             self.query_engine.upsert_text_artifact(
                 value,
@@ -112,7 +112,7 @@ class TextToolMemory(BaseToolMemory):
             self.namespace_metadata[namespace] = subtask.action_to_json()
 
             output = J2("memory/tool/text.j2").render(
-                memory_name=self.id,
+                memory_name=self.name,
                 tool_name=tool_name,
                 activity_name=activity_name,
                 artifact_namespace=namespace
@@ -120,7 +120,7 @@ class TextToolMemory(BaseToolMemory):
 
             return InfoArtifact(output)
         else:
-            logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.id}")
+            logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.name}")
 
             return value
 

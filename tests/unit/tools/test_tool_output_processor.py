@@ -39,7 +39,7 @@ class TestTextMemoryBrowser:
 
     def test_insert(self, tool):
         tool.insert(
-            {"values": {"memory_name": tool.input_memory[0].id, "artifact_namespace": "foo", "text": "foobar"}}
+            {"values": {"memory_name": tool.input_memory[0].name, "artifact_namespace": "foo", "text": "foobar"}}
         )
 
         assert BaseArtifact.from_json(
@@ -48,15 +48,15 @@ class TestTextMemoryBrowser:
 
     def test_summarize(self, tool):
         assert tool.summarize(
-            {"values": {"memory_name": tool.input_memory[0].id, "artifact_namespace": "foo"}}
+            {"values": {"memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
         ).value == "foobar summary"
 
     def test_query(self, tool):
         assert tool.search(
-            {"values": {"query": "foobar", "memory_name": tool.input_memory[0].id, "artifact_namespace": "foo"}}
+            {"values": {"query": "foobar", "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
         ).value == "foobar"
 
     def test_extract_csv(self, tool):
         assert tool.extract_csv(
-            {"values": {"column_names": "foo", "memory_name": tool.input_memory[0].id, "artifact_namespace": "foo"}}
+            {"values": {"column_names": "foo", "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
         )[0].value == {"foo": "bar"}

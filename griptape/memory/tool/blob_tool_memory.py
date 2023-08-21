@@ -30,7 +30,7 @@ class BlobToolMemory(BaseToolMemory):
         activity_name = tool_activity.name
 
         if isinstance(value, BlobArtifact):
-            namespace = value.id
+            namespace = value.name
 
             self.driver.save(namespace, value)
         elif isinstance(value, list):
@@ -49,7 +49,7 @@ class BlobToolMemory(BaseToolMemory):
             self.namespace_metadata[namespace] = subtask.action_to_json()
 
             output = J2("memory/tool/blob.j2").render(
-                memory_name=self.id,
+                memory_name=self.name,
                 tool_name=tool_name,
                 activity_name=activity_name,
                 artifact_namespace=namespace
@@ -57,7 +57,7 @@ class BlobToolMemory(BaseToolMemory):
 
             return InfoArtifact(output)
         else:
-            logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.id}")
+            logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.name}")
 
             return value
 
