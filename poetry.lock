@@ -124,20 +124,20 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "anthropic"
-version = "0.3.9"
+version = "0.3.10"
 description = "Client library for the anthropic API"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "anthropic-0.3.9-py3-none-any.whl", hash = "sha256:23e8daf266c707faa0b85328ada03dcf885e62c2f236eb0159352e29b9c4e2e3"},
-    {file = "anthropic-0.3.9.tar.gz", hash = "sha256:c19b75308c07cb1ecbea03ffcdde9ba68e5ca22a22479217712396385678bde3"},
+    {file = "anthropic-0.3.10-py3-none-any.whl", hash = "sha256:95cd73168296a4f91a5899a28660991e044322cf94442d07b99901d4ca74acd6"},
+    {file = "anthropic-0.3.10.tar.gz", hash = "sha256:d1f66efc541fbff0ecfd37fd4d3690f9daaa748fc42d9ded5863a10815a5d97b"},
 ]
 
 [package.dependencies]
 anyio = ">=3.5.0,<4"
 distro = ">=1.7.0,<2"
 httpx = ">=0.23.0,<1"
-pydantic = ">=1.9.0,<2.0.0"
+pydantic = ">=1.9.0,<3"
 tokenizers = ">=0.13.0"
 typing-extensions = ">=4.5,<5"
 
@@ -298,17 +298,17 @@ css = ["tinycss2 (>=1.1.0,<1.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.28.28"
+version = "1.28.31"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.28.28-py3-none-any.whl", hash = "sha256:57d618f03bd269ebef6287dd4ed86ddaa1d53a4021008ad3267c6097be17e172"},
-    {file = "boto3-1.28.28.tar.gz", hash = "sha256:4a435fdbd77628e3d32cfbc8b6225e779d8f789027fadb6a51fe1b456e15ef54"},
+    {file = "boto3-1.28.31-py3-none-any.whl", hash = "sha256:2761f3249fe25c3ec1a8cd6b95fca2317747503e6f1d127daf6a3d2cdeb25680"},
+    {file = "boto3-1.28.31.tar.gz", hash = "sha256:dc6d72470f6d8926b8cdc10ee7708d7ccdd36d6313c7aa298bc1cf6bedb8921e"},
 ]
 
 [package.dependencies]
-botocore = ">=1.31.28,<1.32.0"
+botocore = ">=1.31.31,<1.32.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -317,13 +317,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.31.28"
+version = "1.31.31"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.31.28-py3-none-any.whl", hash = "sha256:d6310826e37ba0209e904d691638b8e848342ec17f5187568ca02ad092c55c45"},
-    {file = "botocore-1.31.28.tar.gz", hash = "sha256:1fcfbd23c7f1f66f16c5c1a1e8565ee8ff68429cc0ee9d2acfb1b55739584cbd"},
+    {file = "botocore-1.31.31-py3-none-any.whl", hash = "sha256:1eef14ae98e8662e43f7cf6d993c732793def02644e2d489c5171d3b9269e900"},
+    {file = "botocore-1.31.31.tar.gz", hash = "sha256:950a49c5286fe1f6d72cfbe2910b9ddbdfbb907975ddc41cf38ac9709b4d1291"},
 ]
 
 [package.dependencies]
@@ -507,13 +507,13 @@ files = [
 
 [[package]]
 name = "click"
-version = "8.1.6"
+version = "8.1.7"
 description = "Composable command line interface toolkit"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "click-8.1.6-py3-none-any.whl", hash = "sha256:fa244bb30b3b5ee2cae3da8f55c9e5e0c0e86093306301fb418eb9dc40fbded5"},
-    {file = "click-8.1.6.tar.gz", hash = "sha256:48ee849951919527a045bfe3bf7baa8a959c423134e1a5b98c05c20ba75a1cbd"},
+    {file = "click-8.1.7-py3-none-any.whl", hash = "sha256:ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28"},
+    {file = "click-8.1.7.tar.gz", hash = "sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de"},
 ]
 
 [package.dependencies]
@@ -521,13 +521,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cohere"
-version = "4.20.1"
+version = "4.20.2"
 description = ""
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "cohere-4.20.1-py3-none-any.whl", hash = "sha256:4466c7abdbb168fe2893e5b5123882fe91691d0e3fe43ee254b411917f780dfc"},
-    {file = "cohere-4.20.1.tar.gz", hash = "sha256:533e4a45b38dc338f8a27f24e098b652b4f5ed9f9fbb4719780d1a9fcd1af39e"},
+    {file = "cohere-4.20.2-py3-none-any.whl", hash = "sha256:8572ac0da5dbc1ab5d64558ffe59c8735e34b0d46e1a821a9a4a4a12ef18c89e"},
+    {file = "cohere-4.20.2.tar.gz", hash = "sha256:ad4e3f7b8752c3eeddca0dc926bf0f55e843560ef9d9ae0f2d0ca077d9faa803"},
 ]
 
 [package.dependencies]
@@ -2546,13 +2546,13 @@ files = [
 
 [[package]]
 name = "readme-renderer"
-version = "40.0"
+version = "41.0"
 description = "readme_renderer is a library for rendering \"readme\" descriptions for Warehouse"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "readme_renderer-40.0-py3-none-any.whl", hash = "sha256:e18feb2a1e7706f2865b81ebb460056d93fb29d69daa10b223c00faa7bd9a00a"},
-    {file = "readme_renderer-40.0.tar.gz", hash = "sha256:9f77b519d96d03d7d7dce44977ba543090a14397c4f60de5b6eb5b8048110aa4"},
+    {file = "readme_renderer-41.0-py3-none-any.whl", hash = "sha256:a38243d5b6741b700a850026e62da4bd739edc7422071e95fd5c4bb60171df86"},
+    {file = "readme_renderer-41.0.tar.gz", hash = "sha256:4f4b11e5893f5a5d725f592c5a343e0dc74f5f273cb3dcf8c42d9703a27073f7"},
 ]
 
 [package.dependencies]
@@ -3863,4 +3863,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "654162cb1a10ade7bcb1bd44053c49e3de4e598287090360d40b34995c62f996"
+content-hash = "77c33d5381c6868b82133f1e8d612353bf1d536a1f9f54cfd70d1652da760db3"
