@@ -10,19 +10,19 @@ class TestBlobToolMemory:
     @pytest.fixture
     def memory(self):
         return BlobToolMemory(
-            id="MyMemory",
+            name="MyMemory",
             driver=LocalBlobToolMemoryDriver()
         )
 
     def test_init(self, memory):
-        assert memory.id == "MyMemory"
+        assert memory.name == "MyMemory"
 
         memory = BlobToolMemory(driver=LocalBlobToolMemoryDriver())
 
-        assert memory.id == BlobToolMemory.__name__
+        assert memory.name == BlobToolMemory.__name__
 
     def test_process_output(self, memory):
-        artifact = BlobArtifact(b"foo", name="foo")
+        artifact = BlobArtifact(b"foo", id="foo")
         subtask = ActionSubtask()
         output = memory.process_output(MockTool().test, subtask, artifact)
 

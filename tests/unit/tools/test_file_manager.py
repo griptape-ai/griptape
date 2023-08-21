@@ -32,6 +32,6 @@ class TestFileManager:
 
             result = FileManager(
                 input_memory=[memory]
-            ).save_file_to_disk({"values": {"path": path, "memory_id": memory.id, "artifact_namespace": "foobar"}})
+            ).save_file_to_disk({"values": {"path": path, "memory_name": memory.name, "artifact_namespace": "foobar"}})
 
             assert result.value == "saved successfully"

@@ -41,9 +41,9 @@ class BaseTool(ActivityMixin, ABC):
                 if not self.find_activity(activity_name):
                     raise ValueError(f"activity {activity_name} doesn't exist")
 
-                output_memory_ids = [memory.id for memory in memory_list]
+                output_memory_names = [memory.name for memory in memory_list]
 
-                if len(output_memory_ids) > len(set(output_memory_ids)):
+                if len(output_memory_names) > len(set(output_memory_names)):
                     raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
 
     @property
@@ -157,8 +157,8 @@ class BaseTool(ActivityMixin, ABC):
             stderr=None if self.verbose else subprocess.DEVNULL
         )
 
-    def find_input_memory(self, memory_id: str) -> Optional[BaseToolMemory]:
+    def find_input_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
         if self.input_memory:
-            return next((m for m in self.input_memory if m.id == memory_id), None)
+            return next((m for m in self.input_memory if m.name == memory_name), None)
         else:
             return None

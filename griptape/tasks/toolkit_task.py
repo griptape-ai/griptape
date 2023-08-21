@@ -47,8 +47,8 @@ class ToolkitTask(PromptTask):
         for memories in [tool.output_memory for tool in self.tools if tool.output_memory]:
             for memory_list in memories.values():
                 for memory in memory_list:
-                    if memory.id not in unique_memory_dict:
-                        unique_memory_dict[memory.id] = memory
+                    if memory.name not in unique_memory_dict:
+                        unique_memory_dict[memory.name] = memory
 
         return list(unique_memory_dict.values())
 
@@ -74,7 +74,7 @@ class ToolkitTask(PromptTask):
             action_schema=action_schema,
             tool_names=str.join(", ", [tool.name for tool in self.tools]),
             tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
-            memory_ids=str.join(", ", [memory.id for memory in memories]),
+            memory_names=str.join(", ", [memory.name for memory in memories]),
             memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
         )
 
@@ -152,8 +152,8 @@ class ToolkitTask(PromptTask):
             None
         )
 
-    def find_memory(self, memory_id: str) -> Optional[BaseToolMemory]:
+    def find_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
         return next(
-            (r for r in self.memory if r.id == memory_id),
+            (m for m in self.memory if m.name == memory_name),
             None
         )

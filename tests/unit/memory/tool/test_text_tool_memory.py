@@ -33,14 +33,14 @@ class TestTextToolMemory:
         )
 
         return TextToolMemory(
-            id="MyMemory",
+            name="MyMemory",
             query_engine=VectorQueryEngine(
                 vector_store_driver=vector_store_driver
             )
         )
 
     def test_init(self, memory):
-        assert memory.id == "MyMemory"
+        assert memory.name == "MyMemory"
 
     def test_process_output(self, memory):
         artifact = TextArtifact("foo")

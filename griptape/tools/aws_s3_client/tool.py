@@ -104,7 +104,7 @@ class AwsS3Client(BaseAwsClient):
     @activity(config={
         "description": "Can be used to upload artifacts to an AWS S3 bucket.",
         "schema": Schema({
-            "memory_id": str,
+            "memory_name": str,
             "artifact_namespace": str,
             "bucket_name": str
         })
@@ -112,7 +112,7 @@ class AwsS3Client(BaseAwsClient):
     def upload_objects(self, params: dict) -> InfoArtifact | ErrorArtifact:
         artifact_namespaces = params["values"]["artifact_namespace"]
         bucket_name = params["values"]["bucket_name"]
-        memory = self.find_input_memory(params["values"]["memory_id"])
+        memory = self.find_input_memory(params["values"]["memory_name"])
 
         if memory:
             try:

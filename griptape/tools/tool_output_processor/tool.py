@@ -28,13 +28,13 @@ class ToolOutputProcessor(BaseTool):
     @activity(config={
         "description": "Can be used to insert text into a memory",
         "schema": Schema({
-            "memory_id": str,
+            "memory_name": str,
             "artifact_namespace": str,
             "text": str
         })
     })
     def insert(self, params: dict):
-        memory = self.find_input_memory(params["values"]["memory_id"])
+        memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         text = params["values"]["text"]
 
@@ -49,7 +49,7 @@ class ToolOutputProcessor(BaseTool):
         "description": "Can be used to extract and format content from memory into CSV output",
         "uses_default_memory": False,
         "schema": Schema({
-            "memory_id": str,
+            "memory_name": str,
             "artifact_namespace": str,
             Literal(
                 "column_names",
@@ -58,7 +58,7 @@ class ToolOutputProcessor(BaseTool):
         })
     })
     def extract_csv(self, params: dict) -> list[BaseArtifact] | BaseArtifact:
-        memory = self.find_input_memory(params["values"]["memory_id"])
+        memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         column_names = params["values"]["column_names"]
 
@@ -74,12 +74,12 @@ class ToolOutputProcessor(BaseTool):
         "description": "Can be used to summarize memory content",
         "uses_default_memory": False,
         "schema": Schema({
-            "memory_id": str,
+            "memory_name": str,
             "artifact_namespace": str
         })
     })
     def summarize(self, params: dict) -> TextArtifact | ErrorArtifact:
-        memory = self.find_input_memory(params["values"]["memory_id"])
+        memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
 
         if memory:
@@ -93,7 +93,7 @@ class ToolOutputProcessor(BaseTool):
         "description": "Can be used to search and query memory content",
         "uses_default_memory": False,
         "schema": Schema({
-            "memory_id": str,
+            "memory_name": str,
             "artifact_namespace": str,
             Literal(
                 "query",
@@ -103,7 +103,7 @@ class ToolOutputProcessor(BaseTool):
         })
     })
     def search(self, params: dict) -> TextArtifact | ErrorArtifact:
-        memory = self.find_input_memory(params["values"]["memory_id"])
+        memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         query = params["values"]["query"]
 
@@ -117,8 +117,8 @@ class ToolOutputProcessor(BaseTool):
         else:
             return ErrorArtifact("memory not found")
 
-    def find_input_memory(self, memory_id: str) -> Optional[TextToolMemory]:
+    def find_input_memory(self, memory_name: str) -> Optional[TextToolMemory]:
         if self.input_memory:
-            return next((m for m in self.input_memory if isinstance(m, TextToolMemory) and m.id == memory_id), None)
+            return next((m for m in self.input_memory if isinstance(m, TextToolMemory) and m.name == memory_name), None)
         else:
             return None
