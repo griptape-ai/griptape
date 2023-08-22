@@ -8,13 +8,11 @@ from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromp
 from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.text_gen_driver import TextGenPromptDriver
+from .prompt.amazon_sagemaker_prompt_driver import AmazonSagemakerPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
-from .memory.conversation.dynamodb_conversation_memory_driver import (
-    DynamoDbConversationMemoryDriver
-)
-
+from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
 
 from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
 from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
@@ -47,6 +45,7 @@ __all__ = [
     "HuggingFaceHubPromptDriver",
     "AnthropicPromptDriver",
     "TextGenPromptDriver",
+    "AmazonSagemakerPromptDriver",
 
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
