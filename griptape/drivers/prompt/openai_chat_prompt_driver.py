@@ -30,7 +30,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 value=result.choices[0]["message"]["content"].strip()
             )
         else:
-            raise Exception("Completion with mor than one choice is not supported yet.")
+            raise Exception("Completion with more than one choice is not supported yet.")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = [
