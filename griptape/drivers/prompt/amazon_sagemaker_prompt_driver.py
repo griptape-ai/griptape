@@ -3,6 +3,7 @@ import boto3
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.drivers import BasePromptDriver
+from griptape.core import PromptStack
 
 
 @define
@@ -17,14 +18,28 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def _build_model_input(self, prompt: str) -> any:
+    def _build_model_input(self, prompt_stack: PromptStack) -> any:
         if self.model.startswith("llama"):
             return [
-                [
-                    {"role": "user", "content": prompt},
-                ]
+                {"role": prompt_line.role, "content": prompt_line.content}
+                for prompt_line in prompt_stack.inputs
             ]
         elif self.model.startswith("falcon"):
+            # https://huggingface.co/tiiuae/falcon-7b-instruct/discussions/1
+            prompt_lines = []
+
+            for i in prompt_stack.inputs:
+                if i.is_assistant():
+                    prompt_lines.append(f"Assistant: {i.content}")
+                elif i.is_user():
+                    prompt_lines.append(f"User: {i.content}")
+                elif i.is_system():
+                    prompt_lines.append(f"Context: {i.content}")
+
+            prompt_lines.append("Assistant:")
+
+            prompt = "\n\n" + "\n\n".join(prompt_lines)
+
             return prompt
         raise ValueError("unknown model type")
 
@@ -52,10 +67,10 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
         else:
             return ErrorArtifact("unknown model type")
 
-    def try_run(self, value: str) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
-            "inputs": self._build_model_input(value),
-            "parameters": self._build_model_parameters(value),
+            "inputs": self._build_model_input(prompt_stack),
+            "parameters": self._build_model_parameters(prompt_stack),
         }
         response = self.sagemaker_client.invoke_endpoint(
             EndpointName=self.endpoint_name,
