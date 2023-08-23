@@ -32,13 +32,27 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
-        messages = [
+    def token_count(self, prompt_stack: PromptStack) -> int:
+        return self.tokenizer.token_count(
+            self._prompt_stack_to_messages(prompt_stack)
+        )
+
+    def max_output_tokens(self, messages: list) -> int:
+        if self.max_tokens:
+            return self.max_tokens
+        else:
+            return self.tokenizer.tokens_left(messages)
+
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+        return [
             {
                 "role": self.__to_openai_role(i),
                 "content": i.content
             } for i in prompt_stack.inputs
         ]
+
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        messages = self._prompt_stack_to_messages(prompt_stack)
 
         return {
             "model": self.model,
@@ -53,12 +67,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "api_type": self.api_type,
             "messages": messages
         }
-
-    def max_output_tokens(self, messages: list) -> int:
-        if self.max_tokens:
-            return self.max_tokens
-        else:
-            return self.tokenizer.tokens_left(messages)
 
     def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
         if prompt_input.is_system():
