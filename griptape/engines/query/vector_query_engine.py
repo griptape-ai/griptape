@@ -9,6 +9,7 @@ from griptape.utils.j2 import J2
 
 @define
 class VectorQueryEngine(BaseQueryEngine):
+    answer_token_offset: int = field(default=200, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(lambda: LocalVectorStoreDriver()),
         kw_only=True
@@ -46,7 +47,7 @@ class VectorQueryEngine(BaseQueryEngine):
                 text_segments=text_segments,
             )
 
-            if tokenizer.token_count(message) > tokenizer.max_tokens:
+            if tokenizer.token_count(message) + self.answer_token_offset >= tokenizer.max_tokens:
                 text_segments.pop()
                 break
 
