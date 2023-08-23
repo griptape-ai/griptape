@@ -23,7 +23,7 @@ Tool Descriptions:
 {% if memory_names|length > 0 %}
 Actions of Type "memory"
 
-Tools might store their output in memory. You MUST ALWAYS use memory activities to access stored output. You have access ONLY to memory with the following names: [{{ memory_names }}]. NEVER make up memory names or memory activities.
+Tools might store their output in memory as artifacts (with `memory_name` and `artifact_namespace`) You MUST ALWAYS use memory activities to access stored output. You ONLY have access to memory with the following names: [{{ memory_names }}]. NEVER make up memory names or memory activities.
 
 Memory Descriptions:
 {% for memory in memories %}
