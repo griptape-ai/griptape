@@ -9,7 +9,7 @@ from griptape.utils.j2 import J2
 
 @define
 class VectorQueryEngine(BaseQueryEngine):
-    answer_token_offset: int = field(default=200, kw_only=True)
+    answer_token_offset: int = field(default=400, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(lambda: LocalVectorStoreDriver()),
         kw_only=True
@@ -46,9 +46,21 @@ class VectorQueryEngine(BaseQueryEngine):
                 question=query,
                 text_segments=text_segments,
             )
+            message_token_count = self.prompt_driver.token_count(
+                PromptStack(
+                    inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)]
+                )
+            )
 
-            if tokenizer.token_count(message) + self.answer_token_offset >= tokenizer.max_tokens:
+            if message_token_count + self.answer_token_offset >= tokenizer.max_tokens:
                 text_segments.pop()
+
+                message = self.template_generator.render(
+                    metadata=metadata,
+                    question=query,
+                    text_segments=text_segments,
+                )
+
                 break
 
         return self.prompt_driver.run(
