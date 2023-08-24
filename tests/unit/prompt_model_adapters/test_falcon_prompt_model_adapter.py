@@ -2,18 +2,18 @@ import boto3
 import pytest
 from griptape.core import PromptStack
 from griptape.drivers import AmazonSagemakerPromptDriver
-from griptape.prompt_model_adapters import LlamaPromptModelAdapter
+from griptape.prompt_model_adapters import LlamaPromptModelAdapter, FalconPromptModelAdapter
 from griptape.tokenizers import TiktokenTokenizer
 
 
-class TestLlamaPromptModelAdapter:
+class TestFalconPromptModelAdapter:
     @pytest.fixture
     def adapter(self):
         return AmazonSagemakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
             tokenizer=TiktokenTokenizer(),
-            prompt_model_adapter_class=LlamaPromptModelAdapter,
+            prompt_model_adapter_class=FalconPromptModelAdapter,
             temperature=0.12345
         ).prompt_model_adapter
 
@@ -29,12 +29,8 @@ class TestLlamaPromptModelAdapter:
     def test_prompt_stack_to_model_input(self, adapter, stack):
         model_input = adapter.prompt_stack_to_model_input(stack)
 
-        assert isinstance(model_input, list)
-        assert len(model_input[0]) == 2
-        assert model_input[0][0]["role"] == "system"
-        assert model_input[0][0]["content"] == "foo"
-        assert model_input[0][1]["role"] == "user"
-        assert model_input[0][1]["content"] == "bar"
+        assert isinstance(model_input, str)
+        assert model_input.startswith("foo\n\nUser: bar")
 
     def test_model_params(self, adapter, stack):
         assert adapter.model_params(stack)["max_new_tokens"] == 4083
@@ -42,5 +38,5 @@ class TestLlamaPromptModelAdapter:
 
     def test_process_output(self, adapter, stack):
         assert adapter.process_output([
-            {"generation": {"content": "foobar"}}
+            {"generated_text": "foobar"}
         ]).value == "foobar"
