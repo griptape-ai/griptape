@@ -27,7 +27,7 @@ class TestBlobToolMemory:
         output = memory.process_output(MockTool().test, subtask, artifact)
 
         assert output.to_text().startswith(
-            'Output of "MockTool.test" was stored in memory:'
+            'Output of "MockTool.test" was stored in memory'
         )
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
@@ -37,7 +37,7 @@ class TestBlobToolMemory:
         assert memory.process_output(
             MockTool().test, ActionSubtask(), [BlobArtifact(b"foo", name="foo")]
         ).to_text().startswith(
-            'Output of "MockTool.test" was stored in memory:'
+            'Output of "MockTool.test" was stored in memory'
         )
 
     def test_load_artifacts(self, memory):
