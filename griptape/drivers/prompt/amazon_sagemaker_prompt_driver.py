@@ -8,14 +8,14 @@ from griptape.drivers import BasePromptDriver
 
 if TYPE_CHECKING:
     from griptape.core import PromptStack
-    from griptape.prompt_model_adapters import BasePromptModelAdapter
+    from griptape.drivers import BasePromptModelDriver
 
 
 @define
 class AmazonSagemakerPromptDriver(BasePromptDriver):
     model: str = field(kw_only=True)
-    prompt_model_adapter_class: Type[BasePromptModelAdapter] = field(kw_only=True)
-    prompt_model_adapter: BasePromptModelAdapter = field(
+    prompt_model_adapter_class: Type[BasePromptModelDriver] = field(kw_only=True)
+    prompt_model_adapter: BasePromptModelDriver = field(
         default=Factory(lambda self: self.prompt_model_adapter_class(prompt_driver=self), takes_self=True),
         kw_only=True
     )

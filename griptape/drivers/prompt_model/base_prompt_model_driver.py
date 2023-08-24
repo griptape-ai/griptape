@@ -7,7 +7,7 @@ from griptape.drivers import BasePromptDriver
 
 
 @define
-class BasePromptModelAdapter(ABC):
+class BasePromptModelDriver(ABC):
     prompt_driver: BasePromptDriver = field(kw_only=True)
 
     @abstractmethod

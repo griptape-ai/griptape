@@ -33,6 +33,10 @@ from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
 from .sql.snowflake_sql_driver import SnowflakeSqlDriver
 from .sql.sql_driver import SqlDriver
 
+from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
+from .prompt_model.llama_prompt_model_driver import LlamaPromptModelDriver
+from .prompt_model.falcon_prompt_model_driver import FalconPromptModelDriver
+
 
 __all__ = [
     "BasePromptDriver",
@@ -68,5 +72,9 @@ __all__ = [
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
-    "SqlDriver"
+    "SqlDriver",
+
+    "BasePromptModelDriver",
+    "LlamaPromptModelDriver",
+    "FalconPromptModelDriver"
 ]

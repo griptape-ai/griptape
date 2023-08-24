@@ -1,11 +1,11 @@
 from attr import define
 from griptape.artifacts import TextArtifact
 from griptape.core import PromptStack
-from griptape.prompt_model_adapters import BasePromptModelAdapter
+from griptape.drivers import BasePromptModelDriver
 
 
 @define
-class LlamaPromptModelAdapter(BasePromptModelAdapter):
+class LlamaPromptModelDriver(BasePromptModelDriver):
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> list:
         return [[
             {"role": i.role, "content": i.content}
