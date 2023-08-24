@@ -30,6 +30,10 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    custom_attributes: str = field(
+        default="accept_eula=true",
+        kw_only=True
+    )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
@@ -40,7 +44,7 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
             EndpointName=self.model,
             ContentType="application/json",
             Body=json.dumps(payload),
-            CustomAttributes="accept_eula=true",
+            CustomAttributes=self.custom_attributes,
         )
 
         generations = json.loads(response["Body"].read().decode("utf8"))
