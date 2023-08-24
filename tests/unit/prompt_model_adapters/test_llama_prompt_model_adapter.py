@@ -1,6 +1,5 @@
 import boto3
 import pytest
-
 from griptape.core import PromptStack
 from griptape.drivers import AmazonSagemakerPromptDriver
 from griptape.prompt_model_adapters import LlamaPromptModelAdapter
@@ -41,4 +40,6 @@ class TestLlamaPromptModelAdapter:
         assert adapter.model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, adapter, stack):
-        assert adapter.process_output({"generation": {"content": "foobar"}}).value == "foobar"
+        assert adapter.process_output([
+            {"generation": {"content": "foobar"}}
+        ]).value == "foobar"

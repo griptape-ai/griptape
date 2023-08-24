@@ -19,5 +19,5 @@ class BasePromptModelAdapter(ABC):
         ...
 
     @abstractmethod
-    def process_output(self, output: dict) -> TextArtifact:
+    def process_output(self, output: list[dict]) -> TextArtifact:
         ...

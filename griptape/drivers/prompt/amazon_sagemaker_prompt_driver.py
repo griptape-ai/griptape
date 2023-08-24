@@ -47,9 +47,9 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
             CustomAttributes=self.custom_attributes,
         )
 
-        generations = json.loads(response["Body"].read().decode("utf8"))
+        decoded_body = json.loads(response["Body"].read().decode("utf8"))
 
-        if generations:
-            return self.prompt_model_adapter.process_output(generations[0])
+        if decoded_body:
+            return self.prompt_model_adapter.process_output(decoded_body)
         else:
-            raise Exception("model didn't return any generations")
+            raise Exception("model response is empty")

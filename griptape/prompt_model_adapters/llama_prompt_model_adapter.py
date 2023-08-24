@@ -20,7 +20,7 @@ class LlamaPromptModelAdapter(BasePromptModelAdapter):
             "temperature": self.prompt_driver.temperature,
         }
 
-    def process_output(self, output: dict) -> TextArtifact:
+    def process_output(self, output: list[dict]) -> TextArtifact:
         return TextArtifact(
-            output["generation"]["content"].strip()
+            output[0]["generation"]["content"].strip()
         )
