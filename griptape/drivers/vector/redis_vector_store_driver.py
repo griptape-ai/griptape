@@ -36,11 +36,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
         key = self._generate_key(vector_id, namespace)
-        bytes_vector = json.dumps(vector).encode("utf-8")
 
         mapping = {
             "vector": np.array(vector, dtype=np.float32).tobytes(),
-            "vec_string": bytes_vector
         }
 
         if meta:
@@ -90,19 +88,23 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         results = self.client.ft(self.index).search(query_expression, query_params).docs
 
-        query_results = []
+        pipe = self.client.pipeline()
         for document in results:
-            metadata = getattr(document, "metadata", None)
-            namespace = document.id.split(":")[0] if ":" in document.id else None
-            vector_float_list = json.loads(document["vec_string"])
+            pipe.hget(document.id, "vector")
+
+        vectors = pipe.execute()
+
+        query_results = []
+        for document, vector in zip(results, vectors):
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
-                    vector=vector_float_list,
+                    vector=np.frombuffer(vector, dtype=np.float32).tolist(),
                     score=float(document['score']),
-                    meta=metadata,
-                    namespace=namespace
+                    meta=None,
+                    namespace=None
                 )
             )
+        print("Query Results", query_results)
         return query_results
 
     def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
