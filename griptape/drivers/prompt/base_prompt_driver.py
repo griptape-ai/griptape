@@ -32,6 +32,11 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         else:
             return self.tokenizer.tokens_left(text)
 
+    def token_count(self, prompt_stack: PromptStack) -> int:
+        return self.tokenizer.token_count(
+            self.prompt_stack_to_string(prompt_stack)
+        )
+
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:

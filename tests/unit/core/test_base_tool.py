@@ -67,8 +67,8 @@ class TestBaseTool:
         tool = MockTool(
             output_memory={
                 "test": [
-                    TextToolMemory(id="Memory1", query_engine=query_engine),
-                    TextToolMemory(id="Memory2", query_engine=query_engine)
+                    TextToolMemory(name="Memory1", query_engine=query_engine),
+                    TextToolMemory(name="Memory2", query_engine=query_engine)
                 ]
             }
         )
@@ -86,8 +86,8 @@ class TestBaseTool:
             MockTool(
                 output_memory={
                     "test": [
-                        TextToolMemory(id="Memory1", query_engine=query_engine),
-                        TextToolMemory(id="Memory1", query_engine=query_engine)
+                        TextToolMemory(name="Memory1", query_engine=query_engine),
+                        TextToolMemory(name="Memory1", query_engine=query_engine)
                     ]
                 }
             )
@@ -96,7 +96,7 @@ class TestBaseTool:
             MockTool(
                 output_memory={
                     "output_memory": [
-                        TextToolMemory(id="Memory1", query_engine=query_engine)
+                        TextToolMemory(name="Memory1", query_engine=query_engine)
                     ]
                 }
             )
@@ -105,12 +105,12 @@ class TestBaseTool:
                 output_memory={
                     "test": [
                         TextToolMemory(
-                            id="Memory1", query_engine=query_engine
+                            name="Memory1", query_engine=query_engine
                         )
                     ],
                     "test_str_output": [
                         TextToolMemory(
-                            id="Memory1", query_engine=query_engine
+                            name="Memory1", query_engine=query_engine
                         )
                     ]
                 }
@@ -118,7 +118,7 @@ class TestBaseTool:
 
     def test_find_input_memory(self):
         assert MockTool().find_input_memory("foo") is None
-        assert MockTool(input_memory=[TextToolMemory(id="foo")]).find_input_memory("foo") is not None
+        assert MockTool(input_memory=[TextToolMemory(name="foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
         assert tool.execute(

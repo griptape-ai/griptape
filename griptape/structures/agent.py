@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.core import BaseTool
+from griptape.tools import BaseTool
 from griptape.memory.structure import Run, ConversationMemory
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask

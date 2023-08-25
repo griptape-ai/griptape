@@ -8,7 +8,8 @@ from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.core import BaseTool, ActivityMixin
+from griptape.tools import BaseTool
+from griptape.core import ActivityMixin
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
 from griptape.artifacts import BaseArtifact
@@ -197,7 +198,7 @@ class ActionSubtask(PromptTask):
                         self.__validate_activity_mixin(self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
-                        self._memory = self.task.find_memory(self.action_input["values"]["memory_id"])
+                        self._memory = self.task.find_memory(self.action_input["values"]["memory_name"])
 
                     if self._memory:
                         self.__validate_activity_mixin(self._memory)

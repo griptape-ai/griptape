@@ -1,0 +1,5 @@
+version: "v1"
+name: AWS IAM Client
+description: Tool for the IAM boto3 API.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

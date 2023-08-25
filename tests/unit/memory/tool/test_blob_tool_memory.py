@@ -10,24 +10,24 @@ class TestBlobToolMemory:
     @pytest.fixture
     def memory(self):
         return BlobToolMemory(
-            id="MyMemory",
+            name="MyMemory",
             driver=LocalBlobToolMemoryDriver()
         )
 
     def test_init(self, memory):
-        assert memory.id == "MyMemory"
+        assert memory.name == "MyMemory"
 
         memory = BlobToolMemory(driver=LocalBlobToolMemoryDriver())
 
-        assert memory.id == BlobToolMemory.__name__
+        assert memory.name == BlobToolMemory.__name__
 
     def test_process_output(self, memory):
-        artifact = BlobArtifact(b"foo", name="foo")
+        artifact = BlobArtifact(b"foo", id="foo")
         subtask = ActionSubtask()
         output = memory.process_output(MockTool().test, subtask, artifact)
 
         assert output.to_text().startswith(
-            'Output of "MockTool.test" was stored in memory:'
+            'Output of "MockTool.test" was stored in memory'
         )
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
@@ -37,7 +37,7 @@ class TestBlobToolMemory:
         assert memory.process_output(
             MockTool().test, ActionSubtask(), [BlobArtifact(b"foo", name="foo")]
         ).to_text().startswith(
-            'Output of "MockTool.test" was stored in memory:'
+            'Output of "MockTool.test" was stored in memory'
         )
 
     def test_load_artifacts(self, memory):
