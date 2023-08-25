@@ -50,15 +50,12 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         try:
             response = self.client.get(index=self.index_name, id=vector_id)
             if response["found"]:
-                # Extracting the vector details
                 vector_data = response["_source"]
-
-                # Constructing the Entry object
                 entry = BaseVectorStoreDriver.Entry(
                     id=vector_id,
-                    meta=vector_data.get("metadata"),  # Assumes you have a metadata key in your vector data
-                    vector=vector_data.get("vector"),  # Assumes you have a vector key in your vector data
-                    namespace=vector_data.get("namespace")  # Assumes you have a namespace key in your vector data
+                    meta=vector_data.get("metadata"),
+                    vector=vector_data.get("vector"),
+                    namespace=vector_data.get("namespace")
                 )
                 return entry
             return None
@@ -69,9 +66,9 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
 
         query_body = {
-            "size": 10000,  # Retrieve up to 10,000 documents
+            "size": 10000,
             "query": {
-                "match_all": {}  # Match all documents
+                "match_all": {}
             }
         }
 
@@ -146,7 +143,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             }
 
         response = self.client.search(index=self.index_name, body=query_body)
-        # After receiving the response
 
         return [
             BaseVectorStoreDriver.QueryResult(
@@ -157,28 +153,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             )
             for hit in response["hits"]["hits"]
         ]
-
-    def simple_query(self):
-        query_body = {
-            "size": 5,
-            "query": {
-                "match_all": {}
-            }
-        }
-        print("Simple Query Body:", query_body)
-        response = self.client.search(index=self.index_name, body=query_body)
-        print("Response:", response)
-
-        results = []
-        if response and "hits" in response and "hits" in response["hits"]:
-            for hit in response["hits"]["hits"]:
-                results.append(BaseVectorStoreDriver.QueryResult(
-                    namespace=hit["_source"].get("namespace"),
-                    score=hit["_score"],
-                    vector=hit["_source"].get("vector"),
-                    meta=hit["_source"].get("metadata")
-                ))
-        return results
 
     def initialize_index(self):
         if not self.client.indices.exists(index=self.index_name):

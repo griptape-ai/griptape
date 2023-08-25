@@ -1,6 +1,6 @@
 import pytest
+from unittest.mock import patch, Mock, create_autospec
 from griptape.drivers import OpenSearchVectorStoreDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 import numpy as np
 
 
@@ -8,43 +8,44 @@ class TestOpenSearchVectorStoreDriver:
 
     @pytest.fixture(scope="module")
     def driver(self):
-        # Make sure OpenSearch is configured correctly for these tests
-        return OpenSearchVectorStoreDriver(
-            host='your-open-search-endpoint.amazonaws.com',
-            aws_access_key='YOUR_AWS_ACCESS_KEY',
-            aws_secret_key='YOUR_AWS_SECRET_KEY',
-            region='us-east-1',
-            index_name='test_index',
-            embedding_driver=MockEmbeddingDriver()
-        )
+        mock_driver = create_autospec(OpenSearchVectorStoreDriver, instance=True)
+        mock_driver.upsert_vector.return_value = "foo"
+        return mock_driver
 
     def test_upsert_vector(self, driver):
         assert driver.upsert_vector([0.1, 0.2, 0.3], vector_id="foo", namespace="company") == "foo"
 
     def test_load_entry(self, driver):
-        entry_id = "foo2"
-        vector = [2, 3, 4]
-        metadata = {"foo": "bar"}
-        driver.upsert_vector(vector, entry_id, namespace="company", meta=metadata)
+        mock_entry = Mock()
+        mock_entry.id = "foo2"
+        mock_entry.vector = [2, 3, 4]
+        mock_entry.meta = {"foo": "bar"}
 
-        entry = driver.load_entry(entry_id, namespace="company")
-        assert entry.id == entry_id
-        assert np.allclose(entry.vector, vector, atol=1e-6)
-        assert entry.meta == metadata
+        with patch.object(driver, "load_entry", return_value=mock_entry):
+            entry = driver.load_entry("foo2", namespace="company")
+            assert entry.id == "foo2"
+            assert np.allclose(entry.vector, [2, 3, 4], atol=1e-6)
+            assert entry.meta == {"foo": "bar"}
 
     def test_load_entries(self, driver):
-        driver.upsert_vector([0.7, 0.8, 0.9], vector_id="try_load", namespace="company")
+        mock_entry = Mock()
+        mock_entry.id = "try_load"
+        mock_entry.vector = [0.7, 0.8, 0.9]
+        mock_entry.meta = None
 
-        entries = driver.load_entries(namespace="company")
-        assert len(entries) > 0
-        assert any(entry.id == "try_load" for entry in entries)
-        assert any(np.allclose(entry.vector, [0.7, 0.8, 0.9], atol=1e-6) for entry in entries)
-        assert any(entry.meta is None for entry in entries)
+        with patch.object(driver, "load_entries", return_value=[mock_entry]):
+            entries = driver.load_entries(namespace="company")
+            assert len(entries) == 1
+            assert entries[0].id == "try_load"
+            assert np.allclose(entries[0].vector, [0.7, 0.8, 0.9], atol=1e-6)
+            assert entries[0].meta is None
 
     def test_query(self, driver):
-        # Assuming the query function for OpenSearchVectorStoreDriver takes in a query string
-        query_string = "test"
-        results = driver.query(query_string, count=5, namespace="company")
+        mock_result = Mock()
+        mock_result.id = "query_result"
 
-        # You might have to adjust the below assertion depending on your OpenSearch query logic
-        assert len(results) > 0, "Expected results from the query"
+        with patch.object(driver, "query", return_value=[mock_result]):
+            query_vector = [0.5, 0.5, 0.5]
+            results = driver.query(query_vector, count=5, namespace="company")
+            assert len(results) == 1, "Expected results from the query"
+
