@@ -10,5 +10,5 @@ class TestAmazonSagemakerPromptDriver:
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
             tokenizer=TiktokenTokenizer(),
-            prompt_model_adapter_class=LlamaPromptModelAdapter
+            prompt_model_driver_class=LlamaPromptModelAdapter
         )

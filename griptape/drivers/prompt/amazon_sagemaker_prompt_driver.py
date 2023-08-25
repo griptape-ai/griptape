@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 @define
 class AmazonSagemakerPromptDriver(BasePromptDriver):
     model: str = field(kw_only=True)
-    prompt_model_adapter_class: Type[BasePromptModelDriver] = field(kw_only=True)
-    prompt_model_adapter: BasePromptModelDriver = field(
-        default=Factory(lambda self: self.prompt_model_adapter_class(prompt_driver=self), takes_self=True),
+    prompt_model_driver_class: Type[BasePromptModelDriver] = field(kw_only=True)
+    prompt_model_driver: BasePromptModelDriver = field(
+        default=Factory(lambda self: self.prompt_model_driver_class(prompt_driver=self), takes_self=True),
         kw_only=True
     )
     session: boto3.Session = field(
@@ -37,8 +37,8 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
-            "inputs": self.prompt_model_adapter.prompt_stack_to_model_input(prompt_stack),
-            "parameters": self.prompt_model_adapter.model_params(prompt_stack)
+            "inputs": self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack),
+            "parameters": self.prompt_model_driver.model_params(prompt_stack)
         }
         response = self.sagemaker_client.invoke_endpoint(
             EndpointName=self.model,
@@ -50,6 +50,6 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
         decoded_body = json.loads(response["Body"].read().decode("utf8"))
 
         if decoded_body:
-            return self.prompt_model_adapter.process_output(decoded_body)
+            return self.prompt_model_driver.process_output(decoded_body)
         else:
             raise Exception("model response is empty")

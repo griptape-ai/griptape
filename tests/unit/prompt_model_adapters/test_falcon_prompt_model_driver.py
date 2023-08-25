@@ -7,14 +7,14 @@ from griptape.tokenizers import TiktokenTokenizer
 
 class TestFalconPromptModelDriver:
     @pytest.fixture
-    def adapter(self):
+    def driver(self):
         return AmazonSagemakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
             tokenizer=TiktokenTokenizer(),
-            prompt_model_adapter_class=FalconPromptModelDriver,
+            prompt_model_driver_class=FalconPromptModelDriver,
             temperature=0.12345
-        ).prompt_model_adapter
+        ).prompt_model_driver
 
     @pytest.fixture
     def stack(self):
@@ -25,17 +25,17 @@ class TestFalconPromptModelDriver:
 
         return stack
 
-    def test_prompt_stack_to_model_input(self, adapter, stack):
-        model_input = adapter.prompt_stack_to_model_input(stack)
+    def test_prompt_stack_to_model_input(self, driver, stack):
+        model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, str)
         assert model_input.startswith("foo\n\nUser: bar")
 
-    def test_model_params(self, adapter, stack):
-        assert adapter.model_params(stack)["max_new_tokens"] == 4083
-        assert adapter.model_params(stack)["temperature"] == 0.12345
+    def test_model_params(self, driver, stack):
+        assert driver.model_params(stack)["max_new_tokens"] == 4083
+        assert driver.model_params(stack)["temperature"] == 0.12345
 
-    def test_process_output(self, adapter, stack):
-        assert adapter.process_output([
+    def test_process_output(self, driver, stack):
+        assert driver.process_output([
             {"generated_text": "foobar"}
         ]).value == "foobar"
