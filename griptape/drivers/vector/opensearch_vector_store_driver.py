@@ -1,30 +1,30 @@
-from typing import Optional
-from elasticsearch import Elasticsearch, RequestsHttpConnection
-from requests_aws4auth import AWS4Auth
+from typing import Optional, Union, Tuple
+from opensearchpy import OpenSearch, RequestsHttpConnection
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
-from attr import define, field
+from attr import define, field, Factory
 
 
 @define
 class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     host: str = field(kw_only=True)
-    aws_access_key: str = field(kw_only=True)
-    aws_secret_key: str = field(kw_only=True)
-    region: str = field(kw_only=True)
+    port: int = field(default=443, kw_only=True)
+    http_auth: Optional[Union[str, Tuple[str, str]]] = field(default=None, kw_only=True)
+    use_ssl: bool = field(default=True, kw_only=True)
+    verify_certs: bool = field(default=True, kw_only=True)
     index_name: str = field(kw_only=True)
+    dimension: int = field(default=3, kw_only=True)
 
-    client: Elasticsearch = field(init=False)
-
-    def __attrs_post_init__(self) -> None:
-        aws_auth = AWS4Auth(self.aws_access_key, self.aws_secret_key, self.region, 'es')
-        self.client = Elasticsearch(
-            hosts=[{'host': self.host, 'port': 443}],
-            http_auth=aws_auth,
-            use_ssl=True,
-            verify_certs=True,
+    client: OpenSearch = field(default=Factory(
+        lambda self: OpenSearch(
+            hosts=[{'host': self.host, 'port': self.port}],
+            http_auth=self.http_auth,
+            use_ssl=self.use_ssl,
+            verify_certs=self.verify_certs,
             connection_class=RequestsHttpConnection
-        )
+        ),
+        takes_self=True
+    ))
 
     def upsert_vector(
             self,
@@ -63,7 +63,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 return entry
             return None
         except Exception as e:
-            # Handle exceptions like "document not found" or any other issues
+            print(f"Error while loading entry: {e}")
             return None
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -101,28 +101,14 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     def query(
             self,
             query_vector: list[float],
-            count: Optional[int] = 10,
+            count: Optional[int] = None,
             field_name: str = "vector",
             namespace: Optional[str] = None,
             include_vectors: bool = False,
             include_metadata=True,
             **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        """
-        Query the OpenSearch index for k nearest neighbors to the given vector.
-
-        Args:
-            - query_vector: The vector used for the k-NN search.
-            - count: The number of neighbors you want the query to return.
-            - field_name: The field containing the vectors in the OpenSearch index.
-            - namespace: An optional namespace filter.
-            - include_vectors: Whether to include vectors in the results.
-            - include_metadata: Whether to include metadata in the results.
-            - **kwargs: Additional arguments.
-
-        Returns:
-            A list of QueryResult objects.
-        """
+        count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
 
         # Base k-NN query
         query_body = {
@@ -160,21 +146,65 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             }
 
         response = self.client.search(index=self.index_name, body=query_body)
+        # After receiving the response
+
+        return [
+            BaseVectorStoreDriver.QueryResult(
+                namespace=hit["_source"].get("namespace") if namespace else None,
+                score=hit["_score"],
+                vector=hit["_source"].get("vector") if include_vectors else None,
+                meta=hit["_source"].get("metadata") if include_metadata else None
+            )
+            for hit in response["hits"]["hits"]
+        ]
+
+    def simple_query(self):
+        query_body = {
+            "size": 5,
+            "query": {
+                "match_all": {}
+            }
+        }
+        print("Simple Query Body:", query_body)
+        response = self.client.search(index=self.index_name, body=query_body)
+        print("Response:", response)
 
         results = []
-        for hit in response["hits"]["hits"]:
-            vector_data = hit["_source"]
-
-            # Create the QueryResult object.
-            # This is an approximation since the exact structure of QueryResult is not provided
-            result = BaseVectorStoreDriver.QueryResult(
-                id=hit["_id"],
-                score=hit["_score"],
-                vector=vector_data.get("vector") if include_vectors else None,
-                meta=vector_data.get("metadata") if include_metadata else None
-            )
-            results.append(result)
-
+        if response and "hits" in response and "hits" in response["hits"]:
+            for hit in response["hits"]["hits"]:
+                results.append(BaseVectorStoreDriver.QueryResult(
+                    namespace=hit["_source"].get("namespace"),
+                    score=hit["_score"],
+                    vector=hit["_source"].get("vector"),
+                    meta=hit["_source"].get("metadata")
+                ))
         return results
 
-
+    def initialize_index(self):
+        if not self.client.indices.exists(index=self.index_name):
+            mapping = {
+                "settings": {
+                    "number_of_shards": 1,
+                    "number_of_replicas": 1,
+                    "index.knn": True
+                },
+                "mappings": {
+                    "properties": {
+                        "vector": {
+                            "type": "knn_vector",
+                            "dimension": self.dimension
+                        },
+                        "namespace": {
+                            "type": "keyword"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "enabled": True
+                        }
+                    }
+                }
+            }
+            try:
+                self.client.indices.create(index=self.index_name, body=mapping)
+            except Exception as e:
+                print(f"Error initializing the index: {e}")
