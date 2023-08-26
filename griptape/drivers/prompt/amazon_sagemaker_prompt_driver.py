@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type, Optional
 import boto3
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -9,11 +9,13 @@ from griptape.drivers import BasePromptDriver
 if TYPE_CHECKING:
     from griptape.core import PromptStack
     from griptape.drivers import BasePromptModelDriver
+    from griptape.tokenizers import BaseTokenizer
 
 
 @define
 class AmazonSagemakerPromptDriver(BasePromptDriver):
     model: str = field(kw_only=True)
+    tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
     prompt_model_driver_class: Type[BasePromptModelDriver] = field(kw_only=True)
     prompt_model_driver: BasePromptModelDriver = field(
         default=Factory(lambda self: self.prompt_model_driver_class(prompt_driver=self), takes_self=True),
@@ -34,6 +36,10 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
         default="accept_eula=true",
         kw_only=True
     )
+
+    def __attrs_post_init__(self) -> None:
+        if not self.tokenizer:
+            self.tokenizer = self.prompt_model_driver.tokenizer
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {

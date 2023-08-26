@@ -1,18 +1,18 @@
 import boto3
 import pytest
 from griptape.core import PromptStack
-from griptape.drivers import AmazonSagemakerPromptDriver, LlamaPromptModelDriver
+from griptape.drivers import AmazonSagemakerPromptDriver, SagemakerLlamaPromptModelDriver
 from griptape.tokenizers import TiktokenTokenizer
 
 
-class TestLlamaPromptModelDriver:
+class TestSagemakerLlamaPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonSagemakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
             tokenizer=TiktokenTokenizer(),
-            prompt_model_driver_class=LlamaPromptModelDriver,
+            prompt_model_driver_class=SagemakerLlamaPromptModelDriver,
             temperature=0.12345
         ).prompt_model_driver
 
