@@ -7,7 +7,7 @@ from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 
 if TYPE_CHECKING:
-    from griptape.core import PromptStack
+    from griptape.utils import PromptStack
     from griptape.drivers import BasePromptModelDriver
     from griptape.tokenizers import BaseTokenizer
 

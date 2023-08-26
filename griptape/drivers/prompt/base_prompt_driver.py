@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
-from griptape.core import ExponentialBackoffMixin, PromptStack
+from griptape.utils import ExponentialBackoffMixin, PromptStack
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:

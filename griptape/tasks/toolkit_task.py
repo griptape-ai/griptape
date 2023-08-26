@@ -5,7 +5,7 @@ from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.tools import BaseTool
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.tasks import ActionSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2

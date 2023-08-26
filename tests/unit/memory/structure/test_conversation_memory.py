@@ -1,6 +1,6 @@
 import json
 
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.memory.structure import ConversationMemory, Run
 
 
