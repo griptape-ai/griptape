@@ -84,13 +84,6 @@ class Structure(ABC):
     def is_executing(self) -> bool:
         return any(s for s in self.tasks if s.is_executing())
 
-    def _init_task(self, task: BaseTask) -> BaseTask:
-        task.structure = self
-
-        if isinstance(task, ToolkitTask) and task.tool_memory is None:
-            task.set_default_tools_memory(self.tool_memory)
-        return task
-
     def find_task(self, task_id: str) -> Optional[BaseTask]:
         return next((task for task in self.tasks if task.id == task_id), None)
 
@@ -119,3 +112,10 @@ class Structure(ABC):
     @abstractmethod
     def run(self, *args) -> Union[BaseTask, list[BaseTask]]:
         ...
+
+    def _init_task(self, task: BaseTask) -> BaseTask:
+        task.structure = self
+
+        if isinstance(task, ToolkitTask) and task.tool_memory is None:
+            task.set_default_tools_memory(self.tool_memory)
+        return task

@@ -12,7 +12,7 @@ class TestPromptSubtask:
 
         assert subtask.run().to_text() == "mock output"
 
-    def test_render_prompt(self):
+    def test_to_text(self):
         subtask = PromptTask("{{ test }}", context={"test": "test value"})
 
         Pipeline().add_task(subtask)
