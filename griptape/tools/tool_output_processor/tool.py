@@ -3,7 +3,7 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, BaseArtifact
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 from griptape.engines import CsvExtractionEngine, BaseSummaryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from schema import Schema, Literal

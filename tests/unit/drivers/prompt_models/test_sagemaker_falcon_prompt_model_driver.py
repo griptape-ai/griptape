@@ -1,6 +1,6 @@
 import boto3
 import pytest
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import AmazonSagemakerPromptDriver, SagemakerFalconPromptModelDriver
 from griptape.tokenizers import TiktokenTokenizer
 

@@ -1,5 +1,5 @@
 from attr import define, field, Factory
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import OpenAiCompletionPromptDriver
 from griptape.tokenizers import TiktokenTokenizer
 

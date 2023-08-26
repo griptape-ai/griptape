@@ -1,7 +1,7 @@
 from attr import define, field, Factory
 from transformers import LlamaTokenizerFast
 from griptape.artifacts import TextArtifact
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import BasePromptModelDriver
 from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
 

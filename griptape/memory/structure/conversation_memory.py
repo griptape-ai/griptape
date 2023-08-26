@@ -7,7 +7,7 @@ from griptape.memory.structure import Run
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver
     from griptape.structures import Structure
-    from griptape.core import PromptStack
+    from griptape.utils import PromptStack
 
 
 @define

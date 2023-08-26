@@ -4,7 +4,7 @@ from attr import define, field
 from typing import Optional
 from urllib.parse import urljoin
 from griptape.artifacts import TextArtifact
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import TextGenTokenizer
 

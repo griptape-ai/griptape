@@ -9,7 +9,7 @@ import schema
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 from schema import Schema, Literal
 
 
