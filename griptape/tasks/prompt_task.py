@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional, Callable, Union
 from attr import define, field, Factory
 from griptape.utils import PromptStack
 from griptape.utils import J2
-from griptape.tasks import BaseInputTask
+from griptape.tasks import BaseTextInputTask
 from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class PromptTask(BaseInputTask):
+class PromptTask(BaseTextInputTask):
 
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(

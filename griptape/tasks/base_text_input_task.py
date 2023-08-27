@@ -6,7 +6,7 @@ from griptape.utils import J2
 
 
 @define
-class BaseInputTask(BaseTask, ABC):
+class BaseTextInputTask(BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)

@@ -1,11 +1,11 @@
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.engines import BaseSummaryEngine, PromptSummaryEngine
-from griptape.tasks import BaseInputTask
+from griptape.tasks import BaseTextInputTask
 
 
 @define
-class SummaryTask(BaseInputTask):
+class SummaryTask(BaseTextInputTask):
     summary_engine: BaseSummaryEngine = field(
         kw_only=True,
         default=Factory(lambda: PromptSummaryEngine())
