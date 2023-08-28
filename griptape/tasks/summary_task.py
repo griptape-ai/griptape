@@ -1,8 +1,6 @@
-from __future__ import annotations
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.engines import BaseSummaryEngine, PromptSummaryEngine
-from griptape.structures import Structure
 from griptape.tasks import BaseTextInputTask
 
 

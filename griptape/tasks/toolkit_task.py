@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
-from griptape.structures import Structure
 from griptape.tools import BaseTool
 from griptape.utils import PromptStack
 from griptape.tasks import ActionSubtask
@@ -13,6 +12,7 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.memory.tool import BaseToolMemory
+    from griptape.structures import Structure
 
 
 @define
