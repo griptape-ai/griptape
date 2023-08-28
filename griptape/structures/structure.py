@@ -11,7 +11,6 @@ from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
-from griptape.tasks import ToolkitTask
 from griptape.tokenizers import TiktokenTokenizer
 
 if TYPE_CHECKING:
@@ -51,7 +50,7 @@ class Structure(ABC):
         if self.memory:
             self.memory.structure = self
 
-        [self._init_task(task) for task in self.tasks]
+        [task.preprocess(self) for task in self.tasks]
 
         self.prompt_driver.structure = self
 
@@ -112,10 +111,3 @@ class Structure(ABC):
     @abstractmethod
     def run(self, *args) -> Union[BaseTask, list[BaseTask]]:
         ...
-
-    def _init_task(self, task: BaseTask) -> BaseTask:
-        task.structure = self
-
-        if isinstance(task, ToolkitTask) and task.tool_memory is None:
-            task.set_default_tools_memory(self.tool_memory)
-        return task

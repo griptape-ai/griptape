@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.structures import Structure
 from griptape.tools import BaseTool
 from griptape.utils import PromptStack
 from griptape.tasks import ActionSubtask
@@ -69,6 +70,14 @@ class ToolkitTask(PromptTask):
                 stack.add_user_input(self.generate_user_subtask_template(s))
 
         return stack
+
+    def preprocess(self, structure: Structure) -> ToolkitTask:
+        super().preprocess(structure)
+
+        if self.tool_memory is None:
+            self.set_default_tools_memory(structure.tool_memory)
+
+        return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         memories = [r for r in self.memory if len(r.activities()) > 0]
