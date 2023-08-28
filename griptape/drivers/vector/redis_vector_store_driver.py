@@ -110,7 +110,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             )
         return query_results
 
-    def create_index(self, namespace: Optional[str] = None, vector_dimension: Optional[int] = None):
+    def create_index(self, namespace: Optional[str] = None, vector_dimension: Optional[int] = None) -> None:
         try:
             self.client.ft(self.index).info()
             logging.warning("Index already exists!")
