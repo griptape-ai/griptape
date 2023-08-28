@@ -2,7 +2,6 @@ import boto3
 import pytest
 from griptape.utils import PromptStack
 from griptape.drivers import AmazonSagemakerPromptDriver, SagemakerLlamaPromptModelDriver
-from griptape.tokenizers import TiktokenTokenizer
 
 
 class TestSagemakerLlamaPromptModelDriver:
@@ -11,7 +10,6 @@ class TestSagemakerLlamaPromptModelDriver:
         return AmazonSagemakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            tokenizer=TiktokenTokenizer(),
             prompt_model_driver_class=SagemakerLlamaPromptModelDriver,
             temperature=0.12345
         ).prompt_model_driver
@@ -36,10 +34,21 @@ class TestSagemakerLlamaPromptModelDriver:
         assert model_input[0][1]["content"] == "bar"
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 4083
+        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 3993
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver, stack):
         assert driver.process_output([
             {"generation": {"content": "foobar"}}
         ]).value == "foobar"
+
+    def test_tokenizer_max_model_length(self, driver):
+        assert driver.tokenizer.tokenizer.model_max_length == 4000
+
+        assert AmazonSagemakerPromptDriver(
+            model="foo",
+            session=boto3.Session(region_name="us-east-1"),
+            prompt_model_driver_class=SagemakerLlamaPromptModelDriver,
+            temperature=0.12345,
+            max_tokens=10
+        ).prompt_model_driver.tokenizer.tokenizer.model_max_length == 10

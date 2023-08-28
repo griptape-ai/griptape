@@ -8,14 +8,18 @@ from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
 
 @define
 class SagemakerLlamaPromptModelDriver(BasePromptModelDriver):
+    DEFAULT_MAX_TOKENS = 4000
+
     tokenizer: BaseTokenizer = field(
         default=Factory(
-            lambda: HuggingFaceTokenizer(
+            lambda self: HuggingFaceTokenizer(
                 tokenizer=LlamaTokenizerFast.from_pretrained(
                     "hf-internal-testing/llama-tokenizer",
-                    model_max_length=4000
+                    model_max_length=self.prompt_driver.max_tokens
+                    if self.prompt_driver.max_tokens else self.DEFAULT_MAX_TOKENS
                 )
-            )
+            ),
+            takes_self=True
         ),
         kw_only=True
     )
