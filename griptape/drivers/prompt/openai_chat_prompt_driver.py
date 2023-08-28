@@ -2,6 +2,7 @@ import os
 from typing import Optional
 import openai
 from attr import define, field, Factory
+from tenacity import Retrying, wait_exponential, stop_after_attempt, retry_if_not_exception_type
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
@@ -47,6 +48,18 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def token_count(self, prompt_stack: PromptStack) -> int:
         return self.tokenizer.token_count(
             self._prompt_stack_to_messages(prompt_stack)
+        )
+
+    def retrying(self) -> Retrying:
+        return Retrying(
+            wait=wait_exponential(
+                min=self.min_retry_delay,
+                max=self.max_retry_delay
+            ),
+            retry=retry_if_not_exception_type(openai.InvalidRequestError),
+            stop=stop_after_attempt(self.max_attempts),
+            reraise=True,
+            after=self.after_hook,
         )
 
     def max_output_tokens(self, messages: list) -> int:
