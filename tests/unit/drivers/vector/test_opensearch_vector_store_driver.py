@@ -5,7 +5,6 @@ import numpy as np
 
 
 class TestOpenSearchVectorStoreDriver:
-
     @pytest.fixture(scope="module")
     def driver(self):
         mock_driver = create_autospec(OpenSearchVectorStoreDriver, instance=True)
@@ -45,7 +44,6 @@ class TestOpenSearchVectorStoreDriver:
         mock_result.id = "query_result"
 
         with patch.object(driver, "query", return_value=[mock_result]):
-            query_vector = [0.5, 0.5, 0.5]
-            results = driver.query(query_vector, count=5, namespace="company")
+            query_string = "sample query text"
+            results = driver.query(query_string, count=5, namespace="company")
             assert len(results) == 1, "Expected results from the query"
-

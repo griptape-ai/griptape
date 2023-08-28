@@ -1,8 +1,10 @@
 from typing import Optional, Union, Tuple
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from griptape import utils
+import logging
 from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field, Factory
+logging.basicConfig(level=logging.ERROR)
 
 
 @define
@@ -13,7 +15,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     use_ssl: bool = field(default=True, kw_only=True)
     verify_certs: bool = field(default=True, kw_only=True)
     index_name: str = field(kw_only=True)
-    dimension: int = field(default=3, kw_only=True)
 
     client: OpenSearch = field(default=Factory(
         lambda self: OpenSearch(
@@ -42,15 +43,19 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             "metadata": meta
         }
         doc.update(kwargs)
-        response = self.client.index(index=self.index_name, id=vector_id, body=doc)
+        response = self.client.index(index=self.index_name, id=vector_id, body=doc,
+                                     routing=namespace if namespace else "default")
 
         return response["_id"]
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         try:
-            response = self.client.get(index=self.index_name, id=vector_id)
+            response = self.client.get(index=self.index_name, id=vector_id, routing=namespace if namespace else None)
             if response["found"]:
                 vector_data = response["_source"]
+                if namespace and vector_data.get("namespace") != namespace:
+                    # Entry doesn't belong to the specified namespace
+                    return None
                 entry = BaseVectorStoreDriver.Entry(
                     id=vector_id,
                     meta=vector_data.get("metadata"),
@@ -58,9 +63,10 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                     namespace=vector_data.get("namespace")
                 )
                 return entry
-            return None
+            else:
+                return None
         except Exception as e:
-            print(f"Error while loading entry: {e}")
+            logging.error(f"Error while loading entry: {e}")
             return None
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -80,7 +86,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 }
             }
 
-        response = self.client.search(index=self.index_name, body=query_body)
+        response = self.client.search(index=self.index_name, body=query_body, routing=namespace if namespace else None)
 
         entries = []
         for hit in response["hits"]["hits"]:
@@ -92,12 +98,11 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 namespace=vector_data.get("namespace")
             )
             entries.append(entry)
-
         return entries
 
     def query(
             self,
-            query_vector: list[float],
+            query: str,
             count: Optional[int] = None,
             field_name: str = "vector",
             namespace: Optional[str] = None,
@@ -106,14 +111,14 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
-
+        vector = self.embedding_driver.embed_string(query)
         # Base k-NN query
         query_body = {
             "size": count,
             "query": {
                 "knn": {
                     field_name: {
-                        "vector": query_vector,
+                        "vector": vector,
                         "k": count
                     }
                 }
@@ -133,7 +138,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                         {
                             "knn": {
                                 field_name: {
-                                    "vector": query_vector,
+                                    "vector": vector,
                                     "k": count
                                 }
                             }
@@ -154,7 +159,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             for hit in response["hits"]["hits"]
         ]
 
-    def initialize_index(self):
+    def create_index(self, vector_dimension):
         if not self.client.indices.exists(index=self.index_name):
             mapping = {
                 "settings": {
@@ -166,7 +171,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                     "properties": {
                         "vector": {
                             "type": "knn_vector",
-                            "dimension": self.dimension
+                            "dimension": vector_dimension
                         },
                         "namespace": {
                             "type": "keyword"
@@ -181,4 +186,4 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             try:
                 self.client.indices.create(index=self.index_name, body=mapping)
             except Exception as e:
-                print(f"Error initializing the index: {e}")
+                logging.error(f"Error initializing the index: {e}")
