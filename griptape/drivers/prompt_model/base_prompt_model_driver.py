@@ -17,7 +17,7 @@ class BasePromptModelDriver(ABC):
         ...
 
     @abstractmethod
-    def model_params(self, prompt_stack: PromptStack) -> dict:
+    def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         ...
 
     @abstractmethod
