@@ -9,7 +9,7 @@ from griptape.drivers import BaseVectorStoreDriver
 from redis.commands.search.query import Query
 from redis.commands.search.field import TagField, VectorField
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 
 
 @define
@@ -19,7 +19,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     db: int = field(kw_only=True, default=0)
     password: Optional[str] = field(default=None, kw_only=True)
     index: str = field(kw_only=True)
-    vector_dimensions: int = field(kw_only=True, default=1536)
 
     client: redis.Redis = field(
         default=Factory(lambda self: redis.Redis(
@@ -78,8 +77,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         ]
 
     def query(
-            self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
+            self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
     ) -> List[BaseVectorStoreDriver.QueryResult]:
+        key = self.load_entry(vector_id=query)
 
         query_expression = (
             Query(f"*=>[KNN {count or 10} @vector $vector as score]")
@@ -90,7 +90,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         )
 
         query_params = {
-            "vector": np.array(vector, dtype=np.float32).tobytes()
+            "vector": np.array(key.vector, dtype=np.float32).tobytes()
         }
 
         results = self.client.ft(self.index).search(query_expression, query_params).docs
@@ -110,17 +110,17 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             )
         return query_results
 
-    def create_index(self, namespace: Optional[str] = None):
+    def create_index(self, namespace: Optional[str] = None, vector_dimension: Optional[int] = None):
         try:
             self.client.ft(self.index).info()
-            logging.info("Index already exists!")
+            logging.warning("Index already exists!")
         except:
             schema = (
                 TagField("tag"),
                 VectorField("vector",
                             "FLAT", {
                                 "TYPE": "FLOAT32",
-                                "DIM": self.vector_dimensions,
+                                "DIM": vector_dimension,
                                 "DISTANCE_METRIC": "COSINE",
                     }
                 ),

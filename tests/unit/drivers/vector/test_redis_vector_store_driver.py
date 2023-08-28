@@ -3,6 +3,7 @@ import redis
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from griptape.drivers import RedisVectorStoreDriver
 
+
 class TestRedisVectorStorageDriver:
 
     @pytest.fixture(autouse=True)
@@ -49,8 +50,10 @@ class TestRedisVectorStorageDriver:
         assert entries[0].meta == {"foo": "bar"}
 
     def test_query(self, driver):
-        assert driver.query([1.0, 2.0, 3.0]) == []
+        assert driver.query("some_vector_id") == []
 
     def test_create_index(self, driver, mocker):
         driver.create_index(namespace="some_namespace")
         driver.client.ft(driver.index).create_index.assert_called_once()
+
+
