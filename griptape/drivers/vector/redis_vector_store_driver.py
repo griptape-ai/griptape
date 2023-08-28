@@ -79,7 +79,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def query(
             self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
     ) -> List[BaseVectorStoreDriver.QueryResult]:
-        key = self.load_entry(vector_id=query)
+        vector = self.embedding_driver.embed_string(query)
 
         query_expression = (
             Query(f"*=>[KNN {count or 10} @vector $vector as score]")
@@ -90,7 +90,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         )
 
         query_params = {
-            "vector": np.array(key.vector, dtype=np.float32).tobytes()
+            "vector": np.array(vector, dtype=np.float32).tobytes()
         }
 
         results = self.client.ft(self.index).search(query_expression, query_params).docs
