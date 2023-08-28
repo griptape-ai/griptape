@@ -1,6 +1,6 @@
 from os import environ
 
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 

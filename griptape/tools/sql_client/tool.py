@@ -3,7 +3,7 @@ from typing import Optional
 from attr import define, field
 from griptape.artifacts import InfoArtifact, CsvRowArtifact
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 from griptape.loaders import SqlLoader
 from schema import Schema
 

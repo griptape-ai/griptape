@@ -9,7 +9,7 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.core import ActivityMixin
+from griptape.utils import ActivityMixin
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
 from griptape.artifacts import BaseArtifact

@@ -5,7 +5,7 @@ from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.tools import BaseTool
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.tasks import ActionSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
@@ -22,9 +22,16 @@ class ToolkitTask(PromptTask):
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
-    generate_subtask_template: Callable[[ActionSubtask], str] = field(
+    generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(
-            lambda self: self.default_subtask_template_generator,
+            lambda self: self.default_assistant_subtask_template_generator,
+            takes_self=True
+        ),
+        kw_only=True
+    )
+    generate_user_subtask_template: Callable[[ActionSubtask], str] = field(
+        default=Factory(
+            lambda self: self.default_user_subtask_template_generator,
             takes_self=True
         ),
         kw_only=True
@@ -57,7 +64,9 @@ class ToolkitTask(PromptTask):
         stack = super().prompt_stack
 
         if not self.output:
-            [stack.add_assistant_input(self.generate_subtask_template(s)) for s in self.subtasks]
+            for s in self.subtasks:
+                stack.add_assistant_input(self.generate_assistant_subtask_template(s))
+                stack.add_user_input(self.generate_user_subtask_template(s))
 
         return stack
 
@@ -78,8 +87,13 @@ class ToolkitTask(PromptTask):
             memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
         )
 
-    def default_subtask_template_generator(self, subtask: ActionSubtask) -> str:
-        return J2("tasks/toolkit_task/subtask.j2").render(
+    def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:
+        return J2("tasks/toolkit_task/assistant_subtask.j2").render(
+            subtask=subtask
+        )
+
+    def default_user_subtask_template_generator(self, subtask: ActionSubtask) -> str:
+        return J2("tasks/toolkit_task/user_subtask.j2").render(
             subtask=subtask
         )
 

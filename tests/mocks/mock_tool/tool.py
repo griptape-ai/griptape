@@ -2,7 +2,7 @@ from attr import define, field
 from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 
 
 @define

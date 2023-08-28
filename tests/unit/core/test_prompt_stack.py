@@ -1,5 +1,5 @@
 import pytest
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 
 
 class TestPromptStack:

@@ -1,0 +1,40 @@
+from attr import define, field, Factory
+from transformers import AutoTokenizer
+from griptape.artifacts import TextArtifact
+from griptape.utils import PromptStack
+from griptape.drivers import BasePromptModelDriver
+from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
+
+
+@define
+class SagemakerFalconPromptModelDriver(BasePromptModelDriver):
+    tokenizer: BaseTokenizer = field(
+        default=Factory(
+            lambda: HuggingFaceTokenizer(
+                tokenizer=AutoTokenizer.from_pretrained(
+                    "tiiuae/falcon-40b",
+                    model_max_length=2048
+                )
+            )
+        ),
+        kw_only=True
+    )
+
+    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str:
+        return self.prompt_driver.prompt_stack_to_string(prompt_stack)
+
+    def model_params(self, prompt_stack: PromptStack) -> dict:
+        prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)
+        stop_sequences = self.prompt_driver.tokenizer.stop_sequences
+
+        return {
+            "max_new_tokens": self.prompt_driver.max_output_tokens(prompt),
+            "temperature": self.prompt_driver.temperature,
+            "do_sample": True,
+            "stop": stop_sequences
+        }
+
+    def process_output(self, output: list[dict]) -> TextArtifact:
+        return TextArtifact(
+            output[0]["generated_text"].strip()
+        )
