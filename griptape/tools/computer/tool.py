@@ -10,7 +10,7 @@ from attr import define, field, Factory
 from docker.errors import NotFound
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 from schema import Schema, Literal
 
 

@@ -1,0 +1,5 @@
+{% if subtask.output %}
+Observation: {{ subtask.output.to_text() }}
+{% else %}
+Please, keep going!
+{% endif %}

@@ -1,5 +1,5 @@
 from attr import define
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import TiktokenTokenizer, BaseTokenizer
 from griptape.artifacts import TextArtifact

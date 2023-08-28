@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable, Union
 from attr import define, field, Factory
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.utils import J2
 from griptape.tasks import BaseTask
 from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact

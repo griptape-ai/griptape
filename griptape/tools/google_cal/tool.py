@@ -4,7 +4,7 @@ import datetime
 from schema import Schema, Literal, Optional
 from attr import define
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 
 

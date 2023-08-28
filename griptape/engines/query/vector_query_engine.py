@@ -1,7 +1,7 @@
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver, BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2

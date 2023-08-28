@@ -3,7 +3,7 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 
 
 @define
