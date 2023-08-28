@@ -3,7 +3,7 @@ import boto3
 from attr import define, field
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 
 @define
 class BaseAwsClient(BaseTool, ABC):

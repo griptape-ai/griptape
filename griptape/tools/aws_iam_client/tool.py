@@ -3,7 +3,7 @@ import boto3
 from schema import Schema, Literal
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, ErrorArtifact
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
 
 

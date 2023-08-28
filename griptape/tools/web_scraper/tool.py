@@ -6,7 +6,7 @@ from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.loaders import TextLoader
 from schema import Schema, Literal
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 
 
 @define

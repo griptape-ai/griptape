@@ -3,7 +3,7 @@ import io
 from attr import field, Factory, define
 from griptape.artifacts import TextArtifact, CsvRowArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.core import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2

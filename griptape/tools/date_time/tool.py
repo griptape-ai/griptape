@@ -1,7 +1,7 @@
 from datetime import datetime
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 
 
 class DateTime(BaseTool):

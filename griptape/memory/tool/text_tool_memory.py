@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Union
 from attr import define, field, Factory
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact
-from griptape.core.decorators import activity
+from griptape.utils.decorators import activity
 from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine
 from griptape.memory.tool import BaseToolMemory
 
