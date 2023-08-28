@@ -1,5 +1,6 @@
 import redis
 import json
+import logging
 import numpy as np
 from griptape import utils
 from typing import Optional, List
@@ -8,6 +9,7 @@ from griptape.drivers import BaseVectorStoreDriver
 from redis.commands.search.query import Query
 from redis.commands.search.field import TagField, VectorField
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+logging.basicConfig(level=logging.INFO)
 
 
 @define
@@ -39,9 +41,11 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
         key = self._generate_key(vector_id, namespace)
+        bytes_vector = json.dumps(vector).encode("utf-8")
 
         mapping = {
             "vector": np.array(vector, dtype=np.float32).tobytes(),
+            "vec_string": bytes_vector
         }
 
         if meta:
@@ -80,7 +84,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         query_expression = (
             Query(f"*=>[KNN {count or 10} @vector $vector as score]")
             .sort_by("score")
-            .return_fields("id", "score", "metadata")
+            .return_fields("id", "score", "metadata", "vec_string")
             .paging(0, count or 10)
             .dialect(2)
         )
@@ -91,20 +95,17 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         results = self.client.ft(self.index).search(query_expression, query_params).docs
 
-        pipe = self.client.pipeline()
-        for document in results:
-            pipe.hget(document.id, "vector")
-
-        vectors = pipe.execute()
-
         query_results = []
-        for document, vector in zip(results, vectors):
+        for document in results:
+            metadata = getattr(document, "metadata", None)
+            namespace = document.id.split(":")[0] if ":" in document.id else None
+            vector_float_list = json.loads(document["vec_string"])
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
-                    vector=np.frombuffer(vector, dtype=np.float32).tolist(),
+                    vector=vector_float_list,
                     score=float(document['score']),
-                    meta=None,
-                    namespace=None
+                    meta=metadata,
+                    namespace=namespace
                 )
             )
         return query_results
@@ -112,7 +113,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def create_index(self, namespace: Optional[str] = None):
         try:
             self.client.ft(self.index).info()
-            print("Index already exists!")
+            logging.info("Index already exists!")
         except:
             schema = (
                 TagField("tag"),
@@ -121,8 +122,8 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
                                 "TYPE": "FLOAT32",
                                 "DIM": self.vector_dimensions,
                                 "DISTANCE_METRIC": "COSINE",
-                            }
-                            ),
+                    }
+                ),
             )
 
             doc_prefix = self._get_doc_prefix(namespace)
