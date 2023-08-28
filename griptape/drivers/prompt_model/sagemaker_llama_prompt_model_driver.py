@@ -35,8 +35,7 @@ class SagemakerLlamaPromptModelDriver(BasePromptModelDriver):
 
         return {
             "max_new_tokens": self.prompt_driver.max_output_tokens(prompt),
-            "temperature": self.prompt_driver.temperature,
-            "eos_token_id": self.prompt_driver.tokenizer.encode(self.prompt_driver.tokenizer.stop_sequences[0])[1]
+            "temperature": self.prompt_driver.temperature
         }
 
     def process_output(self, output: list[dict]) -> TextArtifact:
