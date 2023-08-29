@@ -9,8 +9,9 @@ from .command_runner import CommandRunner
 from .chat import Chat
 from .futures import execute_futures_dict
 from .token_counter import TokenCounter
-from .activity_mixin import ActivityMixin
-from .exponential_backoff_mixin import ExponentialBackoffMixin
+from .mixins.activity_mixin import ActivityMixin
+from .mixins.exponential_backoff_mixin import ExponentialBackoffMixin
+from .mixins.action_subtask_origin_mixin import ActionSubtaskOriginMixin
 from .prompt_stack import PromptStack
 from .dict_utils import remove_null_values_in_dict_recursively
 
@@ -32,6 +33,7 @@ __all__ = [
     "TokenCounter",
     "ActivityMixin",
     "ExponentialBackoffMixin",
+    "ActionSubtaskOriginMixin",
     "PromptStack",
     "remove_null_values_in_dict_recursively"
 ]

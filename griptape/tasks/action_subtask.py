@@ -9,9 +9,9 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.utils import ActivityMixin, remove_null_values_in_dict_recursively
+from griptape.utils import ActivityMixin, remove_null_values_in_dict_recursively, ActionSubtaskOriginMixin
 from griptape.memory.tool import BaseToolMemory
-from griptape.tasks import PromptTask
+from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 
@@ -63,18 +63,18 @@ class ActionSubtask(PromptTask):
         return TextArtifact(self.input_template)
 
     @property
-    def task(self) -> Optional[ToolkitTask]:
+    def origin_task(self) -> Optional[ActionSubtaskOriginMixin]:
         return self.structure.find_task(self.parent_task_id)
 
     @property
     def parents(self) -> list[ActionSubtask]:
-        return [self.task.find_subtask(parent_id) for parent_id in self.parent_ids]
+        return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
 
     @property
     def children(self) -> list[ActionSubtask]:
-        return [self.task.find_subtask(child_id) for child_id in self.child_ids]
+        return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
 
-    def attach_to(self, parent_task: ToolkitTask):
+    def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
         self.__init_from_prompt(self.input.to_text())
@@ -192,28 +192,28 @@ class ActionSubtask(PromptTask):
                 # Load the action itself
                 if self.action_type == "tool":
                     if self.action_name:
-                        self._tool = self.task.find_tool(self.action_name)
+                        self._tool = self.origin_task.find_tool(self.action_name)
 
                     if self._tool:
                         self.__validate_action_input(self.action_input, self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
-                        self._memory = self.task.find_memory(self.action_input["values"]["memory_name"])
+                        self._memory = self.origin_task.find_memory(self.action_input["values"]["memory_name"])
 
                     if self._memory:
                         self.__validate_action_input(self.action_input, self._memory)
             except SyntaxError as e:
-                self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
                 self.action_name = "error"
                 self.action_input = {"error": f"syntax error: {e}"}
             except ValidationError as e:
-                self.structure.logger.error(f"Subtask {self.task.id}\nInvalid action JSON: {e}")
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action JSON validation error: {e}"}
             except Exception as e:
-                self.structure.logger.error(f"Subtask {self.task.id}\nError parsing tool action: {e}")
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action input parsing error: {e}"}
@@ -230,7 +230,7 @@ class ActionSubtask(PromptTask):
                     schema=activity_schema
                 )
         except ValidationError as e:
-            self.structure.logger.error(f"Subtask {self.task.id}\nInvalid activity input JSON: {e}")
+            self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 
             self.action_name = "error"
             self.action_input = {"error": f"Activity input JSON validation error: {e}"}

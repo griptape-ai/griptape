@@ -5,7 +5,7 @@ from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.tools import BaseTool
-from griptape.utils import PromptStack
+from griptape.utils import PromptStack, ActionSubtaskOriginMixin
 from griptape.tasks import ActionSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolkitTask(PromptTask):
+class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     DEFAULT_MAX_STEPS = 20
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
@@ -156,8 +156,8 @@ class ToolkitTask(PromptTask):
 
         return self.output
 
-    def find_subtask(self, task_id: str) -> Optional[ActionSubtask]:
-        return next((subtask for subtask in self.subtasks if subtask.id == task_id), None)
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+        return next((subtask for subtask in self.subtasks if subtask.id == subtask_id), None)
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         subtask.attach_to(self)

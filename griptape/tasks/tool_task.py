@@ -2,21 +2,23 @@ import json
 from typing import Optional
 import schema
 from attr import define, field
-from jsonschema.exceptions import ValidationError
-from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape import utils
-from griptape.artifacts import TextArtifact, ErrorArtifact
-from griptape.tasks import PromptTask
+from griptape.artifacts import TextArtifact, InfoArtifact
+from griptape.memory.tool import BaseToolMemory
+from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
-from griptape.utils import J2, remove_null_values_in_dict_recursively, ActivityMixin
+from griptape.utils import J2, ActionSubtaskOriginMixin
 
 
 @define
-class ToolTask(PromptTask):
+class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     TOOL_SCHEMA = Schema(
-        description="Tools have name, activity, and input value.",
         schema={
+            Literal(
+                "type",
+                description="Action type"
+            ): schema.Or("tool"),
             Literal(
                 "name",
                 description="Tool name"
@@ -35,8 +37,7 @@ class ToolTask(PromptTask):
     )
 
     tool: BaseTool = field(kw_only=True)
-    tool_activity: Optional[str] = field(default=None, kw_only=True)
-    tool_input: Optional[dict] = field(default=None, kw_only=True)
+    subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         tool_schema = utils.minify_json(
@@ -52,45 +53,39 @@ class ToolTask(PromptTask):
         )
 
     def run(self) -> TextArtifact:
-        output = self.active_driver().run(self.prompt_stack).value
+        output = self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
 
-        try:
-            tool_object: dict = json.loads(output)
-
-            validate(
-                instance=tool_object,
-                schema=self.TOOL_SCHEMA.schema
+        subtask = self.add_subtask(
+            ActionSubtask(
+                f"Action: {output}"
             )
+        )
 
-            self.tool_activity = tool_object["activity"]
+        subtask.before_run()
+        subtask.run()
+        subtask.after_run()
 
-            # Load optional input value; don't throw exceptions if key is not present
-            if "input" in tool_object:
-                # The schema library has a bug, where something like `Or(str, None)` doesn't get
-                # correctly translated into JSON schema. For some optional input fields LLMs sometimes
-                # still provide null value, which trips up the validator. The temporary solution that
-                # works is to strip all key-values where value is null.
-                self.tool_input = remove_null_values_in_dict_recursively(tool_object["input"])
+        if subtask.output:
+            self.output = subtask.output
+        else:
+            self.output = InfoArtifact("No tool output")
 
-            self.__validate_tool_input(self.tool_input)
+        return self.output
 
-            self.output = self.tool.execute(getattr(self.tool, self.tool_activity), self)
+    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
+        if self.tool.name == tool_name:
+            return self.tool
+        else:
+            return None
 
-            return self.output
-        except SyntaxError as e:
-            self.output = ErrorArtifact(f"syntax error: {e}")
-        except ValidationError as e:
-            self.output = ErrorArtifact(f"Action JSON validation error: {e}")
-        except Exception as e:
-            self.output = ErrorArtifact(f"Action input parsing error: {e}")
-        finally:
-            return self.output
+    def find_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
+        return None
 
-    def __validate_tool_input(self, tool_input: dict) -> None:
-        activity_schema = self.tool.activity_schema(getattr(self.tool, self.tool_activity))
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+        return self.subtask if self.subtask.id == subtask_id else None
 
-        if activity_schema:
-            validate(
-                instance=tool_input,
-                schema=activity_schema
-            )
+    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
+        self.subtask = subtask
+        self.subtask.attach_to(self)
+
+        return self.subtask
