@@ -6,20 +6,20 @@ from griptape.structures import Agent
 
 class TestSummarySubtask:
     def test_run(self):
-        subtask = SummaryTask(
+        task = SummaryTask(
             "test",
             summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver())
         )
         agent = Agent()
 
-        agent.add_task(subtask)
+        agent.add_task(task)
 
-        assert subtask.run().to_text() == "mock output"
+        assert task.run().to_text() == "mock output"
 
     def test_to_text(self):
-        subtask = SummaryTask("{{ test }}", context={"test": "test value"})
+        task = SummaryTask("{{ test }}", context={"test": "test value"})
 
-        Agent().add_task(subtask)
+        Agent().add_task(task)
 
-        assert subtask.input.to_text() == "test value"
+        assert task.input.to_text() == "test value"
         

@@ -5,16 +5,16 @@ from griptape.structures import Pipeline
 
 class TestPromptSubtask:
     def test_run(self):
-        subtask = PromptTask("test")
+        task = PromptTask("test")
         pipeline = Pipeline(prompt_driver=MockPromptDriver())
 
-        pipeline.add_task(subtask)
+        pipeline.add_task(task)
 
-        assert subtask.run().to_text() == "mock output"
+        assert task.run().to_text() == "mock output"
 
     def test_to_text(self):
-        subtask = PromptTask("{{ test }}", context={"test": "test value"})
+        task = PromptTask("{{ test }}", context={"test": "test value"})
 
-        Pipeline().add_task(subtask)
+        Pipeline().add_task(task)
 
-        assert subtask.input.to_text() == "test value"
+        assert task.input.to_text() == "test value"

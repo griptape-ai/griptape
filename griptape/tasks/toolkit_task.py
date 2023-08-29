@@ -91,9 +91,9 @@ class ToolkitTask(PromptTask):
             rulesets=self.structure.rulesets,
             action_schema=action_schema,
             tool_names=str.join(", ", [tool.name for tool in self.tools]),
-            tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
+            tools=[J2("tasks/partials/_tool.j2").render(tool=tool) for tool in self.tools],
             memory_names=str.join(", ", [memory.name for memory in memories]),
-            memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
+            memories=[J2("tasks/partials/_tool_memory.j2").render(memory=memory) for memory in memories]
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:

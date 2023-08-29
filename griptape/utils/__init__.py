@@ -12,6 +12,7 @@ from .token_counter import TokenCounter
 from .activity_mixin import ActivityMixin
 from .exponential_backoff_mixin import ExponentialBackoffMixin
 from .prompt_stack import PromptStack
+from .dict_utils import remove_null_values_in_dict_recursively
 
 
 def minify_json(value: str) -> str:
@@ -31,5 +32,6 @@ __all__ = [
     "TokenCounter",
     "ActivityMixin",
     "ExponentialBackoffMixin",
-    "PromptStack"
+    "PromptStack",
+    "remove_null_values_in_dict_recursively"
 ]

@@ -4,6 +4,7 @@ from .prompt_task import PromptTask
 from .action_subtask import ActionSubtask
 from .toolkit_task import ToolkitTask
 from .summary_task import SummaryTask
+from .tool_task import ToolTask
 
 __all__ = [
     "BaseTask",
@@ -11,5 +12,6 @@ __all__ = [
     "PromptTask",
     "ActionSubtask",
     "ToolkitTask",
-    "SummaryTask"
+    "SummaryTask",
+    "ToolTask"
 ]

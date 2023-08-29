@@ -9,7 +9,7 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.utils import ActivityMixin
+from griptape.utils import ActivityMixin, remove_null_values_in_dict_recursively
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask
 from griptape.artifacts import BaseArtifact
@@ -187,7 +187,7 @@ class ActionSubtask(PromptTask):
                     # correctly translated into JSON schema. For some optional input fields LLMs sometimes
                     # still provide null value, which trips up the validator. The temporary solution that
                     # works is to strip all key-values where value is null.
-                    self.action_input = self.remove_null_values_in_dict_recursively(action_object["input"])
+                    self.action_input = remove_null_values_in_dict_recursively(action_object["input"])
 
                 # Load the action itself
                 if self.action_type == "tool":
@@ -195,13 +195,13 @@ class ActionSubtask(PromptTask):
                         self._tool = self.task.find_tool(self.action_name)
 
                     if self._tool:
-                        self.__validate_activity_mixin(self._tool)
+                        self.__validate_action_input(self.action_input, self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
                         self._memory = self.task.find_memory(self.action_input["values"]["memory_name"])
 
                     if self._memory:
-                        self.__validate_activity_mixin(self._memory)
+                        self.__validate_action_input(self.action_input, self._memory)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
 
@@ -220,13 +220,13 @@ class ActionSubtask(PromptTask):
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 
-    def __validate_activity_mixin(self, mixin: ActivityMixin) -> None:
+    def __validate_action_input(self, action_input: dict, mixin: ActivityMixin) -> None:
         try:
             activity_schema = mixin.activity_schema(getattr(mixin, self.action_activity))
 
             if activity_schema:
                 validate(
-                    instance=self.action_input,
+                    instance=action_input,
                     schema=activity_schema
                 )
         except ValidationError as e:
@@ -234,9 +234,3 @@ class ActionSubtask(PromptTask):
 
             self.action_name = "error"
             self.action_input = {"error": f"Activity input JSON validation error: {e}"}
-
-    def remove_null_values_in_dict_recursively(self, d):
-        if isinstance(d, dict):
-            return {k: self.remove_null_values_in_dict_recursively(v) for k, v in d.items() if v is not None}
-        else:
-            return d
