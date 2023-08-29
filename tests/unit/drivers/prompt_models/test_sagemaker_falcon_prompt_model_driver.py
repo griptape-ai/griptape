@@ -31,9 +31,9 @@ class TestSagemakerFalconPromptModelDriver:
         assert isinstance(model_input, str)
         assert model_input.startswith("foo\n\nUser: bar")
 
-    def test_model_params(self, driver, stack):
-        assert driver.model_params(stack)["max_new_tokens"] == 4083
-        assert driver.model_params(stack)["temperature"] == 0.12345
+    def test_prompt_stack_to_model_params(self, driver, stack):
+        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 4083
+        assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver, stack):
         assert driver.process_output([
