@@ -44,7 +44,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             "metadata": meta
         }
         doc.update(kwargs)
-        response = self.client.index(index=self.index_name, id=vector_id, body=doc)
+        response = self.client.index(index=self.index_name, id=vector_id, body=doc, refresh=True)
 
         return response["_id"]
 

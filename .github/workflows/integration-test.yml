@@ -1,0 +1,44 @@
+name: Integration Tests
+
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    env:
+      AWS_DEFAULT_REGION: ${{ secrets.INTEG_AWS_DEFAULT_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.INTEG_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_KEY: ${{ secrets.INTEG_AWS_SECRET_KEY }}
+      DYNAMODB_TABLE: ${{ secrets.INTEG_DYNAMODB_TABLE }}
+      MARQO_API_KEY: ${{ secrets.INTEG_MARQO_API_KEY }}
+      MARQO_INDEX_NAME: ${{ secrets.INTEG_INDEX_NAME }}
+      MARQO_URL: ${{ secrets.INTEG_MARQO_URL }}
+      PINECONE_API_KEY: ${{ secrets.INTEG_PINECONE_API_KEY }}
+      PINECONE_ENVIRONMENT: ${{ secrets.INTEG_PINECONE_ENVIRONMENT }}
+      PINECONE_INDEX_NAME: ${{ secrets.INTEG_PINECONE_INDEX_NAME }}
+      REDSHIFT_CLUSTER_IDENTIFIER: ${{ secrets.INTEG_REDSHIFT_CLUSTER_IDENTIFIER }}
+      REDSHIFT_DATABASE: ${{ secrets.INTEG_REDSHIFT_DATABASE }}
+      SNOWFLAKE_ACCOUNT: ${{ secrets.INTEG_SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_DATABASE: ${{ secrets.INTEG_SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.INTEG_SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_SCHEMA: ${{ secrets.INTEG_SNOWFLAKE_SCHEMA }}
+      SNOWFLAKE_USER: ${{ secrets.INTEG_SNOWFLAKE_USER }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.INTEG_SNOWFLAKE_WAREHOUSE }}
+      REDIS_HOST: ${{ secrets.INTEG_REDIS_HOST }}
+      REDIS_INDEX: ${{ secrets.INTEG_REDIS_INDEX }}
+      REDIS_PASSWORD: ${{ secrets.INTEG_REDIS_PASSWORD }}
+      MONGODB_HOST: ${{ secrets.INTEG_MONGODB_HOST }}
+      MONGODB_USERNAME: ${{ secrets.INTEG_MONGODB_USERNAME }}
+      MONGODB_DATABASE_NAME: ${{ secrets.INTEG_MONGODB_DATABASE_NAME }}
+      MONGODB_COLLECTION_NAME: ${{ secrets.INTEG_MONGODB_COLLECTION_NAME }}
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment 
+        uses: ./.github/actions/init-environment 
+      - name: Run integration tests
+        run: pytest tests/integration
