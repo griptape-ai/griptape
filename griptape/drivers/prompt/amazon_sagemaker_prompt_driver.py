@@ -44,7 +44,7 @@ class AmazonSagemakerPromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
             "inputs": self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack),
-            "parameters": self.prompt_model_driver.model_params(prompt_stack)
+            "parameters": self.prompt_model_driver.prompt_stack_to_model_params(prompt_stack)
         }
         response = self.sagemaker_client.invoke_endpoint(
             EndpointName=self.model,

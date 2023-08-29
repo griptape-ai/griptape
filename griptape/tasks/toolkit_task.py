@@ -46,7 +46,7 @@ class ToolkitTask(PromptTask):
         tool_names = [t.name for t in tools]
 
         if len(tool_names) > len(set(tool_names)):
-            raise ValueError("tools have to be unique")
+            raise ValueError("tools names have to be unique in task")
 
     @property
     def memory(self) -> list[BaseToolMemory]:
