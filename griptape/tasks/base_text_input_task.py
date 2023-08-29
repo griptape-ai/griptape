@@ -23,8 +23,11 @@ class BaseTextInputTask(BaseTask, ABC):
 
     @property
     def full_context(self) -> dict[str, any]:
-        structure_context = self.structure.context(self)
+        if self.structure:
+            structure_context = self.structure.context(self)
 
-        structure_context.update(self.context)
+            structure_context.update(self.context)
 
-        return structure_context
+            return structure_context
+        else:
+            return {}
