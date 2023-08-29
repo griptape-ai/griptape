@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
+from griptape.events import StartPromptEvent, FinishPromptEvent
 from griptape.utils import ExponentialBackoffMixin, PromptStack
 from griptape.tokenizers import BaseTokenizer
 
@@ -40,7 +41,21 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:
+                if self.structure:
+                    self.structure.publish_event(
+                        StartPromptEvent(
+                            token_count=self.token_count(prompt_stack)
+                        )
+                    )
+
                 result = self.try_run(prompt_stack)
+                
+                if self.structure:
+                    self.structure.publish_event(
+                        FinishPromptEvent(
+                            token_count=result.token_count(self.tokenizer)
+                        )
+                    )
 
                 return result
 
