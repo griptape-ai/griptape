@@ -1,11 +1,15 @@
-from typing import Optional, List
-from griptape import utils
-from griptape.drivers import BaseVectorStoreDriver
 import redis
-from attr import define, field, Factory
 import json
-from redis.commands.search.query import Query
+import logging
 import numpy as np
+from griptape import utils
+from typing import Optional, List
+from attr import define, field, Factory
+from griptape.drivers import BaseVectorStoreDriver
+from redis.commands.search.query import Query
+from redis.commands.search.field import TagField, VectorField
+from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+logging.basicConfig(level=logging.WARNING)
 
 
 @define
@@ -73,8 +77,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         ]
 
     def query(
-            self, vector: list[float], count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
+            self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
     ) -> List[BaseVectorStoreDriver.QueryResult]:
+        vector = self.embedding_driver.embed_string(query)
 
         query_expression = (
             Query(f"*=>[KNN {count or 10} @vector $vector as score]")
@@ -105,5 +110,29 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             )
         return query_results
 
+    def create_index(self, namespace: Optional[str] = None, vector_dimension: Optional[int] = None) -> None:
+        try:
+            self.client.ft(self.index).info()
+            logging.warning("Index already exists!")
+        except:
+            schema = (
+                TagField("tag"),
+                VectorField("vector",
+                            "FLAT", {
+                                "TYPE": "FLOAT32",
+                                "DIM": vector_dimension,
+                                "DISTANCE_METRIC": "COSINE",
+                    }
+                ),
+            )
+
+            doc_prefix = self._get_doc_prefix(namespace)
+            definition = IndexDefinition(prefix=[doc_prefix], index_type=IndexType.HASH)
+            self.client.ft(self.index).create_index(fields=schema, definition=definition)
+
     def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
         return f'{namespace}:{vector_id}' if namespace else vector_id
+
+    def _get_doc_prefix(self, namespace: Optional[str] = None) -> str:
+        """Get the document prefix based on the provided namespace."""
+        return f'{namespace}:' if namespace else ""
