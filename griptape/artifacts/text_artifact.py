@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from griptape.tokenizers import BaseTokenizer
 
 
-@define(frozen=True)
+@define
 class TextArtifact(BaseArtifact):
     value: str = field(converter=str)
     __embedding: list[float] = field(factory=list, kw_only=True)

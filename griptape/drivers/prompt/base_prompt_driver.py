@@ -42,6 +42,8 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
             with attempt:
                 result = self.try_run(prompt_stack)
 
+                result.value = result.value.strip()
+
                 return result
 
     def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
