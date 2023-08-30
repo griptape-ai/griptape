@@ -12,6 +12,7 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.memory.tool import BaseToolMemory
+    from griptape.structures import Structure
 
 
 @define
@@ -45,7 +46,7 @@ class ToolkitTask(PromptTask):
         tool_names = [t.name for t in tools]
 
         if len(tool_names) > len(set(tool_names)):
-            raise ValueError("tools have to be unique")
+            raise ValueError("tools names have to be unique in task")
 
     @property
     def memory(self) -> list[BaseToolMemory]:
@@ -69,6 +70,14 @@ class ToolkitTask(PromptTask):
                 stack.add_user_input(self.generate_user_subtask_template(s))
 
         return stack
+
+    def preprocess(self, structure: Structure) -> ToolkitTask:
+        super().preprocess(structure)
+
+        if self.tool_memory is None:
+            self.set_default_tools_memory(structure.tool_memory)
+
+        return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         memories = [r for r in self.memory if len(r.activities()) > 0]

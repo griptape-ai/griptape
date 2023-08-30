@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional, Callable, Union
 from attr import define, field, Factory
 from griptape.utils import PromptStack
 from griptape.utils import J2
-from griptape.tasks import BaseTask
+from griptape.tasks import BaseTextInputTask
 from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact
 
 if TYPE_CHECKING:
@@ -11,11 +11,8 @@ if TYPE_CHECKING:
 
 
 @define
-class PromptTask(BaseTask):
-    DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
+class PromptTask(BaseTextInputTask):
 
-    input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
-    context: dict[str, any] = field(factory=dict, kw_only=True)
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(
@@ -26,23 +23,6 @@ class PromptTask(BaseTask):
     )
 
     output: Optional[Union[TextArtifact, ErrorArtifact, InfoArtifact]] = field(default=None, init=False)
-
-    @property
-    def input(self) -> TextArtifact:
-        return TextArtifact(
-            J2().render_from_string(
-                self.input_template,
-                **self.full_context
-            )
-        )
-
-    @property
-    def full_context(self) -> dict[str, any]:
-        structure_context = self.structure.context(self)
-
-        structure_context.update(self.context)
-
-        return structure_context
 
     @property
     def prompt_stack(self) -> PromptStack:

@@ -42,7 +42,7 @@ class Agent(Structure):
     def add_task(self, task: BaseTask) -> BaseTask:
         self.tasks.clear()
 
-        self._init_task(task)
+        task.preprocess(self)
 
         self.tasks.append(task)
 
