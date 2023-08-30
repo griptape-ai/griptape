@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 
 
 @define
-class AmazonSagemakerPromptDriver(BasePromptDriver):
+class AmazonSageMakerPromptDriver(BasePromptDriver):
     model: str = field(kw_only=True)
     tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
-    prompt_model_driver_class: Type[BasePromptModelDriver] = field(kw_only=True)
+    prompt_model_driver_type: Type[BasePromptModelDriver] = field(kw_only=True)
     prompt_model_driver: BasePromptModelDriver = field(
-        default=Factory(lambda self: self.prompt_model_driver_class(prompt_driver=self), takes_self=True),
+        default=Factory(lambda self: self.prompt_model_driver_type(prompt_driver=self), takes_self=True),
         kw_only=True
     )
     session: boto3.Session = field(
