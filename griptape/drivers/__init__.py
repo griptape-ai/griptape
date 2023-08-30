@@ -7,7 +7,7 @@ from .prompt.cohere_prompt_driver import CoherePromptDriver
 from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
 from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
-from .prompt.text_gen_driver import TextGenPromptDriver
+from .prompt.text_gen_web_ui_prompt_driver import TextGenWebUiPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
@@ -48,7 +48,7 @@ __all__ = [
     "HuggingFacePipelinePromptDriver",
     "HuggingFaceHubPromptDriver",
     "AnthropicPromptDriver",
-    "TextGenPromptDriver",
+    "TextGenWebUiPromptDriver",
     "AmazonSageMakerPromptDriver",
 
     "BaseConversationMemoryDriver",

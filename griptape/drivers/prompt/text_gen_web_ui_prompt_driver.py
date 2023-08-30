@@ -10,7 +10,7 @@ from griptape.tokenizers import TextGenTokenizer
 
 
 @define
-class TextGenPromptDriver(BasePromptDriver):
+class TextGenWebUiPromptDriver(BasePromptDriver):
     """
     Prompt Driver for the text-generation-webui https://github.com/oobabooga/text-generation-webui
 
