@@ -10,7 +10,7 @@ class TestSageMakerFalconPromptModelDriver:
         return AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_class=SageMakerFalconPromptModelDriver,
+            prompt_model_driver_type=SageMakerFalconPromptModelDriver,
             temperature=0.12345
         ).prompt_model_driver
 
@@ -44,7 +44,7 @@ class TestSageMakerFalconPromptModelDriver:
         assert AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_class=SageMakerFalconPromptModelDriver,
+            prompt_model_driver_type=SageMakerFalconPromptModelDriver,
             temperature=0.12345,
             max_tokens=10
         ).prompt_model_driver.tokenizer.tokenizer.model_max_length == 10

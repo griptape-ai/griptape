@@ -10,7 +10,7 @@ class TestSageMakerLlamaPromptModelDriver:
         return AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_class=SageMakerLlamaPromptModelDriver,
+            prompt_model_driver_type=SageMakerLlamaPromptModelDriver,
             temperature=0.12345
         ).prompt_model_driver
 
@@ -48,7 +48,7 @@ class TestSageMakerLlamaPromptModelDriver:
         assert AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_class=SageMakerLlamaPromptModelDriver,
+            prompt_model_driver_type=SageMakerLlamaPromptModelDriver,
             temperature=0.12345,
             max_tokens=10
         ).prompt_model_driver.tokenizer.tokenizer.model_max_length == 10
