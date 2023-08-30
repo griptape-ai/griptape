@@ -63,12 +63,21 @@ moto = {extras = ["dynamodb"], version = "^4.1.8"}
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.286"
 black = "^23.7.0"
+pyright = "^1.1.324"
 
 [tool.black]
 line-length=120
 
 [tool.ruff]
 line-length=120
+
+[tool.pyright]
+include = ["griptape"]
+exclude = [
+    "**/__pycache__",
+]
+pythonVersion = "3.9"
+reportOptionalMemberAccess = "none"
 
 [build-system]
 requires = ["poetry-core"]

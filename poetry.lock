@@ -1056,6 +1056,28 @@ all = ["backports-datetime-fromisoformat", "cchardet (>=2.1.7)", "faust-cchardet
 speed = ["backports-datetime-fromisoformat", "cchardet (>=2.1.7)", "faust-cchardet (>=2.1.19)", "urllib3[brotli]"]
 
 [[package]]
+name = "htmldate"
+version = "1.5.1"
+description = "Fast and robust extraction of original and updated publication dates from URLs and web pages."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "htmldate-1.5.1-py3-none-any.whl", hash = "sha256:d0a9711300cccae5b07e67e27a29a809cc6e3a59f408ab4d787702dced6ddede"},
+    {file = "htmldate-1.5.1.tar.gz", hash = "sha256:00530d34618b6e770df537e6a8be74d8359ffe2cc5ee86e06ef20990049b6db6"},
+]
+
+[package.dependencies]
+charset-normalizer = {version = ">=3.2.0", markers = "python_version >= \"3.7\""}
+dateparser = ">=1.1.2"
+lxml = {version = ">=4.9.3", markers = "platform_system != \"Darwin\""}
+python-dateutil = ">=2.8.2"
+urllib3 = {version = ">=1.26,<3", markers = "python_version >= \"3.7\""}
+
+[package.extras]
+all = ["backports-datetime-fromisoformat", "cchardet (>=2.1.7)", "faust-cchardet (>=2.1.19)", "urllib3[brotli]"]
+speed = ["backports-datetime-fromisoformat", "cchardet (>=2.1.7)", "faust-cchardet (>=2.1.19)", "urllib3[brotli]"]
+
+[[package]]
 name = "httpcore"
 version = "0.17.3"
 description = "A minimal low-level HTTP client."
@@ -1842,6 +1864,20 @@ files = [
 ]
 
 [[package]]
+name = "nodeenv"
+version = "1.8.0"
+description = "Node.js virtual environment builder"
+optional = false
+python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*"
+files = [
+    {file = "nodeenv-1.8.0-py2.py3-none-any.whl", hash = "sha256:df865724bb3c3adc86b3876fa209771517b0cfe596beff01a92700e0e8be4cec"},
+    {file = "nodeenv-1.8.0.tar.gz", hash = "sha256:d51e0c37e64fbf47d017feac3145cdbb58836d7eee8c6f6d3b6880c5456227d2"},
+]
+
+[package.dependencies]
+setuptools = "*"
+
+[[package]]
 name = "numpy"
 version = "1.25.2"
 description = "Fundamental package for array computing in Python"
@@ -2314,6 +2350,24 @@ dev = ["black", "flit", "pip-tools", "pre-commit (<2.18.0)", "pytest-cov", "whee
 docs = ["myst_parser", "sphinx", "sphinx_rtd_theme"]
 full = ["Pillow", "PyCryptodome"]
 image = ["Pillow"]
+
+[[package]]
+name = "pyright"
+version = "1.1.325"
+description = "Command line wrapper for pyright"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pyright-1.1.325-py3-none-any.whl", hash = "sha256:8f3ab88ba4843f053ab5b5c886d676161aba6f446776bfb57cc0434ed4d88672"},
+    {file = "pyright-1.1.325.tar.gz", hash = "sha256:879a3f66944ffd59d3facd54872fed814830fed64daf3e8eb71b146ddd83bb67"},
+]
+
+[package.dependencies]
+nodeenv = ">=1.6.0"
+
+[package.extras]
+all = ["twine (>=3.4.1)"]
+dev = ["twine (>=3.4.1)"]
 
 [[package]]
 name = "pytest"
@@ -3024,6 +3078,22 @@ python-versions = "*"
 files = [
     {file = "sentinels-1.0.0.tar.gz", hash = "sha256:7be0704d7fe1925e397e92d18669ace2f619c92b5d4eb21a89f31e026f9ff4b1"},
 ]
+
+[[package]]
+name = "setuptools"
+version = "68.1.2"
+description = "Easily download, build, install, upgrade, and uninstall Python packages"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "setuptools-68.1.2-py3-none-any.whl", hash = "sha256:3d8083eed2d13afc9426f227b24fd1659489ec107c0e86cec2ffdde5c92e790b"},
+    {file = "setuptools-68.1.2.tar.gz", hash = "sha256:3d4dfa6d95f1b101d695a6160a7626e15583af71a5f52176efa5d39a054d475d"},
+]
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "rst.linker (>=1.9)", "sphinx (>=3.5,<=7.1.2)", "sphinx-favicon", "sphinx-hoverxref (<2)", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (==0.8.3)", "sphinx-reredirects", "sphinxcontrib-towncrier"]
+testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8-2020", "ini2toml[lite] (>=0.9)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "pip (>=19.1)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-perf", "pytest-ruff", "pytest-timeout", "pytest-xdist", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
+testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
 name = "six"
@@ -3789,4 +3859,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f08a9fcaf77d0d7e4abf1e14daec4f842270be3be82608ead01a70a7fdc8bab7"
+content-hash = "7763a11807d0d87735bf8c98b0dfd291e15457be93e640e78fcd1adc7cfbaeaa"
