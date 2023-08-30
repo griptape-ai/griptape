@@ -4,7 +4,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Agent
 
 
-class TestSummarySubtask:
+class TestSummaryTask:
     def test_run(self):
         task = SummaryTask(
             "test",

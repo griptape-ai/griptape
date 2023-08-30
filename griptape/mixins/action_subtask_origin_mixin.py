@@ -11,6 +11,11 @@ if TYPE_CHECKING:
 
 @define
 class ActionSubtaskOriginMixin(ABC):
+    @property
+    @abstractmethod
+    def action_types(self) -> list[str]:
+        ...
+
     @abstractmethod
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         ...
@@ -25,9 +30,4 @@ class ActionSubtaskOriginMixin(ABC):
 
     @abstractmethod
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
-        ...
-
-    @property
-    @abstractmethod
-    def action_types(self) -> list[str]:
         ...
