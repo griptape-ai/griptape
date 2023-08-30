@@ -7,7 +7,7 @@ from griptape.loaders.csv_loader import CsvLoader
 class TestCsvLoader:
     @pytest.fixture
     def loaders(self):
-        return (CsvLoader(), CsvLoader(delimeter="|"))
+        return (CsvLoader(), CsvLoader(delimiter="|"))
 
     def test_load_with_path(self, loaders):
         (loader, loader_pipe) = loaders
