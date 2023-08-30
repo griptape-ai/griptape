@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import re
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
@@ -15,38 +15,12 @@ from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 
-if TYPE_CHECKING:
-    from griptape.tasks import ToolkitTask
-
 
 @define
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTION_PATTERN = r"(?s)^Action:\s*({.*})$"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
-    ACTION_SCHEMA = Schema(
-        description="Actions have type, name, activity, and input value.",
-        schema={
-            Literal(
-                "type",
-                description="Action type"
-            ): schema.Or("tool", "memory"),
-            Literal(
-                "name",
-                description="Action name"
-            ): str,
-            Literal(
-                "activity",
-                description="Action activity"
-            ): str,
-            schema.Optional(
-                Literal(
-                    "input",
-                    description="Optional action activity input object"
-                )
-            ): dict
-        }
-    )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
@@ -73,6 +47,32 @@ class ActionSubtask(PromptTask):
     @property
     def children(self) -> list[ActionSubtask]:
         return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
+
+    @classmethod
+    def action_schema(cls, action_types: list) -> Schema:
+        return Schema(
+            description="Actions have type, name, activity, and input value.",
+            schema={
+                Literal(
+                    "type",
+                    description="Action type"
+                ): schema.Or(*action_types),
+                Literal(
+                    "name",
+                    description="Action name"
+                ): str,
+                Literal(
+                    "activity",
+                    description="Action activity"
+                ): str,
+                schema.Optional(
+                    Literal(
+                        "input",
+                        description="Optional action activity input object"
+                    )
+                ): dict
+            }
+        )
 
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
@@ -166,7 +166,7 @@ class ActionSubtask(PromptTask):
 
                 validate(
                     instance=action_object,
-                    schema=self.ACTION_SCHEMA.schema
+                    schema=self.action_schema(self.origin_task.action_types).schema
                 )
 
                 # Load action type; throw exception if the key is not present

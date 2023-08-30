@@ -39,6 +39,10 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
+    @property
+    def action_types(self) -> list[str]:
+        return ["tool"]
+
     def default_system_template_generator(self, _: PromptTask) -> str:
         tool_schema = utils.minify_json(
             json.dumps(

@@ -26,3 +26,8 @@ class ActionSubtaskOriginMixin(ABC):
     @abstractmethod
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         ...
+
+    @property
+    @abstractmethod
+    def action_types(self) -> list[str]:
+        ...

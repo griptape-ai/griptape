@@ -20,7 +20,7 @@ class MockTool(BaseTool):
         )
     })
     def test(self, value: dict) -> BaseArtifact:
-        return TextArtifact(f"ack {value['test']}")
+        return TextArtifact(f"ack {value['values']['test']}")
 
     @activity(config={
         "description": "test description: {{ foo }}",
@@ -31,7 +31,7 @@ class MockTool(BaseTool):
         )
     })
     def test_error(self, value: dict) -> BaseArtifact:
-        return ErrorArtifact(f"error {value['test']}")
+        return ErrorArtifact(f"error {value['values']['test']}")
 
     @activity(config={
         "description": "test description: {{ foo }}",
@@ -42,7 +42,7 @@ class MockTool(BaseTool):
         )
     })
     def test_str_output(self, value: dict) -> str:
-        return f"ack {value['test']}"
+        return f"ack {value['values']['test']}"
 
     @activity(config={
         "description": "test description"
@@ -69,7 +69,7 @@ class MockTool(BaseTool):
         )
     })
     def test_without_default_memory(self, value: dict) -> str:
-        return f"ack {value['test']}"
+        return f"ack {value['values']['test']}"
 
     @property
     def schema_template_args(self) -> dict:

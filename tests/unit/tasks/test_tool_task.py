@@ -1,20 +1,36 @@
+import json
+import pytest
 from griptape.structures import Agent
-from griptape.tasks import SummaryTask, ToolTask
+from griptape.tasks import ToolTask
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestToolSubtask:
-    def test_run(self):
-        task = ToolTask("test")
-        agent = Agent()
+class TestToolTask:
+    @pytest.fixture
+    def agent(self):
+        output_dict = {
+            "type": "tool",
+            "name": "MockTool",
+            "activity": "test",
+            "input": {
+                "values": {
+                    "test": "foobar"
+                }
+            }
+        }
+        return Agent(
+            prompt_driver=MockPromptDriver(
+                mock_output=json.dumps(output_dict)
+            )
+        )
+
+    def test_run(self, agent):
+        task = ToolTask(tool=MockTool())
 
         agent.add_task(task)
 
-        assert task.run().to_text() == "mock output"
+        assert task.run().to_text() == "ack foobar"
 
-    def test_to_text(self):
-        subtask = SummaryTask("{{ test }}", context={"test": "test value"})
-
-        Agent().add_task(subtask)
-
-        assert subtask.input.to_text() == "test value"
-        
+    def test_action_types(self):
+        assert ToolTask(tool=MockTool()).action_types == ["tool"]

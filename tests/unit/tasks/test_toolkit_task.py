@@ -7,7 +7,7 @@ from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
 from griptape.tasks import ToolkitTask, ActionSubtask
 from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
-from griptape.structures import Pipeline
+from griptape.structures import Pipeline, Agent
 
 
 class TestToolkitSubtask:
@@ -177,3 +177,7 @@ class TestToolkitSubtask:
         assert task.memory[0].name == "Memory1"
         assert task.memory[1].name == "Memory2"
         assert task.memory[2].name == "Memory3"
+
+    def test_action_types(self):
+        assert Agent(tool_memory=None, tools=[MockTool()]).task.action_types == ["tool"]
+        assert Agent(tools=[MockTool()]).task.action_types == ["tool", "memory"]
