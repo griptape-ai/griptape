@@ -9,20 +9,12 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 @define
 class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
     session: boto3.session.Session = field(kw_only=True)
-    region_name: str = field(kw_only=True)
-    host: str = field(kw_only=True)
-    port: int = field(default=443, kw_only=True)
-    use_ssl: bool = field(default=True, kw_only=True)
-    verify_certs: bool = field(default=True, kw_only=True)
-    index_name: str = field(kw_only=True)
 
-    http_auth: Optional[Union[str, Tuple[str, str]]] = field(default=Factory(
-        lambda self: AWS4Auth(self.session.get_credentials().access_key,
-                              self.session.get_credentials().secret_key,
-                              self.region_name,
-                              'es'),
-        takes_self=True
-    ))
+    http_auth: Optional[Union[str, Tuple[str, str]]] = field(
+        default=Factory(lambda self: AWS4Auth(self.session.get_credentials().access_key,
+                                              self.session.get_credentials().secret_key,
+                                              self.session.region_name, 'es'), takes_self=True)
+    )
 
     client: OpenSearch = field(default=Factory(
         lambda self: OpenSearch(

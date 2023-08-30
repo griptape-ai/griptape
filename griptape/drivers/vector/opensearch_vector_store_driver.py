@@ -4,7 +4,6 @@ from griptape import utils
 import logging
 from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field, Factory
-logging.basicConfig(level=logging.ERROR)
 
 
 @define
@@ -43,19 +42,27 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             "metadata": meta
         }
         doc.update(kwargs)
-        response = self.client.index(index=self.index_name, id=vector_id, body=doc,
-                                     routing=namespace if namespace else "default")
+        response = self.client.index(index=self.index_name, id=vector_id, body=doc)
 
         return response["_id"]
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         try:
-            response = self.client.get(index=self.index_name, id=vector_id, routing=namespace if namespace else None)
-            if response["found"]:
-                vector_data = response["_source"]
-                if namespace and vector_data.get("namespace") != namespace:
-                    # Entry doesn't belong to the specified namespace
-                    return None
+            query = {
+                "bool": {
+                    "must": [
+                        {"term": {"_id": vector_id}}
+                    ]
+                }
+            }
+
+            if namespace:
+                query["bool"]["must"].append({"term": {"namespace": namespace}})
+
+            response = self.client.search(index=self.index_name, body={"query": query, "size": 1})
+
+            if response["hits"]["total"]["value"] > 0:
+                vector_data = response["hits"]["hits"][0]["_source"]
                 entry = BaseVectorStoreDriver.Entry(
                     id=vector_id,
                     meta=vector_data.get("metadata"),
@@ -78,7 +85,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             }
         }
 
-        # If a namespace is provided, adjust the query to match vectors in that namespace
         if namespace:
             query_body["query"] = {
                 "match": {
@@ -86,18 +92,17 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 }
             }
 
-        response = self.client.search(index=self.index_name, body=query_body, routing=namespace if namespace else None)
+        response = self.client.search(index=self.index_name, body=query_body)
 
-        entries = []
-        for hit in response["hits"]["hits"]:
-            vector_data = hit["_source"]
-            entry = BaseVectorStoreDriver.Entry(
+        entries = [
+            BaseVectorStoreDriver.Entry(
                 id=hit["_id"],
-                vector=vector_data.get("vector"),
-                meta=vector_data.get("metadata"),
-                namespace=vector_data.get("namespace")
+                vector=hit["_source"].get("vector"),
+                meta=hit["_source"].get("metadata"),
+                namespace=hit["_source"].get("namespace")
             )
-            entries.append(entry)
+            for hit in response["hits"]["hits"]
+        ]
         return entries
 
     def query(
@@ -125,7 +130,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             }
         }
 
-        # If a namespace is provided, adjust the query to match vectors in that namespace
         if namespace:
             query_body["query"] = {
                 "bool": {
@@ -159,31 +163,40 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             for hit in response["hits"]["hits"]
         ]
 
-    def create_index(self, vector_dimension):
-        if not self.client.indices.exists(index=self.index_name):
-            mapping = {
-                "settings": {
-                    "number_of_shards": 1,
-                    "number_of_replicas": 1,
-                    "index.knn": True
-                },
-                "mappings": {
-                    "properties": {
-                        "vector": {
-                            "type": "knn_vector",
-                            "dimension": vector_dimension
-                        },
-                        "namespace": {
-                            "type": "keyword"
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "enabled": True
+    def create_index(self, vector_dimension: Optional[int] = None, settings_override: Optional[dict] = None) -> None:
+        default_settings = {
+            "number_of_shards": 1,
+            "number_of_replicas": 1,
+            "index.knn": True
+        }
+
+        if settings_override:
+            default_settings.update(settings_override)
+
+        try:
+            if self.client.indices.exists(index=self.index_name):
+                logging.warning("Index already exists!")
+                return
+            else:
+                mapping = {
+                    "settings": default_settings,
+                    "mappings": {
+                        "properties": {
+                            "vector": {
+                                "type": "knn_vector",
+                                "dimension": vector_dimension
+                            },
+                            "namespace": {
+                                "type": "keyword"
+                            },
+                            "metadata": {
+                                "type": "object",
+                                "enabled": True
+                            }
                         }
                     }
                 }
-            }
-            try:
+
                 self.client.indices.create(index=self.index_name, body=mapping)
-            except Exception as e:
-                logging.error(f"Error initializing the index: {e}")
+        except Exception as e:
+            logging.error(f"Error while handling index: {e}")
