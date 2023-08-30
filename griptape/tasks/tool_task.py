@@ -8,7 +8,8 @@ from griptape.artifacts import TextArtifact, InfoArtifact
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
-from griptape.utils import J2, ActionSubtaskOriginMixin
+from griptape.utils import J2
+from griptape.mixins import ActionSubtaskOriginMixin
 
 
 @define

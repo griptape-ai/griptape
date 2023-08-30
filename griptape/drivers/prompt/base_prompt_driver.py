@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent
-from griptape.utils import ExponentialBackoffMixin, PromptStack
+from griptape.utils import PromptStack
+from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:

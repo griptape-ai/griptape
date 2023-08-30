@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from attr import define, field
 from griptape.artifacts import TextArtifact
-from griptape.utils import ExponentialBackoffMixin
+from griptape.mixins import ExponentialBackoffMixin
 
 
 @define

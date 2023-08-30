@@ -9,7 +9,8 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.utils import ActivityMixin, remove_null_values_in_dict_recursively, ActionSubtaskOriginMixin
+from griptape.utils import remove_null_values_in_dict_recursively
+from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
 from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact

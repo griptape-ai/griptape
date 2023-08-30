@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Union
 from attr import define, field, Factory
-from griptape.utils import ActivityMixin
+from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
