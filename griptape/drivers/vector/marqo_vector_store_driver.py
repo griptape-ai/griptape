@@ -12,7 +12,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     url: str = field(kw_only=True)
     mq: marqo.Client = field(
         default=Factory(
-            lambda self: marqo.Client(self.url, self.api_key), takes_self=True
+            lambda self: marqo.Client(self.url, api_key=self.api_key), takes_self=True
         ),
         kw_only=True,
     )
