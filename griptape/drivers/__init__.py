@@ -8,7 +8,7 @@ from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromp
 from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.text_gen_driver import TextGenPromptDriver
-from .prompt.amazon_sagemaker_prompt_driver import AmazonSagemakerPromptDriver
+from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
@@ -34,8 +34,8 @@ from .sql.snowflake_sql_driver import SnowflakeSqlDriver
 from .sql.sql_driver import SqlDriver
 
 from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
-from .prompt_model.sagemaker_llama_prompt_model_driver import SagemakerLlamaPromptModelDriver
-from .prompt_model.sagemaker_falcon_prompt_model_driver import SagemakerFalconPromptModelDriver
+from .prompt_model.sagemaker_llama_prompt_model_driver import SageMakerLlamaPromptModelDriver
+from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPromptModelDriver
 
 
 __all__ = [
@@ -49,7 +49,7 @@ __all__ = [
     "HuggingFaceHubPromptDriver",
     "AnthropicPromptDriver",
     "TextGenPromptDriver",
-    "AmazonSagemakerPromptDriver",
+    "AmazonSageMakerPromptDriver",
 
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
@@ -75,6 +75,6 @@ __all__ = [
     "SqlDriver",
 
     "BasePromptModelDriver",
-    "SagemakerLlamaPromptModelDriver",
-    "SagemakerFalconPromptModelDriver"
+    "SageMakerLlamaPromptModelDriver",
+    "SageMakerFalconPromptModelDriver"
 ]
