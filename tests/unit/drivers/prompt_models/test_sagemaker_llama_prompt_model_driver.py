@@ -1,16 +1,16 @@
 import boto3
 import pytest
 from griptape.utils import PromptStack
-from griptape.drivers import AmazonSagemakerPromptDriver, SagemakerLlamaPromptModelDriver
+from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerLlamaPromptModelDriver
 
 
-class TestSagemakerLlamaPromptModelDriver:
+class TestSageMakerLlamaPromptModelDriver:
     @pytest.fixture
     def driver(self):
-        return AmazonSagemakerPromptDriver(
+        return AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_class=SagemakerLlamaPromptModelDriver,
+            prompt_model_driver_class=SageMakerLlamaPromptModelDriver,
             temperature=0.12345
         ).prompt_model_driver
 
@@ -45,10 +45,10 @@ class TestSagemakerLlamaPromptModelDriver:
     def test_tokenizer_max_model_length(self, driver):
         assert driver.tokenizer.tokenizer.model_max_length == 4000
 
-        assert AmazonSagemakerPromptDriver(
+        assert AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_class=SagemakerLlamaPromptModelDriver,
+            prompt_model_driver_class=SageMakerLlamaPromptModelDriver,
             temperature=0.12345,
             max_tokens=10
         ).prompt_model_driver.tokenizer.tokenizer.model_max_length == 10

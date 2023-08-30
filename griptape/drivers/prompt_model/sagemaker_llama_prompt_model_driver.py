@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
 
 
 @define
-class SagemakerLlamaPromptModelDriver(BasePromptModelDriver):
+class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
     DEFAULT_MAX_TOKENS = 4000
 
     tokenizer: BaseTokenizer = field(
