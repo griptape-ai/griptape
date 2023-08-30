@@ -47,6 +47,11 @@ class BaseTask(ABC):
     def __lshift__(self, child: BaseTask) -> BaseTask:
         return self.add_parent(child)
 
+    def preprocess(self, structure: Structure) -> BaseTask:
+        self.structure = structure
+
+        return self
+
     def add_child(self, child: BaseTask) -> BaseTask:
         if self.structure:
             child.structure = self.structure

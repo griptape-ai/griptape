@@ -10,7 +10,7 @@ from griptape.loaders import BaseLoader
 @define
 class CsvLoader(BaseLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
-    delimeter: str = field(default=',', kw_only=True)
+    delimiter: str = field(default=',', kw_only=True)
 
     def load(self, filename: str) -> list[CsvRowArtifact]:
         return self._load_file(filename)
@@ -25,7 +25,7 @@ class CsvLoader(BaseLoader):
         artifacts = []
 
         with open(filename, 'r', encoding='utf-8') as csv_file:
-            reader = csv.DictReader(csv_file, delimiter=self.delimeter)
+            reader = csv.DictReader(csv_file, delimiter=self.delimiter)
             chunks = [CsvRowArtifact(row) for row in reader]
 
             if self.embedding_driver:
