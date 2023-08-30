@@ -6,8 +6,9 @@ Thought: <your step-by-step thought process about how you can complete the reque
 Action: {{ action_schema }}>
 Observation: <action result>
 ...repeat Thought/Action/Observation as many times as you need
+Answer: <final answer>
 
-"Thought", "Action", and "Observation" MUST ALWAYS start on a new line. If an Observation contains an error, you MUST ALWAYS try to fix the error with another Thought/Action/Observation. NEVER make up action types. NEVER make up action names. NEVER make up action activities. Actions must ALWAYS be plain JSON objects. DO NOT use markdown. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. You should ALWAYS use an action if you can. Keep going until you have the final answer.
+"Thought", "Action", "Observation", and "Answer" MUST ALWAYS start on a new line. If an Observation contains an error, you MUST ALWAYS try to fix the error with another Thought/Action/Observation. NEVER make up action types. NEVER make up action names. NEVER make up action activities. Actions must ALWAYS be plain JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. You should ALWAYS use an action if you can. Keep going until you have the final answer.
 
 {% if tool_names|length > 0 %}
 Actions of Type "tool"
