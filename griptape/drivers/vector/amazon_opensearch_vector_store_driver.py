@@ -15,7 +15,8 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
             lambda self: AWS4Auth(
                 self.session.get_credentials().access_key,
                 self.session.get_credentials().secret_key,
-                self.session.region_name, 'es'
+                self.session.region_name,
+                'es'
             ),
             takes_self=True)
     )

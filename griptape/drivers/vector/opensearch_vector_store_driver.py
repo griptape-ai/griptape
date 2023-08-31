@@ -15,16 +15,18 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     verify_certs: bool = field(default=True, kw_only=True)
     index_name: str = field(kw_only=True)
 
-    client: OpenSearch = field(default=Factory(
-        lambda self: OpenSearch(
-            hosts=[{'host': self.host, 'port': self.port}],
-            http_auth=self.http_auth,
-            use_ssl=self.use_ssl,
-            verify_certs=self.verify_certs,
-            connection_class=RequestsHttpConnection
-        ),
-        takes_self=True
-    ))
+    client: OpenSearch = field(
+        default=Factory(
+            lambda self: OpenSearch(
+                hosts=[{'host': self.host, 'port': self.port}],
+                http_auth=self.http_auth,
+                use_ssl=self.use_ssl,
+                verify_certs=self.verify_certs,
+                connection_class=RequestsHttpConnection
+            ),
+            takes_self=True
+        )
+    )
 
     def upsert_vector(
             self,
