@@ -1,36 +1,40 @@
 from textwrap import dedent
-from typing import Optional
-from urllib.parse import urljoin
-import schema
+from typing import Union
 from schema import Schema, Literal
 from attr import define, field
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact
 
 
 @define
 class ShopifyClient(BaseTool):
     storename: str = field(kw_only=True)
-    storefront_access_token: str = field(kw_only=True)
-    shopify_endpoint: str = field(default="myshopify.com/api/2023-07/graphql.json")
+    access_token: str = field(kw_only=True)
+    schema_endpoint: str = field(
+        kw_only=True, default="myshopify.com/api/2023-07/graphql.json"
+    )
+    timeout: int = field(kw_only=True, default=30)
 
     @activity(
         config={
-            "description": "Can be used to search for shopify products",
+            "description": "Can be used to search for Shopify products",
             "schema": Schema(
                 {
-                    Literal("first", description="How many products to retreive."): str,
+                    Literal(
+                        "product_count",
+                        description="How many products to retrieve.",
+                    ): str,
                 }
             ),
         }
     )
-    def search(self, params: dict) -> BaseArtifact:
+    def search(self, params: dict) -> Union[list[TextArtifact], ErrorArtifact]:
         from requests import post, exceptions
 
-        first = params.get("first", 10)
+        first = params.get("product_count", 10)
 
-        url = f"https://{self.storename}.{self.shopify_endpoint}"
+        url = f"https://{self.storename}.{self.schema_endpoint}"
         body = {
             "query": dedent(
                 """
@@ -55,12 +59,14 @@ class ShopifyClient(BaseTool):
             response = post(
                 url,
                 json=body,
-                headers={
-                    "X-Shopify-Storefront-Access-Token": self.storefront_access_token
-                },
-                timeout=30,
+                headers={"X-Shopify-Storefront-Access-Token": self.access_token},
+                timeout=self.timeout,
             )
 
-            return TextArtifact(response.text)
+            products = [
+                TextArtifact(edge["node"]["title"])
+                for edge in response.json()["data"]["products"]["edges"]
+            ]
+            return products
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
