@@ -1,8 +1,6 @@
 import json
 from typing import Optional
-import schema
 from attr import define, field
-from schema import Schema, Literal
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact
 from griptape.memory.tool import BaseToolMemory
@@ -14,29 +12,6 @@ from griptape.mixins import ActionSubtaskOriginMixin
 
 @define
 class ToolTask(PromptTask, ActionSubtaskOriginMixin):
-    TOOL_SCHEMA = Schema(
-        schema={
-            Literal(
-                "type",
-                description="Action type"
-            ): schema.Or("tool"),
-            Literal(
-                "name",
-                description="Tool name"
-            ): str,
-            Literal(
-                "activity",
-                description="Tool activity"
-            ): str,
-            schema.Optional(
-                Literal(
-                    "input",
-                    description="Optional tool activity input object"
-                )
-            ): dict
-        }
-    )
-
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
@@ -45,15 +20,15 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         return ["tool"]
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        tool_schema = utils.minify_json(
+        action_schema = utils.minify_json(
             json.dumps(
-                self.TOOL_SCHEMA.json_schema("ToolSchema")
+                ActionSubtask.action_schema(self.action_types).json_schema("ToolSchema")
             )
         )
 
         return J2("tasks/tool_task/system.j2").render(
             rulesets=self.structure.rulesets,
-            tool_schema=tool_schema,
+            action_schema=action_schema,
             tool=J2("tasks/partials/_tool.j2").render(tool=self.tool)
         )
 
