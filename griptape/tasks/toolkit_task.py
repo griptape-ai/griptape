@@ -6,6 +6,7 @@ from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils import PromptStack
+from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import ActionSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolkitTask(PromptTask):
+class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     DEFAULT_MAX_STEPS = 20
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
@@ -71,6 +72,15 @@ class ToolkitTask(PromptTask):
 
         return stack
 
+    @property
+    def action_types(self) -> list[str]:
+        memories = [r for r in self.memory if len(r.activities()) > 0]
+
+        if len(memories) > 0:
+            return ["tool", "memory"]
+        else:
+            return ["tool"]
+
     def preprocess(self, structure: Structure) -> ToolkitTask:
         super().preprocess(structure)
 
@@ -81,9 +91,10 @@ class ToolkitTask(PromptTask):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         memories = [r for r in self.memory if len(r.activities()) > 0]
+
         action_schema = utils.minify_json(
             json.dumps(
-                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
+                ActionSubtask.action_schema(self.action_types).json_schema("ActionSchema")
             )
         )
 
@@ -91,9 +102,9 @@ class ToolkitTask(PromptTask):
             rulesets=self.structure.rulesets,
             action_schema=action_schema,
             tool_names=str.join(", ", [tool.name for tool in self.tools]),
-            tools=[J2("tasks/toolkit_task/tool.j2").render(tool=tool) for tool in self.tools],
+            tools=[J2("tasks/partials/_tool.j2").render(tool=tool) for tool in self.tools],
             memory_names=str.join(", ", [memory.name for memory in memories]),
-            memories=[J2("tasks/toolkit_task/tool_memory.j2").render(memory=memory) for memory in memories]
+            memories=[J2("tasks/partials/_tool_memory.j2").render(memory=memory) for memory in memories]
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:
@@ -156,8 +167,8 @@ class ToolkitTask(PromptTask):
 
         return self.output
 
-    def find_subtask(self, task_id: str) -> Optional[ActionSubtask]:
-        return next((subtask for subtask in self.subtasks if subtask.id == task_id), None)
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+        return next((subtask for subtask in self.subtasks if subtask.id == subtask_id), None)
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         subtask.attach_to(self)

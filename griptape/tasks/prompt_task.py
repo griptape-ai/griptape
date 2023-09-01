@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(BaseTextInputTask):
-
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(
@@ -61,7 +60,7 @@ class PromptTask(BaseTextInputTask):
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info(f"Task {self.id}\nAnswer: {self.output.to_text()}")
+        self.structure.logger.info(f"Task {self.id}\nOutput: {self.output.to_text()}")
 
     def active_driver(self) -> BasePromptDriver:
         if self.prompt_driver is None:

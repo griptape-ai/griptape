@@ -11,7 +11,7 @@ from typing import Optional
 import yaml
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
-from griptape.utils import ActivityMixin
+from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.memory.tool import BaseToolMemory

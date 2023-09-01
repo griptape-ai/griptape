@@ -3,8 +3,6 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
-
-from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory

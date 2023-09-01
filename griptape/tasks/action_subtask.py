@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import re
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
@@ -9,14 +9,12 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
-from griptape.utils import ActivityMixin
+from griptape.utils import remove_null_values_in_dict_recursively
+from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
 from griptape.memory.tool import BaseToolMemory
-from griptape.tasks import PromptTask
+from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
-
-if TYPE_CHECKING:
-    from griptape.tasks import ToolkitTask
 
 
 @define
@@ -24,29 +22,6 @@ class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTION_PATTERN = r"(?s)^Action:\s*({.*})$"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
-    ACTION_SCHEMA = Schema(
-        description="Actions have type, name, activity, and input value.",
-        schema={
-            Literal(
-                "type",
-                description="Action type"
-            ): schema.Or("tool", "memory"),
-            Literal(
-                "name",
-                description="Action name"
-            ): str,
-            Literal(
-                "activity",
-                description="Action activity"
-            ): str,
-            schema.Optional(
-                Literal(
-                    "input",
-                    description="Optional action activity input object"
-                )
-            ): dict
-        }
-    )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
@@ -63,18 +38,44 @@ class ActionSubtask(PromptTask):
         return TextArtifact(self.input_template)
 
     @property
-    def task(self) -> Optional[ToolkitTask]:
+    def origin_task(self) -> Optional[ActionSubtaskOriginMixin]:
         return self.structure.find_task(self.parent_task_id)
 
     @property
     def parents(self) -> list[ActionSubtask]:
-        return [self.task.find_subtask(parent_id) for parent_id in self.parent_ids]
+        return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
 
     @property
     def children(self) -> list[ActionSubtask]:
-        return [self.task.find_subtask(child_id) for child_id in self.child_ids]
+        return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
 
-    def attach_to(self, parent_task: ToolkitTask):
+    @classmethod
+    def action_schema(cls, action_types: list) -> Schema:
+        return Schema(
+            description="Actions have type, name, activity, and input value.",
+            schema={
+                Literal(
+                    "type",
+                    description="Action type"
+                ): schema.Or(*action_types),
+                Literal(
+                    "name",
+                    description="Action name"
+                ): str,
+                Literal(
+                    "activity",
+                    description="Action activity"
+                ): str,
+                schema.Optional(
+                    Literal(
+                        "input",
+                        description="Optional action activity input object"
+                    )
+                ): dict
+            }
+        )
+
+    def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
         self.__init_from_prompt(self.input.to_text())
@@ -166,7 +167,7 @@ class ActionSubtask(PromptTask):
 
                 validate(
                     instance=action_object,
-                    schema=self.ACTION_SCHEMA.schema
+                    schema=self.action_schema(self.origin_task.action_types).schema
                 )
 
                 # Load action type; throw exception if the key is not present
@@ -187,56 +188,50 @@ class ActionSubtask(PromptTask):
                     # correctly translated into JSON schema. For some optional input fields LLMs sometimes
                     # still provide null value, which trips up the validator. The temporary solution that
                     # works is to strip all key-values where value is null.
-                    self.action_input = self.remove_null_values_in_dict_recursively(action_object["input"])
+                    self.action_input = remove_null_values_in_dict_recursively(action_object["input"])
 
                 # Load the action itself
                 if self.action_type == "tool":
                     if self.action_name:
-                        self._tool = self.task.find_tool(self.action_name)
+                        self._tool = self.origin_task.find_tool(self.action_name)
 
                     if self._tool:
-                        self.__validate_activity_mixin(self._tool)
+                        self.__validate_action_input(self.action_input, self._tool)
                 elif self.action_type == "memory":
                     if self.action_name:
-                        self._memory = self.task.find_memory(self.action_input["values"]["memory_name"])
+                        self._memory = self.origin_task.find_memory(self.action_input["values"]["memory_name"])
 
                     if self._memory:
-                        self.__validate_activity_mixin(self._memory)
+                        self.__validate_action_input(self.action_input, self._memory)
             except SyntaxError as e:
-                self.structure.logger.error(f"Subtask {self.task.id}\nSyntax error: {e}")
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
                 self.action_name = "error"
                 self.action_input = {"error": f"syntax error: {e}"}
             except ValidationError as e:
-                self.structure.logger.error(f"Subtask {self.task.id}\nInvalid action JSON: {e}")
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action JSON validation error: {e}"}
             except Exception as e:
-                self.structure.logger.error(f"Subtask {self.task.id}\nError parsing tool action: {e}")
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action input parsing error: {e}"}
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 
-    def __validate_activity_mixin(self, mixin: ActivityMixin) -> None:
+    def __validate_action_input(self, action_input: dict, mixin: ActivityMixin) -> None:
         try:
             activity_schema = mixin.activity_schema(getattr(mixin, self.action_activity))
 
             if activity_schema:
                 validate(
-                    instance=self.action_input,
+                    instance=action_input,
                     schema=activity_schema
                 )
         except ValidationError as e:
-            self.structure.logger.error(f"Subtask {self.task.id}\nInvalid activity input JSON: {e}")
+            self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 
             self.action_name = "error"
             self.action_input = {"error": f"Activity input JSON validation error: {e}"}
-
-    def remove_null_values_in_dict_recursively(self, d):
-        if isinstance(d, dict):
-            return {k: self.remove_null_values_in_dict_recursively(v) for k, v in d.items() if v is not None}
-        else:
-            return d
