@@ -1,8 +1,8 @@
 from marshmallow import post_load, fields
-from griptape.schemas import ArtifactSchema
+from griptape.schemas import BaseArtifactSchema
 
 
-class ErrorArtifactSchema(ArtifactSchema):
+class ErrorArtifactSchema(BaseArtifactSchema):
     value = fields.Str()
 
     @post_load

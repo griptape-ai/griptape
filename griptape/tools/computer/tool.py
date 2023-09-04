@@ -197,7 +197,7 @@ class Computer(BaseTool):
 
     def dependencies(self) -> list[str]:
         with open(self.requirements_txt_path, "r") as file:
-            return [l.strip() for l in file.readlines()]
+            return [line.strip() for line in file.readlines()]
 
     def __del__(self) -> None:
         if self.__tempdir:

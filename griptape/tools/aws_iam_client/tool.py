@@ -2,7 +2,7 @@ from __future__ import annotations
 import boto3
 from schema import Schema, Literal
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
 
@@ -40,10 +40,12 @@ class AwsIamClient(BaseAwsClient):
     @activity(config={
         "description": "Can be used to list AWS MFA Devices"
     })
-    def list_mfa_devices(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def list_mfa_devices(self, _: dict) -> ListArtifact | ErrorArtifact:
         try:
             devices = self.iam_client.list_mfa_devices()
-            return [TextArtifact(str(d)) for d in devices["MFADevices"]]
+            return ListArtifact(
+                [TextArtifact(str(d)) for d in devices["MFADevices"]]
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing mfa devices: {e}")
 
@@ -56,21 +58,25 @@ class AwsIamClient(BaseAwsClient):
             ): str
         })
     })
-    def list_user_policies(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def list_user_policies(self, params: dict) -> ListArtifact | ErrorArtifact:
         try:
             policies = self.iam_client.list_user_policies(
                 UserName=params["values"]["user_name"]
             )
-            return [TextArtifact(str(p)) for p in policies["PolicyNames"]]
+            return ListArtifact(
+                [TextArtifact(str(p)) for p in policies["PolicyNames"]]
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing iam user policies: {e}")
 
     @activity(config={
         "description": "Can be used to list AWS IAM users."
     })
-    def list_users(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def list_users(self, _: dict) -> ListArtifact | ErrorArtifact:
         try:
             users = self.iam_client.list_users()
-            return [TextArtifact(str(u)) for u in users["Users"]]
+            return ListArtifact(
+                [TextArtifact(str(u)) for u in users["Users"]]
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing s3 users: {e}")

@@ -74,9 +74,9 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     @property
     def action_types(self) -> list[str]:
-        memories = [r for r in self.memory if len(r.activities()) > 0]
+        memories = [r for r in self.memory if r.activities()]
 
-        if len(memories) > 0:
+        if memories:
             return ["tool", "memory"]
         else:
             return ["tool"]

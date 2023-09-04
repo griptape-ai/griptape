@@ -1,8 +1,8 @@
 from marshmallow import post_load, fields
-from griptape.schemas import ArtifactSchema
+from griptape.schemas import BaseArtifactSchema
 
 
-class CsvRowArtifactSchema(ArtifactSchema):
+class CsvRowArtifactSchema(BaseArtifactSchema):
     value = fields.Dict(
         keys=fields.Str(),
         values=fields.Str(allow_none=True)

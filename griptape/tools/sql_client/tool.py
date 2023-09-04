@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from attr import define, field
-from griptape.artifacts import InfoArtifact, CsvRowArtifact
+from griptape.artifacts import InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.loaders import SqlLoader
@@ -44,11 +44,11 @@ class SqlClient(BaseTool):
             "sql_query": str
         })
     })
-    def execute_query(self, params: dict) -> list[CsvRowArtifact] | InfoArtifact:
+    def execute_query(self, params: dict) -> ListArtifact | InfoArtifact:
         query = params["values"]["sql_query"]
         rows = self.sql_loader.load(query)
 
         if len(rows) > 0:
-            return rows
+            return ListArtifact(rows)
         else:
             return InfoArtifact("No results found")

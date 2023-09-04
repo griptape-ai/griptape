@@ -1,9 +1,9 @@
 from marshmallow import post_load, fields
-from griptape.schemas import ArtifactSchema
+from griptape.schemas import BaseArtifactSchema
 from griptape.utils.marshmallow.fields import Bytes
 
 
-class BlobArtifactSchema(ArtifactSchema):
+class BlobArtifactSchema(BaseArtifactSchema):
     name = fields.Str()
     dir = fields.Str(allow_none=True)
     value = Bytes()

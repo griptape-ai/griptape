@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import TextArtifact, CsvRowArtifact
+from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
@@ -52,7 +52,9 @@ class TestTextToolMemory:
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
     def test_process_output_with_many_artifacts(self, memory):
-        assert memory.process_output(MockTool().test, ActionSubtask(), [TextArtifact("foo")]).to_text().startswith(
+        assert memory.process_output(
+            MockTool().test, ActionSubtask(), ListArtifact([TextArtifact("foo")])
+        ).to_text().startswith(
             'Output of "MockTool.test" was stored in memory'
         )
 

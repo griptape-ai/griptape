@@ -59,4 +59,4 @@ class TestTextMemoryBrowser:
     def test_extract_csv(self, tool):
         assert tool.extract_csv(
             {"values": {"column_names": "foo", "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
-        )[0].value == {"foo": "bar"}
+        ).value[0].value == {"foo": "bar"}

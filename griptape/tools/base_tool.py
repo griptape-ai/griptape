@@ -79,18 +79,16 @@ class BaseTool(ActivityMixin, ABC):
 
         activity_result = activity(preprocessed_value)
 
-        if isinstance(activity_result, BaseArtifact) or isinstance(activity_result, list):
+        if isinstance(activity_result, BaseArtifact):
             result = activity_result
         else:
-            logging.warning("Activity result is not an artifact or a list; converting result to InfoArtifact")
+            logging.warning("Activity result is not an artifact; converting result to InfoArtifact")
 
             result = InfoArtifact(activity_result)
 
         return self.after_execute(activity, subtask, result)
 
-    def after_execute(
-            self, activity: callable, subtask: ActionSubtask, value: Union[BaseArtifact, list[BaseArtifact]]
-    ) -> BaseArtifact:
+    def after_execute(self, activity: callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
         if self.output_memory:
             for memory in activity.__self__.output_memory.get(activity.name, []):
                 value = memory.process_output(activity, subtask, value)
@@ -100,19 +98,7 @@ class BaseTool(ActivityMixin, ABC):
             else:
                 return TextArtifact(str(value))
         else:
-            if isinstance(value, BaseArtifact):
-                return value
-            elif isinstance(value, list):
-                if len(value) == 0:
-                    return InfoArtifact("[]")
-                elif len(value) == 1:
-                    return value[0]
-                else:
-                    return reduce(
-                        lambda a, b: TextArtifact(f"{a.to_text()}\n{b.to_text()}"), value[1:], value[0]
-                    )
-            else:
-                return TextArtifact(str(value))
+            return value
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator
