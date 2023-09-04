@@ -5,16 +5,22 @@ from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact, ListArtifact
+from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
+from griptape.mixins import ActivityMixin
 from griptape.utils.decorators import activity
 from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine
-from griptape.memory.tool import BaseToolMemory
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
 
 
 @define
-class TextToolMemory(BaseToolMemory):
+class TextToolMemory(ActivityMixin):
+    name: str = field(
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
+        kw_only=True,
+    )
+    namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
     query_engine: VectorQueryEngine = field(
         kw_only=True,
         default=Factory(lambda: VectorQueryEngine())
@@ -22,6 +28,10 @@ class TextToolMemory(BaseToolMemory):
     summary_engine: BaseSummaryEngine = field(
         kw_only=True,
         default=Factory(lambda: PromptSummaryEngine())
+    )
+    blob_storage_driver: BaseBlobToolMemoryDriver = field(
+        default=Factory(lambda: LocalBlobToolMemoryDriver()),
+        kw_only=True
     )
 
     @activity(config={

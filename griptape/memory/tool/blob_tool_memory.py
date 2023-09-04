@@ -13,10 +13,7 @@ if TYPE_CHECKING:
 
 @define
 class BlobToolMemory(BaseToolMemory):
-    driver: BaseBlobToolMemoryDriver = field(
-        default=Factory(lambda: LocalBlobToolMemoryDriver()),
-        kw_only=True
-    )
+
 
     def process_output(
             self,
@@ -32,14 +29,14 @@ class BlobToolMemory(BaseToolMemory):
         if isinstance(value, BlobArtifact):
             namespace = value.name
 
-            self.driver.save(namespace, value)
+            self.blob_storage_driver.save(namespace, value)
         elif isinstance(value, ListArtifact) and value.is_type(BlobArtifact):
             artifacts = [v for v in value.value]
 
             if artifacts:
                 namespace = uuid.uuid4().hex
 
-                [self.driver.save(namespace, a) for a in artifacts]
+                [self.blob_storage_driver.save(namespace, a) for a in artifacts]
             else:
                 namespace = None
         else:
@@ -62,4 +59,4 @@ class BlobToolMemory(BaseToolMemory):
             return value
 
     def load_artifacts(self, namespace: str) -> list[BaseArtifact]:
-        return self.driver.load(namespace)
+        return self.blob_storage_driver.load(namespace)

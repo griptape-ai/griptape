@@ -11,13 +11,13 @@ class TestBlobToolMemory:
     def memory(self):
         return BlobToolMemory(
             name="MyMemory",
-            driver=LocalBlobToolMemoryDriver()
+            blob_storage_driver=LocalBlobToolMemoryDriver()
         )
 
     def test_init(self, memory):
         assert memory.name == "MyMemory"
 
-        memory = BlobToolMemory(driver=LocalBlobToolMemoryDriver())
+        memory = BlobToolMemory(blob_storage_driver=LocalBlobToolMemoryDriver())
 
         assert memory.name == BlobToolMemory.__name__
 
@@ -31,7 +31,7 @@ class TestBlobToolMemory:
         )
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
-        assert memory.driver.load(artifact.id) == [artifact]
+        assert memory.blob_storage_driver.load(artifact.id) == [artifact]
 
     def test_process_output_with_many_artifacts(self, memory):
         assert memory.process_output(
@@ -42,6 +42,6 @@ class TestBlobToolMemory:
 
     def test_load_artifacts(self, memory):
         for a in [BlobArtifact(b"foo", name="fooname"), BlobArtifact(b"bar", name="barname")]:
-            memory.driver.save("test", a)
+            memory.blob_storage_driver.save("test", a)
 
         assert len(memory.load_artifacts("test")) == 2
