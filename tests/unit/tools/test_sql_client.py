@@ -31,8 +31,8 @@ class TestSqlClient:
             )
             result = client.execute_query({"values": {"sql_query": "SELECT * from test_table;"}})
 
-            assert len(result) == 1
-            assert result[0].value == {"id": 1, "name": "Alice", "age": 25, "city": "New York"}
+            assert len(result.value) == 1
+            assert result.value[0].value == {"id": 1, "name": "Alice", "age": 25, "city": "New York"}
 
     def test_execute_query_description(self, driver):
         client = SqlClient(

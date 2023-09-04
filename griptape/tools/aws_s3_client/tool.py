@@ -3,7 +3,7 @@ import io
 import boto3
 from schema import Schema, Literal
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
 
@@ -76,10 +76,13 @@ class AwsS3Client(BaseAwsClient):
     @activity(config={
         "description": "Can be used to list all AWS S3 buckets."
     })
-    def list_s3_buckets(self, _: dict) -> list[TextArtifact] | ErrorArtifact:
+    def list_s3_buckets(self, _: dict) -> ListArtifact | ErrorArtifact:
         try:
             buckets = self.s3_client.list_buckets()
-            return [TextArtifact(str(b)) for b in buckets["Buckets"]]
+
+            return ListArtifact(
+                [TextArtifact(str(b)) for b in buckets["Buckets"]]
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing s3 buckets: {e}")
 
@@ -92,12 +95,15 @@ class AwsS3Client(BaseAwsClient):
             ): str
         })
     })
-    def list_objects(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def list_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
         try:
             objects = self.s3_client.list_objects_v2(
                 Bucket=params["values"]["bucket_name"]
             )
-            return [TextArtifact(str(o)) for o in objects["Contents"]]
+
+            return ListArtifact(
+                [TextArtifact(str(o)) for o in objects["Contents"]]
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing objects in bucket: {e}")
 

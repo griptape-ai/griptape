@@ -1,7 +1,7 @@
 from __future__ import annotations
 import os
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, BlobArtifact, InfoArtifact
+from griptape.artifacts import ErrorArtifact, BlobArtifact, InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
@@ -20,8 +20,8 @@ class FileManager(BaseTool):
             ): []
         })
     })
-    def load_files_from_disk(self, params: dict) -> list[BlobArtifact] | ErrorArtifact:
-        artifact_list = []
+    def load_files_from_disk(self, params: dict) -> ListArtifact | ErrorArtifact:
+        list_artifact = ListArtifact()
 
         for path in params["values"]["paths"]:
             file_name = os.path.basename(path)
@@ -30,7 +30,7 @@ class FileManager(BaseTool):
 
             try:
                 with open(full_path, "rb") as file:
-                    artifact_list.append(
+                    list_artifact.value.append(
                         BlobArtifact(
                             file.read(),
                             name=file_name,
@@ -42,7 +42,7 @@ class FileManager(BaseTool):
             except Exception as e:
                 return ErrorArtifact(f"error loading file: {e}")
 
-        return artifact_list
+        return list_artifact
 
     @activity(config={
         "description": "Can be used to save an artifact namespace to disk",

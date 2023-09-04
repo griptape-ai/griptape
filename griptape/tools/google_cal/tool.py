@@ -3,7 +3,7 @@ import logging
 import datetime
 from schema import Schema, Literal, Optional
 from attr import define
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 
@@ -30,7 +30,7 @@ class GoogleCalendarClient(BaseGoogleClient):
             ): int
         })
     })
-    def get_upcoming_events(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def get_upcoming_events(self, params: dict) -> ListArtifact | ErrorArtifact:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
 
@@ -49,7 +49,10 @@ class GoogleCalendarClient(BaseGoogleClient):
                 maxResults=values['max_events'], singleEvents=True,
                 orderBy='startTime').execute()
             events = events_result.get('items', [])
-            return [TextArtifact(str(e)) for e in events]
+
+            return ListArtifact(
+                [TextArtifact(str(e)) for e in events]
+            )
         except Exception as e:
             logging.error(e)
             return ErrorArtifact(f"error retrieving calendar events {e}")

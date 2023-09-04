@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 from typing import Optional
 import schema
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
@@ -71,12 +71,12 @@ class EmailClient(BaseTool):
             ): int
         })
     })
-    def retrieve(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def retrieve(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
         imap_user = self.imap_user if self.imap_user else self.username
         imap_password = self.imap_password if self.imap_password else self.password
         max_count = int(values["max_count"]) if values.get("max_count") else self.email_max_retrieve_count
-        artifacts = []
+        list_artifact = ListArtifact()
 
         try:
             import mailparser
@@ -103,14 +103,14 @@ class EmailClient(BaseTool):
                     result, data = con.fetch(str(i), "(RFC822)")
                     message = mailparser.parse_from_bytes(data[0][1])
 
-                    artifacts.append(
+                    list_artifact.value.append(
                         TextArtifact("\n".join(message.text_plain))
                     )
 
                 con.close()
                 con.logout()
 
-                return artifacts
+                return list_artifact
             else:
                 return ErrorArtifact(mailbox[1][0].decode())
         except Exception as e:

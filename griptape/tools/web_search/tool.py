@@ -1,6 +1,6 @@
 from __future__ import annotations
 from attr import define, field
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, ListArtifact
 from schema import Schema, Literal
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
@@ -24,14 +24,14 @@ class WebSearch(BaseTool):
             ): str
         })
     })
-    def search(self, props: dict) -> list[TextArtifact] | ErrorArtifact:
+    def search(self, props: dict) -> ListArtifact | ErrorArtifact:
         query = props["values"]["query"]
 
         try:
-            return [
+            return ListArtifact([
                 TextArtifact(str(result))
                 for result in self._search_google(query)
-            ]
+            ])
         except Exception as e:
             return ErrorArtifact(f"error searching Google: {e}")
 

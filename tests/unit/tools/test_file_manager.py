@@ -1,6 +1,6 @@
 import os.path
 import tempfile
-from griptape.artifacts import BlobArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
@@ -15,9 +15,9 @@ class TestFileManager:
             dir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["resources/bitcoin.pdf"]}})
 
-        assert isinstance(result, list)
-        assert len(result) == 1
-        assert isinstance(result[0], BlobArtifact)
+        assert isinstance(result, ListArtifact)
+        assert len(result.value) == 1
+        assert isinstance(result.value[0], BlobArtifact)
 
     def test_save_file_to_disk(self):
         with tempfile.TemporaryDirectory() as temp_dir:

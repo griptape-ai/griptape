@@ -5,7 +5,7 @@ from griptape.artifacts import BaseArtifact
 
 @define
 class ListArtifact(BaseArtifact):
-    value: list[BaseArtifact] = field()
+    value: list[BaseArtifact] = field(factory=list)
 
     @value.validator
     def validate_value(self, _, value: list[BaseArtifact]) -> None:

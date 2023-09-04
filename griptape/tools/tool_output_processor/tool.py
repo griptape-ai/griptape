@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, BaseArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.engines import CsvExtractionEngine, BaseSummaryEngine, PromptSummaryEngine
@@ -57,15 +57,17 @@ class ToolOutputProcessor(BaseTool):
             ): list[str]
         })
     })
-    def extract_csv(self, params: dict) -> list[BaseArtifact] | BaseArtifact:
+    def extract_csv(self, params: dict) -> ListArtifact | BaseArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         column_names = params["values"]["column_names"]
 
         if memory:
-            return self.csv_extraction_engine.extract(
-                memory.load_artifacts(artifact_namespace),
-                column_names
+            return ListArtifact(
+                self.csv_extraction_engine.extract(
+                    memory.load_artifacts(artifact_namespace),
+                    column_names
+                )
             )
         else:
             return ErrorArtifact("memory not found")
