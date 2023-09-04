@@ -1,3 +1,4 @@
+from typing import Optional
 from attr import field, define
 from griptape.artifacts import BaseArtifact
 
@@ -24,3 +25,12 @@ class ListArtifact(BaseArtifact):
 
     def __add__(self, other: BaseArtifact) -> BaseArtifact:
         return ListArtifact(self.value + other.value)
+
+    def elements_type(self) -> Optional[type]:
+        if self.value:
+            return type(self.value[0])
+        else:
+            return None
+
+    def is_type(self, target_type: type) -> bool:
+        return self.elements_type() == target_type

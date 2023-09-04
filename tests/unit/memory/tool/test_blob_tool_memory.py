@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import BlobArtifact
+from griptape.artifacts import BlobArtifact, ListArtifact
 from griptape.drivers import LocalBlobToolMemoryDriver
 from griptape.memory.tool import BlobToolMemory
 from griptape.tasks import ActionSubtask
@@ -35,7 +35,7 @@ class TestBlobToolMemory:
 
     def test_process_output_with_many_artifacts(self, memory):
         assert memory.process_output(
-            MockTool().test, ActionSubtask(), [BlobArtifact(b"foo", name="foo")]
+            MockTool().test, ActionSubtask(), ListArtifact([BlobArtifact(b"foo", name="foo")])
         ).to_text().startswith(
             'Output of "MockTool.test" was stored in memory'
         )

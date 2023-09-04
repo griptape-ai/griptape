@@ -1,10 +1,10 @@
 from __future__ import annotations
 import logging
 import uuid
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from schema import Schema, Literal
-from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine
 from griptape.memory.tool import BaseToolMemory
@@ -82,7 +82,7 @@ class TextToolMemory(BaseToolMemory):
             self,
             tool_activity: callable,
             subtask: ActionSubtask,
-            value: Union[BaseArtifact, list[BaseArtifact]]
+            value: BaseArtifact
     ) -> BaseArtifact:
         from griptape.utils import J2
 
@@ -96,10 +96,10 @@ class TextToolMemory(BaseToolMemory):
                 value,
                 namespace=namespace
             )
-        elif isinstance(value, list):
-            artifacts = [a for a in value if isinstance(a, TextArtifact)]
+        elif isinstance(value, ListArtifact) and value.is_type(TextArtifact):
+            artifacts = [v for v in value.value]
 
-            if len(artifacts) > 0:
+            if artifacts:
                 namespace = uuid.uuid4().hex
 
                 self.query_engine.upsert_text_artifacts(artifacts, namespace)

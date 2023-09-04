@@ -20,3 +20,9 @@ class TestListArtifact:
     def test_validate_value(self):
         with pytest.raises(ValueError):
             ListArtifact([TextArtifact("foo"), BlobArtifact(b"bar")])
+
+    def test_elements_type(self):
+        assert ListArtifact([TextArtifact("foo")]).elements_type() == TextArtifact
+
+    def test_is_type(self):
+        assert ListArtifact([TextArtifact("foo")]).is_type(TextArtifact)
