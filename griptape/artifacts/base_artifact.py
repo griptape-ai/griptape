@@ -2,7 +2,6 @@ from __future__ import annotations
 import json
 import uuid
 from abc import ABC, abstractmethod
-from typing import Union
 from attr import define, field, Factory
 from marshmallow import class_registry
 from marshmallow.exceptions import RegistryError
@@ -12,7 +11,7 @@ from marshmallow.exceptions import RegistryError
 class BaseArtifact(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     name: str = field(default=Factory(lambda self: self.id, takes_self=True), kw_only=True)
-    value: Union[str, bytes] = field()
+    value: any = field()
     type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     @classmethod
@@ -34,7 +33,12 @@ class BaseArtifact(ABC):
     @classmethod
     def from_dict(cls, artifact_dict: dict) -> BaseArtifact:
         from griptape.schemas import (
-            TextArtifactSchema, InfoArtifactSchema, ErrorArtifactSchema, BlobArtifactSchema, CsvRowArtifactSchema
+            TextArtifactSchema,
+            InfoArtifactSchema,
+            ErrorArtifactSchema,
+            BlobArtifactSchema,
+            CsvRowArtifactSchema,
+            ListArtifactSchema
         )
 
         class_registry.register("TextArtifact", TextArtifactSchema)
@@ -42,6 +46,7 @@ class BaseArtifact(ABC):
         class_registry.register("ErrorArtifact", ErrorArtifactSchema)
         class_registry.register("BlobArtifact", BlobArtifactSchema)
         class_registry.register("CsvRowArtifact", CsvRowArtifactSchema)
+        class_registry.register("ListArtifact", ListArtifactSchema)
 
         try:
             return class_registry.get_class(artifact_dict["type"])().load(artifact_dict)
