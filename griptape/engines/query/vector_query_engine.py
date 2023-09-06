@@ -43,7 +43,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
             message = self.template_generator.render(
                 metadata=metadata,
-                question=query,
+                query=query,
                 text_segments=text_segments,
             )
             message_token_count = self.prompt_driver.token_count(
@@ -57,7 +57,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
                 message = self.template_generator.render(
                     metadata=metadata,
-                    question=query,
+                    query=query,
                     text_segments=text_segments,
                 )
 

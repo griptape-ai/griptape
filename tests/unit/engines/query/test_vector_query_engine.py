@@ -40,7 +40,7 @@ class TestVectorQueryEngine:
     def test_prompt_creation(self, engine):
         message = engine.template_generator.render(
                 metadata="*META*",
-                question="*QUESTION*",
+                query="*QUESTION*",
                 text_segments=["*TEXT SEGMENT 1*", "*TEXT SEGMENT 2*"],
         )
 
