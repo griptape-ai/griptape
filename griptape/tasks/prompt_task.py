@@ -47,20 +47,10 @@ class PromptTask(BaseTextInputTask):
             rulesets=self.structure.rulesets
         )
 
-    def before_run(self) -> None:
-        super().before_run()
-
-        self.structure.logger.info(f"Task {self.id}\nInput: {self.input.to_text()}")
-
     def run(self) -> TextArtifact:
         self.output = self.active_driver().run(self.prompt_stack)
 
         return self.output
-
-    def after_run(self) -> None:
-        super().after_run()
-
-        self.structure.logger.info(f"Task {self.id}\nOutput: {self.output.to_text()}")
 
     def active_driver(self) -> BasePromptDriver:
         if self.prompt_driver is None:
