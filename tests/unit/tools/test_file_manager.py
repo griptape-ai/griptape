@@ -19,7 +19,7 @@ class TestFileManager:
         assert len(result.value) == 1
         assert isinstance(result.value[0], BlobArtifact)
 
-    def test_save_file_to_disk(self):
+    def test_save_file_to_disk_from_memory(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             memory = TextToolMemory(
                 query_engine=VectorQueryEngine(
@@ -32,6 +32,36 @@ class TestFileManager:
 
             result = FileManager(
                 input_memory=[memory]
-            ).save_file_to_disk({"values": {"path": path, "memory_name": memory.name, "artifact_namespace": "foobar"}})
+            ).save_file_to_disk(
+                {
+                    "values":
+                        {
+                            "path": path,
+                            "data": {
+                                "memory_name": memory.name,
+                                "artifact_namespace": "foobar"
+                            }
+                        }
+                }
+            )
+
+            assert result.value == "saved successfully"
+
+    def test_save_file_to_disk_from_prompt(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = os.path.join(temp_dir, "foobar.txt")
+
+            result = FileManager(
+            ).save_file_to_disk(
+                {
+                    "values":
+                        {
+                            "path": path,
+                            "data": {
+                                "content": "foobar"
+                            }
+                        }
+                }
+            )
 
             assert result.value == "saved successfully"

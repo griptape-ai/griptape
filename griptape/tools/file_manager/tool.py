@@ -4,7 +4,7 @@ from attr import define, field
 from griptape.artifacts import ErrorArtifact, BlobArtifact, InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
+from schema import Schema, Literal, Or
 
 
 @define
@@ -45,39 +45,66 @@ class FileManager(BaseTool):
         return list_artifact
 
     @activity(config={
-        "description": "Can be used to save an artifact namespace to disk",
+        "description": "Can be used to save data to disk",
         "schema": Schema({
-            "memory_name": str,
-            "artifact_namespace": str,
             Literal(
                 "path",
                 description="Destination path on disk in the POSIX format. For example, ['foo/bar/file.txt']"
-            ): str
+            ): str,
+            "data": Or(
+                {
+                    "memory_name": str,
+                    "artifact_namespace": str
+                },
+                {
+                    Literal(
+                        "content",
+                        description="Content to be written into the destination path."
+                    ): str
+                },
+                only_one=True
+            )
         })
     })
     def save_file_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
-        artifact_namespace = params["values"]["artifact_namespace"]
+        is_memory = params["values"]["data"].get("memory_name") is not None
         new_path = params["values"]["path"]
-        memory = self.find_input_memory(params["values"]["memory_name"])
+        full_path = os.path.join(self.dir, new_path)
 
-        if memory:
-            artifacts = memory.load_artifacts(artifact_namespace)
+        if is_memory:
+            artifact_namespace = params["values"]["data"]["artifact_namespace"]
+            memory = self.find_input_memory(params["values"]["data"]["memory_name"])
 
-            if len(artifacts) == 0:
-                return ErrorArtifact("no artifacts found")
+            if memory:
+                artifacts = memory.load_artifacts(artifact_namespace)
+
+                if len(artifacts) == 0:
+                    return ErrorArtifact("no artifacts found")
+                else:
+                    try:
+                        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+
+                        with open(full_path, "wb") as file:
+                            value = "\n".join([a.to_text() for a in artifacts])
+
+                            file.write(value.encode() if isinstance(value, str) else value)
+
+                            return InfoArtifact(f"saved successfully")
+                    except Exception as e:
+                        return ErrorArtifact(f"error writing file to disk: {e}")
             else:
-                try:
-                    full_path = os.path.join(self.dir, new_path)
-
-                    os.makedirs(os.path.dirname(full_path), exist_ok=True)
-
-                    with open(full_path, "wb") as file:
-                        value = "\n".join([a.to_text() for a in artifacts])
-
-                        file.write(value.encode() if isinstance(value, str) else value)
-
-                        return InfoArtifact(f"saved successfully")
-                except Exception as e:
-                    return ErrorArtifact(f"error writing file to disk: {e}")
+                return ErrorArtifact("memory not found")
         else:
-            return ErrorArtifact("memory not found")
+            content = params["values"]["data"]["content"]
+
+            try:
+                os.makedirs(os.path.dirname(full_path), exist_ok=True)
+
+                with open(full_path, "wb") as file:
+                    value = content
+
+                    file.write(value.encode() if isinstance(value, str) else value)
+
+                    return InfoArtifact(f"saved successfully")
+            except Exception as e:
+                return ErrorArtifact(f"error writing file to disk: {e}")
