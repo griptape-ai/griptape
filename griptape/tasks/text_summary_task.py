@@ -5,7 +5,7 @@ from griptape.tasks import BaseTextInputTask
 
 
 @define
-class SummaryTask(BaseTextInputTask):
+class TextSummaryTask(BaseTextInputTask):
     summary_engine: BaseSummaryEngine = field(
         kw_only=True,
         default=Factory(lambda: PromptSummaryEngine())
