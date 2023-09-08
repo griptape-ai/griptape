@@ -1,5 +1,5 @@
 from __future__ import annotations
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import ListArtifact, TextArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
@@ -7,7 +7,6 @@ from attr import define, field
 from typing import Optional
 import requests
 import logging
-
 
 @define
 class OpenWeatherClient(BaseTool):
@@ -17,7 +16,7 @@ class OpenWeatherClient(BaseTool):
 
     @activity(
         config={
-            "description": "Can be used to fetch weather data for a given city using the OpenWeather API. Temperatures are returned in {self.units} by default.",  # Modified description
+            "description": "Can be used to fetch weather data for a given city using the OpenWeather API. Temperatures are returned in {{ units }} by default.",
             "schema": Schema({
                 Literal(
                     "city_name",
@@ -26,7 +25,8 @@ class OpenWeatherClient(BaseTool):
             }),
         }
     )
-    def _get_weather_by_city(self, params: dict):
+
+    def get_current_weather_by_city(self, params: dict) -> ListArtifact | TextArtifact | ErrorArtifact:
         city_name = params["values"].get("city_name")
 
         request_params = {
@@ -39,7 +39,10 @@ class OpenWeatherClient(BaseTool):
             response = requests.get(self.BASE_URL, params=request_params)
             if response.status_code == 200:
                 data = response.json()
-                return TextArtifact(str(data))
+                if isinstance(data, list):
+                    return ListArtifact(data)
+                else:
+                    return TextArtifact(str(data))
             else:
                 logging.error(f"Error fetching weather data. HTTP Status Code: {response.status_code}")
                 return ErrorArtifact("Error fetching weather data from OpenWeather API")
