@@ -16,15 +16,9 @@ class VectorStoreClient(BaseTool):
     top_n: int = field(default=DEFAULT_TOP_N, kw_only=True)
     namespace: Optional[str] = field(default=None, kw_only=True)
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {
-            "description": self.description
-        }
-
     @activity(config={
         "description":
-            "Can be used to search a vector database with the following description: {{ self.description }}",
+            "Can be used to search a vector database with the following description: {{ tool.description }}",
         "schema": Schema({
             Literal(
                 "query",

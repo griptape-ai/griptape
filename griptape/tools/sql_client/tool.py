@@ -21,25 +21,20 @@ class SqlClient(BaseTool):
         return f"{self.schema_name}.{self.table_name}" if self.schema_name else self.table_name
 
     @property
-    def schema_template_args(self) -> dict:
-        return {
-            "engine": self.engine_name,
-            "table_name": self.full_table_name,
-            "table_description": self.table_description,
-            "table_schema": self.sql_loader.sql_driver.get_table_schema(self.table_name, schema=self.schema_name)
-        }
+    def table_schema(self) -> str:
+        return self.sql_loader.sql_driver.get_table_schema(self.full_table_name, schema=self.schema_name)
 
     @activity(config={
         "description":
-            "Can be used to execute{% if engine %} {{ engine }}{% endif %} SQL SELECT queries "
-            "in table {{ table_name }}. "
+            "Can be used to execute{% if tool.engine_name %} {{ tool.engine_name }}{% endif %} SQL SELECT queries "
+            "in table {{ tool.full_table_name }}. "
             "Make sure the `SELECT` statement contains enough columns to get an answer without knowing "
             "the original question. "
             "Be creative when you use `WHERE` statements: you can use wildcards, `LOWER()`, and other functions "
             "to get better results. "
             "You can use JOINs if more tables are available in other tools.\n"
-            "{{ table_name }} schema: {{ table_schema }}{% if table_description %}\n"
-            "{{ table_name }} description: {{ table_description }}{% endif %}",
+            "{{ tool.table_name }} schema: {{ tool.table_schema }}\n"
+            "{% if tool.table_description %}{{ tool.table_name }} description: {{ tool.table_description }}{% endif %}",
         "schema": Schema({
             "sql_query": str
         })
