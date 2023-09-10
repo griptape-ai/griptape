@@ -31,24 +31,25 @@ class TestFileManager:
             memory.query_engine.vector_store_driver.upsert_text_artifact(artifact, namespace="foobar")
 
             result = FileManager(
+                dir=temp_dir,
                 input_memory=[memory]
             ).save_memory_artifacts_to_disk(
                 {
                     "values":
                         {
-                            "path": temp_dir,
-                            "filename": "foobar.txt",
+                            "dir_name": "test",
+                            "file_name": "foobar.txt",
                             "memory_name": memory.name,
                             "artifact_namespace": "foobar"
                         }
                 }
             )
 
-            assert Path(os.path.join(temp_dir, "foobar.txt")).read_text() == "foobar"
+            assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
             assert result.value == "saved successfully"
 
     def test_save_memory_artifacts_to_disk_for_multiple_artifacts(self):
-        filename = "foobar.txt"
+        file_name = "foobar.txt"
 
         with tempfile.TemporaryDirectory() as temp_dir:
             memory = TextToolMemory(
@@ -64,36 +65,37 @@ class TestFileManager:
                 memory.query_engine.vector_store_driver.upsert_text_artifact(a, namespace="foobar")
 
             result = FileManager(
+                dir=temp_dir,
                 input_memory=[memory]
             ).save_memory_artifacts_to_disk(
                 {
                     "values":
                         {
-                            "path": temp_dir,
-                            "filename": filename,
+                            "dir_name": "test",
+                            "file_name": file_name,
                             "memory_name": memory.name,
                             "artifact_namespace": "foobar"
                         }
                 }
             )
 
-            assert Path(os.path.join(temp_dir, f"{artifacts[0].name}-{filename}")).read_text() == "foobar"
-            assert Path(os.path.join(temp_dir, f"{artifacts[1].name}-{filename}")).read_text() == "baz"
+            assert Path(os.path.join(temp_dir, "test", f"{artifacts[0].name}-{file_name}")).read_text() == "foobar"
+            assert Path(os.path.join(temp_dir, "test", f"{artifacts[1].name}-{file_name}")).read_text() == "baz"
             assert result.value == "saved successfully"
 
     def test_save_content_to_file(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            path = os.path.join(temp_dir, "foobar.txt")
-
             result = FileManager(
+                dir=temp_dir
             ).save_content_to_file(
                 {
                     "values":
                         {
-                            "path": path,
+                            "path": os.path.join("test", "foobar.txt"),
                             "content": "foobar"
                         }
                 }
             )
 
+            assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
             assert result.value == "saved successfully"

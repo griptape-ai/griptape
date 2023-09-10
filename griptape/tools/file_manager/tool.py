@@ -49,12 +49,12 @@ class FileManager(BaseTool):
         "schema": Schema(
             {
                 Literal(
-                    "dirname",
+                    "dir_name",
                     description="Destination directory name on disk in the POSIX format. For example, 'foo/bar'"
                 ): str,
                 Literal(
-                    "filename",
-                    description="Destination filename. For example, 'baz.txt'"
+                    "file_name",
+                    description="Destination file name. For example, 'baz.txt'"
                 ): str,
                 "memory_name": str,
                 "artifact_namespace": str
@@ -64,8 +64,8 @@ class FileManager(BaseTool):
     def save_memory_artifacts_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
-        dirname = params["values"]["dirname"]
-        filename = params["values"]["filename"]
+        dir_name = params["values"]["dir_name"]
+        file_name = params["values"]["file_name"]
 
         if memory:
             artifacts = memory.load_artifacts(artifact_namespace)
@@ -75,7 +75,7 @@ class FileManager(BaseTool):
             elif len(artifacts) == 1:
                 try:
                     self._save_to_disk(
-                        os.path.join(self.dir, dirname, filename),
+                        os.path.join(self.dir, dir_name, file_name),
                         artifacts[0].to_text()
                     )
 
@@ -86,7 +86,7 @@ class FileManager(BaseTool):
                 try:
                     for a in artifacts:
                         self._save_to_disk(
-                            os.path.join(self.dir, dirname, f"{a.name}-{filename}"),
+                            os.path.join(self.dir, dir_name, f"{a.name}-{file_name}"),
                             a.to_text()
                         )
 
