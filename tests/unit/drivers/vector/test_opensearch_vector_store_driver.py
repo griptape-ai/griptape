@@ -5,7 +5,7 @@ import numpy as np
 
 
 class TestOpenSearchVectorStoreDriver:
-    @pytest.fixture(scope="module")
+    @pytest.fixture
     def driver(self):
         mock_driver = create_autospec(OpenSearchVectorStoreDriver, instance=True)
         mock_driver.upsert_vector.return_value = "foo"
