@@ -76,7 +76,7 @@ class FileManager(BaseTool):
                 try:
                     self._save_to_disk(
                         os.path.join(self.dir, dir_name, file_name),
-                        artifacts[0].to_text()
+                        artifacts[0].value
                     )
 
                     return InfoArtifact(f"saved successfully")
@@ -87,7 +87,7 @@ class FileManager(BaseTool):
                     for a in artifacts:
                         self._save_to_disk(
                             os.path.join(self.dir, dir_name, f"{a.name}-{file_name}"),
-                            a.to_text()
+                            a.value
                         )
 
                     return InfoArtifact(f"saved successfully")
