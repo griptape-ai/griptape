@@ -6,7 +6,7 @@ import boto3
 
 
 class TestAmazonOpenSearchVectorStoreDriver:
-    @pytest.fixture(scope="module")
+    @pytest.fixture
     def driver(self):
         mock_session = create_autospec(boto3.Session, instance=True)
         mock_driver = create_autospec(AmazonOpenSearchVectorStoreDriver, instance=True, session=mock_session)
