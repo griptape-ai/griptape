@@ -2,10 +2,8 @@ from __future__ import annotations
 import logging
 import uuid
 from typing import TYPE_CHECKING
-from attr import define, field, Factory
+from attr import define
 from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact, ListArtifact
-from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
-from griptape.memory.tool import BaseToolMemory
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
@@ -13,8 +11,6 @@ if TYPE_CHECKING:
 
 @define
 class BlobToolMemory(BaseToolMemory):
-
-
     def process_output(
             self,
             tool_activity: callable,

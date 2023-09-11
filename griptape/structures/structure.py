@@ -8,7 +8,7 @@ from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.memory.structure import ConversationMemory
-from griptape.memory.tool import BaseToolMemory, TextToolMemory
+from griptape.memory.tool import TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
 from griptape.tokenizers import TiktokenTokenizer
@@ -34,7 +34,7 @@ class Structure(ABC):
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
-    tool_memory: Optional[BaseToolMemory] = field(
+    tool_memory: Optional[TextToolMemory] = field(
         default=Factory(lambda: TextToolMemory()),
         kw_only=True
     )

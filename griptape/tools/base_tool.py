@@ -13,7 +13,7 @@ from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import BaseToolMemory
+    from griptape.memory.tool import TextToolMemory
     from griptape.tasks import ActionSubtask
 
 
@@ -23,8 +23,8 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    input_memory: Optional[list[BaseToolMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[dict[str, list[BaseToolMemory]]] = field(default=None, kw_only=True)
+    input_memory: Optional[list[TextToolMemory]] = field(default=None, kw_only=True)
+    output_memory: Optional[dict[str, list[TextToolMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
@@ -34,7 +34,7 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator
-    def validate_output_memory(self, _, output_memory: Optional[dict[str, list[BaseToolMemory]]]) -> None:
+    def validate_output_memory(self, _, output_memory: Optional[dict[str, list[TextToolMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
@@ -142,7 +142,7 @@ class BaseTool(ActivityMixin, ABC):
             stderr=None if self.verbose else subprocess.DEVNULL
         )
 
-    def find_input_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
+    def find_input_memory(self, memory_name: str) -> Optional[TextToolMemory]:
         if self.input_memory:
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:
