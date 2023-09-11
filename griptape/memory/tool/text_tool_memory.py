@@ -8,7 +8,8 @@ from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorAr
 from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
 from griptape.mixins import ActivityMixin
 from griptape.utils.decorators import activity
-from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine
+from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine, BaseQueryEngine
+
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
@@ -21,13 +22,14 @@ class TextToolMemory(ActivityMixin):
         kw_only=True,
     )
     namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
-    query_engine: VectorQueryEngine = field(
-        kw_only=True,
-        default=Factory(lambda: VectorQueryEngine())
+
+    query_engine: BaseQueryEngine = field(
+        default=Factory(lambda: VectorQueryEngine()),
+        kw_only=True
     )
     summary_engine: BaseSummaryEngine = field(
-        kw_only=True,
-        default=Factory(lambda: PromptSummaryEngine())
+        default=Factory(lambda: PromptSummaryEngine()),
+        kw_only=True
     )
     blob_storage_driver: BaseBlobToolMemoryDriver = field(
         default=Factory(lambda: LocalBlobToolMemoryDriver()),

@@ -29,10 +29,12 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
 
     def max_output_tokens(self, text: str) -> int:
+        tokens_left = self.tokenizer.tokens_left(text)
+
         if self.max_tokens:
-            return self.max_tokens
+            return min(self.max_tokens, tokens_left)
         else:
-            return self.tokenizer.tokens_left(text)
+            return tokens_left
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         return self.tokenizer.token_count(

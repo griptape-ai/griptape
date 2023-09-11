@@ -1,5 +1,6 @@
 import os.path
 import tempfile
+from pathlib import Path
 from griptape.artifacts import BlobArtifact, TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
@@ -19,19 +20,82 @@ class TestFileManager:
         assert len(result.value) == 1
         assert isinstance(result.value[0], BlobArtifact)
 
-    def test_save_file_to_disk(self):
+    def test_save_memory_artifacts_to_disk_for_one_artifact(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             memory = TextToolMemory(
                 query_engine=VectorQueryEngine(
                     vector_store_driver=LocalVectorStoreDriver(
                         embedding_driver=MockEmbeddingDriver())))
             artifact = TextArtifact("foobar")
-            path = os.path.join(temp_dir, "foobar.txt")
 
             memory.query_engine.vector_store_driver.upsert_text_artifact(artifact, namespace="foobar")
 
             result = FileManager(
+                dir=temp_dir,
                 input_memory=[memory]
-            ).save_file_to_disk({"values": {"path": path, "memory_name": memory.name, "artifact_namespace": "foobar"}})
+            ).save_memory_artifacts_to_disk(
+                {
+                    "values":
+                        {
+                            "dir_name": "test",
+                            "file_name": "foobar.txt",
+                            "memory_name": memory.name,
+                            "artifact_namespace": "foobar"
+                        }
+                }
+            )
 
+            assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
+            assert result.value == "saved successfully"
+
+    def test_save_memory_artifacts_to_disk_for_multiple_artifacts(self):
+        file_name = "foobar.txt"
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            memory = TextToolMemory(
+                query_engine=VectorQueryEngine(
+                    vector_store_driver=LocalVectorStoreDriver(
+                        embedding_driver=MockEmbeddingDriver())))
+            artifacts = [
+                TextArtifact("foobar"),
+                TextArtifact("baz")
+            ]
+
+            for a in artifacts:
+                memory.query_engine.vector_store_driver.upsert_text_artifact(a, namespace="foobar")
+
+            result = FileManager(
+                dir=temp_dir,
+                input_memory=[memory]
+            ).save_memory_artifacts_to_disk(
+                {
+                    "values":
+                        {
+                            "dir_name": "test",
+                            "file_name": file_name,
+                            "memory_name": memory.name,
+                            "artifact_namespace": "foobar"
+                        }
+                }
+            )
+
+            assert Path(os.path.join(temp_dir, "test", f"{artifacts[0].name}-{file_name}")).read_text() == "foobar"
+            assert Path(os.path.join(temp_dir, "test", f"{artifacts[1].name}-{file_name}")).read_text() == "baz"
+            assert result.value == "saved successfully"
+
+    def test_save_content_to_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result = FileManager(
+                dir=temp_dir
+            ).save_content_to_file(
+                {
+                    "values":
+                        {
+                            "path": os.path.join("test", "foobar.txt"),
+                            "content": "foobar"
+                        }
+                }
+            )
+
+            assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
             assert result.value == "saved successfully"

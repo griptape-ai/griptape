@@ -34,6 +34,7 @@ class TestBasePromptDriver:
 
     def test_max_output_tokens(self):
         assert MockPromptDriver().max_output_tokens("foobar") == 4087
+        assert MockPromptDriver(max_tokens=4088).max_output_tokens("foobar") == 4087
         assert MockPromptDriver(max_tokens=100).max_output_tokens("foobar") == 100
 
     def test_prompt_stack_to_string(self):

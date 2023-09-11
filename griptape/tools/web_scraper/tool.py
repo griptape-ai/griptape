@@ -59,7 +59,7 @@ class WebScraper(BaseTool):
         page = trafilatura.fetch_url(url, no_ssl=True)
 
         # This disables signal, so that trafilatura can work on any thread:
-        # More info: https://trafilatura.readthedocs.io/en/latest/usage-python.html#disabling-signal
+        # More info: https://trafilatura.readthedocs.io/usage-python.html#disabling-signal
         config.set("DEFAULT", "EXTRACTION_TIMEOUT", "0")
 
         # Disable error logging in trafilatura as it sometimes logs errors from lxml, even though
