@@ -12,7 +12,7 @@ class MockTool(BaseTool):
     test_dict: dict = field(factory=dict, kw_only=True)
 
     @activity(config={
-        "description": "test description: {{ tool.foo() }}",
+        "description": "test description: {{ _self.foo() }}",
         "schema": Schema({
                 Literal("test"): str
             },
@@ -23,7 +23,7 @@ class MockTool(BaseTool):
         return TextArtifact(f"ack {value['values']['test']}")
 
     @activity(config={
-        "description": "test description: {{ tool.foo() }}",
+        "description": "test description: {{ _self.foo() }}",
         "schema": Schema({
                 Literal("test"): str
             },
@@ -34,7 +34,7 @@ class MockTool(BaseTool):
         return ErrorArtifact(f"error {value['values']['test']}")
 
     @activity(config={
-        "description": "test description: {{ tool.foo() }}",
+        "description": "test description: {{ _self.foo() }}",
         "schema": Schema({
                 Literal("test"): str
             },

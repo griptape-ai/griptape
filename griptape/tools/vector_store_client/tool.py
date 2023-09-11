@@ -18,7 +18,7 @@ class VectorStoreClient(BaseTool):
 
     @activity(config={
         "description":
-            "Can be used to search a vector database with the following description: {{ tool.description }}",
+            "Can be used to search a vector database with the following description: {{ _self.description }}",
         "schema": Schema({
             Literal(
                 "query",

@@ -65,7 +65,7 @@ class Computer(BaseTool):
             "description": "Can be used to execute Python code to solve any programmatic tasks and access and analyze"
                            " files in the file system. If you need to use code output use `print` statements. "
                            "You have access to the following external Python libraries: "
-                           "{{ tool.dependencies() }}",
+                           "{{ _self.dependencies() }}",
             "schema": Schema(
                 {
                     Literal("code", description="Python code to execute"): str,

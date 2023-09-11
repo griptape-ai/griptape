@@ -39,7 +39,7 @@ class EmailClient(BaseTool):
 
     @activity(config={
         "description": "Can be used to retrieve emails."
-                       "{% if tool.mailboxes %} Available mailboxes: {{ tool.mailboxes }}{% endif %}",
+                       "{% if _self.mailboxes %} Available mailboxes: {{ _self.mailboxes }}{% endif %}",
         "schema": Schema({
             Literal(
                 "label",

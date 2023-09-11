@@ -42,10 +42,10 @@ class RestApiClient(BaseTool):
         config={
             "description": dedent(
                 """
-                This tool can be used to make a put request to the rest api url: {{ tool.full_url }}
-                This rest api has the following description: {{ tool.description }}
-                {% if tool.request_body_schema %}The request body must follow this JSON schema: {{ tool.request_body_schema }}{% endif %}
-                {% if tool.response_body_schema %}The response body must follow this JSON schema: {{ tool.response_body_schema }}{% endif %}
+                This tool can be used to make a put request to the rest api url: {{ _self.full_url }}
+                This rest api has the following description: {{ _self.description }}
+                {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
+                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
             "schema": Schema(
@@ -75,11 +75,11 @@ class RestApiClient(BaseTool):
         config={
             "description": dedent(
                 """
-                This tool can be used to make a patch request to the rest api url: {{ tool.full_url }}
-                This rest api has the following description: {{ tool.description }}
-                {% if tool.request_path_parameters %}The request path parameters must follow this JSON schema: {{ tool.request_path_params_schema }}{% endif %}
-                {% if tool.request_body_schema %}The request body must follow this JSON schema: {{ tool.request_body_schema }}{% endif %}
-                {% if tool.response_body_schema %}The response body must follow this JSON schema: {{ tool.response_body_schema }}{% endif %}
+                This tool can be used to make a patch request to the rest api url: {{ _self.full_url }}
+                This rest api has the following description: {{ _self.description }}
+                {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
+                {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
+                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
             "schema": Schema(
@@ -112,10 +112,10 @@ class RestApiClient(BaseTool):
         config={
             "description": dedent(
                 """
-                This tool can be used to make a post request to the rest api url: {{ tool.full_url }}
-                This rest api has the following description: {{ tool.description }}
-                {% if tool.request_body_schema %}The request body must follow this JSON schema: {{ tool.request_body_schema }}{% endif %}
-                {% if tool.response_body_schema %}The response body must follow this JSON schema: {{ tool.response_body_schema }}{% endif %}
+                This tool can be used to make a post request to the rest api url: {{ _self.full_url }}
+                This rest api has the following description: {{ _self.description }}
+                {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
+                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
             "schema": Schema(
@@ -144,11 +144,11 @@ class RestApiClient(BaseTool):
         config={
             "description": dedent(
                 """
-                This tool can be used to make a get request to the rest api url: {{ tool.full_url }}
-                This rest api has the following description: {{ tool.description }}
-                {% if tool.request_path_parameters %}The request path parameters must follow this JSON schema: {{ tool.request_path_params_schema }}{% endif %}
-                {% if tool.request_query_parameters %}The request query parameters must follow this JSON schema: {{ tool.request_path_params_schema }}{% endif %}
-                {% if tool.response_body_schema %}The response body must follow this JSON schema: {{ tool.response_body_schema }}{% endif %}
+                This tool can be used to make a get request to the rest api url: {{ _self.full_url }}
+                This rest api has the following description: {{ _self.description }}
+                {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
+                {% if _self.request_query_parameters %}The request query parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
+                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
             "schema": schema.Optional(
@@ -195,10 +195,10 @@ class RestApiClient(BaseTool):
         config={
             "description": dedent(
                 """
-                This tool can be used to make a delete request to the rest api url: {{ tool.full_url }}
-                This rest api has the following description: {{ tool.description }}
-                {% if tool.request_path_parameters %}The request path parameters must follow this JSON schema: {{ tool.request_path_params_schema }}{% endif %}
-                {% if tool.request_query_parameters %}The request query parameters must follow this JSON schema: {{ tool.request_path_params_schema }}{% endif %}
+                This tool can be used to make a delete request to the rest api url: {{ _self.full_url }}
+                This rest api has the following description: {{ _self.description }}
+                {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
+                {% if _self.request_query_parameters %}The request query parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
                 """
             ),
             "schema": Schema(
