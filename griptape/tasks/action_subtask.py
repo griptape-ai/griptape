@@ -162,8 +162,7 @@ class ActionSubtask(PromptTask):
         if len(action_matches) > 0:
             try:
                 data = action_matches[-1]
-                data = data.replace('\n', '')
-                action_object: dict = json.loads(data)
+                action_object: dict = json.loads(data, strict=False)
 
                 validate(
                     instance=action_object,

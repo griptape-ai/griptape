@@ -20,5 +20,21 @@ class TestActionSubtask:
         assert json_dict["activity"] == "test action"
         assert json_dict["input"] == "test input"
 
+    def test_init_from_prompt_with_newlines(self):
+        valid_input = 'Thought: need to test\n' \
+                      'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test\n\ninput\n\nwith\nnewlines"}\n' \
+                      'Observation: test observation\n' \
+                      'Answer: test output'
+
+        task = ToolkitTask(tools=[])
+        Pipeline().add_task(task)
+        subtask = task.add_subtask(ActionSubtask(valid_input))
+        json_dict = json.loads(subtask.action_to_json())
+
+        assert json_dict["type"] == "tool"
+        assert json_dict["name"] == "test"
+        assert json_dict["activity"] == "test action"
+        assert json_dict["input"] == "test\n\ninput\n\nwith\nnewlines"
+
     def test_input(self):
         assert ActionSubtask("{{ hello }}").input.value == "{{ hello }}"
