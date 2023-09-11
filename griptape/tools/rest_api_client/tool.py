@@ -11,6 +11,16 @@ from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 
 @define
 class RestApiClient(BaseTool):
+    """
+    Attributes:
+        base_url: The base url that will be used for the request.
+        path: The resource path that will be appended to base_url.
+        description: A description of what the REST API does.
+        request_body_schema: A JSON schema string describing the request body. Recommended for PUT, POST, and PATCH requests.
+        request_query_params_schema: A JSON schema string describing the available query parameters.
+        request_path_params_schema: A JSON schema string describing the available path parameters. The schema must describe an array of string values.
+        response_body_schema: A JSON schema string describing the response body.
+    """
     base_url: str = field(kw_only=True)
     path: Optional[str] = field(
         default=None,

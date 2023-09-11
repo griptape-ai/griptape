@@ -9,6 +9,13 @@ from griptape.utils.decorators import activity
 
 @define
 class VectorStoreClient(BaseTool):
+    """
+    Attributes:
+        description: LLM-friendly vector DB description.
+        namespace: Vector storage namespace.
+        query_engine: `BaseQueryEngine`.
+        top_n: Max number of results returned for the query engine query.
+    """
     DEFAULT_TOP_N = 5
 
     description: str = field(kw_only=True)
