@@ -45,39 +45,83 @@ class FileManager(BaseTool):
         return list_artifact
 
     @activity(config={
-        "description": "Can be used to save an artifact namespace to disk",
-        "schema": Schema({
-            "memory_name": str,
-            "artifact_namespace": str,
-            Literal(
-                "path",
-                description="Destination path on disk in the POSIX format. For example, ['foo/bar/file.txt']"
-            ): str
-        })
+        "description": "Can be used to save memory artifacts to disk",
+        "schema": Schema(
+            {
+                Literal(
+                    "dir_name",
+                    description="Destination directory name on disk in the POSIX format. For example, 'foo/bar'"
+                ): str,
+                Literal(
+                    "file_name",
+                    description="Destination file name. For example, 'baz.txt'"
+                ): str,
+                "memory_name": str,
+                "artifact_namespace": str
+            }
+        )
     })
-    def save_file_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
-        artifact_namespace = params["values"]["artifact_namespace"]
-        new_path = params["values"]["path"]
+    def save_memory_artifacts_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
+        artifact_namespace = params["values"]["artifact_namespace"]
+        dir_name = params["values"]["dir_name"]
+        file_name = params["values"]["file_name"]
 
         if memory:
             artifacts = memory.load_artifacts(artifact_namespace)
 
             if len(artifacts) == 0:
                 return ErrorArtifact("no artifacts found")
+            elif len(artifacts) == 1:
+                try:
+                    self._save_to_disk(
+                        os.path.join(self.dir, dir_name, file_name),
+                        artifacts[0].value
+                    )
+
+                    return InfoArtifact(f"saved successfully")
+                except Exception as e:
+                    return ErrorArtifact(f"error writing file to disk: {e}")
             else:
                 try:
-                    full_path = os.path.join(self.dir, new_path)
+                    for a in artifacts:
+                        self._save_to_disk(
+                            os.path.join(self.dir, dir_name, f"{a.name}-{file_name}"),
+                            a.value
+                        )
 
-                    os.makedirs(os.path.dirname(full_path), exist_ok=True)
-
-                    with open(full_path, "wb") as file:
-                        value = "\n".join([a.to_text() for a in artifacts])
-
-                        file.write(value.encode() if isinstance(value, str) else value)
-
-                        return InfoArtifact(f"saved successfully")
+                    return InfoArtifact(f"saved successfully")
                 except Exception as e:
                     return ErrorArtifact(f"error writing file to disk: {e}")
         else:
             return ErrorArtifact("memory not found")
+
+    @activity(config={
+        "description": "Can be used to save content to a file",
+        "schema": Schema(
+            {
+                Literal(
+                    "path",
+                    description="Destination file path on disk in the POSIX format. For example, 'foo/bar/baz.txt'"
+                ): str,
+                "content": str
+            }
+        )
+    })
+    def save_content_to_file(self, params: dict) -> ErrorArtifact | InfoArtifact:
+        content = params["values"]["content"]
+        new_path = params["values"]["path"]
+        full_path = os.path.join(self.dir, new_path)
+
+        try:
+            self._save_to_disk(full_path, content)
+
+            return InfoArtifact(f"saved successfully")
+        except Exception as e:
+            return ErrorArtifact(f"error writing file to disk: {e}")
+
+    def _save_to_disk(self, path: str, value: any) -> None:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+
+        with open(path, "wb") as file:
+            file.write(value.encode() if isinstance(value, str) else value)

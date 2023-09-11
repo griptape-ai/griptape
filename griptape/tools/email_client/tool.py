@@ -51,15 +51,9 @@ class EmailClient(BaseTool):
 
     mailboxes: Optional[dict[str, str]] = field(default=None, kw_only=True)
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {
-            "mailboxes": json.dumps(self.mailboxes) if self.mailboxes else None
-        }
-
     @activity(config={
         "description": "Can be used to retrieve emails."
-                       "{% if mailboxes %} Some of the available mailboxes: {{ mailboxes }}{% endif %}",
+                       "{% if _self.mailboxes %} Available mailboxes: {{ _self.mailboxes }}{% endif %}",
         "schema": Schema({
             Literal(
                 "label",
