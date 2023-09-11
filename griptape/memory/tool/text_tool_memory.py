@@ -4,7 +4,7 @@ import uuid
 from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from schema import Schema, Literal
-from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact, ListArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact, ListArtifact, BlobArtifact
 from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
 from griptape.mixins import ActivityMixin
 from griptape.utils.decorators import activity
@@ -117,6 +117,19 @@ class TextToolMemory(ActivityMixin):
                 self.query_engine.upsert_text_artifacts(artifacts, namespace)
             else:
                 namespace = None
+        elif isinstance(value, BlobArtifact):
+            namespace = value.name
+
+            self.blob_storage_driver.save(namespace, value)
+        elif isinstance(value, ListArtifact) and value.is_type(BlobArtifact):
+            artifacts = [v for v in value.value]
+
+            if artifacts:
+                namespace = uuid.uuid4().hex
+
+                [self.blob_storage_driver.save(namespace, a) for a in artifacts]
+            else:
+                namespace = None
         else:
             namespace = None
 
@@ -143,3 +156,6 @@ class TextToolMemory(ActivityMixin):
         ]
 
         return [a for a in artifacts if isinstance(a, TextArtifact)]
+
+        # TODO: integrate blob artifacts:
+        # return self.blob_storage_driver.load(namespace)
