@@ -1,7 +1,7 @@
 import os.path
 import tempfile
 from pathlib import Path
-from griptape.artifacts import BlobArtifact, TextArtifact, ListArtifact
+from griptape.artifacts import ErrorArtifact, TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.memory.tool import TextToolMemory
@@ -18,7 +18,26 @@ class TestFileManager:
 
         assert isinstance(result, ListArtifact)
         assert len(result.value) == 1
-        assert isinstance(result.value[0], BlobArtifact)
+        
+    def test_load_files_from_disk_with_encoding(self):
+        result = FileManager(
+            encoding='utf-8',
+            input_memory=[TextToolMemory()],
+            dir=os.path.abspath(os.path.dirname(__file__))
+        ).load_files_from_disk({"values": {"paths": ["../../resources/test.txt"]}})
+
+        assert isinstance(result, ListArtifact)
+        assert len(result.value) == 1
+        assert isinstance(result.value[0], TextArtifact)
+
+    def test_load_files_from_disk_with_encoding_failure(self):
+        result = FileManager(
+            encoding='utf-8',
+            input_memory=[TextToolMemory()],
+            dir=os.path.abspath(os.path.dirname(__file__))
+        ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
+
+        assert isinstance(result, ErrorArtifact)
 
     def test_save_memory_artifacts_to_disk_for_one_artifact(self):
         with tempfile.TemporaryDirectory() as temp_dir:

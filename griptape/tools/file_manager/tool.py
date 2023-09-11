@@ -1,7 +1,7 @@
 from __future__ import annotations
 import os
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, BlobArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import ErrorArtifact, BlobArtifact, TextArtifact, InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
@@ -10,6 +10,7 @@ from schema import Schema, Literal
 @define
 class FileManager(BaseTool):
     dir: str = field(default=os.getcwd(), kw_only=True)
+    encoding: str = field(default=None, kw_only=True)
 
     @activity(config={
         "description": "Can be used to load files from disk",
@@ -30,13 +31,18 @@ class FileManager(BaseTool):
 
             try:
                 with open(full_path, "rb") as file:
-                    list_artifact.value.append(
-                        BlobArtifact(
+                    if self.encoding is not None:
+                        artifact = TextArtifact(
+                            file.read().decode(self.encoding),
+                            name=file_name,
+                        )
+                    else:
+                        artifact = BlobArtifact(
                             file.read(),
                             name=file_name,
-                            dir=dir_name
+                            dir=dir_name,
                         )
-                    )
+                list_artifact.value.append(artifact)
             except FileNotFoundError:
                 return ErrorArtifact(f"file {file_name} not found")
             except Exception as e:
