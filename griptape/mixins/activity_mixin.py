@@ -64,7 +64,7 @@ class ActivityMixin:
             raise Exception("This method is not an activity.")
         else:
             return Template(activity.config["description"]).render({
-                "tool": self
+                "_self": self
             })
 
     def activity_uses_default_memory(self, activity: callable) -> bool:

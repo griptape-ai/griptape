@@ -26,15 +26,15 @@ class SqlClient(BaseTool):
 
     @activity(config={
         "description":
-            "Can be used to execute{% if tool.engine_name %} {{ tool.engine_name }}{% endif %} SQL SELECT queries "
-            "in table {{ tool.full_table_name }}. "
+            "Can be used to execute{% if _self.engine_name %} {{ _self.engine_name }}{% endif %} SQL SELECT queries "
+            "in table {{ _self.full_table_name }}. "
             "Make sure the `SELECT` statement contains enough columns to get an answer without knowing "
             "the original question. "
             "Be creative when you use `WHERE` statements: you can use wildcards, `LOWER()`, and other functions "
             "to get better results. "
             "You can use JOINs if more tables are available in other tools.\n"
-            "{{ tool.table_name }} schema: {{ tool.table_schema }}\n"
-            "{% if tool.table_description %}{{ tool.table_name }} description: {{ tool.table_description }}{% endif %}",
+            "{{ _self.table_name }} schema: {{ _self.table_schema }}\n"
+            "{% if _self.table_description %}{{ _self.table_name }} description: {{ _self.table_description }}{% endif %}",
         "schema": Schema({
             "sql_query": str
         })
