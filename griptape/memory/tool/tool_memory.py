@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 @define
-class TextToolMemory(ActivityMixin):
+class ToolMemory(ActivityMixin):
     name: str = field(
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,

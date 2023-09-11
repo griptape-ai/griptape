@@ -4,7 +4,7 @@ from pathlib import Path
 from griptape.artifacts import BlobArtifact, TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
-from griptape.memory.tool import TextToolMemory
+from griptape.memory.tool import ToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from griptape.tools import FileManager
 
@@ -12,7 +12,7 @@ from griptape.tools import FileManager
 class TestFileManager:
     def test_load_files_from_disk(self):
         result = FileManager(
-            input_memory=[TextToolMemory()],
+            input_memory=[ToolMemory()],
             dir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["resources/bitcoin.pdf"]}})
 
@@ -22,7 +22,7 @@ class TestFileManager:
 
     def test_save_memory_artifacts_to_disk_for_one_artifact(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = TextToolMemory(
+            memory = ToolMemory(
                 query_engine=VectorQueryEngine(
                     vector_store_driver=LocalVectorStoreDriver(
                         embedding_driver=MockEmbeddingDriver())))
@@ -52,7 +52,7 @@ class TestFileManager:
         file_name = "foobar.txt"
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = TextToolMemory(
+            memory = ToolMemory(
                 query_engine=VectorQueryEngine(
                     vector_store_driver=LocalVectorStoreDriver(
                         embedding_driver=MockEmbeddingDriver())))

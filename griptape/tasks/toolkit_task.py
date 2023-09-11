@@ -12,7 +12,7 @@ from griptape.tasks import PromptTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import TextToolMemory
+    from griptape.memory.tool import ToolMemory
     from griptape.structures import Structure
 
 
@@ -22,7 +22,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
-    tool_memory: Optional[TextToolMemory] = field(default=None, kw_only=True)
+    tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(
@@ -50,7 +50,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             raise ValueError("tools names have to be unique in task")
 
     @property
-    def memory(self) -> list[TextToolMemory]:
+    def memory(self) -> list[ToolMemory]:
         unique_memory_dict = {}
 
         for memories in [tool.output_memory for tool in self.tools if tool.output_memory]:
@@ -117,7 +117,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             subtask=subtask
         )
 
-    def set_default_tools_memory(self, memory: TextToolMemory) -> None:
+    def set_default_tools_memory(self, memory: ToolMemory) -> None:
         self.tool_memory = memory
 
         for tool in self.tools:
@@ -186,7 +186,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             None
         )
 
-    def find_memory(self, memory_name: str) -> Optional[TextToolMemory]:
+    def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
         return next(
             (m for m in self.memory if m.name == memory_name),
             None

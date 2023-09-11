@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.memory.tool import TextToolMemory
+from griptape.memory.tool import ToolMemory
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import TiktokenTokenizer
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -28,7 +28,7 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        assert isinstance(pipeline.tool_memory, TextToolMemory)
+        assert isinstance(pipeline.tool_memory, ToolMemory)
         assert pipeline.tasks[0].tool_memory == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory

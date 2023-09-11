@@ -2,13 +2,13 @@ import pytest
 from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
-from griptape.memory.tool import TextToolMemory
+from griptape.memory.tool import ToolMemory
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestTextToolMemory:
+class TestToolMemory:
     @pytest.fixture(autouse=True)
     def mock_griptape(self, mocker):
         mocker.patch(
@@ -32,7 +32,7 @@ class TestTextToolMemory:
             embedding_driver=MockEmbeddingDriver()
         )
 
-        return TextToolMemory(
+        return ToolMemory(
             name="MyMemory",
             query_engine=VectorQueryEngine(
                 vector_store_driver=vector_store_driver

@@ -1,6 +1,6 @@
-from .text_tool_memory import TextToolMemory
+from .tool_memory import ToolMemory
 
 
 __all__ = [
-    "TextToolMemory"
+    "ToolMemory"
 ]

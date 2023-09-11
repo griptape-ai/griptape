@@ -1,7 +1,7 @@
 import pytest
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
-from griptape.memory.tool import TextToolMemory
+from griptape.memory.tool import ToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
@@ -132,8 +132,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_memory(self, query_engine):
-        m1 = TextToolMemory(name="Memory1", query_engine=query_engine)
-        m2 = TextToolMemory(name="Memory2", query_engine=query_engine)
+        m1 = ToolMemory(name="Memory1", query_engine=query_engine)
+        m2 = ToolMemory(name="Memory2", query_engine=query_engine)
 
         tool = MockTool(
             name="Tool1",
@@ -153,8 +153,8 @@ class TestToolkitSubtask:
             name="Tool1",
             output_memory={
                 "test": [
-                    TextToolMemory(name="Memory1", query_engine=query_engine),
-                    TextToolMemory(name="Memory2", query_engine=query_engine)
+                    ToolMemory(name="Memory1", query_engine=query_engine),
+                    ToolMemory(name="Memory2", query_engine=query_engine)
                 ]
             }
         )
@@ -163,8 +163,8 @@ class TestToolkitSubtask:
             name="Tool2",
             output_memory={
                 "test": [
-                    TextToolMemory(name="Memory2", query_engine=query_engine),
-                    TextToolMemory(name="Memory3", query_engine=query_engine)
+                    ToolMemory(name="Memory2", query_engine=query_engine),
+                    ToolMemory(name="Memory3", query_engine=query_engine)
                 ]
             }
         )

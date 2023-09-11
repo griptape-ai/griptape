@@ -3,7 +3,7 @@ from typing import Optional
 from attr import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact
-from griptape.memory.tool import TextToolMemory
+from griptape.memory.tool import ToolMemory
 from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
@@ -58,7 +58,7 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         else:
             return None
 
-    def find_memory(self, memory_name: str) -> Optional[TextToolMemory]:
+    def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
         return None
 
     def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:

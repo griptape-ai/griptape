@@ -5,7 +5,7 @@ from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, BaseAr
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.engines import CsvExtractionEngine, BaseSummaryEngine, PromptSummaryEngine
-from griptape.memory.tool import TextToolMemory
+from griptape.memory.tool import ToolMemory
 from schema import Schema, Literal
 
 
@@ -14,7 +14,7 @@ class ToolOutputProcessor(BaseTool):
     # override parent
     denylist: Optional[list[str]] = field(default=Factory(lambda: ["extract_csv"]), kw_only=True)
     # override parent
-    input_memory: Optional[list[TextToolMemory]] = field(default=None, kw_only=True)
+    input_memory: Optional[list[ToolMemory]] = field(default=None, kw_only=True)
     summary_engine: BaseSummaryEngine = field(
         kw_only=True,
         default=Factory(lambda: PromptSummaryEngine())
@@ -119,8 +119,8 @@ class ToolOutputProcessor(BaseTool):
         else:
             return ErrorArtifact("memory not found")
 
-    def find_input_memory(self, memory_name: str) -> Optional[TextToolMemory]:
+    def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
         if self.input_memory:
-            return next((m for m in self.input_memory if isinstance(m, TextToolMemory) and m.name == memory_name), None)
+            return next((m for m in self.input_memory if isinstance(m, ToolMemory) and m.name == memory_name), None)
         else:
             return None
