@@ -14,7 +14,7 @@ class TestFileManager:
         result = FileManager(
             input_memory=[ToolMemory()],
             dir=os.path.abspath(os.path.dirname(__file__))
-        ).load_files_from_disk({"values": {"paths": ["resources/bitcoin.pdf"]}})
+        ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result, ListArtifact)
         assert len(result.value) == 1

@@ -13,6 +13,13 @@ from griptape.tokenizers import HuggingFaceTokenizer
 
 @define
 class HuggingFacePipelinePromptDriver(BasePromptDriver):
+    """
+    Attributes:
+        params: Custom model run parameters. 
+        model: Hugging Face Hub model name. Defaults to `repo_id`.
+        tokenizer: Custom `HuggingFaceTokenizer`.
+        
+    """
     SUPPORTED_TASKS = ["text2text-generation", "text-generation"]
     DEFAULT_PARAMS = {
         "return_full_text": False,

@@ -18,24 +18,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     )
     index: str = field(kw_only=True)
 
-    def __attrs_post_init__(self) -> None:
-        """Initialize the Marqo client with the given API key and URL."""
-        self.set_index(self.index)
-
-    def set_index(self, index):
-        """Set the index for the Marqo client.
-
-        Args:
-            index (str): The index to set for the Marqo client.
-        """
-        indexes = self.get_indexes()
-
-        if index not in indexes:
-            self.create_index(index)
-            logging.info(f"Created index '{index}'")
-
-        self.index = index
-
     def upsert_text(
             self,
             string: str,
