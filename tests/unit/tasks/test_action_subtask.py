@@ -22,7 +22,7 @@ class TestActionSubtask:
 
     def test_init_from_prompt_with_newlines(self):
         valid_input = 'Thought: need to test\n' \
-                      'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test\n\ninput\n\nwith\nnewlines"}\n' \
+                      'Action: {"type":\n "tool",\n\n"name": "test",\n"activity": \n"test action", \n"input": "test\n\ninput\n\nwith\nnewlines"}\n' \
                       'Observation: test observation\n' \
                       'Answer: test output'
 
