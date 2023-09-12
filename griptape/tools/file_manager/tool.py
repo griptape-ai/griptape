@@ -5,12 +5,22 @@ from griptape.artifacts import ErrorArtifact, BlobArtifact, TextArtifact, InfoAr
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
+from typing import Optional
 
 
 @define
 class FileManager(BaseTool):
+    """
+    FileManager is a tool that can be used to load and save files.
+
+    Attributes:
+        dir: The directory to load files from and save files to.
+        load_file_encoding: The encoding to use when loading files from disk.
+        save_file_encoding: The encoding to use when saving files to disk.
+    """
     dir: str = field(default=os.getcwd(), kw_only=True)
-    encoding: str = field(default=None, kw_only=True)
+    load_file_encoding: Optional[str] = field(default=None, kw_only=True)
+    save_file_encoding: Optional[str] = field(default=None, kw_only=True)
 
     @activity(config={
         "description": "Can be used to load files from disk",
@@ -31,9 +41,9 @@ class FileManager(BaseTool):
 
             try:
                 with open(full_path, "rb") as file:
-                    if self.encoding is not None:
+                    if self.load_file_encoding:
                         artifact = TextArtifact(
-                            file.read().decode(self.encoding),
+                            file.read().decode(self.load_file_encoding),
                             name=file_name,
                         )
                     else:
@@ -130,4 +140,10 @@ class FileManager(BaseTool):
         os.makedirs(os.path.dirname(path), exist_ok=True)
 
         with open(path, "wb") as file:
-            file.write(value.encode() if isinstance(value, str) else value)
+            if isinstance(value, str):
+                if self.save_file_encoding:
+                    file.write(value.encode(self.save_file_encoding))
+                else:
+                    file.write(value.encode())
+            else:
+                file.write(value)

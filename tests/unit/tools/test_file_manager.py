@@ -21,7 +21,7 @@ class TestFileManager:
         
     def test_load_files_from_disk_with_encoding(self):
         result = FileManager(
-            encoding='utf-8',
+            load_file_encoding='utf-8',
             input_memory=[TextToolMemory()],
             dir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["../../resources/test.txt"]}})
@@ -32,7 +32,7 @@ class TestFileManager:
 
     def test_load_files_from_disk_with_encoding_failure(self):
         result = FileManager(
-            encoding='utf-8',
+            load_file_encoding='utf-8',
             input_memory=[TextToolMemory()],
             dir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
@@ -118,3 +118,55 @@ class TestFileManager:
 
             assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
             assert result.value == "saved successfully"
+
+    def test_save_content_to_file_with_encoding(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result = FileManager(
+                dir=temp_dir,
+                save_file_encoding='utf-8'
+            ).save_content_to_file(
+                {
+                    "values":
+                        {
+                            "path": os.path.join("test", "foobar.txt"),
+                            "content": "foobar"
+                        }
+                }
+            )
+
+            assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
+            assert result.value == "saved successfully"
+
+    def test_save_and_load_content_to_file_with_encoding(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result = FileManager(
+                dir=temp_dir,
+                save_file_encoding='ascii'
+            ).save_content_to_file(
+                {
+                    "values":
+                        {
+                            "path": os.path.join("test", "foobar.txt"),
+                            "content": "foobar"
+                        }
+                }
+            )
+            
+            assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
+            assert result.value == "saved successfully"
+
+            result = FileManager(
+                dir=temp_dir,
+                load_file_encoding='ascii'
+            ).load_files_from_disk(
+                {
+                    "values":
+                        {
+                            "paths": [os.path.join("test", "foobar.txt")],
+                        }
+                }
+            )
+
+            assert isinstance(result, ListArtifact)
+            assert len(result.value) == 1
+            assert isinstance(result.value[0], TextArtifact)
