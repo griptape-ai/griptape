@@ -11,12 +11,12 @@ class CoherePromptDriver(BasePromptDriver):
     """
     Attributes: 
         api_key: Cohere API key.
-        model: 	Cohere model name. Defaults to `xlarge`.
+        model: 	Cohere model name.
         client: Custom `cohere.Client`.
         tokenizer: Custom `CohereTokenizer`.
     """
     api_key: str = field(kw_only=True)
-    model: str = field(default=CohereTokenizer.DEFAULT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
     client: cohere.Client = field(
         default=Factory(lambda self: cohere.Client(self.api_key), takes_self=True), kw_only=True
     )

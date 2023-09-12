@@ -28,7 +28,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     api_base: str = field(default=openai.api_base, kw_only=True)
     api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True)
-    model: str = field(default=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True

@@ -5,7 +5,7 @@ from griptape.tokenizers import OpenAiTokenizer
 class TestOpenAiTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return OpenAiTokenizer()
+        return OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
     def test_encode(self, tokenizer):
         assert tokenizer.encode("foo bar") == [8134, 3703]
