@@ -9,6 +9,8 @@ from griptape.tokenizers import BaseTokenizer
 
 @define
 class BasePromptModelDriver(ABC):
+    DEFAULT_MAX_TOKENS = 600
+
     prompt_driver: BasePromptDriver = field(kw_only=True)
     tokenizer: BaseTokenizer = field(kw_only=True)
 
