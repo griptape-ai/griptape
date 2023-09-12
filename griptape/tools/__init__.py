@@ -17,7 +17,7 @@ from .proxycurl_client.tool import ProxycurlClient
 from .base_google_client import BaseGoogleClient
 from .google_gmail.tool import GoogleGmailClient
 from .google_cal.tool import GoogleCalendarClient
-
+from .google_drive.tool import GoogleDriveClient
 __all__ = [
     "BaseTool",
     "BaseAwsClient",
@@ -26,6 +26,7 @@ __all__ = [
     "BaseGoogleClient",
     "GoogleGmailClient",
     "GoogleCalendarClient",
+    "GoogleDriveClient",
     "Calculator",
     "WebSearch",
     "WebScraper",
