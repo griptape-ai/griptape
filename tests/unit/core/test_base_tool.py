@@ -122,4 +122,4 @@ class TestBaseTool:
         assert tool.execute(
             tool.test_list_output,
             ActionSubtask("foo")
-        ).value == "foo\nbar"
+        ).to_text() == "foo\n\nbar"

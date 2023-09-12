@@ -43,7 +43,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
             message = self.template_generator.render(
                 metadata=metadata,
-                question=query,
+                query=query,
                 text_segments=text_segments,
             )
             message_token_count = self.prompt_driver.token_count(
@@ -57,7 +57,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
                 message = self.template_generator.render(
                     metadata=metadata,
-                    question=query,
+                    query=query,
                     text_segments=text_segments,
                 )
 
@@ -69,11 +69,7 @@ class VectorQueryEngine(BaseQueryEngine):
             )
         )
 
-    def upsert_text_artifact(
-            self,
-            artifact: TextArtifact,
-            namespace: Optional[str] = None
-    ) -> str:
+    def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         result = self.vector_store_driver.upsert_text_artifact(
             artifact,
             namespace=namespace
@@ -81,11 +77,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
         return result
 
-    def upsert_text_artifacts(
-            self,
-            artifacts: list[TextArtifact],
-            namespace: str
-    ) -> None:
+    def upsert_text_artifacts(self, artifacts: list[TextArtifact], namespace: str) -> None:
         self.vector_store_driver.upsert_text_artifacts({
             namespace: artifacts
         })

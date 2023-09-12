@@ -41,14 +41,25 @@ class TestAwsS3Client:
             session=boto3.Session()
         ).list_objects({"values": value}).value
 
-    def test_upload_objects(self):
+    def test_upload_memory_artifacts_to_s3(self):
         value = {
             "memory_name": "foobar",
             "bucket_name": "bucket_test",
             "artifact_namespace": "foo",
-            "object_names": [],
+            "object_key": "test.txt",
 
         }
         assert "memory not found" in AwsS3Client(
             session=boto3.Session()
-        ).upload_objects({"values": value}).value
+        ).upload_memory_artifacts_to_s3({"values": value}).value
+
+    def test_upload_content_to_s3(self):
+        value = {
+            "content": "foobar",
+            "bucket_name": "bucket_test",
+            "object_key": "test.txt",
+
+        }
+        assert AwsS3Client(
+            session=boto3.Session()
+        ).upload_content_to_s3({"values": value})

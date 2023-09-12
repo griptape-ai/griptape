@@ -9,6 +9,13 @@ from griptape.utils.decorators import activity
 
 @define
 class VectorStoreClient(BaseTool):
+    """
+    Attributes:
+        description: LLM-friendly vector DB description.
+        namespace: Vector storage namespace.
+        query_engine: `BaseQueryEngine`.
+        top_n: Max number of results returned for the query engine query.
+    """
     DEFAULT_TOP_N = 5
 
     description: str = field(kw_only=True)
@@ -16,15 +23,9 @@ class VectorStoreClient(BaseTool):
     top_n: int = field(default=DEFAULT_TOP_N, kw_only=True)
     namespace: Optional[str] = field(default=None, kw_only=True)
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {
-            "description": self.description
-        }
-
     @activity(config={
         "description":
-            "Can be used to search a vector database with the following description: {{ description }}",
+            "Can be used to search a vector database with the following description: {{ _self.description }}",
         "schema": Schema({
             Literal(
                 "query",

@@ -1,9 +1,9 @@
 from __future__ import annotations
 import logging
 import uuid
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
-from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact
+from griptape.artifacts import BlobArtifact, BaseArtifact, InfoArtifact, ListArtifact
 from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
 from griptape.memory.tool import BaseToolMemory
 
@@ -22,7 +22,7 @@ class BlobToolMemory(BaseToolMemory):
             self,
             tool_activity: callable,
             subtask: ActionSubtask,
-            value: Union[BaseArtifact, list[BaseArtifact]]
+            value: BaseArtifact
     ) -> BaseArtifact:
         from griptape.utils import J2
 
@@ -33,10 +33,10 @@ class BlobToolMemory(BaseToolMemory):
             namespace = value.name
 
             self.driver.save(namespace, value)
-        elif isinstance(value, list):
-            artifacts = [a for a in value if isinstance(a, BlobArtifact)]
+        elif isinstance(value, ListArtifact) and value.is_type(BlobArtifact):
+            artifacts = [v for v in value.value]
 
-            if len(artifacts) > 0:
+            if artifacts:
                 namespace = uuid.uuid4().hex
 
                 [self.driver.save(namespace, a) for a in artifacts]

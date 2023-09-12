@@ -3,7 +3,7 @@ from marshmallow import fields
 from griptape.schemas import BaseSchema
 
 
-class ArtifactSchema(BaseSchema):
+class BaseArtifactSchema(BaseSchema):
     class Meta:
         ordered = True
 

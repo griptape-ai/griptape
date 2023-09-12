@@ -167,7 +167,3 @@ class PolymorphicSchema(BaseSchema):
         except ValidationError as ve:
             return ve.messages
         return {}
-
-    @abstractmethod
-    def make_obj(self, data, **kwargs):
-        ...

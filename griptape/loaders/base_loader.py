@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from concurrent import futures
-
 from attr import define, field, Factory
-
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import TextArtifact
 
 
 @define
@@ -14,9 +12,9 @@ class BaseLoader(ABC):
     )
 
     @abstractmethod
-    def load(self, *args, **kwargs) -> list[BaseArtifact]:
+    def load(self, *args, **kwargs) -> list[TextArtifact]:
         ...
 
     @abstractmethod
-    def load_collection(self, *args, **kwargs) -> dict[str, list[BaseArtifact]]:
+    def load_collection(self, *args, **kwargs) -> dict[str, list[TextArtifact]]:
         ...

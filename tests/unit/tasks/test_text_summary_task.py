@@ -1,12 +1,12 @@
 from griptape.engines import PromptSummaryEngine
-from griptape.tasks import SummaryTask
+from griptape.tasks import TextSummaryTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Agent
 
 
-class TestSummaryTask:
+class TestTextSummaryTask:
     def test_run(self):
-        task = SummaryTask(
+        task = TextSummaryTask(
             "test",
             summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver())
         )
@@ -16,8 +16,8 @@ class TestSummaryTask:
 
         assert task.run().to_text() == "mock output"
 
-    def test_to_text(self):
-        task = SummaryTask("{{ test }}", context={"test": "test value"})
+    def test_context_propagation(self):
+        task = TextSummaryTask("{{ test }}", context={"test": "test value"})
 
         Agent().add_task(task)
 

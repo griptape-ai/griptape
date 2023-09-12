@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 from typing import Optional
 import schema
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
@@ -15,6 +15,20 @@ from schema import Schema, Literal
 
 @define
 class EmailClient(BaseTool):
+    """
+    Attributes:
+        username: Used by default for both SMTP and IMAP activities. Will be used as the from email when sending emails.
+        password: Used by default for both SMTP and IMAP activities.
+        email_max_retrieve_count: Used to limit the number of messages retrieved during any given activities.
+        smtp_host: The hostname or url of the SMTP server (smtp.gmail.com).
+        smtp_port: The port name of the SMTP server (465).
+        smtp_use_ssl: Should EmailClient use SSL when sending.
+        smtp_user: Setting this will override whatever is set as the username parameter for SMTP activities.
+        smtp_password: Setting this will override whatever is set as the username parameter for SMTP activities.
+        imap_url: The hostname or url of the SMTP server (imap.gmail.com).
+        imap_user: Setting this will override whatever is set as the username parameter for IMAP activities.
+        imap_password: Setting this will override whatever is set as the username parameter for IMAP activities.
+    """
     # if you set imap|smtp creds explicitly these fields will be overridden
     username: Optional[str] = field(default=None, kw_only=True)
     password: Optional[str] = field(default=None, kw_only=True)
@@ -37,15 +51,9 @@ class EmailClient(BaseTool):
 
     mailboxes: Optional[dict[str, str]] = field(default=None, kw_only=True)
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {
-            "mailboxes": json.dumps(self.mailboxes) if self.mailboxes else None
-        }
-
     @activity(config={
         "description": "Can be used to retrieve emails."
-                       "{% if mailboxes %} Some of the available mailboxes: {{ mailboxes }}{% endif %}",
+                       "{% if _self.mailboxes %} Available mailboxes: {{ _self.mailboxes }}{% endif %}",
         "schema": Schema({
             Literal(
                 "label",
@@ -71,12 +79,12 @@ class EmailClient(BaseTool):
             ): int
         })
     })
-    def retrieve(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def retrieve(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
         imap_user = self.imap_user if self.imap_user else self.username
         imap_password = self.imap_password if self.imap_password else self.password
         max_count = int(values["max_count"]) if values.get("max_count") else self.email_max_retrieve_count
-        artifacts = []
+        list_artifact = ListArtifact()
 
         try:
             import mailparser
@@ -103,14 +111,14 @@ class EmailClient(BaseTool):
                     result, data = con.fetch(str(i), "(RFC822)")
                     message = mailparser.parse_from_bytes(data[0][1])
 
-                    artifacts.append(
+                    list_artifact.value.append(
                         TextArtifact("\n".join(message.text_plain))
                     )
 
                 con.close()
                 con.logout()
 
-                return artifacts
+                return list_artifact
             else:
                 return ErrorArtifact(mailbox[1][0].decode())
         except Exception as e:

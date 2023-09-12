@@ -3,9 +3,10 @@ import io
 import boto3
 from schema import Schema, Literal
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
+
 
 @define
 class AwsS3Client(BaseAwsClient):
@@ -76,10 +77,13 @@ class AwsS3Client(BaseAwsClient):
     @activity(config={
         "description": "Can be used to list all AWS S3 buckets."
     })
-    def list_s3_buckets(self, _: dict) -> list[TextArtifact] | ErrorArtifact:
+    def list_s3_buckets(self, _: dict) -> ListArtifact | ErrorArtifact:
         try:
             buckets = self.s3_client.list_buckets()
-            return [TextArtifact(str(b)) for b in buckets["Buckets"]]
+
+            return ListArtifact(
+                [TextArtifact(str(b)) for b in buckets["Buckets"]]
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing s3 buckets: {e}")
 
@@ -92,43 +96,93 @@ class AwsS3Client(BaseAwsClient):
             ): str
         })
     })
-    def list_objects(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def list_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
         try:
             objects = self.s3_client.list_objects_v2(
                 Bucket=params["values"]["bucket_name"]
             )
-            return [TextArtifact(str(o)) for o in objects["Contents"]]
+
+            return ListArtifact(
+                [TextArtifact(str(o)) for o in objects["Contents"]]
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing objects in bucket: {e}")
 
     @activity(config={
-        "description": "Can be used to upload artifacts to an AWS S3 bucket.",
+        "description": "Can be used to upload memory artifacts to an AWS S3 bucket",
         "schema": Schema({
             "memory_name": str,
             "artifact_namespace": str,
-            "bucket_name": str
+            "bucket_name": str,
+            Literal(
+                "object_key",
+                description="Destination object key name. For example, 'baz.txt'"
+            ): str,
         })
     })
-    def upload_objects(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        artifact_namespaces = params["values"]["artifact_namespace"]
-        bucket_name = params["values"]["bucket_name"]
+    def upload_memory_artifacts_to_s3(self, params: dict) -> InfoArtifact | ErrorArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
+        artifact_namespace = params["values"]["artifact_namespace"]
+        bucket_name = params["values"]["bucket_name"]
+        object_key = params["values"]["object_key"]
 
         if memory:
-            try:
-                self.s3_client.create_bucket(
-                    Bucket=bucket_name
-                )
+            artifacts = memory.load_artifacts(artifact_namespace)
 
-                for artifact in memory.load_artifacts(artifact_namespaces):
-                    self.s3_client.upload_fileobj(
-                        Fileobj=io.BytesIO(artifact.to_text().encode()),
-                        Bucket=bucket_name,
-                        Key=artifact.name
-                    )
+            if len(artifacts) == 0:
+                return ErrorArtifact("no artifacts found")
+            elif len(artifacts) == 1:
+                try:
+                    self._upload_object(bucket_name, object_key, artifacts[0].value)
 
-                return InfoArtifact("successfully uploaded files to the bucket")
-            except Exception as e:
-                return ErrorArtifact(f"error uploading objects to the bucket: {e}")
+                    return InfoArtifact(f"uploaded successfully")
+                except Exception as e:
+                    return ErrorArtifact(f"error uploading objects to the bucket: {e}")
+            else:
+                try:
+                    for a in artifacts:
+                        self._upload_object(bucket_name, object_key, a.value)
+
+                    return InfoArtifact(f"uploaded successfully")
+                except Exception as e:
+                    return ErrorArtifact(f"error uploading objects to the bucket: {e}")
         else:
             return ErrorArtifact("memory not found")
+
+    @activity(config={
+        "description": "Can be used to upload content to an AWS S3 bucket",
+        "schema": Schema(
+            {
+                "bucket_name": str,
+                Literal(
+                    "object_key",
+                    description="Destination object key name. For example, 'baz.txt'"
+                ): str,
+                "content": str
+            }
+        )
+    })
+    def upload_content_to_s3(self, params: dict) -> ErrorArtifact | InfoArtifact:
+        content = params["values"]["content"]
+        bucket_name = params["values"]["bucket_name"]
+        object_key = params["values"]["object_key"]
+
+        try:
+            self._upload_object(bucket_name, object_key, content)
+
+            return InfoArtifact(f"uploaded successfully")
+        except Exception as e:
+            return ErrorArtifact(f"error uploading objects to the bucket: {e}")
+
+    def _upload_object(self, bucket_name: str, object_name: str, value: any) -> None:
+        self.s3_client.create_bucket(
+            Bucket=bucket_name
+        )
+
+        self.s3_client.upload_fileobj(
+            Fileobj=io.BytesIO(
+                value.encode() if isinstance(value, str) else value
+            ),
+            Bucket=bucket_name,
+            Key=object_name
+        )

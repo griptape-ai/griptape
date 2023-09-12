@@ -1,6 +1,6 @@
 from attr import define, field
 from schema import Schema, Literal
-from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -12,7 +12,7 @@ class MockTool(BaseTool):
     test_dict: dict = field(factory=dict, kw_only=True)
 
     @activity(config={
-        "description": "test description: {{ foo }}",
+        "description": "test description: {{ _self.foo() }}",
         "schema": Schema({
                 Literal("test"): str
             },
@@ -23,7 +23,7 @@ class MockTool(BaseTool):
         return TextArtifact(f"ack {value['values']['test']}")
 
     @activity(config={
-        "description": "test description: {{ foo }}",
+        "description": "test description: {{ _self.foo() }}",
         "schema": Schema({
                 Literal("test"): str
             },
@@ -34,7 +34,7 @@ class MockTool(BaseTool):
         return ErrorArtifact(f"error {value['values']['test']}")
 
     @activity(config={
-        "description": "test description: {{ foo }}",
+        "description": "test description: {{ _self.foo() }}",
         "schema": Schema({
                 Literal("test"): str
             },
@@ -53,11 +53,11 @@ class MockTool(BaseTool):
     @activity(config={
         "description": "test description"
     })
-    def test_list_output(self, value: dict) -> list[BaseArtifact]:
-        return [
+    def test_list_output(self, value: dict) -> ListArtifact:
+        return ListArtifact([
             TextArtifact("foo"),
             TextArtifact("bar")
-        ]
+        ])
 
     @activity(config={
         "description": "test description",
@@ -71,8 +71,5 @@ class MockTool(BaseTool):
     def test_without_default_memory(self, value: dict) -> str:
         return f"ack {value['values']['test']}"
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {
-            "foo": "bar"
-        }
+    def foo(self) -> str:
+        return "foo"

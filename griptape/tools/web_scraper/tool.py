@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import json
 from attr import define, field
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, ListArtifact
 from griptape.loaders import TextLoader
 from schema import Schema, Literal
 from griptape.tools import BaseTool
@@ -22,14 +22,16 @@ class WebScraper(BaseTool):
             ): str
         })
     })
-    def get_content(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def get_content(self, params: dict) -> ListArtifact | ErrorArtifact:
         url = params["values"]["url"]
         page = self._load_page(url)
 
         if isinstance(page, ErrorArtifact):
             return page
         else:
-            return TextLoader().text_to_artifacts(page.get("text"))
+            return ListArtifact(
+                TextLoader().text_to_artifacts(page.get("text"))
+            )
 
     @activity(config={
         "description": "Can be used to load a web page author",
@@ -57,7 +59,7 @@ class WebScraper(BaseTool):
         page = trafilatura.fetch_url(url, no_ssl=True)
 
         # This disables signal, so that trafilatura can work on any thread:
-        # More info: https://trafilatura.readthedocs.io/en/latest/usage-python.html#disabling-signal
+        # More info: https://trafilatura.readthedocs.io/usage-python.html#disabling-signal
         config.set("DEFAULT", "EXTRACTION_TIMEOUT", "0")
 
         # Disable error logging in trafilatura as it sometimes logs errors from lxml, even though

@@ -32,10 +32,6 @@ class ActivityMixin:
         for activity_name in denylist:
             self._validate_tool_activity(activity_name)
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {}
-
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `inspect.getmembers`.
     def activities(self) -> list[callable]:
@@ -67,7 +63,9 @@ class ActivityMixin:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
-            return Template(activity.config["description"]).render(self.schema_template_args)
+            return Template(activity.config["description"]).render({
+                "_self": self
+            })
 
     def activity_uses_default_memory(self, activity: callable) -> bool:
         if activity is None or not getattr(activity, "is_activity", False):

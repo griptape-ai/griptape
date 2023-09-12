@@ -14,6 +14,17 @@ from griptape.tokenizers import HuggingFaceTokenizer
 
 @define
 class HuggingFaceHubPromptDriver(BasePromptDriver):
+    """
+    Attributes:
+        repo_id: Hugging Face Hub repo ID. 
+        api_token: Hugging Face Hub API token.
+        use_gpu: Use GPU during model run.
+        params: Custom model run parameters. 
+        model: Hugging Face Hub model name. Defaults to `repo_id`.
+        client: Custom `InferenceApi`.
+        tokenizer: Custom `HuggingFaceTokenizer`.
+        
+    """
     SUPPORTED_TASKS = ["text2text-generation", "text-generation"]
     MAX_NEW_TOKENS = 250
     DEFAULT_PARAMS = {

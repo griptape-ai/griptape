@@ -54,12 +54,6 @@ class Computer(BaseTool):
         if not docker_client:
             raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")
 
-    @property
-    def schema_template_args(self) -> dict:
-        return {
-            "dependencies": self.dependencies()
-        }
-
     def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
         super().install_dependencies(env)
 
@@ -71,7 +65,7 @@ class Computer(BaseTool):
             "description": "Can be used to execute Python code to solve any programmatic tasks and access and analyze"
                            " files in the file system. If you need to use code output use `print` statements. "
                            "You have access to the following external Python libraries: "
-                           "{{ dependencies }}",
+                           "{{ _self.dependencies() }}",
             "schema": Schema(
                 {
                     Literal("code", description="Python code to execute"): str,
@@ -197,7 +191,7 @@ class Computer(BaseTool):
 
     def dependencies(self) -> list[str]:
         with open(self.requirements_txt_path, "r") as file:
-            return [l.strip() for l in file.readlines()]
+            return [line.strip() for line in file.readlines()]
 
     def __del__(self) -> None:
         if self.__tempdir:

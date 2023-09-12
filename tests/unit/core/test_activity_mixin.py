@@ -18,8 +18,7 @@ class TestActivityMixin:
     def test_activity_description(self, tool):
         description = tool.activity_description(tool.test)
 
-        assert "bar" in description
-        assert "baz" not in description
+        assert description == f"test description: {tool.foo()}"
 
     def test_activity_uses_default_memory(self, tool):
         assert tool.activity_uses_default_memory(tool.test) is True
