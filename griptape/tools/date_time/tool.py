@@ -24,8 +24,8 @@ class DateTime(BaseTool):
         "description": "Can be used to return a relative date and time.",
         "schema": Schema({
             Literal(
-                description="A string representing date and/or time in a recognizably valid format."
                 "relative_date_string",
+                description='Relative date in English. For example, "now EST", "20 minutes ago", or "yesterday at 2pm"'
             ): str
         })
     })
