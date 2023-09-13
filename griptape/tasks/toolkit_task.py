@@ -99,7 +99,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         )
 
         return J2("tasks/toolkit_task/system.j2").render(
-            rulesets=self.structure.rulesets,
+            rulesets=self.all_rulesets,
             action_schema=action_schema,
             tool_names=str.join(", ", [tool.name for tool in self.tools]),
             tools=[J2("tasks/partials/_tool.j2").render(tool=tool) for tool in self.tools],
