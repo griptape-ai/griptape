@@ -23,6 +23,24 @@ class TestPipeline:
         assert pipeline.rulesets[0].rules[0].value is "test"
         assert pipeline.memory is None
 
+    def test_rulesets(self):
+        pipeline = Pipeline(
+            rulesets=[Ruleset("Foo", [Rule("foo test")])]
+        )
+
+        pipeline.add_tasks(
+            PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])]),
+            PromptTask(rulesets=[Ruleset("Baz", [Rule("baz test")])])
+        )
+
+        assert len(pipeline.tasks[0].all_rulesets) == 2
+        assert pipeline.tasks[0].all_rulesets[0].name == "Foo"
+        assert pipeline.tasks[0].all_rulesets[1].name == "Bar"
+
+        assert len(pipeline.tasks[1].all_rulesets) == 2
+        assert pipeline.tasks[1].all_rulesets[0].name == "Foo"
+        assert pipeline.tasks[1].all_rulesets[1].name == "Baz"
+
     def test_with_default_tool_memory(self):
         pipeline = Pipeline()
 

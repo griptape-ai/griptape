@@ -6,6 +6,12 @@ from griptape.tokenizers import TiktokenTokenizer
 
 @define
 class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
+    """
+    Attributes:
+        api_base: API URL.
+        deployment_id: Azure OpenAI deployment ID.
+        model: OpenAI model name.
+    """
     api_base: str = field(kw_only=True)
     model: str = field(kw_only=True)
     deployment_id: str = field(kw_only=True)

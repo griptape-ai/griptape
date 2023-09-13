@@ -9,6 +9,18 @@ from griptape.tokenizers import TiktokenTokenizer
 
 @define
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
+    """
+    Attributes:
+        api_type: Can be changed to use OpenAI models on Azure.
+        api_version: API version. 
+        api_base: API URL.
+        api_key: API key to pass directly; by default uses `OPENAI_API_KEY_PATH` environment variable.
+        dimensions: Vector dimensions. Defaults to `1536`.
+        model: OpenAI embedding model name. Uses `text-embedding-ada-002` by default.
+        organization: OpenAI organization.
+        tokenizer: Custom `TiktokenTokenizer`.
+        user: OpenAI user. 	
+    """
     DEFAULT_MODEL = "text-embedding-ada-002"
     DEFAULT_DIMENSIONS = 1536
 

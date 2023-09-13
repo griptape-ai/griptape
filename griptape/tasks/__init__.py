@@ -3,8 +3,9 @@ from .base_text_input_task import BaseTextInputTask
 from .prompt_task import PromptTask
 from .action_subtask import ActionSubtask
 from .toolkit_task import ToolkitTask
-from .summary_task import SummaryTask
+from .text_summary_task import TextSummaryTask
 from .tool_task import ToolTask
+from .text_query_task import TextQueryTask
 
 __all__ = [
     "BaseTask",
@@ -12,6 +13,7 @@ __all__ = [
     "PromptTask",
     "ActionSubtask",
     "ToolkitTask",
-    "SummaryTask",
-    "ToolTask"
+    "TextSummaryTask",
+    "ToolTask",
+    "TextQueryTask"
 ]

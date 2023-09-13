@@ -8,6 +8,12 @@ from griptape.tokenizers import AnthropicTokenizer
 
 @define
 class AnthropicPromptDriver(BasePromptDriver):
+    """
+    Attributes:
+        api_key: Anthropic API key.
+        model: Anthropic model name. Defaults to `claude-2`.
+        tokenizer: Custom `AnthropicTokenizer`.
+    """
     api_key: str = field(kw_only=True)
     model: str = field(default=AnthropicTokenizer.DEFAULT_MODEL, kw_only=True)
     tokenizer: AnthropicTokenizer = field(

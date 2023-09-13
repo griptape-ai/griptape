@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable, Union
 from attr import define, field, Factory
+from griptape.rules import Ruleset
 from griptape.utils import PromptStack
 from griptape.utils import J2
 from griptape.tasks import BaseTextInputTask
@@ -13,6 +14,7 @@ if TYPE_CHECKING:
 @define
 class PromptTask(BaseTextInputTask):
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
+    rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(
             lambda self: self.default_system_template_generator,
@@ -22,6 +24,10 @@ class PromptTask(BaseTextInputTask):
     )
 
     output: Optional[Union[TextArtifact, ErrorArtifact, InfoArtifact]] = field(default=None, init=False)
+
+    @property
+    def all_rulesets(self) -> list[Ruleset]:
+        return self.structure.rulesets + self.rulesets
 
     @property
     def prompt_stack(self) -> PromptStack:
@@ -44,23 +50,13 @@ class PromptTask(BaseTextInputTask):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
-            rulesets=self.structure.rulesets
+            rulesets=self.all_rulesets
         )
-
-    def before_run(self) -> None:
-        super().before_run()
-
-        self.structure.logger.info(f"Task {self.id}\nInput: {self.input.to_text()}")
 
     def run(self) -> TextArtifact:
         self.output = self.active_driver().run(self.prompt_stack)
 
         return self.output
-
-    def after_run(self) -> None:
-        super().after_run()
-
-        self.structure.logger.info(f"Task {self.id}\nOutput: {self.output.to_text()}")
 
     def active_driver(self) -> BasePromptDriver:
         if self.prompt_driver is None:

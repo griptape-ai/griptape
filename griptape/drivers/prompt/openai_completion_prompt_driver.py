@@ -11,6 +11,18 @@ from typing import Tuple, Type
 
 @define
 class OpenAiCompletionPromptDriver(BasePromptDriver):
+    """
+    Attributes:
+        api_type: Can be changed to use OpenAI models on Azure.
+        api_version: API version. 
+        api_base: API URL.
+        api_key: API key to pass directly; by default uses `OPENAI_API_KEY_PATH` environment variable.
+        max_tokens: Optional maximum return tokens. If not specified, the value will be automatically generated based by the tokenizer.
+        model: OpenAI model name. Uses `gpt-4` by default.
+        organization: OpenAI organization.
+        tokenizer: Custom `TiktokenTokenizer`.
+        user: OpenAI user. 	
+    """
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)

@@ -9,17 +9,6 @@
 
 For **predictability**, software structures like sequential pipelines and directed acyclic graphs (DAGs) are enforced. **Creativity**, on the other hand, is facilitated by safely prompting LLMs with Griptape Tools that connect to external APIs and data sources. Developers can move between these two dimensions according to their use case.
 
-> [!IMPORTANT]
-> **Migrating from v0.14 to v0.15**
-> 
-> Griptape introduced several breaking changes in `v0.15`. Please update your code moving forward.
-> - `griptape-tools` was merged into `griptape`. You can remove `griptape-tools` from your dependencies.
-> - `PromptTask.prompt_template` was renamed to `PromptTask.input_template`.
-> - `KnowledgeBaseClient` tool was renamed to `VectorStoreClient`.
-> - `OpenAiPromptDriver` was split into `OpenAiChatPromptDriver` and `OpenAiCompletionPromptDriver`.
-> - `input` was renamed to `parent_output` in agents and pipelines.
-> - `inputs` was renamed to `parent_outputs` in workflows.
-
 ## Documentation
 
 Please refer to [Griptape Docs](https://docs.griptape.ai/) for:

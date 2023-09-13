@@ -8,6 +8,13 @@ from griptape.utils import PromptStack
 
 @define
 class CoherePromptDriver(BasePromptDriver):
+    """
+    Attributes: 
+        api_key: Cohere API key.
+        model: 	Cohere model name. Defaults to `xlarge`.
+        client: Custom `cohere.Client`.
+        tokenizer: Custom `CohereTokenizer`.
+    """
     api_key: str = field(kw_only=True)
     model: str = field(default=CohereTokenizer.DEFAULT_MODEL, kw_only=True)
     client: cohere.Client = field(
