@@ -18,6 +18,24 @@ class TestWorkflow:
         assert workflow.rulesets[0].name is "TestRuleset"
         assert workflow.rulesets[0].rules[0].value is "test"
 
+    def test_rulesets(self):
+        workflow = Workflow(
+            rulesets=[Ruleset("Foo", [Rule("foo test")])]
+        )
+
+        workflow.add_tasks(
+            PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])]),
+            PromptTask(rulesets=[Ruleset("Baz", [Rule("baz test")])])
+        )
+
+        assert len(workflow.tasks[0].all_rulesets) == 2
+        assert workflow.tasks[0].all_rulesets[0].name == "Foo"
+        assert workflow.tasks[0].all_rulesets[1].name == "Bar"
+
+        assert len(workflow.tasks[1].all_rulesets) == 2
+        assert workflow.tasks[1].all_rulesets[0].name == "Foo"
+        assert workflow.tasks[1].all_rulesets[1].name == "Baz"
+
     def test_with_default_tool_memory(self):
         workflow = Workflow()
 
