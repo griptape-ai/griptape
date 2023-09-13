@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 from schema import Schema, Literal, Optional
 from attr import define
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 from googleapiclient.errors import HttpError
@@ -27,22 +27,25 @@ class GoogleDriveClient(BaseGoogleClient):
             )): int
         })
     })
-    def list_files(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
+    def _build_client(self, scopes: list[str], values: dict) -> object:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
+        credentials = service_account.Credentials.from_service_account_info(
+            self.service_account_credentials, scopes=scopes
+        )
+        delegated_credentials = credentials.with_subject(values["drive_owner_email"])
+        service = build('drive', 'v3', credentials=delegated_credentials)
+        return service
+
+    def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
 
         values = params["values"]
 
         try:
-            credentials = service_account.Credentials.from_service_account_info(
-                self.service_account_credentials, scopes=self.LIST_FILES_SCOPES
-            )
-            delegated_credentials = credentials.with_subject(values["drive_owner_email"])
-            service = build('drive', 'v3', credentials=delegated_credentials)
-
+            service = self._build_client(self.LIST_FILES_SCOPES, values)
             results = service.files().list(pageSize=values.get('max_files', 10)).execute()
             items = results.get('files', [])
-            return [TextArtifact(str(i)) for i in items]
+            return items
 
         except Exception as e:
             logging.error(e)
@@ -70,19 +73,12 @@ class GoogleDriveClient(BaseGoogleClient):
         })
     })
     def upload_file(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
         from googleapiclient.http import MediaFileUpload
 
         values = params['values']
 
         try:
-            credentials = service_account.Credentials.from_service_account_info(
-                self.service_account_credentials, scopes=self.UPLOAD_FILE_SCOPES
-            )
-            delegated_credentials = credentials.with_subject(values["drive_owner_email"])
-            service = build('drive', 'v3', credentials=delegated_credentials)
-
+            service = self._build_client(self.UPLOAD_FILE_SCOPES, values)
             file_metadata = {'name': values['file_name']}
             media = MediaFileUpload(values['file_path'], mimetype=values['mime_type'])
             file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
@@ -107,18 +103,11 @@ class GoogleDriveClient(BaseGoogleClient):
         })
     })
     def download_file(self, params: dict) -> TextArtifact | ErrorArtifact:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
 
         values = params["values"]
 
         try:
-            credentials = service_account.Credentials.from_service_account_info(
-                self.service_account_credentials, scopes=self.LIST_FILES_SCOPES
-            )
-            delegated_credentials = credentials.with_subject(values["drive_owner_email"])
-            service = build('drive', 'v3', credentials=delegated_credentials)
-
+            service = self._build_client(self.LIST_FILES_SCOPES, values)
             request = service.files().get_media(fileId=values["file_id"])
             downloaded_file = request.execute()
 
@@ -144,24 +133,17 @@ class GoogleDriveClient(BaseGoogleClient):
             ): str
         })
     })
-    def search_file(self, params: dict) -> list[TextArtifact] | ErrorArtifact:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
+    def search_file(self, params: dict) -> ListArtifact | ErrorArtifact:
 
         values = params["values"]
 
         try:
-            credentials = service_account.Credentials.from_service_account_info(
-                self.service_account_credentials, scopes=self.LIST_FILES_SCOPES
-            )
-            delegated_credentials = credentials.with_subject(values["drive_owner_email"])
-            service = build('drive', 'v3', credentials=delegated_credentials)
-
+            service = self._build_client(self.LIST_FILES_SCOPES, values)
             query = f"name='{values['file_name']}'"
             results = service.files().list(q=query).execute()
             items = results.get('files', [])
 
-            return [TextArtifact(str(i)) for i in items]
+            return items
 
         except HttpError as e:
             logging.error(e)
