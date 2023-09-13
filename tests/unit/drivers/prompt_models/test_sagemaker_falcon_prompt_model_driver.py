@@ -30,7 +30,7 @@ class TestSageMakerFalconPromptModelDriver:
         assert model_input.startswith("foo\n\nUser: bar")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 2042
+        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 594
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver, stack):
@@ -39,7 +39,7 @@ class TestSageMakerFalconPromptModelDriver:
         ]).value == "foobar"
 
     def test_tokenizer_max_model_length(self, driver):
-        assert driver.tokenizer.tokenizer.model_max_length == 2048
+        assert driver.tokenizer.tokenizer.model_max_length == 600
 
         assert AmazonSageMakerPromptDriver(
             model="foo",

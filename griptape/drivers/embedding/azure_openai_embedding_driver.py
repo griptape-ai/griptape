@@ -7,6 +7,15 @@ from griptape.tokenizers import TiktokenTokenizer
 
 @define
 class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
+    """
+    Attributes:
+        model: OpenAI embedding model name. Uses `text-embedding-ada-002` by default.
+        deployment_id: Azure OpenAi deployment ID.
+        api_base: API URL.
+        api_type: Can be changed to use OpenAI models on Azure.
+        api_version: API version. 
+        tokenizer: Custom `TiktokenTokenizer`.
+    """
     model: str = field(kw_only=True)
     deployment_id: str = field(kw_only=True)
     api_base: str = field(kw_only=True)
