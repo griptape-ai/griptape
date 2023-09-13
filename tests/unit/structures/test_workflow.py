@@ -37,6 +37,40 @@ class TestWorkflow:
         assert len(workflow.tasks[1].all_rulesets) == 2
         assert workflow.tasks[1].all_rulesets[0].name == "Foo"
         assert workflow.tasks[1].all_rulesets[1].name == "Baz"
+        
+    def test_rules(self):
+        workflow = Workflow(
+            rules=[Rule("foo test")]
+        )
+
+        workflow.add_tasks(
+            PromptTask(rules=[Rule("bar test")]),
+            PromptTask(rules=[Rule("baz test")])
+        )
+
+        assert len(workflow.tasks[0].all_rulesets) == 2
+        assert workflow.tasks[0].all_rulesets[0].name == "Structure Ruleset"
+        assert workflow.tasks[0].all_rulesets[1].name == "Task Ruleset"
+
+        assert len(workflow.tasks[1].all_rulesets) == 2
+        assert workflow.tasks[1].all_rulesets[0].name == "Structure Ruleset"
+        assert workflow.tasks[1].all_rulesets[1].name == "Task Ruleset"
+        
+    def test_rules_and_rulesets(self):
+        with pytest.raises(ValueError):
+            Workflow(
+                rules=[Rule("foo test")],
+                rulesets=[Ruleset("Bar", [Rule("bar test")])]
+            )
+
+        with pytest.raises(ValueError):
+            workflow = Workflow()
+            workflow.add_task(
+                PromptTask(
+                    rules=[Rule("foo test")],
+                    rulesets=[Ruleset("Bar", [Rule("bar test")])]
+                )
+            )
 
     def test_with_default_tool_memory(self):
         workflow = Workflow()

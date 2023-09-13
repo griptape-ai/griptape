@@ -42,6 +42,39 @@ class TestPipeline:
         assert pipeline.tasks[1].all_rulesets[0].name == "Foo"
         assert pipeline.tasks[1].all_rulesets[1].name == "Baz"
 
+    def test_rules(self):
+        pipeline = Pipeline(
+            rules=[Rule("foo test")]
+        )
+
+        pipeline.add_tasks(
+            PromptTask(rules=[Rule("bar test")]),
+            PromptTask(rules=[Rule("baz test")])
+        )
+
+        assert len(pipeline.tasks[0].all_rulesets) == 2
+        assert pipeline.tasks[0].all_rulesets[0].name == "Structure Ruleset"
+        assert pipeline.tasks[0].all_rulesets[1].name == "Task Ruleset"
+        
+        assert pipeline.tasks[1].all_rulesets[0].name == "Structure Ruleset"
+        assert pipeline.tasks[1].all_rulesets[1].name == "Task Ruleset"
+        
+    def test_rules_and_rulesets(self):
+        with pytest.raises(ValueError):
+            Pipeline(
+                rules=[Rule("foo test")],
+                rulesets=[Ruleset("Bar", [Rule("bar test")])]
+            )
+
+        with pytest.raises(ValueError):
+            pipeline = Pipeline()
+            pipeline.add_task(
+                PromptTask(
+                    rules=[Rule("foo test")],
+                    rulesets=[Ruleset("Bar", [Rule("bar test")])]
+                )
+            )
+
     def test_with_default_tool_memory(self):
         pipeline = Pipeline()
 
