@@ -23,7 +23,7 @@ class WebScraper(BaseTool):
     })
     def get_content(self, params: dict) -> ListArtifact | ErrorArtifact:
         url = params["values"]["url"]
-        page = WebLoader()._load_page(url, self.include_links)
+        page = WebLoader().extract_page(url, self.include_links)
 
         if isinstance(page, ErrorArtifact):
             return page
@@ -43,7 +43,7 @@ class WebScraper(BaseTool):
     })
     def get_author(self, params: dict) -> BaseArtifact:
         url = params["values"]["url"]
-        page = WebLoader()._load_page(url, self.include_links)
+        page = WebLoader().extract_page(url, self.include_links)
 
         if isinstance(page, ErrorArtifact):
             return page

@@ -19,9 +19,9 @@ class WebLoader(TextLoader):
         })
 
     def _load_page_to_artifacts(self, url: str, include_links: bool = True) -> list[TextArtifact]:
-        return self.text_to_artifacts(self._load_page(url, include_links).get('text'))
+        return self.text_to_artifacts(self.extract_page(url, include_links).get('text'))
 
-    def _load_page(self, url: str, include_links: bool = True) -> dict:
+    def extract_page(self, url: str, include_links: bool = True) -> dict:
         config = trafilatura.settings.use_config()
         page = trafilatura.fetch_url(url, no_ssl=True)
 
