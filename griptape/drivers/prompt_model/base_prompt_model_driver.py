@@ -14,7 +14,7 @@ class BasePromptModelDriver(ABC):
     tokenizer: BaseTokenizer
 
     @abstractmethod
-    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> Union[str, list]:
+    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> Union[str, list, dict]:
         ...
 
     @abstractmethod

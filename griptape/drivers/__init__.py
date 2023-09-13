@@ -8,6 +8,7 @@ from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromp
 from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
+from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
@@ -20,6 +21,7 @@ from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryD
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
+from .embedding.amazon_bedrock_embedding_driver import AmazonBedrockEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -38,6 +40,8 @@ from .sql.sql_driver import SqlDriver
 from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
 from .prompt_model.sagemaker_llama_prompt_model_driver import SageMakerLlamaPromptModelDriver
 from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPromptModelDriver
+from .prompt_model.bedrock_titan_prompt_model_driver import BedrockTitanPromptModelDriver
+from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePromptModelDriver
 
 
 __all__ = [
@@ -51,6 +55,7 @@ __all__ = [
     "HuggingFaceHubPromptDriver",
     "AnthropicPromptDriver",
     "AmazonSageMakerPromptDriver",
+    "AmazonBedrockPromptDriver",
     "BaseMultiModelPromptDriver",
 
     "BaseConversationMemoryDriver",
@@ -63,6 +68,7 @@ __all__ = [
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
+    "AmazonBedrockEmbeddingDriver",
 
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
@@ -81,5 +87,7 @@ __all__ = [
 
     "BasePromptModelDriver",
     "SageMakerLlamaPromptModelDriver",
-    "SageMakerFalconPromptModelDriver"
+    "SageMakerFalconPromptModelDriver",
+    "BedrockTitanPromptModelDriver",
+    "BedrockClaudePromptModelDriver",
 ]
