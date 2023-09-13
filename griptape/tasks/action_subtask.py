@@ -20,7 +20,7 @@ from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 @define
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
-    ACTION_PATTERN = r"(?s)Action:[^{}]*({.*})"
+    ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
