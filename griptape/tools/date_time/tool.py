@@ -24,14 +24,14 @@ class DateTime(BaseTool):
         "description": "Can be used to return a relative date and time.",
         "schema": Schema({
             Literal(
-                "date_string",
                 description="A string representing date and/or time in a recognizably valid format."
+                "relative_date_string",
             ): str
         })
     })
     def get_relative_datetime(self, params: dict) -> BaseArtifact:
         try:
-            date_string = params["values"]["date_string"]
+            date_string = params["values"]["relative_date_string"]
             relative_datetime = parse(date_string)
 
             return TextArtifact(str(relative_datetime))
