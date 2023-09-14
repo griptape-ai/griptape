@@ -1,9 +1,11 @@
 from __future__ import annotations
 import os
+from pathlib import Path
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, BlobArtifact, InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+from griptape.loaders import FileLoader
 from schema import Schema, Literal
 
 
@@ -29,14 +31,7 @@ class FileManager(BaseTool):
             full_path = os.path.join(self.dir, path)
 
             try:
-                with open(full_path, "rb") as file:
-                    list_artifact.value.append(
-                        BlobArtifact(
-                            file.read(),
-                            name=file_name,
-                            dir=dir_name
-                        )
-                    )
+                list_artifact.value.extend(FileLoader(dir_name=dir_name).load(Path(full_path)))
             except FileNotFoundError:
                 return ErrorArtifact(f"file {file_name} not found")
             except Exception as e:
