@@ -1,18 +1,29 @@
 from __future__ import annotations
 import logging
 from schema import Schema, Literal, Optional
-from attr import define
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
+from attr import define, field
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 from googleapiclient.errors import HttpError
 from google.auth.exceptions import MalformedError
-
+from googleapiclient.discovery import Resource
 
 @define
 class GoogleDriveClient(BaseGoogleClient):
     LIST_FILES_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
     UPLOAD_FILE_SCOPES = ['https://www.googleapis.com/auth/drive.file']
+    max_files: int = field(default=10, kw_only=True)
+
+    def _build_client(self, scopes: list[str], values: dict) -> Resource:
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        credentials = service_account.Credentials.from_service_account_info(
+            self.service_account_credentials, scopes=scopes
+        )
+        delegated_credentials = credentials.with_subject(values["drive_owner_email"])
+        service = build('drive', 'v3', credentials=delegated_credentials)
+        return service
 
     @activity(config={
         "description": "Can be used to list files from Google Drive",
@@ -27,29 +38,49 @@ class GoogleDriveClient(BaseGoogleClient):
             )): int
         })
     })
-    def _build_client(self, scopes: list[str], values: dict) -> object:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
-        credentials = service_account.Credentials.from_service_account_info(
-            self.service_account_credentials, scopes=scopes
-        )
-        delegated_credentials = credentials.with_subject(values["drive_owner_email"])
-        service = build('drive', 'v3', credentials=delegated_credentials)
-        return service
-
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
-
         values = params["values"]
 
         try:
             service = self._build_client(self.LIST_FILES_SCOPES, values)
-            results = service.files().list(pageSize=values.get('max_files', 10)).execute()
+
+            folder_id = None
+            if "folder_path" in values and values["folder_path"]:
+                folder_id = self._resolve_path_to_id(service, values["folder_path"])
+                if not folder_id:
+                    return ErrorArtifact(f"Could not find folder: {values['folder_path']}")
+
+            if folder_id:
+                query = f"'{folder_id}' in parents and trashed=false"
+            else:
+                query = "mimeType != 'application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
+
+            # Use the provided max_files from the values dictionary, otherwise use the class default
+            max_files = values.get("max_files", self.max_files)
+
+            results = service.files().list(q=query, pageSize=max_files).execute()
             items = results.get('files', [])
-            return items
+            return ListArtifact(items)
 
         except Exception as e:
             logging.error(e)
             return ErrorArtifact(f"error retrieving files from Drive: {e}")
+
+    def _resolve_path_to_id(self, service, path: str) -> Optional[str]:
+        """Resolve a folder path to its Google Drive ID"""
+        parts = path.split('/')
+        current_id = 'root'
+
+        for part in parts:
+            response = service.files().list(
+                q=f"name='{part}' and '{current_id}' in parents and mimeType='application/vnd.google-apps.folder'").execute()
+            files = response.get('files', [])
+
+            if not files:
+                return None
+            current_id = files[0]['id']
+
+        return current_id
 
     @activity(config={
         "description": "Can be used to upload a file to Google Drive",
@@ -102,7 +133,7 @@ class GoogleDriveClient(BaseGoogleClient):
             ): str
         })
     })
-    def download_file(self, params: dict) -> TextArtifact | ErrorArtifact:
+    def download_file(self, params: dict) -> BlobArtifact | ErrorArtifact:
 
         values = params["values"]
 
@@ -111,7 +142,7 @@ class GoogleDriveClient(BaseGoogleClient):
             request = service.files().get_media(fileId=values["file_id"])
             downloaded_file = request.execute()
 
-            return TextArtifact(downloaded_file)
+            return BlobArtifact(downloaded_file)
 
         except HttpError as e:
             logging.error(e)
@@ -142,8 +173,7 @@ class GoogleDriveClient(BaseGoogleClient):
             query = f"name='{values['file_name']}'"
             results = service.files().list(q=query).execute()
             items = results.get('files', [])
-
-            return items
+            return ListArtifact(items)
 
         except HttpError as e:
             logging.error(e)
