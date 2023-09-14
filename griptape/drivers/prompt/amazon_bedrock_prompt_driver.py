@@ -23,10 +23,6 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
         kw_only=True,
     )
 
-    def __attrs_post_init__(self) -> None:
-        if not self.tokenizer:
-            self.tokenizer = self.prompt_model_driver.tokenizer
-
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
             **self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack),

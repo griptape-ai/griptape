@@ -1,3 +1,4 @@
+from unittest import mock
 import json
 import boto3
 import pytest
@@ -5,6 +6,16 @@ from griptape.utils import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockClaudePromptModelDriver
 
 class TestBedrockClaudePromptModelDriver:
+    @pytest.fixture(autouse=True)
+    def mock_session(self, mocker):
+        mock_session_class = mocker.patch("boto3.Session")
+
+        mock_session_object = mock.Mock()
+        mock_client = mock.Mock()
+
+        mock_session_object.client.return_value = mock_client
+        mock_session_class.return_value = mock_session_object
+
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
