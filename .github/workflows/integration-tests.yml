@@ -53,6 +53,7 @@ jobs:
       GOOGLE_TOKEN_URI: ${{ secrets.INTEG_GOOGLE_TOKEN_URI }}
       GOOGLE_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.INTEG_GOOGLE_AUTH_PROVIDER_X509_CERT_URL }}
       PROXYCURL_API_KEY: ${{ secrets.INTEG_PROXYCURL_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.INTEG_ANTHROPIC_API_KEY }}
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
