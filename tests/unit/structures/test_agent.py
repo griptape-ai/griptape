@@ -48,8 +48,8 @@ class TestAgent:
         )
 
         assert len(agent.task.all_rulesets) == 2
-        assert agent.task.all_rulesets[0].name == "Structure Ruleset"
-        assert agent.task.all_rulesets[1].name == "Task Ruleset"
+        assert agent.task.all_rulesets[0].name == "Default Ruleset"
+        assert agent.task.all_rulesets[1].name == "Additional Ruleset"
         
     def test_rules_and_rulesets(self):
         with pytest.raises(ValueError):

@@ -49,12 +49,12 @@ class TestWorkflow:
         )
 
         assert len(workflow.tasks[0].all_rulesets) == 2
-        assert workflow.tasks[0].all_rulesets[0].name == "Structure Ruleset"
-        assert workflow.tasks[0].all_rulesets[1].name == "Task Ruleset"
+        assert workflow.tasks[0].all_rulesets[0].name == "Default Ruleset"
+        assert workflow.tasks[0].all_rulesets[1].name == "Additional Ruleset"
 
         assert len(workflow.tasks[1].all_rulesets) == 2
-        assert workflow.tasks[1].all_rulesets[0].name == "Structure Ruleset"
-        assert workflow.tasks[1].all_rulesets[1].name == "Task Ruleset"
+        assert workflow.tasks[1].all_rulesets[0].name == "Default Ruleset"
+        assert workflow.tasks[1].all_rulesets[1].name == "Additional Ruleset"
         
     def test_rules_and_rulesets(self):
         with pytest.raises(ValueError):

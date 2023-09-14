@@ -44,15 +44,17 @@ class PromptTask(BaseTextInputTask):
 
     @property
     def all_rulesets(self) -> list[Ruleset]:
+        structure_rulesets = []
         if self.structure.rulesets:
             structure_rulesets = self.structure.rulesets
-        else:
-            structure_rulesets = [Ruleset(name="Structure Ruleset", rules=self.structure.rules)]
+        elif self.structure.rules:
+            structure_rulesets = [Ruleset(name="Default Ruleset", rules=self.structure.rules)]
 
+        task_rulesets = []
         if self.rulesets:
             task_rulesets = self.rulesets
-        else:
-            task_rulesets = [Ruleset(name="Task Ruleset", rules=self.rules)]
+        elif self.rules:
+            task_rulesets = [Ruleset(name="Additional Ruleset", rules=self.rules)]
 
         return structure_rulesets + task_rulesets
 

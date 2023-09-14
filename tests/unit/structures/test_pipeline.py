@@ -53,11 +53,11 @@ class TestPipeline:
         )
 
         assert len(pipeline.tasks[0].all_rulesets) == 2
-        assert pipeline.tasks[0].all_rulesets[0].name == "Structure Ruleset"
-        assert pipeline.tasks[0].all_rulesets[1].name == "Task Ruleset"
+        assert pipeline.tasks[0].all_rulesets[0].name == "Default Ruleset"
+        assert pipeline.tasks[0].all_rulesets[1].name == "Additional Ruleset"
         
-        assert pipeline.tasks[1].all_rulesets[0].name == "Structure Ruleset"
-        assert pipeline.tasks[1].all_rulesets[1].name == "Task Ruleset"
+        assert pipeline.tasks[1].all_rulesets[0].name == "Default Ruleset"
+        assert pipeline.tasks[1].all_rulesets[1].name == "Additional Ruleset"
         
     def test_rules_and_rulesets(self):
         with pytest.raises(ValueError):
