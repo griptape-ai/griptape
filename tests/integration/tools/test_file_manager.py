@@ -1,9 +1,9 @@
-from tests.utils.structure_runner import run_structure, OUTPUT_RULESET
+from tests.utils.structure_runner import run_structure, OUTPUT_RULESET, PROMPT_DRIVERS, prompt_driver_id_fn
 import pytest
 
 
 class TestFileManager:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(autouse=True, params=PROMPT_DRIVERS, ids=prompt_driver_id_fn)
     def agent(self):
         from griptape.structures import Agent
         from griptape.tools import FileManager
