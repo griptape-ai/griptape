@@ -7,6 +7,7 @@ from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestAgent:
@@ -54,6 +55,17 @@ class TestAgent:
         )
 
         assert agent.tools[0].output_memory == {}
+
+    def test_default_tool_memory_embedding_driver(self):
+        embedding_driver = MockEmbeddingDriver()
+        agent = Agent(
+            tools=[MockTool()],
+            default_tool_memory_embedding_driver=embedding_driver
+        )
+
+        assert isinstance(agent.tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver, MockEmbeddingDriver)
+        assert agent.tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert agent.tools[0].output_memory["test"][0].query_engine.vector_store_driver.embedding_driver == embedding_driver
 
     def test_without_default_tool_memory(self):
         agent = Agent(
@@ -201,3 +213,4 @@ class TestAgent:
         context = agent.context(task)
 
         assert context["structure"] == agent
+        
