@@ -8,21 +8,30 @@ from griptape.loaders import BaseLoader
 
 @define
 class FileLoader(BaseLoader):
-    dir_name: str = field(kw_only=True)
+    workdir: str = field(default=os.getcwd(), kw_only=True)
 
-    def load(self, path: Path) -> list[BlobArtifact]:
-        return self.text_to_artifacts(path)
+    @workdir.validator
+    def validate_workdir(self, _, workdir: str) -> None:
+        if not Path(workdir).is_absolute():
+            raise ValueError("workdir has to be absolute absolute")
 
-    def load_collection(self, paths: list[Path]) -> dict[str, list[BlobArtifact]]:
+    def load(self, path: Path) -> BlobArtifact:
+        return self.file_to_artifact(path)
+
+    def load_collection(self, paths: list[Path]) -> dict[str, BlobArtifact]:
         return utils.execute_futures_dict({
-            utils.str_to_hash(str(path)): self.futures_executor.submit(self.text_to_artifacts, path)
+            utils.str_to_hash(str(path)): self.futures_executor.submit(self.file_to_artifact, path)
             for path in paths
         })
 
-    def text_to_artifacts(self, path: Path) -> list[BlobArtifact]:
-        file_name = os.path.basename(path)
+    def file_to_artifact(self, path: Path) -> BlobArtifact:
+        full_path = os.path.join(self.workdir, path)
 
-        with open(path, "rb") as file:
+        with open(full_path, "rb") as file:
             body = file.read()
 
-        return [BlobArtifact(body, name=file_name, dir=self.dir_name)]
+        return BlobArtifact(
+            body,
+            name=os.path.basename(path),
+            dir_name=str(os.path.dirname(path))
+        )

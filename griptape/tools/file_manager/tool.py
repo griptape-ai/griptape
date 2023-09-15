@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, BlobArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.loaders import FileLoader
@@ -11,7 +11,12 @@ from schema import Schema, Literal
 
 @define
 class FileManager(BaseTool):
-    dir: str = field(default=os.getcwd(), kw_only=True)
+    workdir: str = field(default=os.getcwd(), kw_only=True)
+
+    @workdir.validator
+    def validate_workdir(self, _, workdir: str) -> None:
+        if not Path(workdir).is_absolute():
+            raise ValueError("workdir has to be absolute absolute")
 
     @activity(config={
         "description": "Can be used to load files from disk",
@@ -26,14 +31,12 @@ class FileManager(BaseTool):
         list_artifact = ListArtifact()
 
         for path in params["values"]["paths"]:
-            file_name = os.path.basename(path)
-            dir_name = os.path.dirname(path)
-            full_path = os.path.join(self.dir, path)
-
             try:
-                list_artifact.value.extend(FileLoader(dir_name=dir_name).load(Path(full_path)))
+                list_artifact.value.append(
+                    FileLoader(workdir=self.workdir).load(Path(path))
+                )
             except FileNotFoundError:
-                return ErrorArtifact(f"file {file_name} not found")
+                return ErrorArtifact(f"file in path `{path}` not found")
             except Exception as e:
                 return ErrorArtifact(f"error loading file: {e}")
 
@@ -70,7 +73,7 @@ class FileManager(BaseTool):
             elif len(artifacts) == 1:
                 try:
                     self._save_to_disk(
-                        os.path.join(self.dir, dir_name, file_name),
+                        os.path.join(self.workdir, dir_name, file_name),
                         artifacts[0].value
                     )
 
@@ -81,7 +84,7 @@ class FileManager(BaseTool):
                 try:
                     for a in artifacts:
                         self._save_to_disk(
-                            os.path.join(self.dir, dir_name, f"{a.name}-{file_name}"),
+                            os.path.join(self.workdir, dir_name, f"{a.name}-{file_name}"),
                             a.value
                         )
 
@@ -106,7 +109,7 @@ class FileManager(BaseTool):
     def save_content_to_file(self, params: dict) -> ErrorArtifact | InfoArtifact:
         content = params["values"]["content"]
         new_path = params["values"]["path"]
-        full_path = os.path.join(self.dir, new_path)
+        full_path = os.path.join(self.workdir, new_path)
 
         try:
             self._save_to_disk(full_path, content)
