@@ -1,5 +1,4 @@
 import pytest
-
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import TextToolMemory
 from griptape.rules import Rule, Ruleset
@@ -56,11 +55,11 @@ class TestAgent:
 
         assert agent.tools[0].output_memory == {}
 
-    def test_default_tool_memory_embedding_driver(self):
+    def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
         agent = Agent(
             tools=[MockTool()],
-            default_tool_memory_embedding_driver=embedding_driver
+            embedding_driver=embedding_driver
         )
 
         assert isinstance(agent.tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver, MockEmbeddingDriver)

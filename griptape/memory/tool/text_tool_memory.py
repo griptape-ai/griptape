@@ -15,14 +15,8 @@ if TYPE_CHECKING:
 
 @define
 class TextToolMemory(BaseToolMemory):
-    query_engine: BaseQueryEngine = field(
-        default=Factory(lambda: VectorQueryEngine()),
-        kw_only=True
-    )
-    summary_engine: BaseSummaryEngine = field(
-        default=Factory(lambda: PromptSummaryEngine()),
-        kw_only=True
-    )
+    query_engine: BaseQueryEngine = field(kw_only=True)
+    summary_engine: BaseSummaryEngine = field(kw_only=True)
 
     @activity(config={
         "description": "Can be used to insert text into a memory",

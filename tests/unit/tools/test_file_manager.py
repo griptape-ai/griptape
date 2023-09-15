@@ -6,7 +6,7 @@ import pytest
 
 from griptape.artifacts import BlobArtifact, TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from griptape.tools import FileManager
@@ -19,7 +19,16 @@ class TestFileManager:
 
     def test_load_files_from_disk(self):
         result = FileManager(
-            input_memory=[TextToolMemory()],
+            input_memory=[
+                TextToolMemory(
+                    query_engine=VectorQueryEngine(
+                        vector_store_driver=LocalVectorStoreDriver(
+                            embedding_driver=MockEmbeddingDriver()
+                        )
+                    ),
+                    summary_engine=PromptSummaryEngine()
+                )
+            ],
             workdir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
@@ -32,7 +41,11 @@ class TestFileManager:
             memory = TextToolMemory(
                 query_engine=VectorQueryEngine(
                     vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver())))
+                        embedding_driver=MockEmbeddingDriver()
+                    )
+                ),
+                summary_engine=PromptSummaryEngine()
+            )
             artifact = TextArtifact("foobar")
 
             memory.query_engine.vector_store_driver.upsert_text_artifact(artifact, namespace="foobar")
@@ -62,7 +75,11 @@ class TestFileManager:
             memory = TextToolMemory(
                 query_engine=VectorQueryEngine(
                     vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver())))
+                        embedding_driver=MockEmbeddingDriver()
+                    )
+                ),
+                summary_engine=PromptSummaryEngine()
+            )
             artifacts = [
                 TextArtifact("foobar"),
                 TextArtifact("baz")

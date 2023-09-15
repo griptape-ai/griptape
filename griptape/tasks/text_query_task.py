@@ -1,16 +1,13 @@
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
-from griptape.engines import BaseQueryEngine, VectorQueryEngine
+from griptape.engines import BaseQueryEngine
 from griptape.loaders import BaseLoader, TextLoader
 from griptape.tasks import BaseTextInputTask
 
 
 @define
 class TextQueryTask(BaseTextInputTask):
-    query_engine: BaseQueryEngine = field(
-        default=Factory(lambda: VectorQueryEngine()),
-        kw_only=True
-    )
+    query_engine: BaseQueryEngine = field(kw_only=True)
     loader: BaseLoader = field(
         default=Factory(lambda: TextLoader()),
         kw_only=True
