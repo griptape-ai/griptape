@@ -8,6 +8,16 @@ from attr import define, field, Factory
 
 @define
 class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
+    """A Vector Store Driver for OpenSearch.
+
+    Attributes:
+        host: The host of the OpenSearch cluster.
+        port: The port of the OpenSearch cluster.
+        http_auth: The HTTP authentication credentials to use.
+        use_ssl: Whether to use SSL.
+        verify_certs: Whether to verify SSL certificates.
+        index_name: The name of the index to use.
+    """
     host: str = field(kw_only=True)
     port: int = field(default=443, kw_only=True)
     http_auth: Optional[Union[str, Tuple[str, str]]] = field(default=None, kw_only=True)
@@ -36,7 +46,12 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
+        """Inserts or updates a vector in OpenSearch.
 
+        If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted. 
+        Metadata associated with the vector can also be provided.
+        """
+        
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
         doc = {
             "vector": vector,
@@ -49,6 +64,11 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         return response["_id"]
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+        """Retrieves a specific vector entry from OpenSearch based on its identifier and optional namespace. 
+
+        Returns:
+            If the entry is found, it returns an instance of BaseVectorStoreDriver.Entry; otherwise, None is returned.
+        """
         try:
             query = {
                 "bool": {
@@ -79,6 +99,11 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             return None
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+        """Retrieves all vector entries from OpenSearch that match the optional namespace. 
+
+        Returns:
+            A list of BaseVectorStoreDriver.Entry objects.
+        """
 
         query_body = {
             "size": 10000,
@@ -117,6 +142,13 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             include_metadata=True,
             **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
+        """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string. 
+
+        Results can be limited using the count parameter and optionally filtered by a namespace. 
+
+        Returns:
+            A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
+        """
         count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         vector = self.embedding_driver.embed_string(query)
         # Base k-NN query
@@ -166,6 +198,14 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         ]
 
     def create_index(self, vector_dimension: Optional[int] = None, settings_override: Optional[dict] = None) -> None:
+        """Creates a new vector index in OpenSearch. 
+        
+        The index is structured to support k-NN (k-nearest neighbors) queries.
+
+        Args:
+            vector_dimension: The dimension of vectors that will be stored in this index. 
+        
+        """
         default_settings = {
             "number_of_shards": 1,
             "number_of_replicas": 1,
