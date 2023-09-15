@@ -25,6 +25,19 @@ class TestAgent:
         assert isinstance(agent.memory, ConversationMemory)
         assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
 
+    def test_rulesets(self):
+        agent = Agent(
+            rulesets=[Ruleset("Foo", [Rule("foo test")])]
+        )
+
+        agent.add_task(
+            PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        )
+
+        assert len(agent.task.all_rulesets) == 2
+        assert agent.task.all_rulesets[0].name == "Foo"
+        assert agent.task.all_rulesets[1].name == "Bar"
+
     def test_with_default_tool_memory(self):
         agent = Agent(
             tools=[MockTool()]
