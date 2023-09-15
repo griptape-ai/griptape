@@ -4,6 +4,7 @@ from .pdf_loader import PdfLoader
 from .web_loader import WebLoader
 from .sql_loader import SqlLoader
 from .csv_loader import CsvLoader
+from .dataframe_loader import DataFrameLoader
 
 
 __all__ = [
@@ -12,5 +13,6 @@ __all__ = [
     "PdfLoader",
     "WebLoader",
     "SqlLoader",
-    "CsvLoader"
+    "CsvLoader",
+    "DataFrameLoader"
 ]
