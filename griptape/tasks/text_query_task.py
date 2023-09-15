@@ -20,7 +20,8 @@ class TextQueryTask(BaseTextInputTask):
         return self.query_engine.query(self.input.to_text())
 
     def load(self, content: any, namespace: str) -> list[TextArtifact]:
-        artifacts = self.loader.load(content)
+        result = self.loader.load(content)
+        artifacts = result if isinstance(result, list) else [result]
 
         self.query_engine.upsert_text_artifacts(
             artifacts,
