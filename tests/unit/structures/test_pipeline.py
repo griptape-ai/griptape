@@ -9,6 +9,7 @@ from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 from tests.mocks.mock_tool.tool import MockTool
+from tests.unit.structures.test_agent import MockEmbeddingDriver
 
 
 class TestPipeline:
@@ -51,6 +52,18 @@ class TestPipeline:
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
+
+    def test_embedding_driver(self):
+        embedding_driver = MockEmbeddingDriver()
+        pipeline = Pipeline(
+            embedding_driver=embedding_driver
+        )
+
+        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+
+        assert isinstance(pipeline.tool_memory.query_engine.vector_store_driver.embedding_driver, MockEmbeddingDriver)
+        assert pipeline.tasks[0].tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert pipeline.tasks[0].tools[0].output_memory["test"][0].query_engine.vector_store_driver.embedding_driver == embedding_driver
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
