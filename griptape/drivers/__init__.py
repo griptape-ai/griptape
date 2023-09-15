@@ -8,6 +8,7 @@ from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromp
 from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
+from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
@@ -50,6 +51,7 @@ __all__ = [
     "HuggingFaceHubPromptDriver",
     "AnthropicPromptDriver",
     "AmazonSageMakerPromptDriver",
+    "BaseMultiModelPromptDriver",
 
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
