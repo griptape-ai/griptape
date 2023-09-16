@@ -1,6 +1,6 @@
 import pytest
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -132,8 +132,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_memory(self, query_engine):
-        m1 = TextToolMemory(name="Memory1", query_engine=query_engine)
-        m2 = TextToolMemory(name="Memory2", query_engine=query_engine)
+        m1 = TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine())
+        m2 = TextToolMemory(name="Memory2", query_engine=query_engine, summary_engine=PromptSummaryEngine())
 
         tool = MockTool(
             name="Tool1",
@@ -153,8 +153,8 @@ class TestToolkitSubtask:
             name="Tool1",
             output_memory={
                 "test": [
-                    TextToolMemory(name="Memory1", query_engine=query_engine),
-                    TextToolMemory(name="Memory2", query_engine=query_engine)
+                    TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine()),
+                    TextToolMemory(name="Memory2", query_engine=query_engine, summary_engine=PromptSummaryEngine())
                 ]
             }
         )
@@ -163,8 +163,8 @@ class TestToolkitSubtask:
             name="Tool2",
             output_memory={
                 "test": [
-                    TextToolMemory(name="Memory2", query_engine=query_engine),
-                    TextToolMemory(name="Memory3", query_engine=query_engine)
+                    TextToolMemory(name="Memory2", query_engine=query_engine, summary_engine=PromptSummaryEngine()),
+                    TextToolMemory(name="Memory3", query_engine=query_engine, summary_engine=PromptSummaryEngine())
                 ]
             }
         )

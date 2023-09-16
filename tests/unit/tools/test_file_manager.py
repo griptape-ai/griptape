@@ -1,19 +1,35 @@
 import os.path
 import tempfile
 from pathlib import Path
+
+import pytest
+
 from griptape.artifacts import BlobArtifact, TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from griptape.tools import FileManager
 
 
 class TestFileManager:
+    def test_validate_workdir(self):
+        with pytest.raises(ValueError):
+            FileManager(workdir="foo")
+
     def test_load_files_from_disk(self):
         result = FileManager(
-            input_memory=[TextToolMemory()],
-            dir=os.path.abspath(os.path.dirname(__file__))
+            input_memory=[
+                TextToolMemory(
+                    query_engine=VectorQueryEngine(
+                        vector_store_driver=LocalVectorStoreDriver(
+                            embedding_driver=MockEmbeddingDriver()
+                        )
+                    ),
+                    summary_engine=PromptSummaryEngine()
+                )
+            ],
+            workdir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result, ListArtifact)
@@ -25,13 +41,17 @@ class TestFileManager:
             memory = TextToolMemory(
                 query_engine=VectorQueryEngine(
                     vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver())))
+                        embedding_driver=MockEmbeddingDriver()
+                    )
+                ),
+                summary_engine=PromptSummaryEngine()
+            )
             artifact = TextArtifact("foobar")
 
             memory.query_engine.vector_store_driver.upsert_text_artifact(artifact, namespace="foobar")
 
             result = FileManager(
-                dir=temp_dir,
+                workdir=temp_dir,
                 input_memory=[memory]
             ).save_memory_artifacts_to_disk(
                 {
@@ -55,7 +75,11 @@ class TestFileManager:
             memory = TextToolMemory(
                 query_engine=VectorQueryEngine(
                     vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver())))
+                        embedding_driver=MockEmbeddingDriver()
+                    )
+                ),
+                summary_engine=PromptSummaryEngine()
+            )
             artifacts = [
                 TextArtifact("foobar"),
                 TextArtifact("baz")
@@ -65,7 +89,7 @@ class TestFileManager:
                 memory.query_engine.vector_store_driver.upsert_text_artifact(a, namespace="foobar")
 
             result = FileManager(
-                dir=temp_dir,
+                workdir=temp_dir,
                 input_memory=[memory]
             ).save_memory_artifacts_to_disk(
                 {
@@ -86,7 +110,7 @@ class TestFileManager:
     def test_save_content_to_file(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             result = FileManager(
-                dir=temp_dir
+                workdir=temp_dir
             ).save_content_to_file(
                 {
                     "values":
