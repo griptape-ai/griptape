@@ -32,6 +32,10 @@ class ActivityMixin:
         for activity_name in denylist:
             self._validate_tool_activity(activity_name)
 
+    def disable_activities(self) -> None:
+        self.allowlist = []
+        self.denylist = None
+
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `inspect.getmembers`.
     def activities(self) -> list[callable]:

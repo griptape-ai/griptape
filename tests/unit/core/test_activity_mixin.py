@@ -88,3 +88,10 @@ class TestActivityMixin:
                 test_int=5,
                 denylist=["test_foo"]
             )
+
+    def test_disable_activities(self, tool):
+        assert len(tool.activities()) > 0
+
+        tool.disable_activities()
+
+        assert len(tool.activities()) == 0
