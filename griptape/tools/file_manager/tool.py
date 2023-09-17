@@ -44,7 +44,7 @@ class FileManager(BaseTool):
         for path in params["values"]["paths"]:
             full_path = os.path.join(self.workdir, path)
 
-            list_artifact.value.append(
+            list_artifact.value.extend(
                 self.loader.load(full_path)
             )
 
