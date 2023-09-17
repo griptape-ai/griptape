@@ -3,7 +3,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, Union, TYPE_CHECKING, Callable, Type
+from typing import Optional, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
@@ -39,7 +39,7 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
+    event_listeners: list[Callable] | dict[Type[BaseEvent], list[Callable]] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(
         default=Factory(lambda self: TextToolMemory(
@@ -123,5 +123,5 @@ class Structure(ABC):
         ...
 
     @abstractmethod
-    def run(self, *args) -> Union[BaseTask, list[BaseTask]]:
+    def run(self, *args) -> BaseTask | list[BaseTask]:
         ...

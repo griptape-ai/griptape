@@ -1,5 +1,6 @@
+from __future__ import annotations
 import os
-from typing import Optional, Union
+from typing import Optional
 import numpy as np
 import openai
 from attr import define, field, Factory
@@ -54,7 +55,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         else:
             return self.embed_chunk(string)
 
-    def embed_chunk(self, chunk: Union[list[int], str]) -> list[float]:
+    def embed_chunk(self, chunk: list[int] | str) -> list[float]:
         return openai.Embedding.create(**self._params(chunk))["data"][0]["embedding"]
 
     def embed_long_string(self, string: str) -> list[float]:
@@ -75,7 +76,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
 
         return embedding_chunks.tolist()
 
-    def _params(self, chunk: Union[list[int], str]) -> dict:
+    def _params(self, chunk: list[int] | str) -> dict:
         return {
             "input": chunk,
             "model": self.model,

@@ -1,4 +1,4 @@
-from typing import Union
+from __future__ import annotations
 
 from attr import define, field, Factory
 from griptape.drivers import OpenAiEmbeddingDriver
@@ -26,7 +26,7 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         kw_only=True
     )
 
-    def _params(self, chunk: Union[list[int], str]) -> dict:
+    def _params(self, chunk: list[int] | str) -> dict:
         return super()._params(chunk) | {
             "deployment_id": self.deployment_id
         }
