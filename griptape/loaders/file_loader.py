@@ -10,35 +10,27 @@ from griptape.loaders import BaseLoader
 
 @define
 class FileLoader(BaseLoader):
-    workdir: str = field(default=os.getcwd(), kw_only=True)
+    encoding: Optional[str] = field(default=None, kw_only=True)
 
-    @workdir.validator
-    def validate_workdir(self, _, workdir: str) -> None:
-        if not Path(workdir).is_absolute():
-            raise ValueError("workdir has to be absolute absolute")
+    def load(self, path: str | Path,) -> TextArtifact | BlobArtifact | ErrorArtifact:
+        return self.file_to_artifact(path)
 
-    def load(self, path: Path, encoding: Optional[str] = None) -> TextArtifact | BlobArtifact | ErrorArtifact:
-        return self.file_to_artifact(path, encoding)
-
-    def load_collection(
-            self, paths: list[Path], encoding: Optional[str] = None
-    ) -> dict[str, TextArtifact | BlobArtifact | ErrorArtifact]:
+    def load_collection(self, paths: list[str | Path]) -> dict[str, TextArtifact | BlobArtifact | ErrorArtifact]:
         return utils.execute_futures_dict({
             utils.str_to_hash(
                 str(path)
-            ): self.futures_executor.submit(self.file_to_artifact, path, encoding)
+            ): self.futures_executor.submit(self.file_to_artifact, path)
             for path in paths
         })
 
-    def file_to_artifact(self, path: Path, encoding: Optional[str]) -> TextArtifact | BlobArtifact | ErrorArtifact:
-        full_path = os.path.join(self.workdir, path)
+    def file_to_artifact(self, path: str | Path) -> TextArtifact | BlobArtifact | ErrorArtifact:
         file_name = os.path.basename(path)
 
         try:
-            with open(full_path, "rb") as file:
-                if encoding:
+            with open(path, "rb") as file:
+                if self.encoding:
                     return TextArtifact(
-                        file.read().decode(encoding),
+                        file.read().decode(self.encoding),
                         name=file_name
                     )
                 else:

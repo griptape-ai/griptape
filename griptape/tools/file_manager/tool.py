@@ -1,11 +1,11 @@
 from __future__ import annotations
 import os
 from pathlib import Path
-from attr import define, field
+from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader
+from griptape.loaders import FileLoader, BaseLoader
 from schema import Schema, Literal
 from typing import Optional
 
@@ -17,11 +17,11 @@ class FileManager(BaseTool):
 
     Attributes:
         workdir: The absolute directory to load files from and save files to.
-        load_file_encoding: The encoding to use when loading files from disk.
+        loader: The loader to use when loading files in load_files_from_disk.
         save_file_encoding: The encoding to use when saving files to disk.
     """
     workdir: str = field(default=os.getcwd(), kw_only=True)
-    load_file_encoding: Optional[str] = field(default=None, kw_only=True)
+    loader: BaseLoader = field(default=Factory(lambda: FileLoader()), kw_only=True)
     save_file_encoding: Optional[str] = field(default=None, kw_only=True)
 
     @workdir.validator
@@ -42,11 +42,10 @@ class FileManager(BaseTool):
         list_artifact = ListArtifact()
 
         for path in params["values"]["paths"]:
+            full_path = os.path.join(self.workdir, path)
+
             list_artifact.value.append(
-                FileLoader(workdir=self.workdir).load(
-                    Path(path),
-                    self.load_file_encoding
-                )
+                self.loader.load(full_path)
             )
 
         return list_artifact

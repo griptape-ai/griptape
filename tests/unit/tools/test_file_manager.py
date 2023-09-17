@@ -6,6 +6,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
+from griptape.loaders import FileLoader
 from griptape.memory.tool import TextToolMemory
 from griptape.tools import FileManager
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -36,8 +37,8 @@ class TestFileManager:
         
     def test_load_files_from_disk_with_encoding(self):
         result = FileManager(
-            load_file_encoding='utf-8',
-            workdir=os.path.abspath(os.path.dirname(__file__))
+            workdir=os.path.abspath(os.path.dirname(__file__)),
+            loader=FileLoader(encoding="utf-8")
         ).load_files_from_disk({"values": {"paths": ["../../resources/test.txt"]}})
 
         assert isinstance(result, ListArtifact)
@@ -46,8 +47,8 @@ class TestFileManager:
 
     def test_load_files_from_disk_with_encoding_failure(self):
         result = FileManager(
-            load_file_encoding='utf-8',
-            workdir=os.path.abspath(os.path.dirname(__file__))
+            workdir=os.path.abspath(os.path.dirname(__file__)),
+            loader=FileLoader(encoding="utf-8")
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result.value[0], ErrorArtifact)
@@ -178,7 +179,7 @@ class TestFileManager:
 
             result = FileManager(
                 workdir=temp_dir,
-                load_file_encoding='ascii'
+                loader=FileLoader(encoding="ascii")
             ).load_files_from_disk(
                 {
                     "values":
