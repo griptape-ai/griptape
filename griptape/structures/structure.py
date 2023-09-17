@@ -7,11 +7,14 @@ from typing import Optional, Union, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
+from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset
 from griptape.events import BaseEvent
 from griptape.tokenizers import TiktokenTokenizer
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
+from griptape.drivers import LocalVectorStoreDriver
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -28,6 +31,10 @@ class Structure(ABC):
         )),
         kw_only=True
     )
+    embedding_driver: BaseEmbeddingDriver = field(
+        default=Factory(lambda: OpenAiEmbeddingDriver()),
+        kw_only=True
+    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
@@ -35,7 +42,14 @@ class Structure(ABC):
     event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(
-        default=Factory(lambda: TextToolMemory()),
+        default=Factory(lambda self: TextToolMemory(
+            query_engine=VectorQueryEngine(
+                vector_store_driver=LocalVectorStoreDriver(
+                    embedding_driver=self.embedding_driver
+                )
+            ),
+            summary_engine=PromptSummaryEngine()
+        ), takes_self=True),
         kw_only=True
     )
     _execution_args: tuple = ()

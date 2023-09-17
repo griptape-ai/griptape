@@ -1,6 +1,7 @@
 import json
 from .paths import abs_path
 from .hash import str_to_hash
+from .hash import dataframe_to_hash
 from .j2 import J2
 from .conversation import Conversation
 from .manifest_validator import ManifestValidator
@@ -26,6 +27,7 @@ __all__ = [
     "J2",
     "Chat",
     "str_to_hash",
+    "dataframe_to_hash",
     "execute_futures_dict",
     "TokenCounter",
     "PromptStack",

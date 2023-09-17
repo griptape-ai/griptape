@@ -7,14 +7,23 @@ from griptape.drivers import BaseVectorStoreDriver
 
 @define
 class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
+    """ A Vector Store Driver for MongoDb Atlas.
+
+    Attributes:
+        connection_string: The connection string for the MongoDb Atlas cluster.
+        database_name: The name of the database to use.
+        collection_name: The name of the collection to use.
+        client: An optional MongoDb client to use. Defaults to a new client using the connection string.
+    """
     connection_string: str = field(kw_only=True)
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
-    client: MongoClient = field(
+    client: Optional[MongoClient] = field(
         default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True)
     )
 
     def get_collection(self) -> Collection:
+        """Returns the MongoDB Collection instance for the specified database and collection name."""
         return self.client[self.database_name][self.collection_name]
 
     def upsert_vector(
@@ -25,6 +34,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             meta: Optional[dict] = None,
             **kwargs
     ) -> str:
+        """Inserts or updates a vector in the collection. 
+
+        If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
+        """
         collection = self.get_collection()
 
         if vector_id is None:
@@ -51,6 +64,11 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entry(
             self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
+        """Loads a document entry from the MongoDB collection based on the vector ID. 
+
+        Returns:
+            The loaded Entry if found; otherwise, None is returned.
+        """
         collection = self.get_collection()
         doc = collection.find_one({"_id": vector_id})
         if doc is None:
@@ -65,6 +83,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(
             self, namespace: Optional[str] = None
     ) -> list[BaseVectorStoreDriver.Entry]:
+        """Loads all document entries from the MongoDB collection. 
+
+        Entries can optionally be filtered by namespace.
+        """
         collection = self.get_collection()
         if namespace is None:
             cursor = collection.find()
@@ -89,6 +111,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             index: Optional[str] = None,
             **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
+        """Queries the MongoDB collection for documents that match the provided query string. 
+
+        Results can be customized based on parameters like count, namespace, inclusion of vectors, offset, and index.
+        """
         collection = self.get_collection()
 
         # Using the embedding driver to convert the query string into a vector

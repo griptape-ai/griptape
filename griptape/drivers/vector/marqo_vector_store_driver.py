@@ -8,33 +8,23 @@ import logging
 
 @define
 class MarqoVectorStoreDriver(BaseVectorStoreDriver):
+    """ A Vector Store Driver for Marqo.
+
+    Attributes:
+        api_key: The API key for the Marqo API.
+        url: The URL to the Marqo API.
+        mq: An optional Marqo client. Defaults to a new client with the given URL and API key.
+        index: The name of the index to use.
+    """
     api_key: str = field(kw_only=True)
     url: str = field(kw_only=True)
-    mq: marqo.Client = field(
+    mq: Optional[marqo.Client] = field(
         default=Factory(
             lambda self: marqo.Client(self.url, api_key=self.api_key), takes_self=True
         ),
         kw_only=True,
     )
     index: str = field(kw_only=True)
-
-    def __attrs_post_init__(self) -> None:
-        """Initialize the Marqo client with the given API key and URL."""
-        self.set_index(self.index)
-
-    def set_index(self, index):
-        """Set the index for the Marqo client.
-
-        Args:
-            index (str): The index to set for the Marqo client.
-        """
-        indexes = self.get_indexes()
-
-        if index not in indexes:
-            self.create_index(index)
-            logging.info(f"Created index '{index}'")
-
-        self.index = index
 
     def upsert_text(
             self,
@@ -47,10 +37,10 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Upsert a text document into the Marqo index.
 
         Args:
-            string (str): The string to be indexed.
-            vector_id (Optional[str], optional): The ID for the vector. If None, Marqo will generate an ID.
-            namespace (Optional[str], optional): An optional namespace for the document.
-            meta (Optional[dict], optional): An optional dictionary of metadata for the document.
+            string: The string to be indexed.
+            vector_id: The ID for the vector. If None, Marqo will generate an ID.
+            namespace: An optional namespace for the document.
+            meta: An optional dictionary of metadata for the document.
 
         Returns:
             str: The ID of the document that was added.
@@ -80,9 +70,9 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Upsert a text artifact into the Marqo index.
 
         Args:
-            artifact (TextArtifact): The text artifact to be indexed.
-            namespace (Optional[str], optional): An optional namespace for the artifact.
-            meta (Optional[dict], optional): An optional dictionary of metadata for the artifact.
+            artifact: The text artifact to be indexed.
+            namespace: An optional namespace for the artifact.
+            meta: An optional dictionary of metadata for the artifact.
 
         Returns:
             str: The ID of the artifact that was added.
@@ -104,11 +94,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Load a document entry from the Marqo index.
 
         Args:
-            vector_id (str): The ID of the vector to load.
-            namespace (Optional[str], optional): The namespace of the vector to load.
+            vector_id: The ID of the vector to load.
+            namespace: The namespace of the vector to load.
 
         Returns:
-            Optional[BaseVectorStoreDriver.Entry]: The loaded Entry if found, otherwise None.
+            The loaded Entry if found, otherwise None.
         """
         result = self.mq.index(self.index).get_document(document_id=vector_id, expose_facets=True)
 
@@ -125,10 +115,10 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Load all document entries from the Marqo index.
 
         Args:
-            namespace (Optional[str], optional): The namespace to filter entries by.
+            namespace: The namespace to filter entries by.
 
         Returns:
-            list[BaseVectorStoreDriver.Entry]: The list of loaded Entries.
+            The list of loaded Entries.
         """
 
         filter_string = f"namespace:{namespace}" if namespace else None
@@ -167,14 +157,14 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Query the Marqo index for documents.
 
         Args:
-            query (str): The query string.
-            count (Optional[int], optional): The maximum number of results to return.
-            namespace (Optional[str], optional): The namespace to filter results by.
-            include_vectors (bool, optional): Whether to include vector data in the results.
-            include_metadata (bool, optional): Whether to include metadata in the results.
+            query: The query string.
+            count: The maximum number of results to return.
+            namespace: The namespace to filter results by.
+            include_vectors: Whether to include vector data in the results.
+            include_metadata: Whether to include metadata in the results.
 
         Returns:
-            list[BaseVectorStoreDriver.QueryResult]: The list of query results.
+            The list of query results.
         """
 
         params = {
@@ -201,7 +191,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Create a new index in the Marqo client.
 
         Args:
-            name (str): The name of the new index.
+            name: The name of the new index.
         """
 
         return self.mq.create_index(name, settings_dict=kwargs)
@@ -210,7 +200,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Delete an index in the Marqo client.
 
         Args:
-            name (str): The name of the index to delete.
+            name: The name of the index to delete.
         """
 
         return self.mq.delete_index(name)
@@ -219,7 +209,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Get a list of all indexes in the Marqo client.
 
         Returns:
-            list: The list of all indexes.
+            The list of all indexes.
         """
 
         # Change this once API issue is fixed (entries in results are no longer objects but dicts)
@@ -236,16 +226,16 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """Upsert a vector into the Marqo index.
 
         Args:
-            vector (list[float]): The vector to be indexed.
-            vector_id (Optional[str], optional): The ID for the vector. If None, Marqo will generate an ID.
-            namespace (Optional[str], optional): An optional namespace for the vector.
-            meta (Optional[dict], optional): An optional dictionary of metadata for the vector.
+            vector: The vector to be indexed.
+            vector_id: The ID for the vector. If None, Marqo will generate an ID.
+            namespace: An optional namespace for the vector.
+            meta: An optional dictionary of metadata for the vector.
 
         Raises:
             Exception: This function is not yet implemented.
 
         Returns:
-            str: The ID of the vector that was added.
+            The ID of the vector that was added.
         """
 
         raise Exception("not implemented")

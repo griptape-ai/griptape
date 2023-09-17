@@ -5,7 +5,9 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.structures import Workflow
+from griptape.engines import VectorQueryEngine
 from tests.mocks.mock_tool.tool import MockTool
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestWorkflow:
@@ -18,6 +20,24 @@ class TestWorkflow:
         assert workflow.rulesets[0].name is "TestRuleset"
         assert workflow.rulesets[0].rules[0].value is "test"
 
+    def test_rulesets(self):
+        workflow = Workflow(
+            rulesets=[Ruleset("Foo", [Rule("foo test")])]
+        )
+
+        workflow.add_tasks(
+            PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])]),
+            PromptTask(rulesets=[Ruleset("Baz", [Rule("baz test")])])
+        )
+
+        assert len(workflow.tasks[0].all_rulesets) == 2
+        assert workflow.tasks[0].all_rulesets[0].name == "Foo"
+        assert workflow.tasks[0].all_rulesets[1].name == "Bar"
+
+        assert len(workflow.tasks[1].all_rulesets) == 2
+        assert workflow.tasks[1].all_rulesets[0].name == "Foo"
+        assert workflow.tasks[1].all_rulesets[1].name == "Baz"
+
     def test_with_default_tool_memory(self):
         workflow = Workflow()
 
@@ -27,6 +47,18 @@ class TestWorkflow:
         assert workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
         assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
         assert workflow.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
+
+    def test_embedding_driver(self):
+        embedding_driver = MockEmbeddingDriver()
+        workflow = Workflow(
+            embedding_driver=embedding_driver
+        )
+
+        workflow.add_task(ToolkitTask(tools=[MockTool()]))
+
+        assert isinstance(workflow.tasks[0].tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver, MockEmbeddingDriver)
+        assert workflow.tasks[0].tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert workflow.tasks[0].tools[0].output_memory["test"][0].query_engine.vector_store_driver.embedding_driver == embedding_driver
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
         workflow = Workflow()

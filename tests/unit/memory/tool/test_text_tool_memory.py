@@ -1,7 +1,7 @@
 import pytest
 from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -36,7 +36,8 @@ class TestTextToolMemory:
             name="MyMemory",
             query_engine=VectorQueryEngine(
                 vector_store_driver=vector_store_driver
-            )
+            ),
+            summary_engine=PromptSummaryEngine()
         )
 
     def test_init(self, memory):

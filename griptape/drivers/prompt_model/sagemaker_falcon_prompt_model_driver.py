@@ -8,16 +8,10 @@ from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
 
 @define
 class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
-    DEFAULT_MAX_TOKENS = 2048
-
     tokenizer: BaseTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=AutoTokenizer.from_pretrained(
-                    "tiiuae/falcon-40b",
-                    model_max_length=self.prompt_driver.max_tokens
-                    if self.prompt_driver.max_tokens else self.DEFAULT_MAX_TOKENS
-                )
+                tokenizer=AutoTokenizer.from_pretrained("tiiuae/falcon-40b", model_max_length=self.max_tokens)
             ),
             takes_self=True
         ),
