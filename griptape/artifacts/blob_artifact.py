@@ -1,6 +1,5 @@
 from __future__ import annotations
 import os.path
-from pathlib import Path
 from typing import Optional
 from attr import field, define
 from griptape.artifacts import BaseArtifact
@@ -13,11 +12,6 @@ class BlobArtifact(BaseArtifact):
 
     def __add__(self, other: BlobArtifact) -> BlobArtifact:
         return BlobArtifact(self.value + other.value, name=self.name)
-
-    @dir_name.validator
-    def validate_dir_name(self, _, dir_name: Optional[str]) -> None:
-        if dir_name and Path(dir_name).is_absolute():
-            raise ValueError("dir_name has to be relative")
 
     @property
     def full_path(self) -> str:
