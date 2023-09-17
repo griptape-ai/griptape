@@ -95,3 +95,12 @@ class TestActivityMixin:
         tool.disable_activities()
 
         assert len(tool.activities()) == 0
+
+    def test_enable_activities(self, tool):
+        tool.disable_activities()
+
+        assert len(tool.activities()) == 0
+
+        tool.enable_activities()
+
+        assert len(tool.activities()) > 0

@@ -32,6 +32,10 @@ class ActivityMixin:
         for activity_name in denylist:
             self._validate_tool_activity(activity_name)
 
+    def enable_activities(self) -> None:
+        self.allowlist = None
+        self.denylist = None
+
     def disable_activities(self) -> None:
         self.allowlist = []
         self.denylist = None
