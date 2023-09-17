@@ -33,12 +33,11 @@ class TestFileManager:
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result, ListArtifact)
-        assert len(result.value) == 1
+        assert len(result.value) == 4
         
     def test_load_files_from_disk_with_encoding(self):
         result = FileManager(
             workdir=os.path.abspath(os.path.dirname(__file__)),
-            loader=FileLoader(encoding="utf-8")
         ).load_files_from_disk({"values": {"paths": ["../../resources/test.txt"]}})
 
         assert isinstance(result, ListArtifact)
@@ -48,7 +47,8 @@ class TestFileManager:
     def test_load_files_from_disk_with_encoding_failure(self):
         result = FileManager(
             workdir=os.path.abspath(os.path.dirname(__file__)),
-            loader=FileLoader(encoding="utf-8")
+            default_loader=FileLoader(encoding="utf-8"),
+            loaders={}
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result.value[0], ErrorArtifact)
@@ -179,7 +179,8 @@ class TestFileManager:
 
             result = FileManager(
                 workdir=temp_dir,
-                loader=FileLoader(encoding="ascii")
+                default_loader=FileLoader(encoding="ascii"),
+                loaders={}
             ).load_files_from_disk(
                 {
                     "values":

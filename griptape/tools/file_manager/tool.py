@@ -1,11 +1,13 @@
 from __future__ import annotations
+
+import logging
 import os
 from pathlib import Path
 from attr import define, field, Factory
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader, BaseLoader
+from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader
 from schema import Schema, Literal
 from typing import Optional
 
@@ -17,11 +19,22 @@ class FileManager(BaseTool):
 
     Attributes:
         workdir: The absolute directory to load files from and save files to.
-        loader: The loader to use when loading files in load_files_from_disk.
+        loaders: Dictionary of file extensions and matching loaders to use when loading files in load_files_from_disk.
+        default_loader: The loader to use when loading files in load_files_from_disk without any matching loader in `loaders`.
         save_file_encoding: The encoding to use when saving files to disk.
     """
     workdir: str = field(default=os.getcwd(), kw_only=True)
-    loader: BaseLoader = field(default=Factory(lambda: FileLoader()), kw_only=True)
+    default_loader: BaseLoader = field(default=Factory(lambda: FileLoader()))
+    loaders: dict[str, BaseLoader] = field(
+        default=Factory(
+            lambda: {
+                "pdf": PdfLoader(),
+                "csv": CsvLoader(),
+                "txt": TextLoader()
+            }
+        ),
+        kw_only=True
+    )
     save_file_encoding: Optional[str] = field(default=None, kw_only=True)
 
     @workdir.validator
@@ -42,11 +55,17 @@ class FileManager(BaseTool):
         list_artifact = ListArtifact()
 
         for path in params["values"]["paths"]:
-            full_path = os.path.join(self.workdir, path)
+            full_path = Path(os.path.join(self.workdir, path))
+            extension = path.split(".")[-1]
+            loader = self.loaders.get(extension) or self.default_loader
+            result = loader.load(full_path)
 
-            list_artifact.value.extend(
-                self.loader.load(full_path)
-            )
+            if isinstance(result, list):
+                list_artifact.value.extend(result)
+            elif isinstance(result, BaseArtifact):
+                list_artifact.value.append(result)
+            else:
+                logging.warning(f"Unknown loader return type for file {path}")
 
         return list_artifact
 
