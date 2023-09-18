@@ -38,7 +38,7 @@ class AmazonBedrockEmbeddingDriver(BaseEmbeddingDriver):
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),
-            modelId=self.DEFAULT_MODEL,
+            modelId=self.model,
             accept=self.accept,
             contentType=self.content_type,
         )
