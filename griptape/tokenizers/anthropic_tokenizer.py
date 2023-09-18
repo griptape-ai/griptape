@@ -17,7 +17,7 @@ class AnthropicTokenizer(BaseTokenizer):
 
     @property
     def max_tokens(self) -> int:
-        return self.MODEL_TO_MAX_TOKENS[self.model]
+        return self.MODEL_TO_MAX_TOKENS.get(self.model, self.MODEL_TO_MAX_TOKENS[self.DEFAULT_MODEL])
 
     def encode(self, text: str) -> list[int]:
         return anthropic._client.sync_get_tokenizer().encode(text).ids
