@@ -158,6 +158,3 @@ class GoogleDocsClient(BaseGoogleClient):
 
         return ListArtifact(downloaded_files)
 
-
-
-
