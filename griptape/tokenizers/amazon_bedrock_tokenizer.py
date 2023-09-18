@@ -33,7 +33,7 @@ class AmazonBedrockTokenizer(BaseTokenizer):
     def max_tokens(self) -> int:
         return self.DEFAULT_MAX_TOKENS
 
-    def token_count(self, text: str) -> list[int]:
+    def token_count(self, text: str) -> int:
         text = text.replace(os.linesep, " ")
 
         payload = {"inputText": text}
