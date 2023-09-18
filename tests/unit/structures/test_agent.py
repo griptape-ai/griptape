@@ -37,6 +37,35 @@ class TestAgent:
         assert len(agent.task.all_rulesets) == 2
         assert agent.task.all_rulesets[0].name == "Foo"
         assert agent.task.all_rulesets[1].name == "Bar"
+        
+    def test_rules(self):
+        agent = Agent(
+            rules=[Rule("foo test")]
+        )
+
+        agent.add_task(
+            PromptTask(rules=[Rule("bar test")])
+        )
+
+        assert len(agent.task.all_rulesets) == 2
+        assert agent.task.all_rulesets[0].name == "Default Ruleset"
+        assert agent.task.all_rulesets[1].name == "Additional Ruleset"
+        
+    def test_rules_and_rulesets(self):
+        with pytest.raises(ValueError):
+            Agent(
+                rules=[Rule("foo test")],
+                rulesets=[Ruleset("Bar", [Rule("bar test")])]
+            )
+
+        with pytest.raises(ValueError):
+            agent = Agent()
+            agent.add_task(
+                PromptTask(
+                    rules=[Rule("foo test")],
+                    rulesets=[Ruleset("Bar", [Rule("bar test")])]
+                )
+            )
 
     def test_with_default_tool_memory(self):
         agent = Agent(
