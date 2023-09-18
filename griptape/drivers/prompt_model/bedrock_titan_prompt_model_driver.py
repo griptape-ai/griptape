@@ -8,9 +8,11 @@ from griptape.tokenizers import AmazonBedrockTokenizer
 
 @define
 class BedrockTitanPromptModelDriver(BasePromptModelDriver):
+    model: str = field(default="amazon.titan-tg1-large", kw_only=True)
     tokenizer: AmazonBedrockTokenizer = field(
         default=Factory(
-            lambda: AmazonBedrockTokenizer(model="amazon.titan-tg1-large"),
+            lambda self: AmazonBedrockTokenizer(model=self.model),
+            takes_self=True
         ),
         kw_only=True,
     )
