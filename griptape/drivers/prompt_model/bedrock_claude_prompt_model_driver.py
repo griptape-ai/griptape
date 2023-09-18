@@ -35,7 +35,6 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)
 
         return {
-            "anthropic_version": "bedrock-2023-05-31",
             "max_tokens_to_sample": self.prompt_driver.max_output_tokens(prompt),
             "stop_sequences": self.tokenizer.stop_sequences,
             "temperature": self.prompt_driver.temperature,
