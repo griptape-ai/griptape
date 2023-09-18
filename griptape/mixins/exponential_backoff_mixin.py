@@ -14,7 +14,7 @@ class ExponentialBackoffMixin(ABC):
         default=lambda s: logging.warning(s),
         kw_only=True
     )
-    ignored_exception_types: Tuple[Type[Exception], ...] = field(default=(), kw_only=True)
+    ignored_exception_types: Tuple[Type[Exception], ...] = field(factory=tuple, kw_only=True)
 
     def retrying(self) -> Retrying:
         return Retrying(
