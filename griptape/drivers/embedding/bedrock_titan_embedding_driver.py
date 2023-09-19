@@ -1,5 +1,4 @@
 import json
-import os
 import boto3
 from typing import Any
 from attr import define, field, Factory
@@ -31,7 +30,7 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     )
 
     def try_embed_string(self, string: str) -> list[float]:
-        text = string.replace(os.linesep, " ")
+        text = string.replace('\n', " ")
 
         payload = { "inputText": text }
 
