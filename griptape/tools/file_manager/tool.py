@@ -1,17 +1,41 @@
 from __future__ import annotations
+
+import logging
 import os
 from pathlib import Path
-from attr import define, field
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
+from attr import define, field, Factory
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader
+from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader
 from schema import Schema, Literal
+from typing import Optional
 
 
 @define
 class FileManager(BaseTool):
+    """
+    FileManager is a tool that can be used to load and save files.
+
+    Attributes:
+        workdir: The absolute directory to load files from and save files to.
+        loaders: Dictionary of file extensions and matching loaders to use when loading files in load_files_from_disk.
+        default_loader: The loader to use when loading files in load_files_from_disk without any matching loader in `loaders`.
+        save_file_encoding: The encoding to use when saving files to disk.
+    """
     workdir: str = field(default=os.getcwd(), kw_only=True)
+    default_loader: BaseLoader = field(default=Factory(lambda: FileLoader()))
+    loaders: dict[str, BaseLoader] = field(
+        default=Factory(
+            lambda: {
+                "pdf": PdfLoader(),
+                "csv": CsvLoader(),
+                "txt": TextLoader()
+            }
+        ),
+        kw_only=True
+    )
+    save_file_encoding: Optional[str] = field(default=None, kw_only=True)
 
     @workdir.validator
     def validate_workdir(self, _, workdir: str) -> None:
@@ -31,14 +55,17 @@ class FileManager(BaseTool):
         list_artifact = ListArtifact()
 
         for path in params["values"]["paths"]:
-            try:
-                list_artifact.value.append(
-                    FileLoader(workdir=self.workdir).load(Path(path))
-                )
-            except FileNotFoundError:
-                return ErrorArtifact(f"file in path `{path}` not found")
-            except Exception as e:
-                return ErrorArtifact(f"error loading file: {e}")
+            full_path = Path(os.path.join(self.workdir, path))
+            extension = path.split(".")[-1]
+            loader = self.loaders.get(extension) or self.default_loader
+            result = loader.load(full_path)
+
+            if isinstance(result, list):
+                list_artifact.value.extend(result)
+            elif isinstance(result, BaseArtifact):
+                list_artifact.value.append(result)
+            else:
+                logging.warning(f"Unknown loader return type for file {path}")
 
         return list_artifact
 
@@ -122,4 +149,10 @@ class FileManager(BaseTool):
         os.makedirs(os.path.dirname(path), exist_ok=True)
 
         with open(path, "wb") as file:
-            file.write(value.encode() if isinstance(value, str) else value)
+            if isinstance(value, str):
+                if self.save_file_encoding:
+                    file.write(value.encode(self.save_file_encoding))
+                else:
+                    file.write(value.encode())
+            else:
+                file.write(value)
