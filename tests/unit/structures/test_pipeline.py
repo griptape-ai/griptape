@@ -3,7 +3,7 @@ import pytest
 from griptape.artifacts import TextArtifact
 from griptape.memory.tool import TextToolMemory
 from griptape.rules import Rule, Ruleset
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -249,7 +249,7 @@ class TestPipeline:
     def test_text_artifact_token_count(self):
         text = "foobar"
 
-        assert TextArtifact(text).token_count(TiktokenTokenizer()) == TiktokenTokenizer().token_count(text)
+        assert TextArtifact(text).token_count(OpenAiTokenizer()) == OpenAiTokenizer().token_count(text)
 
     def test_run(self):
         task = PromptTask("test")

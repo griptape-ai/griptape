@@ -1,7 +1,7 @@
 import boto3
 from griptape.drivers import AmazonSageMakerPromptDriver
 from griptape.drivers import SageMakerLlamaPromptModelDriver
-from griptape.tokenizers import TiktokenTokenizer, HuggingFaceTokenizer
+from griptape.tokenizers import OpenAiTokenizer, HuggingFaceTokenizer
 
 
 class TestAmazonSageMakerPromptDriver:
@@ -22,6 +22,6 @@ class TestAmazonSageMakerPromptDriver:
         assert isinstance(AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            tokenizer=TiktokenTokenizer(),
+            tokenizer=OpenAiTokenizer(),
             prompt_model_driver=SageMakerLlamaPromptModelDriver()
-        ).tokenizer, TiktokenTokenizer)
+        ).tokenizer, OpenAiTokenizer)
