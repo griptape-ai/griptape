@@ -3,15 +3,15 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptModelDriver
-from griptape.tokenizers import AmazonBedrockTokenizer
+from griptape.tokenizers import BedrockTitanTokenizer
 
 
 @define
 class BedrockTitanPromptModelDriver(BasePromptModelDriver):
     model: str = field(default="amazon.titan-tg1-large", kw_only=True)
-    tokenizer: AmazonBedrockTokenizer = field(
+    tokenizer: BedrockTitanTokenizer = field(
         default=Factory(
-            lambda self: AmazonBedrockTokenizer(model=self.model),
+            lambda self: BedrockTitanTokenizer(model=self.model),
             takes_self=True
         ),
         kw_only=True,

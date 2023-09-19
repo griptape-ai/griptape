@@ -3,15 +3,15 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptModelDriver
-from griptape.tokenizers import AnthropicTokenizer
+from griptape.tokenizers import BedrockClaudeTokenizer
 
 
 @define
 class BedrockClaudePromptModelDriver(BasePromptModelDriver):
     model: str = field(default="anthropic.claude-v2", kw_only=True)
-    tokenizer: AnthropicTokenizer = field(
+    tokenizer: BedrockClaudeTokenizer = field(
         default=Factory(
-            lambda self: AnthropicTokenizer(model=self.model),
+            lambda self: BedrockClaudeTokenizer(model=self.model),
             takes_self=True
         ),
         kw_only=True,

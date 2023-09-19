@@ -3,7 +3,7 @@ import pytest
 import boto3
 from griptape.drivers import AmazonBedrockPromptDriver
 from griptape.drivers import BedrockClaudePromptModelDriver, BedrockTitanPromptModelDriver
-from griptape.tokenizers import AnthropicTokenizer, AmazonBedrockTokenizer
+from griptape.tokenizers import AnthropicTokenizer, BedrockTitanTokenizer
 
 
 class TestAmazonBedrockPromptDriver:
@@ -36,6 +36,6 @@ class TestAmazonBedrockPromptDriver:
         assert isinstance(AmazonBedrockPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            tokenizer=AmazonBedrockTokenizer(model="amazon.titan-tg1-large"),
+            tokenizer=BedrockTitanTokenizer(model="amazon.titan-tg1-large"),
             prompt_model_driver=BedrockTitanPromptModelDriver()
-        ).tokenizer, AmazonBedrockTokenizer)
+        ).tokenizer, BedrockTitanTokenizer)

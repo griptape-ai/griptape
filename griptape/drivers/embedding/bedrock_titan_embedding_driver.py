@@ -4,18 +4,18 @@ import boto3
 from typing import Any
 from attr import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
-from griptape.tokenizers import AmazonBedrockTokenizer
+from griptape.tokenizers import BedrockTitanTokenizer
 
 
 @define
-class AmazonBedrockEmbeddingDriver(BaseEmbeddingDriver):
+class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "amazon.titan-e1t-medium"
 
     dimensions: int = field(default=1536, kw_only=True)
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
-    tokenizer: AmazonBedrockTokenizer = field(
+    tokenizer: BedrockTitanTokenizer = field(
         default=Factory(
-            lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True
+            lambda self: BedrockTitanTokenizer(model=self.model), takes_self=True
         ),
         kw_only=True,
     )

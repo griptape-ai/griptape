@@ -21,7 +21,7 @@ from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryD
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
-from .embedding.amazon_bedrock_embedding_driver import AmazonBedrockEmbeddingDriver
+from .embedding.bedrock_titan_embedding_driver import BedrockTitanEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -69,7 +69,7 @@ __all__ = [
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
-    "AmazonBedrockEmbeddingDriver",
+    "BedrockTitanEmbeddingDriver",
 
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",

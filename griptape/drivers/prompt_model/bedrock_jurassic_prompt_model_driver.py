@@ -3,14 +3,14 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptModelDriver
-from griptape.tokenizers import AmazonBedrockTokenizer
+from griptape.tokenizers import BedrockJurassicTokenizer
 
 
 @define
 class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
     model: str = field(default="ai21.j2-ultra", kw_only=True)
-    tokenizer: AmazonBedrockTokenizer = field(
-        default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
+    tokenizer: BedrockJurassicTokenizer = field(
+        default=Factory(lambda self: BedrockJurassicTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
     top_p: float = field(default=0.9, kw_only=True)
