@@ -36,6 +36,6 @@ class TestAmazonBedrockPromptDriver:
         assert isinstance(AmazonBedrockPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            tokenizer=AmazonBedrockTokenizer(),
+            tokenizer=AmazonBedrockTokenizer(model="amazon.titan-tg1-large"),
             prompt_model_driver=BedrockTitanPromptModelDriver()
         ).tokenizer, AmazonBedrockTokenizer)
