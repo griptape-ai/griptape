@@ -1,4 +1,4 @@
-from attr import define, field
+from attr import define, field, Factory
 from griptape.tokenizers import AnthropicTokenizer
 
 
@@ -7,6 +7,6 @@ class BedrockClaudeTokenizer(AnthropicTokenizer):
     DEFAULT_MODEL = 'anthropic.claude-v2'
     DEFAULT_MAX_TOKENS = 8192
 
-    stop_sequences: list[str] = field(factory=list, kw_only=True)
+    stop_sequences: list[str] = field(default=Factory(lambda: ["\n\nHuman:"]), kw_only=True)
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
