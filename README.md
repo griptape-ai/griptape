@@ -1,13 +1,19 @@
 # griptape
 
 [![PyPI Version](https://img.shields.io/pypi/v/griptape.svg)](https://pypi.python.org/pypi/griptape)
-[![Tests](https://github.com/griptape-ai/griptape/actions/workflows/tests.yml/badge.svg)](https://github.com/griptape-ai/griptape/actions/workflows/tests.yml)
+[![Tests](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml)
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io/)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
-**Griptape** offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity.
+**Griptape** is a modular Python framework for building AI-powered applications that connect securely to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
 
-For **predictability**, software structures like sequential pipelines and directed acyclic graphs (DAGs) are enforced. **Creativity**, on the other hand, is facilitated by safely prompting LLMs with Griptape Tools that connect to external APIs and data sources. Developers can move between these two dimensions according to their use case.
+**Build AI Apps**: Easily compose apps in Python with modular structures and ready-made tools. Use built-in drivers to connect to whichever LLMs and data stores you choose.
+
+**Control Data Access**: Connect securely to data sources with granular access controls, ensuring LLMs stay focused on the information that matters.
+
+**Scale With Your Workload**: Easily deploy and run apps in the cloud, where your data lives. Process data ahead of time or vectorize it on the fly.
+
+Using Griptape, you can securely integrate with your internal data stores and APIs. You get to control what data goes into the prompt, and what the LLM is allowed to do with it. 
 
 ## Documentation
 
@@ -17,6 +23,8 @@ Please refer to [Griptape Docs](https://docs.griptape.ai/) for:
 - Core concepts and design overviews.
 - Examples.
 - Contribution guidelines.
+
+Please check out [Griptape Trade School](https://learn.griptape.ai/) for free online courses.
 
 ## Quick Start
 
@@ -48,37 +56,7 @@ And here is the output:
 > Q: based on https://www.griptape.ai/, tell me what Griptape is  
 > A: Griptape is an opinionated Python framework that enables developers to fully harness the potential of LLMs while enforcing strict trust boundaries, schema validation, and activity-level permissions. It offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity. Griptape can be used to create conversational and autonomous agents.
 
-During the run, the Griptape agent loaded a webpage, stored its full content in the short-term memory, and finally queried it to answer the original question. The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the content never goes to memory instead of the main prompt.
-
-## Using Other LLMs
-
-By default, Griptape uses OpenAI's `gpt-4` to drive the core agent logic. Other framework components responsible for summarization, querying, and text extraction use `gpt-3.5-turbo`. All of those are customizable through _prompt drivers_. For example, if you don't have access to `gpt-4`, you can change the quick start snippet like this:
-
-```python
-from griptape.drivers import OpenAiChatPromptDriver
-from griptape.structures import Agent
-from griptape.tools import WebScraper
-
-agent = Agent(
-    prompt_driver=OpenAiChatPromptDriver(
-        model="gpt-3.5-turbo"
-    ),
-    tools=[WebScraper()]
-)
-
-agent.run(
-    "based on https://www.griptape.ai/, tell me what Griptape is"
-)
-```
-
-If you are running into `gpt-4` rate limiting issues, specify a custom number of `max_tokens` in the driver:
-
-```python
-OpenAiChatPromptDriver(
-    model="gpt-4",
-    max_tokens=200
-)
-```
+During the run, the Griptape agent loaded a webpage with a **tool**, stored its full content in the **short-term memory**, and finally queried it to answer the original question. The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content never goes back to the main prompt.
 
 [Check out our docs](https://docs.griptape.ai/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 

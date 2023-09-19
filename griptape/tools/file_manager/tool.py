@@ -1,15 +1,46 @@
 from __future__ import annotations
+
+import logging
 import os
-from attr import define, field
-from griptape.artifacts import ErrorArtifact, BlobArtifact, InfoArtifact, ListArtifact
+from pathlib import Path
+from attr import define, field, Factory
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader
 from schema import Schema, Literal
+from typing import Optional
 
 
 @define
 class FileManager(BaseTool):
-    dir: str = field(default=os.getcwd(), kw_only=True)
+    """
+    FileManager is a tool that can be used to load and save files.
+
+    Attributes:
+        workdir: The absolute directory to load files from and save files to.
+        loaders: Dictionary of file extensions and matching loaders to use when loading files in load_files_from_disk.
+        default_loader: The loader to use when loading files in load_files_from_disk without any matching loader in `loaders`.
+        save_file_encoding: The encoding to use when saving files to disk.
+    """
+    workdir: str = field(default=os.getcwd(), kw_only=True)
+    default_loader: BaseLoader = field(default=Factory(lambda: FileLoader()))
+    loaders: dict[str, BaseLoader] = field(
+        default=Factory(
+            lambda: {
+                "pdf": PdfLoader(),
+                "csv": CsvLoader(),
+                "txt": TextLoader()
+            }
+        ),
+        kw_only=True
+    )
+    save_file_encoding: Optional[str] = field(default=None, kw_only=True)
+
+    @workdir.validator
+    def validate_workdir(self, _, workdir: str) -> None:
+        if not Path(workdir).is_absolute():
+            raise ValueError("workdir has to be absolute absolute")
 
     @activity(config={
         "description": "Can be used to load files from disk",
@@ -24,23 +55,17 @@ class FileManager(BaseTool):
         list_artifact = ListArtifact()
 
         for path in params["values"]["paths"]:
-            file_name = os.path.basename(path)
-            dir_name = os.path.dirname(path)
-            full_path = os.path.join(self.dir, path)
+            full_path = Path(os.path.join(self.workdir, path))
+            extension = path.split(".")[-1]
+            loader = self.loaders.get(extension) or self.default_loader
+            result = loader.load(full_path)
 
-            try:
-                with open(full_path, "rb") as file:
-                    list_artifact.value.append(
-                        BlobArtifact(
-                            file.read(),
-                            name=file_name,
-                            dir=dir_name
-                        )
-                    )
-            except FileNotFoundError:
-                return ErrorArtifact(f"file {file_name} not found")
-            except Exception as e:
-                return ErrorArtifact(f"error loading file: {e}")
+            if isinstance(result, list):
+                list_artifact.value.extend(result)
+            elif isinstance(result, BaseArtifact):
+                list_artifact.value.append(result)
+            else:
+                logging.warning(f"Unknown loader return type for file {path}")
 
         return list_artifact
 
@@ -75,7 +100,7 @@ class FileManager(BaseTool):
             elif len(artifacts) == 1:
                 try:
                     self._save_to_disk(
-                        os.path.join(self.dir, dir_name, file_name),
+                        os.path.join(self.workdir, dir_name, file_name),
                         artifacts[0].value
                     )
 
@@ -86,7 +111,7 @@ class FileManager(BaseTool):
                 try:
                     for a in artifacts:
                         self._save_to_disk(
-                            os.path.join(self.dir, dir_name, f"{a.name}-{file_name}"),
+                            os.path.join(self.workdir, dir_name, f"{a.name}-{file_name}"),
                             a.value
                         )
 
@@ -111,7 +136,7 @@ class FileManager(BaseTool):
     def save_content_to_file(self, params: dict) -> ErrorArtifact | InfoArtifact:
         content = params["values"]["content"]
         new_path = params["values"]["path"]
-        full_path = os.path.join(self.dir, new_path)
+        full_path = os.path.join(self.workdir, new_path)
 
         try:
             self._save_to_disk(full_path, content)
@@ -124,4 +149,10 @@ class FileManager(BaseTool):
         os.makedirs(os.path.dirname(path), exist_ok=True)
 
         with open(path, "wb") as file:
-            file.write(value.encode() if isinstance(value, str) else value)
+            if isinstance(value, str):
+                if self.save_file_encoding:
+                    file.write(value.encode(self.save_file_encoding))
+                else:
+                    file.write(value.encode())
+            else:
+                file.write(value)

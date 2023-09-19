@@ -8,6 +8,13 @@ from opensearchpy import OpenSearch, RequestsHttpConnection
 
 @define
 class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
+    """A Vector Store Driver for Amazon OpenSearch.
+
+    Attributes:
+        session: The boto3 session to use.
+        http_auth: The HTTP authentication credentials to use. Defaults to using credentials in the boto3 session.
+        client: An optional OpenSearch client to use. Defaults to a new client using the host, port, http_auth, use_ssl, and verify_certs attributes.
+    """
     session: boto3.session.Session = field(kw_only=True)
 
     http_auth: Optional[Union[str, Tuple[str, str]]] = field(
@@ -21,7 +28,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
             takes_self=True)
     )
 
-    client: OpenSearch = field(
+    client: Optional[OpenSearch] = field(
         default=Factory(
             lambda self: OpenSearch(
                 hosts=[{'host': self.host, 'port': self.port}],
