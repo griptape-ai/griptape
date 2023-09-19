@@ -8,5 +8,3 @@ class BedrockClaudeTokenizer(AnthropicTokenizer):
     DEFAULT_MAX_TOKENS = 8192
 
     stop_sequences: list[str] = field(default=Factory(lambda: ["\n\nHuman:"]), kw_only=True)
-
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
