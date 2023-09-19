@@ -2,6 +2,7 @@ import os
 import json
 import boto3
 from attr import define, field, Factory
+from typing import Any
 from griptape.tokenizers import BaseTokenizer
 
 
@@ -19,7 +20,7 @@ class AmazonBedrockTokenizer(BaseTokenizer):
         default=Factory(lambda: boto3.Session()), kw_only=True
     )
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
-    bedrock_client: boto3.client = field(
+    bedrock_client: Any = field(
         default=Factory(
             lambda self: self.session.client("bedrock"),
             takes_self=True,

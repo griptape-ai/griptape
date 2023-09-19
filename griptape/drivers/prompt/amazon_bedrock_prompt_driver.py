@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 import boto3
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 @define
 class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
-    bedrock_client: boto3.client = field(
+    bedrock_client: Any = field(
         default=Factory(
             lambda self: self.session.client("bedrock"),
             takes_self=True,

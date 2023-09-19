@@ -1,6 +1,7 @@
 import json
 import os
 import boto3
+from typing import Any
 from attr import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import AmazonBedrockTokenizer
@@ -21,7 +22,7 @@ class AmazonBedrockEmbeddingDriver(BaseEmbeddingDriver):
     session: boto3.Session = field(
         default=Factory(lambda: boto3.Session()), kw_only=True
     )
-    bedrock_client: boto3.client = field(
+    bedrock_client: Any = field(
         default=Factory(
             lambda self: self.session.client("bedrock"),
             takes_self=True,
