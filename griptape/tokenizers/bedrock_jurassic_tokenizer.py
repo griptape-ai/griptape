@@ -14,7 +14,6 @@ class BedrockJurassicTokenizer(BaseTokenizer):
         default=Factory(lambda: boto3.Session()), kw_only=True
     )
     stop_sequences: list[str] = field(factory=list, kw_only=True)
-
     model: str = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
