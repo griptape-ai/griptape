@@ -20,15 +20,16 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
 
         for i in prompt_stack.inputs:
             if i.is_user():
-                prompt_lines.append(f"User: {i.content}")
+                prompt_lines.append(f"\n\nUser: {i.content}")
             elif i.is_assistant():
-                prompt_lines.append(f"Bot: {i.content}")
+                prompt_lines.append(f"\n\nBot: {i.content}")
             elif i.is_system():
-                prompt_lines.append(f"Instructions: {i.content}")
+                prompt_lines.append(f"\nInstructions: {i.content}")
 
-        prompt =  "\n\n".join(prompt_lines)
+        prompt_lines.append("\n\nBot:")
+        prompt = "".join(prompt_lines)
 
-        return {"prompt": prompt}
+        return { "prompt": prompt }
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)

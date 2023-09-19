@@ -42,7 +42,7 @@ class TestBedrockTitanPromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input['inputText'].startswith("User: foo\nUser: bar\n\nBot:")
+        assert model_input['inputText'].startswith("\nInstructions: foo\n\nUser: bar\n\nBot:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
         assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["maxTokenCount"] == 4083

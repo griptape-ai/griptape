@@ -23,15 +23,17 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
-            if i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
-            else:
-                prompt_lines.append(f"Human: {i.content}")
+            if i.is_user():
+                prompt_lines.append(f"\n\nHuman: {i.content}")
+            elif i.is_assistant():
+                prompt_lines.append(f"\n\nAssistant: {i.content}")
+            elif i.is_system():
+                prompt_lines.append(f"\nInstructions: {i.content}")
 
-        prompt_lines.append("Assistant:")
+        prompt_lines.append("\n\nAssistant:")
 
-        prompt = "\n".join(prompt_lines)
-        return {"prompt": prompt}
+        prompt = "".join(prompt_lines)
+        return { "prompt": prompt }
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)
