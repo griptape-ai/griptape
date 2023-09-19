@@ -21,8 +21,6 @@ class AmazonBedrockEmbeddingDriver(BaseEmbeddingDriver):
     session: boto3.Session = field(
         default=Factory(lambda: boto3.Session()), kw_only=True
     )
-    content_type: str = field(default="application/json", kw_only=True)
-    accept: str = field(default="application/json", kw_only=True)
     bedrock_client: boto3.client = field(
         default=Factory(
             lambda self: self.session.client("bedrock"),
@@ -39,8 +37,8 @@ class AmazonBedrockEmbeddingDriver(BaseEmbeddingDriver):
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),
             modelId=self.model,
-            accept=self.accept,
-            contentType=self.content_type,
+            accept='application/json',
+            contentType='application/json'
         )
         response_body = json.loads(response.get("body").read())
 

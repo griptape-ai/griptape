@@ -13,8 +13,6 @@ if TYPE_CHECKING:
 @define
 class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
-    content_type: str = field(default="application/json", kw_only=True)
-    accept: str = field(default="application/json", kw_only=True)
     bedrock_client: boto3.client = field(
         default=Factory(
             lambda self: self.session.client("bedrock"),
@@ -30,8 +28,8 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
         }
         response = self.bedrock_client.invoke_model(
             modelId=self.model,
-            contentType=self.content_type,
-            accept=self.accept,
+            contentType='application/json',
+            accept='application/json',
             body=json.dumps(payload),
         )
 
