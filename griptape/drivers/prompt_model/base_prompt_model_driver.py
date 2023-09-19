@@ -22,5 +22,5 @@ class BasePromptModelDriver(ABC):
         ...
 
     @abstractmethod
-    def process_output(self, output: list[dict]) -> TextArtifact:
+    def process_output(self, output: Union[list[dict], str, bytes]) -> TextArtifact:
         ...

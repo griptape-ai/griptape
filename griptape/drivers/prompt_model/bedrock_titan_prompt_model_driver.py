@@ -45,6 +45,6 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         }
 
     def process_output(self, response_body: str) -> TextArtifact:
-        response_body = json.loads(response_body)
+        body = json.loads(response_body)
 
-        return TextArtifact(response_body["results"][0]["outputText"])
+        return TextArtifact(body["results"][0]["outputText"])

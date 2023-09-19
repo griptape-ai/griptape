@@ -45,6 +45,6 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         }
 
     def process_output(self, response_body: bytes) -> TextArtifact:
-        response_body = json.loads(response_body.decode())
+        body = json.loads(response_body.decode())
 
-        return TextArtifact(response_body["completion"])
+        return TextArtifact(body["completion"])

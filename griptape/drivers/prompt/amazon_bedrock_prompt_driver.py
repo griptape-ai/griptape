@@ -22,10 +22,13 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        model_input = self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack)
         payload = {
-            **self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack),
             **self.prompt_model_driver.prompt_stack_to_model_params(prompt_stack),
         }
+        if isinstance(model_input, dict):
+            payload.update(model_input)
+
         response = self.bedrock_client.invoke_model(
             modelId=self.model,
             contentType='application/json',
