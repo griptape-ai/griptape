@@ -15,6 +15,13 @@ class ListArtifact(BaseArtifact):
             if not all(isinstance(v, first_type) for v in value):
                 raise ValueError(f"list elements in 'value' are not the same type")
 
+    @property
+    def child_type(self) -> Optional[type]:
+        if self.value:
+            return type(self.value[0])
+        else:
+            return None
+
     def to_text(self) -> str:
         return "\n\n".join([str(v.value) for v in self.value])
 
@@ -26,11 +33,8 @@ class ListArtifact(BaseArtifact):
     def __add__(self, other: BaseArtifact) -> BaseArtifact:
         return ListArtifact(self.value + other.value)
 
-    def elements_type(self) -> Optional[type]:
-        if self.value:
-            return type(self.value[0])
-        else:
-            return None
-
     def is_type(self, target_type: type) -> bool:
-        return self.elements_type() == target_type
+        if self.value:
+            return isinstance(self.value[0], target_type)
+        else:
+            return False

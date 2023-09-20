@@ -82,10 +82,10 @@ class TestTextToolMemory:
 
     def test_summarize(self, memory):
         assert memory.summarize(
-            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+            {"values": {"query": "foobar", "memory_name": memory.name, "artifact_namespace": "foo"}}
         ).value == "foobar summary"
 
     def test_query(self, memory):
         assert memory.search(
-            {"values": {"query": "foobar", "artifact_namespace": "foo"}}
+            {"values": {"query": "foobar", "memory_name": memory.name, "artifact_namespace": "foo"}}
         ).value == "foobar"

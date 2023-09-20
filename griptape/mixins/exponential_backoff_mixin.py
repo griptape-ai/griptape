@@ -5,7 +5,7 @@ from tenacity import Retrying, wait_exponential, stop_after_attempt, retry_if_no
 from typing import Tuple, Type
 
 
-@define
+@define(slots=False)
 class ExponentialBackoffMixin(ABC):
     min_retry_delay: float = field(default=2, kw_only=True)
     max_retry_delay: float = field(default=10, kw_only=True)

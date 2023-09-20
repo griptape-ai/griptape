@@ -19,7 +19,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         kw_only=True
     )
     template_generator: J2 = field(
-        default=Factory(lambda: J2("engines/prompt_summary.j2")),
+        default=Factory(lambda: J2("engines/summary/prompt_summary.j2")),
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(

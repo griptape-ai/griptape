@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import ListArtifact, TextArtifact, BlobArtifact
+from griptape.artifacts import ListArtifact, TextArtifact, BlobArtifact, CsvRowArtifact
 
 
 class TestListArtifact:
@@ -21,8 +21,10 @@ class TestListArtifact:
         with pytest.raises(ValueError):
             ListArtifact([TextArtifact("foo"), BlobArtifact(b"bar")])
 
-    def test_elements_type(self):
-        assert ListArtifact([TextArtifact("foo")]).elements_type() == TextArtifact
+    def test_child_type(self):
+        assert ListArtifact([TextArtifact("foo")]).child_type == TextArtifact
 
     def test_is_type(self):
         assert ListArtifact([TextArtifact("foo")]).is_type(TextArtifact)
+        assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(TextArtifact)
+        assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(CsvRowArtifact)

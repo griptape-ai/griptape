@@ -16,7 +16,7 @@ class VectorQueryEngine(BaseQueryEngine):
         kw_only=True
     )
     template_generator: J2 = field(
-        default=Factory(lambda: J2("engines/vector_query.j2")),
+        default=Factory(lambda: J2("engines/query/vector_query.j2")),
         kw_only=True
     )
 
