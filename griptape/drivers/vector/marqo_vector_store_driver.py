@@ -151,7 +151,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             count: Optional[int] = None,
             namespace: Optional[str] = None,
             include_vectors: bool = False,
-            include_metadata=True,
+            include_metadata: bool = True,
             **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Query the Marqo index for documents.

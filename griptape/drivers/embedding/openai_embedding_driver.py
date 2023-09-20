@@ -4,7 +4,7 @@ import numpy as np
 import openai
 from attr import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
@@ -18,7 +18,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         dimensions: Vector dimensions. Defaults to `1536`.
         model: OpenAI embedding model name. Uses `text-embedding-ada-002` by default.
         organization: OpenAI organization.
-        tokenizer: Custom `TiktokenTokenizer`.
+        tokenizer: Custom `OpenAiTokenizer`.
         user: OpenAI user. 	
     """
     DEFAULT_MODEL = "text-embedding-ada-002"
@@ -31,8 +31,8 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     api_base: str = field(default=openai.api_base, kw_only=True)
     api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True)
-    tokenizer: TiktokenTokenizer = field(
-        default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
+    tokenizer: OpenAiTokenizer = field(
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True
     )
 

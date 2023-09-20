@@ -10,9 +10,9 @@ from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
-from griptape.rules import Ruleset
+from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.drivers import LocalVectorStoreDriver
 
@@ -27,7 +27,7 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(
-            model=TiktokenTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
         )),
         kw_only=True
     )
@@ -36,6 +36,7 @@ class Structure(ABC):
         kw_only=True
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
+    rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
@@ -59,6 +60,22 @@ class Structure(ABC):
     def validate_tasks(self, _, tasks: list[BaseTask]) -> None:
         if len(tasks) > 0:
             raise ValueError("Tasks can't be initialized directly. Use add_task or add_tasks method instead")
+
+    @rulesets.validator
+    def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
+        if not rulesets:
+            return
+
+        if self.rules:
+            raise ValueError("can't have both rulesets and rules specified")
+
+    @rules.validator
+    def validate_rules(self, _, rules: list[Rule]) -> None:
+        if not rules:
+            return
+
+        if self.rulesets:
+            raise ValueError("can't have both rules and rulesets specified")
 
     def __attrs_post_init__(self) -> None:
         if self.memory:
