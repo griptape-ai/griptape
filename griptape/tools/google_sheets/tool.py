@@ -27,7 +27,7 @@ class GoogleSheetsClient(BaseGoogleClient):
         service = build(service_name, version, credentials=delegated_credentials)
         return service
 
-    def create_new_sheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
+    def create_sheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
         title = values.get("title", "Untitled Sheet")
 
@@ -45,7 +45,7 @@ class GoogleSheetsClient(BaseGoogleClient):
             logging.error(e)
             return ErrorArtifact(f"Error creating a new sheet: {e}")
 
-    def _resolve_path_to_id(self, service, path: str) -> Optional[str]:
+    def _path_to_file_id(self, service, path: str) -> Optional[str]:
         parts = path.split('/')
         current_id = 'root'
 
@@ -64,7 +64,7 @@ class GoogleSheetsClient(BaseGoogleClient):
 
         return current_id
 
-    def download_sheet_as_csv_or_excel(self, params: dict) -> BlobArtifact | ErrorArtifact:
+    def download_sheet(self, params: dict) -> BlobArtifact | ErrorArtifact:
         values = params["values"]
         file_path = values["file_path"]
         mime_type = values["mime_type"]
@@ -80,7 +80,7 @@ class GoogleSheetsClient(BaseGoogleClient):
 
         try:
             service = self._build_client(self.DRIVE_READ_SCOPES, service_name='drive', version='v3')
-            sheet_id = self._resolve_path_to_id(service, file_path)
+            sheet_id = self._path_to_file_id(service, file_path)
 
             if not sheet_id:
                 return ErrorArtifact(f"Could not find sheet at path: {file_path}")
@@ -97,7 +97,7 @@ class GoogleSheetsClient(BaseGoogleClient):
             logging.error("MalformedError occurred")
             return ErrorArtifact("Error downloading sheet due to malformed credentials")
 
-    def upload_file_as_sheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
+    def upload_sheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaFileUpload
 
         values = params['values']
