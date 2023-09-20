@@ -6,7 +6,7 @@ from .summary.prompt_summary_engine import PromptSummaryEngine
 
 from .extraction.base_extraction_engine import BaseExtractionEngine
 from .extraction.csv_extraction_engine import CsvExtractionEngine
-from .extraction.text_extraction_engine import TextExtractionEngine
+from .extraction.json_extraction_engine import JsonExtractionEngine
 
 
 __all__ = [
@@ -16,5 +16,5 @@ __all__ = [
     "PromptSummaryEngine",
     "BaseExtractionEngine",
     "CsvExtractionEngine",
-    "TextExtractionEngine"
+    "JsonExtractionEngine"
 ]

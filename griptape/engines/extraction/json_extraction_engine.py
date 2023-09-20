@@ -7,9 +7,9 @@ from griptape.utils import PromptStack
 
 
 @define
-class TextExtractionEngine(BaseExtractionEngine):
+class JsonExtractionEngine(BaseExtractionEngine):
     template_generator: J2 = field(
-        default=Factory(lambda: J2("engines/extraction/text_extraction.j2")),
+        default=Factory(lambda: J2("engines/extraction/json_extraction.j2")),
         kw_only=True
     )
 

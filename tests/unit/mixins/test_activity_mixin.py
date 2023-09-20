@@ -1,6 +1,5 @@
 import pytest
 from schema import Schema
-
 from tests.mocks.mock_tool.tool import MockTool
 
 
