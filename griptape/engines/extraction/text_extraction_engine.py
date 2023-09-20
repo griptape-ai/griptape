@@ -1,6 +1,5 @@
 import json
 from attr import field, Factory, define
-from schema import Schema
 from griptape.artifacts import TextArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -14,12 +13,15 @@ class TextExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, artifacts: list[TextArtifact], template_schema: Schema) -> list[TextArtifact]:
-        json_schema = template_schema.json_schema("TemplateSchema")
+    def extract(self, artifacts: list[TextArtifact], template_schema: str) -> list[TextArtifact]:
+        assert json.loads(template_schema)
 
-        return self.extract_rec(artifacts, json_schema, [])
+        return self._extract_rec(artifacts, template_schema, [])
 
-    def extract_rec(
+    def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
+        return [TextArtifact(e) for e in json.loads(json_input)]
+
+    def _extract_rec(
             self,
             artifacts: list[TextArtifact],
             template_schema: str,
@@ -60,12 +62,8 @@ class TextExtractionEngine(BaseExtractionEngine):
                 )
             )
 
-            return self.extract_rec(
+            return self._extract_rec(
                 chunks[1:],
                 template_schema,
                 extractions
             )
-
-    def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
-        text_extractions = json.loads(json_input)
-        return [TextArtifact(e) for e in text_extractions]
