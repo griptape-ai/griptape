@@ -12,7 +12,7 @@ from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.drivers import LocalVectorStoreDriver
 
@@ -27,7 +27,7 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(
-            model=TiktokenTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
         )),
         kw_only=True
     )
