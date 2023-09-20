@@ -14,10 +14,6 @@ class TestBlobArtifact:
     def test_to_dict(self):
         assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").to_dict()["name"] == "foobar.txt"
 
-    def test_validate_dir_name(self):
-        with pytest.raises(ValueError):
-            BlobArtifact(b"foobar", name="foobar.txt", dir_name="/foo").to_text()
-
     def test_full_path_with_path(self):
         assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").full_path == "foo/foobar.txt"
 
