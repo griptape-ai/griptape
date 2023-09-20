@@ -15,13 +15,26 @@ class CsvExtractionEngine(BaseExtractionEngine):
     )
 
     def extract(self, artifacts: list[TextArtifact], column_names: list[str]) -> list[CsvRowArtifact]:
-        return self.extract_rec(
+        return self._extract_rec(
             artifacts,
             column_names,
             []
         )
 
-    def extract_rec(
+    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
+        rows = []
+
+        with io.StringIO(text) as f:
+            for row in csv.reader(f):
+                rows.append(
+                    CsvRowArtifact(
+                        dict(zip(column_names, [x.strip() for x in row]))
+                    )
+                )
+
+        return rows
+
+    def _extract_rec(
             self,
             artifacts: list[TextArtifact],
             column_names: list[str],
@@ -64,21 +77,8 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 )
             )
 
-            return self.extract_rec(
+            return self._extract_rec(
                 chunks[1:],
                 column_names,
                 rows
             )
-
-    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
-        rows = []
-
-        with io.StringIO(text) as f:
-            for row in csv.reader(f):
-                rows.append(
-                    CsvRowArtifact(
-                        dict(zip(column_names, [x.strip() for x in row]))
-                    )
-                )
-
-        return rows
