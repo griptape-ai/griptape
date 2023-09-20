@@ -1,8 +1,7 @@
 from __future__ import annotations
-from schema import Schema, Literal, Optional
+from typing import Any
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, BlobArtifact
-from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 from googleapiclient.errors import HttpError
 from google.auth.exceptions import MalformedError
@@ -16,17 +15,6 @@ class GoogleSheetsClient(BaseGoogleClient):
     SHEETS_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
     DRIVE_READ_SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
     DRIVE_UPLOAD_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-
-    def _build_client(self, scopes: list[str], service_name: str, version: str) -> Resource:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
-
-        credentials = service_account.Credentials.from_service_account_info(
-            self.service_account_credentials, scopes=scopes
-        )
-        delegated_credentials = credentials.with_subject(self.owner_email)
-        service = build(service_name, version, credentials=delegated_credentials)
-        return service
 
     def create_sheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
@@ -43,25 +31,6 @@ class GoogleSheetsClient(BaseGoogleClient):
         except HttpError as e:
             logging.error(e)
             return ErrorArtifact(f"Error creating a new sheet: {e}")
-
-    def _path_to_file_id(self, service, path: str) -> Optional[str]:
-        parts = path.split("/")
-        current_id = "root"
-
-        for index, part in enumerate(parts):
-            if index == len(parts) - 1:
-                query = f"name='{part}' and '{current_id}' in parents"
-            else:
-                query = f"name='{part}' and '{current_id}' in parents and mimeType='application/vnd.google-apps.folder'"
-
-            response = service.files().list(q=query).execute()
-            files = response.get("files", [])
-
-            if not files:
-                return None
-            current_id = files[0]["id"]
-
-        return current_id
 
     def download_sheet(self, params: dict) -> BlobArtifact | ErrorArtifact:
         values = params["values"]
@@ -120,3 +89,33 @@ class GoogleSheetsClient(BaseGoogleClient):
         except Exception as e:
             logging.error(e)
             return ErrorArtifact(f"error uploading and converting file to Google Sheet: {e}")
+
+    def _build_client(self, scopes: list[str], service_name: str, version: str) -> Resource:
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+
+        credentials = service_account.Credentials.from_service_account_info(
+            self.service_account_credentials, scopes=scopes
+        )
+        delegated_credentials = credentials.with_subject(self.owner_email)
+        service = build(service_name, version, credentials=delegated_credentials)
+        return service
+
+    def _path_to_file_id(self, service: Any, path: str) -> None | str:
+        parts = path.split("/")
+        current_id = "root"
+
+        for index, part in enumerate(parts):
+            if index == len(parts) - 1:
+                query = f"name='{part}' and '{current_id}' in parents"
+            else:
+                query = f"name='{part}' and '{current_id}' in parents and mimeType='application/vnd.google-apps.folder'"
+
+            response = service.files().list(q=query).execute()
+            files = response.get("files", [])
+
+            if not files:
+                return None
+            current_id = files[0]["id"]
+
+        return current_id
