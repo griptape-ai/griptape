@@ -11,10 +11,6 @@ from schema import Schema, Literal
 
 @define
 class ToolOutputProcessor(BaseTool):
-    # override parent
-    denylist: Optional[list[str]] = field(default=Factory(lambda: ["extract_csv"]), kw_only=True)
-    # override parent
-    input_memory: Optional[list[TextToolMemory]] = field(default=None, kw_only=True)
     summary_engine: BaseSummaryEngine = field(
         kw_only=True,
         default=Factory(lambda: PromptSummaryEngine())
@@ -47,7 +43,6 @@ class ToolOutputProcessor(BaseTool):
 
     @activity(config={
         "description": "Can be used to extract and format content from memory into CSV output",
-        "uses_default_memory": False,
         "schema": Schema({
             "memory_name": str,
             "artifact_namespace": str,
@@ -74,7 +69,6 @@ class ToolOutputProcessor(BaseTool):
 
     @activity(config={
         "description": "Can be used to summarize memory content",
-        "uses_default_memory": False,
         "schema": Schema({
             "memory_name": str,
             "artifact_namespace": str
@@ -93,7 +87,6 @@ class ToolOutputProcessor(BaseTool):
 
     @activity(config={
         "description": "Can be used to search and query memory content",
-        "uses_default_memory": False,
         "schema": Schema({
             "memory_name": str,
             "artifact_namespace": str,
@@ -120,6 +113,9 @@ class ToolOutputProcessor(BaseTool):
             return ErrorArtifact("memory not found")
 
     def find_input_memory(self, memory_name: str) -> Optional[TextToolMemory]:
+        """
+        Override parent method to only return TextToolMemory
+        """
         if self.input_memory:
             return next((m for m in self.input_memory if isinstance(m, TextToolMemory) and m.name == memory_name), None)
         else:

@@ -6,6 +6,7 @@ from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import TiktokenTokenizer
+from typing import Tuple, Type
 
 
 @define
@@ -33,6 +34,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True
     )
     user: str = field(default="", kw_only=True)
+    ignored_exception_types: Tuple[Type[Exception], ...] = field(default=Factory(lambda: (openai.InvalidRequestError)), kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
