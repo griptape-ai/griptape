@@ -13,13 +13,14 @@ import logging
 @define
 class GoogleSheetsClient(BaseGoogleClient):
     owner_email: str = field(kw_only=True)
-    SHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    DRIVE_READ_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
-    DRIVE_UPLOAD_SCOPES = ['https://www.googleapis.com/auth/drive.file']
+    SHEETS_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+    DRIVE_READ_SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
+    DRIVE_UPLOAD_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
     def _build_client(self, scopes: list[str], service_name: str, version: str) -> Resource:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
+
         credentials = service_account.Credentials.from_service_account_info(
             self.service_account_credentials, scopes=scopes
         )
@@ -32,11 +33,9 @@ class GoogleSheetsClient(BaseGoogleClient):
         title = values.get("title", "Untitled Sheet")
 
         try:
-            service = self._build_client(self.SHEETS_SCOPES, 'sheets', 'v4')
+            service = self._build_client(self.SHEETS_SCOPES, "sheets", "v4")
 
-            spreadsheet_body = {
-                'properties': {'title': title}
-            }
+            spreadsheet_body = {"properties": {"title": title}}
 
             spreadsheet = service.spreadsheets().create(body=spreadsheet_body).execute()
             return InfoArtifact(f"Spreadsheet created with ID: {spreadsheet['spreadsheetId']}")
@@ -46,8 +45,8 @@ class GoogleSheetsClient(BaseGoogleClient):
             return ErrorArtifact(f"Error creating a new sheet: {e}")
 
     def _path_to_file_id(self, service, path: str) -> Optional[str]:
-        parts = path.split('/')
-        current_id = 'root'
+        parts = path.split("/")
+        current_id = "root"
 
         for index, part in enumerate(parts):
             if index == len(parts) - 1:
@@ -56,11 +55,11 @@ class GoogleSheetsClient(BaseGoogleClient):
                 query = f"name='{part}' and '{current_id}' in parents and mimeType='application/vnd.google-apps.folder'"
 
             response = service.files().list(q=query).execute()
-            files = response.get('files', [])
+            files = response.get("files", [])
 
             if not files:
                 return None
-            current_id = files[0]['id']
+            current_id = files[0]["id"]
 
         return current_id
 
@@ -71,15 +70,14 @@ class GoogleSheetsClient(BaseGoogleClient):
 
         export_mime_mapping = {
             "text/csv": "text/csv",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         }
 
         if mime_type not in export_mime_mapping:
             return ErrorArtifact("Unsupported mime type for downloading")
 
         try:
-            service = self._build_client(self.DRIVE_READ_SCOPES, service_name='drive', version='v3')
+            service = self._build_client(self.DRIVE_READ_SCOPES, service_name="drive", version="v3")
             sheet_id = self._path_to_file_id(service, file_path)
 
             if not sheet_id:
@@ -100,29 +98,24 @@ class GoogleSheetsClient(BaseGoogleClient):
     def upload_sheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaFileUpload
 
-        values = params['values']
+        values = params["values"]
 
-        mime_mapping = {
-            'csv': 'text/csv',
-            'excel': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        }
+        mime_mapping = {"csv": "text/csv", "excel": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
 
-        file_type = values['file_type']
+        file_type = values["file_type"]
         if file_type not in mime_mapping:
             logging.error(f"Unsupported file type '{file_type}' provided.")
             return ErrorArtifact(f"Unsupported file type '{file_type}'. Please provide either 'csv' or 'excel'.")
 
         try:
-            service = self._build_client(self.DRIVE_UPLOAD_SCOPES, service_name='drive', version='v3')
-            file_metadata = {
-                'name': values['file_name'],
-                'mimeType': 'application/vnd.google-apps.spreadsheet'
-            }
-            media = MediaFileUpload(values['file_path'], mimetype=mime_mapping[values['file_type']])
-            file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+            service = self._build_client(self.DRIVE_UPLOAD_SCOPES, service_name="drive", version="v3")
+            file_metadata = {"name": values["file_name"], "mimeType": "application/vnd.google-apps.spreadsheet"}
+            media = MediaFileUpload(values["file_path"], mimetype=mime_mapping[values["file_type"]])
+            file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
 
             return InfoArtifact(
-                f'A file was successfully uploaded and converted to a Google Sheet with ID {file.get("id")}.')
+                f'A file was successfully uploaded and converted to a Google Sheet with ID {file.get("id")}.'
+            )
 
         except Exception as e:
             logging.error(e)
