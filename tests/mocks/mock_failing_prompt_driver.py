@@ -2,7 +2,7 @@ from attr import define
 
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import TiktokenTokenizer, BaseTokenizer
+from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
 from griptape.artifacts import TextArtifact
 
 
@@ -11,7 +11,7 @@ class MockFailingPromptDriver(BasePromptDriver):
     max_failures: int
     current_attempt: int = 0
     model: str = "test-model"
-    tokenizer: BaseTokenizer = TiktokenTokenizer()
+    tokenizer: BaseTokenizer = OpenAiTokenizer()
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         if self.current_attempt < self.max_failures:
