@@ -5,15 +5,15 @@ from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import TextChunker
 from griptape.loaders import BaseLoader
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
 class TextLoader(BaseLoader):
     MAX_TOKEN_RATIO = 0.5
 
-    tokenizer: TiktokenTokenizer = field(
-        default=Factory(lambda: TiktokenTokenizer()),
+    tokenizer: OpenAiTokenizer = field(
+        default=Factory(lambda: OpenAiTokenizer()),
         kw_only=True
     )
     max_tokens: int = field(
