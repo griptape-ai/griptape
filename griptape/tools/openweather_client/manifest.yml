@@ -1,0 +1,5 @@
+version: "v1"
+name: OpenWeather Client
+description: Tool for using OpenWeather to retrieve weather information
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
