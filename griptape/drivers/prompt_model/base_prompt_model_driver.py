@@ -12,7 +12,11 @@ from griptape.tokenizers import BaseTokenizer
 class BasePromptModelDriver(ABC):
     max_tokens: int = field(default=600, kw_only=True)
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
-    tokenizer: BaseTokenizer
+
+    @property
+    @abstractmethod
+    def tokenizer(self) -> BaseTokenizer:
+        ...
 
     @abstractmethod
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str | list | dict:
@@ -23,5 +27,5 @@ class BasePromptModelDriver(ABC):
         ...
 
     @abstractmethod
-    def process_output(self, output: Union[list[dict], str, bytes]) -> TextArtifact:
+    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
         ...

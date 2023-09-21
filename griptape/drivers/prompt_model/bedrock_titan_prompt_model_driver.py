@@ -1,22 +1,28 @@
 import json
-from attr import define, field, Factory
+from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptModelDriver
 from griptape.tokenizers import BedrockTitanTokenizer
+from griptape.drivers import AmazonBedrockPromptDriver
 
 
 @define
 class BedrockTitanPromptModelDriver(BasePromptModelDriver):
     model: str = field(default="amazon.titan-tg1-large", kw_only=True)
-    tokenizer: BedrockTitanTokenizer = field(
-        default=Factory(
-            lambda self: BedrockTitanTokenizer(model=self.model),
-            takes_self=True
-        ),
-        kw_only=True,
-    )
     top_p: float = field(default=0.9, kw_only=True)
+    _tokenizer: BedrockTitanTokenizer = field(default=None, kw_only=True)
+
+    @property
+    def tokenizer(self) -> BedrockTitanTokenizer:
+        if self._tokenizer:
+            return self._tokenizer
+        else:
+            if isinstance(self.prompt_driver, AmazonBedrockPromptDriver):
+                self._tokenizer = BedrockTitanTokenizer(model=self.model, session=self.prompt_driver.session)
+                return self._tokenizer
+            else:
+                raise ValueError("prompt_driver must be of instance AmazonBedrockPromptDriver")
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
         prompt_lines = []

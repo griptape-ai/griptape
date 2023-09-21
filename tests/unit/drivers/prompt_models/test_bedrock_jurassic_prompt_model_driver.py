@@ -21,6 +21,8 @@ class TestBedrockJurassicPromptModelDriver:
         mock_session_object.client.return_value = mock_client
         mock_session_class.return_value = mock_session_object
 
+        return mock_session_object
+
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
@@ -54,3 +56,6 @@ class TestBedrockJurassicPromptModelDriver:
             driver.process_output(json.dumps({"completions": [{"data": {"text": "foobar"}}]}).encode()).value
             == "foobar"
         )
+
+    def test_session_initialization(self, driver, mock_session):
+        assert driver.tokenizer.session == mock_session
