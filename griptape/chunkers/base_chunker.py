@@ -4,7 +4,7 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import ChunkSeparator
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
@@ -17,8 +17,8 @@ class BaseChunker(ABC):
         default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True),
         kw_only=True
     )
-    tokenizer: TiktokenTokenizer = field(
-        default=Factory(lambda: TiktokenTokenizer()),
+    tokenizer: OpenAiTokenizer = field(
+        default=Factory(lambda: OpenAiTokenizer()),
         kw_only=True
     )
     max_tokens: int = field(

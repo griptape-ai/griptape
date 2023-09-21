@@ -15,7 +15,7 @@ class BasePromptModelDriver(ABC):
     tokenizer: BaseTokenizer
 
     @abstractmethod
-    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str | list:
+    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str | list | dict:
         ...
 
     @abstractmethod
@@ -23,5 +23,5 @@ class BasePromptModelDriver(ABC):
         ...
 
     @abstractmethod
-    def process_output(self, output: list[dict]) -> TextArtifact:
+    def process_output(self, output: Union[list[dict], str, bytes]) -> TextArtifact:
         ...
