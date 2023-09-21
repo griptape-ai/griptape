@@ -2,13 +2,14 @@ from typing import Optional
 from attr import define, field
 from griptape.drivers import BaseGraphDriver
 import neo4j
-#add to requirements ^
+#add neo4j to poetry.lock requirements? ^
 
 @define
 class CypherDriver(BaseGraphDriver):
     uri: str = field(kw_only=True)
     username: str = field(kw_only=True)
     password: str = field(kw_only=True)
+    MAX_SCHEMA_SIZE: int = 6000
     _driver: Optional[neo4j.Driver] = field(init=False, default=None)
 
     def __attrs_post_init__(self):
@@ -30,25 +31,15 @@ class CypherDriver(BaseGraphDriver):
         finally:
             self._driver.close()
 
-    # def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
-    #     try:
-    #         with self._driver.session() as session:
-    #             results = session.run(query)
-    #             return [record.data() for record in results]
-    #     except neo4j.exceptions.CypherSyntaxError as e:
-    #         raise ValueError(f"Generated Cypher Statement is not valid\n{e}")
-    #     finally:
-    #         self._driver.close()
-    #
-    # def get_schema(self) -> str:
-    #     node_properties_query = """
-    #     CALL apoc.meta.data()
-    #     YIELD label, other, elementType, type, property
-    #     WHERE NOT type = "RELATIONSHIP" AND elementType = "node"
-    #     WITH label AS nodeLabels, collect({property:property, type:type}) AS properties
-    #     RETURN {labels: nodeLabels, properties: properties} AS output
-    #     """
-    #
-    #     results = self.execute_query_raw(node_properties_query)
-    #     schema = "\n".join([str(result["output"]) for result in results])
-    #     return schema
+    def get_schema(self) -> str:
+        schema_query = """
+        CALL db.schema.visualization()
+        """
+        with self._driver.session() as session:
+            results = session.run(schema_query)
+            schema_str = "\n".join([str(record.data()) for record in results])
+
+            if len(schema_str) > self.MAX_SCHEMA_SIZE:
+                raise ValueError("The retrieved schema is too large to handle.")
+
+            return schema_str

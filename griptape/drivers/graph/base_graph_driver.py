@@ -13,10 +13,6 @@ class BaseGraphDriver(ABC):
     def execute_query(self, query: str) -> Optional[list[NodeResult]]:
         ...
 
-    # @abstractmethod
-    # def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
-    #     ...
-    #
-    # @abstractmethod
-    # def get_schema(self) -> str:
-    #     ...
+    @abstractmethod
+    def get_schema(self) -> dict:
+        ...

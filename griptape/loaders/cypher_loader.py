@@ -16,3 +16,6 @@ class CypherLoader(BaseLoader):
         return {
             query: self.load(query) for query in cypher_queries
         }
+
+    def get_schema(self) -> str:
+        return self.cypher_driver.get_schema()

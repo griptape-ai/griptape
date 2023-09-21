@@ -39,6 +39,9 @@ from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
 from .prompt_model.sagemaker_llama_prompt_model_driver import SageMakerLlamaPromptModelDriver
 from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPromptModelDriver
 
+from .graph.base_graph_driver import BaseGraphDriver
+from .graph.cypher_driver import CypherDriver
+
 
 __all__ = [
     "BasePromptDriver",
@@ -81,5 +84,8 @@ __all__ = [
 
     "BasePromptModelDriver",
     "SageMakerLlamaPromptModelDriver",
-    "SageMakerFalconPromptModelDriver"
+    "SageMakerFalconPromptModelDriver",
+
+    "BaseGraphDriver",
+    "CypherDriver"
 ]
