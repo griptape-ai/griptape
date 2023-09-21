@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 
@@ -48,9 +48,5 @@ class BaseExtractionEngine(ABC):
         )
 
     @abstractmethod
-    def extract(
-            self,
-            artifacts: list[TextArtifact],
-            **kwargs
-    ) -> list[BaseArtifact] | BaseArtifact:
+    def extract(self, text: str, **kwargs) -> ListArtifact:
         ...

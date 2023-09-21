@@ -1,7 +1,7 @@
 import csv
 import io
 from attr import field, Factory, define
-from griptape.artifacts import TextArtifact, CsvRowArtifact
+from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact
 from griptape.utils import PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -14,9 +14,9 @@ class CsvExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, artifacts: list[TextArtifact], column_names: list[str]) -> list[CsvRowArtifact]:
+    def extract(self, text: str, column_names: list[str]) -> ListArtifact:
         return self._extract_rec(
-            artifacts,
+            [TextArtifact(text)],
             column_names,
             []
         )
@@ -39,7 +39,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
             artifacts: list[TextArtifact],
             column_names: list[str],
             rows: list[CsvRowArtifact]
-    ) -> list[CsvRowArtifact]:
+    ) -> ListArtifact:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
             column_names=column_names,
@@ -58,7 +58,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 )
             )
 
-            return rows
+            return ListArtifact(rows)
         else:
             chunks = self.chunker.chunk(artifacts_text)
             partial_text = self.template_generator.render(

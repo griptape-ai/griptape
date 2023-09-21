@@ -1,6 +1,6 @@
 import json
 from attr import field, Factory, define
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.utils import PromptStack
@@ -13,10 +13,14 @@ class JsonExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, artifacts: list[TextArtifact], template_schema: str) -> list[TextArtifact]:
+    def extract(self, text: str, template_schema: str) -> ListArtifact:
         assert json.loads(template_schema)
 
-        return self._extract_rec(artifacts, template_schema, [])
+        return self._extract_rec(
+            [TextArtifact(text)],
+            template_schema,
+            []
+        )
 
     def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
         return [TextArtifact(e) for e in json.loads(json_input)]
@@ -26,7 +30,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             artifacts: list[TextArtifact],
             template_schema: str,
             extractions: list[TextArtifact]
-    ) -> list[TextArtifact]:
+    ) -> ListArtifact:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
             template_schema=template_schema,
@@ -44,7 +48,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
                 )
             )
 
-            return extractions
+            return ListArtifact(extractions)
         else:
             chunks = self.chunker.chunk(artifacts_text)
             partial_text = self.template_generator.render(

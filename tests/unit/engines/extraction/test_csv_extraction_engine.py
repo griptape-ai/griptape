@@ -12,10 +12,10 @@ class TestCsvExtractionEngine:
         )
 
     def test_extract(self, engine):
-        result = engine.extract([TextArtifact("foo")], ["test1"])
+        result = engine.extract("foo", ["test1"])
 
-        assert len(result) == 1
-        assert result[0].value == {'test1': 'mock output'}
+        assert len(result.value) == 1
+        assert result.value[0].value == {'test1': 'mock output'}
 
     def test_text_to_csv_rows(self, engine):
         result = engine.text_to_csv_rows("foo,bar\nbaz,maz", ["test1", "test2"])
