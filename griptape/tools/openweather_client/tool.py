@@ -29,7 +29,7 @@ class OpenWeatherClient(BaseTool):
                     description="Location to fetch coordinates for. "
                                 "For US cities, use the format 'city_name, state_code'. "
                                 "For non-US cities, use 'city_name, country_code'. "
-                                "For cities without specifying a state or country, simply use 'city_name'."
+                                "For cities without specifying state or country, simply use 'city_name'."
                 ): str
             }),
         }
