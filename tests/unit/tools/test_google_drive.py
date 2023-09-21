@@ -1,48 +1,60 @@
 from griptape.tools import GoogleDriveClient
 from unittest.mock import patch
+from griptape.artifacts import ErrorArtifact
 from google.auth.exceptions import MalformedError
 
 
 class TestGoogleDriveClient:
-
     def test_list_files(self):
         value = {
             "max_files": 10
         }
-        assert "error retrieving files from Drive" in GoogleDriveClient(
+        result = GoogleDriveClient(
             owner_email="tony@griptape.ai",
             service_account_credentials={}
-        ).list_files({"values": value}).value
+        ).list_files({"values": value})
 
-    def test_upload_file(self):
+        assert isinstance(result, ErrorArtifact)
+        assert "error retrieving files from Google Drive" in result.value
+
+    def test_save_content_to_drive(self):
         value = {
-            "file_path": "/path/to/your/file.txt",
-            "file_name": "uploaded_file.txt",
-            "mime_type": "text/plain"
+            "path": "/path/to/your/file.txt",
+            "content": "Sample content for the file."
         }
-        assert "error uploading file to Drive" in GoogleDriveClient(
+        result = GoogleDriveClient(
             owner_email="tony@griptape.ai",
             service_account_credentials={}
-        ).upload_file({"values": value}).value
+        ).save_content_to_drive({"values": value})
 
-    @patch('google.oauth2.service_account.Credentials.from_service_account_info')
-    def test_download_file(self, mock_auth):
-        mock_auth.side_effect = MalformedError('Mocked Error')
+        assert isinstance(result, ErrorArtifact)
+        assert "error saving file to Google Drive" in result.value
+
+    @patch('griptape.tools.GoogleDriveClient._build_client')
+    def test_download_file(self, mock_build_client):
+        mock_build_client.side_effect = MalformedError('Mocked Error')
         value = {
-            "file_id": "example_file_id"
+            "file_path": "example_folder/example_file.txt"
         }
-        assert "error downloading file" in GoogleDriveClient(
+        result = GoogleDriveClient(
             owner_email="tony@griptape.ai",
             service_account_credentials={}
-        ).download_file({"values": value}).value
+        ).download_file({"values": value})
 
-    @patch('google.oauth2.service_account.Credentials.from_service_account_info')
-    def test_search_file(self, mock_auth):
-        mock_auth.side_effect = MalformedError('Mocked Error')
+        assert isinstance(result, ErrorArtifact)
+        assert "error downloading file due to malformed credentials" in result.value
+
+    @patch('griptape.tools.GoogleDriveClient._build_client')
+    def test_search_file(self, mock_build_client):
+        mock_build_client.side_effect = MalformedError('Mocked Error')
         value = {
+            "search_mode": "name",
             "file_name": "search_file_name.txt"
         }
-        assert "error searching for file due to malformed credentials" in GoogleDriveClient(
-            owner_email="tony@griptape.ai",  # Pass owner_email to the constructor
+        result = GoogleDriveClient(
+            owner_email="tony@griptape.ai",
             service_account_credentials={}
-        ).search_file({"values": value}).value
+        ).search_file({"values": value})
+
+        assert isinstance(result, ErrorArtifact)
+        assert "error searching for file due to malformed credentials" in result.value

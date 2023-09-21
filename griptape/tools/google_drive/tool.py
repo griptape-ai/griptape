@@ -4,15 +4,15 @@ from schema import Schema, Literal, Optional
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 from griptape.utils.decorators import activity
-from griptape.tools import BaseGoogleClient
-from googleapiclient.errors import HttpError
+from griptape.tools import BaseGoogleClient, BaseTool
 from google.auth.exceptions import MalformedError
 from googleapiclient.discovery import Resource
+from googleapiclient.http import MediaIoBaseUpload
+from googleapiclient.errors import HttpError
+from io import BytesIO
 
 @define
-class GoogleDriveClient(BaseGoogleClient):
-    owner_email: str = field(kw_only=True)
-
+class GoogleDriveClient(BaseGoogleClient, BaseTool):
     LIST_FILES_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
     UPLOAD_FILE_SCOPES = ['https://www.googleapis.com/auth/drive.file']
@@ -26,6 +26,7 @@ class GoogleDriveClient(BaseGoogleClient):
             "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     }
 
+    owner_email: str = field(kw_only=True)
     page_size: int = field(default=100, kw_only=True)
 
     def _build_client(self, scopes: list[str]) -> Resource:
@@ -59,6 +60,17 @@ class GoogleDriveClient(BaseGoogleClient):
 
         return current_id
 
+    @activity(config={
+        "description": "List files in a specific Google Drive folder or the root if no folder is specified",
+        "schema": Schema({
+            Optional("folder_path",
+                     description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
+                                 "from which files should be listed. If not provided, files from the root "
+                                 "directory will be listed."): str,
+            Optional("max_files",
+                     description="Maximum number of files to list. If not provided, the default page size will be used."): int
+        })
+    })
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
 
@@ -101,25 +113,102 @@ class GoogleDriveClient(BaseGoogleClient):
 
         except Exception as e:
             logging.error(e)
-            return ErrorArtifact(f"error retrieving files from Drive: {e}")
+            return ErrorArtifact(f"error retrieving files from Google Drive: {e}")
 
-    def upload_file(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        from googleapiclient.http import MediaFileUpload
+    @activity(config={
+        "description": "Can be used to save memory artifacts to Google Drive using folder paths",
+        "schema": Schema({
+            "memory_name": str,
+            "artifact_namespace": str,
+            "file_name": str,
+            Optional("folder_path",
+                     description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
+                                 "where the file should be stored. If not provided, the file will be saved "
+                                 "to the root directory."): str,
+        })
+    })
+    def save_memory_artifacts_to_drive(self, params: dict) -> ErrorArtifact | InfoArtifact:
+        values = params["values"]
+        memory = self.find_input_memory(values["memory_name"])
+        file_name = values["file_name"]
+    
+        if memory:
+            artifacts = memory.load_artifacts(values["artifact_namespace"])
+    
+            if not artifacts:
+                return ErrorArtifact("no artifacts found")
 
-        values = params['values']
+            service = self._build_client(self.UPLOAD_FILE_SCOPES)
+
+            folder_id = None
+            if "folder_path" in values and values["folder_path"]:
+                folder_id = self._path_to_file_id(service, values["folder_path"])
+                if not folder_id:
+                    return ErrorArtifact(f"Could not find folder: {values['folder_path']}")
+
+            try:
+                if len(artifacts) == 1:
+                    self._save_to_drive(file_name, artifacts[0].value, folder_id)
+                else:
+                    for a in artifacts:
+                        self._save_to_drive(f"{a.name}-{file_name}", a.value, folder_id)
+    
+                return InfoArtifact(f"saved successfully")
+    
+            except Exception as e:
+                return ErrorArtifact(f"error saving file to Google Drive: {e}")
+        else:
+            return ErrorArtifact("memory not found")
+
+    @activity(config={
+        "description": "Can be used to save content to a file",
+        "schema": Schema(
+            {
+                Literal(
+                    "path",
+                    description="Destination file path on disk in the POSIX format. For example, 'foo/bar/baz.txt'"
+                ): str,
+                "content": str
+            }
+        )
+    })
+    def save_content_to_drive(self, params: dict) -> ErrorArtifact | InfoArtifact:
+        content = params["values"]["content"]
+        filename = params["values"]["path"]
 
         try:
-            service = self._build_client(self.UPLOAD_FILE_SCOPES)
-            file_metadata = {'name': values['file_name']}
-            media = MediaFileUpload(values['file_path'], mimetype=values['mime_type'])
-            file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+            self._save_to_drive(filename, content)
 
-            return InfoArtifact(f'A file was successfully uploaded with ID {file.get("id")}.')
-
+            return InfoArtifact(f"saved successfully")
         except Exception as e:
-            logging.error(e)
-            return ErrorArtifact(f"error uploading file to Drive: {e}")
+            return ErrorArtifact(f"error saving file to Google Drive: {e}")
 
+    def _save_to_drive(self, filename: str, value: any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
+        service = self._build_client(self.UPLOAD_FILE_SCOPES)
+    
+        if isinstance(value, str):
+            value = value.encode()
+    
+        file_metadata = {"name": filename}
+        if parent_folder_id:
+            file_metadata["parents"] = [parent_folder_id]
+    
+        media = MediaIoBaseUpload(BytesIO(value), mimetype="application/octet-stream", resumable=True)
+    
+        try:
+            file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
+            return InfoArtifact(file.get("id"))
+        except HttpError as error:
+            return ErrorArtifact(f"An error occurred: {error}")
+
+    @activity(config={
+        "description": "Download a file from Google Drive based on a provided path",
+        "schema": Schema({
+            Literal("file_path",
+                    description="Path of the Google Drive file (like 'MainFolder/Subfolder1/filename.ext') "
+                                "that needs to be downloaded."): str
+        })
+    })
     def download_file(self, params: dict) -> BlobArtifact | ErrorArtifact:
         values = params["values"]
 
@@ -144,25 +233,61 @@ class GoogleDriveClient(BaseGoogleClient):
 
         except HttpError as e:
             logging.error(e)
-            return ErrorArtifact(f"error downloading file from Drive: {e}")
+            return ErrorArtifact(f"error downloading file from Google Drive: {e}")
         except MalformedError:
             logging.error("MalformedError occurred")
             return ErrorArtifact("error downloading file due to malformed credentials")
 
+    @activity(config={
+        "description": "Search for a file on Google Drive based on name or content",
+        "schema": Schema({
+            Literal("search_mode",
+                    description="Mode of search, either 'name' to search by file name or "
+                                "'content' to search by file content."): str,
+            Literal("file_name",
+                    description="Name of the file to search for, used when search_mode is 'name'"): str,
+            Optional("search_text",
+                     description="Text to search for within files, used when search_mode is 'content'"): str,
+            Optional("folder_path",
+                     description="Path of the Google Drive folder (like 'MainFolder/Subfolder1') "
+                                 "in which to restrict the search. If not provided, the search "
+                                 "will span the entire Drive."): str
+        })
+    })
     def search_file(self, params: dict) -> ListArtifact | ErrorArtifact:
-
         values = params["values"]
+
+        search_mode = values.get("search_mode", "name")
 
         try:
             service = self._build_client(self.LIST_FILES_SCOPES)
-            query = f"name='{values['file_name']}'"
+
+            folder_id = None
+            if "folder_path" in values and values["folder_path"]:
+                folder_id = self._path_to_file_id(service, values["folder_path"])
+                if not folder_id:
+                    return ErrorArtifact(f"Folder path {values['folder_path']} not found")
+
+            if search_mode == "name":
+                query = f"name='{values['file_name']}'"
+            elif search_mode == "content":
+                query = f"fullText contains '{values['search_text']}'"
+            else:
+                return ErrorArtifact(f"Invalid search mode: {search_mode}")
+
+            query += " and trashed=false"
+
+            if folder_id:
+                query += f" and '{folder_id}' in parents"
+
             results = service.files().list(q=query).execute()
             items = results.get('files', [])
             return ListArtifact(items)
 
         except HttpError as e:
             logging.error(e)
-            return ErrorArtifact(f"error searching for file in Drive: {e}")
+            return ErrorArtifact(f"error searching for file in Google Drive: {e}")
         except MalformedError:
             logging.error("MalformedError occurred")
             return ErrorArtifact("error searching for file due to malformed credentials")
+
