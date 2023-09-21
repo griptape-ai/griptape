@@ -1,11 +1,11 @@
 import pytest
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 
 
-class TestTiktokenTokenizer:
+class TestOpenAiTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return TiktokenTokenizer()
+        return OpenAiTokenizer()
 
     def test_encode(self, tokenizer):
         assert tokenizer.encode("foo bar") == [8134, 3703]
