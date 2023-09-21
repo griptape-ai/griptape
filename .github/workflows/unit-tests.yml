@@ -19,4 +19,4 @@ jobs:
       - name: Init environment 
         uses: ./.github/actions/init-environment 
       - name: Run unit tests
-        run: pytest tests/unit
+        run: pytest -n auto tests/unit
