@@ -45,7 +45,7 @@ class TestTextToolMemory:
     def test_upsert_namespace_artifact(self, memory):
         memory.query_engine.upsert_text_artifact(TextArtifact("foo"), namespace="test")
 
-        assert len(memory.load_artifacts("test")) == 1
+        assert len(memory.load_artifacts("test").value) == 1
 
     def test_upsert_namespace_artifacts(self, memory):
         memory.query_engine.upsert_text_artifacts(
@@ -53,7 +53,7 @@ class TestTextToolMemory:
             "test"
         )
 
-        assert len(memory.load_artifacts("test")) == 2
+        assert len(memory.load_artifacts("test").value) == 2
 
     def test_load_artifacts(self, memory):
         memory.query_engine.upsert_text_artifacts(
@@ -61,4 +61,4 @@ class TestTextToolMemory:
             "test"
         )
 
-        assert len(memory.load_artifacts("test")) == 2
+        assert len(memory.load_artifacts("test").value) == 2

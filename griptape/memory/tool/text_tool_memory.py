@@ -76,13 +76,15 @@ class TextToolMemory(BaseToolMemory, TextMemoryActivitiesMixin):
 
             return value
 
-    def load_artifacts(self, namespace: str) -> list[TextArtifact]:
+    def load_artifacts(self, namespace: str) -> ListArtifact:
         artifacts = [
             BaseArtifact.from_json(e.meta["artifact"])
             for e in self.query_engine.vector_store_driver.load_entries(namespace)
         ]
 
-        return [a for a in artifacts if isinstance(a, TextArtifact)]
+        return ListArtifact(
+            [a for a in artifacts if isinstance(a, TextArtifact)]
+        )
 
     def find_input_memory(self, memory_name: str) -> Optional[TextToolMemory]:
         if memory_name == self.name:

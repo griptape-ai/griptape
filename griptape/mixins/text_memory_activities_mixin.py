@@ -51,11 +51,9 @@ class TextMemoryActivitiesMixin:
         column_names = params["values"]["column_names"]
 
         if memory:
-            return ListArtifact(
-                memory.csv_extraction_engine.extract(
-                    memory.load_artifacts(artifact_namespace),
-                    column_names
-                )
+            return memory.csv_extraction_engine.extract(
+                memory.load_artifacts(artifact_namespace),
+                column_names
             )
         else:
             return ErrorArtifact("memory not found")
@@ -69,7 +67,7 @@ class TextMemoryActivitiesMixin:
             Literal(
                 "json_schema",
                 description="JSON schema for an individual JSON object."
-            ): list[str]
+            ): dict
         })
     })
     def extract_json_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
@@ -78,11 +76,9 @@ class TextMemoryActivitiesMixin:
         json_schema = params["values"]["json_schema"]
 
         if memory:
-            return ListArtifact(
-                memory.json_extraction_engine.extract(
-                    memory.load_artifacts(artifact_namespace),
-                    json_schema
-                )
+            return memory.json_extraction_engine.extract(
+                memory.load_artifacts(artifact_namespace),
+                json_schema
             )
         else:
             return ErrorArtifact("memory not found")

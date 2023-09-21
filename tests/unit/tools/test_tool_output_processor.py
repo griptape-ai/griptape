@@ -22,12 +22,12 @@ class TestTextMemoryBrowser:
 
         mocker.patch(
             "griptape.engines.CsvExtractionEngine.extract",
-            return_value=[CsvRowArtifact({"foo": "bar"})]
+            return_value=ListArtifact([CsvRowArtifact({"foo": "bar"})])
         )
 
         mocker.patch(
             "griptape.engines.JsonExtractionEngine.extract",
-            return_value=[TextArtifact('{"foo":"bar"}')]
+            return_value=ListArtifact([TextArtifact('{"foo":"bar"}')])
         )
 
     @pytest.fixture
@@ -71,5 +71,5 @@ class TestTextMemoryBrowser:
 
     def test_extract_json_objects(self, tool):
         assert tool.extract_json_objects(
-            {"values": {"json_schema": "{}", "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
+            {"values": {"json_schema": {}, "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
         ).value[0].value == '{"foo":"bar"}'

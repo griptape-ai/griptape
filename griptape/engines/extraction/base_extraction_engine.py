@@ -48,5 +48,5 @@ class BaseExtractionEngine(ABC):
         )
 
     @abstractmethod
-    def extract(self, text: str, **kwargs) -> ListArtifact:
+    def extract(self, text: str | ListArtifact, **kwargs) -> ListArtifact:
         ...

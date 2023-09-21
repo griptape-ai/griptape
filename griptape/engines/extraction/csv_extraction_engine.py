@@ -1,3 +1,4 @@
+from __future__ import annotations
 import csv
 import io
 from attr import field, Factory, define
@@ -14,9 +15,9 @@ class CsvExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, text: str, column_names: list[str]) -> ListArtifact:
+    def extract(self, text: str | ListArtifact, column_names: list[str]) -> ListArtifact:
         return self._extract_rec(
-            [TextArtifact(text)],
+            text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
             column_names,
             []
         )

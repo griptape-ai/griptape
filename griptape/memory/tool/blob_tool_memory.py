@@ -61,5 +61,7 @@ class BlobToolMemory(BaseToolMemory):
 
             return value
 
-    def load_artifacts(self, namespace: str) -> list[BaseArtifact]:
-        return self.driver.load(namespace)
+    def load_artifacts(self, namespace: str) -> ListArtifact:
+        return ListArtifact(
+            self.driver.load(namespace)
+        )
