@@ -51,12 +51,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             self._prompt_stack_to_messages(prompt_stack)
         )
 
-    def max_output_tokens(self, messages: list) -> int:
-        if self.max_tokens:
-            return self.max_tokens
-        else:
-            return self.tokenizer.tokens_left(messages)
-
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         return [
             {

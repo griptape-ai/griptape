@@ -1,5 +1,6 @@
+from __future__ import annotations
 import logging
-from typing import Union, Optional
+from typing import Optional
 from attr import define, field
 import tiktoken
 from griptape.tokenizers import BaseTokenizer
@@ -55,10 +56,10 @@ class OpenAiTokenizer(BaseTokenizer):
     def decode(self, tokens: list[int]) -> str:
         return self.encoding.decode(tokens)
 
-    def tokens_left(self, text: Union[str, list]) -> int:
+    def tokens_left(self, text: str | list) -> int:
         return super().tokens_left(text)
 
-    def token_count(self, text: Union[str, list], model: Optional[str] = None) -> int:
+    def token_count(self, text: str | list, model: Optional[str] = None) -> int:
         """
         Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb

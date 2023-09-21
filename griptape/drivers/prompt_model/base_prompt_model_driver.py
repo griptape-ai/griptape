@@ -1,5 +1,6 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Union, Optional
+from typing import Optional
 from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
@@ -14,7 +15,7 @@ class BasePromptModelDriver(ABC):
     tokenizer: BaseTokenizer
 
     @abstractmethod
-    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> Union[str, list, dict]:
+    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str | list | dict:
         ...
 
     @abstractmethod

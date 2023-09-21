@@ -1,7 +1,6 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
-from typing import Union
 from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
@@ -15,7 +14,7 @@ class Workflow(Structure):
         kw_only=True
     )
 
-    def __add__(self, other: Union[BaseTask, list[BaseTask]]) -> BaseTask:
+    def __add__(self, other: BaseTask | list[BaseTask]) -> BaseTask:
         return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
 
     def add_task(self, task: BaseTask) -> BaseTask:
