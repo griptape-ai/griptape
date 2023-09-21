@@ -1,10 +1,9 @@
 from __future__ import annotations
-from griptape.artifacts import ListArtifact, TextArtifact, ErrorArtifact
+from griptape.artifacts import ListArtifact, TextArtifact, ErrorArtifact, InfoArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
 from attr import define, field
-from typing import Optional
 import requests
 import logging
 
@@ -12,33 +11,41 @@ import logging
 class OpenWeatherClient(BaseTool):
     BASE_URL = "https://api.openweathermap.org/data/3.0/onecall"
     GEOCODING_URL = "https://api.openweathermap.org/geo/1.0/direct"
+    US_STATE_CODES = [
+        "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN",
+        "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV",
+        "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN",
+        "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+    ]
     api_key: str = field(kw_only=True)
-    units: Optional[str] = field(default="imperial", kw_only=True)
+    units: str = field(default="imperial", kw_only=True)
 
     @activity(
         config={
-            "description": "Fetches the latitude and longitude for a given location using the OpenWeather Geocoding API.",
+            "description": "Can be used to fetch the latitude and longitude for a given location.",
             "schema": Schema({
                 Literal(
                     "location",
-                    description="Location to fetch coordinates for. For US cities, use the format 'city_name, state_code'. For non-US cities, use 'city_name, country_code'. For cities without specifying state or country, simply use 'city_name'."
+                    description="Location to fetch coordinates for. "
+                                "For US cities, use the format 'city_name, state_code'. "
+                                "For non-US cities, use 'city_name, country_code'. "
+                                "For cities without specifying state or country, simply use 'city_name'."
                 ): str
             }),
         }
     )
-    def get_coordinates_by_location(self, params: dict) -> ListArtifact | TextArtifact | ErrorArtifact:
+    def get_coordinates_by_location(self, params: dict) -> InfoArtifact | ErrorArtifact:
         location = params["values"].get("location")
         coordinates = self._fetch_coordinates(location)
         if coordinates:
             lat, lon = coordinates
-            return TextArtifact(f"Coordinates for {location}: Latitude: {lat}, Longitude: {lon}")
+            return InfoArtifact(f"Coordinates for {location}: Latitude: {lat}, Longitude: {lon}")
         else:
             return ErrorArtifact(f"Error fetching coordinates for location: {location}")
 
     def _fetch_coordinates(self, location: str) -> tuple[float, float] | None:
-        US_STATE_CODES = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
         parts = location.split(',')
-        if len(parts) == 2 and parts[1].strip() in US_STATE_CODES:
+        if len(parts) == 2 and parts[1].strip() in self.US_STATE_CODES:
             location += ', US'
         request_params = {
             'q': location,
@@ -60,7 +67,8 @@ class OpenWeatherClient(BaseTool):
 
     @activity(
         config={
-            "description": "Can be used to fetch current weather data for a given location using the OpenWeather API. Temperatures are returned in {{ units }} by default.",
+            "description": "Can be used to fetch current weather data for a given location. "
+                           "Temperatures are returned in {{ _self.units }} by default.",
             "schema": Schema({
                 Literal("location", description="Location to fetch weather data for."): str
             }),
@@ -84,7 +92,8 @@ class OpenWeatherClient(BaseTool):
 
     @activity(
         config={
-            "description": "Fetch hourly forecast for a given location up to 48 hours ahead using the OpenWeather API. Temperatures are returned in {{ units }} by default.",
+            "description": "Can be used to fetch hourly forecast for a given location up to 48 hours ahead. "
+                           "Temperatures are returned in {{ _self.units }} by default.",
             "schema": Schema({
                 Literal("location", description="Location to fetch hourly forecast for."): str
             }),
@@ -108,7 +117,8 @@ class OpenWeatherClient(BaseTool):
 
     @activity(
         config={
-            "description": "Fetch daily forecast for a given location up to 8 days ahead using the OpenWeather API. Temperatures are returned in {{ units }} by default.",
+            "description": "Can be used to fetch daily forecast for a given location up to 8 days ahead. "
+                           "Temperatures are returned in {{ _self.units }} by default.",
             "schema": Schema({
                 Literal("location", description="Location to fetch daily forecast for."): str
             }),
@@ -136,7 +146,8 @@ class OpenWeatherClient(BaseTool):
             if response.status_code == 200:
                 data = response.json()
                 if isinstance(data, list):
-                    return ListArtifact(data)
+                    wrapped_data = [InfoArtifact(item) for item in data]
+                    return ListArtifact(wrapped_data)
                 else:
                     return TextArtifact(str(data))
             else:
