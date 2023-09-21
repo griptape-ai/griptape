@@ -34,9 +34,10 @@ class DateTime(BaseTool):
         try:
             date_string = params["values"]["relative_date_string"]
             relative_datetime = parse(date_string)
-            if not relative_datetime:
-                return ErrorArtifact("invalid date string")
 
-            return TextArtifact(str(relative_datetime))
+            if relative_datetime:
+                return TextArtifact(str(relative_datetime))
+            else:
+                return ErrorArtifact("invalid date string")
         except Exception as e:
             return ErrorArtifact(f"error getting current datetime: {e}")
