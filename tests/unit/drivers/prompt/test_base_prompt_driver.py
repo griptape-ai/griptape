@@ -30,7 +30,7 @@ class TestBasePromptDriver:
     def test_token_count(self):
         assert MockPromptDriver().token_count(
             PromptStack(inputs=[PromptStack.Input("foobar", role=PromptStack.USER_ROLE)])
-        ) == 4
+        ) == 7
 
     def test_max_output_tokens(self):
         assert MockPromptDriver().max_output_tokens("foobar") == 4087
@@ -40,7 +40,7 @@ class TestBasePromptDriver:
     def test_prompt_stack_to_string(self):
         assert MockPromptDriver().prompt_stack_to_string(
             PromptStack(inputs=[PromptStack.Input("foobar", role=PromptStack.USER_ROLE)])
-        ) == "User: foobar"
+        ) == "User: foobar\n\nAssistant:"
 
     def test_custom_prompt_stack_to_string(self):
         assert MockPromptDriver(
