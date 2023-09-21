@@ -25,7 +25,8 @@ class DateTime(BaseTool):
         "schema": Schema({
             Literal(
                 "relative_date_string",
-                description='Relative date in English. For example, "now EST", "20 minutes ago", or "yesterday at 2pm"'
+                description='Relative date in English. For example, "now EST", "20 minutes ago", '
+                            '"in 2 days", "3 months, 1 week and 1 day ago", or "yesterday at 2pm"'
             ): str
         })
     })
@@ -34,6 +35,9 @@ class DateTime(BaseTool):
             date_string = params["values"]["relative_date_string"]
             relative_datetime = parse(date_string)
 
-            return TextArtifact(str(relative_datetime))
+            if relative_datetime:
+                return TextArtifact(str(relative_datetime))
+            else:
+                return ErrorArtifact("invalid date string")
         except Exception as e:
             return ErrorArtifact(f"error getting current datetime: {e}")
