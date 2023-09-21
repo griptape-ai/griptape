@@ -35,7 +35,7 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         return { "inputText": prompt }
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
-        prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)
+        prompt = self.prompt_stack_to_model_input(prompt_stack)["inputText"]
 
         return {
             "textGenerationConfig": {
