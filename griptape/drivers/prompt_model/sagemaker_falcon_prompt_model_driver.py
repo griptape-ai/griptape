@@ -22,7 +22,7 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
         return self.prompt_driver.prompt_stack_to_string(prompt_stack)
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
-        prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)
+        prompt = self.prompt_stack_to_model_input(prompt_stack)
         stop_sequences = self.prompt_driver.tokenizer.stop_sequences
 
         return {
