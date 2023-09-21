@@ -41,7 +41,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
         return { "prompt": prompt }
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
-        prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)
+        prompt = self.prompt_stack_to_model_input(prompt_stack)["prompt"]
 
         return {
             "maxTokens": self.prompt_driver.max_output_tokens(prompt),
