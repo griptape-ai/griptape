@@ -18,6 +18,7 @@ from .base_google_client import BaseGoogleClient
 from .google_gmail.tool import GoogleGmailClient
 from .google_cal.tool import GoogleCalendarClient
 from .openweather_client.tool import OpenWeatherClient
+from .cypher_client.tool import CypherClient
 
 __all__ = [
     "BaseTool",
@@ -39,5 +40,6 @@ __all__ = [
     "ToolOutputProcessor",
     "Computer",
     "ProxycurlClient",
-    "OpenWeatherClient"
+    "OpenWeatherClient",
+    "CypherClient"
 ]
