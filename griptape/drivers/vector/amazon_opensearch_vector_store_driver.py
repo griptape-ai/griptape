@@ -1,7 +1,8 @@
+from __future__ import annotations
 import boto3
 from requests_aws4auth import AWS4Auth
 from attr import define, field, Factory
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple
 from griptape.drivers import OpenSearchVectorStoreDriver
 from opensearchpy import OpenSearch, RequestsHttpConnection
 
@@ -17,7 +18,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
     """
     session: boto3.session.Session = field(kw_only=True)
 
-    http_auth: Optional[Union[str, Tuple[str, str]]] = field(
+    http_auth: Optional[str | Tuple[str, str]] = field(
         default=Factory(
             lambda self: AWS4Auth(
                 self.session.get_credentials().access_key,
