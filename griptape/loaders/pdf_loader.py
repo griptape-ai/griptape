@@ -1,5 +1,6 @@
+from __future__ import annotations
 from pathlib import Path
-from typing import Union, IO, Optional
+from typing import IO, Optional
 from PyPDF2 import PdfReader
 from attr import define, field, Factory
 from griptape import utils
@@ -21,12 +22,12 @@ class PdfLoader(TextLoader):
         kw_only=True
     )
 
-    def load(self, stream: Union[str, IO, Path], password: Optional[str] = None) -> list[TextArtifact]:
+    def load(self, stream: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:
         return self._load_pdf(stream, password)
 
     def load_collection(
             self,
-            streams: list[Union[str, IO, Path]],
+            streams: list[str | IO | Path],
             password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
         return utils.execute_futures_dict({
@@ -35,7 +36,7 @@ class PdfLoader(TextLoader):
             for s in streams
         })
 
-    def _load_pdf(self, stream: Union[str, IO, Path], password: Optional[str]) -> list[TextArtifact]:
+    def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
         reader = PdfReader(stream, strict=True, password=password)
 
         return self.text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))

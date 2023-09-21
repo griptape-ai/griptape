@@ -1,4 +1,5 @@
-from typing import Optional, Union, Tuple
+from __future__ import annotations
+from typing import Optional, Tuple
 from opensearchpy import OpenSearch, RequestsHttpConnection
 from griptape import utils
 import logging
@@ -20,7 +21,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     """
     host: str = field(kw_only=True)
     port: int = field(default=443, kw_only=True)
-    http_auth: Optional[Union[str, Tuple[str, str]]] = field(default=None, kw_only=True)
+    http_auth: Optional[str | Tuple[str, str]] = field(default=None, kw_only=True)
     use_ssl: bool = field(default=True, kw_only=True)
     verify_certs: bool = field(default=True, kw_only=True)
     index_name: str = field(kw_only=True)
