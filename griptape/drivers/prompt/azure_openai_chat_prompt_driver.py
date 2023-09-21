@@ -1,7 +1,7 @@
 from attr import define, field, Factory
 from griptape.utils import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
@@ -17,8 +17,8 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     deployment_id: str = field(kw_only=True)
     api_type: str = field(default="azure", kw_only=True)
     api_version: str = field(default="2023-05-15", kw_only=True)
-    tokenizer: TiktokenTokenizer = field(
-        default=Factory(lambda self: TiktokenTokenizer(model=self.model), takes_self=True),
+    tokenizer: OpenAiTokenizer = field(
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True
     )
 
