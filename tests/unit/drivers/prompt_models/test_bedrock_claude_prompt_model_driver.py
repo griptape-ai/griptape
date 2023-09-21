@@ -41,7 +41,7 @@ class TestBedrockClaudePromptModelDriver:
         assert model_input['prompt'].startswith("\nInstructions: foo\n\nHuman: bar\n\nAssistant:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_tokens_to_sample"] == 8186
+        assert driver.prompt_stack_to_model_params(stack)["max_tokens_to_sample"] == 8178
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver, stack):
