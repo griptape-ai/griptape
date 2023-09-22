@@ -945,6 +945,20 @@ ssh = ["paramiko"]
 tqdm = ["tqdm"]
 
 [[package]]
+name = "fuzzywuzzy"
+version = "0.18.0"
+description = "Fuzzy string matching in python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fuzzywuzzy-0.18.0-py2.py3-none-any.whl", hash = "sha256:928244b28db720d1e0ee7587acf660ea49d7e4c632569cad4f1cd7e68a5f0993"},
+    {file = "fuzzywuzzy-0.18.0.tar.gz", hash = "sha256:45016e92264780e58972dca1b3d939ac864b78437422beecebb3095f8efd00e8"},
+]
+
+[package.extras]
+speedup = ["python-levenshtein (>=0.12)"]
+
+[[package]]
 name = "greenlet"
 version = "2.0.2"
 description = "Lightweight in-process concurrent programming"
@@ -1723,13 +1737,13 @@ files = [
 
 [[package]]
 name = "moto"
-version = "4.2.4"
+version = "4.2.3"
 description = ""
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "moto-4.2.4-py2.py3-none-any.whl", hash = "sha256:3516f55405015e4516c549d875c7a93e7daa1622d6342af335e63cf7bfe442fd"},
-    {file = "moto-4.2.4.tar.gz", hash = "sha256:eea3c5b29987e8b12816b355dfdcca5d7a815a9d9f17208af31fa32acbe8b389"},
+    {file = "moto-4.2.3-py2.py3-none-any.whl", hash = "sha256:2e934d834729b274382055e097b166127db829ab4fae00bb08c031c108391a2c"},
+    {file = "moto-4.2.3.tar.gz", hash = "sha256:4caab0145d557d102fe79d0ce3b73d6bf1d916d29ad03c14da15f7da66429cdb"},
 ]
 
 [package.dependencies]
@@ -4042,4 +4056,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "67bb26b5f21a1f56c148ab4b86035bd049a1d59916308c541844b52000486414"
+content-hash = "0d87c50e8b0509ab39b338b2cfd9d7cd48c3bd7c69ef2ccdf6b98f8e0b5bfac0"
