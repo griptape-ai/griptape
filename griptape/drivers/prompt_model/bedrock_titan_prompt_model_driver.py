@@ -15,6 +15,20 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
 
     @property
     def tokenizer(self) -> BedrockTitanTokenizer:
+        """Returns the tokenizer for this driver.
+
+        We need to pass the `session` field from the Prompt Driver to the
+        Tokenizer. However, the Prompt Driver is not initialized until after
+        the Prompt Model Driver is initialized. To resolve this, we make the `tokenizer`
+        field a @property that is only initialized when it is first accessed.
+        This ensures that by the time we need to initialize the Tokenizer, the 
+        Prompt Driver has already been initialized and we can access its session.
+
+        See this thread more more information: https://github.com/griptape-ai/griptape/issues/244
+
+        Returns:
+            BedrockTitanTokenizer: The tokenizer for this driver.
+        """
         if self._tokenizer:
             return self._tokenizer
         else:
