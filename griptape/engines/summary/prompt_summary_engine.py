@@ -7,7 +7,6 @@ from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 
-
 @define
 class PromptSummaryEngine(BaseSummaryEngine):
     chunk_joiner: str = field(
@@ -35,11 +34,11 @@ class PromptSummaryEngine(BaseSummaryEngine):
     )
 
     @max_token_multiplier.validator
-    def validate_allowlist(self, _, max_token_multiplier: int) -> None:
+    def validate_max_token_multiplier(self, _, max_token_multiplier: float) -> None:
         if max_token_multiplier > 1:
-            raise ValueError("has to be less than or equal to 1")
+            raise ValueError("max_token_multiplier has to be less than or equal to 1")
         elif max_token_multiplier <= 0:
-            raise ValueError("has to be greater than 0")
+            raise ValueError("max_token_multiplier has to be greater than 0")
 
     @property
     def max_chunker_tokens(self) -> int:
@@ -53,15 +52,18 @@ class PromptSummaryEngine(BaseSummaryEngine):
             self.max_token_multiplier
         )
 
-    def summarize_artifacts(self, artifacts: list[BaseArtifact]) -> TextArtifact:
-        return self.summarize_artifacts_rec(artifacts, None)
+    def summarize_artifacts(self, artifacts: list[BaseArtifact], length: int = None, target_audience: str = None, format: str = None) -> TextArtifact:
+        return self.summarize_artifacts_rec(artifacts, length, target_audience, format)
 
-    def summarize_artifacts_rec(self, artifacts: list[BaseArtifact], summary: Optional[str]) -> TextArtifact:
+    def summarize_artifacts_rec(self, artifacts: list[BaseArtifact], length: int = None, target_audience: str = None, format: str = None, summary: Optional[str] = None) -> TextArtifact:
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 
         full_text = self.template_generator.render(
             summary=summary,
-            text=artifacts_text
+            text=artifacts_text,
+            length=length,
+            target_audience=target_audience,
+            format=format
         )
 
         if self.prompt_driver.tokenizer.tokens_left(full_text) >= self.min_response_tokens:
@@ -75,12 +77,18 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
             partial_text = self.template_generator.render(
                 summary=summary,
-                text=chunks[0].value
+                text=chunks[0].value,
+                length=length,
+                target_audience=target_audience,
+                format=format
             )
 
             return self.summarize_artifacts_rec(
                 chunks[1:],
-                self.prompt_driver.run(
+                length=length,
+                target_audience=target_audience,
+                format=format,
+                summary=self.prompt_driver.run(
                     PromptStack(
                         inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)]
                     )
