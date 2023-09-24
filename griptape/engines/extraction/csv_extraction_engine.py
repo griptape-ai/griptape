@@ -22,7 +22,8 @@ class CsvExtractionEngine(BaseExtractionEngine):
                     text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
                     column_names,
                     []
-                )
+                ),
+                item_separator="\n"
             )
         except Exception as e:
             return ErrorArtifact(f"error extracting CSV rows: {e}")

@@ -1,6 +1,6 @@
 from typing import Optional
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
@@ -78,3 +78,15 @@ class VectorQueryEngine(BaseQueryEngine):
         self.vector_store_driver.upsert_text_artifacts({
             namespace: artifacts
         })
+
+    def load_artifacts(self, namespace: str) -> ListArtifact:
+        result = self.vector_store_driver.load_entries(namespace)
+        artifacts = [
+            BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta.get("artifact")
+        ]
+
+        return ListArtifact(
+            [
+                a for a in artifacts if isinstance(a, TextArtifact)
+            ]
+        )

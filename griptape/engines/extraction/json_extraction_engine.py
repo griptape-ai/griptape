@@ -23,7 +23,8 @@ class JsonExtractionEngine(BaseExtractionEngine):
                     text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
                     json_schema,
                     []
-                )
+                ),
+                item_separator="\n"
             )
         except Exception as e:
             return ErrorArtifact(f"error extracting JSON: {e}")

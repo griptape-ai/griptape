@@ -6,6 +6,7 @@ from griptape.artifacts import BaseArtifact
 @define
 class ListArtifact(BaseArtifact):
     value: list[BaseArtifact] = field(factory=list)
+    item_separator: str = field(default="\n\n", kw_only=True)
 
     @value.validator
     def validate_value(self, _, value: list[BaseArtifact]) -> None:
@@ -23,7 +24,7 @@ class ListArtifact(BaseArtifact):
             return None
 
     def to_text(self) -> str:
-        return "\n\n".join([str(v.value) for v in self.value])
+        return self.item_separator.join([v.to_text() for v in self.value])
 
     def to_dict(self) -> dict:
         from griptape.schemas import ListArtifactSchema
@@ -38,3 +39,6 @@ class ListArtifact(BaseArtifact):
             return isinstance(self.value[0], target_type)
         else:
             return False
+
+    def has_items(self) -> bool:
+        return len(self.value) > 0

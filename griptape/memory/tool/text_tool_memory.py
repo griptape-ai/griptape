@@ -34,27 +34,28 @@ class TextToolMemory(BaseToolMemory, TextMemoryActivitiesMixin):
             self,
             tool_activity: callable,
             subtask: ActionSubtask,
-            value: BaseArtifact
+            output_artifact: BaseArtifact
     ) -> BaseArtifact:
         from griptape.utils import J2
 
         tool_name = tool_activity.__self__.name
         activity_name = tool_activity.name
 
-        if isinstance(value, TextArtifact):
-            namespace = value.name
+        if isinstance(output_artifact, TextArtifact):
+            namespace = output_artifact.name
 
             self.query_engine.upsert_text_artifact(
-                value,
+                output_artifact,
                 namespace=namespace
             )
-        elif isinstance(value, ListArtifact) and value.is_type(TextArtifact):
-            artifacts = [v for v in value.value]
-
-            if artifacts:
+        elif isinstance(output_artifact, ListArtifact):
+            if output_artifact.has_items():
                 namespace = uuid.uuid4().hex
 
-                self.query_engine.upsert_text_artifacts(artifacts, namespace)
+                self.query_engine.upsert_text_artifact(
+                    TextArtifact(output_artifact.to_text()),
+                    namespace
+                )
             else:
                 namespace = None
         else:
@@ -74,17 +75,10 @@ class TextToolMemory(BaseToolMemory, TextMemoryActivitiesMixin):
         else:
             logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.name}")
 
-            return value
+            return output_artifact
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
-        artifacts = [
-            BaseArtifact.from_json(e.meta["artifact"])
-            for e in self.query_engine.vector_store_driver.load_entries(namespace)
-        ]
-
-        return ListArtifact(
-            [a for a in artifacts if isinstance(a, TextArtifact)]
-        )
+        return self.query_engine.load_artifacts(namespace)
 
     def find_input_memory(self, memory_name: str) -> Optional[TextToolMemory]:
         if memory_name == self.name:

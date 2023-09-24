@@ -93,15 +93,15 @@ class FileManager(BaseTool):
         file_name = params["values"]["file_name"]
 
         if memory:
-            artifacts = memory.load_artifacts(artifact_namespace)
+            list_artifact = memory.load_artifacts(artifact_namespace)
 
-            if len(artifacts.value) == 0:
+            if len(list_artifact.value) == 0:
                 return ErrorArtifact("no artifacts found")
-            elif len(artifacts.value) == 1:
+            elif len(list_artifact.value) == 1:
                 try:
                     self._save_to_disk(
                         os.path.join(self.workdir, dir_name, file_name),
-                        artifacts.value[0].value
+                        list_artifact.value[0].value
                     )
 
                     return InfoArtifact(f"saved successfully")
@@ -109,10 +109,10 @@ class FileManager(BaseTool):
                     return ErrorArtifact(f"error writing file to disk: {e}")
             else:
                 try:
-                    for a in artifacts.value:
+                    for a in list_artifact.value:
                         self._save_to_disk(
                             os.path.join(self.workdir, dir_name, f"{a.name}-{file_name}"),
-                            a.value
+                            a.to_text()
                         )
 
                     return InfoArtifact(f"saved successfully")

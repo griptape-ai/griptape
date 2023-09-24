@@ -5,6 +5,7 @@ from griptape.artifacts import ListArtifact, TextArtifact, BlobArtifact, CsvRowA
 class TestListArtifact:
     def test_to_text(self):
         assert ListArtifact([TextArtifact("foo"), TextArtifact("bar")]).to_text() == "foo\n\nbar"
+        assert ListArtifact([TextArtifact("foo"), TextArtifact("bar")], item_separator="test").to_text() == "footestbar"
 
     def test_to_dict(self):
         assert ListArtifact([TextArtifact("foobar")]).to_dict()["value"][0]["value"] == "foobar"
@@ -28,3 +29,7 @@ class TestListArtifact:
         assert ListArtifact([TextArtifact("foo")]).is_type(TextArtifact)
         assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(TextArtifact)
         assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(CsvRowArtifact)
+
+    def test_has_items(self):
+        assert not ListArtifact().has_items()
+        assert ListArtifact([TextArtifact("foo")]).has_items()

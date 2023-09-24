@@ -1,6 +1,6 @@
 from typing import Optional
 from attr import define, Factory, field
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
@@ -53,8 +53,8 @@ class PromptSummaryEngine(BaseSummaryEngine):
             self.max_token_multiplier
         )
 
-    def summarize_artifacts(self, artifacts: list[BaseArtifact]) -> TextArtifact:
-        return self.summarize_artifacts_rec(artifacts, None)
+    def summarize_artifacts(self, artifacts: ListArtifact) -> TextArtifact:
+        return self.summarize_artifacts_rec(artifacts.value, None)
 
     def summarize_artifacts_rec(self, artifacts: list[BaseArtifact], summary: Optional[str]) -> TextArtifact:
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
