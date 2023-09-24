@@ -15,12 +15,14 @@ class CsvExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, text: str | ListArtifact, column_names: list[str]) -> ListArtifact | ErrorArtifact:
+    def extract(self, text: str | ListArtifact, column_names: list[str], **kwargs) -> ListArtifact | ErrorArtifact:
         try:
-            return self._extract_rec(
-                text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
-                column_names,
-                []
+            return ListArtifact(
+                self._extract_rec(
+                    text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                    column_names,
+                    []
+                )
             )
         except Exception as e:
             return ErrorArtifact(f"error extracting CSV rows: {e}")
@@ -43,7 +45,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
             artifacts: list[TextArtifact],
             column_names: list[str],
             rows: list[CsvRowArtifact]
-    ) -> ListArtifact:
+    ) -> list[CsvRowArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
             column_names=column_names,
@@ -62,7 +64,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 )
             )
 
-            return ListArtifact(rows)
+            return rows
         else:
             chunks = self.chunker.chunk(artifacts_text)
             partial_text = self.template_generator.render(

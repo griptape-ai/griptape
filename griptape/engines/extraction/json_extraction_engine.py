@@ -14,14 +14,16 @@ class JsonExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, text: str | ListArtifact, template_schema: str) -> ListArtifact | ErrorArtifact:
+    def extract(self, text: str | ListArtifact, template_schema: dict, **kwargs) -> ListArtifact | ErrorArtifact:
         try:
-            json.loads(template_schema)
+            json_schema = json.dumps(template_schema)
 
-            return self._extract_rec(
-                text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
-                template_schema,
-                []
+            return ListArtifact(
+                self._extract_rec(
+                    text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                    json_schema,
+                    []
+                )
             )
         except Exception as e:
             return ErrorArtifact(f"error extracting JSON: {e}")
@@ -32,12 +34,12 @@ class JsonExtractionEngine(BaseExtractionEngine):
     def _extract_rec(
             self,
             artifacts: list[TextArtifact],
-            template_schema: str,
+            json_template_schema: str,
             extractions: list[TextArtifact]
-    ) -> ListArtifact:
+    ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
-            template_schema=template_schema,
+            json_template_schema=json_template_schema,
             text=artifacts_text
         )
 
@@ -52,11 +54,11 @@ class JsonExtractionEngine(BaseExtractionEngine):
                 )
             )
 
-            return ListArtifact(extractions)
+            return extractions
         else:
             chunks = self.chunker.chunk(artifacts_text)
             partial_text = self.template_generator.render(
-                template_schema=template_schema,
+                template_schema=json_template_schema,
                 text=chunks[0].value
             )
 
@@ -72,6 +74,6 @@ class JsonExtractionEngine(BaseExtractionEngine):
 
             return self._extract_rec(
                 chunks[1:],
-                template_schema,
+                json_template_schema,
                 extractions
             )
