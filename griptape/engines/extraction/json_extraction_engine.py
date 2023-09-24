@@ -1,91 +1,80 @@
 from __future__ import annotations
-import csv
-import io
+import json
 from attr import field, Factory, define
-from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, ErrorArtifact
-from griptape.utils import PromptStack
+from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
+from griptape.utils import PromptStack
 
 
 @define
-class CsvExtractionEngine(BaseExtractionEngine):
+class JsonExtractionEngine(BaseExtractionEngine):
     template_generator: J2 = field(
-        default=Factory(lambda: J2("engines/extraction/csv_extraction.j2")),
+        default=Factory(lambda: J2("engines/extraction/json_extraction.j2")),
         kw_only=True
     )
 
-    def extract(self, text: str | ListArtifact, column_names: list[str], **kwargs) -> ListArtifact | ErrorArtifact:
+    def extract(self, text: str | ListArtifact, template_schema: dict, **kwargs) -> ListArtifact | ErrorArtifact:
         try:
+            json_schema = json.dumps(template_schema)
+
             return ListArtifact(
                 self._extract_rec(
                     text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
-                    column_names,
+                    json_schema,
                     []
                 ),
                 item_separator="\n"
             )
         except Exception as e:
-            return ErrorArtifact(f"error extracting CSV rows: {e}")
+            return ErrorArtifact(f"error extracting JSON: {e}")
 
-    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
-        rows = []
-
-        with io.StringIO(text) as f:
-            for row in csv.reader(f):
-                rows.append(
-                    CsvRowArtifact(
-                        dict(zip(column_names, [x.strip() for x in row]))
-                    )
-                )
-
-        return rows
+    def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
+        return [TextArtifact(e) for e in json.loads(json_input)]
 
     def _extract_rec(
             self,
             artifacts: list[TextArtifact],
-            column_names: list[str],
-            rows: list[CsvRowArtifact]
-    ) -> list[CsvRowArtifact]:
+            json_template_schema: str,
+            extractions: list[TextArtifact]
+    ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
-            column_names=column_names,
+            json_template_schema=json_template_schema,
             text=artifacts_text
         )
 
         if self.prompt_driver.tokenizer.tokens_left(full_text) >= self.min_response_tokens:
-            rows.extend(
-                self.text_to_csv_rows(
+            extractions.extend(
+                self.json_to_text_artifacts(
                     self.prompt_driver.run(
                         PromptStack(
                             inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)]
                         )
-                    ).value,
-                    column_names
+                    ).value
                 )
             )
 
-            return rows
+            return extractions
         else:
             chunks = self.chunker.chunk(artifacts_text)
             partial_text = self.template_generator.render(
-                column_names=column_names,
+                template_schema=json_template_schema,
                 text=chunks[0].value
             )
 
-            rows.extend(
-                self.text_to_csv_rows(
+            extractions.extend(
+                self.json_to_text_artifacts(
                     self.prompt_driver.run(
                         PromptStack(
                             inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)]
                         )
-                    ).value,
-                    column_names
+                    ).value
                 )
             )
 
             return self._extract_rec(
                 chunks[1:],
-                column_names,
-                rows
+                json_template_schema,
+                extractions
             )
