@@ -19,11 +19,11 @@ class TestTextSummaryTask:
     def test_context_propagation(self):
         task = TextSummaryTask(
             "{{ test }}",
+            summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver()),
             context={"test": "test value"},
             length=2,
             target_audience="child",
             format="yaml"
         )
         Agent().add_task(task)
-        expected_result = 'The text is a simple statement of "test value".'
-        assert task.run().to_text() == expected_result
+        assert task.input.to_text() == "test value" 
