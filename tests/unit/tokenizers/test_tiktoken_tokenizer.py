@@ -45,6 +45,20 @@ class TestOpenAiTokenizer:
             model="gpt-3.5-turbo-0301"
         ) == 21
 
+        assert tokenizer.token_count(
+            [
+                {
+                    "role": "system",
+                    "content": "foobar baz"
+                },
+                {
+                    "role": "user",
+                    "content": "how foobar am I?"
+                }
+            ],
+            model="gpt-35-turbo"
+        ) == 19
+
     def test_tokens_left(self, tokenizer):
         assert tokenizer.tokens_left("foo bar huzzah") == 4083
 
