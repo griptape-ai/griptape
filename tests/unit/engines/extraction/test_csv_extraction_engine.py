@@ -1,5 +1,4 @@
 import pytest
-from griptape.artifacts import TextArtifact
 from griptape.engines import CsvExtractionEngine
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 

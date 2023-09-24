@@ -2,7 +2,7 @@ from __future__ import annotations
 import csv
 import io
 from attr import field, Factory, define
-from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact
+from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, ErrorArtifact
 from griptape.utils import PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -15,12 +15,15 @@ class CsvExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, text: str | ListArtifact, column_names: list[str]) -> ListArtifact:
-        return self._extract_rec(
-            text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
-            column_names,
-            []
-        )
+    def extract(self, text: str | ListArtifact, column_names: list[str]) -> ListArtifact | ErrorArtifact:
+        try:
+            return self._extract_rec(
+                text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                column_names,
+                []
+            )
+        except Exception as e:
+            return ErrorArtifact(f"error extracting CSV rows: {e}")
 
     def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
         rows = []

@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from attr import field, Factory, define
-from griptape.artifacts import TextArtifact, ListArtifact
+from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.utils import PromptStack
@@ -14,14 +14,17 @@ class JsonExtractionEngine(BaseExtractionEngine):
         kw_only=True
     )
 
-    def extract(self, text: str | ListArtifact, template_schema: str) -> ListArtifact:
-        assert json.loads(template_schema)
+    def extract(self, text: str | ListArtifact, template_schema: str) -> ListArtifact | ErrorArtifact:
+        try:
+            json.loads(template_schema)
 
-        return self._extract_rec(
-            text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
-            template_schema,
-            []
-        )
+            return self._extract_rec(
+                text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                template_schema,
+                []
+            )
+        except Exception as e:
+            return ErrorArtifact(f"error extracting JSON: {e}")
 
     def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
         return [TextArtifact(e) for e in json.loads(json_input)]
