@@ -5,7 +5,7 @@ from jinja2 import Template
 from schema import Schema
 
 
-@define
+@define(slots=False)
 class ActivityMixin:
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
