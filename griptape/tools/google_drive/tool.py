@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 from schema import Schema, Literal, Optional, Or
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient, BaseTool
 from google.auth.exceptions import MalformedError
@@ -46,12 +46,13 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                 query = "mimeType != 'application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
             else:
                 folder_id = self._path_to_file_id(service, values["folder_path"])
-                if not folder_id:
+                if folder_id:
+                    query = f"'{folder_id}' in parents and trashed=false"
+                else:
                     return ErrorArtifact(f"Could not find folder: {values['folder_path']}")
-                query = f"'{folder_id}' in parents and trashed=false"
 
             items = self._list_files(service, query)
-            return ListArtifact(items)
+            return ListArtifact([TextArtifact(i) for i in items])
 
         except Exception as e:
             logging.error(e)
@@ -216,22 +217,22 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                 folder_id = self._path_to_file_id(service, values["folder_path"])
                 if not folder_id:
                     return ErrorArtifact(f"Folder path {values['folder_path']} not found")
-    
+
             if search_mode == "name":
                 query = f"name='{values['search_query']}'"
             elif search_mode == "content":
                 query = f"fullText contains '{values['search_query']}'"
             else:
                 return ErrorArtifact(f"Invalid search mode: {search_mode}")
-    
+
             query += " and trashed=false"
-    
+
             if folder_id != "root":
                 query += f" and '{folder_id}' in parents"
-    
+
             results = service.files().list(q=query).execute()
             items = results.get("files", [])
-            return ListArtifact(items)
+            return ListArtifact([TextArtifact(i) for i in items])
     
         except HttpError as e:
             logging.error(e)
