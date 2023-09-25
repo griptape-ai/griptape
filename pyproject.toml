@@ -54,12 +54,12 @@ pandas = "^2.1.0"
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
 pytest-mock = "*"
-pytest-cover = "*"
 mongomock = "*"
 
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
 pytest-xdist = "^3.3.1"
+pytest-cov = "^4.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
