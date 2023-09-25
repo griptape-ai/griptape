@@ -8,7 +8,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class OpenAiTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "davinci"
+    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "text-davinci-003"
     DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
     DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
