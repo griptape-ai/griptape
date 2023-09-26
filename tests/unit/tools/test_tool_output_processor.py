@@ -1,7 +1,7 @@
 import pytest
-from griptape.artifacts import TextArtifact, CsvRowArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, CsvRowArtifact, BaseArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from griptape.tools import ToolOutputProcessor
@@ -22,19 +22,27 @@ class TestTextMemoryBrowser:
 
         mocker.patch(
             "griptape.engines.CsvExtractionEngine.extract",
-            return_value=[CsvRowArtifact({"foo": "bar"})]
+            return_value=ListArtifact([CsvRowArtifact({"foo": "bar"})])
+        )
+
+        mocker.patch(
+            "griptape.engines.JsonExtractionEngine.extract",
+            return_value=ListArtifact([TextArtifact('{"foo":"bar"}')])
         )
 
     @pytest.fixture
     def tool(self):
         return ToolOutputProcessor(
-            input_memory=[TextToolMemory(
-                query_engine=VectorQueryEngine(
-                    vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver()
-                    )
+            input_memory=[
+                TextToolMemory(
+                    query_engine=VectorQueryEngine(
+                        vector_store_driver=LocalVectorStoreDriver(
+                            embedding_driver=MockEmbeddingDriver()
+                        )
+                    ),
+                    summary_engine=PromptSummaryEngine()
                 )
-            )]
+            ]
         )
 
     def test_insert(self, tool):
@@ -56,7 +64,12 @@ class TestTextMemoryBrowser:
             {"values": {"query": "foobar", "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
         ).value == "foobar"
 
-    def test_extract_csv(self, tool):
-        assert tool.extract_csv(
+    def test_extract_csv_rows(self, tool):
+        assert tool.extract_csv_rows(
             {"values": {"column_names": "foo", "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
         ).value[0].value == {"foo": "bar"}
+
+    def test_extract_json_objects(self, tool):
+        assert tool.extract_json_objects(
+            {"values": {"json_schema": {}, "memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}
+        ).value[0].value == '{"foo":"bar"}'

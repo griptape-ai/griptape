@@ -4,7 +4,7 @@ import pytest
 import yaml
 from schema import SchemaMissingKeyError
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.memory.tool import TextToolMemory
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -65,8 +65,8 @@ class TestBaseTool:
         tool = MockTool(
             output_memory={
                 "test": [
-                    TextToolMemory(name="Memory1", query_engine=query_engine),
-                    TextToolMemory(name="Memory2", query_engine=query_engine)
+                    TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine()),
+                    TextToolMemory(name="Memory2", query_engine=query_engine, summary_engine=PromptSummaryEngine())
                 ]
             }
         )
@@ -84,8 +84,8 @@ class TestBaseTool:
             MockTool(
                 output_memory={
                     "test": [
-                        TextToolMemory(name="Memory1", query_engine=query_engine),
-                        TextToolMemory(name="Memory1", query_engine=query_engine)
+                        TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine()),
+                        TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine())
                     ]
                 }
             )
@@ -94,7 +94,7 @@ class TestBaseTool:
             MockTool(
                 output_memory={
                     "output_memory": [
-                        TextToolMemory(name="Memory1", query_engine=query_engine)
+                        TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine())
                     ]
                 }
             )
@@ -103,20 +103,28 @@ class TestBaseTool:
                 output_memory={
                     "test": [
                         TextToolMemory(
-                            name="Memory1", query_engine=query_engine
+                            name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine()
                         )
                     ],
                     "test_str_output": [
                         TextToolMemory(
-                            name="Memory1", query_engine=query_engine
+                            name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine()
                         )
                     ]
                 }
             )
 
     def test_find_input_memory(self):
+        query_engine = VectorQueryEngine(
+            vector_store_driver=LocalVectorStoreDriver(
+                embedding_driver=MockEmbeddingDriver()
+            )
+        )
+
         assert MockTool().find_input_memory("foo") is None
-        assert MockTool(input_memory=[TextToolMemory(name="foo")]).find_input_memory("foo") is not None
+        assert MockTool(input_memory=[
+            TextToolMemory(name="foo", query_engine=query_engine, summary_engine=PromptSummaryEngine())
+        ]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
         assert tool.execute(

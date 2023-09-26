@@ -1,8 +1,8 @@
 from typing import Optional
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
-from griptape.drivers import BaseVectorStoreDriver, LocalVectorStoreDriver, BasePromptDriver, OpenAiChatPromptDriver
+from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
 
@@ -10,16 +10,13 @@ from griptape.utils.j2 import J2
 @define
 class VectorQueryEngine(BaseQueryEngine):
     answer_token_offset: int = field(default=400, kw_only=True)
-    vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda: LocalVectorStoreDriver()),
-        kw_only=True
-    )
+    vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver()),
         kw_only=True
     )
     template_generator: J2 = field(
-        default=Factory(lambda: J2("engines/vector_query.j2")),
+        default=Factory(lambda: J2("engines/query/vector_query.j2")),
         kw_only=True
     )
 
@@ -81,3 +78,15 @@ class VectorQueryEngine(BaseQueryEngine):
         self.vector_store_driver.upsert_text_artifacts({
             namespace: artifacts
         })
+
+    def load_artifacts(self, namespace: str) -> ListArtifact:
+        result = self.vector_store_driver.load_entries(namespace)
+        artifacts = [
+            BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta.get("artifact")
+        ]
+
+        return ListArtifact(
+            [
+                a for a in artifacts if isinstance(a, TextArtifact)
+            ]
+        )

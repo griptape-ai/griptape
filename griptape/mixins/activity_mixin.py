@@ -5,7 +5,7 @@ from jinja2 import Template
 from schema import Schema
 
 
-@define
+@define(slots=False)
 class ActivityMixin:
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
@@ -31,6 +31,14 @@ class ActivityMixin:
 
         for activity_name in denylist:
             self._validate_tool_activity(activity_name)
+
+    def enable_activities(self) -> None:
+        self.allowlist = None
+        self.denylist = None
+
+    def disable_activities(self) -> None:
+        self.allowlist = []
+        self.denylist = None
 
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `inspect.getmembers`.

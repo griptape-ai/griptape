@@ -3,12 +3,13 @@ import pytest
 from griptape.artifacts import TextArtifact
 from griptape.memory.tool import TextToolMemory
 from griptape.rules import Rule, Ruleset
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 from tests.mocks.mock_tool.tool import MockTool
+from tests.unit.structures.test_agent import MockEmbeddingDriver
 
 
 class TestPipeline:
@@ -41,6 +42,39 @@ class TestPipeline:
         assert pipeline.tasks[1].all_rulesets[0].name == "Foo"
         assert pipeline.tasks[1].all_rulesets[1].name == "Baz"
 
+    def test_rules(self):
+        pipeline = Pipeline(
+            rules=[Rule("foo test")]
+        )
+
+        pipeline.add_tasks(
+            PromptTask(rules=[Rule("bar test")]),
+            PromptTask(rules=[Rule("baz test")])
+        )
+
+        assert len(pipeline.tasks[0].all_rulesets) == 2
+        assert pipeline.tasks[0].all_rulesets[0].name == "Default Ruleset"
+        assert pipeline.tasks[0].all_rulesets[1].name == "Additional Ruleset"
+        
+        assert pipeline.tasks[1].all_rulesets[0].name == "Default Ruleset"
+        assert pipeline.tasks[1].all_rulesets[1].name == "Additional Ruleset"
+        
+    def test_rules_and_rulesets(self):
+        with pytest.raises(ValueError):
+            Pipeline(
+                rules=[Rule("foo test")],
+                rulesets=[Ruleset("Bar", [Rule("bar test")])]
+            )
+
+        with pytest.raises(ValueError):
+            pipeline = Pipeline()
+            pipeline.add_task(
+                PromptTask(
+                    rules=[Rule("foo test")],
+                    rulesets=[Ruleset("Bar", [Rule("bar test")])]
+                )
+            )
+
     def test_with_default_tool_memory(self):
         pipeline = Pipeline()
 
@@ -51,6 +85,18 @@ class TestPipeline:
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
+
+    def test_embedding_driver(self):
+        embedding_driver = MockEmbeddingDriver()
+        pipeline = Pipeline(
+            embedding_driver=embedding_driver
+        )
+
+        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+
+        assert isinstance(pipeline.tool_memory.query_engine.vector_store_driver.embedding_driver, MockEmbeddingDriver)
+        assert pipeline.tasks[0].tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert pipeline.tasks[0].tools[0].output_memory["test"][0].query_engine.vector_store_driver.embedding_driver == embedding_driver
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
@@ -203,7 +249,7 @@ class TestPipeline:
     def test_text_artifact_token_count(self):
         text = "foobar"
 
-        assert TextArtifact(text).token_count(TiktokenTokenizer()) == TiktokenTokenizer().token_count(text)
+        assert TextArtifact(text).token_count(OpenAiTokenizer()) == OpenAiTokenizer().token_count(text)
 
     def test_run(self):
         task = PromptTask("test")

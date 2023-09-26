@@ -1,13 +1,14 @@
+from __future__ import annotations
 import logging
-from typing import Union, Optional
+from typing import Optional
 from attr import define, field
 import tiktoken
 from griptape.tokenizers import BaseTokenizer
 
 
 @define(frozen=True)
-class TiktokenTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "davinci"
+class OpenAiTokenizer(BaseTokenizer):
+    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "text-davinci-003"
     DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
     DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
@@ -55,10 +56,10 @@ class TiktokenTokenizer(BaseTokenizer):
     def decode(self, tokens: list[int]) -> str:
         return self.encoding.decode(tokens)
 
-    def tokens_left(self, text: Union[str, list]) -> int:
+    def tokens_left(self, text: str | list) -> int:
         return super().tokens_left(text)
 
-    def token_count(self, text: Union[str, list], model: Optional[str] = None) -> int:
+    def token_count(self, text: str | list, model: Optional[str] = None) -> int:
         """
         Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
@@ -88,7 +89,7 @@ class TiktokenTokenizer(BaseTokenizer):
                 tokens_per_message = 4
                 # if there's a name, the role is omitted
                 tokens_per_name = -1
-            elif "gpt-3.5-turbo" in model:
+            elif "gpt-3.5-turbo" in model or "gpt-35-turbo" in model:
                 logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
                 return self.token_count(text, model="gpt-3.5-turbo-0613")
             elif "gpt-4" in model:

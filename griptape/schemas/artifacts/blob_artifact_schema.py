@@ -5,7 +5,7 @@ from griptape.utils.marshmallow.fields import Bytes
 
 class BlobArtifactSchema(BaseArtifactSchema):
     name = fields.Str()
-    dir = fields.Str(allow_none=True)
+    dir_name = fields.Str(allow_none=True)
     value = Bytes()
 
     @post_load
