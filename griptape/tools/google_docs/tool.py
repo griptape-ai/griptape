@@ -102,7 +102,7 @@ class GoogleDocsClient(BaseGoogleClient):
         downloaded_files = []
 
         for path in file_paths:
-            blob = self.download_document(path)
+            blob = self._download_document(path)
             if isinstance(blob, ErrorArtifact):
                 return ErrorArtifact(f"Error downloading Google Doc for path {path}: {blob.value}")
             downloaded_files.append(blob)
