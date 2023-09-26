@@ -10,13 +10,14 @@ import pytest
 
 class TestFileManager:
     @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
-    def agent(self):
+    def agent(self, request):
         from griptape.structures import Agent
         from griptape.tools import FileManager
 
         return Agent(
             tools=[FileManager()],
             memory=None,
+            prompt_driver=request.param,
             rulesets=[OUTPUT_RULESET],
         )
 

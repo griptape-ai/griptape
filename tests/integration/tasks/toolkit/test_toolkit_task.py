@@ -10,7 +10,7 @@ import pytest
 
 class TestToolkitTask:
     @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
-    def agent(self):
+    def agent(self, request):
         import os
         from griptape.structures import Agent
         from griptape.tools import WebScraper
@@ -25,6 +25,7 @@ class TestToolkitTask:
                 WebScraper(),
             ],
             memory=None,
+            prompt_driver=request.param,
             rulesets=[OUTPUT_RULESET],
         )
 
