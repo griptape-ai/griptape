@@ -63,8 +63,15 @@ class AwsIamClient(BaseAwsClient):
             policies = self.iam_client.list_user_policies(
                 UserName=params["values"]["user_name"]
             )
+            policy_names = policies["PolicyNames"]
+
+            attached_policies = self.iam_client.list_attached_user_policies(
+                UserName=params["values"]["user_name"]
+            )
+            attached_policy_names = [p["PolicyName"] for p in attached_policies["AttachedPolicies"]]
+
             return ListArtifact(
-                [TextArtifact(str(p)) for p in policies["PolicyNames"]]
+                [TextArtifact(str(p)) for p in policy_names + attached_policy_names]
             )
         except Exception as e:
             return ErrorArtifact(f"error listing iam user policies: {e}")

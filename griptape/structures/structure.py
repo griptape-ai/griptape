@@ -3,7 +3,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, Union, TYPE_CHECKING, Callable, Type
+from typing import Optional, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
@@ -12,7 +12,7 @@ from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.drivers import LocalVectorStoreDriver
 
@@ -27,7 +27,7 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(
-            model=TiktokenTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
         )),
         kw_only=True
     )
@@ -40,7 +40,7 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: Union[list[Callable], dict[Type[BaseEvent], list[Callable]]] = field(factory=list, kw_only=True)
+    event_listeners: list[Callable] | dict[Type[BaseEvent], list[Callable]] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
     tool_memory: Optional[BaseToolMemory] = field(
         default=Factory(lambda self: TextToolMemory(
@@ -140,5 +140,5 @@ class Structure(ABC):
         ...
 
     @abstractmethod
-    def run(self, *args) -> Union[BaseTask, list[BaseTask]]:
+    def run(self, *args) -> BaseTask | list[BaseTask]:
         ...

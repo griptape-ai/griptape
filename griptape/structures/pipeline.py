@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional
 from attr import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
@@ -20,7 +20,7 @@ class Pipeline(Structure):
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
 
-    def __add__(self, other: Union[BaseTask, list[BaseTask]]) -> list[BaseTask]:
+    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
         return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
 
     def add_task(self, task: BaseTask) -> BaseTask:

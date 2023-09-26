@@ -1,41 +1,88 @@
-from unittest import mock
-import pytest
-import boto3
+from botocore.response import StreamingBody
+from griptape.artifacts import TextArtifact
 from griptape.drivers import AmazonBedrockPromptDriver
 from griptape.drivers import BedrockClaudePromptModelDriver, BedrockTitanPromptModelDriver
 from griptape.tokenizers import AnthropicTokenizer, BedrockTitanTokenizer
+from io import StringIO
+from unittest.mock import Mock
+import json
+import pytest
 
 
 class TestAmazonBedrockPromptDriver:
+    @pytest.fixture
+    def mock_model_driver(self):
+        mock_model_driver = Mock()
+        mock_model_driver.prompt_stack_to_model_params.return_value = { 'model-param-key': 'model-param-value' }
+        mock_model_driver.process_output.return_value = TextArtifact('model-output')
+        return mock_model_driver
+
     @pytest.fixture(autouse=True)
-    def mock_session(self, mocker):
-        mock_session_class = mocker.patch("boto3.Session")
-
-        mock_session_object = mock.Mock()
-        mock_client = mock.Mock()
-        mock_response = mock.Mock()
-
-        mock_client.invoke_model.return_value = mock_response
-        mock_session_object.client.return_value = mock_client
-        mock_session_class.return_value = mock_session_object
+    def mock_client(self, mocker):
+        return mocker.patch('boto3.Session').return_value.client.return_value
 
     def test_init(self):
         assert AmazonBedrockPromptDriver(
             model="foo",
-            session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockClaudePromptModelDriver()
         )
 
     def test_custom_tokenizer(self):
         assert isinstance(AmazonBedrockPromptDriver(
             model="foo",
-            session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockClaudePromptModelDriver()
         ).tokenizer, AnthropicTokenizer)
 
         assert isinstance(AmazonBedrockPromptDriver(
             model="foo",
-            session=boto3.Session(region_name="us-east-1"),
             tokenizer=BedrockTitanTokenizer(model="amazon.titan-tg1-large"),
             prompt_model_driver=BedrockTitanPromptModelDriver()
         ).tokenizer, BedrockTitanTokenizer)
+
+    @pytest.mark.parametrize('model_inputs', [{ 'model-input-key': 'model-input-value' }, 'not-a-dict'])
+    def test_try_run(self, model_inputs, mock_model_driver, mock_client):
+        # Given
+        driver = AmazonBedrockPromptDriver(
+            model='model',
+            prompt_model_driver=mock_model_driver
+        )
+        prompt_stack = 'prompt-stack'
+        response_body = 'invoke-model-response-body'
+        mock_model_driver.prompt_stack_to_model_input.return_value = model_inputs
+        mock_client.invoke_model.return_value = { 'body': to_streaming_body(response_body) }
+        
+        # When
+        text_artifact = driver.try_run(prompt_stack)
+
+        # Then
+        mock_model_driver.prompt_stack_to_model_input.assert_called_once_with(prompt_stack)
+        mock_model_driver.prompt_stack_to_model_params.assert_called_once_with(prompt_stack)
+        mock_client.invoke_model.assert_called_once_with(
+            modelId=driver.model,
+            contentType='application/json',
+            accept='application/json',
+            body=json.dumps({
+                **mock_model_driver.prompt_stack_to_model_params.return_value,
+                **(model_inputs if isinstance(model_inputs, dict) else {}),
+            }),
+        )
+        mock_model_driver.process_output.assert_called_once_with(response_body)
+        assert text_artifact == mock_model_driver.process_output.return_value
+
+    def test_try_run_throws_on_empty_response(self, mock_model_driver, mock_client):
+        # Given
+        driver = AmazonBedrockPromptDriver(
+            model='model',
+            prompt_model_driver=mock_model_driver
+        )
+        mock_client.invoke_model.return_value = { 'body': to_streaming_body('') }
+        
+        # When
+        with pytest.raises(Exception) as e:
+            driver.try_run('prompt-stack')
+
+        # Then
+        assert e.value.args[0] == 'model response is empty'
+
+def to_streaming_body(text: str) -> StreamingBody:
+    return StreamingBody(StringIO(text), len(text))

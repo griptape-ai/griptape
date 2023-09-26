@@ -1,11 +1,11 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact
+    from griptape.artifacts import BaseArtifact, ListArtifact
     from griptape.tasks import ActionSubtask
 
 
@@ -21,10 +21,10 @@ class BaseToolMemory(ActivityMixin, ABC):
         self,
         _tool_activity: callable,
         _subtask: ActionSubtask,
-        artifact: Union[BaseArtifact, list[BaseArtifact]],
+        artifact: BaseArtifact | list[BaseArtifact],
     ) -> BaseArtifact:
         return artifact
 
     @abstractmethod
-    def load_artifacts(self, namespace: str) -> list[BaseArtifact]:
+    def load_artifacts(self, namespace: str) -> ListArtifact:
         ...
