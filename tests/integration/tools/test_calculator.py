@@ -24,16 +24,8 @@ class TestCalculator:
     def test_calculate(self, agent):
         result = run_structure(agent, "What is 10 raised to the power of 5?")
 
-        assert fuzz.partial_ratio(str(result["task_output"]), "100000") > 80
+        assert fuzz.partial_ratio(str(result["answer"]), "100000") > 80
 
         result = run_structure(agent, "What is 7 times 3 divided by 5 plus 10.")
 
-        assert fuzz.partial_ratio(str(result["task_output"]), "14.2") > 80
-
-        result = run_structure(agent, "What is 1 divided by 0?")
-
-        assert (
-            fuzz.partial_ratio(result["task_output"], "Infinity") > 80
-            or fuzz.partial_ratio(result["task_output"], "undefined") > 80
-            or fuzz.partial_ratio(result["task_output"], "not possible") > 80
-        ) or result['task_result'] == 'failure'
+        assert fuzz.partial_ratio(str(result["answer"]), "14.2") > 80

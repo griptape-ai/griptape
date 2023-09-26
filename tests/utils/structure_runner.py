@@ -25,28 +25,8 @@ OUTPUT_RULESET = Ruleset(
     rules=[
         Rule(
             value=dedent(
-                """Write your output in json with the following schema: 
-                {
-                  "$schema": "http://json-schema.org/draft-04/schema#",
-                  "type": "object",
-                  "properties": {
-                    "task_output": {
-                      "type": "string"
-                    },
-                    "task_result": {
-                      "type": "string"
-                      "oneOf": [
-                        "success",
-                        "failure"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "task_output",
-                    "task_result"
-                  ]
-                }
-                If there is an error or the answer is incorrect, task_result should be "failure".
+                """Write your output in json with a key "answer" and a key "result".
+                If there is an error or the answer is incorrect, "result" should be "failure".
                 """
             )
         )
@@ -131,4 +111,4 @@ def run_structure(structure, prompt) -> dict:
     json_matches = re.findall(r"[^{]*({.*})", output_text, re.DOTALL)
     if json_matches:
         return loads(json_matches[0], strict=False)
-    return {"task_output": output_text, "task_result": "maybe"}
+    return {"answer": output_text, "result": "unknown"}

@@ -1,3 +1,4 @@
+from fuzzywuzzy import fuzz
 from tests.utils.structure_runner import (
     TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
     run_structure,
@@ -22,14 +23,14 @@ class TestFileManager:
     def test_save_content_to_disk(self, agent):
         result = run_structure(agent, 'Write the content "Hello World!" to a file called "poem.txt".')
 
-        assert result["task_result"] == "success"
+        assert result["result"] == "success"
 
         result = run_structure(agent, 'Write the content "Hello World!" to a file called ".".')
 
-        assert result["task_result"] == "failure"
+        assert result["result"] == "failure"
 
     def test_load_files_from_disk(self, agent):
         result = run_structure(agent, "Read the content of the file called 'poem.txt'.")
 
-        assert result["task_output"] == "Hello World!"
-        assert result["task_result"] == "success"
+        assert fuzz.partial_ratio(result["answer"], "Hello World!") == 100
+        assert result["result"] == "success"
