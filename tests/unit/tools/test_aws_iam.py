@@ -1,8 +1,14 @@
+from pytest import fixture
 from griptape.tools import AwsIamClient
+from tests.utils.aws import mock_aws_credentials
 import boto3
 
 
 class TestAwsIamClient:
+    @fixture(autouse=True)
+    def run_before_and_after_tests(self):
+        mock_aws_credentials()
+
     def test_get_user_policy(self):
         value = {
             "user_name": "test_user",

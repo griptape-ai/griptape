@@ -5,7 +5,7 @@ from attr import define, field, Factory
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact
+    from griptape.artifacts import BaseArtifact, ListArtifact
     from griptape.tasks import ActionSubtask
 
 
@@ -26,5 +26,5 @@ class BaseToolMemory(ActivityMixin, ABC):
         return artifact
 
     @abstractmethod
-    def load_artifacts(self, namespace: str) -> list[BaseArtifact]:
+    def load_artifacts(self, namespace: str) -> ListArtifact:
         ...

@@ -44,4 +44,4 @@ class TestBlobToolMemory:
         for a in [BlobArtifact(b"foo", name="fooname"), BlobArtifact(b"bar", name="barname")]:
             memory.driver.save("test", a)
 
-        assert len(memory.load_artifacts("test")) == 2
+        assert len(memory.load_artifacts("test").value) == 2

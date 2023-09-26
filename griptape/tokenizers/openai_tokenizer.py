@@ -8,7 +8,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class OpenAiTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "davinci"
+    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "text-davinci-003"
     DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
     DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
@@ -89,7 +89,7 @@ class OpenAiTokenizer(BaseTokenizer):
                 tokens_per_message = 4
                 # if there's a name, the role is omitted
                 tokens_per_name = -1
-            elif "gpt-3.5-turbo" in model:
+            elif "gpt-3.5-turbo" in model or "gpt-35-turbo" in model:
                 logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
                 return self.token_count(text, model="gpt-3.5-turbo-0613")
             elif "gpt-4" in model:
