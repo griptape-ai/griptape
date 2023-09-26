@@ -1,5 +1,6 @@
 from __future__ import annotations
 import logging
+from typing import List, Dict
 from schema import Schema, Literal, Optional, Or
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
@@ -30,10 +31,12 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
     @activity(config={
         "description": "Can be used to list files in a specific Google Drive folder or the root directory",
         "schema": Schema({
-            Literal("folder_path",
-                    description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
-                                "from which files should be listed. Specify 'root' to list files from the "
-                                "root directory."): str,
+            Optional(
+                "folder_path",
+                default="root",
+                description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
+                            "from which files should be listed."
+            ): str,
         })
     })
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
@@ -69,8 +72,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                     Optional(
                         "folder_path",
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
-                                    "where the file should be saved. Specify 'root' to save in the "
-                                    "root directory.",
+                                    "where the file should be saved.",
                         default='root'
                     ): str,
                 }
@@ -200,13 +202,13 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                     Literal(
                         "search_query",
                         description="Query to search for. If search_mode is 'name', it's the file name. If 'content', "
-                        "it's the text within files.",
+                                    "it's the text within files.",
                     ): str,
-                    Literal(
+                    Optional(
                         "folder_path",
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
-                        "where the search should be performed. Specify 'root' to search in the "
-                        "root directory.",
+                                    "where the search should be performed.",
+                        default='root'
                     ): str,
                 }
             ),
@@ -269,22 +271,27 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         current_id = "root"
     
         for idx, part in enumerate(parts):
-            if idx == len(parts) - 1:  # If it's the last part
-                query = f"name='{part}' and '{current_id}' in parents"  # No mime type restriction
+            if idx == len(parts) - 1:
+                query = f"name='{part}' and '{current_id}' in parents"
             else:
                 query = f"name='{part}' and '{current_id}' in parents and mimeType='application/vnd.google-apps.folder'"
     
             response = service.files().list(q=query).execute()
             files = response.get("files", [])
     
-            if not files and idx != len(parts) - 1:  # Only create folders for non-last parts
-                folder_metadata = {"name": part, "mimeType": "application/vnd.google-apps.folder", "parents": [current_id]}
-                folder = service.files().create(body=folder_metadata, fields="id").execute()
-                current_id = folder.get("id")
-            elif files:
-                current_id = files[0]["id"]
+            if not files:
+                if idx != len(parts) - 1:
+                    folder_metadata = {
+                        "name": part,
+                        "mimeType": "application/vnd.google-apps.folder",
+                        "parents": [current_id],
+                    }
+                    folder = service.files().create(body=folder_metadata, fields="id").execute()
+                    current_id = folder.get("id")
+                else:
+                    current_id = None
             else:
-                return None  # File not found
+                current_id = files[0]["id"]
     
         return current_id
 
@@ -311,7 +318,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
         return InfoArtifact(file)
 
-    def _list_files(self, service, query: str) -> list:
+    def _list_files(self, service, query: str) -> List[Dict]:
         items = []
         next_page_token = None
     
