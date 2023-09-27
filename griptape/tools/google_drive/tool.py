@@ -166,9 +166,10 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                         request = service.files().export_media(fileId=file_id, mimeType=export_mime)
                     else:
                         request = service.files().get_media(fileId=file_id)
-    
-                    downloaded_file = request.execute()
-                    downloaded_files.append(BlobArtifact(downloaded_file))
+
+                    downloaded_files.append(
+                        BlobArtifact(request.execute())
+                    )
                 else:
                     logging.error(f"Could not find file: {path}")
     
