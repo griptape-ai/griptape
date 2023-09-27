@@ -1,6 +1,5 @@
 import pytest
 from schema import Schema
-
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -88,3 +87,19 @@ class TestActivityMixin:
                 test_int=5,
                 denylist=["test_foo"]
             )
+
+    def test_disable_activities(self, tool):
+        assert len(tool.activities()) > 0
+
+        tool.disable_activities()
+
+        assert len(tool.activities()) == 0
+
+    def test_enable_activities(self, tool):
+        tool.disable_activities()
+
+        assert len(tool.activities()) == 0
+
+        tool.enable_activities()
+
+        assert len(tool.activities()) > 0

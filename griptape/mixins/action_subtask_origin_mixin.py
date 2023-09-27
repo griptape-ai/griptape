@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from attr import define
 
 if TYPE_CHECKING:
@@ -9,8 +9,8 @@ if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
 
 
-@define
-class ActionSubtaskOriginMixin(ABC):
+@define(slots=False)
+class ActionSubtaskOriginMixin:
     @property
     @abstractmethod
     def action_types(self) -> list[str]:

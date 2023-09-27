@@ -22,19 +22,19 @@ class BlobToolMemory(BaseToolMemory):
             self,
             tool_activity: callable,
             subtask: ActionSubtask,
-            value: BaseArtifact
+            output_artifact: BaseArtifact
     ) -> BaseArtifact:
         from griptape.utils import J2
 
         tool_name = tool_activity.__self__.name
         activity_name = tool_activity.name
 
-        if isinstance(value, BlobArtifact):
-            namespace = value.name
+        if isinstance(output_artifact, BlobArtifact):
+            namespace = output_artifact.name
 
-            self.driver.save(namespace, value)
-        elif isinstance(value, ListArtifact) and value.is_type(BlobArtifact):
-            artifacts = [v for v in value.value]
+            self.driver.save(namespace, output_artifact)
+        elif isinstance(output_artifact, ListArtifact) and output_artifact.is_type(BlobArtifact):
+            artifacts = [v for v in output_artifact.value]
 
             if artifacts:
                 namespace = uuid.uuid4().hex
@@ -59,7 +59,9 @@ class BlobToolMemory(BaseToolMemory):
         else:
             logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.name}")
 
-            return value
+            return output_artifact
 
-    def load_artifacts(self, namespace: str) -> list[BaseArtifact]:
-        return self.driver.load(namespace)
+    def load_artifacts(self, namespace: str) -> ListArtifact:
+        return ListArtifact(
+            self.driver.load(namespace)
+        )

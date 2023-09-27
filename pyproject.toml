@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "griptape"
-version = "0.16.2"
+version = "0.17.1"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
@@ -54,11 +54,12 @@ pandas = "^2.1.0"
 [tool.poetry.group.test.dependencies]
 pytest = "~=7.1"
 pytest-mock = "*"
-pytest-cover = "*"
 mongomock = "*"
 
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
+pytest-xdist = "^3.3.1"
+pytest-cov = "^4.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

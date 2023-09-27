@@ -129,18 +129,18 @@ class AwsS3Client(BaseAwsClient):
         if memory:
             artifacts = memory.load_artifacts(artifact_namespace)
 
-            if len(artifacts) == 0:
+            if len(artifacts.value) == 0:
                 return ErrorArtifact("no artifacts found")
-            elif len(artifacts) == 1:
+            elif len(artifacts.value) == 1:
                 try:
-                    self._upload_object(bucket_name, object_key, artifacts[0].value)
+                    self._upload_object(bucket_name, object_key, artifacts.value[0].value)
 
                     return InfoArtifact(f"uploaded successfully")
                 except Exception as e:
                     return ErrorArtifact(f"error uploading objects to the bucket: {e}")
             else:
                 try:
-                    for a in artifacts:
+                    for a in artifacts.value:
                         self._upload_object(bucket_name, object_key, a.value)
 
                     return InfoArtifact(f"uploaded successfully")

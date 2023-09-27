@@ -12,9 +12,7 @@ class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
         default=Factory(
             lambda self: HuggingFaceTokenizer(
                 tokenizer=LlamaTokenizerFast.from_pretrained(
-                    "hf-internal-testing/llama-tokenizer",
-                    model_max_length=self.prompt_driver.max_tokens
-                    if self.prompt_driver.max_tokens else self.DEFAULT_MAX_TOKENS
+                    "hf-internal-testing/llama-tokenizer", model_max_length=self.max_tokens
                 )
             ),
             takes_self=True

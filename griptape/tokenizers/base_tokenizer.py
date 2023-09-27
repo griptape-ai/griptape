@@ -5,7 +5,7 @@ from typing import Generator
 from attr import define, field, Factory
 
 
-@define
+@define(frozen=True)
 class BaseTokenizer(ABC):
     DEFAULT_STOP_SEQUENCES = ["Observation:"]
 

@@ -6,6 +6,7 @@ from .toolkit_task import ToolkitTask
 from .text_summary_task import TextSummaryTask
 from .tool_task import ToolTask
 from .text_query_task import TextQueryTask
+from.extraction_task import ExtractionTask
 
 __all__ = [
     "BaseTask",
@@ -15,5 +16,6 @@ __all__ = [
     "ToolkitTask",
     "TextSummaryTask",
     "ToolTask",
-    "TextQueryTask"
+    "TextQueryTask",
+    "ExtractionTask"
 ]

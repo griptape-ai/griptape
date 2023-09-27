@@ -1,11 +1,11 @@
 import pytest
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 
 
-class TestTiktokenTokenizer:
+class TestOpenAiTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return TiktokenTokenizer()
+        return OpenAiTokenizer()
 
     def test_encode(self, tokenizer):
         assert tokenizer.encode("foo bar") == [8134, 3703]
@@ -44,6 +44,20 @@ class TestTiktokenTokenizer:
             ],
             model="gpt-3.5-turbo-0301"
         ) == 21
+
+        assert tokenizer.token_count(
+            [
+                {
+                    "role": "system",
+                    "content": "foobar baz"
+                },
+                {
+                    "role": "user",
+                    "content": "how foobar am I?"
+                }
+            ],
+            model="gpt-35-turbo"
+        ) == 19
 
     def test_tokens_left(self, tokenizer):
         assert tokenizer.tokens_left("foo bar huzzah") == 4083

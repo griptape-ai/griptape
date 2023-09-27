@@ -1,9 +1,10 @@
+from __future__ import annotations
 from abc import ABC
-from typing import Optional, Union
+from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import ChunkSeparator
-from griptape.tokenizers import TiktokenTokenizer
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
@@ -16,8 +17,8 @@ class BaseChunker(ABC):
         default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True),
         kw_only=True
     )
-    tokenizer: TiktokenTokenizer = field(
-        default=Factory(lambda: TiktokenTokenizer()),
+    tokenizer: OpenAiTokenizer = field(
+        default=Factory(lambda: OpenAiTokenizer()),
         kw_only=True
     )
     max_tokens: int = field(
@@ -25,7 +26,7 @@ class BaseChunker(ABC):
         kw_only=True
     )
 
-    def chunk(self, text: Union[TextArtifact, str]) -> list[TextArtifact]:
+    def chunk(self, text: TextArtifact | str) -> list[TextArtifact]:
         text = text.value if isinstance(text, TextArtifact) else text
 
         return [TextArtifact(c) for c in self._chunk_recursively(text)]
