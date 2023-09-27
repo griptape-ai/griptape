@@ -6,6 +6,7 @@ from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.events import CompletionChunkEvent
 from typing import Tuple, Type
 
 
@@ -16,7 +17,7 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
         api_type: Can be changed to use OpenAI models on Azure.
         api_version: API version. 
         api_base: API URL.
-        api_key: API key to pass directly; by default uses `OPENAI_API_KEY_PATH` environment variable.
+        api_key: API key to pass directly; by default uses `OPENAI_API_KEY` environment variable.
         max_tokens: Optional maximum return tokens. If not specified, the value will be automatically generated based by the tokenizer.
         model: OpenAI model name. Uses `gpt-4` by default.
         organization: OpenAI organization.
@@ -39,12 +40,32 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.Completion.create(**self._base_params(prompt_stack))
 
-        if len(result.choices) == 1:
-            return TextArtifact(
-                value=result.choices[0].text.strip()
-            )
+        if self.stream:
+            tokens = []
+
+            for chunk in result:
+                if len(chunk.choices) == 1:
+                    choice = chunk.choices[0]
+                    delta_content = choice["text"]
+                    tokens.append(delta_content)
+
+                    if self.structure:
+                        self.structure.publish_event(
+                            CompletionChunkEvent(token=delta_content)
+                        )
+                else:
+                    raise Exception("Completion with more than one choice is not supported yet.")
+
+            full_message = ''.join(tokens)
+
+            return TextArtifact(value=full_message)
         else:
-            raise Exception("Completion with more than one choice is not supported yet.")
+            if len(result.choices) == 1:
+                return TextArtifact(
+                    value=result.choices[0].text.strip()
+                )
+            else:
+                raise Exception("Completion with more than one choice is not supported yet.")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)
@@ -60,5 +81,6 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
             "api_version": self.api_version,
             "api_base": self.api_base,
             "api_type": self.api_type,
-            "prompt": prompt
+            "prompt": prompt,
+            "stream": self.stream
         }

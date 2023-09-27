@@ -24,6 +24,7 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         ),
         kw_only=True
     )
+    stream: bool = field(default=False, kw_only=True)
 
     model: str
     tokenizer: BaseTokenizer

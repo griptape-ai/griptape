@@ -4,6 +4,7 @@ from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
+from griptape.events import CompletionChunkEvent
 
 
 @define
@@ -25,15 +26,39 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         prompt = self.prompt_stack_to_string(prompt_stack)
-        response = anthropic.Anthropic(api_key=self.api_key).completions.create(
-            prompt=prompt,
-            stop_sequences=self.tokenizer.stop_sequences,
-            model=self.model,
-            max_tokens_to_sample=self.max_output_tokens(prompt),
-            temperature=self.temperature,
-        )
 
-        return TextArtifact(value=response.completion)
+        if self.stream:
+            response = anthropic.Anthropic(api_key=self.api_key).completions.create(
+                prompt=prompt,
+                stop_sequences=self.tokenizer.stop_sequences,
+                model=self.model,
+                max_tokens_to_sample=self.max_output_tokens(prompt),
+                temperature=self.temperature,
+                stream=True
+            )
+
+            tokens = []
+            for chunk in response:
+                completion = chunk.completion
+                tokens.append(completion)
+                
+                if self.structure:
+                    self.structure.publish_event(
+                        CompletionChunkEvent(token=completion)
+                    )
+            return TextArtifact(value=''.join(tokens))
+        else:
+            response = anthropic.Anthropic(api_key=self.api_key).completions.create(
+                prompt=prompt,
+                stop_sequences=self.tokenizer.stop_sequences,
+                model=self.model,
+                max_tokens_to_sample=self.max_output_tokens(prompt),
+                temperature=self.temperature,
+            )
+            return TextArtifact(value=response.completion)
+
+            
+
 
     def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
         prompt_lines = []

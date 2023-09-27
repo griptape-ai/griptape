@@ -6,11 +6,19 @@ import pytest
 
 
 class TestCoherePromptDriver:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def mock_client(self, mocker):
         mock_client = mocker.patch('cohere.Client').return_value
         mock_client.generate.return_value.generations = [Mock()]
         mock_client.generate.return_value.generations[0].text = 'model-output'
+        return mock_client
+
+    @pytest.fixture
+    def mock_stream_client(self, mocker):
+        mock_client = mocker.patch('cohere.Client').return_value
+        mock_chunk = Mock()
+        mock_chunk.text = 'model-output'
+        mock_client.generate.return_value = iter([mock_chunk])
         return mock_client
     
     @pytest.fixture(autouse=True)
@@ -29,9 +37,19 @@ class TestCoherePromptDriver:
     def test_init(self):
         assert CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key="foobar")
 
-    def test_try_run(self, prompt_stack):
+    def test_try_run(self, mock_client, prompt_stack): # pyright: ignore
         # Given
         driver = CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key='api-key')
+
+        # When
+        text_artifact = driver.try_run(prompt_stack)
+
+        # Then
+        assert text_artifact.value == 'model-output'
+
+    def test_try_stream_run(self, mock_stream_client, prompt_stack): # pyright: ignore
+        # Given
+        driver = CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key='api-key', stream=True)
 
         # When
         text_artifact = driver.try_run(prompt_stack)

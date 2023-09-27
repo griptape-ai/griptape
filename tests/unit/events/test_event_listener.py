@@ -9,6 +9,7 @@ from griptape.events import (
     FinishSubtaskEvent,
     StartPromptEvent,
     FinishPromptEvent,
+    CompletionChunkEvent,
 )
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -19,7 +20,7 @@ class TestEventListener:
     def pipeline(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)
 
         task.add_subtask(ActionSubtask('foo'))
@@ -38,8 +39,8 @@ class TestEventListener:
         pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
-        assert event_handler_1.call_count == 6
-        assert event_handler_2.call_count == 6
+        assert event_handler_1.call_count == 7
+        assert event_handler_2.call_count == 7
 
     def test_dict_listeners(self, pipeline):
         start_prompt_event_handler = Mock()
@@ -48,6 +49,7 @@ class TestEventListener:
         finish_task_event_handler = Mock()
         start_subtask_event_handler = Mock()
         finish_subtask_event_handler = Mock()
+        completion_chunk_handler = Mock()
 
         pipeline.event_listeners = {
             StartPromptEvent: [start_prompt_event_handler],
@@ -56,6 +58,7 @@ class TestEventListener:
             FinishTaskEvent: [finish_task_event_handler],
             StartSubtaskEvent: [start_subtask_event_handler],
             FinishSubtaskEvent: [finish_subtask_event_handler],
+            CompletionChunkEvent: [completion_chunk_handler],
         }
 
         # can't mock subtask events, so must manually call 
@@ -67,3 +70,4 @@ class TestEventListener:
         finish_task_event_handler.assert_called_once()
         start_subtask_event_handler.assert_called_once()
         finish_subtask_event_handler.assert_called_once()
+        completion_chunk_handler.assert_called_once()

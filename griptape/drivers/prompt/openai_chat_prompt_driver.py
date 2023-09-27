@@ -6,6 +6,7 @@ from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.events import CompletionChunkEvent
 from typing import Tuple, Type
 
 
@@ -40,12 +41,33 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
 
-        if len(result.choices) == 1:
-            return TextArtifact(
-                value=result.choices[0]["message"]["content"].strip()
-            )
+        if self.stream:
+            tokens = []
+
+            for chunk in result:
+                if len(chunk.choices) == 1:
+                    delta = chunk.choices[0]["delta"]
+                else:
+                    raise Exception("Completion with more than one choice is not supported yet.")
+
+                if "content" in delta:
+                    delta_content = delta["content"]
+                    tokens.append(delta_content)
+
+                    if self.structure:
+                        self.structure.publish_event(
+                            CompletionChunkEvent(token=delta_content)
+                        )
+            full_message = ''.join(tokens)
+
+            return TextArtifact(value=full_message)
         else:
-            raise Exception("Completion with more than one choice is not supported yet.")
+            if len(result.choices) == 1:
+                return TextArtifact(
+                    value=result.choices[0]["message"]["content"].strip()
+                )
+            else:
+                raise Exception("Completion with more than one choice is not supported yet.")
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         return self.tokenizer.token_count(
@@ -73,7 +95,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "api_version": self.api_version,
             "api_base": self.api_base,
             "api_type": self.api_type,
-            "messages": messages
+            "messages": messages,
+            "stream": self.stream
         }
 
         # A max_tokens parameter is not required, but if it is specified by the caller, bound it to

@@ -4,6 +4,7 @@ from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
 from griptape.utils import PromptStack
+from griptape.events import CompletionChunkEvent
 
 
 @define
@@ -32,14 +33,31 @@ class CoherePromptDriver(BasePromptDriver):
             model=self.model,
             temperature=self.temperature,
             end_sequences=self.tokenizer.stop_sequences,
-            max_tokens=self.max_output_tokens(prompt)
+            max_tokens=self.max_output_tokens(prompt),
+            stream=self.stream
         )
 
-        if len(result.generations) == 1:
-            generation = result.generations[0]
+        
+        if self.stream:
+            tokens = []
 
-            return TextArtifact(
-                value=generation.text.strip()
-            )
+            for chunk in result:
+                text = chunk.text
+                tokens.append(text)
+
+                if self.structure:
+                    self.structure.publish_event(
+                        CompletionChunkEvent(token=text)
+                    )
+            full_message = ''.join(tokens)
+
+            return TextArtifact(value=full_message)
         else:
-            raise Exception("Completion with more than one choice is not supported yet.")
+            if len(result.generations) == 1:
+                generation = result.generations[0]
+
+                return TextArtifact(
+                    value=generation.text.strip()
+                )
+            else:
+                raise Exception("Completion with more than one choice is not supported yet.")
