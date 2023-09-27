@@ -1,8 +1,8 @@
-import os
 import pytest
 from moto import mock_dynamodb
 import boto3
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.utils.aws import mock_aws_credentials
 from griptape.memory.structure import ConversationMemory
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
@@ -18,7 +18,7 @@ class TestDynamoDbConversationMemoryDriver:
 
     @pytest.fixture(autouse=True)
     def run_before_and_after_tests(self):
-        self._mock_aws_credentials()
+        mock_aws_credentials()
         self.mock_dynamodb = mock_dynamodb()
         self.mock_dynamodb.start()
 
@@ -91,9 +91,3 @@ class TestDynamoDbConversationMemoryDriver:
         assert len(new_memory.runs) == 2
         assert new_memory.runs[0].input == "test"
         assert new_memory.runs[0].output == "mock output"
-
-    def _mock_aws_credentials(self):
-        os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-        os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-        os.environ["AWS_SECURITY_TOKEN"] = "testing"
-        os.environ["AWS_SESSION_TOKEN"] = "testing"

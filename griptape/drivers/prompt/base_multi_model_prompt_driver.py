@@ -27,7 +27,8 @@ class BaseMultiModelPromptDriver(BasePromptDriver, ABC):
     prompt_model_driver: BasePromptModelDriver = field(kw_only=True)
 
     def __attrs_post_init__(self) -> None:
+        self.prompt_model_driver.prompt_driver = self
+
         if not self.tokenizer:
             self.tokenizer = self.prompt_model_driver.tokenizer
 
-        self.prompt_model_driver.prompt_driver = self

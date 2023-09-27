@@ -34,7 +34,7 @@ class TestSageMakerLlamaPromptModelDriver:
         assert model_input[0][1]["content"] == "bar"
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 593
+        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 588
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver, stack):

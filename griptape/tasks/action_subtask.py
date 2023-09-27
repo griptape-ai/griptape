@@ -71,7 +71,9 @@ class ActionSubtask(PromptTask):
                         "input",
                         description="Optional action activity input object"
                     )
-                ): dict
+                ): {
+                    schema.Optional("values", description="Optional activity values field"): dict
+                }
             }
         )
 

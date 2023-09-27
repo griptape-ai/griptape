@@ -3,7 +3,7 @@ import logging
 import subprocess
 import sys
 from functools import reduce
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 import inspect
 import os
 from abc import ABC

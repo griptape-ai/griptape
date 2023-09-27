@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Callable, Union
+from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape.rules import Ruleset, Rule
 from griptape.utils import PromptStack
@@ -24,7 +24,7 @@ class PromptTask(BaseTextInputTask):
         kw_only=True
     )
 
-    output: Optional[Union[TextArtifact, ErrorArtifact, InfoArtifact]] = field(default=None, init=False)
+    output: Optional[TextArtifact | ErrorArtifact | InfoArtifact] = field(default=None, init=False)
     
     @rulesets.validator
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
