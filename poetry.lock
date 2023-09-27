@@ -2146,6 +2146,19 @@ files = [
 ]
 
 [[package]]
+name = "pgvector"
+version = "0.2.3"
+description = "pgvector support for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pgvector-0.2.3-py2.py3-none-any.whl", hash = "sha256:9d53dc01138ecc7c9aca64e4680cfa9edf4c38f9cb8ed7098317871fdd211824"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "pinecone-client"
 version = "2.2.4"
 description = "Pinecone client and SDK"
@@ -4042,4 +4055,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "67bb26b5f21a1f56c148ab4b86035bd049a1d59916308c541844b52000486414"
+content-hash = "471ad5b23a1d03cbed9761a7e860c2eb5a6f3911cd3104065f1c0c152b249abe"
