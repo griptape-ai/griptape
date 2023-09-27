@@ -168,24 +168,15 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                         request = service.files().get_media(fileId=file_id)
     
                     downloaded_file = request.execute()
-                    logging.info(f"File '{path}' successfully downloaded.")
                     downloaded_files.append(BlobArtifact(downloaded_file))
                 else:
                     logging.error(f"Could not find file: {path}")
-                    downloaded_files.append(
-                        ErrorArtifact(f"Could not find file: {path}")
-                    )
     
             except HttpError as e:
                 logging.error(e)
-                downloaded_files.append(
-                    ErrorArtifact(f"error downloading file '{path}' from Google Drive: {e}")
-                )
+    
             except MalformedError:
-                logging.error("MalformedError occurred")
-                downloaded_files.append(
-                    ErrorArtifact(f"error downloading file '{path}' from Google Drive due to malformed credentials")
-                )
+                logging.error(f"MalformedError occurred while downloading file '{path}' from Google Drive")
     
         return ListArtifact(downloaded_files)
 
