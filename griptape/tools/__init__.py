@@ -17,6 +17,7 @@ from .proxycurl_client.tool import ProxycurlClient
 from .base_google_client import BaseGoogleClient
 from .google_gmail.tool import GoogleGmailClient
 from .google_cal.tool import GoogleCalendarClient
+from .google_drive.tool import GoogleDriveClient
 from .openweather_client.tool import OpenWeatherClient
 
 __all__ = [
@@ -27,6 +28,7 @@ __all__ = [
     "BaseGoogleClient",
     "GoogleGmailClient",
     "GoogleCalendarClient",
+    "GoogleDriveClient",
     "Calculator",
     "WebSearch",
     "WebScraper",
