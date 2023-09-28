@@ -1,11 +1,14 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
 import logging
 from attr import field, define
-from schema import Schema, Optional
+from schema import Schema, Optional, Literal
 from griptape.artifacts import ErrorArtifact, InfoArtifact, BlobArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
-from googleapiclient.discovery import Resource
+
+if TYPE_CHECKING:
+    from googleapiclient.discovery import Resource
 
 @define
 class GoogleDocsClient(BaseGoogleClient):
@@ -18,11 +21,19 @@ class GoogleDocsClient(BaseGoogleClient):
     @activity(
         config={
             "description": "Can be used to create a new Google Doc in Drive",
-            "schema": Schema({"file_name": str}),
+            "schema": Schema(
+                {
+                    Literal(
+                        "file_name",
+                        description="Name of the file to be created."
+                    ): str
+                }
+            ),
         }
     )
-    def create_google_doc(self, file_name: str) -> InfoArtifact | ErrorArtifact:
+    def create_google_doc(self, params: dict) -> InfoArtifact | ErrorArtifact:
         try:
+            file_name = params["file_name"]
             service = self._build_client(self.DOCS_SCOPES, "v1", "docs")
             doc = service.documents().create(body={"title": file_name}).execute()
             return InfoArtifact(f"Google Doc '{file_name}' created with ID: {doc['documentId']}")
@@ -34,11 +45,25 @@ class GoogleDocsClient(BaseGoogleClient):
     @activity(
         config={
             "description": "Can be used to append text to a Google Doc",
-            "schema": Schema({"file_path": str, "text": str}),
+            "schema": Schema(
+                {
+                    Literal(
+                        "file_path",
+                        description="Destination file path on Google Drive in the POSIX format. "
+                                    "For example, 'foo/bar/baz.txt'"
+                    ): str,
+                    Literal(
+                        "text",
+                        description="Text to be appended to the Google Doc."
+                    ): str
+                }
+            ),
         }
     )
-    def append_text_to_google_doc(self, file_path: str, text: str) -> InfoArtifact | ErrorArtifact:
+    def append_text_to_google_doc(self, params: dict) -> InfoArtifact | ErrorArtifact:
         try:
+            file_path = params["file_path"]
+            text = params["text"]
             service = self._build_client(self.DOCS_SCOPES, "v1", "docs")
             drive_service = self._build_client(self.DRIVE_SCOPES, "v3", "drive")
             document_id = self._path_to_file_id(drive_service, file_path)
@@ -53,22 +78,36 @@ class GoogleDocsClient(BaseGoogleClient):
                 requests = [{"insertText": {"location": {"index": append_index}, "text": text}}]
 
                 doc = service.documents().batchUpdate(documentId=document_id, body={"requests": requests}).execute()
-                return InfoArtifact("Text appended successfully")
+                return InfoArtifact("text appended successfully")
             else:
-                return ErrorArtifact(f"Error: File not found for path {file_path}")
+                return ErrorArtifact(f"error appending to Google Doc, file not found for path {file_path}")
 
         except Exception as e:
             logging.error(e)
-            return ErrorArtifact(f"Error appending text to Google Doc: {e}")
+            return ErrorArtifact(f"error appending text to Google Doc with path {file_path}: {e}")
 
     @activity(
         config={
             "description": "Can be used to prepend text to a Google Doc",
-            "schema": Schema({"file_path": str, "text": str}),
+            "schema": Schema(
+                {
+                    Literal(
+                        "file_path",
+                        description="Destination file path on Google Drive in the POSIX format. "
+                                    "For example, 'foo/bar/baz.txt'"
+                    ): str,
+                    Literal(
+                        "text",
+                        description="Text to be prepended to the Google Doc."
+                    ): str
+                }
+            ),
         }
     )
-    def prepend_text_to_google_doc(self, file_path: str, text: str) -> InfoArtifact | ErrorArtifact:
+    def prepend_text_to_google_doc(self, params: dict) -> InfoArtifact | ErrorArtifact:
         try:
+            file_path = params["file_path"]
+            text = params["text"]
             service = self._build_client(self.DOCS_SCOPES, "v1", "docs")
             drive_service = self._build_client(self.DRIVE_SCOPES, "v3", "drive")
             document_id = self._path_to_file_id(drive_service, file_path)
@@ -82,25 +121,36 @@ class GoogleDocsClient(BaseGoogleClient):
                     requests = [{"insertText": {"location": {"index": start_index}, "text": text}}]
 
                 doc = service.documents().batchUpdate(documentId=document_id, body={"requests": requests}).execute()
-                return InfoArtifact("Text prepended successfully")
+                return InfoArtifact("text prepended successfully")
             else:
-                return ErrorArtifact(f"Error: File not found for path {file_path}")
+                return ErrorArtifact(f"error prepending to google doc, file not found for path {file_path}")
 
         except Exception as e:
             logging.error(e)
-            return ErrorArtifact(f"Error prepending text to Google Doc: {e}")
+            return ErrorArtifact(f"error prepending text to Google Doc with path {file_path}: {e}")
 
     @activity(
         config={
             "description": "Can be used to create a new Google Doc and save content to it on Google Drive",
-            "schema": Schema({"file_name": str, "content": str}),
+            "schema": Schema(
+                {
+                    Literal(
+                        "file_path",
+                        description="Name of the file to be created, which will be used to save content in."
+                    ): str,
+                    Literal(
+                        "content",
+                        description="Content to be saved in Google Doc."
+                    ): str
+                }
+            ),
         }
     )
     def save_content_to_google_doc(self, params: dict) -> ErrorArtifact | InfoArtifact:
-        doc_creation_result = self.create_google_doc(params["file_name"])
+        doc_creation_result = self.create_google_doc({"file_name": params["file_name"]})
     
         if isinstance(doc_creation_result, ErrorArtifact):
-            return ErrorArtifact(f"Error creating Google Doc: {doc_creation_result.value}")
+            return ErrorArtifact(f"error creating Google Doc: {doc_creation_result.value}")
     
         document_id = doc_creation_result.value.split()[-1]
         save_content_params = {"document_id": document_id, "content": params["content"]}
@@ -109,22 +159,31 @@ class GoogleDocsClient(BaseGoogleClient):
             saved_document_id = self._save_to_doc(save_content_params)
             return InfoArtifact(saved_document_id)
         except Exception as e:
-            return ErrorArtifact(f"Error saving content to Google Doc with ID {document_id}: {str(e)}")
+            return ErrorArtifact(f"error saving content to Google Doc with Id {document_id}: {str(e)}")
 
     @activity(
         config={
-            "description": "Can be used to download multiple Google Docs from Google Drive based on their paths",
-            "schema": Schema({"file_paths": [str]}),
+            "description": "Can be used to download multiple Google Docs from Google Drive based on their paths.",
+            "schema": Schema(
+                {
+                    Literal(
+                        "file_paths",
+                        description="Destination file paths on Google Drive in the POSIX format. "
+                                    "For example, 'foo/bar/baz.txt, foo/bar/baz2.txt'"
+                    ): [str]
+                }
+            ),
         }
     )
-    def download_google_docs(self, file_paths: list[str]) -> ListArtifact | ErrorArtifact:
+    def download_google_docs(self, params: dict) -> ListArtifact | ErrorArtifact:
+        file_paths = params["file_paths"]
         downloaded_files = []
 
-        for path in file_paths:
-            blob = self._download_document(path)
-            if isinstance(blob, ErrorArtifact):
-                return ErrorArtifact(f"Error downloading Google Doc for path {path}: {blob.value}")
-            downloaded_files.append(blob)
+        for file_path in file_paths:
+            document_artifact = self._download_document(file_path)
+            if isinstance(document_artifact, ErrorArtifact):
+                return ErrorArtifact(f"error downloading Google Doc for path {file_path}: {document_artifact.value}")
+            downloaded_files.append(document_artifact)
 
         return ListArtifact(downloaded_files)
 

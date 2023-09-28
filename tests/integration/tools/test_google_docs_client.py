@@ -1,11 +1,11 @@
 import pytest
 import os
-from tests.utils.structure_runner import run_structure, OUTPUT_RULESET, PROMPT_DRIVERS, prompt_driver_id_fn
+from tests.utils.structure_runner import run_structure, OUTPUT_RULESET, TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, prompt_driver_id_fn
 
 
 class TestGoogleDocsClient:
-    @pytest.fixture(autouse=True, params=PROMPT_DRIVERS, ids=prompt_driver_id_fn)
-    def agent(self):
+    @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
+    def agent(self, request):
         from griptape.structures import Agent
         from griptape.tools import GoogleDocsClient
         return Agent(
@@ -24,6 +24,8 @@ class TestGoogleDocsClient:
                 },
                 owner_email=os.environ["GOOGLE_OWNER_EMAIL"]
             )],
+            memory=None,
+            prompt_driver=request.param,
             rulesets=[OUTPUT_RULESET],
         )
 
