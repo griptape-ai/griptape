@@ -19,7 +19,7 @@ class CypherClient(BaseTool):
         return self.graph_name
 
     @property
-    def graph_schema(self) -> str:
+    def graph_schema(self) -> list:
         return self.cypher_loader.cypher_driver.get_schema()
 
     @activity(config={

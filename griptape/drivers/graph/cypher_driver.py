@@ -9,7 +9,7 @@ class CypherDriver(BaseGraphDriver):
     uri: str = field(kw_only=True)
     username: str = field(kw_only=True)
     password: str = field(kw_only=True)
-    MAX_SCHEMA_SIZE: int = 6000
+    MAX_SCHEMA_SIZE: int = 500
     _driver: Optional[neo4j.Driver] = field(init=False, default=None)
 
     def __attrs_post_init__(self):
@@ -31,16 +31,40 @@ class CypherDriver(BaseGraphDriver):
         finally:
             self._driver.close()
 
-    def get_schema(self) -> str:
+    def get_schema(self) -> list:
         schema_query = """
         CALL db.schema.visualization()
         """
         with self._driver.session() as session:
             results = session.run(schema_query)
-            schema_str = "\n".join([str(record.data()) for record in results])
+            nodes = []
+            relationships = []
+
+            for record in results:
+                record_data = record.data()
+                nodes.extend(record_data.get('nodes', []))
+                relationships.extend(record_data.get('relationships', []))
+
+            schema_list = self.parse_neo4j_schema({'nodes': nodes, 'relationships': relationships})
             self._driver.close()
-
-            if len(schema_str) > self.MAX_SCHEMA_SIZE:
+            if len(schema_list) > self.MAX_SCHEMA_SIZE:
                 raise ValueError("The retrieved schema is too large to handle.")
+            return schema_list
 
-            return schema_str
+    @staticmethod
+    def parse_neo4j_schema(data):
+        nodes = data.get('nodes', [])
+        relationships = data.get('relationships', [])
+
+        node_names = [f"Node: {node['name']}" for node in nodes]
+
+        relationship_list = []
+        for rel in relationships:
+            start_node = rel[0]['name']
+            relationship_type = rel[1]
+            end_node = rel[2]['name']
+            relationship_list.append(
+                f"Relationship: {start_node} → {relationship_type} → {end_node}")
+
+        combined_list = node_names + relationship_list
+        return combined_list
