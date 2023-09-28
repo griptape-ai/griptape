@@ -1,15 +1,11 @@
 from __future__ import annotations
 import logging
-from typing import List, Dict
+from typing import List, Dict, Any
 from schema import Schema, Literal, Optional, Or
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient, BaseTool
-from google.auth.exceptions import MalformedError
-from googleapiclient.discovery import Resource
-from googleapiclient.http import MediaIoBaseUpload
-from googleapiclient.errors import HttpError
 from io import BytesIO
 
 
@@ -149,37 +145,44 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         })
     })
     def download_files(self, params: dict) -> ListArtifact | ErrorArtifact:
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError
+
         values = params["values"]
         downloaded_files = []
     
-        service = self._build_client(self.LIST_FILES_SCOPES)
-    
-        for path in values["paths"]:
-            try:
-                file_id = self._path_to_file_id(service, path)
-                if file_id:
-                    file_info = service.files().get(fileId=file_id).execute()
-                    mime_type = file_info["mimeType"]
-    
-                    if mime_type in self.GOOGLE_EXPORT_MIME_MAPPING:
-                        export_mime = self.GOOGLE_EXPORT_MIME_MAPPING[mime_type]
-                        request = service.files().export_media(fileId=file_id, mimeType=export_mime)
-                    else:
-                        request = service.files().get_media(fileId=file_id)
+        try:
+            service = self._build_client(self.LIST_FILES_SCOPES)
+        
+            for path in values["paths"]:
+                try:
+                    file_id = self._path_to_file_id(service, path)
+                    if file_id:
+                        file_info = service.files().get(fileId=file_id).execute()
+                        mime_type = file_info["mimeType"]
+        
+                        if mime_type in self.GOOGLE_EXPORT_MIME_MAPPING:
+                            export_mime = self.GOOGLE_EXPORT_MIME_MAPPING[mime_type]
+                            request = service.files().export_media(fileId=file_id, mimeType=export_mime)
+                        else:
+                            request = service.files().get_media(fileId=file_id)
 
-                    downloaded_files.append(
-                        BlobArtifact(request.execute())
-                    )
-                else:
-                    logging.error(f"Could not find file: {path}")
-    
-            except HttpError as e:
-                logging.error(e)
-    
-            except MalformedError:
-                logging.error(f"MalformedError occurred while downloading file '{path}' from Google Drive")
-    
-        return ListArtifact(downloaded_files)
+                        downloaded_files.append(
+                            BlobArtifact(request.execute())
+                        )
+                    else:
+                        logging.error(f"Could not find file: {path}")
+        
+                except HttpError as e:
+                    logging.error(e)
+        
+                except MalformedError:
+                    logging.error(f"MalformedError occurred while downloading file '{path}' from Google Drive")
+        
+            return ListArtifact(downloaded_files)
+        except MalformedError:
+            logging.error("MalformedError occurred")
+            return ErrorArtifact("error searching for file due to malformed credentials")
 
     @activity(
         config={
@@ -207,6 +210,9 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         }
     )
     def search_files(self, params: dict) -> ListArtifact | ErrorArtifact:
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError
+
         values = params["values"]
     
         search_mode = values["search_mode"]
@@ -244,7 +250,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
             logging.error("MalformedError occurred")
             return ErrorArtifact("error searching for file due to malformed credentials")
 
-    def _build_client(self, scopes: list[str]) -> Resource:
+    def _build_client(self, scopes: list[str]) -> Any:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
 
@@ -288,6 +294,8 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         return current_id
 
     def _save_to_drive(self, filename: str, value: any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
+        from googleapiclient.http import MediaIoBaseUpload
+
         service = self._build_client(self.UPLOAD_FILE_SCOPES)
     
         if isinstance(value, str):
