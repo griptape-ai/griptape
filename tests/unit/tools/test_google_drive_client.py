@@ -11,7 +11,7 @@ class TestGoogleDriveClient:
         )
     
         assert isinstance(result, ErrorArtifact)
-        assert "error retrieving files from Google Drive" in result.value
+        assert "error listing files due to malformed credentials" in result.value
 
     def test_save_content_to_drive(self):
         value = {
@@ -36,7 +36,7 @@ class TestGoogleDriveClient:
         ).download_files({"values": value})
 
         assert isinstance(result, ErrorArtifact)
-        assert "error searching for file due to malformed credentials" in result.value
+        assert "error downloading file due to malformed credentials" in result.value
         
 
     def test_search_files(self):
