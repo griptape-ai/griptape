@@ -55,10 +55,8 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
             return ListArtifact([TextArtifact(i) for i in items])
 
         except MalformedError:
-            logging.error("MalformedError occurred while listing files from Google Drive")
             return ErrorArtifact("error listing files due to malformed credentials")
         except Exception as e:
-            logging.error(e)
             return ErrorArtifact(f"error listing files from Google Drive: {e}")
 
     @activity(
@@ -178,13 +176,10 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
     
             return ListArtifact(downloaded_files)
         except HttpError as e:
-            logging.error(e)
             return ErrorArtifact(f"error downloading file in Google Drive: {e}")
         except MalformedError:
-            logging.error("MalformedError occurred while downloading file from Google Drive")
             return ErrorArtifact("error downloading file due to malformed credentials")
         except Exception as e:
-            logging.error(e)
             return ErrorArtifact(f"error downloading file to Google Drive: {e}")
 
     @activity(
@@ -247,13 +242,10 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                 return ErrorArtifact(f"Folder path {values['folder_path']} not found")
     
         except HttpError as e:
-            logging.error(e)
             return ErrorArtifact(f"error searching for file in Google Drive: {e}")
         except MalformedError:
-            logging.error("MalformedError occurred")
             return ErrorArtifact("error searching for file due to malformed credentials")
         except Exception as e:
-            logging.error(e)
             return ErrorArtifact(f"error searching file to Google Drive: {e}")
 
     def _build_client(self, scopes: list[str]) -> Any:
