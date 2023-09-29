@@ -31,7 +31,7 @@ pyyaml = ">=6"
 fastapi = ">=0.80"
 uvicorn = ">= 0.20"
 python-decouple=">=3"
-boto3 = "^1.28.2"
+boto3 = "^1.28.57"
 tenacity = ">=8.0"
 numpy = ">=1"
 pinecone-client = ">=2"
@@ -62,6 +62,7 @@ twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
 pytest-xdist = "^3.3.1"
 pytest-cov = "^4.1.0"
+fuzzywuzzy = "^0.18.0"
 
 
 [tool.poetry.group.dev.dependencies]
