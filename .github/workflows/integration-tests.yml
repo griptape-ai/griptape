@@ -54,10 +54,24 @@ jobs:
       GOOGLE_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.INTEG_GOOGLE_AUTH_PROVIDER_X509_CERT_URL }}
       PROXYCURL_API_KEY: ${{ secrets.INTEG_PROXYCURL_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.INTEG_ANTHROPIC_API_KEY }}
+    services:
+      postgres:
+        image: ankane/pgvector:v0.5.0
+        env:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
-      - name: Init environment 
-        uses: ./.github/actions/init-environment 
+      - name: Init environment
+        uses: ./.github/actions/init-environment
       - name: Run integration tests
         run: pytest -vs tests/integration
