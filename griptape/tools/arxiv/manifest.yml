@@ -1,0 +1,6 @@
+version: "v1"
+name: Arxiv Search
+description: A tool for searching scientific articles on Arxiv.org using Griptape
+Author: Agniva Mahata
+contact_email: agnivastartup@gmail.com
+websites: agnivamahata.com
