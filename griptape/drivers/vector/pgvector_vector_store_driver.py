@@ -72,7 +72,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             obj = session.merge(obj)
             session.commit()
 
-            return obj.id
+            return str(obj.id)
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """
@@ -102,7 +102,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return [
                 BaseVectorStoreDriver.Entry(
-                    id=result.id,
+                    id=str(result.id),
                     vector=result.vector,
                     namespace=result.namespace,
                     meta=result.meta,
