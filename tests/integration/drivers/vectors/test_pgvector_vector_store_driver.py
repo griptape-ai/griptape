@@ -2,8 +2,10 @@ import uuid
 import pytest
 from griptape.drivers import PgVectorVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from tests.utils.postgres import can_connect_to_postgres
 
 
+@pytest.mark.skipif(not can_connect_to_postgres(), reason="Postgres is not present")
 class TestPgVectorVectorStoreDriver:
     vec1 = [0.1, 0.2, 0.3]
     vec2 = [0.4, 0.5, 0.6]
