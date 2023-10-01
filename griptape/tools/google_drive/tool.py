@@ -12,7 +12,9 @@ from io import BytesIO
 @define
 class GoogleDriveClient(BaseGoogleClient, BaseTool):
     LIST_FILES_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+
     UPLOAD_FILE_SCOPES = ['https://www.googleapis.com/auth/drive.file']
+
     GOOGLE_EXPORT_MIME_MAPPING = {
         "application/vnd.google-apps.document":
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -22,14 +24,16 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
             "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     }
 
+    DEFAULT_FOLDER_PATH = "root"
+
     owner_email: str = field(kw_only=True)
 
     @activity(config={
-        "description": "Can be used to list files in a specific Google Drive folder or the root directory",
+        "description": "Can be used to list files in a specific Google Drive folder.",
         "schema": Schema({
             Optional(
                 "folder_path",
-                default="root",
+                default=DEFAULT_FOLDER_PATH,
                 description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
                             "from which files should be listed."
             ): str,
@@ -38,12 +42,12 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
         from google.auth.exceptions import MalformedError
-        folder_path = values.get("folder_path", "root")
+        folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
 
         try:
             service = self._build_client(self.LIST_FILES_SCOPES)
 
-            if folder_path == "root":
+            if folder_path == self.DEFAULT_FOLDER_PATH:
                 query = "mimeType != 'application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
             else:
                 folder_id = self._path_to_file_id(service, folder_path)
@@ -72,7 +76,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                         "folder_path",
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
                                     "where the file should be saved.",
-                        default='root'
+                        default=DEFAULT_FOLDER_PATH
                     ): str,
                 }
             ),
@@ -82,7 +86,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         values = params["values"]
         memory = self.find_input_memory(values["memory_name"])
         file_name = values["file_name"]
-        folder_path = values.get("folder_path", "root")
+        folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
 
         if memory:
             artifacts = memory.load_artifacts(values["artifact_namespace"])
@@ -90,8 +94,8 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
             if artifacts:
                 service = self._build_client(self.UPLOAD_FILE_SCOPES)
 
-                if folder_path == "root":
-                    folder_id = "root"
+                if folder_path == self.DEFAULT_FOLDER_PATH:
+                    folder_id = self.DEFAULT_FOLDER_PATH
                 else:
                     folder_id = self._path_to_file_id(service, folder_path)
 
@@ -203,7 +207,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                         "folder_path",
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
                                     "where the search should be performed.",
-                        default='root'
+                        default=DEFAULT_FOLDER_PATH
                     ): str,
                 }
             ),
@@ -216,14 +220,14 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         values = params["values"]
     
         search_mode = values["search_mode"]
-        folder_path = values.get("folder_path", "root")
+        folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
     
         try:
             service = self._build_client(self.LIST_FILES_SCOPES)
     
             folder_id = None
-            if folder_path == "root":
-                folder_id = "root"
+            if folder_path == self.DEFAULT_FOLDER_PATH:
+                folder_id = self.DEFAULT_FOLDER_PATH
             else:
                 folder_id = self._path_to_file_id(service, folder_path)
     
@@ -235,7 +239,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                     query = f"fullText contains '{values['search_query']}'"
     
                 query += " and trashed=false"
-                if folder_id != "root":
+                if folder_id != self.DEFAULT_FOLDER_PATH:
                     query += f" and '{folder_id}' in parents"
     
                 results = service.files().list(q=query).execute()
@@ -267,7 +271,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
 
     def _path_to_file_id(self, service, path: str) -> Optional[str]:
         parts = path.split("/")
-        current_id = "root"
+        current_id = self.DEFAULT_FOLDER_PATH
     
         for idx, part in enumerate(parts):
             if idx == len(parts) - 1:
