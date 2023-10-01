@@ -38,18 +38,19 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
         from google.auth.exceptions import MalformedError
+        folder_path = values.get("folder_path", "root")
 
         try:
             service = self._build_client(self.LIST_FILES_SCOPES)
 
-            if values["folder_path"] == "root":
+            if folder_path == "root":
                 query = "mimeType != 'application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
             else:
-                folder_id = self._path_to_file_id(service, values["folder_path"])
+                folder_id = self._path_to_file_id(service, folder_path)
                 if folder_id:
                     query = f"'{folder_id}' in parents and trashed=false"
                 else:
-                    return ErrorArtifact(f"Could not find folder: {values['folder_path']}")
+                    return ErrorArtifact(f"Could not find folder: {folder_path}")
 
             items = self._list_files(service, query)
             return ListArtifact([TextArtifact(i) for i in items])
@@ -81,6 +82,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         values = params["values"]
         memory = self.find_input_memory(values["memory_name"])
         file_name = values["file_name"]
+        folder_path = values.get("folder_path", "root")
 
         if memory:
             artifacts = memory.load_artifacts(values["artifact_namespace"])
@@ -88,10 +90,10 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
             if artifacts:
                 service = self._build_client(self.UPLOAD_FILE_SCOPES)
 
-                if values["folder_path"] == "root":
+                if folder_path == "root":
                     folder_id = "root"
                 else:
-                    folder_id = self._path_to_file_id(service, values["folder_path"])
+                    folder_id = self._path_to_file_id(service, folder_path)
 
                 if folder_id:
                     try:
@@ -106,7 +108,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                     except Exception as e:
                         return ErrorArtifact(f"error saving file to Google Drive: {e}")
                 else:
-                    return ErrorArtifact(f"Could not find folder: {values['folder_path']}")
+                    return ErrorArtifact(f"Could not find folder: {folder_path}")
             else:
                 return ErrorArtifact("no artifacts found")
         else:
@@ -214,15 +216,16 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
         values = params["values"]
     
         search_mode = values["search_mode"]
+        folder_path = values.get("folder_path", "root")
     
         try:
             service = self._build_client(self.LIST_FILES_SCOPES)
     
             folder_id = None
-            if values["folder_path"] == "root":
+            if folder_path == "root":
                 folder_id = "root"
             else:
-                folder_id = self._path_to_file_id(service, values["folder_path"])
+                folder_id = self._path_to_file_id(service, folder_path)
     
             if folder_id:
                 query = None
@@ -239,7 +242,7 @@ class GoogleDriveClient(BaseGoogleClient, BaseTool):
                 items = results.get("files", [])
                 return ListArtifact([TextArtifact(i) for i in items])
             else:
-                return ErrorArtifact(f"Folder path {values['folder_path']} not found")
+                return ErrorArtifact(f"Folder path {folder_path} not found")
     
         except HttpError as e:
             return ErrorArtifact(f"error searching for file in Google Drive: {e}")
