@@ -75,6 +75,8 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
             else:
                 prompt_lines.append(i.content)
 
+        prompt_lines.append("Assistant:")
+
         return "\n\n".join(prompt_lines)
 
     @abstractmethod

@@ -1,22 +1,23 @@
 from __future__ import annotations
 import logging
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from schema import Schema, Literal
-from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ErrorArtifact, ListArtifact, BlobArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import BlobArtifact
 from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
+from griptape.engines import (
+    BaseSummaryEngine, PromptSummaryEngine, BaseQueryEngine, CsvExtractionEngine, JsonExtractionEngine
+)
 from griptape.mixins import ActivityMixin
-from griptape.utils.decorators import activity
-from griptape.engines import VectorQueryEngine, BaseSummaryEngine, PromptSummaryEngine, BaseQueryEngine
-
+from griptape.mixins import TextMemoryActivitiesMixin
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
 
 
 @define
-class ToolMemory(ActivityMixin):
+class ToolMemory(TextMemoryActivitiesMixin, ActivityMixin):
     name: str = field(
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
@@ -24,105 +25,59 @@ class ToolMemory(ActivityMixin):
     namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
 
     query_engine: BaseQueryEngine = field(
-        default=Factory(lambda: VectorQueryEngine()),
         kw_only=True
     )
     summary_engine: BaseSummaryEngine = field(
-        default=Factory(lambda: PromptSummaryEngine()),
-        kw_only=True
+        kw_only=True,
+        default=Factory(lambda: PromptSummaryEngine())
+    )
+    csv_extraction_engine: CsvExtractionEngine = field(
+        kw_only=True,
+        default=Factory(lambda: CsvExtractionEngine())
+    )
+    json_extraction_engine: JsonExtractionEngine = field(
+        kw_only=True,
+        default=Factory(lambda: JsonExtractionEngine())
     )
     blob_storage_driver: BaseBlobToolMemoryDriver = field(
         default=Factory(lambda: LocalBlobToolMemoryDriver()),
         kw_only=True
     )
 
-    @activity(config={
-        "description": "Can be used to insert text into a memory",
-        "schema": Schema({
-            "memory_name": str,
-            "artifact_namespace": str,
-            "text": str
-        })
-    })
-    def insert(self, params: dict):
-        artifact_namespace = params["values"]["artifact_namespace"]
-        text = params["values"]["text"]
-
-        self.query_engine.upsert_text_artifact(TextArtifact(text), artifact_namespace)
-
-        return InfoArtifact("text was successfully inserted")
-
-    @activity(config={
-        "description": "Can be used to summarize memory",
-        "uses_default_memory": False,
-        "schema": Schema({
-            "memory_name": str,
-            "artifact_namespace": str
-        })
-    })
-    def summarize(self, params: dict) -> TextArtifact | ErrorArtifact:
-        artifact_namespace = params["values"]["artifact_namespace"]
-
-        return self.summary_engine.summarize_artifacts(
-            self.load_artifacts(artifact_namespace),
-        )
-
-    @activity(config={
-        "description": "Can be used to search memory",
-        "uses_default_memory": False,
-        "schema": Schema({
-            "memory_name": str,
-            "artifact_namespace": str,
-            Literal(
-                "query",
-                description="A natural language search query in the form of a question with enough "
-                            "contextual information for another person to understand what the query is about"
-            ): str
-        })
-    })
-    def search(self, params: dict) -> TextArtifact | ErrorArtifact:
-        artifact_namespace = params["values"]["artifact_namespace"]
-        query = params["values"]["query"]
-
-        return self.query_engine.query(
-            query,
-            metadata=self.namespace_metadata.get(artifact_namespace),
-            namespace=artifact_namespace
-        )
-
     def process_output(
             self,
             tool_activity: callable,
             subtask: ActionSubtask,
-            value: BaseArtifact
+            output_artifact: BaseArtifact
     ) -> BaseArtifact:
         from griptape.utils import J2
 
         tool_name = tool_activity.__self__.name
         activity_name = tool_activity.name
 
-        if isinstance(value, TextArtifact):
-            namespace = value.name
+        if isinstance(output_artifact, TextArtifact):
+            namespace = output_artifact.name
 
             self.query_engine.upsert_text_artifact(
-                value,
+                output_artifact,
                 namespace=namespace
             )
-        elif isinstance(value, ListArtifact) and value.is_type(TextArtifact):
-            artifacts = [v for v in value.value]
-
-            if artifacts:
+        elif isinstance(output_artifact, ListArtifact):
+            if output_artifact.has_items():
                 namespace = uuid.uuid4().hex
 
-                self.query_engine.upsert_text_artifacts(artifacts, namespace)
+                self.query_engine.upsert_text_artifact(
+                    TextArtifact(output_artifact.to_text()),
+                    namespace
+                )
             else:
                 namespace = None
-        elif isinstance(value, BlobArtifact):
-            namespace = value.name
+        elif isinstance(output_artifact, BlobArtifact):
+            namespace = output_artifact.name
 
-            self.blob_storage_driver.save(namespace, value)
-        elif isinstance(value, ListArtifact) and value.is_type(BlobArtifact):
-            artifacts = [v for v in value.value]
+            self.blob_storage_driver.save(namespace, output_artifact)
+        elif isinstance(output_artifact, ListArtifact) and output_artifact.is_type(BlobArtifact):
+            artifacts = [v for v in output_artifact.value]
 
             if artifacts:
                 namespace = uuid.uuid4().hex
@@ -147,15 +102,15 @@ class ToolMemory(ActivityMixin):
         else:
             logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.name}")
 
-            return value
+            return output_artifact
 
-    def load_artifacts(self, namespace: str) -> list[TextArtifact]:
-        artifacts = [
-            BaseArtifact.from_json(e.meta["artifact"])
-            for e in self.query_engine.vector_store_driver.load_entries(namespace)
-        ]
-
-        return [a for a in artifacts if isinstance(a, TextArtifact)]
+    def load_artifacts(self, namespace: str) -> ListArtifact:
+        return self.query_engine.load_artifacts(namespace)
 
         # TODO: integrate blob artifacts:
         # return self.blob_storage_driver.load(namespace)
+    def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
+        if memory_name == self.name:
+            return self
+        else:
+            return None

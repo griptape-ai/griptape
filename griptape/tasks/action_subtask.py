@@ -20,7 +20,7 @@ from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 @define
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
-    ACTION_PATTERN = r"(?s)^Action:\s*({.*})$"
+    ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
@@ -71,7 +71,9 @@ class ActionSubtask(PromptTask):
                         "input",
                         description="Optional action activity input object"
                     )
-                ): dict
+                ): {
+                    schema.Optional("values", description="Optional activity values field"): dict
+                }
             }
         )
 
@@ -153,7 +155,7 @@ class ActionSubtask(PromptTask):
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
-        action_matches = re.findall(self.ACTION_PATTERN, value, re.MULTILINE)
+        action_matches = re.findall(self.ACTION_PATTERN, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
         if self.thought is None and len(thought_matches) > 0:

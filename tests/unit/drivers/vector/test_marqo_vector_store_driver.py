@@ -2,6 +2,7 @@ from collections import namedtuple
 import pytest
 from griptape.drivers import MarqoVectorStoreDriver
 from griptape.artifacts import TextArtifact
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestMarqoVectorStorageDriver:
@@ -102,7 +103,8 @@ class TestMarqoVectorStorageDriver:
             api_key="foobar",
             url="http://localhost:8000",
             index="test",
-            mq=mock_marqo
+            mq=mock_marqo,
+            embedding_driver=MockEmbeddingDriver()
         )
 
     def test_create_index(self, driver, mock_marqo):

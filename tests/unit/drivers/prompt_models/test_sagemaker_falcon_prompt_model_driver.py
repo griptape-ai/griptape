@@ -10,7 +10,7 @@ class TestSageMakerFalconPromptModelDriver:
         return AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_type=SageMakerFalconPromptModelDriver,
+            prompt_model_driver=SageMakerFalconPromptModelDriver(),
             temperature=0.12345
         ).prompt_model_driver
 
@@ -30,7 +30,7 @@ class TestSageMakerFalconPromptModelDriver:
         assert model_input.startswith("foo\n\nUser: bar")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 2042
+        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 590
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver, stack):
@@ -39,12 +39,11 @@ class TestSageMakerFalconPromptModelDriver:
         ]).value == "foobar"
 
     def test_tokenizer_max_model_length(self, driver):
-        assert driver.tokenizer.tokenizer.model_max_length == 2048
+        assert driver.tokenizer.tokenizer.model_max_length == 600
 
         assert AmazonSageMakerPromptDriver(
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver_type=SageMakerFalconPromptModelDriver,
+            prompt_model_driver=SageMakerFalconPromptModelDriver(max_tokens=10),
             temperature=0.12345,
-            max_tokens=10
         ).prompt_model_driver.tokenizer.tokenizer.model_max_length == 10

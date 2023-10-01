@@ -1,5 +1,6 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Optional
 from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
@@ -9,11 +10,16 @@ from griptape.tokenizers import BaseTokenizer
 
 @define
 class BasePromptModelDriver(ABC):
-    prompt_driver: BasePromptDriver = field(kw_only=True)
-    tokenizer: BaseTokenizer = field(kw_only=True)
+    max_tokens: int = field(default=600, kw_only=True)
+    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
+
+    @property
+    @abstractmethod
+    def tokenizer(self) -> BaseTokenizer:
+        ...
 
     @abstractmethod
-    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> Union[str, list]:
+    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str | list | dict:
         ...
 
     @abstractmethod
@@ -21,5 +27,5 @@ class BasePromptModelDriver(ABC):
         ...
 
     @abstractmethod
-    def process_output(self, output: list[dict]) -> TextArtifact:
+    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
         ...

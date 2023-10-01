@@ -19,10 +19,10 @@ class TestActionSubtask:
         assert json_dict["name"] == "test"
         assert json_dict["activity"] == "test action"
         assert json_dict["input"] == "test input"
-
-    def test_init_from_prompt_with_newlines(self):
+        
+    def test_init_from_action_with_newlines(self):
         valid_input = 'Thought: need to test\n' \
-                      'Action: {"type":\n "tool",\n\n"name": "test",\n"activity": \n"test action", \n"input": "test\n\ninput\n\nwith\nnewlines"}\n' \
+                      'Action:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n{"type":\n "tool",\n\n"name": "test",\n"activity": \n"test action", \n"input": "test\n\ninput\n\nwith\nnewlines"}\n\nFoobizbar1)(*&^%$#@!)' \
                       'Observation: test observation\n' \
                       'Answer: test output'
 

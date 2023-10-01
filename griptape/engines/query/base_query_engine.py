@@ -1,13 +1,17 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 from attr import define
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, ListArtifact
 
 
 @define
 class BaseQueryEngine(ABC):
     @abstractmethod
     def query(self, *args, **kwargs) -> TextArtifact:
+        ...
+
+    @abstractmethod
+    def load_artifacts(self, namespace: str) -> ListArtifact:
         ...
 
     @abstractmethod

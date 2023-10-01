@@ -60,5 +60,5 @@ class TestCsvLoader:
         artifacts = collection[key2]
         assert len(artifacts) == 10
         first_artifact = artifacts[0].value
-        assert first_artifact["Bar"] == "foo1"
-        assert first_artifact["Foo"] == "bar1"
+        assert first_artifact["Bar"] == "bar1"
+        assert first_artifact["Foo"] == "foo1"

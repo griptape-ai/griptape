@@ -1,0 +1,5 @@
+version: "v1"
+name: Google Drive Tool
+description: Tool for working with Google Drive.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
