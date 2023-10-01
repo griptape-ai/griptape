@@ -11,13 +11,6 @@ class TestGoogleDocsClient:
             service_account_credentials={}
         )
 
-    def test_create_google_doc(self, mock_docs_client):
-        params = {
-            "file_name": "test_document"
-        }
-        result = mock_docs_client.create_google_doc(params).value
-        assert "Error creating Google Doc" in result
-
     def test_append_text(self, mock_docs_client):
         params = {
             "file_path": "test_folder/test_document",
@@ -43,8 +36,8 @@ class TestGoogleDocsClient:
 
     def test_save_content_to_google_doc(self, mock_docs_client):
         params = {
-            "file_name": "test_document",
+            "file_path": "test_document",
             "content": "Sample content"
         }
         result = mock_docs_client.save_content_to_google_doc(params).value
-        assert "Error creating Google Doc" in result
+        assert "Error creating/saving Google Doc:" in result
