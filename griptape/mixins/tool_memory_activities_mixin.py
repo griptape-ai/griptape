@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define(slots=False)
-class TextMemoryActivitiesMixin:
+class ToolMemoryActivitiesMixin:
     max_search_results: int = field(default=5, kw_only=True)
 
     @activity(config={

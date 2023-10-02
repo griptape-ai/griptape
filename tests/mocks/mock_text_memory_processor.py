@@ -3,13 +3,13 @@ from attr import define, field, Factory
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.memory.tool import ToolMemory
-from griptape.mixins import TextMemoryActivitiesMixin
+from griptape.mixins import ToolMemoryActivitiesMixin
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 @define
-class MockTextMemoryProcessor(TextMemoryActivitiesMixin):
+class MockToolMemoryProcessor(ToolMemoryActivitiesMixin):
     memory: ToolMemory = field(
         default=Factory(
             lambda: ToolMemory(

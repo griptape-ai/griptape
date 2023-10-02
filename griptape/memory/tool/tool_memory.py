@@ -10,14 +10,14 @@ from griptape.engines import (
     BaseSummaryEngine, PromptSummaryEngine, BaseQueryEngine, CsvExtractionEngine, JsonExtractionEngine
 )
 from griptape.mixins import ActivityMixin
-from griptape.mixins import TextMemoryActivitiesMixin
+from griptape.mixins import ToolMemoryActivitiesMixin
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
 
 
 @define
-class ToolMemory(TextMemoryActivitiesMixin, ActivityMixin):
+class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
     name: str = field(
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,

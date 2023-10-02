@@ -123,7 +123,6 @@ class TestBaseTool:
         )
 
         assert MockTool().find_input_memory("foo") is None
-        assert MockTool(input_memory=[ToolMemory(name="foo")]).find_input_memory("foo") is not None
         assert MockTool(input_memory=[
             ToolMemory(name="foo", query_engine=query_engine, summary_engine=PromptSummaryEngine())
         ]).find_input_memory("foo") is not None
