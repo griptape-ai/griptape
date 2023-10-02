@@ -5,7 +5,11 @@ from griptape.tokenizers import OpenAiTokenizer
 class TestOpenAiTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return OpenAiTokenizer()
+        return OpenAiTokenizer(model="gpt-3.5-turbo")
+
+    @pytest.fixture
+    def tokenizer_32k(self):
+        return OpenAiTokenizer(model="gpt-4-32k")
 
     def test_encode(self, tokenizer):
         assert tokenizer.encode("foo bar") == [8134, 3703]
@@ -61,6 +65,9 @@ class TestOpenAiTokenizer:
 
     def test_tokens_left(self, tokenizer):
         assert tokenizer.tokens_left("foo bar huzzah") == 4083
+
+    def test_tokens_left_32k(self, tokenizer_32k):
+        assert tokenizer_32k.tokens_left("foo bar huzzah") == 32755
 
     def test_encoding(self, tokenizer):
         assert tokenizer.encoding.name == "cl100k_base"
