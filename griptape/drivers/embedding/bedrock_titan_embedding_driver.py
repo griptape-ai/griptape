@@ -23,7 +23,7 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     )
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock"),
+            lambda self: self.session.client("bedrock-runtime"),
             takes_self=True,
         ),
         kw_only=True,
