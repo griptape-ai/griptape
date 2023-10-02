@@ -27,7 +27,8 @@ class GoogleDocsClient(BaseGoogleClient):
                 {
                     Literal(
                         "file_path",
-                        description="Destination file path in the POSIX format. For example, 'foo/bar/baz.txt'"
+                        description="Destination file path of Google Doc in the POSIX format. "
+                                    "For example, 'foo/bar/baz.txt'"
                     ): str,
                     Literal(
                         "text",
@@ -41,11 +42,11 @@ class GoogleDocsClient(BaseGoogleClient):
         try:
             file_path = params["file_path"]
             text = params["text"]
-            service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
+            docs_service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
             drive_service = self._build_client(self.DRIVE_SCOPES, "drive", "v3")
             document_id = self._path_to_file_id(drive_service, file_path)
             if document_id:
-                doc = service.documents().get(documentId=document_id).execute()
+                doc = docs_service.documents().get(documentId=document_id).execute()
                 content = doc["body"]["content"]
                 last_text = content[-1]["paragraph"]["elements"][-1]["textRun"]["content"]
                 append_index = content[-1]["endIndex"]
@@ -54,7 +55,7 @@ class GoogleDocsClient(BaseGoogleClient):
 
                 requests = [{"insertText": {"location": {"index": append_index}, "text": text}}]
 
-                service.documents().batchUpdate(documentId=document_id, body={"requests": requests}).execute()
+                docs_service.documents().batchUpdate(documentId=document_id, body={"requests": requests}).execute()
                 return InfoArtifact("text appended successfully")
             else:
                 return ErrorArtifact(f"error appending to Google Doc, file not found for path {file_path}")
@@ -70,7 +71,8 @@ class GoogleDocsClient(BaseGoogleClient):
                 {
                     Literal(
                         "file_path",
-                        description="Destination file path in the POSIX format. For example, 'foo/bar/baz.txt'"
+                        description="Destination file path of Google Doc in the POSIX format. "
+                                    "For example, 'foo/bar/baz.txt'"
                     ): str,
                     Literal(
                         "text",
@@ -84,11 +86,11 @@ class GoogleDocsClient(BaseGoogleClient):
         try:
             file_path = params["file_path"]
             text = params["text"]
-            service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
+            docs_service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
             drive_service = self._build_client(self.DRIVE_SCOPES, "drive", "v3")
             document_id = self._path_to_file_id(drive_service, file_path)
             if document_id:
-                doc = service.documents().get(documentId=document_id).execute()
+                doc = docs_service.documents().get(documentId=document_id).execute()
 
                 if len(doc["body"]["content"]) == 1:
                     requests = [{"insertText": {"location": {"index": 1}, "text": text}}]
@@ -96,7 +98,7 @@ class GoogleDocsClient(BaseGoogleClient):
                     start_index = doc["body"]["content"][1]["startIndex"]
                     requests = [{"insertText": {"location": {"index": start_index}, "text": text}}]
 
-                service.documents().batchUpdate(documentId=document_id, body={"requests": requests}).execute()
+                docs_service.documents().batchUpdate(documentId=document_id, body={"requests": requests}).execute()
                 return InfoArtifact("text prepended successfully")
             else:
                 return ErrorArtifact(f"error prepending to google doc, file not found for path {file_path}")
@@ -122,7 +124,7 @@ class GoogleDocsClient(BaseGoogleClient):
                     Optional(
                         "folder_path",
                         default=DEFAULT_FOLDER_PATH,
-                        description="Path of the folder where the document will be created."
+                        description="Path of the folder where the Google doc will be created."
                     ): str,
                 }
             ),
@@ -173,7 +175,7 @@ class GoogleDocsClient(BaseGoogleClient):
                     "file_name": str,
                     Optional(
                         "folder_path",
-                        description="Path of the folder where the file should be saved.",
+                        description="Path of the folder where the Google Doc should be saved.",
                         default=DEFAULT_FOLDER_PATH,
                     ): str,
                 }
@@ -204,9 +206,9 @@ class GoogleDocsClient(BaseGoogleClient):
                     return ErrorArtifact(f"Error: {e}")
     
             else:
-                return ErrorArtifact("No artifacts found.")
+                return ErrorArtifact("no artifacts found")
         else:
-            return ErrorArtifact("Memory not found.")
+            return ErrorArtifact("memory not found")
 
     @activity(
         config={
@@ -215,9 +217,9 @@ class GoogleDocsClient(BaseGoogleClient):
                 {
                     Literal(
                         "file_paths",
-                        description="Destination file paths in the POSIX format. "
+                        description="Destination file paths of Google Docs in the POSIX format. "
                         "For example, 'foo/bar/baz.txt, foo/bar/baz2.txt'",
-                    ): [str]
+                    ): list[str]
                 }
             ),
         }
