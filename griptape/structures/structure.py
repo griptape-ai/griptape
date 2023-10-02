@@ -53,8 +53,9 @@ class Structure(ABC):
                 summary_engine=PromptSummaryEngine()
             ),
             takes_self=True
-        )
-    ),
+        ),
+        kw_only=True
+    )
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 

@@ -19,7 +19,7 @@ class ActivityMixin:
             raise ValueError("can't have both allowlist and denylist specified")
 
         for activity_name in allowlist:
-            self._validate_tool_activity( activity_name)
+            self._validate_tool_activity(activity_name)
 
     @denylist.validator
     def validate_denylist(self, _, denylist: Optional[list[str]]) -> None:
