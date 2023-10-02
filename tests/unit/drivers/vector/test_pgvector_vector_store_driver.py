@@ -3,10 +3,12 @@ import pytest
 from griptape.drivers import PgVectorVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.utils.postgres import can_connect_to_postgres
+from sqlalchemy import create_engine
 
 
 @pytest.mark.skipif(not can_connect_to_postgres(), reason="Postgres is not present")
 class TestPgVectorVectorStoreDriver:
+    connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
     vec1 = [0.1, 0.2, 0.3]
     vec2 = [0.4, 0.5, 0.6]
 
@@ -17,14 +19,35 @@ class TestPgVectorVectorStoreDriver:
     @pytest.fixture
     def vector_store_driver(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
-            connection_string="postgresql://postgres:postgres@localhost:5432/postgres",
+            connection_string=self.connection_string,
             embedding_driver=embedding_driver,
         )
 
-        driver.install_postgres_extensions()
-        driver.create_schema()
+        driver.initialize()
 
         return driver
+
+    def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
+        with pytest.raises(ValueError):
+            driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver)
+            driver.initialize()
+
+    def test_initialize_accepts_engine(self, embedding_driver):
+        engine = create_engine(self.connection_string)
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=embedding_driver,
+            engine=engine,
+        )
+
+        driver.initialize()
+
+    def test_initialize_accepts_connection_string(self, embedding_driver):
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=embedding_driver,
+            connection_string=self.connection_string,
+        )
+
+        driver.initialize()
 
     def test_can_insert_vector(self, vector_store_driver):
         result = vector_store_driver.upsert_vector(self.vec1)
@@ -151,3 +174,19 @@ class TestPgVectorVectorStoreDriver:
 
         assert len(results) == 1
         assert results[0].vector == pytest.approx(embedding)
+
+    def test_set_custom_table_name(self, vector_store_driver):
+        """This test ensures at least one row exists in the default table before specifying
+        a custom table name. After inserting another row, we should be able to query only one
+        vector from the table, and it should be the vector added to the table with the new name.
+        """
+        old_table_vector_id = vector_store_driver.upsert_vector(self.vec1)
+
+        new_table_name = str(uuid.uuid4())
+        vector_store_driver.initialize(table_name=new_table_name)
+        new_table_vector_id = vector_store_driver.upsert_vector(self.vec2)
+
+        results = vector_store_driver.load_entries()
+
+        assert len(results) == 1
+        assert results[0].id == new_table_vector_id

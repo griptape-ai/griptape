@@ -17,9 +17,9 @@ jobs:
       postgres:
         image: ankane/pgvector:v0.5.0
         env:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: postgres
+            POSTGRES_USER: ${{ secrets.UNIT_POSTGRES_USER }}
+            POSTGRES_PASSWORD: ${{ secrets.UNIT_POSTGRES_PASSWORD }}
+            POSTGRES_DB: ${{ secrets.UNIT_POSTGRES_DB }}
         ports:
             - 5432:5432
         options: >-

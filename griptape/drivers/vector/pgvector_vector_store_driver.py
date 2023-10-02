@@ -1,6 +1,7 @@
 import uuid
 from typing import Optional
-from attr import define, field, Factory
+from attr import define, field
+from dataclasses import dataclass
 from griptape.drivers import BaseVectorStoreDriver
 from sqlalchemy.engine import Engine
 from sqlalchemy import create_engine, Column, String, JSON
@@ -10,10 +11,24 @@ from sqlalchemy.orm import Session
 from pgvector.sqlalchemy import Vector
 
 
+def vector_model_factory(table_name="griptape_vectors"):
+    Base = declarative_base()
+
+    @dataclass
+    class VectorModel(Base):
+        __tablename__ = table_name
+
+        id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+        vector = Column(Vector())
+        namespace = Column(String)
+        meta = Column(JSON)
+
+    return VectorModel
+
+
 @define
 class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
-    """
-    A vector store driver to Postgres using the PGVector extension.
+    """A vector store driver to Postgres using the PGVector extension.
 
     Attributes:
         connection_string: The connection string for the Postgres database instance.
@@ -21,34 +36,36 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         engine: An optional sqlalchemy Postgres engine to use.
     """
 
-    connection_string: Optional[str] = field(default=None, kw_only=True)
+    connection_string: str = field(default=None, kw_only=True)
     create_engine_params: Optional[dict] = field(factory=dict, kw_only=True)
-    engine: Optional[Engine] = field(
-        default=Factory(
-            lambda self: create_engine(self.connection_string, **self.create_engine_params), takes_self=True
-        )
-    )
+    _Model: any = field(default=vector_model_factory, init=False)
+    engine: Optional[Engine] = field(default=None)
 
-    class VectorModel(declarative_base()):
-        __tablename__ = "griptape_vectors"
+    def initialize(
+        self,
+        table_name="griptape_vectors",
+        create_schema=True,
+        install_uuid_extension=True,
+        install_vector_extension=True,
+        **kwargs
+    ):
+        """Provides a mechanism to initialize the database schema and extensions."""
+        if self.engine is None and self.connection_string is None:
+            raise ValueError("Either an engine or connection string must be provided")
 
-        id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-        vector = Column(Vector())
-        namespace = Column(String)
-        meta = Column(JSON)
+        if self.engine is None:
+            self.engine = create_engine(self.connection_string, **self.create_engine_params)
 
-    def install_postgres_extensions(self) -> None:
-        """
-        Ensures the uuid-ossp and vector extensions are installed in the database.
-        """
-        self.engine.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
-        self.engine.execute('CREATE EXTENSION IF NOT EXISTS "vector";')
+        self._Model = vector_model_factory(table_name)
 
-    def create_schema(self) -> None:
-        """
-        Creates the schema for the vectors table.
-        """
-        self.VectorModel.metadata.create_all(self.engine)
+        if install_uuid_extension:
+            self.engine.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
+
+        if install_vector_extension:
+            self.engine.execute('CREATE EXTENSION IF NOT EXISTS "vector";')
+
+        if create_schema:
+            self._Model.metadata.create_all(self.engine)
 
     def upsert_vector(
         self,
@@ -58,11 +75,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs
     ) -> str:
-        """
-        Inserts or updates a vector in the collection.
-        """
+        """Inserts or updates a vector in the collection."""
         with Session(self.engine) as session:
-            obj = self.VectorModel(
+            obj = self._Model(
                 id=vector_id,
                 vector=vector,
                 namespace=namespace,
@@ -75,11 +90,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             return str(obj.id)
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
-        """
-        Retrieves a specific vector entry from the collection based on its identifier and optional namespace.
-        """
+        """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
         with Session(self.engine) as session:
-            result = session.get(self.VectorModel, vector_id)
+            result = session.get(self._Model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
                 id=result.id,
@@ -89,12 +102,11 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        """
-        Retrieves all vector entries from the collection, optionally filtering to only
+        """Retrieves all vector entries from the collection, optionally filtering to only
         those that match the provided namespace.
         """
         with Session(self.engine) as session:
-            query = session.query(self.VectorModel)
+            query = session.query(self._Model)
             if namespace:
                 query = query.filter_by(namespace=namespace)
 
@@ -113,33 +125,32 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
+        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         distance_metric: str = "cosine_distance",
         **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        """
-        Performs a search on the collection to find vectors similar to the provided input vector,
+        """Performs a search on the collection to find vectors similar to the provided input vector,
         optionally filtering to only those that match the provided namespace.
         """
-        count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
-
         distance_metrics = {
-            "cosine_distance": self.VectorModel.vector.cosine_distance,
-            "l2_distance": self.VectorModel.vector.l2_distance,
-            "inner_product": self.VectorModel.vector.max_inner_product,
+            "cosine_distance": self._Model.vector.cosine_distance,
+            "l2_distance": self._Model.vector.l2_distance,
+            "inner_product": self._Model.vector.max_inner_product,
         }
-        op = distance_metrics[distance_metric]
-        if op is None:
+
+        if distance_metric not in distance_metrics:
             raise ValueError("Invalid distance metric provided")
+
+        op = distance_metrics[distance_metric]
 
         with Session(self.engine) as session:
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
             query = session.query(
-                self.VectorModel,
+                self._Model,
                 op(vector).label("score"),
             ).order_by(op(vector))
 
