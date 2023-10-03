@@ -16,33 +16,38 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     """A vector store driver to Postgres using the PGVector extension.
 
     Attributes:
-        connection_string: The connection string for the Postgres database instance.
+        connection_string: An optional string describing the target Postgres database instance.
         create_engine_params: Additional configuration params passed when creating the database connection.
         engine: An optional sqlalchemy Postgres engine to use.
+        table_name: Optionally specify the name of the table to used to store vectors.
     """
 
     connection_string: str = field(default=None, kw_only=True)
     create_engine_params: Optional[dict] = field(factory=dict, kw_only=True)
-    _model: any = field(default=Factory(lambda self: self.vector_model_factory, takes_self=True), init=False)
     engine: Optional[Engine] = field(default=None, kw_only=True)
+    table_name: str = field(default="griptape_vectors", kw_only=True)
+    _model: any = field(default=Factory(lambda self: self.vector_model_factory, takes_self=True), init=False)
 
-    def setup(
-        self,
-        table_name: str,
-        create_schema: bool = True,
-        install_uuid_extension: bool = True,
-        install_vector_extension: bool = True,
-        **kwargs
-    ) -> None:
-        """Provides a mechanism to initialize the database schema and extensions."""
+    def __attrs_post_init__(self) -> None:
+        """Validates engine and connection string inputs.
+        If a an engine is provided, it will be used to connect to the database. If not, a connection string
+        is used to create a new database connection.
+        """
         if self.engine is None and self.connection_string is None:
             raise ValueError("Either an engine or connection string must be provided")
 
         if self.engine is None:
             self.engine = create_engine(self.connection_string, **self.create_engine_params)
 
-        self._model = self.vector_model_factory(table_name)
+        self._model = self.vector_model_factory(self.table_name)
 
+    def setup(
+        self,
+        create_schema: bool = True,
+        install_uuid_extension: bool = True,
+        install_vector_extension: bool = True,
+    ) -> None:
+        """Provides a mechanism to initialize the database schema and extensions."""
         if install_uuid_extension:
             self.engine.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
 

@@ -23,14 +23,14 @@ class TestPgVectorVectorStoreDriver:
             embedding_driver=embedding_driver,
         )
 
-        driver.setup(table_name="griptape_vectors")
+        driver.setup()
 
         return driver
 
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
             driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver)
-            driver.setup(table_name="griptape_vectors")
+            driver.setup()
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine = create_engine(self.connection_string)
@@ -39,7 +39,7 @@ class TestPgVectorVectorStoreDriver:
             engine=engine,
         )
 
-        driver.setup(table_name="griptape_vectors")
+        driver.setup()
 
     def test_initialize_accepts_connection_string(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
@@ -47,7 +47,7 @@ class TestPgVectorVectorStoreDriver:
             connection_string=self.connection_string,
         )
 
-        driver.setup(table_name="griptape_vectors")
+        driver.setup()
 
     def test_can_insert_vector(self, vector_store_driver):
         result = vector_store_driver.upsert_vector(self.vec1)
@@ -175,7 +175,7 @@ class TestPgVectorVectorStoreDriver:
         assert len(results) == 1
         assert results[0].vector == pytest.approx(embedding)
 
-    def test_set_custom_table_name(self, vector_store_driver):
+    def test_can_use_custom_table_name(self, embedding_driver, vector_store_driver):
         """This test ensures at least one row exists in the default table before specifying
         a custom table name. After inserting another row, we should be able to query only one
         vector from the table, and it should be the vector added to the table with the new name.
@@ -183,10 +183,16 @@ class TestPgVectorVectorStoreDriver:
         vector_store_driver.upsert_vector(self.vec1)
 
         new_table_name = str(uuid.uuid4())
-        vector_store_driver.setup(table_name=new_table_name)
-        new_table_vector_id = vector_store_driver.upsert_vector(self.vec2)
+        new_vector_store_driver = PgVectorVectorStoreDriver(
+            embedding_driver=embedding_driver,
+            connection_string=self.connection_string,
+            table_name=new_table_name,
+        )
 
-        results = vector_store_driver.load_entries()
+        new_vector_store_driver.setup()
+        new_table_vector_id = new_vector_store_driver.upsert_vector(self.vec2)
+
+        results = new_vector_store_driver.load_entries()
 
         assert len(results) == 1
         assert results[0].id == new_table_vector_id
