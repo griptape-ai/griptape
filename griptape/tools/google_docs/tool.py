@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 import logging
 from attr import field, define
 from schema import Schema, Optional, Literal
@@ -7,16 +6,14 @@ from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextAr
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 
-if TYPE_CHECKING:
-    from googleapiclient.discovery import Resource
 
 @define
 class GoogleDocsClient(BaseGoogleClient):
-    DEFAULT_FOLDER_PATH = "root"
-
     DOCS_SCOPES = ["https://www.googleapis.com/auth/documents"]
 
     DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+
+    DEFAULT_FOLDER_PATH = "root"
 
     owner_email: str = field(kw_only=True)
 
@@ -42,9 +39,20 @@ class GoogleDocsClient(BaseGoogleClient):
         try:
             file_path = params["file_path"]
             text = params["text"]
-            docs_service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
-            drive_service = self._build_client(self.DRIVE_SCOPES, "drive", "v3")
-            document_id = self._path_to_file_id(drive_service, file_path)
+            docs_service = self._build_client(
+                scopes=self.DOCS_SCOPES,
+                service_name="docs",
+                version="v1",
+                owner_email=self.owner_email
+            )
+            drive_service = self._build_client(
+                scopes=self.DRIVE_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+            )
+
+            document_id = self._convert_path_to_file_id(drive_service, file_path)
             if document_id:
                 doc = docs_service.documents().get(documentId=document_id).execute()
                 content = doc["body"]["content"]
@@ -86,9 +94,20 @@ class GoogleDocsClient(BaseGoogleClient):
         try:
             file_path = params["file_path"]
             text = params["text"]
-            docs_service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
-            drive_service = self._build_client(self.DRIVE_SCOPES, "drive", "v3")
-            document_id = self._path_to_file_id(drive_service, file_path)
+            docs_service = self._build_client(
+                scopes=self.DOCS_SCOPES,
+                service_name="docs",
+                version="v1",
+                owner_email=self.owner_email
+            )
+            drive_service = self._build_client(
+                scopes=self.DRIVE_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+            )
+
+            document_id = self._convert_path_to_file_id(drive_service, file_path)
             if document_id:
                 doc = docs_service.documents().get(documentId=document_id).execute()
 
@@ -136,8 +155,18 @@ class GoogleDocsClient(BaseGoogleClient):
             content = params.get("content")
             folder_path = params.get("folder_path", self.DEFAULT_FOLDER_PATH)
 
-            docs_service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
-            drive_service = self._build_client(self.DRIVE_SCOPES, "drive", "v3")
+            docs_service = self._build_client(
+                scopes=self.DOCS_SCOPES,
+                service_name="docs",
+                version="v1",
+                owner_email=self.owner_email
+            )
+            drive_service = self._build_client(
+                scopes=self.DRIVE_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+            )
 
             body = {
                 "title": file_path,
@@ -147,7 +176,7 @@ class GoogleDocsClient(BaseGoogleClient):
             doc_id = doc["documentId"]
 
             if folder_path.lower() != self.DEFAULT_FOLDER_PATH:
-                folder_id = self._path_to_file_id(drive_service, folder_path)
+                folder_id = self._convert_path_to_file_id(drive_service, folder_path)
                 if folder_id:
                     drive_service.files().update(fileId=doc_id, addParents=folder_id, fields="id, parents").execute()
                 else:
@@ -229,10 +258,15 @@ class GoogleDocsClient(BaseGoogleClient):
         downloaded_files = []
     
         try:
-            service = self._build_client(self.DRIVE_SCOPES, "drive", "v3")
+            service = self._build_client(
+                scopes=self.DRIVE_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+                )
     
             for file_path in file_paths:
-                file_id = self._path_to_file_id(service, file_path)
+                file_id = self._convert_path_to_file_id(service, file_path)
                 if file_id:
 
                     request = service.files().export_media(fileId=file_id, mimeType="text/plain")
@@ -247,48 +281,12 @@ class GoogleDocsClient(BaseGoogleClient):
             logging.error(e)
             return ErrorArtifact(f"Error downloading Google Docs: {e}")
 
-    def _build_client(self, scopes: list[str], tool: str, version: str) -> Resource:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
-
-        credentials = service_account.Credentials.from_service_account_info(
-            self.service_account_credentials, scopes=scopes
-        )
-        delegated_credentials = credentials.with_subject(self.owner_email)
-        service = build(tool, version, credentials=delegated_credentials)
-        return service
-
-    def _path_to_file_id(self, service, path: str) -> Optional[str]:
-        parts = path.split("/")
-        current_id = self.DEFAULT_FOLDER_PATH
-
-        for idx, part in enumerate(parts):
-            if idx == len(parts) - 1:
-                query = f"name='{part}' and '{current_id}' in parents"
-            else:
-                query = f"name='{part}' and '{current_id}' in parents and mimeType='application/vnd.google-apps.folder'"
-    
-            response = service.files().list(q=query).execute()
-            files = response.get("files", [])
-    
-            if not files:
-                if idx != len(parts) - 1:
-                    folder_metadata = {
-                        "name": part,
-                        "mimeType": "application/vnd.google-apps.folder",
-                        "parents": [current_id],
-                    }
-                    folder = service.files().create(body=folder_metadata, fields="id").execute()
-                    current_id = folder.get("id")
-                else:
-                    current_id = None
-            else:
-                current_id = files[0]["id"]
-    
-        return current_id
-
     def _save_to_doc(self, params: dict) -> str:
-        service = self._build_client(self.DOCS_SCOPES, "docs", "v1")
+        service = self._build_client(
+            scopes=self.DOCS_SCOPES,
+            service_name="docs",
+            version="v1",
+            owner_email=self.owner_email)
     
         requests = [
             {

@@ -1,0 +1,5 @@
+version: "v1"
+name: Google Docs Tool
+description: Tool for working with Google Docs.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
