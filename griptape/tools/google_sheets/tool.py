@@ -21,16 +21,18 @@ class GoogleSheetsClient(BaseGoogleClient):
 
     DRIVE_UPLOAD_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
+    DEFAULT_FOLDER_PATH = "root"
+
     owner_email: str = field(kw_only=True)
 
     @activity(
         config={
-            "description": "Can be used to list all spreadsheets in the specified folder or the root directory.",
+            "description": "Can be used to list all spreadsheets in the specified folder.",
             "schema": Schema(
                 {
                     Optional(
                         "folder_path",
-                        default="root",
+                        default=DEFAULT_FOLDER_PATH,
                         description="Path of the folder (like 'MainFolder/Subfolder1/Subfolder2') "
                         "from which spreadsheets should be listed.",
                     ): str,
@@ -39,11 +41,11 @@ class GoogleSheetsClient(BaseGoogleClient):
         }
     )
     def list_spreadsheets(self, params: dict) -> ListArtifact | ErrorArtifact:
-        folder_path = params.get("folder_path", "root")
+        folder_path = params.get("folder_path", self.DEFAULT_FOLDER_PATH)
         service = self._build_client(self.DRIVE_READ_SCOPES, service_name="drive", version="v3")
 
         try:
-            if folder_path == "root":
+            if folder_path == self.DEFAULT_FOLDER_PATH:
                 query = "mimeType='application/vnd.google-apps.spreadsheet' and 'root' in parents and trashed=false"
             else:
                 folder_id = self._path_to_file_id(service, folder_path)
@@ -105,7 +107,7 @@ class GoogleSheetsClient(BaseGoogleClient):
 
     @activity(
         config={
-            "description": "Can be used to downloads multiple spreadsheets from Google Drive based on provided file paths",
+            "description": "Can be used to downloads multiple spreadsheets based on provided file paths",
             "schema": Schema(
                 {
                     Literal("file_paths", description="List of file paths to the spreadsheets."): [str],
@@ -123,7 +125,8 @@ class GoogleSheetsClient(BaseGoogleClient):
 
         export_mime_mapping = {
             "text/csv": "text/csv",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         }
 
         downloaded_files = []
@@ -138,7 +141,9 @@ class GoogleSheetsClient(BaseGoogleClient):
 
                     if sheet_id:
                         request = service.files().export_media(fileId=sheet_id, mimeType=export_mime_mapping[mime_type])
-                        downloaded_files.append(BlobArtifact(request.execute()))
+                        downloaded_files.append(
+                            BlobArtifact(request.execute())
+                        )
                     else:
                         logging.error(f"Could not find sheet at path: {file_path}")
 
@@ -146,13 +151,13 @@ class GoogleSheetsClient(BaseGoogleClient):
                     logging.error(e)
 
                 except MalformedError:
-                    logging.error(f"MalformedError occurred while downloading sheet '{file_path}' from Google Drive")
+                    logging.error(f"MalformedError occurred while downloading sheet '{file_path}'")
 
         return ListArtifact(downloaded_files)
 
     @activity(
         config={
-            "description": "Uploads a spreadsheet to Google Drive and converts it to a Google Sheets format",
+            "description": "Uploads a spreadsheet and converts it to a Google Sheets format",
             "schema": Schema(
                 {
                     Literal("file_name", description="The name of the file to be uploaded"): str,
@@ -212,8 +217,8 @@ class GoogleSheetsClient(BaseGoogleClient):
         try:
             service = self._build_client(self.DRIVE_AUTH_SCOPES, service_name="drive", version="v3")
 
-            if file_path.lower() == "root":
-                spreadsheet_id = "root"
+            if file_path.lower() == self.DEFAULT_FOLDER_PATH:
+                spreadsheet_id = self.DEFAULT_FOLDER_PATH
             else:
                 spreadsheet_id = self._path_to_file_id(service, file_path)
 
@@ -245,8 +250,8 @@ class GoogleSheetsClient(BaseGoogleClient):
         service = self._build_client(self.DRIVE_AUTH_SCOPES, service_name="drive", version="v3")
 
         try:
-            if file_path.lower() == "root":
-                spreadsheet_id = "root"
+            if file_path.lower() == self.DEFAULT_FOLDER_PATH:
+                spreadsheet_id = self.DEFAULT_FOLDER_PATH
             else:
                 spreadsheet_id = self._path_to_file_id(service, file_path)
 
@@ -282,7 +287,7 @@ class GoogleSheetsClient(BaseGoogleClient):
 
     def _path_to_file_id(self, service, path: str) -> Optional[str]:
         parts = path.split("/")
-        current_id = "root"
+        current_id = self.DEFAULT_FOLDER_PATH
 
         for idx, part in enumerate(parts):
             if idx == len(parts) - 1:
