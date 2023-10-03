@@ -1,14 +1,10 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
 import logging
 from schema import Schema, Literal, Optional, Or
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
-
-if TYPE_CHECKING:
-    from googleapiclient.discovery import Resource
 
 
 @define
@@ -42,15 +38,22 @@ class GoogleSheetsClient(BaseGoogleClient):
     )
     def list_spreadsheets(self, params: dict) -> ListArtifact | ErrorArtifact:
         folder_path = params.get("folder_path", self.DEFAULT_FOLDER_PATH)
-        service = self._build_client(self.DRIVE_READ_SCOPES, service_name="drive", version="v3")
 
         try:
+            service = self._build_client(
+                scopes=self.DRIVE_READ_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+                )
+
             if folder_path == self.DEFAULT_FOLDER_PATH:
                 query = "mimeType='application/vnd.google-apps.spreadsheet' and 'root' in parents and trashed=false"
             else:
-                folder_id = self._path_to_file_id(service, folder_path)
+                folder_id = self._convert_path_to_file_id(service, folder_path)
                 if folder_id:
-                    query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false"
+                    query = (f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.spreadsheet' "
+                             f"and trashed=false")
                 else:
                     return ErrorArtifact(f"Could not find folder: {folder_path}")
 
@@ -78,7 +81,7 @@ class GoogleSheetsClient(BaseGoogleClient):
 
         except Exception as e:
             logging.error(e)
-            return ErrorArtifact(f"Error listing spreadsheets: {e}")
+            return ErrorArtifact(f"error listing spreadsheets: {e}")
 
         return ListArtifact(spreadsheets)
 
@@ -90,11 +93,16 @@ class GoogleSheetsClient(BaseGoogleClient):
     )
     def create_spreadsheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.errors import HttpError
-
+        from google.auth.exceptions import MalformedError
         title = params["title"]
 
         try:
-            service = self._build_client(self.SHEETS_SCOPES, "sheets", "v4")
+            service = self._build_client(
+                scopes=self.SHEETS_SCOPES,
+                service_name="sheets",
+                version="v4",
+                owner_email=self.owner_email
+            )
 
             spreadsheet_body = {"properties": {"title": title}}
 
@@ -103,14 +111,17 @@ class GoogleSheetsClient(BaseGoogleClient):
 
         except HttpError as e:
             logging.error(e)
-            return ErrorArtifact(f"Error creating a new sheet: {e}")
+            return ErrorArtifact(f"error creating spreadsheet due to http error: {e}")
+        except MalformedError as e:
+            logging.error(e)
+            return ErrorArtifact(f"error creating spreadsheet due to malformed credentials: {e}")
 
     @activity(
         config={
             "description": "Can be used to downloads multiple spreadsheets based on provided file paths",
             "schema": Schema(
                 {
-                    Literal("file_paths", description="List of file paths to the spreadsheets."): [str],
+                    Literal("file_paths", description="List of file paths to the spreadsheets."): list[str],
                     Literal("mime_type", description="The MIME type for the file format to export to."): str,
                 }
             ),
@@ -120,7 +131,7 @@ class GoogleSheetsClient(BaseGoogleClient):
         from google.auth.exceptions import MalformedError
         from googleapiclient.errors import HttpError
 
-        file_paths = params["file_paths"]  # Expecting a list of file paths
+        file_paths = params["file_paths"]
         mime_type = params["mime_type"]
 
         export_mime_mapping = {
@@ -134,10 +145,16 @@ class GoogleSheetsClient(BaseGoogleClient):
         if mime_type not in export_mime_mapping:
             logging.error("Unsupported mime type for downloading")
         else:
-            service = self._build_client(self.DRIVE_READ_SCOPES, service_name="drive", version="v3")
-            for file_path in file_paths:
-                try:
-                    sheet_id = self._path_to_file_id(service, file_path)
+            try:
+                service = self._build_client(
+                    scopes=self.DRIVE_READ_SCOPES,
+                    service_name="drive",
+                    version="v3",
+                    owner_email=self.owner_email
+                )
+                for file_path in file_paths:
+
+                    sheet_id = self._convert_path_to_file_id(service, file_path)
 
                     if sheet_id:
                         request = service.files().export_media(fileId=sheet_id, mimeType=export_mime_mapping[mime_type])
@@ -145,13 +162,13 @@ class GoogleSheetsClient(BaseGoogleClient):
                             BlobArtifact(request.execute())
                         )
                     else:
-                        logging.error(f"Could not find sheet at path: {file_path}")
+                        logging.error(f"error finding spreadsheet at path: {file_path}")
 
-                except HttpError as e:
-                    logging.error(e)
+            except HttpError as e:
+                logging.error(e)
 
-                except MalformedError:
-                    logging.error(f"MalformedError occurred while downloading sheet '{file_path}'")
+            except MalformedError:
+                logging.error(f"error downloading spreadsheet due to malformed credentials")
 
         return ListArtifact(downloaded_files)
 
@@ -180,13 +197,19 @@ class GoogleSheetsClient(BaseGoogleClient):
             return ErrorArtifact(f"Unsupported file type '{file_type}'. Please provide either 'csv' or 'excel'.")
 
         try:
-            service = self._build_client(self.DRIVE_UPLOAD_SCOPES, service_name="drive", version="v3")
+            service = self._build_client(
+                scopes=self.DRIVE_UPLOAD_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+            )
+
             file_metadata = {"name": params["file_name"], "mimeType": "application/vnd.google-apps.spreadsheet"}
             media = MediaFileUpload(params["file_path"], mimetype=mime_mapping[params["file_type"]])
             file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
 
             return InfoArtifact(
-                f'A file was successfully uploaded and converted to a Google Sheet with ID {file.get("id")}.'
+                f'file was successfully uploaded and converted to a Google Sheet with ID {file.get("id")}.'
             )
 
         except Exception as e:
@@ -215,12 +238,17 @@ class GoogleSheetsClient(BaseGoogleClient):
         role = params.get("role", "reader")
 
         try:
-            service = self._build_client(self.DRIVE_AUTH_SCOPES, service_name="drive", version="v3")
+            service = self._build_client(
+                scopes=self.DRIVE_AUTH_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+            )
 
             if file_path.lower() == self.DEFAULT_FOLDER_PATH:
                 spreadsheet_id = self.DEFAULT_FOLDER_PATH
             else:
-                spreadsheet_id = self._path_to_file_id(service, file_path)
+                spreadsheet_id = self._convert_path_to_file_id(service, file_path)
 
             if spreadsheet_id:
                 batch_update_permission_request_body = {"role": role, "type": "user", "emailAddress": email_address}
@@ -230,10 +258,10 @@ class GoogleSheetsClient(BaseGoogleClient):
                 request.execute()
                 return InfoArtifact(f"Spreadsheet at {file_path} shared with {email_address} as a {role}")
             else:
-                return ErrorArtifact(f"No spreadsheet found at path: {file_path}")
+                return ErrorArtifact(f"error finding spreadsheet at path: {file_path}")
         except Exception as e:
             logging.error(e)
-            return ErrorArtifact(f"Error sharing spreadsheet: {e}")
+            return ErrorArtifact(f"error sharing spreadsheet: {e}")
 
     @activity(
         config={
@@ -247,13 +275,18 @@ class GoogleSheetsClient(BaseGoogleClient):
     )
     def check_permissions_for_spreadsheet(self, params: dict) -> ListArtifact | ErrorArtifact:
         file_path = params["file_path"]
-        service = self._build_client(self.DRIVE_AUTH_SCOPES, service_name="drive", version="v3")
 
         try:
+            service = self._build_client(
+                scopes=self.DRIVE_AUTH_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email
+            )
             if file_path.lower() == self.DEFAULT_FOLDER_PATH:
                 spreadsheet_id = self.DEFAULT_FOLDER_PATH
             else:
-                spreadsheet_id = self._path_to_file_id(service, file_path)
+                spreadsheet_id = self._convert_path_to_file_id(service, file_path)
 
             if spreadsheet_id:
                 permissions = (
@@ -269,47 +302,7 @@ class GoogleSheetsClient(BaseGoogleClient):
 
                 return ListArtifact(permissions_artifacts)
             else:
-                return ErrorArtifact(f"No spreadsheet found at path: {file_path}")
+                return ErrorArtifact(f"error finding spreadsheet at path: {file_path}")
         except Exception as e:
             logging.error(e)
-            return ErrorArtifact(f"Error checking permissions: {e}")
-
-    def _build_client(self, scopes: list[str], service_name: str, version: str) -> Resource:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
-
-        credentials = service_account.Credentials.from_service_account_info(
-            self.service_account_credentials, scopes=scopes
-        )
-        delegated_credentials = credentials.with_subject(self.owner_email)
-        service = build(service_name, version, credentials=delegated_credentials)
-        return service
-
-    def _path_to_file_id(self, service, path: str) -> Optional[str]:
-        parts = path.split("/")
-        current_id = self.DEFAULT_FOLDER_PATH
-
-        for idx, part in enumerate(parts):
-            if idx == len(parts) - 1:
-                query = f"name='{part}' and '{current_id}' in parents"
-            else:
-                query = f"name='{part}' and '{current_id}' in parents and mimeType='application/vnd.google-apps.folder'"
-
-            response = service.files().list(q=query).execute()
-            files = response.get("files", [])
-
-            if not files:
-                if idx != len(parts) - 1:
-                    folder_metadata = {
-                        "name": part,
-                        "mimeType": "application/vnd.google-apps.folder",
-                        "parents": [current_id],
-                    }
-                    folder = service.files().create(body=folder_metadata, fields="id").execute()
-                    current_id = folder.get("id")
-                else:
-                    current_id = None
-            else:
-                current_id = files[0]["id"]
-
-        return current_id
+            return ErrorArtifact(f"error checking permissions: {e}")
