@@ -26,8 +26,6 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     _model: any = field(default=Factory(lambda self: self.vector_model_factory, takes_self=True), init=False)
     engine: Optional[Engine] = field(default=None, kw_only=True)
 
-    distance_metrics = {"cosine_distance": Vector().comparator_factory.cosine_distance()}
-
     def setup(
         self,
         table_name: str,

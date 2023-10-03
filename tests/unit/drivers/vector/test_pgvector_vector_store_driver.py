@@ -30,7 +30,7 @@ class TestPgVectorVectorStoreDriver:
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
             driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver)
-            driver.setup()
+            driver.setup(table_name="griptape_vectors")
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine = create_engine(self.connection_string)
