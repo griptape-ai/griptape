@@ -40,23 +40,29 @@ PROMPT_DRIVERS = {
     "OPENAI_COMPLETION_DAVINCI": OpenAiCompletionPromptDriver(
         api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"
     ),
-    "AZURE_CHAT_35": AzureOpenAiChatPromptDriver(
-        api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    "AZURE_CHAT_35_16k": AzureOpenAiChatPromptDriver(
+        api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
         model="gpt-35-turbo-16k",
-        deployment_id=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_ID"],
-        api_base=os.environ["AZURE_OPENAI_API_BASE"],
-    ),
-    "AZURE_CHAT_4": AzureOpenAiChatPromptDriver(
-        api_key=os.environ["AZURE_OPENAI_API_KEY"],
-        model="gpt-4-32k",
-        deployment_id=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT_ID"],
-        api_base=os.environ["AZURE_OPENAI_API_BASE"],
+        deployment_id=os.environ["AZURE_OPENAI_35_16k_DEPLOYMENT_ID"],
+        api_base=os.environ["AZURE_OPENAI_API_BASE_1"],
     ),
     "AZURE_COMPLETION_DAVINCI": AzureOpenAiCompletionPromptDriver(
-        api_key=os.environ["AZURE_OPENAI_API_KEY"],
+        api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
         model="text-davinci-003",
-        deployment_id=os.environ["AZURE_OPENAI_COMPLETION_DEPLOYMENT_ID"],
-        api_base=os.environ["AZURE_OPENAI_API_BASE"],
+        deployment_id=os.environ["AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID"],
+        api_base=os.environ["AZURE_OPENAI_API_BASE_1"],
+    ),
+    "AZURE_CHAT_4": AzureOpenAiChatPromptDriver(
+        api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
+        model="gpt-4",
+        deployment_id=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
+        api_base=os.environ["AZURE_OPENAI_API_BASE_2"],
+    ),
+    "AZURE_CHAT_4_32k": AzureOpenAiChatPromptDriver(
+        api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
+        model="gpt-4-32k",
+        deployment_id=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
+        api_base=os.environ["AZURE_OPENAI_API_BASE_2"],
     ),
     "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(model="claude-2", api_key=os.environ["ANTHROPIC_API_KEY"]),
     "COHERE_COMMAND": CoherePromptDriver(
@@ -86,7 +92,9 @@ PROMPT_DRIVERS = {
 TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = [
     PROMPT_DRIVERS["OPENAI_CHAT_4"],
     PROMPT_DRIVERS["OPENAI_CHAT_35"],
-    PROMPT_DRIVERS["AZURE_CHAT_35"],
+    PROMPT_DRIVERS["AZURE_CHAT_35_16k"],
+    PROMPT_DRIVERS["AZURE_CHAT_4"],
+    PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
     PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
     PROMPT_DRIVERS["BEDROCK_CLAUDE_2"],
 ]
