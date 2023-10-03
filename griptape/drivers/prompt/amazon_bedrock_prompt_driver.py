@@ -15,7 +15,7 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock"),
+            lambda self: self.session.client("bedrock-runtime"),
             takes_self=True,
         ),
         kw_only=True,
