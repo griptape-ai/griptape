@@ -136,6 +136,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             vector_float_list = json.loads(document["vec_string"])
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
+                    vector_id=document.id,
                     vector=vector_float_list,
                     score=float(document['score']),
                     meta=metadata,

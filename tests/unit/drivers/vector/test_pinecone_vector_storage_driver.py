@@ -16,6 +16,7 @@ class TestPineconeVectorStorageDriver:
         fake_query_response = {
             "matches": [
                 {
+                    "id": "foo",
                     "values": [0, 1, 0],
                     "score": 42,
                     "metadata": {

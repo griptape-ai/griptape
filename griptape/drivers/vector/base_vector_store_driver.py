@@ -14,6 +14,7 @@ class BaseVectorStoreDriver(ABC):
 
     @dataclass
     class QueryResult:
+        vector_id: str
         vector: list[float]
         score: float
         meta: Optional[dict] = None
