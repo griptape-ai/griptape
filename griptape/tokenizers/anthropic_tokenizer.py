@@ -1,5 +1,5 @@
-import anthropic
 from attr import define, field
+from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
 
 
@@ -15,7 +15,11 @@ class AnthropicTokenizer(BaseTokenizer):
         return self.DEFAULT_MAX_TOKENS
 
     def encode(self, text: str) -> list[int]:
+        anthropic = import_optional_dependency("anthropic", "drivers-prompt-anthropic")
+
         return anthropic._client.sync_get_tokenizer().encode(text).ids
 
     def decode(self, tokens: list[int]) -> str:
+        anthropic = import_optional_dependency("anthropic", "drivers-prompt-anthropic")
+
         return anthropic._client.sync_get_tokenizer().decode(tokens)

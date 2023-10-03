@@ -1,10 +1,13 @@
-import cohere
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
-from griptape.utils import PromptStack
+from griptape.utils import PromptStack, import_optional_dependency
 
+if TYPE_CHECKING:
+    from cohere import Client
 
 @define
 class CoherePromptDriver(BasePromptDriver):
@@ -17,8 +20,8 @@ class CoherePromptDriver(BasePromptDriver):
     """
     api_key: str = field(kw_only=True)
     model: str = field(default=CohereTokenizer.DEFAULT_MODEL, kw_only=True)
-    client: cohere.Client = field(
-        default=Factory(lambda self: cohere.Client(self.api_key), takes_self=True), kw_only=True
+    client: Client = field(
+        default=Factory(lambda self: import_optional_dependency("cohere", "drivers-prompt-cohere").Client(self.api_key), takes_self=True), kw_only=True
     )
     tokenizer: CohereTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),

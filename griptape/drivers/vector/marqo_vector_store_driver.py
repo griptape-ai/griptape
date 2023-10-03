@@ -1,10 +1,12 @@
-from typing import Optional, List, Dict, Any
+from __future__ import annotations
+from typing import Optional, List, Dict, Any, TYPE_CHECKING
+from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact
-import marqo
 from attr import define, field, Factory
-import logging
 
+if TYPE_CHECKING:
+    import marqo
 
 @define
 class MarqoVectorStoreDriver(BaseVectorStoreDriver):
@@ -20,7 +22,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     url: str = field(kw_only=True)
     mq: Optional[marqo.Client] = field(
         default=Factory(
-            lambda self: marqo.Client(self.url, api_key=self.api_key), takes_self=True
+            lambda self: import_optional_dependency("marqo", "drivers-prompt-marqo").Client(self.url, api_key=self.api_key), takes_self=True
         ),
         kw_only=True,
     )

@@ -1,9 +1,11 @@
-from typing import Optional
-from pymongo import MongoClient
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from attr import define, field, Factory
-from pymongo.collection import Collection
 from griptape.drivers import BaseVectorStoreDriver
+from griptape.utils import import_optional_dependency
 
+if TYPE_CHECKING:
+    from pymongo import MongoClient, Collection
 
 @define
 class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
@@ -19,7 +21,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
     client: Optional[MongoClient] = field(
-        default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True)
+        default=Factory(lambda self: import_optional_dependency("pymongo", "drivers-prompt-mongodb").MongoClient(self.connection_string), takes_self=True)
     )
 
     def get_collection(self) -> Collection:

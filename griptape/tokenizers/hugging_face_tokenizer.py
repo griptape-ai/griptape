@@ -1,10 +1,14 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from os import environ
+
+if TYPE_CHECKING:
+    from transformers import PreTrainedTokenizerBase
 
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 
 from attr import define, field, Factory
 from griptape.tokenizers import BaseTokenizer
-from transformers import PreTrainedTokenizerBase
 
 
 @define(frozen=True)

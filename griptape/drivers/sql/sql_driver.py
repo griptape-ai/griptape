@@ -1,10 +1,12 @@
-from typing import Optional
-import sqlalchemy
-from sqlalchemy.engine import Engine
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from griptape.drivers import BaseSqlDriver
-from sqlalchemy import create_engine, text, MetaData, Table
+from griptape.utils import import_optional_dependency 
 from attr import define, field
 
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Engine
 
 @define
 class SqlDriver(BaseSqlDriver):
@@ -13,7 +15,9 @@ class SqlDriver(BaseSqlDriver):
     engine: Engine = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        self.engine = create_engine(self.engine_url, **self.create_engine_params)
+        sqlalchemy = import_optional_dependency("sqlalchemy", "drivers-sql-base")
+        
+        self.engine = sqlalchemy.create_engine(self.engine_url, **self.create_engine_params)
 
     def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)
@@ -24,8 +28,10 @@ class SqlDriver(BaseSqlDriver):
             return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
+        sqlalchemy = import_optional_dependency("sqlalchemy", "drivers-sql-base")
+        
         with self.engine.begin() as con:
-            results = con.execute(text(query))
+            results = con.execute(sqlalchemy.text(query))
 
             if results.returns_rows:
                 return [{column: value for column, value in result.items()} for result in results]
@@ -33,10 +39,12 @@ class SqlDriver(BaseSqlDriver):
                 return None
 
     def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
+        sqlalchemy = import_optional_dependency("sqlalchemy", "drivers-sql-base")
+
         try:
-            table = Table(
+            table = sqlalchemy.Table(
                 table,
-                MetaData(bind=self.engine),
+                sqlalchemy.MetaData(bind=self.engine),
                 schema=schema,
                 autoload=True,
                 autoload_with=self.engine

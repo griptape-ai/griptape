@@ -53,6 +53,9 @@ drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-aws = ["boto3"]
 
+tokenizers-huggingface = ["transformers"]
+tokenizers-cohere = ["cohere"]
+
 drivers-sql-base = ["sqlalchemy"]
 drivers-sql-redshift = ["sqlalchemy", "sqlalchemy-redshift", "boto3"]
 drivers-sql-snowflake = ["sqlalchemy", "snowflake-sqlalchemy", "snowflake"]
@@ -63,7 +66,8 @@ drivers-vector-store-marqo = ["marqo"]
 drivers-vector-store-pinecone = ["pinecone-client"]
 drivers-vector-store-mongodb = ["pymongo"]
 drivers-vector-store-redis = ["redis"]
-drivers-vector-store-opensearch = ["opensearch-py", "boto3", "requests-aws4auth"]
+drivers-vector-store-opensearch = ["opensearch-py"]
+drivers-vector-store-opensearch-aws = ["opensearch-py", "boto3", "requests-aws4auth"]
 
 tools-computer = ["stringcase", "docker"]
 

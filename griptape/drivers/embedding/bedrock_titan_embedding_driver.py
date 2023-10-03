@@ -1,9 +1,13 @@
+from __future__ import annotations
 import json
-import boto3
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import BedrockTitanTokenizer
+from griptape.utils import import_optional_dependency
+
+if TYPE_CHECKING:
+    import boto3
 
 
 @define
@@ -19,7 +23,7 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
         kw_only=True,
     )
     session: boto3.Session = field(
-        default=Factory(lambda: boto3.Session()), kw_only=True
+        default=Factory(lambda: import_optional_dependency("boto3", "drivers-embedding-bedrock").Session()), kw_only=True
     )
     bedrock_client: Any = field(
         default=Factory(

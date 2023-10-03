@@ -5,7 +5,7 @@ from griptape.utils import PromptStack
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 
 from attr import define, field, Factory
-from transformers import pipeline, AutoTokenizer
+from griptape.utils import import_optional_dependency
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
@@ -31,7 +31,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=AutoTokenizer.from_pretrained(self.model)
+                tokenizer=import_optional_dependency("transformers", "drivers-prompt-huggingface").AutoTokenizer.from_pretrained(self.model)
             ), takes_self=True
         ),
         kw_only=True
@@ -39,6 +39,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         prompt = self.prompt_stack_to_string(prompt_stack)
+        pipeline = import_optional_dependency("transformers", "drivers-prompt-huggingface").pipeline
 
         generator = pipeline(
             tokenizer=self.tokenizer.tokenizer,

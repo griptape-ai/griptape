@@ -34,8 +34,8 @@ class TestDataFrameLoader:
         df2 = pd.read_csv(path2)
         collection = loader.load_collection([df1, df2])
 
-        key1 = utils.dataframe_to_hash(df1)
-        key2 = utils.dataframe_to_hash(df2)
+        key1 = loader._dataframe_to_hash(df1)
+        key2 = loader._dataframe_to_hash(df2)
 
         print(list(collection.keys()))
         print([key1, key2])

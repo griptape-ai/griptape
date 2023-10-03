@@ -1,7 +1,10 @@
-import cohere
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from attr import define, field
 from griptape.tokenizers import BaseTokenizer
 
+if TYPE_CHECKING:
+    from cohere import Client
 
 @define(frozen=True)
 class CohereTokenizer(BaseTokenizer):
@@ -9,7 +12,7 @@ class CohereTokenizer(BaseTokenizer):
     MAX_TOKENS = 2048
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
-    client: cohere.Client = field(kw_only=True)
+    client: Client = field(kw_only=True)
 
     @property
     def max_tokens(self) -> int:

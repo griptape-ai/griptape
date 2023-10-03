@@ -4,7 +4,6 @@ from attr import define
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.loaders import TextLoader
-import trafilatura
 
 
 @define
@@ -22,6 +21,8 @@ class WebLoader(TextLoader):
         return self.text_to_artifacts(self.extract_page(url, include_links).get('text'))
 
     def extract_page(self, url: str, include_links: bool = True) -> dict:
+        import trafilatura
+
         config = trafilatura.settings.use_config()
         page = trafilatura.fetch_url(url, no_ssl=True)
 

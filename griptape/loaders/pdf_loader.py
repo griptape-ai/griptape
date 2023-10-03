@@ -1,7 +1,6 @@
 from __future__ import annotations
 from pathlib import Path
 from typing import IO, Optional
-from PyPDF2 import PdfReader
 from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact
@@ -37,6 +36,8 @@ class PdfLoader(TextLoader):
         })
 
     def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
+        from PyPDF2 import PdfReader
+
         reader = PdfReader(stream, strict=True, password=password)
 
         return self.text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))

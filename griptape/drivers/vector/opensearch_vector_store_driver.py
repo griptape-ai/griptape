@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import Optional, Tuple
-from opensearchpy import OpenSearch, RequestsHttpConnection
+from typing import Optional, Tuple, TYPE_CHECKING
 from griptape import utils
 import logging
+from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field, Factory
 
+if TYPE_CHECKING:
+    from opensearchpy import OpenSearch, RequestsHttpConnection
 
 @define
 class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
@@ -28,7 +30,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
     client: OpenSearch = field(
         default=Factory(
-            lambda self: OpenSearch(
+            lambda self: import_optional_dependency("opensearchpy", "drivers-vector-opensearch").OpenSearch(
                 hosts=[{'host': self.host, 'port': self.port}],
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,
