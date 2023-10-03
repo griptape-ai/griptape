@@ -23,14 +23,14 @@ class TestPgVectorVectorStoreDriver:
             embedding_driver=embedding_driver,
         )
 
-        driver.initialize()
+        driver.setup(table_name="griptape_vectors")
 
         return driver
 
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
             driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver)
-            driver.initialize()
+            driver.setup()
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine = create_engine(self.connection_string)
@@ -39,7 +39,7 @@ class TestPgVectorVectorStoreDriver:
             engine=engine,
         )
 
-        driver.initialize()
+        driver.setup(table_name="griptape_vectors")
 
     def test_initialize_accepts_connection_string(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
@@ -47,7 +47,7 @@ class TestPgVectorVectorStoreDriver:
             connection_string=self.connection_string,
         )
 
-        driver.initialize()
+        driver.setup(table_name="griptape_vectors")
 
     def test_can_insert_vector(self, vector_store_driver):
         result = vector_store_driver.upsert_vector(self.vec1)
@@ -180,10 +180,10 @@ class TestPgVectorVectorStoreDriver:
         a custom table name. After inserting another row, we should be able to query only one
         vector from the table, and it should be the vector added to the table with the new name.
         """
-        old_table_vector_id = vector_store_driver.upsert_vector(self.vec1)
+        vector_store_driver.upsert_vector(self.vec1)
 
         new_table_name = str(uuid.uuid4())
-        vector_store_driver.initialize(table_name=new_table_name)
+        vector_store_driver.setup(table_name=new_table_name)
         new_table_vector_id = vector_store_driver.upsert_vector(self.vec2)
 
         results = vector_store_driver.load_entries()
