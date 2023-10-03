@@ -17,7 +17,7 @@ class BedrockTitanTokenizer(BaseTokenizer):
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock"),
+            lambda self: self.session.client("bedrock-runtime"),
             takes_self=True,
         ),
         kw_only=True,
