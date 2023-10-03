@@ -22,7 +22,7 @@ class BaseGoogleClient(BaseTool, ABC):
             credentials=credentials.with_subject(owner_email)
         )
 
-    def _path_to_file_id(self, service, path: str) -> Optional[str]:
+    def _convert_path_to_file_id(self, service: Any, path: str) -> Optional[str]:
         parts = path.split("/")
         current_id = "root"
 

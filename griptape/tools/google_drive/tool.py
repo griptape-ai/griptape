@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import List, Dict
+from typing import List, Dict, Any
 from schema import Schema, Literal, Optional, Or
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
@@ -26,6 +26,10 @@ class GoogleDriveClient(BaseGoogleClient):
 
     DEFAULT_FOLDER_PATH = "root"
 
+    SERVICE_NAME = "drive"
+
+    SERVICE_VERSION = "v3"
+
     owner_email: str = field(kw_only=True)
 
     @activity(config={
@@ -45,12 +49,17 @@ class GoogleDriveClient(BaseGoogleClient):
         folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
 
         try:
-            service = self._build_client(self.LIST_FILES_SCOPES, "drive", "v3", self.owner_email)
+            service = self._build_client(
+                self.LIST_FILES_SCOPES,
+                self.SERVICE_NAME,
+                self.SERVICE_VERSION,
+                self.owner_email
+            )
 
             if folder_path == self.DEFAULT_FOLDER_PATH:
                 query = "mimeType != 'application/vnd.google-apps.folder' and 'root' in parents and trashed=false"
             else:
-                folder_id = self._path_to_file_id(service, folder_path)
+                folder_id = self._convert_path_to_file_id(service, folder_path)
                 if folder_id:
                     query = f"'{folder_id}' in parents and trashed=false"
                 else:
@@ -92,12 +101,17 @@ class GoogleDriveClient(BaseGoogleClient):
             artifacts = memory.load_artifacts(values["artifact_namespace"])
 
             if artifacts:
-                service = self._build_client(self.UPLOAD_FILE_SCOPES, "drive", "v3", self.owner_email)
+                service = self._build_client(
+                    self.UPLOAD_FILE_SCOPES,
+                    self.SERVICE_NAME,
+                    self.SERVICE_VERSION,
+                    self.owner_email
+                )
 
                 if folder_path == self.DEFAULT_FOLDER_PATH:
                     folder_id = self.DEFAULT_FOLDER_PATH
                 else:
-                    folder_id = self._path_to_file_id(service, folder_path)
+                    folder_id = self._convert_path_to_file_id(service, folder_path)
 
                 if folder_id:
                     try:
@@ -160,10 +174,15 @@ class GoogleDriveClient(BaseGoogleClient):
         downloaded_files = []
     
         try:
-            service = self._build_client(self.LIST_FILES_SCOPES, "drive", "v3", self.owner_email)
+            service = self._build_client(
+                self.LIST_FILES_SCOPES,
+                self.SERVICE_NAME,
+                self.SERVICE_VERSION,
+                self.owner_email
+            )
 
             for path in values["paths"]:
-                file_id = self._path_to_file_id(service, path)
+                file_id = self._convert_path_to_file_id(service, path)
                 if file_id:
                     file_info = service.files().get(fileId=file_id).execute()
                     mime_type = file_info["mimeType"]
@@ -223,13 +242,18 @@ class GoogleDriveClient(BaseGoogleClient):
         folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
     
         try:
-            service = self._build_client(self.LIST_FILES_SCOPES, "drive", "v3", self.owner_email)
+            service = self._build_client(
+                self.LIST_FILES_SCOPES,
+                self.SERVICE_NAME,
+                self.SERVICE_VERSION,
+                self.owner_email
+            )
     
             folder_id = None
             if folder_path == self.DEFAULT_FOLDER_PATH:
                 folder_id = self.DEFAULT_FOLDER_PATH
             else:
-                folder_id = self._path_to_file_id(service, folder_path)
+                folder_id = self._convert_path_to_file_id(service, folder_path)
     
             if folder_id:
                 query = None
@@ -258,7 +282,12 @@ class GoogleDriveClient(BaseGoogleClient):
     def _save_to_drive(self, filename: str, value: any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaIoBaseUpload
 
-        service = self._build_client(self.UPLOAD_FILE_SCOPES, "drive", "v3", self.owner_email)
+        service = self._build_client(
+            self.UPLOAD_FILE_SCOPES,
+            self.SERVICE_NAME,
+            self.SERVICE_VERSION,
+            self.owner_email
+        )
     
         if isinstance(value, str):
             value = value.encode()
@@ -266,7 +295,7 @@ class GoogleDriveClient(BaseGoogleClient):
         parts = filename.split("/")
         if len(parts) > 1:
             directory = "/".join(parts[:-1])
-            parent_folder_id = self._path_to_file_id(service, directory)
+            parent_folder_id = self._convert_path_to_file_id(service, directory)
             if not parent_folder_id:
                 return ErrorArtifact(f"Could not find folder: {directory}")
             filename = parts[-1]
@@ -280,7 +309,7 @@ class GoogleDriveClient(BaseGoogleClient):
         file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
         return InfoArtifact(file)
 
-    def _list_files(self, service, query: str) -> List[Dict]:
+    def _list_files(self, service: Any, query: str) -> List[Dict]:
         items = []
         next_page_token = None
     
