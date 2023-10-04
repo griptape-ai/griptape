@@ -21,7 +21,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
     client: Optional[MongoClient] = field(
-        default=Factory(lambda self: import_optional_dependency("pymongo", "drivers-prompt-mongodb").MongoClient(self.connection_string), takes_self=True)
+        default=Factory(lambda self: import_optional_dependency("pymongo").MongoClient(self.connection_string), takes_self=True)
     )
 
     def get_collection(self) -> Collection:

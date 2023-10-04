@@ -38,6 +38,6 @@ class DataFrameLoader(BaseLoader):
         return artifacts
 
     def _dataframe_to_hash(self, dataframe: DataFrame) -> str:
-        pd = utils.import_optional_dependency("pandas", "loaders-dataframe")
+        pd = utils.import_optional_dependency("pandas")
         
         return hashlib.sha256(pd.util.hash_pandas_object(dataframe, index=True).values).hexdigest()

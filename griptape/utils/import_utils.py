@@ -7,7 +7,6 @@ INSTALL_MAPPING = {}
 
 def import_optional_dependency(
     name: str,
-    extra: str,
     errors: Literal["raise", "ignore"] = "raise",
 ) -> Optional[ModuleType]:
     """Import an optional dependency.
@@ -33,7 +32,7 @@ def import_optional_dependency(
 
     msg = (
         f"Missing optional dependency: '{install_name}'. "
-        f"Use poetry or pip to install the extra: {extra}."
+        f"Use poetry or pip to install the required extra."
     )
     try:
         module = import_module(name)

@@ -23,7 +23,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        anthropic = import_optional_dependency("anthropic", "drivers-prompt-anthropic")
+        anthropic = import_optional_dependency("anthropic")
         prompt = self.prompt_stack_to_string(prompt_stack)
         response = anthropic.Anthropic(api_key=self.api_key).completions.create(
             prompt=prompt,

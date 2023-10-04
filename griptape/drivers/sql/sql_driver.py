@@ -15,7 +15,7 @@ class SqlDriver(BaseSqlDriver):
     engine: Engine = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        sqlalchemy = import_optional_dependency("sqlalchemy", "drivers-sql-base")
+        sqlalchemy = import_optional_dependency("sqlalchemy")
         
         self.engine = sqlalchemy.create_engine(self.engine_url, **self.create_engine_params)
 
@@ -28,7 +28,7 @@ class SqlDriver(BaseSqlDriver):
             return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
-        sqlalchemy = import_optional_dependency("sqlalchemy", "drivers-sql-base")
+        sqlalchemy = import_optional_dependency("sqlalchemy")
         
         with self.engine.begin() as con:
             results = con.execute(sqlalchemy.text(query))
@@ -39,7 +39,7 @@ class SqlDriver(BaseSqlDriver):
                 return None
 
     def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
-        sqlalchemy = import_optional_dependency("sqlalchemy", "drivers-sql-base")
+        sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:
             table = sqlalchemy.Table(

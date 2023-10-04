@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define
 class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     session: boto3.Session = field(
-        default=Factory(lambda: import_optional_dependency("boto3", "driver-prompt-bedrock").Session()), kw_only=True
+        default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True
     )
     bedrock_client: Any = field(
         default=Factory(

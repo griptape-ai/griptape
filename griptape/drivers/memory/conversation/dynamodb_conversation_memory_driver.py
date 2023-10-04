@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 @define
 class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
-    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3", "drivers-conversation-memory-aws").Session()), kw_only=True)
+    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     table_name: str = field(kw_only=True)
     partition_key: str = field(kw_only=True)
     value_attribute_key: str = field(kw_only=True)

@@ -30,7 +30,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
     client: OpenSearch = field(
         default=Factory(
-            lambda self: import_optional_dependency("opensearchpy", "drivers-vector-opensearch").OpenSearch(
+            lambda self: import_optional_dependency("opensearchpy").OpenSearch(
                 hosts=[{'host': self.host, 'port': self.port}],
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,

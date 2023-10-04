@@ -15,7 +15,7 @@ class BedrockTitanTokenizer(BaseTokenizer):
     DEFAULT_MAX_TOKENS = 4096
 
     session: boto3.Session = field(
-        default=Factory(lambda: import_optional_dependency("boto3", "drivers-prompt-aws").Session()), kw_only=True
+        default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True
     )
     stop_sequences: list[str] = field(factory=list, kw_only=True)
     model: str = field(default=DEFAULT_MODEL, kw_only=True)

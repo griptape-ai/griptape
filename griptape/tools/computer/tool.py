@@ -164,12 +164,12 @@ class Computer(BaseTool):
             return None
 
     def image_name(self, tool: BaseTool) -> str:
-        stringcase = import_optional_dependency("stringcase", "tools-computer")
+        stringcase = import_optional_dependency("stringcase")
 
         return f"{stringcase.snakecase(tool.name)}_image"
 
     def container_name(self, tool: BaseTool) -> str:
-        stringcase = import_optional_dependency("stringcase", "tools-computer")
+        stringcase = import_optional_dependency("stringcase")
 
         return f"{stringcase.snakecase(tool.name)}_container"
 

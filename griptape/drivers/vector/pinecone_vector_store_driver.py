@@ -16,7 +16,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     index: pinecone.Index = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        pinecone = import_optional_dependency("pinecone", "drivers-vector-pinecone")
+        pinecone = import_optional_dependency("pinecone")
         pinecone.init(
             api_key=self.api_key,
             environment=self.environment,
@@ -118,5 +118,5 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             "dimension": self.embedding_driver.dimensions
         } | kwargs
 
-        pinecone = import_optional_dependency("pinecone", "drivers-vector-pinecone")
+        pinecone = import_optional_dependency("pinecone")
         pinecone.create_index(**params)

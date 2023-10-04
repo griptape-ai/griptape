@@ -23,7 +23,7 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
         kw_only=True,
     )
     session: boto3.Session = field(
-        default=Factory(lambda: import_optional_dependency("boto3", "drivers-embedding-bedrock").Session()), kw_only=True
+        default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True
     )
     bedrock_client: Any = field(
         default=Factory(

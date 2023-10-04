@@ -17,7 +17,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         default=Factory(
             # Creator bypasses the URL param
             # https://docs.sqlalchemy.org/en/14/core/engines.html#sqlalchemy.create_engine.params.creator
-            lambda self: import_optional_dependency("sqlalchemy", "prompt-drivers-snowflake").create_engine(
+            lambda self: import_optional_dependency("sqlalchemy").create_engine(
                 "snowflake://not@used/db", creator=self.connection_func
             ),
             takes_self=True,
@@ -30,7 +30,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         self, _, connection_func: Callable[[], SnowflakeConnection]
     ) -> None:
         snowflake_connection = connection_func()
-        snowflake = import_optional_dependency("snowflake", "prompt-drivers-snowflake")
+        snowflake = import_optional_dependency("snowflake")
 
         if not isinstance(snowflake_connection, snowflake.connector.SnowflakeConnection):
             raise ValueError("The connection_func must return a SnowflakeConnection")
@@ -53,7 +53,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
-        sqlalchemy = import_optional_dependency("sqlalchemy", "prompt-drivers-snowflake")
+        sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:
             results = con.execute(sqlalchemy.text(query))
@@ -69,7 +69,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
     def get_table_schema(
         self, table: str, schema: Optional[str] = None
     ) -> Optional[str]:
-        sqlalchemy = import_optional_dependency("sqlalchemy", "prompt-drivers-snowflake")
+        sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:
             metadata_obj = sqlalchemy.MetaData()

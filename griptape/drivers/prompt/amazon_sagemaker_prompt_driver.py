@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @define
 class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
-    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3", "drivers-prompt-sagemaker").Session()), kw_only=True)
+    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     sagemaker_client: boto3.client = field(
         default=Factory(
             lambda self: self.session.client("sagemaker-runtime"),

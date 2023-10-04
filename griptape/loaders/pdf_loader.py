@@ -30,13 +30,13 @@ class PdfLoader(TextLoader):
             password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
         return execute_futures_dict({
-            str_to_hash(s.decode()) if isinstance(s, bytes) else utils.str_to_hash(str(s)):
+            str_to_hash(s.decode()) if isinstance(s, bytes) else str_to_hash(str(s)):
                 self.futures_executor.submit(self._load_pdf, s, password)
             for s in streams
         })
 
     def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
-        PdfReader = import_optional_dependency("PyPDF2", "loaders-pdf").PdfReader
+        PdfReader = import_optional_dependency("PyPDF2").PdfReader
         
         reader = PdfReader(stream, strict=True, password=password)
 

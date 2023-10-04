@@ -33,7 +33,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     index: str = field(kw_only=True)
 
     client: Redis = field(
-        default=Factory(lambda self: import_optional_dependency("redis", "drivers-prompt-redis").Redis(
+        default=Factory(lambda self: import_optional_dependency("redis").Redis(
             host=self.host,
             port=self.port,
             db=self.db,
@@ -113,7 +113,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
-        Query = import_optional_dependency("redis.commands.search.query", "drivers-prompt-redis").Query
+        Query = import_optional_dependency("redis.commands.search.query").Query
         
         vector = self.embedding_driver.embed_string(query)
 
@@ -154,10 +154,10 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Optionally, a namespace can be provided which will determine the prefix for document keys. 
         The index is constructed with a TagField named "tag" and a VectorField that utilizes the cosine distance metric on FLOAT32 type vectors.
         """
-        TagField = import_optional_dependency("redis.commands.search.field", "drivers-prompt-redis").TagField
-        VectorField = import_optional_dependency("redis.commands.search.field", "drivers-prompt-redis").VectorField
-        IndexDefinition = import_optional_dependency("redis.commands.search.indexDefinition", "drivers-prompt-redis").IndexDefinition
-        IndexType = import_optional_dependency("redis.commands.search.indexDefinition", "drivers-prompt-redis").IndexType
+        TagField = import_optional_dependency("redis.commands.search.field").TagField
+        VectorField = import_optional_dependency("redis.commands.search.field").VectorField
+        IndexDefinition = import_optional_dependency("redis.commands.search.indexDefinition").IndexDefinition
+        IndexType = import_optional_dependency("redis.commands.search.indexDefinition").IndexType
 
         try:
             self.client.ft(self.index).info()

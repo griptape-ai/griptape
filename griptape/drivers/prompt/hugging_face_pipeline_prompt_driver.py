@@ -31,7 +31,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency("transformers", "drivers-prompt-huggingface").AutoTokenizer.from_pretrained(self.model)
+                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model)
             ), takes_self=True
         ),
         kw_only=True
@@ -39,7 +39,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         prompt = self.prompt_stack_to_string(prompt_stack)
-        pipeline = import_optional_dependency("transformers", "drivers-prompt-huggingface").pipeline
+        pipeline = import_optional_dependency("transformers").pipeline
 
         generator = pipeline(
             tokenizer=self.tokenizer.tokenizer,
