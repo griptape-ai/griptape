@@ -945,7 +945,7 @@ speedup = ["python-levenshtein (>=0.12)"]
 name = "greenlet"
 version = "3.0.0"
 description = "Lightweight in-process concurrent programming"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "greenlet-3.0.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:e09dea87cc91aea5500262993cbd484b41edf8af74f976719dd83fe724644cd6"},
@@ -3313,7 +3313,7 @@ files = [
 name = "sqlalchemy"
 version = "1.4.49"
 description = "Database Abstraction Library"
-optional = true
+optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
 files = [
     {file = "SQLAlchemy-1.4.49-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:95b9df9afd680b7a3b13b38adf6e3a38995da5e162cc7524ef08e3be4e5ed3e1"},
@@ -3981,7 +3981,6 @@ drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
 drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
-drivers-sql-base = ["sqlalchemy"]
 drivers-sql-redshift = ["boto3", "sqlalchemy", "sqlalchemy-redshift"]
 drivers-sql-snowflake = ["snowflake-sqlalchemy", "sqlalchemy"]
 drivers-vector-amazon-opensearch = ["boto3", "opensearch-py", "requests-aws4auth"]
@@ -3994,4 +3993,4 @@ drivers-vector-redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "39513db282f599ec629e09904a3ee351fa8120a1baf522c62d6079f5aa35501d"
+content-hash = "11fad7c0f1144f780a7ddc1fbb9be048c14fbd95c154c31ea13bc48e87c52296"

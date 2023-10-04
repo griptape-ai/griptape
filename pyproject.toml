@@ -30,16 +30,17 @@ trafilatura = ">= 1.6"
 pandas = ">=1.3"
 stringcase = "^1.2.0"
 docker = "^6.1.3"
+sqlalchemy = "~=1.0"
+
 
 cohere = { version = ">=4", optional = true }
 anthropic = { version = "^0.3.0", optional = true }
 transformers = { version = "^4.30", optional = true }
 huggingface-hub = { version = ">=0.13", optional = true }
 boto3 = { version = "^1.28.2", optional = true }
-sqlalchemy = { version = "~=1.0", optional = true }
 sqlalchemy-redshift = { version = "*", optional = true }
-pinecone-client = { version = ">=2", optional = true }
 snowflake-sqlalchemy = { version = "^1.4.7", optional = true }
+pinecone-client = { version = ">=2", optional = true }
 pymongo = { version = "*", optional = true }
 marqo = { version = ">=1.1.0", optional = true }
 redis = { version = "^4.6.0", optional = true }
@@ -53,7 +54,6 @@ drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 
-drivers-sql-base = ["sqlalchemy"]
 drivers-sql-redshift = ["sqlalchemy", "sqlalchemy-redshift", "boto3"]
 drivers-sql-snowflake = ["sqlalchemy", "snowflake-sqlalchemy", "snowflake"]
 
