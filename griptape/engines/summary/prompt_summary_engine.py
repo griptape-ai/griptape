@@ -6,6 +6,7 @@ from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
@@ -23,7 +24,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True
     )
     chunker: BaseChunker = field(

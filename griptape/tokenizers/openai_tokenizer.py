@@ -34,7 +34,7 @@ class OpenAiTokenizer(BaseTokenizer):
         "text-embedding-ada-001"
     ]
 
-    model: str = field(default=DEFAULT_OPENAI_GPT_3_CHAT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
 
     @property
     def encoding(self) -> tiktoken.Encoding:
