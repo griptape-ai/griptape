@@ -3,7 +3,12 @@ from types import ModuleType
 from typing import Literal, Optional
 
 
-INSTALL_MAPPING = {}
+INSTALL_MAPPING = {
+    "huggingface_hub": "huggingface-hub",
+    "pinecone": "pinecone-client",
+    "opensearchpy": "opensearch-py",
+    "requests_aws4auth": "requests-aws4auth"
+}
 
 def import_optional_dependency(
     name: str,
@@ -32,7 +37,7 @@ def import_optional_dependency(
 
     msg = (
         f"Missing optional dependency: '{install_name}'. "
-        f"Use poetry or pip to install the required extra."
+        f"Use poetry or pip to install '{install_name}'."
     )
     try:
         module = import_module(name)
