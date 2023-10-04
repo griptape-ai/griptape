@@ -5,7 +5,7 @@ from griptape.tokenizers import AnthropicTokenizer
 class TestAnthropicTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return AnthropicTokenizer()
+        return AnthropicTokenizer(model=AnthropicTokenizer.DEFAULT_MODEL)
 
     def test_encode(self, tokenizer):
         assert tokenizer.encode("foo bar") == [3803, 3871]
