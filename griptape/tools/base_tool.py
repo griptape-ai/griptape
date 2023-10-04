@@ -70,13 +70,18 @@ class BaseTool(ActivityMixin, ABC):
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
 
-    def before_execute(self, activity: callable, value: Optional[dict]) -> Optional[dict]:
+    def execute(self, activity: callable, subtask: ActionSubtask) -> BaseArtifact:
+        preprocessed_input = self.before_run(activity, subtask.action_input)
+        output = self.run(activity, subtask, preprocessed_input)
+        postprocessed_output = self.after_run(activity, subtask, output)
+
+        return postprocessed_output
+
+    def before_run(self, activity: callable, value: Optional[dict]) -> Optional[dict]:
         return value
 
-    def execute(self, activity: callable, subtask: ActionSubtask) -> BaseArtifact:
-        preprocessed_value = self.before_execute(activity, subtask.action_input)
-
-        activity_result = activity(preprocessed_value)
+    def run(self, activity: callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
+        activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
             result = activity_result
@@ -85,9 +90,9 @@ class BaseTool(ActivityMixin, ABC):
 
             result = InfoArtifact(activity_result)
 
-        return self.after_execute(activity, subtask, result)
+        return result
 
-    def after_execute(self, activity: callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
+    def after_run(self, activity: callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
         if self.output_memory:
             for memory in activity.__self__.output_memory.get(activity.name, []):
                 value = memory.process_output(activity, subtask, value)
