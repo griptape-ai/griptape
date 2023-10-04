@@ -7,7 +7,7 @@ from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListAr
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import ToolMemory
+    from griptape.memory import ToolMemory
 
 
 @define(slots=False)

@@ -3,7 +3,7 @@ from typing import Optional
 from attr import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2

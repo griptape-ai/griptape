@@ -7,7 +7,7 @@ from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.loaders import FileLoader
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from griptape.tools import FileManager
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 

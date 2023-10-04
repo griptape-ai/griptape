@@ -5,7 +5,7 @@ import yaml
 from schema import SchemaMissingKeyError
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver

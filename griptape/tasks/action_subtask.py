@@ -11,7 +11,7 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent

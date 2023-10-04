@@ -13,7 +13,7 @@ from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import ToolMemory
+    from griptape.memory import ToolMemory
     from griptape.tasks import ActionSubtask
 
 

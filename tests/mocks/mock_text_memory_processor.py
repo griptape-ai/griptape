@@ -2,7 +2,7 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from griptape.mixins import ToolMemoryActivitiesMixin
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver

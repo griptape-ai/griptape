@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask

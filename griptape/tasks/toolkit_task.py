@@ -12,7 +12,7 @@ from griptape.tasks import PromptTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import ToolMemory
+    from griptape.memory import ToolMemory
     from griptape.structures import Structure
 
 

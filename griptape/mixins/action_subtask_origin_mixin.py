@@ -4,7 +4,7 @@ from abc import abstractmethod
 from attr import define
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import ToolMemory
+    from griptape.memory import ToolMemory
     from griptape.tools import BaseTool
     from griptape.tasks import ActionSubtask
 

@@ -1,7 +1,7 @@
 import pytest
 from griptape.artifacts import TextArtifact, ListArtifact, CsvRowArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver

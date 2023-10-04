@@ -1,6 +1,6 @@
 import pytest
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.memory.tool import ToolMemory
+from griptape.memory import ToolMemory
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
