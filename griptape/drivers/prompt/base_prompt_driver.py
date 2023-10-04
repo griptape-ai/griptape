@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable
+from typing import TYPE_CHECKING, Optional, Callable, Tuple, Type
 from attr import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent
 from griptape.utils import PromptStack
@@ -24,6 +24,7 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         ),
         kw_only=True
     )
+    ignored_exception_types: Tuple[Type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
 
     model: str
     tokenizer: BaseTokenizer
