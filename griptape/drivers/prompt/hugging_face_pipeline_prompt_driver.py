@@ -16,7 +16,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     """
     Attributes:
         params: Custom model run parameters. 
-        model: Hugging Face Hub model name. Defaults to `repo_id`.
+        model: Hugging Face Hub model name.
         tokenizer: Custom `HuggingFaceTokenizer`.
         
     """
