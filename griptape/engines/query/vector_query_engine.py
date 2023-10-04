@@ -5,6 +5,7 @@ from griptape.utils import PromptStack
 from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
@@ -12,7 +13,7 @@ class VectorQueryEngine(BaseQueryEngine):
     answer_token_offset: int = field(default=400, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True
     )
     template_generator: J2 = field(

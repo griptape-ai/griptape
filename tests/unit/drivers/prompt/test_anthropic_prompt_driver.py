@@ -1,5 +1,6 @@
 from griptape.drivers import AnthropicPromptDriver
 from griptape.utils import PromptStack
+from griptape.tokenizers import AnthropicTokenizer
 from unittest.mock import ANY
 import pytest
 
@@ -12,7 +13,7 @@ class TestAnthropicPromptDriver:
         return mock_completion_create
 
     def test_init(self):
-        assert AnthropicPromptDriver(api_key='1234')
+        assert AnthropicPromptDriver(model=AnthropicTokenizer.DEFAULT_MODEL, api_key='1234')
 
     def test_try_run(self, mock_completion_create):
         # Given
@@ -21,7 +22,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_system_input('system-input')
         prompt_stack.add_user_input('user-input')
         prompt_stack.add_assistant_input('assistant-input')
-        driver = AnthropicPromptDriver(api_key='api-key')
+        driver = AnthropicPromptDriver(model=AnthropicTokenizer.DEFAULT_MODEL, api_key='api-key')
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -46,7 +47,7 @@ class TestAnthropicPromptDriver:
     def test_try_run_throws_when_prompt_stack_is_string(self):
         # Given
         prompt_stack = 'prompt-stack'
-        driver = AnthropicPromptDriver(api_key='api-key')
+        driver = AnthropicPromptDriver(model=AnthropicTokenizer.DEFAULT_MODEL, api_key='api-key')
 
         # When
         with pytest.raises(Exception) as e:
