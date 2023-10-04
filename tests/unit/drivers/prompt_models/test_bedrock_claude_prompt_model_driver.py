@@ -38,7 +38,7 @@ class TestBedrockClaudePromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input['prompt'].startswith("\nInstructions: foo\n\nHuman: bar\n\nAssistant:")
+        assert model_input['prompt'].startswith("\n\nHuman: foo\n\nHuman: bar\n\nAssistant:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
         assert driver.prompt_stack_to_model_params(stack)["max_tokens_to_sample"] == 8178

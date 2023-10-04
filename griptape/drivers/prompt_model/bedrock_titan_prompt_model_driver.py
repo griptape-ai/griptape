@@ -43,15 +43,17 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
 
         for i in prompt_stack.inputs:
             if i.is_user():
-                prompt_lines.append(f"\n\nUser: {i.content}")
-            if i.is_assistant():
-                prompt_lines.append(f"\n\nBot: {i.content}")
+                prompt_lines.append(f"User: {i.content}")
+            elif i.is_assistant():
+                prompt_lines.append(f"Bot: {i.content}")
             elif i.is_system():
-                prompt_lines.append(f"\nInstructions: {i.content}")
+                prompt_lines.append(f"Instructions: {i.content}")
+            else:
+                prompt_lines.append(i.content)
+        prompt_lines.append("Bot:")
 
-        prompt_lines.append("\n\nBot:")
+        prompt = '\n\n'.join(prompt_lines)
 
-        prompt = ''.join(prompt_lines)
         return { "inputText": prompt }
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
