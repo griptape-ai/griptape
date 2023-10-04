@@ -1,6 +1,6 @@
 from __future__ import annotations
 from attr import define, field, Factory
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
@@ -10,14 +10,14 @@ if TYPE_CHECKING:
 
 
 @define
-class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
+class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     table_name: str = field(kw_only=True)
     partition_key: str = field(kw_only=True)
     value_attribute_key: str = field(kw_only=True)
     partition_key_value: str = field(kw_only=True)
 
-    table: any = field(init=False)
+    table: Any = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         dynamodb = self.session.resource(

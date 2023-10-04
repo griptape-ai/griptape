@@ -13,7 +13,7 @@ from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
-from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
+from .memory.conversation.amazon_dynamodb_conversation_memory_driver import AmazonDynamoDbConversationMemoryDriver
 
 from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
 from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
@@ -61,7 +61,7 @@ __all__ = [
 
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
-    "DynamoDbConversationMemoryDriver",
+    "AmazonDynamoDbConversationMemoryDriver",
 
     "BaseBlobToolMemoryDriver",
     "LocalBlobToolMemoryDriver",
