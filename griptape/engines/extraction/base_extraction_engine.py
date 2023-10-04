@@ -4,6 +4,7 @@ from attr import define, field, Factory
 from griptape.artifacts import ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
+from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
@@ -17,7 +18,7 @@ class BaseExtractionEngine(ABC):
         kw_only=True
     )
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True
     )
     chunker: BaseChunker = field(

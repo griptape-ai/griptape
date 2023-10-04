@@ -13,7 +13,7 @@ class TextLoader(BaseLoader):
     MAX_TOKEN_RATIO = 0.5
 
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda: OpenAiTokenizer()),
+        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True
     )
     max_tokens: int = field(

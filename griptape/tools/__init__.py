@@ -18,6 +18,7 @@ from .base_google_client import BaseGoogleClient
 from .google_gmail.tool import GoogleGmailClient
 from .google_cal.tool import GoogleCalendarClient
 from .google_sheets.tool import GoogleSheetsClient
+from .google_docs.tool import GoogleDocsClient
 from .google_drive.tool import GoogleDriveClient
 from .openweather_client.tool import OpenWeatherClient
 
@@ -28,6 +29,7 @@ __all__ = [
     "AwsS3Client",
     "BaseGoogleClient",
     "GoogleGmailClient",
+    "GoogleDocsClient",
     "GoogleCalendarClient",
     "GoogleSheetsClient",
     "GoogleDriveClient",
