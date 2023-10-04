@@ -3,6 +3,7 @@ from sqlalchemy.pool import StaticPool
 from griptape import utils
 from griptape.drivers import SqlDriver
 from griptape.loaders import SqlLoader
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 MAX_TOKENS = 50
 
@@ -19,7 +20,8 @@ class TestSqlLoader:
                     },
                     "poolclass": StaticPool
                 }
-            )
+            ),
+            embedding_driver=MockEmbeddingDriver()
         )
 
         sql_loader.sql_driver.execute_query(
@@ -37,12 +39,14 @@ class TestSqlLoader:
         return sql_loader
 
     def test_load(self, loader):
-        result = loader.load("SELECT * FROM test_table;")
+        artifacts = loader.load("SELECT * FROM test_table;")
 
-        assert len(result) == 3
-        assert result[0].value == {"id": 1, "name": "Alice", "age": 25, "city": "New York"}
-        assert result[1].value == {"id": 2, "name": "Bob", "age": 30, "city": "Los Angeles"}
-        assert result[2].value == {"id": 3, "name": "Charlie", "age": 22, "city": "Chicago"}
+        assert len(artifacts) == 3
+        assert artifacts[0].value == {"id": 1, "name": "Alice", "age": 25, "city": "New York"}
+        assert artifacts[1].value == {"id": 2, "name": "Bob", "age": 30, "city": "Los Angeles"}
+        assert artifacts[2].value == {"id": 3, "name": "Charlie", "age": 22, "city": "Chicago"}
+
+        assert (artifacts[0].embedding == [0, 1])
 
     def test_load_collection(self, loader):
         artifacts = loader.load_collection([
@@ -60,3 +64,5 @@ class TestSqlLoader:
             {"age": 25, "city": "New York", "id": 1, "name": "Alice"},
             {"age": 30, "city": "Los Angeles", "id": 2, "name": "Bob"}
         ]
+
+        assert (list(artifacts.values())[0][0].embedding == [0, 1])

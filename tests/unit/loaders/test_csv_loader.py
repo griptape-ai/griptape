@@ -2,12 +2,16 @@ import os
 import pytest
 from griptape import utils
 from griptape.loaders.csv_loader import CsvLoader
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestCsvLoader:
     @pytest.fixture
     def loaders(self):
-        return (CsvLoader(), CsvLoader(delimiter="|"))
+        return (
+            CsvLoader(embedding_driver=MockEmbeddingDriver()),
+            CsvLoader(embedding_driver=MockEmbeddingDriver(), delimiter="|")
+        )
 
     def test_load_with_path(self, loaders):
         (loader, loader_pipe) = loaders
@@ -34,6 +38,8 @@ class TestCsvLoader:
         first_artifact = artifacts[0].value
         assert first_artifact["Bar"] == "foo1"
         assert first_artifact["Foo"] == "bar1"
+
+        assert (artifacts[0].embedding == [0, 1])
 
     def test_load_collection_with_path(self, loaders):
         loader = loaders[0]
@@ -62,3 +68,5 @@ class TestCsvLoader:
         first_artifact = artifacts[0].value
         assert first_artifact["Bar"] == "bar1"
         assert first_artifact["Foo"] == "foo1"
+
+        assert (artifacts[0].embedding == [0, 1])
