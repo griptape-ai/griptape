@@ -30,8 +30,9 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         self, _, connection_func: Callable[[], SnowflakeConnection]
     ) -> None:
         snowflake_connection = connection_func()
-        SnowflakeConnection = import_optional_dependency("snowflake", "prompt-drivers-snowflake").connector.SnowflakeConnection
-        if not isinstance(snowflake_connection, SnowflakeConnection):
+        snowflake = import_optional_dependency("snowflake", "prompt-drivers-snowflake")
+
+        if not isinstance(snowflake_connection, snowflake.connector.SnowflakeConnection):
             raise ValueError("The connection_func must return a SnowflakeConnection")
         if not snowflake_connection.schema or not snowflake_connection.database:
             raise ValueError(

@@ -113,10 +113,8 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
-        redis = import_optional_dependency("redis.commands.search", "drivers-prompt-redis")
+        Query = import_optional_dependency("redis.commands.search.query", "drivers-prompt-redis").Query
         
-        Query = redis.commands.search.query.Query
-
         vector = self.embedding_driver.embed_string(query)
 
         query_expression = (
@@ -156,12 +154,10 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Optionally, a namespace can be provided which will determine the prefix for document keys. 
         The index is constructed with a TagField named "tag" and a VectorField that utilizes the cosine distance metric on FLOAT32 type vectors.
         """
-        redis = import_optional_dependency("redis.commands.search.field", "drivers-prompt-redis")
-        redis = import_optional_dependency("redis.commands.search.indexDefinition", "drivers-prompt-redis")
-        TagField = redis.commands.search.field.TagField
-        VectorField = redis.commands.search.field.VectorField
-        IndexDefinition = redis.commands.search.indexDefinition.IndexDefinition
-        IndexType = redis.commands.search.indexDefinition.IndexType
+        TagField = import_optional_dependency("redis.commands.search.field", "drivers-prompt-redis").TagField
+        VectorField = import_optional_dependency("redis.commands.search.field", "drivers-prompt-redis").VectorField
+        IndexDefinition = import_optional_dependency("redis.commands.search.indexDefinition", "drivers-prompt-redis").IndexDefinition
+        IndexType = import_optional_dependency("redis.commands.search.indexDefinition", "drivers-prompt-redis").IndexType
 
         try:
             self.client.ft(self.index).info()

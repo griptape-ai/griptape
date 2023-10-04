@@ -9,6 +9,7 @@ from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+from griptape.utils import import_optional_dependency
 from schema import Schema, Literal
 
 if TYPE_CHECKING:
@@ -163,12 +164,12 @@ class Computer(BaseTool):
             return None
 
     def image_name(self, tool: BaseTool) -> str:
-        import stringcase
+        stringcase = import_optional_dependency("stringcase", "tools-computer")
 
         return f"{stringcase.snakecase(tool.name)}_image"
 
     def container_name(self, tool: BaseTool) -> str:
-        import stringcase
+        stringcase = import_optional_dependency("stringcase", "tools-computer")
 
         return f"{stringcase.snakecase(tool.name)}_container"
 

@@ -11,15 +11,12 @@ if TYPE_CHECKING:
 
 @define
 class BaseAwsClient(BaseTool, ABC):
-
-    session: boto3.session = field(kw_only=True)
+    session: boto3.Session = field(kw_only=True)
 
     @activity(config={
         "description": "Can be used to get current AWS account and IAM principal."
     })
     def get_current_aws_identity(self, params: dict) -> BaseArtifact:
-        import boto3
-
         try:
             session = self.session
             sts = session.client('sts')
