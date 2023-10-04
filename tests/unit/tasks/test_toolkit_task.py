@@ -173,10 +173,10 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        assert len(task.memory) == 3
-        assert task.memory[0].name == "Memory1"
-        assert task.memory[1].name == "Memory2"
-        assert task.memory[2].name == "Memory3"
+        assert len(task.tool_output_memory) == 3
+        assert task.tool_output_memory[0].name == "Memory1"
+        assert task.tool_output_memory[1].name == "Memory2"
+        assert task.tool_output_memory[2].name == "Memory3"
 
     def test_action_types(self):
         assert Agent(tool_memory=None, tools=[MockTool()]).task.action_types == ["tool"]

@@ -50,7 +50,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             raise ValueError("tools names have to be unique in task")
 
     @property
-    def memory(self) -> list[ToolMemory]:
+    def tool_output_memory(self) -> list[ToolMemory]:
         unique_memory_dict = {}
 
         for memories in [tool.output_memory for tool in self.tools if tool.output_memory]:
@@ -74,7 +74,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     @property
     def action_types(self) -> list[str]:
-        memories = [r for r in self.memory if r.activities()]
+        memories = [r for r in self.tool_output_memory if r.activities()]
 
         if memories:
             return ["tool", "memory"]
@@ -90,7 +90,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        memories = [r for r in self.memory if len(r.activities()) > 0]
+        memories = [r for r in self.tool_output_memory if len(r.activities()) > 0]
 
         action_schema = utils.minify_json(
             json.dumps(
@@ -188,6 +188,6 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
         return next(
-            (m for m in self.memory if m.name == memory_name),
+            (m for m in self.tool_output_memory if m.name == memory_name),
             None
         )
