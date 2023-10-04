@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class BedrockJurassicTokenizer(BaseTokenizer):
-
     DEFAULT_MODEL = 'ai21.j2-ultra'
     DEFAULT_MAX_TOKENS = 8192
 
