@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 @pytest.mark.skipif(not can_connect_to_postgres(), reason="Postgres is not present")
 class TestPgVectorVectorStoreDriver:
     connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
+    table_name = "griptape_vectors"
     vec1 = [0.1, 0.2, 0.3]
     vec2 = [0.4, 0.5, 0.6]
 
@@ -21,6 +22,7 @@ class TestPgVectorVectorStoreDriver:
         driver = PgVectorVectorStoreDriver(
             connection_string=self.connection_string,
             embedding_driver=embedding_driver,
+            table_name=self.table_name,
         )
 
         driver.setup()
@@ -29,7 +31,10 @@ class TestPgVectorVectorStoreDriver:
 
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
-            driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver)
+            driver = PgVectorVectorStoreDriver(
+                embedding_driver=embedding_driver,
+                table_name=self.table_name,
+            )
             driver.setup()
 
     def test_initialize_accepts_engine(self, embedding_driver):
@@ -37,6 +42,7 @@ class TestPgVectorVectorStoreDriver:
         driver = PgVectorVectorStoreDriver(
             embedding_driver=embedding_driver,
             engine=engine,
+            table_name=self.table_name,
         )
 
         driver.setup()
@@ -45,6 +51,7 @@ class TestPgVectorVectorStoreDriver:
         driver = PgVectorVectorStoreDriver(
             embedding_driver=embedding_driver,
             connection_string=self.connection_string,
+            table_name=self.table_name,
         )
 
         driver.setup()

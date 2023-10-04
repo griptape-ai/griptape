@@ -22,24 +22,42 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         table_name: Optionally specify the name of the table to used to store vectors.
     """
 
-    connection_string: str = field(default=None, kw_only=True)
-    create_engine_params: Optional[dict] = field(factory=dict, kw_only=True)
+    connection_string: Optional[str] = field(default=None, kw_only=True)
+    create_engine_params: dict = field(factory=dict, kw_only=True)
     engine: Optional[Engine] = field(default=None, kw_only=True)
-    table_name: str = field(default="griptape_vectors", kw_only=True)
-    _model: any = field(default=Factory(lambda self: self.vector_model_factory, takes_self=True), init=False)
+    table_name: str = field(kw_only=True)
+    _model: any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
+
+    @connection_string.validator
+    def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
+        # If an engine is provided, the connection string is not used.
+        if self.engine is not None:
+            return
+
+        # If an engine is not provided, a connection string is required.
+        if connection_string is None:
+            raise ValueError("An engine or connection string is required")
+
+        if not connection_string.startswith("postgresql://"):
+            raise ValueError("The connection string must describe a Postgres database connection")
+
+    @engine.validator
+    def validate_engine(self, _, engine: Optional[Engine]) -> None:
+        # If a connection string is provided, an engine does not need to be provided.
+        if self.connection_string is not None:
+            return
+
+        # If a connection string is not provided, an engine is required.
+        if engine is None:
+            raise ValueError("An engine or connection string is required")
 
     def __attrs_post_init__(self) -> None:
         """Validates engine and connection string inputs.
         If a an engine is provided, it will be used to connect to the database. If not, a connection string
         is used to create a new database connection.
         """
-        if self.engine is None and self.connection_string is None:
-            raise ValueError("Either an engine or connection string must be provided")
-
         if self.engine is None:
             self.engine = create_engine(self.connection_string, **self.create_engine_params)
-
-        self._model = self.vector_model_factory(self.table_name)
 
     def setup(
         self,
@@ -159,13 +177,12 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 for result in results
             ]
 
-    @classmethod
-    def vector_model_factory(cls, table_name: str) -> any:
+    def default_vector_model(self) -> any:
         Base = declarative_base()
 
         @dataclass
         class VectorModel(Base):
-            __tablename__ = table_name
+            __tablename__ = self.table_name
 
             id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
             vector = Column(Vector())
