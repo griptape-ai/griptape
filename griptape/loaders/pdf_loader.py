@@ -2,10 +2,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import IO, Optional
 from attr import define, field, Factory
-from griptape.utils import str_to_hash, import_optional_dependency, execute_futures_dict
+from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import PdfChunker
 from griptape.loaders import TextLoader
+from PyPDF2 import PdfReader
 
 
 @define
@@ -36,7 +37,6 @@ class PdfLoader(TextLoader):
         })
 
     def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
-        PdfReader = import_optional_dependency("PyPDF2").PdfReader
         
         reader = PdfReader(stream, strict=True, password=password)
 

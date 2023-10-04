@@ -6,6 +6,7 @@ from griptape import utils
 from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
+import pandas as pd
 
 if TYPE_CHECKING:
     from pandas import DataFrame
@@ -38,6 +39,4 @@ class DataFrameLoader(BaseLoader):
         return artifacts
 
     def _dataframe_to_hash(self, dataframe: DataFrame) -> str:
-        pd = utils.import_optional_dependency("pandas")
-        
         return hashlib.sha256(pd.util.hash_pandas_object(dataframe, index=True).values).hexdigest()

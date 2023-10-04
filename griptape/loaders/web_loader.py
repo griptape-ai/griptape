@@ -1,9 +1,10 @@
 import json
 import logging
 from attr import define
-from griptape.utils import str_to_hash, import_optional_dependency, execute_futures_dict
+from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
 from griptape.loaders import TextLoader
+import trafilatura
 
 
 @define
@@ -21,8 +22,6 @@ class WebLoader(TextLoader):
         return self.text_to_artifacts(self.extract_page(url, include_links).get('text'))
 
     def extract_page(self, url: str, include_links: bool = True) -> dict:
-        trafilatura = import_optional_dependency("trafilatura")
-
         config = trafilatura.settings.use_config()
         page = trafilatura.fetch_url(url, no_ssl=True)
 

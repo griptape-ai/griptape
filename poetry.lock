@@ -261,17 +261,17 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.28.59"
+version = "1.28.60"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.28.59-py3-none-any.whl", hash = "sha256:7623b52c135becf145f762a9cc4203a1fb30055bb1cc7a254f82e5f7954d44a1"},
-    {file = "boto3-1.28.59.tar.gz", hash = "sha256:aa861e5568a564a5ce2fff5413d6ae2cda0eed7399b3a949bc861a20915e2046"},
+    {file = "boto3-1.28.60-py3-none-any.whl", hash = "sha256:d5f270c2c9a051f78c308cbba4268458e8df441057b73ba140742707ac1bc7ea"},
+    {file = "boto3-1.28.60.tar.gz", hash = "sha256:dccb49cc10b31314b8553c6c9614c44b2249e0d0285d73f608a5d2010f6e1d82"},
 ]
 
 [package.dependencies]
-botocore = ">=1.31.59,<1.32.0"
+botocore = ">=1.31.60,<1.32.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.7.0,<0.8.0"
 
@@ -280,13 +280,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.31.59"
+version = "1.31.60"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.31.59-py3-none-any.whl", hash = "sha256:6485a700744c60fcbf4bba4fcacb22067f601e79fb0c27fae04cf07b03c5e8f9"},
-    {file = "botocore-1.31.59.tar.gz", hash = "sha256:159f637300206a0b37b49c1bee61265650843f591e9cb62e9adcb3d1c2afec91"},
+    {file = "botocore-1.31.60-py3-none-any.whl", hash = "sha256:b6de7a6a03ca3da18b78615a2cb5221c9fdb9483d3f50cb4281ae038b3f22d9f"},
+    {file = "botocore-1.31.60.tar.gz", hash = "sha256:578470a15a5bd64f67437a81f23feccba85084167acf63c56acada2c1c1d95d8"},
 ]
 
 [package.dependencies]
@@ -530,7 +530,7 @@ files = [
 name = "courlan"
 version = "0.9.4"
 description = "Clean, filter and sample URLs to optimize data collection – includes spam, content type and language filters."
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "courlan-0.9.4-py3-none-any.whl", hash = "sha256:72f03e307f3dfe91e0c790ab0766bab2aa319fdb09597daec920e4a394cfc14e"},
@@ -658,7 +658,7 @@ test-randomorder = ["pytest-randomly"]
 name = "dateparser"
 version = "1.1.8"
 description = "Date parsing library designed to parse dates from HTML pages"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "dateparser-1.1.8-py2.py3-none-any.whl", hash = "sha256:070b29b5bbf4b1ec2cd51c96ea040dc68a614de703910a91ad1abba18f9f379f"},
@@ -1030,7 +1030,7 @@ files = [
 name = "htmldate"
 version = "1.5.1"
 description = "Fast and robust extraction of original and updated publication dates from URLs and web pages."
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "htmldate-1.5.1-py3-none-any.whl", hash = "sha256:d0a9711300cccae5b07e67e27a29a809cc6e3a59f408ab4d787702dced6ddede"},
@@ -1268,7 +1268,7 @@ referencing = ">=0.28.0"
 name = "justext"
 version = "3.0.0"
 description = "Heuristic based boilerplate removal tool"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "jusText-3.0.0-py2.py3-none-any.whl", hash = "sha256:86b48f5b1d99505acd072f5831def6cd3f1306043651c524a1c609e62e3544e4"},
@@ -1305,7 +1305,7 @@ testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)",
 name = "langcodes"
 version = "3.3.0"
 description = "Tools for labeling human languages with IETF language tags"
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "langcodes-3.3.0-py3-none-any.whl", hash = "sha256:4d89fc9acb6e9c8fdef70bcdf376113a3db09b67285d9e1d534de6d8818e7e69"},
@@ -1337,7 +1337,7 @@ dev = ["Sphinx (==7.2.5)", "colorama (==0.4.5)", "colorama (==0.4.6)", "exceptio
 name = "lxml"
 version = "4.9.2"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
-optional = true
+optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
 files = [
     {file = "lxml-4.9.2-cp27-cp27m-macosx_10_15_x86_64.whl", hash = "sha256:76cf573e5a365e790396a5cc2b909812633409306c6531a6877c59061e42c4f2"},
@@ -1429,7 +1429,7 @@ source = ["Cython (>=0.29.7)"]
 name = "lxml"
 version = "4.9.3"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
-optional = true
+optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
 files = [
     {file = "lxml-4.9.3-cp27-cp27m-macosx_11_0_x86_64.whl", hash = "sha256:b0a545b46b526d418eb91754565ba5b63b1c0b12f9bd2f808c852d9b4b2f9b5c"},
@@ -1986,7 +1986,7 @@ files = [
 name = "pandas"
 version = "2.1.0"
 description = "Powerful data structures for data analysis, time series, and statistics"
-optional = true
+optional = false
 python-versions = ">=3.9"
 files = [
     {file = "pandas-2.1.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:40dd20439ff94f1b2ed55b393ecee9cb6f3b08104c2c40b0cb7186a2f0046242"},
@@ -2044,7 +2044,7 @@ xml = ["lxml (>=4.8.0)"]
 name = "pandas"
 version = "2.1.1"
 description = "Powerful data structures for data analysis, time series, and statistics"
-optional = true
+optional = false
 python-versions = ">=3.9"
 files = [
     {file = "pandas-2.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:58d997dbee0d4b64f3cb881a24f918b5f25dd64ddf31f467bb9b67ae4c63a1e4"},
@@ -2459,7 +2459,7 @@ test = ["flaky", "pretend", "pytest (>=3.0.1)"]
 name = "pypdf2"
 version = "3.0.1"
 description = "A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF files"
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "PyPDF2-3.0.1.tar.gz", hash = "sha256:a74408f69ba6271f71b9352ef4ed03dc53a31aa404d29b5d31f53bfecfee1440"},
@@ -2589,7 +2589,7 @@ six = ">=1.5"
 name = "pytz"
 version = "2023.3.post1"
 description = "World timezone definitions, modern and historical"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "pytz-2023.3.post1-py2.py3-none-any.whl", hash = "sha256:ce42d816b81b68506614c11e8937d3aa9e41007ceb50bfdcb0749b921bf646c7"},
@@ -3397,7 +3397,7 @@ SQLAlchemy = ">=0.9.2,<2.0.0"
 name = "stringcase"
 version = "1.2.0"
 description = "String case converter."
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "stringcase-1.2.0.tar.gz", hash = "sha256:48a06980661908efe8d9d34eab2b6c13aefa2163b3ced26972902e3bdfd87008"},
@@ -3466,7 +3466,7 @@ blobfile = ["blobfile (>=2)"]
 name = "tld"
 version = "0.13"
 description = "Extract the top-level domain (TLD) from the URL given."
-optional = true
+optional = false
 python-versions = ">=3.7, <4"
 files = [
     {file = "tld-0.13-py2.py3-none-any.whl", hash = "sha256:f75b2be080f767ed17c2338a339eaa4fab5792586319ca819119da252f9f3749"},
@@ -3634,7 +3634,7 @@ telegram = ["requests"]
 name = "trafilatura"
 version = "1.6.2"
 description = "Python package and command-line tool designed to gather text on the Web. It includes discovery, extraction and text processing components. Its main applications are web crawling, downloads, scraping, and extraction of main texts, metadata and comments."
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "trafilatura-1.6.2-py3-none-any.whl", hash = "sha256:5bf97ed0d09eda4393770360b6e2b8851781d35fdff2d0276ec705a4f7791047"},
@@ -3774,7 +3774,7 @@ files = [
 name = "tzdata"
 version = "2023.3"
 description = "Provider of IANA time zone data"
-optional = true
+optional = false
 python-versions = ">=2"
 files = [
     {file = "tzdata-2023.3-py2.py3-none-any.whl", hash = "sha256:7e65763eef3120314099b6939b5546db7adce1e7d6f2e179e3df563c70511eda"},
@@ -3783,13 +3783,13 @@ files = [
 
 [[package]]
 name = "tzlocal"
-version = "5.0.1"
+version = "5.1"
 description = "tzinfo object for the local timezone"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "tzlocal-5.0.1-py3-none-any.whl", hash = "sha256:f3596e180296aaf2dbd97d124fe76ae3a0e3d32b258447de7b939b3fd4be992f"},
-    {file = "tzlocal-5.0.1.tar.gz", hash = "sha256:46eb99ad4bdb71f3f72b7d24f4267753e240944ecfc16f25d2719ba89827a803"},
+    {file = "tzlocal-5.1-py3-none-any.whl", hash = "sha256:2938498395d5f6a898ab8009555cb37a4d360913ad375d4747ef16826b03ef23"},
+    {file = "tzlocal-5.1.tar.gz", hash = "sha256:a5ccb2365b295ed964e0a98ad076fe10c495591e75505d34f154d60a7f1ed722"},
 ]
 
 [package.dependencies]
@@ -3975,29 +3975,23 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [extras]
-all = ["PyPDF2", "anthropic", "boto3", "cohere", "docker", "marqo", "opensearch-py", "pandas", "pinecone-client", "pymongo", "redis", "requests-aws4auth", "snowflake-sqlalchemy", "sqlalchemy", "sqlalchemy-redshift", "stringcase", "trafilatura", "transformers"]
-drivers-conversation-memory-aws = ["boto3"]
+all = ["anthropic", "boto3", "cohere", "marqo", "opensearch-py", "pinecone-client", "pymongo", "redis", "requests-aws4auth", "snowflake-sqlalchemy", "sqlalchemy", "sqlalchemy-redshift", "transformers"]
+drivers-memory-conversation-amazon-dynamodb = ["boto3"]
+drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
 drivers-prompt-anthropic = ["anthropic"]
-drivers-prompt-aws = ["boto3"]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-sql-base = ["sqlalchemy"]
 drivers-sql-redshift = ["boto3", "sqlalchemy", "sqlalchemy-redshift"]
 drivers-sql-snowflake = ["snowflake-sqlalchemy", "sqlalchemy"]
-drivers-vector-store-marqo = ["marqo"]
-drivers-vector-store-mongodb = ["pymongo"]
-drivers-vector-store-opensearch = ["opensearch-py"]
-drivers-vector-store-opensearch-aws = ["boto3", "opensearch-py", "requests-aws4auth"]
-drivers-vector-store-pinecone = ["pinecone-client"]
-drivers-vector-store-redis = ["redis"]
-loaders-dataframe = ["pandas"]
-loaders-pdf = ["PyPDF2"]
-loaders-web = ["trafilatura"]
-tokenizers-cohere = ["cohere"]
-tokenizers-huggingface = ["transformers"]
-tools-computer = ["docker", "stringcase"]
+drivers-vector-amazon-opensearch = ["boto3", "opensearch-py", "requests-aws4auth"]
+drivers-vector-marqo = ["marqo"]
+drivers-vector-mongodb = ["pymongo"]
+drivers-vector-opensearch = ["opensearch-py"]
+drivers-vector-pinecone = ["pinecone-client"]
+drivers-vector-redis = ["redis"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "680911a765b23b1effd40e184f4048bd0af2341b3277132f4132314654f75a0f"
+content-hash = "39513db282f599ec629e09904a3ee351fa8120a1baf522c62d6079f5aa35501d"

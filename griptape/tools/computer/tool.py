@@ -9,8 +9,10 @@ from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.utils import import_optional_dependency
 from schema import Schema, Literal
+import stringcase
+import docker
+
 
 if TYPE_CHECKING:
     from docker import DockerClient
@@ -164,13 +166,9 @@ class Computer(BaseTool):
             return None
 
     def image_name(self, tool: BaseTool) -> str:
-        stringcase = import_optional_dependency("stringcase")
-
         return f"{stringcase.snakecase(tool.name)}_image"
 
     def container_name(self, tool: BaseTool) -> str:
-        stringcase = import_optional_dependency("stringcase")
-
         return f"{stringcase.snakecase(tool.name)}_container"
 
     def remove_existing_container(self, name: str) -> None:
