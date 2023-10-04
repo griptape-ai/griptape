@@ -8,6 +8,7 @@ from griptape.drivers import OpenAiChatPromptDriver
 from griptape.schemas import SummaryConversationMemorySchema
 from griptape.utils import J2
 from griptape.memory.structure import ConversationMemory
+from griptape.tokenizers import OpenAiTokenizer
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True
     )
     summary: Optional[str] = field(default=None, kw_only=True)

@@ -26,7 +26,7 @@ class TestTextArtifact:
         assert TextArtifact("foobar").to_text() == "foobar"
 
     def test_token_count(self):
-        assert TextArtifact("foobarbaz").token_count(OpenAiTokenizer()) == 2
+        assert TextArtifact("foobarbaz").token_count(OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)) == 2
 
     def test_to_dict(self):
         assert TextArtifact("foobar").to_dict()["value"] == "foobar"
