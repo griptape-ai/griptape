@@ -21,7 +21,6 @@ def import_optional_dependency(
 
     Args:
         name: The module name.
-        extra: Additional text to include in the ImportError message.
         errors: What to do when a dependency is not found
                 * raise : Raise an ImportError
                 * ignore: If the module is not installed, return None.

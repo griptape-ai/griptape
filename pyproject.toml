@@ -53,6 +53,7 @@ drivers-prompt-cohere = ["cohere"]
 drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
+drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 
 drivers-sql-redshift = ["sqlalchemy", "sqlalchemy-redshift", "boto3"]
 drivers-sql-snowflake = ["sqlalchemy", "snowflake-sqlalchemy", "snowflake"]

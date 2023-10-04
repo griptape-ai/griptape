@@ -3978,6 +3978,7 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 all = ["anthropic", "boto3", "cohere", "marqo", "opensearch-py", "pinecone-client", "pymongo", "redis", "requests-aws4auth", "snowflake-sqlalchemy", "sqlalchemy", "sqlalchemy-redshift", "transformers"]
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
 drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
+drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
@@ -3993,4 +3994,4 @@ drivers-vector-redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "11fad7c0f1144f780a7ddc1fbb9be048c14fbd95c154c31ea13bc48e87c52296"
+content-hash = "d7bc464792515c75bdd4c272e0cf8043540232fb7c38d0a18cf0fe8e8e482d4f"
