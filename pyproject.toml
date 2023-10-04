@@ -74,10 +74,10 @@ black = "^23.7.0"
 pyright = "^1.1.324"
 
 [tool.black]
-line-length=120
+line-length=80
 
 [tool.ruff]
-line-length=120
+line-length=80
 
 [tool.pyright]
 include = ["griptape"]
