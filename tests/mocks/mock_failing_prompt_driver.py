@@ -11,7 +11,7 @@ class MockFailingPromptDriver(BasePromptDriver):
     max_failures: int
     current_attempt: int = 0
     model: str = "test-model"
-    tokenizer: BaseTokenizer = OpenAiTokenizer()
+    tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         if self.current_attempt < self.max_failures:

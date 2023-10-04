@@ -5,7 +5,7 @@ from griptape.tokenizers import OpenAiTokenizer
 class TestOpenAiTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return OpenAiTokenizer(model="gpt-3.5-turbo")
+        return OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
     @pytest.fixture
     def tokenizer_32k(self):

@@ -1,6 +1,7 @@
 from griptape.drivers import OpenAiCompletionPromptDriver
 from griptape.utils import PromptStack
 from unittest.mock import ANY, Mock
+from griptape.tokenizers import OpenAiTokenizer
 import pytest
 
 class TestOpenAiCompletionPromptDriverFixtureMixin:
@@ -32,11 +33,11 @@ class TestOpenAiCompletionPromptDriverFixtureMixin:
 
 class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMixin):
     def test_init(self):
-        assert OpenAiCompletionPromptDriver()
+        assert OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
     def test_try_run(self, mock_completion_create, prompt_stack, prompt):
         # Given
-        driver = OpenAiCompletionPromptDriver()
+        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -59,7 +60,7 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
 
     def test_try_run_throws_when_prompt_stack_is_string(self):
         # Given
-        driver = OpenAiCompletionPromptDriver()
+        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
         # When
         with pytest.raises(Exception) as e:
@@ -71,7 +72,7 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
     @pytest.mark.parametrize('choices', [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_completion_create, prompt_stack):
         # Given
-        driver = OpenAiCompletionPromptDriver()
+        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
         mock_completion_create.return_value.choices = choices
 
         # When
