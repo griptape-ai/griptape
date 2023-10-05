@@ -42,8 +42,11 @@ class GoogleSheetsClient(BaseGoogleClient):
         }
     )
     def list_spreadsheets(self, params: dict) -> ListArtifact | ErrorArtifact:
+        from googleapiclient.errors import HttpError
+        from google.auth.exceptions import MalformedError
+    
         folder_path = params.get("folder_path", self.DEFAULT_FOLDER_PATH)
-
+    
         try:
             service = self._build_client(
                 scopes=self.DRIVE_READ_SCOPES,
@@ -51,7 +54,7 @@ class GoogleSheetsClient(BaseGoogleClient):
                 version="v3",
                 owner_email=self.owner_email,
             )
-
+    
             if folder_path == self.DEFAULT_FOLDER_PATH:
                 query = "mimeType='application/vnd.google-apps.spreadsheet' and 'root' in parents and trashed=false"
             else:
@@ -62,14 +65,12 @@ class GoogleSheetsClient(BaseGoogleClient):
                         f"and trashed=false"
                     )
                 else:
-                    return ErrorArtifact(
-                        f"Could not find folder: {folder_path}"
-                    )
-
+                    return ErrorArtifact(f"Could not find folder: {folder_path}")
+    
             spreadsheets = []
             page_token = None
-
-            while True:
+    
+            while page_token is not None:
                 response = (
                     service.files()
                     .list(
@@ -80,23 +81,19 @@ class GoogleSheetsClient(BaseGoogleClient):
                     )
                     .execute()
                 )
-
+    
                 for file in response.get("files", []):
-                    spreadsheets.append(
-                        InfoArtifact(
-                            f"Spreadsheet ID: {file['id']}, Name: {file['name']}"
-                        )
-                    )
-
-                page_token = response.get("nextPageToken", None)
-                if page_token is None:
-                    break
-
+                    spreadsheets.append(InfoArtifact(f"Spreadsheet ID: {file['id']}, Name: {file['name']}"))
+    
+                page_token = response.get("nextPageToken")
+            return ListArtifact(spreadsheets)
+    
+        except HttpError as e:
+            return ErrorArtifact(f"error listing spreadsheet due to http error: {e}")
+        except MalformedError as e:
+            return ErrorArtifact(f"error listing spreadsheet due to malformed credentials: {e}")
         except Exception as e:
-            logging.error(e)
             return ErrorArtifact(f"error listing spreadsheets: {e}")
-
-        return ListArtifact(spreadsheets)
 
     @activity(
         config={
@@ -134,15 +131,15 @@ class GoogleSheetsClient(BaseGoogleClient):
             )
 
         except HttpError as e:
-            logging.error(e)
             return ErrorArtifact(
                 f"error creating spreadsheet due to http error: {e}"
             )
         except MalformedError as e:
-            logging.error(e)
             return ErrorArtifact(
                 f"error creating spreadsheet due to malformed credentials: {e}"
             )
+        except Exception as e:
+            return ErrorArtifact(f"error creating spreadsheets: {e}")
 
     @activity(
         config={
@@ -161,7 +158,7 @@ class GoogleSheetsClient(BaseGoogleClient):
             ),
         }
     )
-    def download_spreadsheets(self, params: dict) -> ListArtifact:
+    def download_spreadsheets(self, params: dict) -> ListArtifact | ErrorArtifact:
         from google.auth.exceptions import MalformedError
         from googleapiclient.errors import HttpError
 
@@ -176,7 +173,8 @@ class GoogleSheetsClient(BaseGoogleClient):
         downloaded_files = []
 
         if mime_type not in export_mime_mapping:
-            logging.error("Unsupported mime type for downloading")
+            logging.error(f"Unsupported mime type '{mime_type}' provided.")
+            return ErrorArtifact("Unsupported mime type for downloading")
         else:
             try:
                 service = self._build_client(
@@ -200,12 +198,15 @@ class GoogleSheetsClient(BaseGoogleClient):
                         )
 
             except HttpError as e:
-                logging.error(e)
-
-            except MalformedError:
-                logging.error(
-                    "error downloading spreadsheet due to malformed credentials"
+                return ErrorArtifact(
+                    f"error downloading spreadsheet due to http error: {e}"
                 )
+            except MalformedError as e:
+                return ErrorArtifact(
+                    f"error downloading spreadsheet due to malformed credentials: {e}"
+                )
+            except Exception as e:
+                return ErrorArtifact(f"error downloading spreadsheets: {e}")
 
         return ListArtifact(downloaded_files)
 
@@ -232,6 +233,8 @@ class GoogleSheetsClient(BaseGoogleClient):
     )
     def upload_spreadsheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaFileUpload
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError
 
         mime_mapping = {
             "csv": "text/csv",
@@ -269,9 +272,15 @@ class GoogleSheetsClient(BaseGoogleClient):
             return InfoArtifact(
                 f'file was successfully uploaded and converted to a Google Sheet with ID {file.get("id")}.'
             )
-
+        except HttpError as e:
+            return ErrorArtifact(
+                f"error uploading spreadsheet due to http error: {e}"
+            )
+        except MalformedError as e:
+            return ErrorArtifact(
+                f"error uploading spreadsheet due to malformed credentials: {e}"
+            )
         except Exception as e:
-            logging.error(e)
             return ErrorArtifact(
                 f"error uploading and converting file to Google Sheet: {e}"
             )
@@ -299,6 +308,9 @@ class GoogleSheetsClient(BaseGoogleClient):
         }
     )
     def share_spreadsheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError
+
         file_path = params["file_path"]
         email_address = params["email_address"]
         role = params.get("role", "reader")
@@ -337,8 +349,15 @@ class GoogleSheetsClient(BaseGoogleClient):
                 return ErrorArtifact(
                     f"error finding spreadsheet at path: {file_path}"
                 )
+        except HttpError as e:
+            return ErrorArtifact(
+                f"error sharing spreadsheet due to http error: {e}"
+            )
+        except MalformedError as e:
+            return ErrorArtifact(
+                f"error sharing spreadsheet due to malformed credentials: {e}"
+            )
         except Exception as e:
-            logging.error(e)
             return ErrorArtifact(f"error sharing spreadsheet: {e}")
 
     @activity(
@@ -354,9 +373,10 @@ class GoogleSheetsClient(BaseGoogleClient):
             ),
         }
     )
-    def check_permissions_for_spreadsheet(
-        self, params: dict
-    ) -> ListArtifact | ErrorArtifact:
+    def list_permissions_for_spreadsheet(self, params: dict) -> ListArtifact | ErrorArtifact:
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError
+
         file_path = params["file_path"]
 
         try:
@@ -395,6 +415,13 @@ class GoogleSheetsClient(BaseGoogleClient):
                 return ErrorArtifact(
                     f"error finding spreadsheet at path: {file_path}"
                 )
+        except HttpError as e:
+            return ErrorArtifact(
+                f"error checking permissions due to http error: {e}"
+            )
+        except MalformedError as e:
+            return ErrorArtifact(
+                f"error checking permissions due to malformed credentials: {e}"
+            )
         except Exception as e:
-            logging.error(e)
             return ErrorArtifact(f"error checking permissions: {e}")
