@@ -7,6 +7,7 @@ from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer
 from typing import Tuple, Type
+import requests
 
 
 @define
@@ -36,7 +37,22 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     user: str = field(default="", kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(default=Factory(lambda: (openai.InvalidRequestError)), kw_only=True)
 
+    @staticmethod
+    def __print_headers(response, *args, **kwargs):
+        print("request limit:", response.headers['x-ratelimit-limit-requests'])
+        print("request remaining:", response.headers['x-ratelimit-remaining-requests'])
+        print("reset requests in:", response.headers["x-ratelimit-reset-requests"])
+        print("token limit:", response.headers['x-ratelimit-limit-tokens'])
+        print("remaining tokens:", response.headers['x-ratelimit-remaining-tokens'])
+        print("reset tokens in:", response.headers["x-ratelimit-reset-tokens"])
+
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        s = requests.Session()
+        s.hooks = {
+            "response": self.__print_headers
+        }
+
+        openai.requestssession = s
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
@@ -64,7 +80,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return {
             "model": self.model,
-            "max_tokens": self.max_output_tokens(messages),
             "temperature": self.temperature,
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,

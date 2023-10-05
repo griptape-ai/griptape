@@ -24,7 +24,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Then
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
-            max_tokens=ANY,
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
