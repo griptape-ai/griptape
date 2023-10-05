@@ -13,7 +13,7 @@ class BedrockJurassicTokenizer(BaseTokenizer):
     session: boto3.Session = field(
         default=Factory(lambda: boto3.Session()), kw_only=True
     )
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
             lambda self: self.session.client("bedrock-runtime"),

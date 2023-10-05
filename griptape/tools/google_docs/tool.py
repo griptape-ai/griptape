@@ -36,9 +36,11 @@ class GoogleDocsClient(BaseGoogleClient):
         }
     )
     def append_text_to_google_doc(self, params: dict) -> InfoArtifact | ErrorArtifact:
+        values = params["values"]
+        file_path = values.get("file_path")
+        text = values.get("text")
+
         try:
-            file_path = params["file_path"]
-            text = params["text"]
             docs_service = self._build_client(
                 scopes=self.DOCS_SCOPES,
                 service_name="docs",
@@ -91,9 +93,11 @@ class GoogleDocsClient(BaseGoogleClient):
         }
     )
     def prepend_text_to_google_doc(self, params: dict) -> InfoArtifact | ErrorArtifact:
+        values = params["values"]
+        file_path = values.get("file_path")
+        text = values.get("text")
+
         try:
-            file_path = params["file_path"]
-            text = params["text"]
             docs_service = self._build_client(
                 scopes=self.DOCS_SCOPES,
                 service_name="docs",
@@ -150,11 +154,12 @@ class GoogleDocsClient(BaseGoogleClient):
         }
     )
     def save_content_to_google_doc(self, params: dict) -> ErrorArtifact | InfoArtifact:
-        try:
-            file_path = params["file_path"]
-            content = params.get("content")
-            folder_path = params.get("folder_path", self.DEFAULT_FOLDER_PATH)
+        values = params["values"]
+        file_path = values.get("file_path")
+        content = values.get("content")
+        folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
 
+        try:
             docs_service = self._build_client(
                 scopes=self.DOCS_SCOPES,
                 service_name="docs",
@@ -254,7 +259,8 @@ class GoogleDocsClient(BaseGoogleClient):
         }
     )
     def download_google_docs(self, params: dict) -> ListArtifact | ErrorArtifact:
-        file_paths = params["file_paths"]
+        values = params["values"]
+        file_paths = values.get("file_paths")
         downloaded_files = []
     
         try:
