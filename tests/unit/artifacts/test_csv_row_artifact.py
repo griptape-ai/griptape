@@ -29,3 +29,7 @@ class TestCsvRowArtifact:
 
         assert artifact.name == artifact.id
         assert CsvRowArtifact({}, name="bar").name == "bar"
+
+    def test_is_empty(self):
+        assert CsvRowArtifact({}).is_empty()
+        assert not CsvRowArtifact({"foo": "bar"}).is_empty()

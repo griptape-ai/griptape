@@ -30,3 +30,6 @@ class CsvRowArtifact(TextArtifact):
         from griptape.schemas import CsvRowArtifactSchema
 
         return dict(CsvRowArtifactSchema().dump(self))
+
+    def is_empty(self) -> bool:
+        return False if len(self.value) == 0 else True

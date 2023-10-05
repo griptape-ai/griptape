@@ -20,6 +20,9 @@ class TextArtifact(BaseArtifact):
     def __add__(self, other: TextArtifact) -> TextArtifact:
         return TextArtifact(self.value + other.value)
 
+    def is_empty(self) -> bool:
+        return False if self.value.strip() else True
+
     def generate_embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
         self.__embedding.clear()
         self.__embedding.extend(driver.embed_string(str(self.value)))

@@ -15,8 +15,8 @@ from .memory.conversation.base_conversation_memory_driver import BaseConversatio
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
 from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
 
-from .memory.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
-from .memory.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
+from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
+from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
 
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver

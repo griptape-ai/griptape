@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ListArtifact
 from griptape.artifacts import BlobArtifact
-from griptape.drivers import BaseBlobToolMemoryDriver, LocalBlobToolMemoryDriver
+from griptape.drivers import LocalBlobToolMemoryDriver
 from griptape.engines import (
     BaseSummaryEngine, PromptSummaryEngine, BaseQueryEngine, CsvExtractionEngine, JsonExtractionEngine
 )
@@ -14,6 +14,7 @@ from griptape.mixins import ToolMemoryActivitiesMixin
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
+    from griptape.drivers import BaseBlobToolMemoryDriver
 
 
 @define
