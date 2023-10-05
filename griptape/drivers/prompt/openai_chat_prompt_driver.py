@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 import openai
+import litellm
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
@@ -37,7 +38,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     ignored_exception_types: Tuple[Type[Exception], ...] = field(default=Factory(lambda: (openai.InvalidRequestError)), kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
+        result = litellm.completion(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
             return TextArtifact(
@@ -47,8 +48,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             raise Exception("Completion with more than one choice is not supported yet.")
 
     def token_count(self, prompt_stack: PromptStack) -> int:
-        return self.tokenizer.token_count(
-            self._prompt_stack_to_messages(prompt_stack)
+        return litellm.utils.token_counter(
+            model = self.model,
+            messages=self._prompt_stack_to_messages(prompt_stack)
         )
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
