@@ -61,7 +61,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
 
         result = [
             BaseVectorStoreDriver.QueryResult(
-                vector_id=er[0].id,
+                id=er[0].id,
                 vector=er[0].vector,
                 score=er[1],
                 meta=er[0].meta
@@ -73,7 +73,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return [
                 BaseVectorStoreDriver.QueryResult(
-                    vector_id=r.vector_id,
+                    id=r.id,
                     vector=[],
                     score=r.score,
                     meta=r.meta,

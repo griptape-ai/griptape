@@ -51,7 +51,7 @@ class TestMongoDbAtlasVectorStoreDriver:
         results = driver.query(query_str, include_vectors=True)
         assert len(results) == len(mock_query_result)
         for result, expected in zip(results, mock_query_result):
-            assert result.vector_id == expected.vector_id
+            assert result.id == expected.id
             assert result.vector == expected.vector
             assert isinstance(result, BaseVectorStoreDriver.QueryResult)
 

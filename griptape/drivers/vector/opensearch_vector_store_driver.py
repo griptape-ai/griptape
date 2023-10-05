@@ -190,7 +190,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.QueryResult(
-                vector_id=hit["_id"],
+                id=hit["_id"],
                 namespace=hit["_source"].get("namespace") if namespace else None,
                 score=hit["_score"],
                 vector=hit["_source"].get("vector") if include_vectors else None,

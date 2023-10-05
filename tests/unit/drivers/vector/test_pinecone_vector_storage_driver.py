@@ -58,7 +58,7 @@ class TestPineconeVectorStorageDriver:
         results = driver.query("test")
 
         assert results[0].vector == [0, 1, 0]
-        assert results[0].vector_id == "foo"
+        assert results[0].id == "foo"
 
     def test_create_index(self, driver):
         assert driver.create_index("test") is None

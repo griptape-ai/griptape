@@ -46,7 +46,7 @@ class TestLocalVectorStoreDriver:
         assert driver.query("foobar")[0].vector == []
         assert driver.query("foobar", include_vectors=True)[0].vector == [0, 1]
         assert BaseArtifact.from_json(driver.query("foobar")[0].meta["artifact"]).value == "foobar"
-        assert driver.query("foobar")[0].vector_id == vector_id
+        assert driver.query("foobar")[0].id == vector_id
 
     def test_load_entry(self, driver):
         vector_id = driver.upsert_text_artifact(
