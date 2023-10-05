@@ -27,11 +27,11 @@ class TestHuggingFaceHubPromptDriver:
         return mock_autotokenizer
 
     def test_init(self):
-        assert HuggingFaceHubPromptDriver(api_token="foobar", repo_id="gpt2")
+        assert HuggingFaceHubPromptDriver(api_token="foobar", model="gpt2")
 
     def test_try_run(self, prompt_stack):
         # Given
-        driver = HuggingFaceHubPromptDriver(api_token="api-token", repo_id="repo-id")
+        driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id")
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -42,7 +42,7 @@ class TestHuggingFaceHubPromptDriver:
     @pytest.mark.parametrize('choices', [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_client, prompt_stack):
         # Given
-        driver = HuggingFaceHubPromptDriver(api_token='api-token', repo_id='repo-id')
+        driver = HuggingFaceHubPromptDriver(api_token='api-token', model='repo-id')
         mock_client.return_value = choices
 
         # When
@@ -54,7 +54,7 @@ class TestHuggingFaceHubPromptDriver:
 
     def test_try_run_throws_when_unsupported_task_returned(self, prompt_stack, mock_client):
         # Given
-        driver = HuggingFaceHubPromptDriver(api_token='api-token', repo_id='repo-id')
+        driver = HuggingFaceHubPromptDriver(api_token='api-token', model='repo-id')
         mock_client.task = 'obviously-an-unsupported-task'
 
         # When
