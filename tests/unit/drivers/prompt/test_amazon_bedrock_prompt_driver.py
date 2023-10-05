@@ -8,6 +8,8 @@ from unittest.mock import Mock
 import json
 import pytest
 
+from griptape.tokenizers.bedrock_claude_tokenizer import BedrockClaudeTokenizer
+
 
 class TestAmazonBedrockPromptDriver:
     @pytest.fixture
@@ -24,19 +26,19 @@ class TestAmazonBedrockPromptDriver:
     def test_init(self):
         assert AmazonBedrockPromptDriver(
             model="foo",
-            prompt_model_driver=BedrockClaudePromptModelDriver()
+            prompt_model_driver=BedrockClaudePromptModelDriver(model=BedrockClaudeTokenizer.DEFAULT_MODEL)
         )
 
     def test_custom_tokenizer(self):
         assert isinstance(AmazonBedrockPromptDriver(
             model="foo",
-            prompt_model_driver=BedrockClaudePromptModelDriver()
+            prompt_model_driver=BedrockClaudePromptModelDriver(model=BedrockClaudeTokenizer.DEFAULT_MODEL)
         ).tokenizer, AnthropicTokenizer)
 
         assert isinstance(AmazonBedrockPromptDriver(
             model="foo",
             tokenizer=BedrockTitanTokenizer(model="amazon.titan-tg1-large"),
-            prompt_model_driver=BedrockTitanPromptModelDriver()
+            prompt_model_driver=BedrockTitanPromptModelDriver(model=BedrockTitanTokenizer.DEFAULT_MODEL)
         ).tokenizer, BedrockTitanTokenizer)
 
     @pytest.mark.parametrize('model_inputs', [{ 'model-input-key': 'model-input-value' }, 'not-a-dict'])

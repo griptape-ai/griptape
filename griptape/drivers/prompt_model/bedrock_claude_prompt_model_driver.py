@@ -8,7 +8,7 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 
 @define
 class BedrockClaudePromptModelDriver(BasePromptModelDriver):
-    model: str = field(default="anthropic.claude-v2", kw_only=True)
+    model: str = field(kw_only=True)
     tokenizer: BedrockClaudeTokenizer = field(
         default=Factory(
             lambda self: BedrockClaudeTokenizer(model=self.model),
