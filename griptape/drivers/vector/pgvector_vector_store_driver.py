@@ -52,9 +52,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("An engine or connection string is required")
 
     def __attrs_post_init__(self) -> None:
-        """Validates engine and connection string inputs.
-        If a an engine is provided, it will be used to connect to the database. If not, a connection string
-        is used to create a new database connection.
+        """If a an engine is provided, it will be used to connect to the database.
+        If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
             self.engine = create_engine(self.connection_string, **self.create_engine_params)
