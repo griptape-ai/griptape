@@ -44,8 +44,9 @@ class GoogleSheetsClient(BaseGoogleClient):
     def list_spreadsheets(self, params: dict) -> ListArtifact | ErrorArtifact:
         from googleapiclient.errors import HttpError
         from google.auth.exceptions import MalformedError
-    
-        folder_path = params.get("folder_path", self.DEFAULT_FOLDER_PATH)
+
+        values = params["values"]
+        folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
     
         try:
             service = self._build_client(
@@ -111,7 +112,8 @@ class GoogleSheetsClient(BaseGoogleClient):
         from googleapiclient.errors import HttpError
         from google.auth.exceptions import MalformedError
 
-        title = params["title"]
+        values = params["values"]
+        title = values.get("title")
 
         try:
             service = self._build_client(
@@ -162,8 +164,9 @@ class GoogleSheetsClient(BaseGoogleClient):
         from google.auth.exceptions import MalformedError
         from googleapiclient.errors import HttpError
 
-        file_paths = params["file_paths"]
-        mime_type = params["mime_type"]
+        values = params["values"]
+        file_paths = values.get("file_paths")
+        mime_type = values.get("mime_type")
 
         export_mime_mapping = {
             "text/csv": "text/csv",
@@ -236,12 +239,16 @@ class GoogleSheetsClient(BaseGoogleClient):
         from google.auth.exceptions import MalformedError
         from googleapiclient.errors import HttpError
 
+        values = params["values"]
+        file_type = values.get("file_type")
+        file_path = values.get("file_path")
+        file_name = values.get("file_name")
+
         mime_mapping = {
             "csv": "text/csv",
             "excel": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         }
 
-        file_type = params["file_type"]
         if file_type not in mime_mapping:
             logging.error(f"Unsupported file type '{file_type}' provided.")
             return ErrorArtifact(
@@ -257,11 +264,11 @@ class GoogleSheetsClient(BaseGoogleClient):
             )
 
             file_metadata = {
-                "name": params["file_name"],
+                "name": file_name,
                 "mimeType": "application/vnd.google-apps.spreadsheet",
             }
             media = MediaFileUpload(
-                params["file_path"], mimetype=mime_mapping[params["file_type"]]
+                file_path, mimetype=mime_mapping[file_type]
             )
             file = (
                 service.files()
@@ -311,9 +318,10 @@ class GoogleSheetsClient(BaseGoogleClient):
         from google.auth.exceptions import MalformedError
         from googleapiclient.errors import HttpError
 
-        file_path = params["file_path"]
-        email_address = params["email_address"]
-        role = params.get("role", "reader")
+        values = params["values"]
+        file_path = values.get("file_path")
+        email_address = values.get("email_address")
+        role = values.get("role", "reader")
 
         try:
             service = self._build_client(
@@ -377,7 +385,8 @@ class GoogleSheetsClient(BaseGoogleClient):
         from google.auth.exceptions import MalformedError
         from googleapiclient.errors import HttpError
 
-        file_path = params["file_path"]
+        values = params["values"]
+        file_path = values.get("file_path")
 
         try:
             service = self._build_client(

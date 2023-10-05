@@ -12,14 +12,14 @@ class TestGoogleSheetsClient:
         params = {
             "folder_path": "root"
         }
-        result = client.list_spreadsheets(params)
+        result = client.list_spreadsheets({"values": params})
 
         assert isinstance(result, ErrorArtifact)
         assert "error listing spreadsheet due to malformed credentials:" in result.value
 
     def test_create_spreadsheet(self, client):
         params = {"title": "Test Spreadsheet"}
-        result = client.create_spreadsheet(params)
+        result = client.create_spreadsheet({"values": params})
 
         assert isinstance(result, ErrorArtifact)
         assert "error creating spreadsheet due to malformed credentials" in result.value
@@ -29,7 +29,7 @@ class TestGoogleSheetsClient:
             "file_paths": ["example_folder/example_file"],
             "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         }
-        result = client.download_spreadsheets(params)
+        result = client.download_spreadsheets({"values": params})
 
         assert isinstance(result, ErrorArtifact)
         assert "error downloading spreadsheet due to malformed credentials" in result.value
@@ -40,7 +40,7 @@ class TestGoogleSheetsClient:
             "file_path": "/path/to/your/test_sheet.xlsx",
             "file_type": "excel"
         }
-        result = client.upload_spreadsheet(params)
+        result = client.upload_spreadsheet({"values": params})
 
         assert isinstance(result, ErrorArtifact)
         assert "error uploading spreadsheet due to malformed credentials:" in result.value
@@ -51,15 +51,14 @@ class TestGoogleSheetsClient:
             "email_address": "example@example.com",
             "role": "reader"
         }
-        result = client.share_spreadsheet(params)
+        result = client.share_spreadsheet({"values": params})
 
         assert isinstance(result, ErrorArtifact)
         assert "error sharing spreadsheet due to malformed credentials:" in result.value
 
     def test_check_permissions_for_spreadsheet(self, client):
         params = {"file_path": "example_folder/example_file"}
-        result = client.list_permissions_for_spreadsheet(params)
+        result = client.list_permissions_for_spreadsheet({"values": params})
 
         assert isinstance(result, ErrorArtifact)
         assert "error checking permissions due to malformed credentials:" in result.value
-
