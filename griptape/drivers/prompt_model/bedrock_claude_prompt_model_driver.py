@@ -8,7 +8,7 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 
 @define
 class BedrockClaudePromptModelDriver(BasePromptModelDriver):
-    model: str = field(default="anthropic.claude-v2", kw_only=True)
+    model: str = field(kw_only=True)
     tokenizer: BedrockClaudeTokenizer = field(
         default=Factory(
             lambda self: BedrockClaudeTokenizer(model=self.model),
@@ -23,17 +23,14 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
-            if i.is_user():
-                prompt_lines.append(f"\n\nHuman: {i.content}")
-            elif i.is_assistant():
-                prompt_lines.append(f"\n\nAssistant: {i.content}")
-            elif i.is_system():
-                prompt_lines.append(f"\nInstructions: {i.content}")
+            if i.is_assistant():
+                prompt_lines.append(f"Assistant: {i.content}")
+            else:
+                prompt_lines.append(f"Human: {i.content}")
 
-        prompt_lines.append("\n\nAssistant:")
+        prompt_lines.append("Assistant:")
 
-        prompt = "".join(prompt_lines)
-        return { "prompt": prompt }
+        return {"prompt": "\n\n" + "\n\n".join(prompt_lines)}
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_model_input(prompt_stack)["prompt"]

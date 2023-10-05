@@ -2,6 +2,7 @@ from unittest import mock
 import json
 import boto3
 import pytest
+from griptape.tokenizers import BedrockClaudeTokenizer
 from griptape.utils import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockClaudePromptModelDriver
 
@@ -21,7 +22,7 @@ class TestBedrockClaudePromptModelDriver:
         return AmazonBedrockPromptDriver(
             model="anthropic.claude-v2",
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver=BedrockClaudePromptModelDriver(),
+            prompt_model_driver=BedrockClaudePromptModelDriver(model=BedrockClaudeTokenizer.DEFAULT_MODEL),
             temperature=0.12345,
         ).prompt_model_driver
 
@@ -38,7 +39,7 @@ class TestBedrockClaudePromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input['prompt'].startswith("\nInstructions: foo\n\nHuman: bar\n\nAssistant:")
+        assert model_input['prompt'].startswith("\n\nHuman: foo\n\nHuman: bar\n\nAssistant:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
         assert driver.prompt_stack_to_model_params(stack)["max_tokens_to_sample"] == 8178
