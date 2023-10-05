@@ -3,7 +3,7 @@ import logging
 import base64
 from email.message import EmailMessage
 from schema import Schema, Literal
-from attr import define
+from attr import define, field
 from griptape.artifacts import InfoArtifact, ErrorArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
@@ -12,6 +12,9 @@ from griptape.tools import BaseGoogleClient
 @define
 class GoogleGmailClient(BaseGoogleClient):
     CREATE_DRAFT_EMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.compose']
+
+    owner_email: str = field(kw_only=True)
+
     @activity(config={
         "description": "Can be used to create a draft email in GMail",
         "schema": Schema({
@@ -24,37 +27,26 @@ class GoogleGmailClient(BaseGoogleClient):
                 description="subject of the email"
             ): str,
             Literal(
-                "from",
-                description="email address which to send from"
-            ): str,
-            Literal(
                 "body",
                 description="body of the email"
             ): str,
-            Literal(
-                "inbox_owner",
-                description="email address of the inbox owner where the draft will be created. if not provided, use the from address"
-            ): str
         })
     })
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
-
         values = params["values"]
 
         try:
-            credentials = service_account.Credentials.from_service_account_info(
-                self.service_account_credentials, scopes=self.CREATE_DRAFT_EMAIL_SCOPES
+            service = self._build_client(
+                scopes=self.CREATE_DRAFT_EMAIL_SCOPES,
+                service_name='gmail',
+                version='v1',
+                owner_email=self.owner_email
             )
-
-            delegated_creds = credentials.with_subject(values["inbox_owner"])
-            service = build('gmail', 'v1', credentials=delegated_creds)
 
             message = EmailMessage()
             message.set_content(values["body"])
             message['To'] = values["to"]
-            message['From'] = values["from"]
+            message['From'] = self.owner_email
             message['Subject'] = values["subject"]
 
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
