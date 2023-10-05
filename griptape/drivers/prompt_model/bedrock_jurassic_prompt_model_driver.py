@@ -9,7 +9,7 @@ from griptape.drivers import AmazonBedrockPromptDriver
 
 @define
 class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
-    model: str = field(default="ai21.j2-ultra", kw_only=True)
+    model: str = field(kw_only=True)
     top_p: float = field(default=0.9, kw_only=True)
     _tokenizer: BedrockJurassicTokenizer = field(default=None, kw_only=True)
 
