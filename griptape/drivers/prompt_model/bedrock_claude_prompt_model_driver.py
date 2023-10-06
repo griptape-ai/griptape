@@ -1,3 +1,4 @@
+from typing import Optional
 import json
 from attr import define, field
 from griptape.artifacts import TextArtifact
@@ -11,6 +12,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.999, kw_only=True)
     top_k: int = field(default=250, kw_only=True)
     _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 
     @property
     def tokenizer(self) -> BedrockClaudeTokenizer:
@@ -31,11 +33,8 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            if isinstance(self.prompt_driver, AmazonBedrockPromptDriver):
-                self._tokenizer = BedrockClaudeTokenizer(model=self.prompt_driver.model)
-                return self._tokenizer
-            else:
-                raise ValueError("prompt_driver must be of instance AmazonBedrockPromptDriver")
+            self._tokenizer = BedrockClaudeTokenizer(model=self.prompt_driver.model)
+            return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
         prompt_lines = []

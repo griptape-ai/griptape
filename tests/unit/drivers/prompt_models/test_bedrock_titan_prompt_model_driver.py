@@ -26,9 +26,9 @@ class TestBedrockTitanPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model="foo",
+            model=BedrockTitanTokenizer.DEFAULT_MODEL,
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver=BedrockTitanPromptModelDriver(model=BedrockTitanTokenizer.DEFAULT_MODEL),
+            prompt_model_driver=BedrockTitanPromptModelDriver(),
             temperature=0.12345,
         ).prompt_model_driver
 

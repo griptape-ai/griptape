@@ -25,20 +25,20 @@ class TestAmazonBedrockPromptDriver:
 
     def test_init(self):
         assert AmazonBedrockPromptDriver(
-            model="foo",
-            prompt_model_driver=BedrockClaudePromptModelDriver(model=BedrockClaudeTokenizer.DEFAULT_MODEL)
+            model=BedrockClaudeTokenizer.DEFAULT_MODEL,
+            prompt_model_driver=BedrockClaudePromptModelDriver()
         )
 
     def test_custom_tokenizer(self):
         assert isinstance(AmazonBedrockPromptDriver(
-            model="foo",
-            prompt_model_driver=BedrockClaudePromptModelDriver(model=BedrockClaudeTokenizer.DEFAULT_MODEL)
+            model=BedrockClaudeTokenizer.DEFAULT_MODEL,
+            prompt_model_driver=BedrockClaudePromptModelDriver()
         ).tokenizer, AnthropicTokenizer)
 
         assert isinstance(AmazonBedrockPromptDriver(
-            model="foo",
-            tokenizer=BedrockTitanTokenizer(model="amazon.titan-tg1-large"),
-            prompt_model_driver=BedrockTitanPromptModelDriver(model=BedrockTitanTokenizer.DEFAULT_MODEL)
+            model=BedrockTitanTokenizer.DEFAULT_MODEL,
+            tokenizer=BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL),
+            prompt_model_driver=BedrockTitanPromptModelDriver()
         ).tokenizer, BedrockTitanTokenizer)
 
     @pytest.mark.parametrize('model_inputs', [{ 'model-input-key': 'model-input-value' }, 'not-a-dict'])
