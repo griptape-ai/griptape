@@ -4,12 +4,9 @@ from pathlib import Path
 import pytest
 from griptape.artifacts import ErrorArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine
 from griptape.loaders import FileLoader
-from griptape.memory.tool import TextToolMemory
 from griptape.tools import FileManager
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from tests.utils import defaults
 
 
 class TestFileManager:
@@ -20,14 +17,7 @@ class TestFileManager:
     def test_load_files_from_disk(self):
         result = FileManager(
             input_memory=[
-                TextToolMemory(
-                    query_engine=VectorQueryEngine(
-                        vector_store_driver=LocalVectorStoreDriver(
-                            embedding_driver=MockEmbeddingDriver()
-                        )
-                    ),
-                    summary_engine=PromptSummaryEngine()
-                )
+                defaults.text_tool_memory("Memory1")
             ],
             workdir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
@@ -55,14 +45,7 @@ class TestFileManager:
 
     def test_save_memory_artifacts_to_disk_for_one_artifact(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = TextToolMemory(
-                query_engine=VectorQueryEngine(
-                    vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver()
-                    )
-                ),
-                summary_engine=PromptSummaryEngine()
-            )
+            memory = defaults.text_tool_memory("Memory1")
             artifact = TextArtifact("foobar")
 
             memory.query_engine.vector_store_driver.upsert_text_artifact(artifact, namespace="foobar")
@@ -89,14 +72,7 @@ class TestFileManager:
         file_name = "foobar.txt"
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = TextToolMemory(
-                query_engine=VectorQueryEngine(
-                    vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver()
-                    )
-                ),
-                summary_engine=PromptSummaryEngine()
-            )
+            memory = defaults.text_tool_memory("Memory1")
             artifacts = [
                 TextArtifact("foobar"),
                 TextArtifact("baz")

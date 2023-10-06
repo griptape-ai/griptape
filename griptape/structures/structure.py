@@ -13,7 +13,7 @@ from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.drivers import LocalVectorStoreDriver
 
 if TYPE_CHECKING:
@@ -45,11 +45,20 @@ class Structure(ABC):
     tool_memory: Optional[BaseToolMemory] = field(
         default=Factory(lambda self: TextToolMemory(
             query_engine=VectorQueryEngine(
+                prompt_driver=self.prompt_driver,
                 vector_store_driver=LocalVectorStoreDriver(
                     embedding_driver=self.embedding_driver
                 )
             ),
-            summary_engine=PromptSummaryEngine()
+            summary_engine=PromptSummaryEngine(
+                prompt_driver=self.prompt_driver
+            ),
+            csv_extraction_engine=CsvExtractionEngine(
+                prompt_driver=self.prompt_driver
+            ),
+            json_extraction_engine=JsonExtractionEngine(
+                prompt_driver=self.prompt_driver
+            )
         ), takes_self=True),
         kw_only=True
     )
