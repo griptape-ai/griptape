@@ -9,7 +9,6 @@ from griptape.drivers import AmazonBedrockPromptDriver
 
 @define
 class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
-    model: str = field(kw_only=True)
     top_p: float = field(default=0.9, kw_only=True)
     _tokenizer: BedrockJurassicTokenizer = field(default=None, kw_only=True)
 
@@ -22,7 +21,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
         the Prompt Model Driver is initialized. To resolve this, we make the `tokenizer`
         field a @property that is only initialized when it is first accessed.
         This ensures that by the time we need to initialize the Tokenizer, the 
-        Prompt Driver has already been initialized and we can access its session.
+        Prompt Driver has already been initialized.
 
         See this thread more more information: https://github.com/griptape-ai/griptape/issues/244
 
@@ -33,7 +32,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
             return self._tokenizer
         else:
             if isinstance(self.prompt_driver, AmazonBedrockPromptDriver):
-                self._tokenizer = BedrockJurassicTokenizer(model=self.model, session=self.prompt_driver.session)
+                self._tokenizer = BedrockJurassicTokenizer(model=self.prompt_driver.model, session=self.prompt_driver.session)
                 return self._tokenizer
             else:
                 raise ValueError("prompt_driver must be of instance AmazonBedrockPromptDriver")
