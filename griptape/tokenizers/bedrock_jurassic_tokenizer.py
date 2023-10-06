@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class BedrockJurassicTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'ai21.j2-ultra'
+    DEFAULT_MODEL = 'ai21.j2-ultra-v1'
     DEFAULT_MAX_TOKENS = 8192
 
     session: boto3.Session = field(

@@ -20,9 +20,9 @@ class TestBedrockClaudePromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model="anthropic.claude-v2",
+            model=BedrockClaudeTokenizer.DEFAULT_MODEL,
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver=BedrockClaudePromptModelDriver(model=BedrockClaudeTokenizer.DEFAULT_MODEL),
+            prompt_model_driver=BedrockClaudePromptModelDriver(),
             temperature=0.12345,
         ).prompt_model_driver
 

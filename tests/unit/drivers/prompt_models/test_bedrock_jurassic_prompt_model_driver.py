@@ -27,9 +27,9 @@ class TestBedrockJurassicPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model="ai21.j2-ultra",
+            model=BedrockJurassicTokenizer.DEFAULT_MODEL,
             session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver=BedrockJurassicPromptModelDriver(model=BedrockJurassicTokenizer.DEFAULT_MODEL),
+            prompt_model_driver=BedrockJurassicPromptModelDriver(),
             temperature=0.12345,
         ).prompt_model_driver
 

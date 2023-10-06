@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class BedrockTitanTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'amazon.titan-tg1-large'
+    DEFAULT_MODEL = 'amazon.titan-text-express-v1'
     DEFAULT_MAX_TOKENS = 4096
 
     session: boto3.Session = field(
