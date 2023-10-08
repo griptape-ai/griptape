@@ -22,7 +22,6 @@ class BaseMultiModelPromptDriver(BasePromptDriver, ABC):
         prompt_model_driver: Prompt Model Driver to use.
     """
 
-    model: str = field(kw_only=True)
     tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
     prompt_model_driver: BasePromptModelDriver = field(kw_only=True)
 

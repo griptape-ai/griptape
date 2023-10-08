@@ -66,6 +66,7 @@ PROMPT_DRIVERS = {
     ),
     "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(model="claude-2", api_key=os.environ["ANTHROPIC_API_KEY"]),
     "COHERE_COMMAND": CoherePromptDriver(
+        model="command",
         api_key=os.environ["COHERE_API_KEY"],
     ),
     "BEDROCK_TITAN": AmazonBedrockPromptDriver(

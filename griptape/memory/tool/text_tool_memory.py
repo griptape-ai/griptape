@@ -2,10 +2,10 @@ from __future__ import annotations
 import logging
 import uuid
 from typing import TYPE_CHECKING, Optional
-from attr import define, field, Factory
+from attr import define, field
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ListArtifact
 from griptape.engines import (
-    BaseSummaryEngine, PromptSummaryEngine, BaseQueryEngine, CsvExtractionEngine, JsonExtractionEngine
+    BaseSummaryEngine, BaseQueryEngine, CsvExtractionEngine, JsonExtractionEngine
 )
 from griptape.memory.tool import BaseToolMemory
 from griptape.mixins import TextMemoryActivitiesMixin
@@ -17,18 +17,9 @@ if TYPE_CHECKING:
 @define
 class TextToolMemory(BaseToolMemory, TextMemoryActivitiesMixin):
     query_engine: BaseQueryEngine = field(kw_only=True)
-    summary_engine: BaseSummaryEngine = field(
-        kw_only=True,
-        default=Factory(lambda: PromptSummaryEngine())
-    )
-    csv_extraction_engine: CsvExtractionEngine = field(
-        kw_only=True,
-        default=Factory(lambda: CsvExtractionEngine())
-    )
-    json_extraction_engine: JsonExtractionEngine = field(
-        kw_only=True,
-        default=Factory(lambda: JsonExtractionEngine())
-    )
+    summary_engine: BaseSummaryEngine = field(kw_only=True)
+    csv_extraction_engine: CsvExtractionEngine = field(kw_only=True)
+    json_extraction_engine: JsonExtractionEngine = field(kw_only=True)
 
     def process_output(
             self,
