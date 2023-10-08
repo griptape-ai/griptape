@@ -149,6 +149,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         results = [
             BaseVectorStoreDriver.QueryResult(
+                id=str(doc["_id"]),
                 vector=doc["vector"] if include_vectors else None,
                 score=doc["score"],  # Include the score in the result
                 meta=doc["meta"],

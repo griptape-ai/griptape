@@ -37,8 +37,8 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     def test_query(self, driver, monkeypatch):
         mock_query_result = [
-            BaseVectorStoreDriver.QueryResult(vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None),
-            BaseVectorStoreDriver.QueryResult(vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None)
+            BaseVectorStoreDriver.QueryResult("foo", [0.5, 0.5, 0.5], score=None, meta={}, namespace=None),
+            BaseVectorStoreDriver.QueryResult("foo", vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None)
         ]
 
         monkeypatch.setattr(
@@ -51,6 +51,7 @@ class TestMongoDbAtlasVectorStoreDriver:
         results = driver.query(query_str, include_vectors=True)
         assert len(results) == len(mock_query_result)
         for result, expected in zip(results, mock_query_result):
+            assert result.id == expected.id
             assert result.vector == expected.vector
             assert isinstance(result, BaseVectorStoreDriver.QueryResult)
 

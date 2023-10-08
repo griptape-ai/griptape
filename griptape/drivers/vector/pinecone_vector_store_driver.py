@@ -101,6 +101,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.QueryResult(
+                id=r["id"],
                 vector=r["values"],
                 score=r["score"],
                 meta=r["metadata"],

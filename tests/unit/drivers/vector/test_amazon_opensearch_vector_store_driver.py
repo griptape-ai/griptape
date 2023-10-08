@@ -49,3 +49,4 @@ class TestAmazonOpenSearchVectorStoreDriver:
             query_vector = [0.5, 0.5, 0.5]
             results = driver.query(query_vector, count=5, namespace="company")
             assert len(results) == 1, "Expected results from the query"
+            assert results[0].id == "query_result", "Expected a result id"
