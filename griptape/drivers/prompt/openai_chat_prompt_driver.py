@@ -48,12 +48,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         print("reset tokens in:", response.headers["x-ratelimit-reset-tokens"])
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        s = requests.Session()
-        s.hooks = {
+        openai.requestssession = requests.Session()
+        openai.requestssession.hooks = {
             "response": self.__print_headers
         }
 
-        openai.requestssession = s
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
