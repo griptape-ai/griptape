@@ -18,6 +18,7 @@ class ConversationMemory:
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
+    buffer_size: Optional[int] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.driver and self.autoload:
@@ -37,6 +38,10 @@ class ConversationMemory:
 
     def try_add_run(self, run: Run) -> None:
         self.runs.append(run)
+
+        if self.buffer_size:
+            while len(self.runs) > self.buffer_size:
+                self.runs.pop(0)
 
     def after_add_run(self) -> None:
         if self.driver:

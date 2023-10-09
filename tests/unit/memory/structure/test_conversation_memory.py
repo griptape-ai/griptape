@@ -1,5 +1,8 @@
 import json
 from griptape.memory.structure import ConversationMemory, Run
+from griptape.structures import Pipeline
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from griptape.tasks import PromptTask
 
 
 class TestConversationMemory:
@@ -49,3 +52,20 @@ class TestConversationMemory:
 
         assert isinstance(memory.from_dict(memory_dict), ConversationMemory)
         assert memory.from_dict(memory_dict).runs[0].input == "foo"
+
+    def test_buffering(self):
+        memory = ConversationMemory(buffer_size=2)
+
+        pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
+
+        pipeline.add_tasks(PromptTask())
+
+        pipeline.run("run1")
+        pipeline.run("run2")
+        pipeline.run("run3")
+        pipeline.run("run4")
+        pipeline.run("run5")
+
+        assert len(pipeline.memory.runs) == 2
+        assert pipeline.memory.runs[0].input == 'run4'
+        assert pipeline.memory.runs[1].input == 'run5'
