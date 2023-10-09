@@ -136,10 +136,11 @@ class TestPgVectorVectorStoreDriver:
         namespace = str(uuid.uuid4())
         embedding = vector_store_driver.embedding_driver.embed_string(value)
 
-        vector_store_driver.upsert_vector(embedding, namespace=namespace)
+        vector_id = vector_store_driver.upsert_vector(embedding, namespace=namespace)
         results = vector_store_driver.query(value, namespace=namespace)
 
         assert len(results) == 1
+        assert results[0].id == vector_id
 
     def test_can_query_by_cosine_distance(self, vector_store_driver):
         value = "my string here"

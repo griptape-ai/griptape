@@ -161,6 +161,7 @@ class TestMarqoVectorStorageDriver:
         assert results[0].score == 0.6047464
         assert results[0].meta["Title"] == "Test Title"
         assert results[0].meta["Description"] == "Test description"
+        assert results[0].id == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
 
     def test_search_with_include_vectors(self, driver, mock_marqo):
         # mock_marqo.index().search.return_value = fake_search_response

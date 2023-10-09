@@ -242,3 +242,17 @@ class TestAgent:
 
         assert context["structure"] == agent
         
+
+    def test_tool_memory_defaults(self):
+        prompt_driver = MockPromptDriver()
+        embedding_driver = MockEmbeddingDriver()
+        agent = Agent(
+            prompt_driver=prompt_driver,
+            embedding_driver=embedding_driver
+        )
+
+        assert agent.tool_memory.query_engine.prompt_driver == prompt_driver
+        assert agent.tool_memory.query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert agent.tool_memory.summary_engine.prompt_driver == prompt_driver
+        assert agent.tool_memory.csv_extraction_engine.prompt_driver == prompt_driver
+        assert agent.tool_memory.json_extraction_engine.prompt_driver == prompt_driver
