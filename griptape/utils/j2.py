@@ -20,8 +20,8 @@ class J2:
         kw_only=True
     )
 
-    def render(self, **kwargs):
+    def render(self, **kwargs) -> str:
         return self.environment.get_template(self.template_name).render(kwargs)
 
-    def render_from_string(self, value: str, **kwargs):
+    def render_from_string(self, value: str, **kwargs) -> str:
         return self.environment.from_string(value).render(kwargs)
