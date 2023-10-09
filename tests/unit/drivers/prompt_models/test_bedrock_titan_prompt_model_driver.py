@@ -2,6 +2,7 @@ from unittest import mock
 import json
 import boto3
 import pytest
+from griptape.tokenizers.bedrock_titan_tokenizer import BedrockTitanTokenizer
 from griptape.utils import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockTitanPromptModelDriver
 
@@ -25,7 +26,7 @@ class TestBedrockTitanPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model="foo",
+            model=BedrockTitanTokenizer.DEFAULT_MODEL,
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockTitanPromptModelDriver(),
             temperature=0.12345,

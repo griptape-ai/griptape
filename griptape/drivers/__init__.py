@@ -31,6 +31,7 @@ from .vector.mongodb_vector_store_driver import MongoDbAtlasVectorStoreDriver
 from .vector.redis_vector_store_driver import RedisVectorStoreDriver
 from .vector.opensearch_vector_store_driver import OpenSearchVectorStoreDriver
 from .vector.amazon_opensearch_vector_store_driver import AmazonOpenSearchVectorStoreDriver
+from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -58,19 +59,15 @@ __all__ = [
     "AmazonSageMakerPromptDriver",
     "AmazonBedrockPromptDriver",
     "BaseMultiModelPromptDriver",
-
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "DynamoDbConversationMemoryDriver",
-
     "BaseBlobToolMemoryDriver",
     "LocalBlobToolMemoryDriver",
-
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
     "BedrockTitanEmbeddingDriver",
-
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
@@ -79,13 +76,11 @@ __all__ = [
     "RedisVectorStoreDriver",
     "OpenSearchVectorStoreDriver",
     "AmazonOpenSearchVectorStoreDriver",
-
-
+    "PgVectorVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
     "SqlDriver",
-
     "BasePromptModelDriver",
     "SageMakerLlamaPromptModelDriver",
     "SageMakerFalconPromptModelDriver",

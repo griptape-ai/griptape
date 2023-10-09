@@ -133,9 +133,11 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         for document in results:
             metadata = getattr(document, "metadata", None)
             namespace = document.id.split(":")[0] if ":" in document.id else None
+            vector_id = document.id.split(":")[1] if ":" in document.id else document.id
             vector_float_list = json.loads(document["vec_string"])
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
+                    id=vector_id,
                     vector=vector_float_list,
                     score=float(document['score']),
                     meta=metadata,

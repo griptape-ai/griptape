@@ -61,6 +61,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
 
         result = [
             BaseVectorStoreDriver.QueryResult(
+                id=er[0].id,
                 vector=er[0].vector,
                 score=er[1],
                 meta=er[0].meta
@@ -71,7 +72,13 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
             return result
         else:
             return [
-                BaseVectorStoreDriver.QueryResult([], r.score, r.meta, r.namespace) for r in result
+                BaseVectorStoreDriver.QueryResult(
+                    id=r.id,
+                    vector=[],
+                    score=r.score,
+                    meta=r.meta,
+                    namespace=r.namespace,
+                ) for r in result
             ]
 
     def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):

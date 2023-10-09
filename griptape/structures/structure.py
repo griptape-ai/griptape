@@ -6,14 +6,15 @@ from logging import Logger
 from typing import Optional, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
+from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver, BaseBlobToolMemoryDriver, \
+    LocalBlobToolMemoryDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import ToolMemory
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.drivers import LocalVectorStoreDriver
 
 if TYPE_CHECKING:
@@ -35,6 +36,10 @@ class Structure(ABC):
         default=Factory(lambda: OpenAiEmbeddingDriver()),
         kw_only=True
     )
+    blob_storage_driver: BaseBlobToolMemoryDriver = field(
+        default=Factory(lambda: LocalBlobToolMemoryDriver()),
+        kw_only=True
+    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
@@ -46,11 +51,21 @@ class Structure(ABC):
         default=Factory(
             lambda self: ToolMemory(
                 query_engine=VectorQueryEngine(
+                    prompt_driver=self.prompt_driver,
                     vector_store_driver=LocalVectorStoreDriver(
                         embedding_driver=self.embedding_driver
                     )
                 ),
-                summary_engine=PromptSummaryEngine()
+                summary_engine=PromptSummaryEngine(
+                    prompt_driver=self.prompt_driver
+                ),
+                csv_extraction_engine=CsvExtractionEngine(
+                    prompt_driver=self.prompt_driver
+                ),
+                json_extraction_engine=JsonExtractionEngine(
+                    prompt_driver=self.prompt_driver
+                ),
+                blob_storage_driver=self.blob_storage_driver
             ),
             takes_self=True
         ),

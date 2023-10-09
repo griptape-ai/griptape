@@ -16,11 +16,10 @@ from griptape.tokenizers import HuggingFaceTokenizer
 class HuggingFaceHubPromptDriver(BasePromptDriver):
     """
     Attributes:
-        repo_id: Hugging Face Hub repo ID. 
         api_token: Hugging Face Hub API token.
         use_gpu: Use GPU during model run.
         params: Custom model run parameters. 
-        model: Hugging Face Hub model name. Defaults to `repo_id`.
+        model: Hugging Face Hub model name.
         client: Custom `InferenceApi`.
         tokenizer: Custom `HuggingFaceTokenizer`.
         
@@ -32,15 +31,14 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         "max_new_tokens": MAX_NEW_TOKENS
     }
 
-    repo_id: str = field(kw_only=True)
     api_token: str = field(kw_only=True)
     use_gpu: bool = field(default=False, kw_only=True)
     params: dict = field(factory=dict, kw_only=True)
-    model: str = field(default=Factory(lambda self: self.repo_id, takes_self=True), kw_only=True)
+    model: str = field(kw_only=True)
     client: InferenceApi = field(
         default=Factory(
             lambda self: InferenceApi(
-                repo_id=self.repo_id,
+                repo_id=self.model,
                 token=self.api_token,
                 gpu=self.use_gpu
             ),
@@ -51,7 +49,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=AutoTokenizer.from_pretrained(self.repo_id),
+                tokenizer=AutoTokenizer.from_pretrained(self.model),
                 max_tokens=self.MAX_NEW_TOKENS
             ), takes_self=True
         ),

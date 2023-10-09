@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import datetime
 from schema import Schema, Literal, Optional
-from attr import define
+from attr import define, field
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
@@ -11,7 +11,10 @@ from griptape.tools import BaseGoogleClient
 @define
 class GoogleCalendarClient(BaseGoogleClient):
     CREATE_EVENT_SCOPES = ['https://www.googleapis.com/auth/calendar']
+
     GET_UPCOMING_EVENTS_SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+    owner_email: str = field(kw_only=True)
 
     @activity(config={
         "description": "Can be used to get upcoming events from a google calendar",
@@ -21,27 +24,21 @@ class GoogleCalendarClient(BaseGoogleClient):
                 description="id of the google calendar such as 'primary'"
             ): str,
             Literal(
-                "calendar_owner_email",
-                description="email of the calendar's owner"
-            ): str,
-            Literal(
                 "max_events",
                 description="maximum number of events to return"
             ): int
         })
     })
     def get_upcoming_events(self, params: dict) -> ListArtifact | ErrorArtifact:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
 
         values = params["values"]
 
         try:
-            credentials = service_account.Credentials.from_service_account_info(
-                self.service_account_credentials, scopes=self.GET_UPCOMING_EVENTS_SCOPES
-            )
-            delegated_credentials = credentials.with_subject(values["calendar_owner_email"])
-            service = build('calendar', 'v3', credentials=delegated_credentials)
+            service = self._build_client(
+                scopes=self.GET_UPCOMING_EVENTS_SCOPES,
+                service_name='calendar',
+                version='v3',
+                owner_email=self.owner_email)
             now = datetime.datetime.utcnow().isoformat() + 'Z'
 
             events_result = service.events().list(
@@ -61,24 +58,24 @@ class GoogleCalendarClient(BaseGoogleClient):
         "description": "Can be used to create an event on a google calendar",
         "schema": Schema({
             Literal(
-                "calendar_owner_email",
-                description="email of the calendar's owner"
-            ): str,
-            Literal(
                 "start_datetime",
-                description="combined date-time value in string format according to RFC3399 excluding the timezone for when the meeting starts"
+                description="combined date-time value in string format according to RFC3399 "
+                            "excluding the timezone for when the meeting starts"
             ): str,
             Literal(
                 "start_time_zone",
-                description="time zone in which the start time is specified in string format according to IANA time zone data base name, such as 'Europe/Zurich'"
+                description="time zone in which the start time is specified in string format "
+                            "according to IANA time zone data base name, such as 'Europe/Zurich'"
             ): str,
             Literal(
                 "end_datetime",
-                description="combined date-time value in string format according to RFC3399 excluding the timezone for when the meeting ends"
+                description="combined date-time value in string format according to RFC3399 "
+                            "excluding the timezone for when the meeting ends"
             ): str,
             Literal(
                 "end_time_zone",
-                description="time zone in which the end time is specified in string format according to IANA time zone data base name, such as 'Europe/Zurich'"
+                description="time zone in which the end time is specified in string format "
+                            "according to IANA time zone data base name, such as 'Europe/Zurich'"
             ): str,
             Literal(
                 "title",
@@ -99,17 +96,15 @@ class GoogleCalendarClient(BaseGoogleClient):
         })
     })
     def create_event(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
 
         values = params['values']
 
         try:
-            credentials = service_account.Credentials.from_service_account_info(
-                self.service_account_credentials, scopes=self.CREATE_EVENT_SCOPES
-            )
-            delegated_credentials = credentials.with_subject(values["calendar_owner_email"])
-            service = build('calendar', 'v3', credentials=delegated_credentials)
+            service = self._build_client(
+                scopes=self.CREATE_EVENT_SCOPES,
+                service_name='calendar',
+                version='v3',
+                owner_email=self.owner_email)
 
             event = {
                 'summary': values['title'],

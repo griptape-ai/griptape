@@ -1,4 +1,5 @@
 name: "Init Environment"
+description: "Initialize environment for tests"
 runs:
   using: "composite"
   steps:

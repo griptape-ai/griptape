@@ -7,14 +7,14 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class BedrockTitanTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'amazon.titan-tg1-large'
+    DEFAULT_MODEL = 'amazon.titan-text-express-v1'
     DEFAULT_MAX_TOKENS = 4096
 
     session: boto3.Session = field(
         default=Factory(lambda: boto3.Session()), kw_only=True
     )
     stop_sequences: list[str] = field(factory=list, kw_only=True)
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
             lambda self: self.session.client("bedrock-runtime"),
