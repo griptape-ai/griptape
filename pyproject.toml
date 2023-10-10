@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "griptape"
-version = "0.18.1"
+version = "0.18.2"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
@@ -51,6 +51,7 @@ requests-aws4auth = "1.2.3"
 pandas = "^2.1.0"
 pgvector = "^0.2.3"
 psycopg2-binary = "^2.9.9"
+snowflake-connector-python = "^3.2"
 
 
 [tool.poetry.group.test.dependencies]
