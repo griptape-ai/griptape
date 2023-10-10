@@ -34,7 +34,7 @@ class GoogleGmailClient(BaseGoogleClient):
                 "attachments",
                 description="List of file paths to be attached to the email"
             )): list[str],
-        }, ignore_extra_keys=True)
+        })
     })
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
