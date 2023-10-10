@@ -1,16 +1,17 @@
 from __future__ import annotations
 import imaplib
-import json
 import logging
 import smtplib
 from email.mime.text import MIMEText
-from typing import Optional
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 import schema
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
+from schema import Schema, Literal, Optional
 
 
 @define
@@ -140,7 +141,13 @@ class EmailClient(BaseTool):
             Literal(
                 "body",
                 description="Email body"
-            ): str
+            ): str,
+            Optional(
+                Literal(
+                    "attachments",
+                    description="List of file paths to be attached to the email"
+                )
+            ): list[str]
         })
     })
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
@@ -160,9 +167,30 @@ class EmailClient(BaseTool):
         smtp_host = self.smtp_host
         smtp_port = int(self.smtp_port)
 
-        to_email = input_values["to"]
-        subject = input_values["subject"]
-        msg = MIMEText(input_values["body"])
+        # Create a multipart email and set headers
+        msg = MIMEMultipart()
+        msg["From"] = smtp_user
+        msg["To"] = input_values["to"]
+        msg["Subject"] = input_values["subject"]
+
+        # Attach the body to the email
+        msg.attach(MIMEText(input_values["body"]))
+
+        # Process attachments
+        attachments = input_values.get("attachments", [])
+        for file_path in attachments:
+            try:
+                with open(file_path, "rb") as attachment:
+                    part = MIMEBase("application", "octet-stream")
+                    part.set_payload(attachment.read())
+                    encoders.encode_base64(part)
+                    part.add_header(
+                        "Content-Disposition",
+                        f"attachment; filename= {file_path.split('/')[-1]}"
+                    )
+                    msg.attach(part)
+            except Exception as e:
+                logging.error(f"Error attaching {file_path}: {e}")
 
         try:
             if self.smtp_use_ssl:
@@ -170,17 +198,12 @@ class EmailClient(BaseTool):
             else:
                 server = smtplib.SMTP(smtp_host, smtp_port)
 
-            msg["Subject"] = subject
-            msg["From"] = smtp_user
-            msg["To"] = to_email
-
             server.login(smtp_user, smtp_password)
-            server.sendmail(smtp_user, [to_email], msg.as_string())
+            server.sendmail(smtp_user, [input_values["to"]], msg.as_string())
 
             return InfoArtifact("email was successfully sent")
         except Exception as e:
             logging.error(e)
-
             return ErrorArtifact(f"error sending email: {e}")
         finally:
             try:

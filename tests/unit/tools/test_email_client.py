@@ -19,7 +19,8 @@ class TestEmailClient:
         value = {
             "to": "foo@bar.com",
             "subject": "test",
-            "body": "hello"
+            "body": "hello",
+            "attachments": ["/test/foo/bar.txt"]
         }
 
         assert "error sending email" in EmailClient(
