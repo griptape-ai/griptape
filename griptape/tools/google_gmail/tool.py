@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import base64
 from email.message import EmailMessage
-from schema import Schema, Literal
+from schema import Schema, Literal, Optional
 from attr import define, field
 from griptape.artifacts import InfoArtifact, ErrorArtifact
 from griptape.utils.decorators import activity
@@ -30,10 +30,18 @@ class GoogleGmailClient(BaseGoogleClient):
                 "body",
                 description="body of the email"
             ): str,
-        })
+            Optional(Literal(
+                "attachments",
+                description="List of file paths to be attached to the email"
+            )): list[str],
+        }, ignore_extra_keys=True)
     })
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
+        to_address = values.get("to")
+        subject = values.get("subject")
+        body = values.get("body")
+        attachments = values.get("attachments", [])
 
         try:
             service = self._build_client(
@@ -44,10 +52,17 @@ class GoogleGmailClient(BaseGoogleClient):
             )
 
             message = EmailMessage()
-            message.set_content(values["body"])
-            message['To'] = values["to"]
+            message.set_content(body)
+            message['To'] = to_address
             message['From'] = self.owner_email
-            message['Subject'] = values["subject"]
+            message['Subject'] = subject
+
+            for attachment in attachments:
+                with open(attachment, "rb") as f:
+                    file_data = f.read()
+                    file_name = attachment.split("/")[-1]
+                    message.add_attachment(file_data, maintype='application',
+                                           subtype='octet-stream', filename=file_name)
 
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
             create_message = {
