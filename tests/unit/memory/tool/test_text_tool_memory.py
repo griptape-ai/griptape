@@ -1,27 +1,14 @@
 import pytest
 from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine
-from griptape.memory.tool import TextToolMemory
 from griptape.tasks import ActionSubtask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_tool.tool import MockTool
+from tests.utils import defaults
 
 
 class TestTextToolMemory:
     @pytest.fixture
     def memory(self):
-        vector_store_driver = LocalVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver()
-        )
-
-        return TextToolMemory(
-            name="MyMemory",
-            query_engine=VectorQueryEngine(
-                vector_store_driver=vector_store_driver
-            ),
-            summary_engine=PromptSummaryEngine()
-        )
+        return defaults.text_tool_memory("MyMemory")
 
     def test_init(self, memory):
         assert memory.name == "MyMemory"

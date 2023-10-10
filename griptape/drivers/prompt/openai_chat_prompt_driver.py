@@ -17,7 +17,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         api_version: API version. 
         api_base: API URL.
         api_key: API key to pass directly; by default uses `OPENAI_API_KEY_PATH` environment variable.
-        max_tokens: Optional maximum return tokens. If not specified, the value will be automatically generated based by the tokenizer.
+        max_tokens: Optional maximum return tokens. If not specified, no value will be passed to the API. If set, the
+            value will be bounded to the maximum possible as determined by the tokenizer.
         model: OpenAI model name. Uses `gpt-4` by default.
         organization: OpenAI organization.
         tokenizer: Custom `OpenAiTokenizer`.
@@ -62,9 +63,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
-        return {
+        params = {
             "model": self.model,
-            "max_tokens": self.max_output_tokens(messages),
             "temperature": self.temperature,
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
@@ -75,6 +75,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "api_type": self.api_type,
             "messages": messages
         }
+
+        # A max_tokens parameter is not required, but if it is specified by the caller, bound it to
+        # the maximum value as determined by the tokenizer and pass it to the API.
+        if self.max_tokens:
+            params["max_tokens"] = self.max_output_tokens(messages)
+
+        return params
 
     def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
         if prompt_input.is_system():
