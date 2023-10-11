@@ -41,12 +41,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
         default=Factory(lambda: openai.InvalidRequestError), kw_only=True
     )
-    _ratelimit_request_limit: Optional[int] = field(init=False, default=None)
-    _ratelimit_requests_remaining: Optional[int] = field(init=False, default=None)
-    _ratelimit_requests_reset_at: Optional[datetime] = field(init=False, default=None)
-    _ratelimit_token_limit: Optional[int] = field(init=False, default=None)
-    _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
-    _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
+    __ratelimit_request_limit: Optional[int] = field(init=False, default=None)
+    __ratelimit_requests_remaining: Optional[int] = field(init=False, default=None)
+    __ratelimit_requests_reset_at: Optional[datetime] = field(init=False, default=None)
+    __ratelimit_token_limit: Optional[int] = field(init=False, default=None)
+    __ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
+    __ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         # Define a hook to pull rate limit metadata from the OpenAI API response header.
@@ -68,42 +68,42 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         """Returns the maximum number of requests allowed before the reset time.
         This value is None until the first request is made.
         """
-        return self._ratelimit_request_limit
+        return self.__ratelimit_request_limit
 
     @property
     def ratelimit_requests_remaining(self) -> Optional[int]:
         """Returns the remaining number of requests allowed before the reset time.
         This value is None until the first request is made.
         """
-        return self._ratelimit_requests_remaining
+        return self.__ratelimit_requests_remaining
 
     @property
     def ratelimit_requests_reset_at(self) -> Optional[datetime]:
         """Returns the time at which the request limit will be reset.
         This value is None until the first request is made.
         """
-        return self._ratelimit_requests_reset_at
+        return self.__ratelimit_requests_reset_at
 
     @property
     def ratelimit_token_limit(self) -> Optional[int]:
         """Returns the maximum number of tokens that may be consumed before the reset time.
         This value is None until the first request is made.
         """
-        return self._ratelimit_token_limit
+        return self.__ratelimit_token_limit
 
     @property
     def ratelimit_tokens_remaining(self) -> Optional[int]:
         """Returns the remaining number of tokens that may be consumed before the reset time.
         This value is None until the first request is made.
         """
-        return self._ratelimit_tokens_remaining
+        return self.__ratelimit_tokens_remaining
 
     @property
     def ratelimit_tokens_reset_at(self) -> Optional[datetime]:
         """Returns the time at which the token limit will be reset.
         This value is None until the first request is made.
         """
-        return self._ratelimit_tokens_reset_at
+        return self.__ratelimit_tokens_reset_at
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         return [{"role": self.__to_openai_role(i), "content": i.content} for i in prompt_stack.inputs]
@@ -143,21 +143,21 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         # The dateparser utility doesn't handle sub-second durations as are sometimes returned by OpenAI's API.
         # If the API returns, for example, "13ms", dateparser.parse() returns None. In this case, we will set
         # the time value to the current time plus a one second buffer.
-        self._ratelimit_requests_reset_at = dateparser.parse(
+        self.__ratelimit_requests_reset_at = dateparser.parse(
             response.headers["x-ratelimit-reset-requests"],
             settings={"PREFER_DATES_FROM": "future"},
         )
-        if self._ratelimit_requests_reset_at is None:
-            self._ratelimit_requests_reset_at = datetime.now() + timedelta(seconds=1)
+        if self.__ratelimit_requests_reset_at is None:
+            self.__ratelimit_requests_reset_at = datetime.now() + timedelta(seconds=1)
 
-        self._ratelimit_tokens_reset_at = dateparser.parse(
+        self.__ratelimit_tokens_reset_at = dateparser.parse(
             response.headers["x-ratelimit-reset-tokens"],
             settings={"PREFER_DATES_FROM": "future"},
         )
-        if self._ratelimit_tokens_reset_at is None:
-            self._ratelimit_tokens_reset_at = datetime.now() + timedelta(seconds=1)
+        if self.__ratelimit_tokens_reset_at is None:
+            self.__ratelimit_tokens_reset_at = datetime.now() + timedelta(seconds=1)
 
-        self._ratelimit_request_limit = response.headers["x-ratelimit-limit-requests"]
-        self._ratelimit_requests_remaining = response.headers["x-ratelimit-remaining-requests"]
-        self._ratelimit_token_limit = response.headers["x-ratelimit-limit-tokens"]
-        self._ratelimit_tokens_remaining = response.headers["x-ratelimit-remaining-tokens"]
+        self.__ratelimit_request_limit = response.headers["x-ratelimit-limit-requests"]
+        self.__ratelimit_requests_remaining = response.headers["x-ratelimit-remaining-requests"]
+        self.__ratelimit_token_limit = response.headers["x-ratelimit-limit-tokens"]
+        self.__ratelimit_tokens_remaining = response.headers["x-ratelimit-remaining-tokens"]
