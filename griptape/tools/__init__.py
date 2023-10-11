@@ -15,7 +15,7 @@ from .aws_s3_client.tool import AwsS3Client
 from .computer.tool import Computer
 from .proxycurl_client.tool import ProxycurlClient
 from .base_google_client import BaseGoogleClient
-from .google_gmail.tool import GoogleGmailClient
+from .google_gmail_client.tool import GoogleGmailClient
 from .google_cal.tool import GoogleCalendarClient
 from .google_docs.tool import GoogleDocsClient
 from .google_drive.tool import GoogleDriveClient

@@ -30,10 +30,10 @@ class GoogleGmailClient(BaseGoogleClient):
                 "body",
                 description="body of the email"
             ): str,
-            Optional(Literal(
+            Optional(
                 "attachments",
                 description="List of file paths to be attached to the email"
-            )): list[str],
+            ): list[str],
         })
     })
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:

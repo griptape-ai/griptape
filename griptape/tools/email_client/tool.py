@@ -143,16 +143,16 @@ class EmailClient(BaseTool):
                 description="Email body"
             ): str,
             Optional(
-                Literal(
-                    "attachments",
-                    description="List of file paths to be attached to the email"
-                )
+                "attachments",
+                description="List of file paths to be attached to the email"
             ): list[str]
         })
     })
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         input_values = params["values"]
         server: Optional[smtplib.SMTP] = None
+        to_email = input_values["to"]
+        subject = input_values["subject"]
 
         # email username can be overridden by setting the smtp user explicitly
         smtp_user = self.smtp_user
@@ -170,8 +170,8 @@ class EmailClient(BaseTool):
         # Create a multipart email and set headers
         msg = MIMEMultipart()
         msg["From"] = smtp_user
-        msg["To"] = input_values["to"]
-        msg["Subject"] = input_values["subject"]
+        msg["To"] = to_email
+        msg["Subject"] = subject
 
         # Attach the body to the email
         msg.attach(MIMEText(input_values["body"]))
@@ -191,6 +191,7 @@ class EmailClient(BaseTool):
                     msg.attach(part)
             except Exception as e:
                 logging.error(f"Error attaching {file_path}: {e}")
+                return ErrorArtifact(f"Error attaching {file_path}: {e}")
 
         try:
             if self.smtp_use_ssl:
