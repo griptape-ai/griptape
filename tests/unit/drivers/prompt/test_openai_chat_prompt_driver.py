@@ -3,7 +3,7 @@ import datetime
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.utils import PromptStack
 from griptape.tokenizers import OpenAiTokenizer
-from unittest.mock import ANY, Mock
+from unittest.mock import  Mock
 import pytest
 
 
@@ -99,7 +99,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             api_base=driver.api_base,
             api_type=driver.api_type,
             messages=messages,
-            stream=driver.stream,
         )
         assert text_artifact.value == 'model-output'
 
@@ -108,7 +107,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         mock_chat_completion_stream_create.assert_called_once_with(
@@ -121,7 +120,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
-            stream=driver.stream,
+            stream=True,
             messages=messages
         )
         assert text_artifact.value == "model-output"
@@ -147,7 +146,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
-            stream=driver.stream,
             messages=messages,
             max_tokens=1,
         )
@@ -176,7 +174,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
-            stream=driver.stream,
             messages=messages,
             max_tokens=tokens_left,
         )

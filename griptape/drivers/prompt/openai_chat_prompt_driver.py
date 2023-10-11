@@ -1,12 +1,12 @@
+from __future__ import annotations
 import os
-from typing import Optional
+from typing import Iterator, Optional
 import openai
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.events import CompletionChunkEvent
 from typing import Tuple, Type
 import dateparser
 from datetime import datetime, timedelta
@@ -62,33 +62,26 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
 
-        if self.stream:
-            tokens = []
-
-            for chunk in result:
-                if len(chunk.choices) == 1:
-                    delta = chunk.choices[0]["delta"]
-                else:
-                    raise Exception("Completion with more than one choice is not supported yet.")
-
-                if "content" in delta:
-                    delta_content = delta["content"]
-                    tokens.append(delta_content)
-
-                    if self.structure:
-                        self.structure.publish_event(
-                            CompletionChunkEvent(token=delta_content)
-                        )
-            full_message = ''.join(tokens)
-
-            return TextArtifact(value=full_message)
+        if len(result.choices) == 1:
+            return TextArtifact(
+                value=result.choices[0]["message"]["content"].strip()
+            )
         else:
-            if len(result.choices) == 1:
-                return TextArtifact(
-                    value=result.choices[0]["message"]["content"].strip()
-                )
+            raise Exception("Completion with more than one choice is not supported yet.")
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        result = openai.ChatCompletion.create(**self._base_params(prompt_stack), stream=True)
+
+        for chunk in result:
+            if len(chunk.choices) == 1:
+                delta = chunk.choices[0]["delta"]
             else:
                 raise Exception("Completion with more than one choice is not supported yet.")
+
+            if "content" in delta:
+                delta_content = delta["content"]
+
+                yield TextArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         return self.tokenizer.token_count(self._prompt_stack_to_messages(prompt_stack))

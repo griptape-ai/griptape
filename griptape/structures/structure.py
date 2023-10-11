@@ -8,6 +8,8 @@ from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
+from griptape.events.finish_structure_run_event import FinishStructureRunEvent
+from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.tool import BaseToolMemory, TextToolMemory
 from griptape.rules import Ruleset, Rule
@@ -25,10 +27,12 @@ class Structure(ABC):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
+    stream: bool = field(default=False, kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
-        )),
+        default=Factory(lambda self: OpenAiChatPromptDriver(
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL,
+            stream=self.stream
+        ), takes_self=True),
         kw_only=True
     )
     embedding_driver: BaseEmbeddingDriver = field(
@@ -129,6 +133,16 @@ class Structure(ABC):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
+    def add_event_listener(self, event_type: Type[BaseEvent], event_listener: Callable) -> None:
+        if isinstance(self.event_listeners, list):
+            if event_listener not in self.event_listeners:
+                self.event_listeners.append(event_listener)
+        elif isinstance(self.event_listeners, dict):
+            if event_type not in self.event_listeners:
+                self.event_listeners[event_type] = [event_listener]
+            elif event_listener not in self.event_listeners[event_type]:
+                self.event_listeners[event_type].append(event_listener)
+
     def publish_event(self, event: BaseEvent) -> None:
         if isinstance(self.event_listeners, dict):
             listeners = self.event_listeners.get(type(event), [])
@@ -144,10 +158,25 @@ class Structure(ABC):
             "structure": self,
         }
 
+    def before_run(self) -> None:
+        self.publish_event(StartStructureRunEvent())
+
+    def after_run(self) -> None:
+        self.publish_event(FinishStructureRunEvent())
+
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask:
         ...
 
-    @abstractmethod
     def run(self, *args) -> BaseTask | list[BaseTask]:
+        self.before_run()
+
+        result = self.try_run(*args)
+
+        self.after_run()
+        
+        return result
+
+    @abstractmethod
+    def try_run(self, *args) -> BaseTask | list[BaseTask]:
         ...

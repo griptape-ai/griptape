@@ -1,10 +1,10 @@
+from typing import Iterator
 import cohere
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
 from griptape.utils import PromptStack
-from griptape.events import CompletionChunkEvent
 
 
 @define
@@ -27,32 +27,11 @@ class CoherePromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        prompt = self.prompt_stack_to_string(prompt_stack)
         result = self.client.generate(
-            prompt=prompt,
-            model=self.model,
-            temperature=self.temperature,
-            end_sequences=self.tokenizer.stop_sequences,
-            max_tokens=self.max_output_tokens(prompt),
-            stream=self.stream
+            **self._base_params(prompt_stack)
         )
 
-        
-        if self.stream:
-            tokens = []
-
-            for chunk in result:
-                text = chunk.text
-                tokens.append(text)
-
-                if self.structure:
-                    self.structure.publish_event(
-                        CompletionChunkEvent(token=text)
-                    )
-            full_message = ''.join(tokens)
-
-            return TextArtifact(value=full_message)
-        else:
+        if result.generations:
             if len(result.generations) == 1:
                 generation = result.generations[0]
 
@@ -60,4 +39,26 @@ class CoherePromptDriver(BasePromptDriver):
                     value=generation.text.strip()
                 )
             else:
-                raise Exception("Completion with more than one choice is not supported yet.")
+                raise Exception("completion with more than one choice is not supported yet")
+        else:
+            raise Exception("model response is empty")
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        result = self.client.generate(
+            **self._base_params(prompt_stack),
+            stream=True
+        )
+
+        for chunk in result:
+            yield TextArtifact(value=chunk.text)
+
+
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        prompt = self.prompt_stack_to_string(prompt_stack)
+        return {
+            "prompt": self.prompt_stack_to_string(prompt_stack),
+            "model": self.model,
+            "temperature": self.temperature,
+            "end_sequences": self.tokenizer.stop_sequences,
+            "max_tokens": self.max_output_tokens(prompt),
+        }

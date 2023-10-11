@@ -86,7 +86,7 @@ class TestAmazonBedrockPromptDriver:
         mock_client.invoke_model_with_response_stream.return_value = { 'body': response_body }
         
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         mock_prompt_model_driver.prompt_stack_to_model_input.assert_called_once_with(prompt_stack)

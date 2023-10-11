@@ -1,10 +1,9 @@
 from typing import Optional
 import json
 from attr import define, field
-from typing import Optional
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
-from griptape.drivers import BasePromptModelDriver, BasePromptDriver
+from griptape.drivers import BasePromptModelDriver
 from griptape.tokenizers import BedrockJurassicTokenizer
 from griptape.drivers import AmazonBedrockPromptDriver
 
@@ -12,7 +11,6 @@ from griptape.drivers import AmazonBedrockPromptDriver
 @define
 class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.9, kw_only=True)
-    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     _tokenizer: BedrockJurassicTokenizer = field(default=None, kw_only=True)
     prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 

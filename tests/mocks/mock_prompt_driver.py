@@ -1,3 +1,4 @@
+from typing import Iterator
 from attr import define, field
 from griptape.events import CompletionChunkEvent
 from griptape.utils import PromptStack
@@ -13,6 +14,7 @@ class MockPromptDriver(BasePromptDriver):
     mock_output: str = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        if self.structure:
-            self.structure.publish_event(CompletionChunkEvent(token=self.mock_output))
         return TextArtifact(value=self.mock_output)
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        yield TextArtifact(value=self.mock_output)

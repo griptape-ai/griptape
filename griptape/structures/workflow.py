@@ -24,7 +24,7 @@ class Workflow(Structure):
 
         return task
 
-    def run(self, *args) -> list[BaseTask]:
+    def try_run(self, *args) -> list[BaseTask]:
         self._execution_args = args
         ordered_tasks = self.order_tasks()
         exit_loop = False

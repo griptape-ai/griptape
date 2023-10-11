@@ -35,7 +35,6 @@ class TestAzureOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixt
             api_base=driver.api_base,
             api_type=driver.api_type,
             prompt=prompt,
-            stream=driver.stream,
             deployment_id='deployment-id',
         )
         assert text_artifact.value == 'model-output'
@@ -50,7 +49,7 @@ class TestAzureOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixt
         )
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         mock_completion_stream_create.assert_called_once_with(

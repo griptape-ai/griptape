@@ -1,14 +1,14 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable
+from typing import TYPE_CHECKING, Iterator, Optional, Callable
 from attr import define, field, Factory
-from griptape.events import StartPromptEvent, FinishPromptEvent
+from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
 from griptape.utils import PromptStack
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
+from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextArtifact
     from griptape.structures import Structure
 
 
@@ -24,10 +24,9 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         ),
         kw_only=True
     )
-    stream: bool = field(default=False, kw_only=True)
-
     model: str
     tokenizer: BaseTokenizer
+    stream: bool = field(default=False, kw_only=True)
 
     def max_output_tokens(self, text: str) -> int:
         tokens_left = self.tokenizer.tokens_left(text)
@@ -42,28 +41,44 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
             self.prompt_stack_to_string(prompt_stack)
         )
 
+    def before_run(self, prompt_stack: PromptStack) -> None:
+        if self.structure:
+            self.structure.publish_event(
+                StartPromptEvent(
+                    token_count=self.token_count(prompt_stack)
+                )
+            )
+
+
+    def after_run(self, result: TextArtifact) -> None:
+        if self.structure:
+            self.structure.publish_event(
+                FinishPromptEvent(
+                    token_count=result.token_count(self.tokenizer)
+                )
+            )
+
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:
-                if self.structure:
-                    self.structure.publish_event(
-                        StartPromptEvent(
-                            token_count=self.token_count(prompt_stack)
-                        )
-                    )
+                self.before_run(prompt_stack)
 
-                result = self.try_run(prompt_stack)
-                
-                if self.structure:
-                    self.structure.publish_event(
-                        FinishPromptEvent(
-                            token_count=result.token_count(self.tokenizer)
-                        )
-                    )
+                if self.stream:
+                    tokens = []
+                    completion_chunks = self.try_stream(prompt_stack)
+                    for chunk in completion_chunks:
+                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
+                        tokens.append(chunk.value)
+                    result = TextArtifact(value="".join(tokens).strip())
+                else:
+                    result = self.try_run(prompt_stack)
+                    result.value = result.value.strip()
 
-                result.value = result.value.strip()
+                self.after_run(result)
 
                 return result
+        else:
+            raise Exception("prompt driver failed after all retry attempts")
 
     def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
         prompt_lines = []
@@ -82,4 +97,8 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
 
     @abstractmethod
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+        ...
+
+    @abstractmethod
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         ...

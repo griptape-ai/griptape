@@ -35,7 +35,7 @@ class Pipeline(Structure):
 
         return task
 
-    def run(self, *args) -> BaseTask:
+    def try_run(self, *args) -> BaseTask:
         self._execution_args = args
 
         [task.reset() for task in self.tasks]

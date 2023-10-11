@@ -62,7 +62,7 @@ class TestAnthropicPromptDriver:
         driver = AnthropicPromptDriver(model=AnthropicTokenizer.DEFAULT_MODEL, api_key='api-key', stream=True)
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         mock_completion_stream_create.assert_called_once_with(

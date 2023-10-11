@@ -52,7 +52,7 @@ class TestCoherePromptDriver:
         driver = CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key='api-key', stream=True)
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         assert text_artifact.value == 'model-output'

@@ -31,7 +31,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
-            stream=driver.stream,
             messages=messages,
             deployment_id='deployment-id'
         )
@@ -47,7 +46,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         mock_chat_completion_stream_create.assert_called_once_with(
@@ -60,7 +59,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
-            stream=driver.stream,
+            stream=True,
             messages=messages,
             deployment_id='deployment-id',
         )

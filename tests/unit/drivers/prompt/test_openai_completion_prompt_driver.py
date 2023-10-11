@@ -62,7 +62,6 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
-            stream=driver.stream,
             prompt=prompt
         )
         assert text_artifact.value == 'model-output'
@@ -72,7 +71,7 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
         driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         mock_completion_stream_create.assert_called_once_with(
@@ -86,7 +85,7 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
-            stream=driver.stream,
+            stream=True,
             prompt=prompt
         )
         assert text_artifact.value == 'model-output'
