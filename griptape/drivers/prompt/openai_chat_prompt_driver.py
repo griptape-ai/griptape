@@ -39,55 +39,14 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     )
     user: str = field(default="", kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
-        default=Factory(lambda: (openai.InvalidRequestError)), kw_only=True
+        default=Factory(lambda: openai.InvalidRequestError), kw_only=True
     )
-    __ratelimit_request_limit: int = field(default=Factory(lambda: 0))
-    __ratelimit_requests_remaining: int = field(default=Factory(lambda: 0))
-    __ratelimit_requests_reset_at: datetime = field(default=Factory(lambda: datetime.now()))
-    __ratelimit_token_limit: int = field(default=Factory(lambda: 0))
-    __ratelimit_tokens_remaining: int = field(default=Factory(lambda: 0))
-    __ratelimit_tokens_reset_at: datetime = field(default=Factory(lambda: datetime.now()))
-
-    @property
-    def ratelimit_request_limit(self) -> int:
-        """Returns the maximum number of requests allowed before the reset time."""
-        return self.__ratelimit_request_limit
-
-    @property
-    def ratelimit_requests_remaining(self) -> int:
-        """Returns the remaining number of requests allowed before the reset time."""
-        return self.__ratelimit_requests_remaining
-
-    @property
-    def ratelimit_requests_reset_at(self) -> datetime:
-        """Returns the time at which the request limit will be reset."""
-        return self.__ratelimit_requests_reset_at
-
-    @property
-    def ratelimit_token_limit(self) -> int:
-        """Returns the maximum number of tokens that may be consumed before the reset time."""
-        return self.__ratelimit_token_limit
-
-    @property
-    def ratelimit_tokens_remaining(self) -> int:
-        """Returns the remaining number of tokens that may be consumed before the reset time."""
-        return self.__ratelimit_tokens_remaining
-
-    @property
-    def ratelimit_tokens_reset_at(self) -> datetime:
-        """Returns the time at which the token limit will be reset."""
-        return self.__ratelimit_tokens_reset_at
-
-    def __extract_ratelimit_metadata(self, response, *args, **kwargs):
-        reset_requests_duration_sec = timeparse(response.headers["x-ratelimit-reset-requests-in"])
-        self.__ratelimit_request_reset_at = datetime.now() + timedelta(seconds=reset_requests_duration_sec)
-        self.__ratelimit_request_limit = response.headers["x-ratelimit-limit-requests"]
-        self.__ratelimit_requests_remaining = response.headers["x-ratelimit-remaining-requests"]
-
-        reset_token_duration_sec = timeparse(response.headers["x-ratelimit-reset-tokens-in"])
-        self.__ratelimit_token_reset_at = datetime.now() + timedelta(seconds=reset_token_duration_sec)
-        self.__ratelimit_token_limit = response.headers["x-ratelimit-limit-tokens"]
-        self.__ratelimit_tokens_remaining = response.headers["x-ratelimit-remaining-tokens"]
+    __ratelimit_request_limit: Optional[int] = field(default=None)
+    __ratelimit_requests_remaining: Optional[int] = field(default=None)
+    __ratelimit_requests_reset_at: Optional[datetime] = field(default=None)
+    __ratelimit_token_limit: Optional[int] = field(default=None)
+    __ratelimit_tokens_remaining: Optional[int] = field(default=None)
+    __ratelimit_tokens_reset_at: Optional[datetime] = field(default=None)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         # Define a hook to pull rate limit metadata from the OpenAI API response header.
@@ -137,3 +96,55 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return "assistant"
         else:
             return "user"
+    @property
+    def ratelimit_request_limit(self) -> Optional[int]:
+        """Returns the maximum number of requests allowed before the reset time.
+        This value is unknown until the first request is made.
+        """
+        return self.__ratelimit_request_limit
+
+    @property
+    def ratelimit_requests_remaining(self) -> Optional[int]:
+        """Returns the remaining number of requests allowed before the reset time.
+        This value is unknown until the first request is made.
+        """
+        return self.__ratelimit_requests_remaining
+
+    @property
+    def ratelimit_requests_reset_at(self) -> Optional[datetime]:
+        """Returns the time at which the request limit will be reset.
+        This value is unknown until the first request is made.
+        """
+        return self.__ratelimit_requests_reset_at
+
+    @property
+    def ratelimit_token_limit(self) -> Optional[int]:
+        """Returns the maximum number of tokens that may be consumed before the reset time.
+        This value is unknown until the first request is made.
+        """
+        return self.__ratelimit_token_limit
+
+    @property
+    def ratelimit_tokens_remaining(self) -> Optional[int]:
+        """Returns the remaining number of tokens that may be consumed before the reset time.
+        This value is unknown until the first request is made.
+        """
+        return self.__ratelimit_tokens_remaining
+
+    @property
+    def ratelimit_tokens_reset_at(self) -> Optional[datetime]:
+        """Returns the time at which the token limit will be reset.
+        This value is unknown until the first request is made.
+        """
+        return self.__ratelimit_tokens_reset_at
+
+    def __extract_ratelimit_metadata(self, response, *args, **kwargs):
+        reset_requests_duration_sec = timeparse(response.headers["x-ratelimit-reset-requests-in"])
+        self.__ratelimit_request_reset_at = datetime.now() + timedelta(seconds=reset_requests_duration_sec)
+        self.__ratelimit_request_limit = response.headers["x-ratelimit-limit-requests"]
+        self.__ratelimit_requests_remaining = response.headers["x-ratelimit-remaining-requests"]
+
+        reset_token_duration_sec = timeparse(response.headers["x-ratelimit-reset-tokens-in"])
+        self.__ratelimit_token_reset_at = datetime.now() + timedelta(seconds=reset_token_duration_sec)
+        self.__ratelimit_token_limit = response.headers["x-ratelimit-limit-tokens"]
+        self.__ratelimit_tokens_remaining = response.headers["x-ratelimit-remaining-tokens"]
