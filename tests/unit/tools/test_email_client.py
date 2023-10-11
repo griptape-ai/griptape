@@ -23,7 +23,7 @@ class TestEmailClient:
             "attachments": ["/test/foo/bar.txt"]
         }
 
-        assert "error sending email" in EmailClient(
+        assert "Error attaching" in EmailClient(
             smtp_host="",
             smtp_port=0
         ).send({"values": value}).value
