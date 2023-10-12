@@ -80,7 +80,8 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                 stack.add_user_input(self.generate_user_subtask_template(s))
 
         if memory:
-            memory.add_to_prompt_stack(stack, 1)
+            # inserting at index 1 to place memory right after system prompt
+            stack.add_conversation_memory(memory, 1)
 
         return stack
 

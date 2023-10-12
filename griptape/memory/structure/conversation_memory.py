@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.memory.structure import Run
 from griptape.utils import PromptStack
-from griptape.utils import Conversation
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver
@@ -25,53 +24,6 @@ class ConversationMemory:
             memory = self.driver.load()
             if memory is not None:
                 [self.add_run(r) for r in memory.runs]
-
-    def add_to_prompt_stack(self, stack: PromptStack, index: Optional[int]=None) -> None:
-        """Add the Conversation Memory runs to the Prompt Stack.
-
-        If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack
-        as possible without exceeding the token limit.
-
-        Args:
-            stack: The Prompt Stack to add the Conversation Memory runs to.
-            index: Optional index to insert the Monversation Memory runs at.
-                   Defaults to appending to the end of the Prompt Stack.
-        """
-        runs_to_fit_in_prompt = len(self.runs)
-
-        if self.autoprune and hasattr(self, "structure"):
-            should_prune = True
-            prompt_driver = self.structure.prompt_driver
-            temp_stack = PromptStack()
-
-            # Try to determine how many Conversation Memory runs we can 
-            # fit into the Prompt Stack without exceeding the token limit.
-            while should_prune and runs_to_fit_in_prompt > 0:
-                temp_stack.inputs = stack.inputs.copy()
-
-                # Add n runs from Conversation Memory.
-                # Where we insert into the Prompt Stack doesn't matter here
-                # since we only care about the total token count.
-                memory_inputs = Conversation(self).prompt_stack(runs_to_fit_in_prompt).inputs
-                temp_stack.inputs.extend(memory_inputs)
-
-                # Convert the prompt stack into tokens left.
-                prompt_string = prompt_driver.prompt_stack_to_string(temp_stack)
-                tokens_left = prompt_driver.tokenizer.tokens_left(prompt_string)
-                if tokens_left > 0:
-                    # There are still tokens left, no need to prune.
-                    should_prune = False
-                else:
-                    # There were not any tokens left, prune one run and try again.
-                    runs_to_fit_in_prompt -= 1
-
-        if runs_to_fit_in_prompt:
-            memory_inputs = Conversation(self).prompt_stack(runs_to_fit_in_prompt).inputs
-            if index:
-                stack.inputs[index:index] = memory_inputs
-            else:
-                stack.inputs.extend(memory_inputs)
-            
 
     def add_run(self, run: Run) -> ConversationMemory:
         self.before_add_run()
@@ -100,6 +52,14 @@ class ConversationMemory:
         from griptape.schemas import ConversationMemorySchema
 
         return dict(ConversationMemorySchema().dump(self))
+
+    def to_prompt_stack(self, last_n: Optional[int]=None) -> PromptStack:
+        prompt_stack = PromptStack()
+        runs = self.runs[-last_n:] if last_n else self.runs
+        for run in runs:
+            prompt_stack.add_user_input(run.input)
+            prompt_stack.add_assistant_input(run.output)
+        return prompt_stack
 
     @classmethod
     def from_dict(cls, memory_dict: dict) -> ConversationMemory:

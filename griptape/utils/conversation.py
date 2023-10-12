@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from attr import define, field
-from .prompt_stack import PromptStack
 
 if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
@@ -20,12 +19,13 @@ class Conversation:
 
         return lines
 
-    def prompt_stack(self, last_n: int) -> PromptStack:
-        prompt_stack = PromptStack()
-        for run in self.memory.runs[-last_n:]:
-            prompt_stack.add_user_input(run.input)
-            prompt_stack.add_assistant_input(run.output)
-        return prompt_stack
+    def prompt_stack(self) -> list[str]:
+        lines = []
+
+        for stack in self.memory.to_prompt_stack().inputs:
+            lines.append(f"{stack.role}: {stack.content}")
+
+        return lines
 
     def __str__(self) -> str:
         return str.join("\n", self.lines())
