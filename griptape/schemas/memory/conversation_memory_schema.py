@@ -8,6 +8,7 @@ class ConversationMemorySchema(BaseSchema):
 
     type = fields.Str()
     runs = fields.List(fields.Nested(RunSchema()))
+    buffer_size = fields.Int()
 
     @post_load
     def make_obj(self, data, **kwargs):
