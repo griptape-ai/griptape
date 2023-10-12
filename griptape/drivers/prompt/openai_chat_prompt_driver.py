@@ -26,6 +26,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         organization: OpenAI organization.
         tokenizer: Custom `OpenAiTokenizer`.
         user: OpenAI user.
+        _ratelimit_request_limit: The maximum number of requests allowed in the current rate limit window.
+        _ratelimit_requests_remaining: The number of requests remaining in the current rate limit window.
+        _ratelimit_requests_reset_at: The time at which the current rate limit window resets.
+        _ratelimit_token_limit: The maximum number of tokens allowed in the current rate limit window.
+        _ratelimit_tokens_remaining: The number of tokens remaining in the current rate limit window.
+        _ratelimit_tokens_reset_at: The time at which the current rate limit window resets.
     """
 
     api_type: str = field(default=openai.api_type, kw_only=True)
