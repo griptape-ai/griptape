@@ -28,6 +28,10 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
     query_engine: BaseQueryEngine = field(
         kw_only=True
     )
+    blob_storage_driver: BaseBlobToolMemoryDriver = field(
+        default=Factory(lambda: LocalBlobToolMemoryDriver()),
+        kw_only=True
+    )
     summary_engine: BaseSummaryEngine = field(
         kw_only=True,
         default=Factory(lambda: PromptSummaryEngine())
@@ -39,10 +43,6 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
     json_extraction_engine: JsonExtractionEngine = field(
         kw_only=True,
         default=Factory(lambda: JsonExtractionEngine())
-    )
-    blob_storage_driver: BaseBlobToolMemoryDriver = field(
-        default=Factory(lambda: LocalBlobToolMemoryDriver()),
-        kw_only=True
     )
 
     def process_output(
@@ -106,10 +106,18 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
             return output_artifact
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
-        return self.query_engine.load_artifacts(namespace)
+        storage = self.namespace_metadata.get("namespace", {}).get("storage")
 
-        # TODO: integrate blob artifacts:
-        # return self.blob_storage_driver.load(namespace)
+        if storage:
+            if isinstance(storage, BaseQueryEngine):
+                return storage.load_artifacts(namespace)
+            elif isinstance(storage, BaseBlobToolMemoryDriver):
+                return ListArtifact(storage.load(namespace))
+            else:
+                return ListArtifact()
+        else:
+            return ListArtifact()
+
     def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
         if memory_name == self.name:
             return self
