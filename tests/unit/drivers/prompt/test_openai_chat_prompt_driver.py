@@ -214,10 +214,10 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
         driver._extract_ratelimit_metadata(response_with_headers)
 
-        assert driver.ratelimit_requests_remaining == response_with_headers.remaining_requests
-        assert driver.ratelimit_tokens_remaining == response_with_headers.remaining_tokens
-        assert driver.ratelimit_request_limit == response_with_headers.limit_requests
-        assert driver.ratelimit_token_limit == response_with_headers.limit_tokens
+        assert driver._ratelimit_requests_remaining == response_with_headers.remaining_requests
+        assert driver._ratelimit_tokens_remaining == response_with_headers.remaining_tokens
+        assert driver._ratelimit_request_limit == response_with_headers.limit_requests
+        assert driver._ratelimit_token_limit == response_with_headers.limit_tokens
 
         # Assert that the reset times are within one second of the expected value.
         expected_request_reset_time = datetime.datetime.now() + datetime.timedelta(
@@ -227,8 +227,8 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             seconds=response_with_headers.reset_tokens_in
         )
 
-        assert abs(driver.ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
-        assert abs(driver.ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
+        assert abs(driver._ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
+        assert abs(driver._ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
 
     def test_extract_ratelimit_metadata_with_subsecond_reset_times(self):
         response_with_headers = OpenAiApiResponseWithHeaders(
@@ -245,5 +245,5 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         expected_request_reset_time = datetime.datetime.now() + datetime.timedelta(seconds=1)
         expected_token_reset_time = datetime.datetime.now() + datetime.timedelta(seconds=1)
 
-        assert abs(driver.ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
-        assert abs(driver.ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
+        assert abs(driver._ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
+        assert abs(driver._ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
