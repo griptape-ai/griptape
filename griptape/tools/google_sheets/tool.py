@@ -145,76 +145,6 @@ class GoogleSheetsClient(BaseGoogleClient):
 
     @activity(
         config={
-            "description": "Can be used to downloads multiple spreadsheets based on provided file paths",
-            "schema": Schema(
-                {
-                    Literal(
-                        "file_paths",
-                        description="List of file paths to the spreadsheets.",
-                    ): list[str],
-                    Literal(
-                        "mime_type",
-                        description="The MIME type for the file format to export to.",
-                    ): str,
-                }
-            ),
-        }
-    )
-    def download_spreadsheets(self, params: dict) -> ListArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError
-        from googleapiclient.errors import HttpError
-
-        values = params["values"]
-        file_paths = values.get("file_paths")
-        mime_type = values.get("mime_type")
-
-        export_mime_mapping = {
-            "text/csv": "text/csv",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        }
-
-        downloaded_files = []
-
-        if mime_type not in export_mime_mapping:
-            logging.error(f"Unsupported mime type '{mime_type}' provided.")
-            return ErrorArtifact("Unsupported mime type for downloading")
-        else:
-            try:
-                service = self._build_client(
-                    scopes=self.DRIVE_READ_SCOPES,
-                    service_name="drive",
-                    version="v3",
-                    owner_email=self.owner_email,
-                )
-                for file_path in file_paths:
-                    sheet_id = self._convert_path_to_file_id(service, file_path)
-
-                    if sheet_id:
-                        request = service.files().export_media(
-                            fileId=sheet_id,
-                            mimeType=export_mime_mapping[mime_type],
-                        )
-                        downloaded_files.append(BlobArtifact(request.execute()))
-                    else:
-                        logging.error(
-                            f"error finding spreadsheet at path: {file_path}"
-                        )
-
-            except HttpError as e:
-                return ErrorArtifact(
-                    f"error downloading spreadsheet due to http error: {e}"
-                )
-            except MalformedError as e:
-                return ErrorArtifact(
-                    f"error downloading spreadsheet due to malformed credentials: {e}"
-                )
-            except Exception as e:
-                return ErrorArtifact(f"error downloading spreadsheets: {e}")
-
-        return ListArtifact(downloaded_files)
-
-    @activity(
-        config={
             "description": "Uploads a spreadsheet and converts it to a Google Sheets format",
             "schema": Schema(
                 {
@@ -294,143 +224,82 @@ class GoogleSheetsClient(BaseGoogleClient):
 
     @activity(
         config={
-            "description": "Can be used to share a spreadsheet with a specified user.",
+            "description": "Can be used to modify a cell value in Google Sheets based on the specified operation "
+            "(append, update, or delete).",
             "schema": Schema(
                 {
                     Literal(
                         "file_path",
-                        description="The path of the spreadsheet to share",
+                        description="The file path of the spreadsheet to modify"
                     ): str,
                     Literal(
-                        "email_address",
-                        description="The email address of the user to share with",
+                        "range",
+                        description="The cell range to modify"
                     ): str,
                     Optional(
-                        "role",
-                        default="reader",
-                        description="The role to give to the user, e.g., 'reader', 'writer', or 'commenter'",
-                    ): Or("reader", "writer", "commenter"),
-                }
-            ),
-        }
-    )
-    def share_spreadsheet(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError
-        from googleapiclient.errors import HttpError
-
-        values = params["values"]
-        file_path = values.get("file_path")
-        email_address = values.get("email_address")
-        role = values.get("role", "reader")
-
-        try:
-            service = self._build_client(
-                scopes=self.DRIVE_AUTH_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email,
-            )
-
-            if file_path.lower() == self.DEFAULT_FOLDER_PATH:
-                spreadsheet_id = self.DEFAULT_FOLDER_PATH
-            else:
-                spreadsheet_id = self._convert_path_to_file_id(
-                    service, file_path
-                )
-
-            if spreadsheet_id:
-                batch_update_permission_request_body = {
-                    "role": role,
-                    "type": "user",
-                    "emailAddress": email_address,
-                }
-                request = service.permissions().create(
-                    fileId=spreadsheet_id,
-                    body=batch_update_permission_request_body,
-                    fields="id",
-                )
-                request.execute()
-                return InfoArtifact(
-                    f"Spreadsheet at {file_path} shared with {email_address} as a {role}"
-                )
-            else:
-                return ErrorArtifact(
-                    f"error finding spreadsheet at path: {file_path}"
-                )
-        except HttpError as e:
-            return ErrorArtifact(
-                f"error sharing spreadsheet due to http error: {e}"
-            )
-        except MalformedError as e:
-            return ErrorArtifact(
-                f"error sharing spreadsheet due to malformed credentials: {e}"
-            )
-        except Exception as e:
-            return ErrorArtifact(f"error sharing spreadsheet: {e}")
-
-    @activity(
-        config={
-            "description": "Can be used to check the permissions on a specified spreadsheet.",
-            "schema": Schema(
-                {
+                        "values",
+                        description="The values to be added or updated"
+                    ): list,
                     Literal(
-                        "file_path",
-                        description="The path of the spreadsheet to check permissions for",
-                    ): str,
+                        "operation",
+                        description="The operation type (append, update, or delete)"
+                    ): Or(
+                        "append", "update", "delete"
+                          ),
                 }
             ),
         }
     )
-    def list_permissions_for_spreadsheet(self, params: dict) -> ListArtifact | ErrorArtifact:
+    def modify_cell(self, params: dict) -> InfoArtifact | ErrorArtifact:
         from google.auth.exceptions import MalformedError
         from googleapiclient.errors import HttpError
 
-        values = params["values"]
-        file_path = values.get("file_path")
-
+        input_values = params["values"]
+        file_path = input_values.get("file_path")
+        range_ = input_values.get("range")
+        values = input_values.get("values")
+        operation = input_values["operation"]
+    
         try:
-            service = self._build_client(
-                scopes=self.DRIVE_AUTH_SCOPES,
+            sheets_service = self._build_client(
+                scopes=self.SHEETS_SCOPES,
+                service_name="sheets",
+                version="v4",
+                owner_email=self.owner_email,
+            )
+            drive_service = self._build_client(
+                scopes=self.DRIVE_UPLOAD_SCOPES,
                 service_name="drive",
                 version="v3",
                 owner_email=self.owner_email,
             )
-            if file_path.lower() == self.DEFAULT_FOLDER_PATH:
-                spreadsheet_id = self.DEFAULT_FOLDER_PATH
-            else:
-                spreadsheet_id = self._convert_path_to_file_id(
-                    service, file_path
-                )
-
+    
+            spreadsheet_id = self._convert_path_to_file_id(drive_service, file_path)
+    
             if spreadsheet_id:
-                permissions = (
-                    service.permissions()
-                    .list(
-                        fileId=spreadsheet_id,
-                        fields="permissions(id,role,emailAddress)",
-                    )
-                    .execute()
-                )
-
-                permissions_artifacts = [
-                    InfoArtifact(
-                        f"Permission ID: {perm['id']}, Role: {perm['role']}, Email: {perm['emailAddress']}"
-                    )
-                    for perm in permissions.get("permissions", [])
-                ]
-
-                return ListArtifact(permissions_artifacts)
+                if operation == "append":
+                    sheets_service.spreadsheets().values().append(
+                        spreadsheetId=spreadsheet_id, range=range_, valueInputOption="RAW", body={"values": [values]}
+                    ).execute()
+                    result = InfoArtifact(f"Value appended to {file_path} at range {range_}")
+                elif operation == "update":
+                    sheets_service.spreadsheets().values().update(
+                        spreadsheetId=spreadsheet_id, range=range_, valueInputOption="RAW", body={"values": [values]}
+                    ).execute()
+                    result = InfoArtifact(f"Value updated in {file_path} at range {range_}")
+                elif operation == "delete":
+                    sheets_service.spreadsheets().values().clear(spreadsheetId=spreadsheet_id, range=range_).execute()
+                    result = InfoArtifact(f"Value cleared in {file_path} at range {range_}")
+                else:
+                    result = ErrorArtifact(f"Unsupported operation: {operation}")
             else:
-                return ErrorArtifact(
-                    f"error finding spreadsheet at path: {file_path}"
-                )
+                result = ErrorArtifact(f"Could not find spreadsheet: {file_path}")
+    
+            return result
+    
         except HttpError as e:
-            return ErrorArtifact(
-                f"error checking permissions due to http error: {e}"
-            )
+            return ErrorArtifact(f"error modifying value in cell due to http error: {e}")
         except MalformedError as e:
-            return ErrorArtifact(
-                f"error checking permissions due to malformed credentials: {e}"
-            )
+            return ErrorArtifact(f"error modifying value in cell due to malformed credentials: {e}")
         except Exception as e:
-            return ErrorArtifact(f"error checking permissions: {e}")
+            return ErrorArtifact(f"error in modifying value in cell: {e}")
