@@ -1,7 +1,5 @@
 from __future__ import annotations
 import logging
-import uuid
-from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ListArtifact
@@ -12,10 +10,10 @@ from griptape.engines import (
 )
 from griptape.mixins import ActivityMixin
 from griptape.mixins import ToolMemoryActivitiesMixin
+from griptape.drivers import BaseBlobToolMemoryDriver
 
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
-    from griptape.drivers import BaseBlobToolMemoryDriver
 
 
 @define
@@ -29,6 +27,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
     )
+    namespace_storage: dict[str, any] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, any] = field(factory=dict, kw_only=True)
 
     query_engine: BaseQueryEngine = field(
@@ -70,21 +69,17 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
                 namespace=namespace
             )
 
-            self.namespace_metadata[namespace] = {
-                "storage": self.query_engine
-            }
+            self.namespace_storage[namespace] = self.query_engine
 
             state = self.ProcessingState.PROCESSED
-        elif isinstance(output_artifact, ListArtifact):
+        elif isinstance(output_artifact, ListArtifact) and output_artifact.is_type(TextArtifact):
             if output_artifact.value:
-                self.query_engine.upsert_text_artifact(
-                    TextArtifact(output_artifact.to_text()),
-                    namespace
-                )
+                [
+                    self.query_engine.upsert_text_artifact(a, namespace=namespace)
+                    for a in output_artifact.value
+                ]
 
-                self.namespace_metadata[namespace] = {
-                    "storage": self.query_engine
-                }
+                self.namespace_storage[namespace] = self.query_engine
 
                 state = self.ProcessingState.PROCESSED
             else:
@@ -92,20 +87,17 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         elif isinstance(output_artifact, BlobArtifact):
             self.blob_storage_driver.save(namespace, output_artifact)
 
-            self.namespace_metadata[namespace] = {
-                "storage": self.blob_storage_driver
-            }
+            self.namespace_storage[namespace] = self.blob_storage_driver
 
             state = self.ProcessingState.PROCESSED
         elif isinstance(output_artifact, ListArtifact) and output_artifact.is_type(BlobArtifact):
             if output_artifact.value:
-                artifact_values = [v for v in output_artifact.value]
+                [
+                    self.blob_storage_driver.save(namespace, a)
+                    for a in output_artifact.value
+                ]
 
-                [self.blob_storage_driver.save(namespace, a) for a in artifact_values]
-
-                self.namespace_metadata[namespace] = {
-                    "storage": self.blob_storage_driver
-                }
+                self.namespace_storage[namespace] = self.blob_storage_driver
 
                 state = self.ProcessingState.PROCESSED
             else:
@@ -130,7 +122,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
             return output_artifact
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
-        storage = self.namespace_metadata.get("namespace", {}).get("storage")
+        storage = self.namespace_storage.get(namespace)
 
         if storage:
             if isinstance(storage, BaseQueryEngine):

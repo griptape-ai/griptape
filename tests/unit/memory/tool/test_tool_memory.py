@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import CsvRowArtifact
+from griptape.artifacts import CsvRowArtifact, BlobArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_tool.tool import MockTool
@@ -47,20 +47,36 @@ class TestToolMemory:
             'Output of "MockTool.test" was stored in memory'
         )
 
-    def test_upsert_namespace_artifact(self, memory):
-        memory.query_engine.upsert_text_artifact(TextArtifact("foo"), namespace="test")
-
-        assert len(memory.load_artifacts("test").value) == 1
-
-    def test_upsert_namespace_artifacts(self, memory):
-        memory.query_engine.upsert_text_artifacts(
-            [TextArtifact("foo"), TextArtifact("bar")],
-            "test"
-        )
-
-        assert len(memory.load_artifacts("test").value) == 2
-
     def test_load_artifacts_for_text_artifact(self, memory):
         memory.process_output(MockTool().test, ActionSubtask(), TextArtifact("foo", name="test"))
 
         assert len(memory.load_artifacts("test").value) == 1
+
+    def test_load_artifacts_for_blob_artifact(self, memory):
+        memory.process_output(MockTool().test, ActionSubtask(), BlobArtifact(b"foo", name="test"))
+
+        assert len(memory.load_artifacts("test").value) == 1
+
+    def test_load_artifacts_for_text_list_artifact(self, memory):
+        memory.process_output(
+            MockTool().test,
+            ActionSubtask(),
+            ListArtifact([
+                TextArtifact("foo", name="test1"),
+                TextArtifact("foo", name="test2")
+            ], name="test")
+        )
+
+        assert len(memory.load_artifacts("test").value) == 2
+
+    def test_load_artifacts_for_blob_list_artifact(self, memory):
+        memory.process_output(
+            MockTool().test,
+            ActionSubtask(),
+            ListArtifact([
+                BlobArtifact(b"foo", name="test1"),
+                BlobArtifact(b"foo", name="test2")
+            ], name="test")
+        )
+
+        assert len(memory.load_artifacts("test").value) == 2
