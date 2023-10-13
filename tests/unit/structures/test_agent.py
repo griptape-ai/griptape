@@ -1,6 +1,7 @@
 import pytest
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import ToolMemory
+from griptape.memory.tool.storage import TextToolMemoryStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -91,9 +92,10 @@ class TestAgent:
             embedding_driver=embedding_driver
         )
 
-        assert isinstance(agent.tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver, MockEmbeddingDriver)
-        assert agent.tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver == embedding_driver
-        assert agent.tools[0].output_memory["test"][0].query_engine.vector_store_driver.embedding_driver == embedding_driver
+        memory_embedding_driver = agent.tool_memory.memory_storage[
+            0].query_engine.vector_store_driver.embedding_driver
+
+        assert memory_embedding_driver == embedding_driver
 
     def test_without_default_tool_memory(self):
         agent = Agent(
@@ -241,7 +243,6 @@ class TestAgent:
         context = agent.context(task)
 
         assert context["structure"] == agent
-        
 
     def test_tool_memory_defaults(self):
         prompt_driver = MockPromptDriver()
@@ -251,8 +252,10 @@ class TestAgent:
             embedding_driver=embedding_driver
         )
 
-        assert agent.tool_memory.query_engine.prompt_driver == prompt_driver
-        assert agent.tool_memory.query_engine.vector_store_driver.embedding_driver == embedding_driver
-        assert agent.tool_memory.summary_engine.prompt_driver == prompt_driver
-        assert agent.tool_memory.csv_extraction_engine.prompt_driver == prompt_driver
-        assert agent.tool_memory.json_extraction_engine.prompt_driver == prompt_driver
+        storage: TextToolMemoryStorage = agent.tool_memory.memory_storage[0]
+
+        assert storage.query_engine.prompt_driver == prompt_driver
+        assert storage.query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert storage.summary_engine.prompt_driver == prompt_driver
+        assert storage.csv_extraction_engine.prompt_driver == prompt_driver
+        assert storage.json_extraction_engine.prompt_driver == prompt_driver

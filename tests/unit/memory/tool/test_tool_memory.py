@@ -30,6 +30,18 @@ class TestToolMemory:
 
     def test_init(self, memory):
         assert memory.name == "MyMemory"
+    
+    def test_validate_memory_storage(self):
+        assert False
+
+    def test_get_memory_driver_for(self):
+        assert False
+
+    def test_store_artifact(self):
+        assert False
+
+    def test_find_input_memory(self):
+        assert False
 
     def test_process_output(self, memory):
         artifact = TextArtifact("foo")

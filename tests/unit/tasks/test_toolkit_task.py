@@ -5,6 +5,7 @@ from griptape.engines import VectorQueryEngine
 from griptape.structures import Pipeline, Agent
 from griptape.tasks import ToolkitTask, ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
 from tests.utils import defaults
@@ -14,6 +15,7 @@ class TestToolkitSubtask:
     @pytest.fixture
     def query_engine(self):
         return VectorQueryEngine(
+            prompt_driver=MockPromptDriver(),
             vector_store_driver=LocalVectorStoreDriver(
                 embedding_driver=MockEmbeddingDriver()
             )

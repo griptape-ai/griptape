@@ -11,9 +11,6 @@ from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 
-from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
-from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
-
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
 from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbConversationMemoryDriver
@@ -59,15 +56,16 @@ __all__ = [
     "AmazonSageMakerPromptDriver",
     "AmazonBedrockPromptDriver",
     "BaseMultiModelPromptDriver",
+
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "DynamoDbConversationMemoryDriver",
-    "BaseBlobToolMemoryDriver",
-    "LocalBlobToolMemoryDriver",
+
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
     "BedrockTitanEmbeddingDriver",
+
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
