@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact
 from griptape.mixins import ActivityMixin
 from griptape.mixins import ToolMemoryActivitiesMixin
 
@@ -17,34 +17,34 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
     )
-    namespace_drivers: dict[str, BaseToolMemoryStorage] = field(factory=dict, kw_only=True)
+    namespace_storage: dict[str, BaseToolMemoryStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, any] = field(factory=dict, kw_only=True)
 
     memory_storage: list[BaseToolMemoryStorage] = field(kw_only=True)
 
     @memory_storage.validator
-    def validate_memory_storage(self, _, memory_drivers: list[BaseToolMemoryStorage]) -> None:
+    def validate_memory_storage(self, _, memory_storage: list[BaseToolMemoryStorage]) -> None:
         seen_types = []
 
-        for driver in memory_drivers:
-            if type(driver) in seen_types:
+        for storage in memory_storage:
+            if type(storage) in seen_types:
                 raise ValueError("Can't have more than memory storage of the same type")
 
-            seen_types.append(type(driver))
+            seen_types.append(type(storage))
 
-    def get_memory_driver_for(self, artifact: BaseArtifact) -> Optional[BaseToolMemoryStorage]:
-        find_driver = lambda a: next(
-            (driver for driver in self.memory_storage if driver.can_store(a)),
+    def get_memory_storage_for(self, artifact: BaseArtifact) -> Optional[BaseToolMemoryStorage]:
+        find_storage = lambda a: next(
+            (s for s in self.memory_storage if s.can_store(a)),
             None
         )
 
         if isinstance(artifact, ListArtifact):
             if artifact.has_items():
-                return find_driver(artifact.value[0])
+                return find_storage(artifact.value[0])
             else:
                 return None
         else:
-            return find_driver(artifact)
+            return find_storage(artifact)
 
     def process_output(
             self,
@@ -72,39 +72,45 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
 
             return InfoArtifact(output)
         else:
-            logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.name}")
+            logging.info(f"Output of {tool_name}.{activity_name} can't be stored in {self.name}")
 
-            return output_artifact
+            return ErrorArtifact("Error processing tool output.")
 
     def store_artifact(self, namespace: str, artifact: BaseArtifact) -> bool:
-        driver = self.get_memory_driver_for(artifact)
+        namespace_storage = self.namespace_storage.get(namespace)
+        storage = self.get_memory_storage_for(artifact)
 
-        if driver:
-            if isinstance(artifact, ListArtifact):
-                [
-                    driver.store_artifact(namespace, a)
-                    for a in artifact.value
-                ]
+        if namespace_storage and namespace_storage != storage:
+            logging.warning(f"Incompatible storage types")
 
-                self.namespace_drivers[namespace] = driver
+            return False
+        else:
+            if storage:
+                if isinstance(artifact, ListArtifact):
+                    [
+                        storage.store_artifact(namespace, a)
+                        for a in artifact.value
+                    ]
 
-                return True
-            elif isinstance(artifact, BaseArtifact):
-                driver.store_artifact(namespace, artifact)
+                    self.namespace_storage[namespace] = storage
 
-                self.namespace_drivers[namespace] = driver
+                    return True
+                elif isinstance(artifact, BaseArtifact):
+                    storage.store_artifact(namespace, artifact)
 
-                return True
+                    self.namespace_storage[namespace] = storage
+
+                    return True
+                else:
+                    return False
             else:
                 return False
-        else:
-            return False
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
-        driver = self.namespace_drivers.get(namespace)
+        storage = self.namespace_storage.get(namespace)
 
-        if driver:
-            return driver.load_artifacts(namespace)
+        if storage:
+            return storage.load_artifacts(namespace)
         else:
             return ListArtifact()
 

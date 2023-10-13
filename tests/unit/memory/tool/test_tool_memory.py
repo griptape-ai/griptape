@@ -1,6 +1,8 @@
 import pytest
 from griptape.artifacts import CsvRowArtifact, BlobArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
+from griptape.memory import ToolMemory
+from griptape.memory.tool.storage import BlobToolMemoryStorage, TextToolMemoryStorage
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
@@ -30,18 +32,29 @@ class TestToolMemory:
 
     def test_init(self, memory):
         assert memory.name == "MyMemory"
-    
+
     def test_validate_memory_storage(self):
-        assert False
+        with pytest.raises(ValueError):
+            ToolMemory(
+                memory_storage=[
+                    BlobToolMemoryStorage(),
+                    BlobToolMemoryStorage()
+                ]
+            )
 
-    def test_get_memory_driver_for(self):
-        assert False
+    def test_get_memory_driver_for(self, memory):
+        assert isinstance(memory.get_memory_storage_for(TextArtifact("foo")), TextToolMemoryStorage)
+        assert isinstance(memory.get_memory_storage_for(BlobArtifact(b"foo")), BlobToolMemoryStorage)
 
-    def test_store_artifact(self):
-        assert False
+    def test_store_artifact(self, memory):
+        assert memory.store_artifact("test", TextArtifact("foo1"))
+        assert memory.store_artifact("test", TextArtifact("foo2"))
+        assert not memory.store_artifact("test", BlobArtifact(b"foo3"))
+        assert memory.store_artifact("btest", BlobArtifact(b"foo4"))
+        assert not memory.store_artifact("btest", TextArtifact("foo5"))
 
-    def test_find_input_memory(self):
-        assert False
+    def test_find_input_memory(self, memory):
+        assert memory.find_input_memory(memory.name) == memory
 
     def test_process_output(self, memory):
         artifact = TextArtifact("foo")

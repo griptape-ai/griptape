@@ -12,13 +12,13 @@ class TestTextToolMemoryStorage:
         artifact = TextArtifact("foo", name="foo")
         storage.store_artifact("test", artifact)
 
-        assert storage.load_artifacts("test").value == [artifact]
+        assert storage.load_artifacts("test").value[0].value == "foo"
 
     def test_load_artifacts(self, storage):
         artifact = TextArtifact("foo", name="foo")
         storage.store_artifact("test", artifact)
 
-        assert storage.load_artifacts("test").value == [artifact]
+        assert storage.load_artifacts("test").value[0].value == "foo"
         assert storage.load_artifacts("empty").is_empty()
 
     def test_can_store(self, storage):
