@@ -14,14 +14,18 @@ class BaseTextInputTask(BaseTask, ABC):
     input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
 
+    _input: TextArtifact = field(default=None, init=False)
+
     @property
     def input(self) -> TextArtifact:
-        return TextArtifact(
-            J2().render_from_string(
-                self.input_template,
-                **self.full_context
-            )
-        )
+        input_str = J2().render_from_string(self.input_template, **self.full_context)
+            
+        if self._input is not None:
+            self._input.value = input_str
+        else:
+            self._input = TextArtifact(input_str)
+            
+        return self._input
 
     @property
     def full_context(self) -> dict[str, Any]:
@@ -32,7 +36,7 @@ class BaseTextInputTask(BaseTask, ABC):
 
             return structure_context
         else:
-            return {}
+            return {"args": [], **self.context}
 
     def before_run(self) -> None:
         super().before_run()

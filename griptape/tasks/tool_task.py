@@ -69,3 +69,8 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         self.subtask.attach_to(self)
 
         return self.subtask
+
+    def to_dict(self) -> dict:
+        from griptape.schemas import ToolTaskSchema
+
+        return dict(ToolTaskSchema().dump(self))

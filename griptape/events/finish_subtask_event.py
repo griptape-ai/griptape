@@ -10,3 +10,8 @@ if TYPE_CHECKING:
 @define
 class FinishSubtaskEvent(BaseEvent):
     subtask: ActionSubtask = field(kw_only=True)
+
+    def to_dict(self) -> dict:
+        from griptape.schemas import FinishSubtaskEventSchema
+
+        return dict(FinishSubtaskEventSchema().dump(self))

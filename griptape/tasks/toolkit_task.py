@@ -204,3 +204,8 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             (m for m in self.tool_output_memory if m.name == memory_name),
             None
         )
+
+    def to_dict(self) -> dict:
+        from griptape.schemas import ToolkitTaskSchema
+
+        return dict(ToolkitTaskSchema().dump(self))

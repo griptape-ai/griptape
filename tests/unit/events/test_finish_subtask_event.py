@@ -9,3 +9,7 @@ class TestFinishSubtaskEvent:
 
     def test_subtask(self, finish_subtask_event):
         assert isinstance(finish_subtask_event.subtask, ActionSubtask)
+
+    def test_to_dict(self, finish_subtask_event):
+        assert 'timestamp' in finish_subtask_event.to_dict()
+        assert finish_subtask_event.to_dict()['subtask'] == finish_subtask_event.subtask.to_dict()

@@ -1,15 +1,17 @@
 from __future__ import annotations
+import json
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
+from marshmallow import class_registry
+from marshmallow.exceptions import RegistryError
 from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
-    from griptape.tasks import BaseTask
     from griptape.structures import Structure
 
 
@@ -27,6 +29,8 @@ class BaseTask(ABC):
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
+
+    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     @property
     @abstractmethod
@@ -46,6 +50,41 @@ class BaseTask(ABC):
 
     def __lshift__(self, child: BaseTask) -> BaseTask:
         return self.add_parent(child)
+
+    @classmethod
+    def from_dict(cls, task_dict: dict) -> BaseTask:
+        from griptape.schemas import (
+            PromptTaskSchema,
+            ToolkitTaskSchema,
+            ToolTaskSchema,
+            ExtractionTaskSchema,
+            TextQueryTaskSchema,
+            TextSummaryTaskSchema,
+            ActionSubtaskSchema,
+        )
+
+        class_registry.register("PromptTask", PromptTaskSchema)
+        class_registry.register("ToolkitTask", ToolkitTaskSchema)
+        class_registry.register("ToolTask", ToolTaskSchema)
+        class_registry.register("ExtractionTask", ExtractionTaskSchema)
+        class_registry.register("TextQueryTask", TextQueryTaskSchema)
+        class_registry.register("TextSummaryTask", TextSummaryTaskSchema)
+        class_registry.register("ActionSubtask", ActionSubtaskSchema)
+
+        try:
+            return class_registry.get_class(task_dict["type"])().load(task_dict)
+        except RegistryError:
+            raise ValueError("Unsupported task type")
+
+    @classmethod
+    def from_json(cls, artifact_str: str) -> BaseTask:
+        return cls.from_dict(json.loads(artifact_str))
+
+    def __str__(self) -> str:
+        return json.dumps(self.to_dict())
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict())
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure
@@ -138,4 +177,8 @@ class BaseTask(ABC):
 
     @abstractmethod
     def run(self) -> BaseArtifact:
+        ...
+
+    @abstractmethod
+    def to_dict(self) -> dict:
         ...

@@ -10,3 +10,8 @@ if TYPE_CHECKING:
 @define
 class StartTaskEvent(BaseEvent):
     task: BaseTask = field(kw_only=True)
+
+    def to_dict(self) -> dict:
+        from griptape.schemas import StartTaskEventSchema
+
+        return dict(StartTaskEventSchema().dump(self))

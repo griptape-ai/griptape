@@ -31,13 +31,18 @@ class ActionSubtask(PromptTask):
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_activity: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[dict] = field(default=None, kw_only=True)
+    _input: Optional[TextArtifact] = field(default=None, init=False)
 
     _tool: Optional[BaseTool] = None
     _memory: Optional[ToolMemory] = None
 
     @property
     def input(self) -> TextArtifact:
-        return TextArtifact(self.input_template)
+        if self._input is not None:
+            self._input.value = self.input_template
+        else:
+            self._input = TextArtifact(self.input_template)
+        return self._input
 
     @property
     def origin_task(self) -> Optional[ActionSubtaskOriginMixin]:
@@ -154,6 +159,12 @@ class ActionSubtask(PromptTask):
             parent.child_ids.append(self.id)
 
         return parent
+
+    def to_dict(self) -> dict:
+        from griptape.schemas import ActionSubtaskSchema
+
+        return dict(ActionSubtaskSchema().dump(self))
+        
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)

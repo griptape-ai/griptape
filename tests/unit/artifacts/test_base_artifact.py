@@ -1,4 +1,4 @@
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 
 
 class TestBaseArtifact:
@@ -22,6 +22,44 @@ class TestBaseArtifact:
         assert isinstance(artifact, ErrorArtifact)
         assert artifact.to_text() == "foobar"
 
+    def test_info_artifact_from_dict(self):
+        dict_value = {
+            "type": "InfoArtifact",
+            "value": "foobar"
+        }
+        artifact = BaseArtifact.from_dict(dict_value)
+
+        assert isinstance(artifact, InfoArtifact)
+        assert artifact.to_text() == "foobar"
+
+    def test_list_artifact_from_dict(self):
+        dict_value = {
+            "type": "ListArtifact",
+            "value": [
+                {
+                    "type": "TextArtifact",
+                    "value": "foobar"
+                }
+            ]
+        }
+        artifact = BaseArtifact.from_dict(dict_value)
+
+        assert isinstance(artifact, ListArtifact)
+        assert artifact.to_text() == "foobar"
+
+    def test_blob_artifact_from_dict(self):
+        dict_value = {
+            "type": "BlobArtifact",
+            "value": b"Zm9vYmFy",
+            "dir_name": "foo",
+            "name": "bar"
+        }
+        artifact = BaseArtifact.from_dict(dict_value)
+
+        assert isinstance(artifact, BlobArtifact)
+        assert artifact.to_text() == "foobar"
+
+
     def test_unsupported_from_dict(self):
         dict_value = {
             "type": "foo",
@@ -33,3 +71,4 @@ class TestBaseArtifact:
             assert False
         except ValueError:
             assert True
+

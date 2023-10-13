@@ -24,3 +24,6 @@ class TestTextQueryTask:
 
         assert len(result.value) == 1
         assert result.value[0].value == {'test1': 'mock output'}
+
+    def test_to_dict(self, task):
+        assert task.to_dict() is not None

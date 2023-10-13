@@ -23,3 +23,5 @@ class TestTextSummaryTask:
 
         assert task.input.to_text() == "test value"
         
+    def test_to_dict(self):
+        assert TextSummaryTask().to_dict() is not None

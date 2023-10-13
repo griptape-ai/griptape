@@ -26,3 +26,8 @@ class TextQueryTask(BaseTextInputTask):
         )
 
         return artifacts
+
+    def to_dict(self) -> dict:
+        from griptape.schemas import ToolkitTaskSchema
+
+        return dict(ToolkitTaskSchema().dump(self))
