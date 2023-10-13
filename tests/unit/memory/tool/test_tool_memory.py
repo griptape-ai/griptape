@@ -60,10 +60,7 @@ class TestToolMemory:
 
         assert len(memory.load_artifacts("test").value) == 2
 
-    def test_load_artifacts(self, memory):
-        memory.query_engine.upsert_text_artifacts(
-            [TextArtifact("foo"), TextArtifact("bar")],
-            "test"
-        )
+    def test_load_artifacts_for_text_artifact(self, memory):
+        memory.process_output(MockTool().test, ActionSubtask(), TextArtifact("foo", name="test"))
 
-        assert len(memory.load_artifacts("test").value) == 2
+        assert len(memory.load_artifacts("test").value) == 1

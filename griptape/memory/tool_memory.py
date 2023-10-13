@@ -1,6 +1,7 @@
 from __future__ import annotations
 import logging
 import uuid
+from enum import Enum
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, TextArtifact, InfoArtifact, ListArtifact
@@ -19,11 +20,16 @@ if TYPE_CHECKING:
 
 @define
 class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
+    class ProcessingState:
+        UNPROCESSED = 1
+        PROCESSED = 2
+        EMPTY = 3
+
     name: str = field(
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
     )
-    namespace_metadata: dict[str, str] = field(factory=dict, kw_only=True)
+    namespace_metadata: dict[str, any] = field(factory=dict, kw_only=True)
 
     query_engine: BaseQueryEngine = field(
         kw_only=True
@@ -55,41 +61,57 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
 
         tool_name = tool_activity.__self__.name
         activity_name = tool_activity.name
+        namespace = output_artifact.name
+        state = self.ProcessingState.UNPROCESSED
 
         if isinstance(output_artifact, TextArtifact):
-            namespace = output_artifact.name
-
             self.query_engine.upsert_text_artifact(
                 output_artifact,
                 namespace=namespace
             )
-        elif isinstance(output_artifact, ListArtifact):
-            if output_artifact.has_items():
-                namespace = uuid.uuid4().hex
 
+            self.namespace_metadata[namespace] = {
+                "storage": self.query_engine
+            }
+
+            state = self.ProcessingState.PROCESSED
+        elif isinstance(output_artifact, ListArtifact):
+            if output_artifact.value:
                 self.query_engine.upsert_text_artifact(
                     TextArtifact(output_artifact.to_text()),
                     namespace
                 )
+
+                self.namespace_metadata[namespace] = {
+                    "storage": self.query_engine
+                }
+
+                state = self.ProcessingState.PROCESSED
             else:
-                namespace = None
+                state = self.ProcessingState.EMPTY
         elif isinstance(output_artifact, BlobArtifact):
-            namespace = output_artifact.name
-
             self.blob_storage_driver.save(namespace, output_artifact)
+
+            self.namespace_metadata[namespace] = {
+                "storage": self.blob_storage_driver
+            }
+
+            state = self.ProcessingState.PROCESSED
         elif isinstance(output_artifact, ListArtifact) and output_artifact.is_type(BlobArtifact):
-            artifacts = [v for v in output_artifact.value]
+            if output_artifact.value:
+                artifact_values = [v for v in output_artifact.value]
 
-            if artifacts:
-                namespace = uuid.uuid4().hex
+                [self.blob_storage_driver.save(namespace, a) for a in artifact_values]
 
-                [self.blob_storage_driver.save(namespace, a) for a in artifacts]
+                self.namespace_metadata[namespace] = {
+                    "storage": self.blob_storage_driver
+                }
+
+                state = self.ProcessingState.PROCESSED
             else:
-                namespace = None
-        else:
-            namespace = None
+                state = self.ProcessingState.EMPTY
 
-        if namespace:
+        if state is self.ProcessingState.PROCESSED:
             self.namespace_metadata[namespace] = subtask.action_to_json()
 
             output = J2("memory/tool.j2").render(
@@ -100,6 +122,8 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
             )
 
             return InfoArtifact(output)
+        elif state is self.ProcessingState.EMPTY:
+            return InfoArtifact("Tool output is empty.")
         else:
             logging.info(f"Output of {tool_name}.{activity_name} can't be processed by memory {self.name}")
 
