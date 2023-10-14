@@ -20,7 +20,7 @@ from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
 @define
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
-    ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
+    ACTION_PATTERN =  r"(?s)Action:[^{]*(.*?)[^}]*?(?:Observation|$)"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
@@ -163,7 +163,7 @@ class ActionSubtask(PromptTask):
 
         if len(action_matches) > 0:
             try:
-                data = action_matches[-1]
+                data = action_matches[-1].strip()
                 action_object: dict = json.loads(data, strict=False)
 
                 validate(
