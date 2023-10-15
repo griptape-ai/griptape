@@ -1,3 +1,5 @@
+import datetime
+
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.utils import PromptStack
 from griptape.tokenizers import OpenAiTokenizer
@@ -29,6 +31,39 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
         ]
+
+
+class OpenAiApiResponseWithHeaders:
+    def __init__(
+        self,
+        reset_requests_in=5,
+        reset_requests_in_unit="s",
+        reset_tokens_in=10,
+        reset_tokens_in_unit="s",
+        remaining_requests=123,
+        remaining_tokens=234,
+        limit_requests=345,
+        limit_tokens=456,
+    ):
+        self.reset_requests_in = reset_requests_in
+        self.reset_requests_in_unit = reset_requests_in_unit
+        self.reset_tokens_in = reset_tokens_in
+        self.reset_tokens_in_unit = reset_tokens_in_unit
+        self.remaining_requests = remaining_requests
+        self.remaining_tokens = remaining_tokens
+        self.limit_requests = limit_requests
+        self.limit_tokens = limit_tokens
+
+    @property
+    def headers(self):
+        return {
+            "x-ratelimit-reset-requests": f"{self.reset_requests_in}{self.reset_requests_in_unit}",
+            "x-ratelimit-reset-tokens": f"{self.reset_tokens_in}{self.reset_tokens_in_unit}",
+            "x-ratelimit-limit-requests": self.limit_requests,
+            "x-ratelimit-remaining-requests": self.remaining_requests,
+            "x-ratelimit-limit-tokens": self.limit_tokens,
+            "x-ratelimit-remaining-tokens": self.remaining_tokens,
+        }
 
 
 class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
@@ -167,6 +202,48 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert max_output_tokens == 42
 
     def test_max_output_tokens_with_max_tokens(self, messages):
-        OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, max_tokens=42).max_output_tokens(
-            messages
-        ) == 42
+        max_tokens = OpenAiChatPromptDriver(
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            max_tokens=42,
+        ).max_output_tokens(messages)
+
+        assert max_tokens == 42
+
+    def test_extract_ratelimit_metadata(self):
+        response_with_headers = OpenAiApiResponseWithHeaders()
+        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        driver._extract_ratelimit_metadata(response_with_headers)
+
+        assert driver._ratelimit_requests_remaining == response_with_headers.remaining_requests
+        assert driver._ratelimit_tokens_remaining == response_with_headers.remaining_tokens
+        assert driver._ratelimit_request_limit == response_with_headers.limit_requests
+        assert driver._ratelimit_token_limit == response_with_headers.limit_tokens
+
+        # Assert that the reset times are within one second of the expected value.
+        expected_request_reset_time = datetime.datetime.now() + datetime.timedelta(
+            seconds=response_with_headers.reset_requests_in
+        )
+        expected_token_reset_time = datetime.datetime.now() + datetime.timedelta(
+            seconds=response_with_headers.reset_tokens_in
+        )
+
+        assert abs(driver._ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
+        assert abs(driver._ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
+
+    def test_extract_ratelimit_metadata_with_subsecond_reset_times(self):
+        response_with_headers = OpenAiApiResponseWithHeaders(
+            reset_requests_in=1,
+            reset_requests_in_unit="ms",
+            reset_tokens_in=10,
+            reset_tokens_in_unit="ms",
+        )
+        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        driver._extract_ratelimit_metadata(response_with_headers)
+
+        # Assert that the reset times are within one second of the expected value. With a sub-second reset time,
+        # this is rounded up to one second in the future.
+        expected_request_reset_time = datetime.datetime.now() + datetime.timedelta(seconds=1)
+        expected_token_reset_time = datetime.datetime.now() + datetime.timedelta(seconds=1)
+
+        assert abs(driver._ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
+        assert abs(driver._ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
