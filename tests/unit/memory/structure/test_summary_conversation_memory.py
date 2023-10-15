@@ -41,18 +41,6 @@ class TestSummaryConversationMemory:
         assert memory.summary is not None
         assert memory.summary_index == 3
 
-    def test_add_to_prompt_stack(self):
-        memory = SummaryConversationMemory(summary="foobar")
-        run = Run(input="foo", output="bar")
-        prompt_stack = PromptStack()
-
-        memory.add_run(run)
-        memory.add_to_prompt_stack(prompt_stack)
-
-        assert prompt_stack.inputs[0].content == "Summary of the conversation so far: foobar"
-        assert prompt_stack.inputs[1].content == "foo"
-        assert prompt_stack.inputs[2].content == "bar"
-
     def test_to_json(self):
         memory = SummaryConversationMemory()
         memory.add_run(Run(input="foo", output="bar"))
@@ -66,6 +54,16 @@ class TestSummaryConversationMemory:
 
         assert memory.to_dict()["type"] == "SummaryConversationMemory"
         assert memory.to_dict()["runs"][0]["input"] == "foo"
+
+    def test_to_prompt_stack(self):
+        memory = SummaryConversationMemory(summary="foobar")
+        memory.add_run(Run(input="foo", output="bar"))
+
+        prompt_stack = memory.to_prompt_stack()
+
+        assert prompt_stack.inputs[0].content == "Summary of the conversation so far: foobar"
+        assert prompt_stack.inputs[1].content == "foo"
+        assert prompt_stack.inputs[2].content == "bar"
 
     def test_from_dict(self):
         memory = SummaryConversationMemory()

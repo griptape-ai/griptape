@@ -1,6 +1,4 @@
 import json
-
-from griptape.utils import PromptStack
 from griptape.memory.structure import ConversationMemory, Run
 
 
@@ -22,17 +20,6 @@ class TestConversationMemory:
 
         assert memory.runs[0] == run
 
-    def test_add_to_prompt_stack(self):
-        memory = ConversationMemory()
-        run = Run(input="foo", output="bar")
-        prompt_stack = PromptStack()
-
-        memory.add_run(run)
-        memory.add_to_prompt_stack(prompt_stack)
-
-        assert prompt_stack.inputs[0].content == "foo"
-        assert prompt_stack.inputs[1].content == "bar"
-
     def test_to_json(self):
         memory = ConversationMemory()
         memory.add_run(Run(input="foo", output="bar"))
@@ -46,6 +33,15 @@ class TestConversationMemory:
 
         assert memory.to_dict()["type"] == "ConversationMemory"
         assert memory.to_dict()["runs"][0]["input"] == "foo"
+
+    def test_to_prompt_stack(self):
+        memory = ConversationMemory()
+        memory.add_run(Run(input="foo", output="bar"))
+
+        prompt_stack = memory.to_prompt_stack()
+
+        assert prompt_stack.inputs[0].content == "foo"
+        assert prompt_stack.inputs[1].content == "bar"
 
     def test_from_dict(self):
         memory = ConversationMemory()
