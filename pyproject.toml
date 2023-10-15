@@ -53,6 +53,7 @@ pgvector = "^0.2.3"
 psycopg2-binary = "^2.9.9"
 snowflake-connector-python = "^3.2"
 cryptography = "^41.0.4"
+dateparser = "^1.1.8"
 
 
 [tool.poetry.group.test.dependencies]
