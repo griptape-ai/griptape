@@ -6,13 +6,13 @@ from griptape.memory.tool.storage import BaseToolMemoryStorage
 
 if TYPE_CHECKING:
     from griptape.engines import (
-        BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine, BaseQueryEngine
-    )
+        BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine, VectorQueryEngine
+)
 
 
 @define
 class TextToolMemoryStorage(BaseToolMemoryStorage):
-    query_engine: BaseQueryEngine = field(kw_only=True)
+    query_engine: VectorQueryEngine = field(kw_only=True)
     summary_engine: BaseSummaryEngine = field(kw_only=True)
     csv_extraction_engine: CsvExtractionEngine = field(kw_only=True)
     json_extraction_engine: JsonExtractionEngine = field(kw_only=True)
@@ -29,4 +29,11 @@ class TextToolMemoryStorage(BaseToolMemoryStorage):
     def summarize(self, namespace: str) -> TextArtifact:
         return self.summary_engine.summarize_artifacts(
             self.load_artifacts(namespace),
+        )
+
+    def query(self, namespace: str, query: str, metadata: any = None) -> TextArtifact:
+        return self.query_engine.query(
+            namespace=namespace,
+            query=query,
+            metadata=str(metadata) if metadata else None
         )

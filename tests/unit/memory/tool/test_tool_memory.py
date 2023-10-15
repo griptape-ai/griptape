@@ -12,11 +12,6 @@ class TestToolMemory:
     @pytest.fixture(autouse=True)
     def mock_griptape(self, mocker):
         mocker.patch(
-            "griptape.engines.VectorQueryEngine.query",
-            return_value=TextArtifact("foobar")
-        )
-
-        mocker.patch(
             "griptape.engines.CsvExtractionEngine.extract",
             return_value=[CsvRowArtifact({"foo": "bar"})]
         )
@@ -101,7 +96,12 @@ class TestToolMemory:
 
         assert len(memory.load_artifacts("test").value) == 2
 
-    def test_summarize(self, memory):
+    def test_summarize_namespace(self, memory):
         memory.store_artifact("foo", TextArtifact("test"))
 
-        assert memory.summarize("foo").value == "mock output"
+        assert memory.summarize_namespace("foo").value == "mock output"
+
+    def test_query_namespace(self, memory):
+        memory.store_artifact("foo", TextArtifact("test"))
+
+        assert memory.query_namespace("foo", "query").value == "mock output"

@@ -20,3 +20,7 @@ class BaseToolMemoryStorage(ABC):
     @abstractmethod
     def summarize(self, namespace: str) -> TextArtifact:
         ...
+
+    @abstractmethod
+    def query(self, namespace: str, query: str, metadata: any = None) -> TextArtifact:
+        ...

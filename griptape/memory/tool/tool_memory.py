@@ -120,10 +120,22 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         else:
             return None
 
-    def summarize(self, namespace: str) -> TextArtifact | InfoArtifact:
+    def summarize_namespace(self, namespace: str) -> TextArtifact | InfoArtifact:
         storage = self.namespace_storage.get(namespace)
 
         if storage:
             return storage.summarize(namespace)
+        else:
+            return InfoArtifact("Can't find memory content")
+
+    def query_namespace(self, namespace: str, query: str) -> TextArtifact | InfoArtifact:
+        storage = self.namespace_storage.get(namespace)
+
+        if storage:
+            return storage.query(
+                namespace=namespace,
+                query=query,
+                metadata=self.namespace_metadata.get(namespace)
+            )
         else:
             return InfoArtifact("Can't find memory content")

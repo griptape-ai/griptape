@@ -29,3 +29,8 @@ class TestTextToolMemoryStorage:
         storage.store_artifact("foo", TextArtifact("test"))
 
         assert storage.summarize("foo").value == "mock output"
+
+    def test_query(self, storage):
+        storage.store_artifact("foo", TextArtifact("test"))
+
+        assert storage.query("foo", "query").value == "mock output"

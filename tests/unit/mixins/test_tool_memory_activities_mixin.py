@@ -7,11 +7,6 @@ class TestToolMemoryActivitiesMixin:
     @pytest.fixture(autouse=True)
     def mock_griptape(self, mocker):
         mocker.patch(
-            "griptape.engines.VectorQueryEngine.query",
-            return_value=TextArtifact("foobar")
-        )
-
-        mocker.patch(
             "griptape.engines.CsvExtractionEngine.extract",
             return_value=ListArtifact([CsvRowArtifact({"foo": "bar"})])
         )
@@ -32,10 +27,12 @@ class TestToolMemoryActivitiesMixin:
             {"values": {"memory_name": processor.memory.name, "artifact_namespace": "foo"}}
         ).value == "mock output"
 
-    def test_search(self, processor):
-        assert processor.search(
+    def test_query(self, processor):
+        processor.memory.store_artifact("foo", TextArtifact("test"))
+
+        assert processor.query(
             {"values": {"query": "foobar", "memory_name": processor.memory.name, "artifact_namespace": "foo"}}
-        ).value == "foobar"
+        ).value == "mock output"
 
     def test_extract_csv_rows(self, processor):
         assert processor.extract_csv_rows(

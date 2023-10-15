@@ -26,3 +26,6 @@ class BlobToolMemoryStorage(BaseToolMemoryStorage):
 
     def summarize(self, namespace: str) -> InfoArtifact:
         return InfoArtifact("Can't summarize artifacts")
+
+    def query(self, namespace: str, query: str, metadata: any = None) -> InfoArtifact:
+        return InfoArtifact("Can't query artifacts")

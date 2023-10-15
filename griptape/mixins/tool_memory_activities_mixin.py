@@ -12,8 +12,6 @@ if TYPE_CHECKING:
 
 @define(slots=False)
 class ToolMemoryActivitiesMixin:
-    max_search_results: int = field(default=5, kw_only=True)
-
     @activity(config={
         "description": "Can be used to extract and format content from memory into CSV output",
         "schema": Schema({
@@ -75,7 +73,7 @@ class ToolMemoryActivitiesMixin:
         artifact_namespace = params["values"]["artifact_namespace"]
 
         if memory:
-            return memory.summarize(artifact_namespace)
+            return memory.summarize_namespace(artifact_namespace)
         else:
             return ErrorArtifact("memory not found")
 
@@ -91,17 +89,15 @@ class ToolMemoryActivitiesMixin:
             ): str
         })
     })
-    def search(self, params: dict) -> TextArtifact | ErrorArtifact:
+    def query(self, params: dict) -> TextArtifact | ErrorArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         query = params["values"]["query"]
 
         if memory:
-            return memory.query_engine.query(
-                query,
-                top_n=self.max_search_results,
-                metadata=memory.namespace_metadata.get(artifact_namespace),
-                namespace=artifact_namespace
+            return memory.query_namespace(
+                namespace=artifact_namespace,
+                query=query
             )
         else:
             return ErrorArtifact("memory not found")
