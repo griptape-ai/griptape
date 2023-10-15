@@ -1,13 +1,13 @@
 from __future__ import annotations
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Type
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 from griptape.mixins import ToolMemoryActivitiesMixin
 
 if TYPE_CHECKING:
-    from griptape.memory.tool.storage import BaseToolMemoryStorage
+    from griptape.memory.tool.storage import BaseArtifactStorage
     from griptape.tasks import ActionSubtask
 
 
@@ -17,24 +17,23 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
     )
-    namespace_storage: dict[str, BaseToolMemoryStorage] = field(factory=dict, kw_only=True)
+    artifact_storage: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
+    namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, any] = field(factory=dict, kw_only=True)
 
-    memory_storage: list[BaseToolMemoryStorage] = field(kw_only=True)
-
-    @memory_storage.validator
-    def validate_memory_storage(self, _, memory_storage: list[BaseToolMemoryStorage]) -> None:
+    @artifact_storage.validator
+    def validate_artifact_storage(self, _, artifact_storage: dict[Type, BaseArtifactStorage]) -> None:
         seen_types = []
 
-        for storage in memory_storage:
+        for storage in artifact_storage.values():
             if type(storage) in seen_types:
                 raise ValueError("Can't have more than memory storage of the same type")
 
             seen_types.append(type(storage))
 
-    def get_memory_storage_for(self, artifact: BaseArtifact) -> Optional[BaseToolMemoryStorage]:
+    def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
         find_storage = lambda a: next(
-            (s for s in self.memory_storage if s.can_store(a)),
+            (v for k, v in self.artifact_storage.items() if isinstance(a, k)),
             None
         )
 
@@ -78,7 +77,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
 
     def store_artifact(self, namespace: str, artifact: BaseArtifact) -> bool:
         namespace_storage = self.namespace_storage.get(namespace)
-        storage = self.get_memory_storage_for(artifact)
+        storage = self.get_storage_for(artifact)
 
         if namespace_storage and namespace_storage != storage:
             logging.warning(f"Incompatible storage types")

@@ -1,13 +1,14 @@
+from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.memory import ToolMemory
-from griptape.memory.tool.storage import TextToolMemoryStorage, BlobToolMemoryStorage
+from griptape.memory.tool.storage import TextArtifactStorage, BlobArtifactStorage
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-def text_tool_memory_storage():
-    return TextToolMemoryStorage(
+def text_tool_artifact_storage():
+    return TextArtifactStorage(
         query_engine=VectorQueryEngine(
             vector_store_driver=LocalVectorStoreDriver(
                 embedding_driver=MockEmbeddingDriver()
@@ -29,8 +30,8 @@ def text_tool_memory_storage():
 def text_tool_memory(name):
     return ToolMemory(
         name=name,
-        memory_storage=[
-            text_tool_memory_storage(),
-            BlobToolMemoryStorage()
-        ]
+        artifact_storage={
+            TextArtifact: text_tool_artifact_storage(),
+            BlobArtifact: BlobArtifactStorage()
+        }
     )

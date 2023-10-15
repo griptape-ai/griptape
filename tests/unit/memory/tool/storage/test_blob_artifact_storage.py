@@ -1,12 +1,12 @@
 import pytest
 from griptape.artifacts import BlobArtifact, TextArtifact
-from griptape.memory.tool.storage import BlobToolMemoryStorage
+from griptape.memory.tool.storage import BlobArtifactStorage
 
 
-class TestBlobToolMemoryStorage:
+class TestBlobArtifactStorage:
     @pytest.fixture
     def storage(self):
-        return BlobToolMemoryStorage()
+        return BlobArtifactStorage()
 
     def test_store_artifact(self, storage):
         artifact = BlobArtifact(b"foo", name="foo")

@@ -1,9 +1,9 @@
-from .base_tool_memory_storage import BaseToolMemoryStorage
-from .text_tool_memory_storage import TextToolMemoryStorage
-from .blob_tool_memory_storage import BlobToolMemoryStorage
+from .base_artifact_storage import BaseArtifactStorage
+from .text_artifact_storage import TextArtifactStorage
+from .blob_artifact_storage import BlobArtifactStorage
 
 __all__ = [
-    "BaseToolMemoryStorage",
-    "TextToolMemoryStorage",
-    "BlobToolMemoryStorage",
+    "BaseArtifactStorage",
+    "TextArtifactStorage",
+    "BlobArtifactStorage",
 ]

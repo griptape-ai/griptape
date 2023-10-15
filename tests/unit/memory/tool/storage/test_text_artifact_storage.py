@@ -3,10 +3,10 @@ from griptape.artifacts import BlobArtifact, TextArtifact
 from tests.utils import defaults
 
 
-class TestTextToolMemoryStorage:
+class TestTextArtifactStorage:
     @pytest.fixture
     def storage(self):
-        return defaults.text_tool_memory_storage()
+        return defaults.text_tool_artifact_storage()
 
     def test_store_artifact(self, storage):
         artifact = TextArtifact("foo", name="foo")

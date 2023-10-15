@@ -90,7 +90,7 @@ class TestWorkflow:
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
-        memory_embedding_driver = workflow.tool_memory.memory_storage[0].query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = list(workflow.tool_memory.artifact_storage.values())[0].query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 

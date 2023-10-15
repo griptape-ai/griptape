@@ -2,7 +2,7 @@ import pytest
 from griptape.artifacts import CsvRowArtifact, BlobArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.memory import ToolMemory
-from griptape.memory.tool.storage import BlobToolMemoryStorage, TextToolMemoryStorage
+from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
@@ -23,18 +23,18 @@ class TestToolMemory:
     def test_init(self, memory):
         assert memory.name == "MyMemory"
 
-    def test_validate_memory_storage(self):
+    def test_validate_artifact_storage(self):
         with pytest.raises(ValueError):
             ToolMemory(
-                memory_storage=[
-                    BlobToolMemoryStorage(),
-                    BlobToolMemoryStorage()
-                ]
+                artifact_storage={
+                    TextArtifact: BlobArtifactStorage(),
+                    BlobArtifact: BlobArtifactStorage()
+                }
             )
 
     def test_get_memory_driver_for(self, memory):
-        assert isinstance(memory.get_memory_storage_for(TextArtifact("foo")), TextToolMemoryStorage)
-        assert isinstance(memory.get_memory_storage_for(BlobArtifact(b"foo")), BlobToolMemoryStorage)
+        assert isinstance(memory.get_storage_for(TextArtifact("foo")), TextArtifactStorage)
+        assert isinstance(memory.get_storage_for(BlobArtifact(b"foo")), BlobArtifactStorage)
 
     def test_store_artifact(self, memory):
         assert memory.store_artifact("test", TextArtifact("foo1"))

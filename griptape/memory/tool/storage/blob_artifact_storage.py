@@ -1,10 +1,10 @@
 from attr import define, field
 from griptape.artifacts import BaseArtifact, ListArtifact, BlobArtifact, InfoArtifact
-from griptape.memory.tool.storage import BaseToolMemoryStorage
+from griptape.memory.tool.storage import BaseArtifactStorage
 
 
 @define
-class BlobToolMemoryStorage(BaseToolMemoryStorage):
+class BlobArtifactStorage(BaseArtifactStorage):
     blobs: dict[str, list[BlobArtifact]] = field(factory=dict, kw_only=True)
 
     def can_store(self, artifact: BaseArtifact) -> bool:

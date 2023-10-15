@@ -4,7 +4,7 @@ from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 
 
 @define
-class BaseToolMemoryStorage(ABC):
+class BaseArtifactStorage(ABC):
     @abstractmethod
     def store_artifact(self, namespace: str, artifact: BaseArtifact) -> None:
         ...

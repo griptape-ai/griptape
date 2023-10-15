@@ -1,7 +1,7 @@
 import pytest
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import ToolMemory
-from griptape.memory.tool.storage import TextToolMemoryStorage
+from griptape.memory.tool.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -92,8 +92,7 @@ class TestAgent:
             embedding_driver=embedding_driver
         )
 
-        memory_embedding_driver = agent.tool_memory.memory_storage[
-            0].query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = list(agent.tool_memory.artifact_storage.values())[0].query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -252,7 +251,7 @@ class TestAgent:
             embedding_driver=embedding_driver
         )
 
-        storage: TextToolMemoryStorage = agent.tool_memory.memory_storage[0]
+        storage: TextArtifactStorage = list(agent.tool_memory.artifact_storage.values())[0]
 
         assert storage.query_engine.prompt_driver == prompt_driver
         assert storage.query_engine.vector_store_driver.embedding_driver == embedding_driver

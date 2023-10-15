@@ -6,11 +6,12 @@ from logging import Logger
 from typing import Optional, TYPE_CHECKING, Callable, Type
 from attr import define, field, Factory
 from rich.logging import RichHandler
+from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import ToolMemory
-from griptape.memory.tool.storage import BlobToolMemoryStorage, TextToolMemoryStorage
+from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
@@ -46,8 +47,8 @@ class Structure(ABC):
     tool_memory: Optional[ToolMemory] = field(
         default=Factory(
             lambda self: ToolMemory(
-                memory_storage=[
-                    TextToolMemoryStorage(
+                artifact_storage={
+                    TextArtifact: TextArtifactStorage(
                         query_engine=VectorQueryEngine(
                             prompt_driver=self.prompt_driver,
                             vector_store_driver=LocalVectorStoreDriver(
@@ -64,8 +65,8 @@ class Structure(ABC):
                             prompt_driver=self.prompt_driver
                         )
                     ),
-                    BlobToolMemoryStorage()
-                ]
+                    BlobArtifact: BlobArtifactStorage()
+                }
             ),
             takes_self=True
         ),

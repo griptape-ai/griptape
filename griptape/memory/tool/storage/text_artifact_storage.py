@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
-from griptape.memory.tool.storage import BaseToolMemoryStorage
+from griptape.memory.tool.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
     from griptape.engines import (
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class TextToolMemoryStorage(BaseToolMemoryStorage):
+class TextArtifactStorage(BaseArtifactStorage):
     query_engine: VectorQueryEngine = field(kw_only=True)
     summary_engine: BaseSummaryEngine = field(kw_only=True)
     csv_extraction_engine: CsvExtractionEngine = field(kw_only=True)
