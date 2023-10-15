@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from attr import define
-from griptape.artifacts import BaseArtifact, ListArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 
 
 @define
@@ -15,4 +15,8 @@ class BaseToolMemoryStorage(ABC):
 
     @abstractmethod
     def can_store(self, artifact: BaseArtifact) -> bool:
+        ...
+
+    @abstractmethod
+    def summarize(self, namespace: str) -> TextArtifact:
         ...

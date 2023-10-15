@@ -25,3 +25,8 @@ class TextToolMemoryStorage(BaseToolMemoryStorage):
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         return self.query_engine.load_artifacts(namespace)
+
+    def summarize(self, namespace: str) -> TextArtifact:
+        return self.summary_engine.summarize_artifacts(
+            self.load_artifacts(namespace),
+        )

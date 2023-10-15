@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 from griptape.mixins import ToolMemoryActivitiesMixin
 
@@ -119,3 +119,11 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
             return self
         else:
             return None
+
+    def summarize(self, namespace: str) -> TextArtifact | InfoArtifact:
+        storage = self.namespace_storage.get(namespace)
+
+        if storage:
+            return storage.summarize(namespace)
+        else:
+            return InfoArtifact("Can't find memory content")

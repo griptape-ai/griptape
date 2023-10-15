@@ -24,3 +24,8 @@ class TestTextToolMemoryStorage:
     def test_can_store(self, storage):
         assert storage.can_store(TextArtifact("foo"))
         assert not storage.can_store(BlobArtifact(b"foo"))
+
+    def test_summarize(self, storage):
+        storage.store_artifact("foo", TextArtifact("test"))
+
+        assert storage.summarize("foo").value == "mock output"

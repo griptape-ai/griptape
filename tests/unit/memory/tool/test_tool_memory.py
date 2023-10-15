@@ -17,11 +17,6 @@ class TestToolMemory:
         )
 
         mocker.patch(
-            "griptape.engines.PromptSummaryEngine.summarize_artifacts",
-            return_value=TextArtifact("foobar summary")
-        )
-
-        mocker.patch(
             "griptape.engines.CsvExtractionEngine.extract",
             return_value=[CsvRowArtifact({"foo": "bar"})]
         )
@@ -105,3 +100,8 @@ class TestToolMemory:
         )
 
         assert len(memory.load_artifacts("test").value) == 2
+
+    def test_summarize(self, memory):
+        memory.store_artifact("foo", TextArtifact("test"))
+
+        assert memory.summarize("foo").value == "mock output"

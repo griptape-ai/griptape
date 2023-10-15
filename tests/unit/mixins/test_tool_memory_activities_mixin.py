@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import TextArtifact, CsvRowArtifact, BaseArtifact, ListArtifact
+from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact
 from tests.mocks.mock_text_memory_processor import MockToolMemoryProcessor
 
 
@@ -9,11 +9,6 @@ class TestToolMemoryActivitiesMixin:
         mocker.patch(
             "griptape.engines.VectorQueryEngine.query",
             return_value=TextArtifact("foobar")
-        )
-
-        mocker.patch(
-            "griptape.engines.PromptSummaryEngine.summarize_artifacts",
-            return_value=TextArtifact("foobar summary")
         )
 
         mocker.patch(
@@ -30,19 +25,12 @@ class TestToolMemoryActivitiesMixin:
     def processor(self):
         return MockToolMemoryProcessor()
 
-    def test_insert(self, processor):
-        processor.insert(
-            {"values": {"memory_name": processor.memory.name, "artifact_namespace": "foo", "text": "foobar"}}
-        )
-
-        assert BaseArtifact.from_json(
-            processor.memory.query_engine.vector_store_driver.load_entries("foo")[0].meta["artifact"]
-        ).value == "foobar"
-
     def test_summarize(self, processor):
+        processor.memory.store_artifact("foo", TextArtifact("test"))
+
         assert processor.summarize(
             {"values": {"memory_name": processor.memory.name, "artifact_namespace": "foo"}}
-        ).value == "foobar summary"
+        ).value == "mock output"
 
     def test_search(self, processor):
         assert processor.search(

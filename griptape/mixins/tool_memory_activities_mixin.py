@@ -15,26 +15,6 @@ class ToolMemoryActivitiesMixin:
     max_search_results: int = field(default=5, kw_only=True)
 
     @activity(config={
-        "description": "Can be used to insert text into a memory",
-        "schema": Schema({
-            "memory_name": str,
-            "artifact_namespace": str,
-            "text": str
-        })
-    })
-    def insert(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        memory = self.find_input_memory(params["values"]["memory_name"])
-        artifact_namespace = params["values"]["artifact_namespace"]
-        text = params["values"]["text"]
-
-        if memory:
-            memory.query_engine.upsert_text_artifact(TextArtifact(text), artifact_namespace)
-
-            return InfoArtifact("text was successfully inserted")
-        else:
-            return ErrorArtifact("memory not found")
-
-    @activity(config={
         "description": "Can be used to extract and format content from memory into CSV output",
         "schema": Schema({
             "memory_name": str,
@@ -95,9 +75,7 @@ class ToolMemoryActivitiesMixin:
         artifact_namespace = params["values"]["artifact_namespace"]
 
         if memory:
-            return memory.summary_engine.summarize_artifacts(
-                memory.load_artifacts(artifact_namespace),
-            )
+            return memory.summarize(artifact_namespace)
         else:
             return ErrorArtifact("memory not found")
 

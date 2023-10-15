@@ -1,5 +1,5 @@
 from attr import define, field
-from griptape.artifacts import BaseArtifact, ListArtifact, BlobArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, BlobArtifact, InfoArtifact
 from griptape.memory.tool.storage import BaseToolMemoryStorage
 
 
@@ -23,3 +23,6 @@ class BlobToolMemoryStorage(BaseToolMemoryStorage):
                 []
             )
         )
+
+    def summarize(self, namespace: str) -> InfoArtifact:
+        return InfoArtifact("Can't summarize artifacts")
