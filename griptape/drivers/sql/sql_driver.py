@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 import sqlalchemy
 from sqlalchemy.engine import Engine
 from griptape.drivers import BaseSqlDriver
