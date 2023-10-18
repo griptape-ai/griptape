@@ -27,7 +27,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
 
         for storage in artifact_storage.values():
             if type(storage) in seen_types:
-                raise ValueError("Can't have more than memory storage of the same type")
+                raise ValueError("can't have more than memory storage of the same type")
 
             seen_types.append(type(storage))
 
@@ -58,7 +58,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         namespace = output_artifact.name
 
         if not output_artifact:
-            return InfoArtifact("Tool output is empty.")
+            return InfoArtifact("tool output is empty")
         elif self.store_artifact(namespace, output_artifact):
             self.namespace_metadata[namespace] = subtask.action_to_json()
 
@@ -73,7 +73,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         else:
             logging.info(f"Output of {tool_name}.{activity_name} can't be stored in {self.name}")
 
-            return ErrorArtifact("Error processing tool output.")
+            return ErrorArtifact("error processing tool output")
 
     def store_artifact(self, namespace: str, artifact: BaseArtifact) -> bool:
         namespace_storage = self.namespace_storage.get(namespace)
