@@ -93,9 +93,7 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(self, activity: callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
-        if value.is_empty():
-            return InfoArtifact("Tool returned an empty value")
-        else:
+        if value:
             if self.output_memory:
                 for memory in activity.__self__.output_memory.get(activity.name, []):
                     value = memory.process_output(activity, subtask, value)
@@ -106,6 +104,8 @@ class BaseTool(ActivityMixin, ABC):
                     return TextArtifact(str(value))
             else:
                 return value
+        else:
+            return InfoArtifact("Tool returned an empty value")
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator

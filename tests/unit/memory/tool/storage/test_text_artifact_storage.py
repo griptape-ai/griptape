@@ -19,7 +19,7 @@ class TestTextArtifactStorage:
         storage.store_artifact("test", artifact)
 
         assert storage.load_artifacts("test").value[0].value == "foo"
-        assert storage.load_artifacts("empty").is_empty()
+        assert not bool(storage.load_artifacts("empty"))
 
     def test_can_store(self, storage):
         assert storage.can_store(TextArtifact("foo"))

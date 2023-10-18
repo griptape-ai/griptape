@@ -57,7 +57,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         activity_name = tool_activity.name
         namespace = output_artifact.name
 
-        if output_artifact.is_empty():
+        if not output_artifact:
             return InfoArtifact("Tool output is empty.")
         elif self.store_artifact(namespace, output_artifact):
             self.namespace_metadata[namespace] = subtask.action_to_json()

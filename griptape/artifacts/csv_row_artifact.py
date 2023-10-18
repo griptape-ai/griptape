@@ -31,5 +31,5 @@ class CsvRowArtifact(TextArtifact):
 
         return dict(CsvRowArtifactSchema().dump(self))
 
-    def is_empty(self) -> bool:
-        return len(self.value) == 0
+    def __bool__(self) -> bool:
+        return len(self.value) > 0

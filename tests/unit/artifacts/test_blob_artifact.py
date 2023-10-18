@@ -63,6 +63,6 @@ class TestBlobArtifact:
     def test_name(self):
         assert BlobArtifact(b"foo", name="bar").name == "bar"
 
-    def test_is_empty(self):
-        assert BlobArtifact(b"").is_empty()
-        assert not BlobArtifact(b"foo").is_empty()
+    def test___bool__(self):
+        assert not bool(BlobArtifact(b""))
+        assert bool(BlobArtifact(b"foo"))

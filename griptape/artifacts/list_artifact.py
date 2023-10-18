@@ -23,8 +23,8 @@ class ListArtifact(BaseArtifact):
         else:
             return None
 
-    def is_empty(self) -> bool:
-        return True if len(self.value) == 0 else False
+    def __bool__(self) -> bool:
+        return len(self.value) > 0
 
     def to_text(self) -> str:
         return self.item_separator.join([v.to_text() for v in self.value])
