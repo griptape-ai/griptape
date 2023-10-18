@@ -86,10 +86,8 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         else:
             if storage:
                 if isinstance(artifact, ListArtifact):
-                    [
+                    for a in artifact.value:
                         storage.store_artifact(namespace, a)
-                        for a in artifact.value
-                    ]
 
                     self.namespace_storage[namespace] = storage
 
