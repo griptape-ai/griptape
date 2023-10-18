@@ -54,7 +54,7 @@ class TestConversationMemory:
         assert memory.from_dict(memory_dict).runs[0].input == "foo"
 
     def test_buffering(self):
-        memory = ConversationMemory(buffer_size=2)
+        memory = ConversationMemory(max_memory_runs=2)
 
         pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
 
