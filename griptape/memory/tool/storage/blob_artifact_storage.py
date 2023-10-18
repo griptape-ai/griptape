@@ -25,7 +25,7 @@ class BlobArtifactStorage(BaseArtifactStorage):
         )
 
     def summarize(self, namespace: str) -> InfoArtifact:
-        return InfoArtifact("Can't summarize artifacts")
+        return InfoArtifact("can't summarize artifacts")
 
     def query(self, namespace: str, query: str, metadata: any = None) -> InfoArtifact:
-        return InfoArtifact("Can't query artifacts")
+        return InfoArtifact("can't query artifacts")
