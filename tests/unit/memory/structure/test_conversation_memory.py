@@ -3,15 +3,6 @@ from griptape.memory.structure import ConversationMemory, Run
 
 
 class TestConversationMemory:
-    def test_is___bool__(self):
-        memory = ConversationMemory()
-
-        assert not bool(memory)
-
-        memory.add_run(Run(input="test", output="test"))
-
-        assert bool(memory)
-
     def test_add_run(self):
         memory = ConversationMemory()
         run = Run(input="test", output="test")

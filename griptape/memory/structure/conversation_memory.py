@@ -42,9 +42,6 @@ class ConversationMemory:
         if self.driver:
             self.driver.store(self)
 
-    def __bool__(self) -> bool:
-        return len(self.runs) > 0
-
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)
 
