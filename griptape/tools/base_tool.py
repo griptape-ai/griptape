@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import subprocess
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 import inspect
 import os
 from abc import ABC
@@ -70,17 +70,17 @@ class BaseTool(ActivityMixin, ABC):
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
 
-    def execute(self, activity: callable, subtask: ActionSubtask) -> BaseArtifact:
+    def execute(self, activity: Callable, subtask: ActionSubtask) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask.action_input)
         output = self.run(activity, subtask, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, output)
 
         return postprocessed_output
 
-    def before_run(self, activity: callable, value: Optional[dict]) -> Optional[dict]:
+    def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
         return value
 
-    def run(self, activity: callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
+    def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
@@ -92,7 +92,7 @@ class BaseTool(ActivityMixin, ABC):
 
         return result
 
-    def after_run(self, activity: callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
+    def after_run(self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
         if value:
             if self.output_memory:
                 for memory in activity.__self__.output_memory.get(activity.name, []):

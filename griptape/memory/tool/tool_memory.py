@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import TYPE_CHECKING, Optional, Type, Any
+from typing import TYPE_CHECKING, Optional, Type, Any, Callable
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
@@ -47,7 +47,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
 
     def process_output(
             self,
-            tool_activity: callable,
+            tool_activity: Callable,
             subtask: ActionSubtask,
             output_artifact: BaseArtifact
     ) -> BaseArtifact:

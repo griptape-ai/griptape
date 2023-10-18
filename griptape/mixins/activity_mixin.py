@@ -1,5 +1,5 @@
 import inspect
-from typing import Optional
+from typing import Optional, Callable
 from attr import define, field
 from jinja2 import Template
 from schema import Schema
@@ -42,7 +42,7 @@ class ActivityMixin:
 
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `inspect.getmembers`.
-    def activities(self) -> list[callable]:
+    def activities(self) -> list[Callable]:
         methods = []
 
         for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
@@ -54,20 +54,20 @@ class ActivityMixin:
 
         return methods
 
-    def find_activity(self, name: str) -> Optional[callable]:
+    def find_activity(self, name: str) -> Optional[Callable]:
         for method in self.activities():
             if getattr(method, "is_activity", False) and method.name == name:
                 return method
 
         return None
 
-    def activity_name(self, activity: callable) -> str:
+    def activity_name(self, activity: Callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
             return activity.name
 
-    def activity_description(self, activity: callable) -> str:
+    def activity_description(self, activity: Callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
@@ -75,13 +75,13 @@ class ActivityMixin:
                 "_self": self
             })
 
-    def activity_uses_default_memory(self, activity: callable) -> bool:
+    def activity_uses_default_memory(self, activity: Callable) -> bool:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
             return activity.config["uses_default_memory"]
 
-    def activity_schema(self, activity: callable) -> Optional[dict]:
+    def activity_schema(self, activity: Callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         elif activity.config["schema"]:
