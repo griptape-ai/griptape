@@ -1,6 +1,8 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
+from typing import Any
+
 from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
@@ -48,7 +50,7 @@ class Workflow(Structure):
 
         return self.output_tasks()
 
-    def context(self, task: BaseTask) -> dict[str, any]:
+    def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
 
         context.update(

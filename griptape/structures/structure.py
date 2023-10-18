@@ -3,7 +3,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, TYPE_CHECKING, Callable, Type
+from typing import Optional, TYPE_CHECKING, Callable, Type, Any
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.artifacts import TextArtifact, BlobArtifact
@@ -148,7 +148,7 @@ class Structure(ABC):
         for listener in listeners:
             listener(event)
 
-    def context(self, task: BaseTask) -> dict[str, any]:
+    def context(self, task: BaseTask) -> dict[str, Any]:
         return {
             "args": self.execution_args,
             "structure": self,

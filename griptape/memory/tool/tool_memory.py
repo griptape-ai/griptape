@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING, Optional, Type, Any
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
@@ -19,7 +19,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
     )
     artifact_storages: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
-    namespace_metadata: dict[str, any] = field(factory=dict, kw_only=True)
+    namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @artifact_storages.validator
     def validate_artifact_storages(self, _, artifact_storage: dict[Type, BaseArtifactStorage]) -> None:
