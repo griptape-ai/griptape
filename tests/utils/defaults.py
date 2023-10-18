@@ -30,7 +30,7 @@ def text_tool_artifact_storage():
 def text_tool_memory(name):
     return ToolMemory(
         name=name,
-        artifact_storage={
+        artifact_storages={
             TextArtifact: text_tool_artifact_storage(),
             BlobArtifact: BlobArtifactStorage()
         }

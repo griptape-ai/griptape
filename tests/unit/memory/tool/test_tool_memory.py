@@ -23,10 +23,10 @@ class TestToolMemory:
     def test_init(self, memory):
         assert memory.name == "MyMemory"
 
-    def test_validate_artifact_storage(self):
+    def test_validate_artifact_storages(self):
         with pytest.raises(ValueError):
             ToolMemory(
-                artifact_storage={
+                artifact_storages={
                     TextArtifact: BlobArtifactStorage(),
                     BlobArtifact: BlobArtifactStorage()
                 }

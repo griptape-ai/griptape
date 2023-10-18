@@ -17,12 +17,12 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
     )
-    artifact_storage: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
+    artifact_storages: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, any] = field(factory=dict, kw_only=True)
 
-    @artifact_storage.validator
-    def validate_artifact_storage(self, _, artifact_storage: dict[Type, BaseArtifactStorage]) -> None:
+    @artifact_storages.validator
+    def validate_artifact_storages(self, _, artifact_storage: dict[Type, BaseArtifactStorage]) -> None:
         seen_types = []
 
         for storage in artifact_storage.values():
@@ -33,7 +33,7 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
 
     def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
         find_storage = lambda a: next(
-            (v for k, v in self.artifact_storage.items() if isinstance(a, k)),
+            (v for k, v in self.artifact_storages.items() if isinstance(a, k)),
             None
         )
 

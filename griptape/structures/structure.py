@@ -47,7 +47,7 @@ class Structure(ABC):
     tool_memory: Optional[ToolMemory] = field(
         default=Factory(
             lambda self: ToolMemory(
-                artifact_storage={
+                artifact_storages={
                     TextArtifact: TextArtifactStorage(
                         query_engine=VectorQueryEngine(
                             prompt_driver=self.prompt_driver,

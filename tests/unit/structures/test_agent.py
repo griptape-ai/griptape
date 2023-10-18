@@ -92,7 +92,7 @@ class TestAgent:
             embedding_driver=embedding_driver
         )
 
-        memory_embedding_driver = list(agent.tool_memory.artifact_storage.values())[0].query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = list(agent.tool_memory.artifact_storages.values())[0].query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -251,7 +251,7 @@ class TestAgent:
             embedding_driver=embedding_driver
         )
 
-        storage: TextArtifactStorage = list(agent.tool_memory.artifact_storage.values())[0]
+        storage: TextArtifactStorage = list(agent.tool_memory.artifact_storages.values())[0]
 
         assert storage.query_engine.prompt_driver == prompt_driver
         assert storage.query_engine.vector_store_driver.embedding_driver == embedding_driver

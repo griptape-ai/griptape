@@ -94,7 +94,7 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        memory_embedding_driver = list(pipeline.tool_memory.artifact_storage.values())[0].query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = list(pipeline.tool_memory.artifact_storages.values())[0].query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
