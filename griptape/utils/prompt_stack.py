@@ -61,7 +61,7 @@ class PromptStack:
         as possible without exceeding the token limit.
 
         Args:
-            stack: The Prompt Stack to add the Conversation Memory runs to.
+            memory: The Conversation Memory to add the Prompt Stack to.
             index: Optional index to insert the Conversation Memory runs at.
                    Defaults to appending to the end of the Prompt Stack.
         """
