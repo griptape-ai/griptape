@@ -55,11 +55,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
     _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def __attrs_post_init__(self) -> None:
         # Define a hook to pull rate limit metadata from the OpenAI API response header.
         openai.requestssession = requests.Session()
         openai.requestssession.hooks = {"response": self._extract_ratelimit_metadata}
 
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
