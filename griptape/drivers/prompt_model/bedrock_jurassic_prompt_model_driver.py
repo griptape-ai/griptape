@@ -13,11 +13,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.9, kw_only=True)
     _tokenizer: BedrockJurassicTokenizer = field(default=None, kw_only=True)
     prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
-
-    @prompt_driver.validator
-    def validate_prompt_driver(self, _, prompt_driver):
-        if prompt_driver and prompt_driver.stream:
-            raise ValueError("jurassic prompt model driver does not support streaming")
+    supports_streaming: bool = field(default=False, kw_only=True)
 
     @property
     def tokenizer(self) -> BedrockJurassicTokenizer:

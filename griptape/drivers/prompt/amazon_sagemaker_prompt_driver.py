@@ -24,6 +24,12 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
         default="accept_eula=true",
         kw_only=True
     )
+    stream: bool = field(default=False, kw_only=True)
+
+    @stream.validator
+    def validate_stream(self, _, stream):
+        if stream:
+            raise ValueError("streaming is not supported")
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
