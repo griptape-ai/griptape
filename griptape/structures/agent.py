@@ -13,23 +13,15 @@ if TYPE_CHECKING:
 @define
 class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
-    memory: Optional[ConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()),
-        kw_only=True
-    )
+    memory: Optional[ConversationMemory] = field(default=Factory(lambda: ConversationMemory()), kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if len(self.tasks) == 0:
             if self.tools:
-                task = ToolkitTask(
-                    self.input_template,
-                    tools=self.tools
-                )
+                task = ToolkitTask(self.input_template, tools=self.tools)
             else:
-                task = PromptTask(
-                    self.input_template
-                )
+                task = PromptTask(self.input_template)
 
             self.add_task(task)
 
@@ -51,7 +43,7 @@ class Agent(Structure):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         raise NotImplementedError("Method is not implemented: agents can only have one task.")
 
-    def run(self, *args) -> BaseTask:
+    def try_run(self, *args) -> BaseTask:
         self._execution_args = args
 
         self.task.reset()
@@ -59,10 +51,7 @@ class Agent(Structure):
         self.task.execute()
 
         if self.memory:
-            run = Run(
-                input=self.task.input.to_text(),
-                output=self.task.output.to_text()
-            )
+            run = Run(input=self.task.input.to_text(), output=self.task.output.to_text())
 
             self.memory.add_run(run)
 

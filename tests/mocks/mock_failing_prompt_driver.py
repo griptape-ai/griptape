@@ -1,3 +1,4 @@
+from typing import Iterator
 from attr import define
 
 from griptape.utils import PromptStack
@@ -20,3 +21,11 @@ class MockFailingPromptDriver(BasePromptDriver):
             raise Exception(f"failed attempt")
         else:
             return TextArtifact("success")
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        if self.current_attempt < self.max_failures:
+            self.current_attempt += 1
+
+            raise Exception(f"failed attempt")
+        else:
+            yield TextArtifact("success")
