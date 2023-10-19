@@ -57,32 +57,33 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         activity_name = tool_activity.name
         namespace = output_artifact.name
 
-        if not output_artifact:
-            return InfoArtifact("tool output is empty")
-        elif self.store_artifact(namespace, output_artifact):
-            self.namespace_metadata[namespace] = subtask.action_to_json()
+        if output_artifact:
+            result = self.store_artifact(namespace, output_artifact)
 
-            output = J2("memory/tool.j2").render(
-                memory_name=self.name,
-                tool_name=tool_name,
-                activity_name=activity_name,
-                artifact_namespace=namespace
-            )
+            if result:
+                return result
+            else:
+                self.namespace_metadata[namespace] = subtask.action_to_json()
 
-            return InfoArtifact(output)
+                output = J2("memory/tool.j2").render(
+                    memory_name=self.name,
+                    tool_name=tool_name,
+                    activity_name=activity_name,
+                    artifact_namespace=namespace
+                )
+
+                return InfoArtifact(output)
         else:
-            logging.info(f"Output of {tool_name}.{activity_name} can't be stored in {self.name}")
+            return InfoArtifact("tool output is empty")
 
-            return ErrorArtifact("error processing tool output")
-
-    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> bool:
+    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> Optional[BaseArtifact]:
         namespace_storage = self.namespace_storage.get(namespace)
         storage = self.get_storage_for(artifact)
 
-        if namespace_storage and namespace_storage != storage:
-            logging.warning(f"Incompatible storage types")
-
-            return False
+        if not storage:
+            return artifact
+        elif namespace_storage and namespace_storage != storage:
+            return ErrorArtifact("error storing tool output in memory")
         else:
             if storage:
                 if isinstance(artifact, ListArtifact):
@@ -91,17 +92,17 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
 
                     self.namespace_storage[namespace] = storage
 
-                    return True
+                    return None
                 elif isinstance(artifact, BaseArtifact):
                     storage.store_artifact(namespace, artifact)
 
                     self.namespace_storage[namespace] = storage
 
-                    return True
+                    return None
                 else:
-                    return False
+                    return ErrorArtifact("error storing tool output in memory")
             else:
-                return False
+                return ErrorArtifact("error storing tool output in memory")
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         storage = self.namespace_storage.get(namespace)

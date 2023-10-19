@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import CsvRowArtifact, BlobArtifact
+from griptape.artifacts import CsvRowArtifact, BlobArtifact, ErrorArtifact, InfoArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.memory import ToolMemory
 from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
@@ -37,11 +37,13 @@ class TestToolMemory:
         assert isinstance(memory.get_storage_for(BlobArtifact(b"foo")), BlobArtifactStorage)
 
     def test_store_artifact(self, memory):
-        assert memory.store_artifact("test", TextArtifact("foo1"))
-        assert memory.store_artifact("test", TextArtifact("foo2"))
-        assert not memory.store_artifact("test", BlobArtifact(b"foo3"))
-        assert memory.store_artifact("btest", BlobArtifact(b"foo4"))
-        assert not memory.store_artifact("btest", TextArtifact("foo5"))
+        assert memory.store_artifact("test", TextArtifact("foo1")) is None
+        assert memory.store_artifact("test", TextArtifact("foo2")) is None
+        assert isinstance(memory.store_artifact("test", BlobArtifact(b"foo3")), ErrorArtifact)
+        assert memory.store_artifact("btest", BlobArtifact(b"foo4")) is None
+        assert isinstance(memory.store_artifact("btest", TextArtifact("foo5")), ErrorArtifact)
+        assert isinstance(memory.store_artifact("test", InfoArtifact("foo1")), InfoArtifact)
+        assert memory.store_artifact("test", ListArtifact([TextArtifact("foo1")])) is None
 
     def test_find_input_memory(self, memory):
         assert memory.find_input_memory(memory.name) == memory
