@@ -67,6 +67,20 @@ jobs:
       AZURE_OPENAI_4_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_4_DEPLOYMENT_ID }}
       AZURE_OPENAI_4_32k_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_4_32k_DEPLOYMENT_ID }}
       COHERE_API_KEY: ${{ secrets.INTEG_COHERE_API_KEY }}
+    services:
+      postgres:
+        image: ankane/pgvector:v0.5.0
+        env:
+          POSTGRES_USER: ${{ secrets.INTEGRATION_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.INTEGRATION_POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.INTEGRATION_POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
