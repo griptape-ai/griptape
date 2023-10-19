@@ -5,11 +5,19 @@ from griptape.tokenizers import OpenAiTokenizer
 import pytest
 
 class TestOpenAiCompletionPromptDriverFixtureMixin:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def mock_completion_create(self, mocker):
         mock_chat_create = mocker.patch('openai.Completion').create
         mock_chat_create.return_value.choices = [  Mock() ]
         mock_chat_create.return_value.choices[0].text = 'model-output'
+        return mock_chat_create
+
+    @pytest.fixture()
+    def mock_completion_stream_create(self, mocker):
+        mock_chat_create = mocker.patch('openai.Completion').create
+        mock_chunk = Mock()
+        mock_chunk.choices = [{'text': 'model-output'}]
+        mock_chat_create.return_value = iter([mock_chunk])
         return mock_chat_create
 
     @pytest.fixture
@@ -54,6 +62,30 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
             api_version=driver.api_version,
             api_base=driver.api_base,
             api_type=driver.api_type,
+            prompt=prompt
+        )
+        assert text_artifact.value == 'model-output'
+        
+    def test_try_stream_run(self, mock_completion_stream_create, prompt_stack, prompt):
+        # Given
+        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
+
+        # When
+        text_artifact = next(driver.try_stream(prompt_stack))
+
+        # Then
+        mock_completion_stream_create.assert_called_once_with(
+            model=driver.model,
+            max_tokens=ANY,
+            temperature=driver.temperature,
+            stop=driver.tokenizer.stop_sequences,
+            user=driver.user,
+            api_key=driver.api_key,
+            organization=driver.organization,
+            api_version=driver.api_version,
+            api_base=driver.api_base,
+            api_type=driver.api_type,
+            stream=True,
             prompt=prompt
         )
         assert text_artifact.value == 'model-output'

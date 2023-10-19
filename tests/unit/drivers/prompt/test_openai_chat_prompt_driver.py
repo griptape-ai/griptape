@@ -3,17 +3,25 @@ import datetime
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.utils import PromptStack
 from griptape.tokenizers import OpenAiTokenizer
-from unittest.mock import ANY, Mock
+from unittest.mock import  Mock
 import pytest
 
 
 class TestOpenAiChatPromptDriverFixtureMixin:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def mock_chat_completion_create(self, mocker):
         mock_chat_create = mocker.patch("openai.ChatCompletion").create
         mock_chat_create.return_value.choices = [{"message": {"content": "model-output"}}]
         return mock_chat_create
 
+    @pytest.fixture
+    def mock_chat_completion_stream_create(self, mocker):
+        mock_chat_create = mocker.patch('openai.ChatCompletion').create
+        mock_chunk = Mock()
+        mock_chunk.choices = [{'delta': {'content': 'model-output'}}]
+        mock_chat_create.return_value = iter([mock_chunk])
+        return mock_chat_create
+    
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
@@ -91,6 +99,29 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             api_base=driver.api_base,
             api_type=driver.api_type,
             messages=messages,
+        )
+        assert text_artifact.value == 'model-output'
+
+    def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
+        # Given
+        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
+
+        # When
+        text_artifact = next(driver.try_stream(prompt_stack))
+
+        # Then
+        mock_chat_completion_stream_create.assert_called_once_with(
+            model=driver.model,
+            temperature=driver.temperature,
+            stop=driver.tokenizer.stop_sequences,
+            user=driver.user,
+            api_key=driver.api_key,
+            organization=driver.organization,
+            api_version=driver.api_version,
+            api_base=driver.api_base,
+            api_type=driver.api_type,
+            stream=True,
+            messages=messages
         )
         assert text_artifact.value == "model-output"
 

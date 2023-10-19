@@ -1,5 +1,6 @@
+from __future__ import annotations
 import os
-from typing import Optional
+from typing import Iterator, Optional
 import openai
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -54,17 +55,34 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
     _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def __attrs_post_init__(self) -> None:
         # Define a hook to pull rate limit metadata from the OpenAI API response header.
         openai.requestssession = requests.Session()
         openai.requestssession.hooks = {"response": self._extract_ratelimit_metadata}
 
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
-            return TextArtifact(value=result.choices[0]["message"]["content"].strip())
+            return TextArtifact(
+                value=result.choices[0]["message"]["content"].strip()
+            )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        result = openai.ChatCompletion.create(**self._base_params(prompt_stack), stream=True)
+
+        for chunk in result:
+            if len(chunk.choices) == 1:
+                delta = chunk.choices[0]["delta"]
+            else:
+                raise Exception("Completion with more than one choice is not supported yet.")
+
+            if "content" in delta:
+                delta_content = delta["content"]
+
+                yield TextArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         return self.tokenizer.token_count(self._prompt_stack_to_messages(prompt_stack))
