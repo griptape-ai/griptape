@@ -3,13 +3,15 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, TYPE_CHECKING, Callable, Type
+from typing import Optional, TYPE_CHECKING, Callable, Type, Any
 from attr import define, field, Factory
 from rich.logging import RichHandler
+from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.memory.structure import ConversationMemory
-from griptape.memory.tool import BaseToolMemory, TextToolMemory
+from griptape.memory import ToolMemory
+from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
@@ -42,24 +44,32 @@ class Structure(ABC):
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[Callable] | dict[Type[BaseEvent], list[Callable]] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
-    tool_memory: Optional[BaseToolMemory] = field(
-        default=Factory(lambda self: TextToolMemory(
-            query_engine=VectorQueryEngine(
-                prompt_driver=self.prompt_driver,
-                vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=self.embedding_driver
-                )
+    tool_memory: Optional[ToolMemory] = field(
+        default=Factory(
+            lambda self: ToolMemory(
+                artifact_storages={
+                    TextArtifact: TextArtifactStorage(
+                        query_engine=VectorQueryEngine(
+                            prompt_driver=self.prompt_driver,
+                            vector_store_driver=LocalVectorStoreDriver(
+                                embedding_driver=self.embedding_driver
+                            )
+                        ),
+                        summary_engine=PromptSummaryEngine(
+                            prompt_driver=self.prompt_driver
+                        ),
+                        csv_extraction_engine=CsvExtractionEngine(
+                            prompt_driver=self.prompt_driver
+                        ),
+                        json_extraction_engine=JsonExtractionEngine(
+                            prompt_driver=self.prompt_driver
+                        )
+                    ),
+                    BlobArtifact: BlobArtifactStorage()
+                }
             ),
-            summary_engine=PromptSummaryEngine(
-                prompt_driver=self.prompt_driver
-            ),
-            csv_extraction_engine=CsvExtractionEngine(
-                prompt_driver=self.prompt_driver
-            ),
-            json_extraction_engine=JsonExtractionEngine(
-                prompt_driver=self.prompt_driver
-            )
-        ), takes_self=True),
+            takes_self=True
+        ),
         kw_only=True
     )
     _execution_args: tuple = ()
@@ -138,7 +148,7 @@ class Structure(ABC):
         for listener in listeners:
             listener(event)
 
-    def context(self, task: BaseTask) -> dict[str, any]:
+    def context(self, task: BaseTask) -> dict[str, Any]:
         return {
             "args": self.execution_args,
             "structure": self,

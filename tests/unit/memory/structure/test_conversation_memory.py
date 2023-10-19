@@ -3,15 +3,6 @@ from griptape.memory.structure import ConversationMemory, Run
 
 
 class TestConversationMemory:
-    def test_is_empty(self):
-        memory = ConversationMemory()
-
-        assert memory.is_empty()
-
-        memory.add_run(Run(input="test", output="test"))
-
-        assert not memory.is_empty()
-
     def test_add_run(self):
         memory = ConversationMemory()
         run = Run(input="test", output="test")

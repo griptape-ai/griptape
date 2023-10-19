@@ -1,5 +1,5 @@
 import time
-from typing import Optional
+from typing import Optional, Any
 import boto3
 from griptape.drivers import BaseSqlDriver
 from attr import Factory, define, field
@@ -39,7 +39,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
     @classmethod
     def _process_cells_from_rows_and_columns(
         cls, columns: list, rows: list[list]
-    ) -> list[dict[str, any]]:
+    ) -> list[dict[str, Any]]:
         return [{column: r[idx] for idx, column in enumerate(columns)} for r in rows]
 
     @classmethod
@@ -47,7 +47,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         return [k["name"] for k in meta]
 
     @classmethod
-    def _post_process(cls, meta, records) -> list[dict[str, any]]:
+    def _post_process(cls, meta, records) -> list[dict[str, Any]]:
         columns = cls._process_columns_from_column_metadata(meta)
         rows = cls._process_rows_from_records(records)
         return cls._process_cells_from_rows_and_columns(columns, rows)
@@ -59,7 +59,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         function_kwargs = {"Sql": query, "Database": self.database}
         if self.workgroup_name:
             function_kwargs["WorkgroupName"] = self.workgroup_name

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Any
 from attr import define
 
 
@@ -8,14 +8,14 @@ from attr import define
 class BaseSqlDriver(ABC):
     @dataclass
     class RowResult:
-        cells: dict[str, any]
+        cells: dict[str, Any]
 
     @abstractmethod
     def execute_query(self, query: str) -> Optional[list[RowResult]]:
         ...
 
     @abstractmethod
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         ...
 
     @abstractmethod

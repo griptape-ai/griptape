@@ -1,7 +1,12 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
-from griptape.engines import BaseSummaryEngine, PromptSummaryEngine
+from griptape.engines import PromptSummaryEngine
 from griptape.tasks import BaseTextInputTask
+
+if TYPE_CHECKING:
+    from griptape.engines import BaseSummaryEngine
 
 
 @define

@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
-from griptape.tools import BaseTool
 from griptape.utils import PromptStack
 from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import ActionSubtask
@@ -12,7 +11,8 @@ from griptape.tasks import PromptTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import BaseToolMemory
+    from griptape.tools import BaseTool
+    from griptape.memory import ToolMemory
     from griptape.structures import Structure
 
 
@@ -22,7 +22,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
-    tool_memory: Optional[BaseToolMemory] = field(default=None, kw_only=True)
+    tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(
@@ -50,7 +50,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             raise ValueError("tools names have to be unique in task")
 
     @property
-    def memory(self) -> list[BaseToolMemory]:
+    def tool_output_memory(self) -> list[ToolMemory]:
         unique_memory_dict = {}
 
         for memories in [tool.output_memory for tool in self.tools if tool.output_memory]:
@@ -87,7 +87,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     @property
     def action_types(self) -> list[str]:
-        memories = [r for r in self.memory if r.activities()]
+        memories = [r for r in self.tool_output_memory if r.activities()]
 
         if memories:
             return ["tool", "memory"]
@@ -103,7 +103,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        memories = [r for r in self.memory if len(r.activities()) > 0]
+        memories = [r for r in self.tool_output_memory if len(r.activities()) > 0]
 
         action_schema = utils.minify_json(
             json.dumps(
@@ -130,7 +130,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             subtask=subtask
         )
 
-    def set_default_tools_memory(self, memory: BaseToolMemory) -> None:
+    def set_default_tools_memory(self, memory: ToolMemory) -> None:
         self.tool_memory = memory
 
         for tool in self.tools:
@@ -199,8 +199,8 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             None
         )
 
-    def find_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
+    def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
         return next(
-            (m for m in self.memory if m.name == memory_name),
+            (m for m in self.tool_output_memory if m.name == memory_name),
             None
         )

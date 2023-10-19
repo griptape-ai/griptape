@@ -42,9 +42,6 @@ class ConversationMemory:
         if self.driver:
             self.driver.store(self)
 
-    def is_empty(self) -> bool:
-        return not self.runs
-
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)
 
