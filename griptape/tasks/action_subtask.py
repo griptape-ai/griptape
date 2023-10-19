@@ -1,20 +1,22 @@
 from __future__ import annotations
 import json
 import re
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.tools import BaseTool
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
-from griptape.memory.tool import BaseToolMemory
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
+
+if TYPE_CHECKING:
+    from griptape.memory import ToolMemory
+    from griptape.tools import BaseTool
 
 
 @define
@@ -31,7 +33,7 @@ class ActionSubtask(PromptTask):
     action_input: Optional[dict] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
-    _memory: Optional[BaseToolMemory] = None
+    _memory: Optional[ToolMemory] = None
 
     @property
     def input(self) -> TextArtifact:

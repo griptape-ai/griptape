@@ -8,6 +8,7 @@ class BaseArtifactSchema(BaseSchema):
         ordered = True
 
     id = fields.Str()
+    name = fields.Str()
     meta = fields.Dict(keys=fields.Str())
     type = fields.Str()
 

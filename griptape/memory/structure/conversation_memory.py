@@ -18,6 +18,7 @@ class ConversationMemory:
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
+    max_runs: Optional[int] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.driver and self.autoload:
@@ -38,12 +39,13 @@ class ConversationMemory:
     def try_add_run(self, run: Run) -> None:
         self.runs.append(run)
 
+        if self.max_runs:
+            while len(self.runs) > self.max_runs:
+                self.runs.pop(0)
+
     def after_add_run(self) -> None:
         if self.driver:
             self.driver.store(self)
-
-    def is_empty(self) -> bool:
-        return not self.runs
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), indent=2)

@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 from griptape.drivers import BaseSqlDriver
 from attr import Factory, define, field
 from sqlalchemy import create_engine, text, MetaData, Table
@@ -47,7 +47,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         with self.engine.connect() as con:
             results = con.execute(text(query))
 

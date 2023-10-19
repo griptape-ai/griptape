@@ -4,6 +4,7 @@ from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.tools import VectorStoreClient
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestVectorStoreClient:
@@ -23,6 +24,7 @@ class TestVectorStoreClient:
         tool = VectorStoreClient(
             description="Test",
             query_engine=VectorQueryEngine(
+                prompt_driver=MockPromptDriver(mock_output="foobar"),
                 vector_store_driver=LocalVectorStoreDriver(
                     embedding_driver=MockEmbeddingDriver()
                 )
