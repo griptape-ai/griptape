@@ -51,13 +51,10 @@ class Stream:
                 yield TextArtifact(value=event.token)
 
     def _run_structure(self, *args):
-        def event_handler(event):
+        def event_handler(event: BaseEvent):
             self._event_queue.put(event, True)
             self._event_queue.join()
 
-        self.structure.add_event_listener(CompletionChunkEvent, event_handler)
-        self.structure.add_event_listener(
-            FinishStructureRunEvent, event_handler
-        )
+        self.structure.add_event_listener(event_handler, [CompletionChunkEvent, FinishStructureRunEvent])
 
         self.structure.run(*args)

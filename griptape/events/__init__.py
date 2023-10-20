@@ -8,6 +8,7 @@ from .finish_prompt_event import FinishPromptEvent
 from .start_structure_run_event import StartStructureRunEvent
 from .finish_structure_run_event import FinishStructureRunEvent
 from .completion_chunk_event import CompletionChunkEvent
+from .event_listener import EventListener
 
 
 __all__ = [
@@ -21,4 +22,6 @@ __all__ = [
     "StartStructureRunEvent",
     "FinishStructureRunEvent",
     "CompletionChunkEvent",
+
+    "EventListener"
 ]
