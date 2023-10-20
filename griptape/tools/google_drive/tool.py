@@ -13,10 +13,6 @@ from io import BytesIO
 class GoogleDriveClient(BaseGoogleClient):
     LIST_FILES_SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
-    UPLOAD_FILE_SCOPES = ['https://www.googleapis.com/auth/drive.file']
-
-    DRIVE_AUTH_SCOPES = ["https://www.googleapis.com/auth/drive"]
-
     GOOGLE_EXPORT_MIME_MAPPING = {
         "application/vnd.google-apps.document":
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -104,7 +100,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
             if artifacts:
                 service = self._build_client(
-                    self.UPLOAD_FILE_SCOPES,
+                    self.DRIVE_FILE_SCOPES,
                     self.SERVICE_NAME,
                     self.SERVICE_VERSION,
                     self.owner_email
@@ -347,70 +343,12 @@ class GoogleDriveClient(BaseGoogleClient):
             return ErrorArtifact(f"error sharing file due to malformed credentials: {e}")
         except Exception as e:
             return ErrorArtifact(f"error sharing file: {e}")
-    
-    
-    @activity(
-        config={
-            "description": "Can be used to check the permissions on a specified file.",
-            "schema": Schema(
-                {
-                    Literal(
-                        "file_path",
-                        description="The path of the file to check permissions for",
-                    ): str,
-                }
-            ),
-        }
-    )
-    def list_permissions_for_file(self, params: dict) -> ListArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError
-        from googleapiclient.errors import HttpError
-    
-        values = params["values"]
-        file_path = values.get("file_path")
-    
-        try:
-            service = self._build_client(
-                scopes=self.DRIVE_AUTH_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email,
-            )
-            if file_path.lower() == self.DEFAULT_FOLDER_PATH:
-                file_id = self.DEFAULT_FOLDER_PATH
-            else:
-                file_id = self._convert_path_to_file_id(service, file_path)
-    
-            if file_id:
-                permissions = (
-                    service.permissions()
-                    .list(
-                        fileId=file_id,
-                        fields="permissions(id,role,emailAddress)",
-                    )
-                    .execute()
-                )
-    
-                permissions_artifacts = [
-                    InfoArtifact(f"Permission ID: {perm['id']}, Role: {perm['role']}, Email: {perm['emailAddress']}")
-                    for perm in permissions.get("permissions", [])
-                ]
-    
-                return ListArtifact(permissions_artifacts)
-            else:
-                return ErrorArtifact(f"error finding file at path: {file_path}")
-        except HttpError as e:
-            return ErrorArtifact(f"error checking permissions due to http error: {e}")
-        except MalformedError as e:
-            return ErrorArtifact(f"error checking permissions due to malformed credentials: {e}")
-        except Exception as e:
-            return ErrorArtifact(f"error checking permissions: {e}")
 
     def _save_to_drive(self, filename: str, value: any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaIoBaseUpload
 
         service = self._build_client(
-            self.UPLOAD_FILE_SCOPES,
+            self.DRIVE_FILE_SCOPES,
             self.SERVICE_NAME,
             self.SERVICE_VERSION,
             self.owner_email

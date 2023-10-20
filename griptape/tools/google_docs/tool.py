@@ -11,8 +11,6 @@ from griptape.tools import BaseGoogleClient
 class GoogleDocsClient(BaseGoogleClient):
     DOCS_SCOPES = ["https://www.googleapis.com/auth/documents"]
 
-    DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-
     DEFAULT_FOLDER_PATH = "root"
 
     owner_email: str = field(kw_only=True)
@@ -48,7 +46,7 @@ class GoogleDocsClient(BaseGoogleClient):
                 owner_email=self.owner_email
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
+                scopes=self.DRIVE_FILE_SCOPES,
                 service_name="drive",
                 version="v3",
                 owner_email=self.owner_email
@@ -105,7 +103,7 @@ class GoogleDocsClient(BaseGoogleClient):
                 owner_email=self.owner_email
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
+                scopes=self.DRIVE_FILE_SCOPES,
                 service_name="drive",
                 version="v3",
                 owner_email=self.owner_email
@@ -167,7 +165,7 @@ class GoogleDocsClient(BaseGoogleClient):
                 owner_email=self.owner_email
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
+                scopes=self.DRIVE_FILE_SCOPES,
                 service_name="drive",
                 version="v3",
                 owner_email=self.owner_email
