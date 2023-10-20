@@ -8,6 +8,7 @@ from griptape.artifacts import (
     ErrorArtifact,
     InfoArtifact,
     ListArtifact,
+    BlobArtifact,
 )
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
@@ -210,6 +211,36 @@ class AwsS3Client(BaseAwsClient):
             return InfoArtifact(f"uploaded successfully")
         except Exception as e:
             return ErrorArtifact(f"error uploading objects to the bucket: {e}")
+
+    @activity(config={
+        "description": "Can be used to download an object from an AWS S3 bucket",
+        "schema": Schema(
+            {
+                Literal(
+                    "bucket_name",
+                    description="The name of the S3 bucket to download from."
+                ): str,
+                Literal(
+                    "object_key",
+                    description="The object key name to download."
+                ): str
+            }
+        )
+    })
+    def download_object(self, params: dict) -> ErrorArtifact | BlobArtifact:
+        bucket_name = params["values"]["bucket_name"]
+        object_key = params["values"]["object_key"]
+
+        try:
+            object = self.s3_client.get_object(
+                Bucket=bucket_name,
+                Key=object_key
+            )
+
+            return BlobArtifact(object["Body"].read())
+
+        except Exception as e:
+            return ErrorArtifact(f"error downloading object from bucket: {e}")
 
     def _upload_object(
         self, bucket_name: str, object_name: str, value: any
