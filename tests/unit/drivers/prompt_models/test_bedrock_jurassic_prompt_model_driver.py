@@ -42,6 +42,19 @@ class TestBedrockJurassicPromptModelDriver:
 
         return stack
 
+    def test_driver_stream(self):
+        with pytest.raises(ValueError):
+            AmazonBedrockPromptDriver(
+                model="ai21.j2-ultra",
+                session=boto3.Session(region_name="us-east-1"),
+                prompt_model_driver=BedrockJurassicPromptModelDriver(),
+                temperature=0.12345,
+                stream=True
+            ).prompt_model_driver
+    
+    def test_init(self, driver):
+        assert driver.prompt_driver is not None
+
     def test_prompt_stack_to_model_input(self, driver, stack):
         model_input = driver.prompt_stack_to_model_input(stack)
 

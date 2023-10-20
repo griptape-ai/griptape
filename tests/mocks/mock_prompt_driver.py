@@ -1,4 +1,6 @@
+from typing import Iterator
 from attr import define, field
+from griptape.events import CompletionChunkEvent
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
@@ -13,3 +15,6 @@ class MockPromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         return TextArtifact(value=self.mock_output)
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        yield TextArtifact(value=self.mock_output)

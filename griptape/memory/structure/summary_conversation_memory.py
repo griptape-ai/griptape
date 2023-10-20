@@ -41,13 +41,16 @@ class SummaryConversationMemory(ConversationMemory):
     def from_json(cls, memory_json: str) -> SummaryConversationMemory:
         return SummaryConversationMemory.from_dict(json.loads(memory_json))
 
-    def add_to_prompt_stack(self, stack: PromptStack) -> None:
+    def to_prompt_stack(self, last_n: Optional[int]=None) -> PromptStack:
+        stack = PromptStack()
         if self.summary:
             stack.add_user_input(self.summary_template_generator.render(summary=self.summary))
 
-        for r in self.unsummarized_runs():
+        for r in self.unsummarized_runs(last_n):
             stack.add_user_input(r.input)
             stack.add_assistant_input(r.output)
+
+        return stack
 
     def to_dict(self) -> dict:
         return dict(SummaryConversationMemorySchema().dump(self))

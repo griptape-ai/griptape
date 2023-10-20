@@ -1,33 +1,31 @@
 import uuid
 import pytest
+from unittest.mock import MagicMock, Mock
 from griptape.drivers import PgVectorVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.utils.postgres import can_connect_to_postgres
 from sqlalchemy import create_engine
 
 
-@pytest.mark.skipif(not can_connect_to_postgres(), reason="Postgres is not present")
 class TestPgVectorVectorStoreDriver:
     connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
     table_name = "griptape_vectors"
-    vec1 = [0.1, 0.2, 0.3]
-    vec2 = [0.4, 0.5, 0.6]
 
     @pytest.fixture
     def embedding_driver(self):
         return MockEmbeddingDriver()
 
     @pytest.fixture
-    def vector_store_driver(self, embedding_driver):
-        driver = PgVectorVectorStoreDriver(
-            connection_string=self.connection_string,
-            embedding_driver=embedding_driver,
-            table_name=self.table_name,
-        )
+    def mock_engine(self):
+        return MagicMock()
 
-        driver.setup()
+    @pytest.fixture
+    def mock_session(self, mocker):
+        session = MagicMock()
+        mock_session_manager = MagicMock()
+        mock_session_manager.__enter__.return_value = session
+        mocker.patch("griptape.drivers.vector.pgvector_vector_store_driver.Session", return_value=mock_session_manager)
 
-        return driver
+        return session
 
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
@@ -35,7 +33,6 @@ class TestPgVectorVectorStoreDriver:
                 embedding_driver=embedding_driver,
                 table_name=self.table_name,
             )
-            driver.setup()
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine = create_engine(self.connection_string)
@@ -45,8 +42,6 @@ class TestPgVectorVectorStoreDriver:
             table_name=self.table_name,
         )
 
-        driver.setup()
-
     def test_initialize_accepts_connection_string(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
             embedding_driver=embedding_driver,
@@ -54,153 +49,136 @@ class TestPgVectorVectorStoreDriver:
             table_name=self.table_name,
         )
 
-        driver.setup()
+    def test_upsert_vector(self, mock_session, mock_engine):
+        test_id = str(uuid.uuid4())
+        mock_session.merge.return_value = Mock(id=test_id)
 
-    def test_can_insert_vector(self, vector_store_driver):
-        result = vector_store_driver.upsert_vector(self.vec1)
-
-        assert result is not None
-
-    def test_can_insert_vector_with_id(self, vector_store_driver):
-        vector_id = str(uuid.uuid4())
-
-        result = vector_store_driver.upsert_vector(self.vec1, vector_id=vector_id)
-
-        assert result == vector_id
-
-    def test_can_update_vector_by_id(self, vector_store_driver):
-        vector_id = str(uuid.uuid4())
-
-        result = vector_store_driver.upsert_vector(self.vec1, vector_id=vector_id)
-        assert result == vector_id
-
-        result = vector_store_driver.upsert_vector(self.vec2, vector_id=vector_id)
-        assert result == vector_id
-
-        result = vector_store_driver.load_entry(vector_id)
-        assert result.vector == pytest.approx(self.vec2)
-
-    def test_can_load_entry_by_id(self, vector_store_driver):
-        result = vector_store_driver.upsert_vector(self.vec1)
-        assert result is not None
-
-        result = vector_store_driver.load_entry(result)
-        assert result.vector == pytest.approx(self.vec1)
-
-    def test_can_insert_and_load_entry_with_namespace(self, vector_store_driver):
-        namespace = str(uuid.uuid4())
-
-        result = vector_store_driver.upsert_vector(self.vec1, namespace=namespace)
-        assert result is not None
-
-        result = vector_store_driver.load_entry(result, namespace=namespace)
-        assert result.vector == pytest.approx(self.vec1)
-
-    def test_can_load_entries(self, vector_store_driver):
-        """
-        Depending on when this test is executed relative to the others,
-        we don't know exactly how many vectors will be returned. We can
-        ensure that at least two exist and confirm that those are found.
-        """
-        vec1_id = vector_store_driver.upsert_vector(self.vec1)
-        vec2_id = vector_store_driver.upsert_vector(self.vec2)
-
-        results = vector_store_driver.load_entries()
-
-        assert len(results) >= 2
-        assert vec1_id in [result.id for result in results]
-        assert vec2_id in [result.id for result in results]
-
-        vectors_by_id = {result.id: result.vector for result in results}
-        assert vectors_by_id[vec1_id] == pytest.approx(self.vec1)
-        assert vectors_by_id[vec2_id] == pytest.approx(self.vec2)
-
-    def test_can_load_by_namespace(self, vector_store_driver):
-        namespace = str(uuid.uuid4())
-
-        vec1_id = vector_store_driver.upsert_vector(self.vec1, namespace=namespace)
-        vec2_id = vector_store_driver.upsert_vector(self.vec2, namespace=namespace)
-
-        results = vector_store_driver.load_entries(namespace=namespace)
-
-        assert len(results) == 2
-        assert vec1_id in [result.id for result in results]
-        assert vec2_id in [result.id for result in results]
-
-        vectors_by_id = {result.id: result.vector for result in results}
-        assert vectors_by_id[vec1_id] == pytest.approx(self.vec1)
-        assert vectors_by_id[vec2_id] == pytest.approx(self.vec2)
-
-    def test_can_query(self, vector_store_driver):
-        value = "my string here"
-        namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
-
-        vector_id = vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(value, namespace=namespace)
-
-        assert len(results) == 1
-        assert results[0].id == vector_id
-
-    def test_can_query_by_cosine_distance(self, vector_store_driver):
-        value = "my string here"
-        namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
-
-        vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(value, namespace=namespace, distance_metric="cosine_distance")
-
-        assert len(results) == 1
-
-    def test_can_query_by_l2_distance(self, vector_store_driver):
-        value = "my string here"
-        namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
-
-        vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(value, namespace=namespace, distance_metric="l2_distance")
-
-        assert len(results) == 1
-
-    def test_can_query_by_inner_product(self, vector_store_driver):
-        value = "my string here"
-        namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
-
-        vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(value, namespace=namespace, distance_metric="inner_product")
-
-        assert len(results) == 1
-
-    def test_query_returns_vectors_when_requested(self, vector_store_driver):
-        value = "my string here"
-        namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
-
-        vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(value, namespace=namespace, include_vectors=True)
-
-        assert len(results) == 1
-        assert results[0].vector == pytest.approx(embedding)
-
-    def test_can_use_custom_table_name(self, embedding_driver, vector_store_driver):
-        """This test ensures at least one row exists in the default table before specifying
-        a custom table name. After inserting another row, we should be able to query only one
-        vector from the table, and it should be the vector added to the table with the new name.
-        """
-        vector_store_driver.upsert_vector(self.vec1)
-
-        new_table_name = str(uuid.uuid4())
-        new_vector_store_driver = PgVectorVectorStoreDriver(
-            embedding_driver=embedding_driver,
-            connection_string=self.connection_string,
-            table_name=new_table_name,
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(),
+            engine=mock_engine,
+            table_name=self.table_name,
         )
 
-        new_vector_store_driver.setup()
-        new_table_vector_id = new_vector_store_driver.upsert_vector(self.vec2)
+        returned_id = driver.upsert_vector([1.0, 2.0, 3.0])
 
-        results = new_vector_store_driver.load_entries()
+        assert returned_id == test_id
+        mock_session.merge.assert_called_once()
+        mock_session.commit.assert_called_once()
 
-        assert len(results) == 1
-        assert results[0].id == new_table_vector_id
+    def test_load_entry(self, mock_session, mock_engine):
+        test_id = str(uuid.uuid4())
+        test_vec = [0.1, 0.2, 0.3]
+        test_namespace = str(uuid.uuid4())
+        test_meta = {"key": "value"}
+        mock_session.get.return_value = Mock(
+            id=test_id,
+            vector=test_vec,
+            namespace=test_namespace,
+            meta=test_meta,
+        )
+
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(),
+            engine=mock_engine,
+            table_name=self.table_name,
+        )
+
+        entry = driver.load_entry(vector_id=test_id)
+
+        assert entry.id == test_id
+        assert entry.vector == test_vec
+        assert entry.namespace == test_namespace
+        assert entry.meta == test_meta
+
+    def test_load_entries(self, mock_session, mock_engine):
+        test_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_vecs = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+        test_namespaces = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_metas = [{"key": "value1"}, {"key": "value2"}]
+        mock_query = MagicMock()
+        mock_query.all.return_value = [
+            Mock(
+                id=test_ids[0],
+                vector=test_vecs[0],
+                namespace=test_namespaces[0],
+                meta=test_metas[0],
+            ),
+            Mock(
+                id=test_ids[1],
+                vector=test_vecs[1],
+                namespace=test_namespaces[1],
+                meta=test_metas[1],
+            ),
+        ]
+        mock_session.query.return_value = mock_query
+
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(),
+            engine=mock_engine,
+            table_name=self.table_name,
+        )
+
+        entries = driver.load_entries()
+
+        assert entries[0].id == test_ids[0]
+        assert entries[1].id == test_ids[1]
+        assert entries[0].vector == test_vecs[0]
+        assert entries[1].vector == test_vecs[1]
+        assert entries[0].namespace == test_namespaces[0]
+        assert entries[1].namespace == test_namespaces[1]
+        assert entries[0].meta == test_metas[0]
+        assert entries[1].meta == test_metas[1]
+
+    def test_query_invalid_distance_metric(self, mock_engine):
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(),
+            engine=mock_engine,
+            table_name=self.table_name,
+        )
+
+        with pytest.raises(ValueError):
+            driver.query("test", distance_metric="invalid")
+
+    def test_query(self, mock_session, mock_engine):
+        test_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_vecs = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+        test_namespaces = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_metas = [{"key": "value1"}, {"key": "value2"}]
+        test_result = [
+            [
+                Mock(
+                    id=test_ids[0],
+                    vector=test_vecs[0],
+                    namespace=test_namespaces[0],
+                    meta=test_metas[0],
+                ),
+                0.1,
+            ],
+            [
+                Mock(
+                    id=test_ids[1],
+                    vector=test_vecs[1],
+                    namespace=test_namespaces[1],
+                    meta=test_metas[1],
+                ),
+                0.9,
+            ],
+        ]
+        mock_session.query().order_by().limit().all.return_value = test_result
+
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(),
+            engine=mock_engine,
+            table_name=self.table_name,
+        )
+
+        result = driver.query("some query", include_vectors=True)
+
+        assert result[0].id == test_ids[0]
+        assert result[1].id == test_ids[1]
+        assert result[0].vector == test_vecs[0]
+        assert result[1].vector == test_vecs[1]
+        assert result[0].namespace == test_namespaces[0]
+        assert result[1].namespace == test_namespaces[1]
+        assert result[0].meta == test_metas[0]
+        assert result[1].meta == test_metas[1]

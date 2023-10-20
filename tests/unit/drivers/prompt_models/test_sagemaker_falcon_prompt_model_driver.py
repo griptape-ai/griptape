@@ -23,6 +23,9 @@ class TestSageMakerFalconPromptModelDriver:
 
         return stack
 
+    def test_init(self, driver):
+        assert driver.prompt_driver is not None
+
     def test_prompt_stack_to_model_input(self, driver, stack):
         model_input = driver.prompt_stack_to_model_input(stack)
 

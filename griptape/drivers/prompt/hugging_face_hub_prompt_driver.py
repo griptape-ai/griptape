@@ -1,3 +1,4 @@
+from typing import Iterator
 from os import environ
 
 from griptape.utils import PromptStack
@@ -55,6 +56,12 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         ),
         kw_only=True
     )
+    stream: bool = field(default=False, kw_only=True)
+
+    @stream.validator
+    def validate_stream(self, _, stream):
+        if stream:
+            raise ValueError("streaming is not supported")
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         prompt = self.prompt_stack_to_string(prompt_stack)
@@ -70,6 +77,9 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
                     value=response[0]["generated_text"].strip()
                 )
             else:
-                raise Exception("Completion with more than one choice is not supported yet.")
+                raise Exception("completion with more than one choice is not supported yet")
         else:
-            raise Exception(f"Only models with the following tasks are supported: {self.SUPPORTED_TASKS}")
+            raise Exception(f"only models with the following tasks are supported: {self.SUPPORTED_TASKS}")
+
+    def try_stream(self, _: PromptStack) -> Iterator[TextArtifact]:
+        raise NotImplementedError("streaming is not supported")
