@@ -40,8 +40,6 @@ class TestDataFrameLoader:
         key1 = utils.dataframe_to_hash(df1)
         key2 = utils.dataframe_to_hash(df2)
 
-        print(list(collection.keys()))
-        print([key1, key2])
         assert list(collection.keys()) == [key1, key2]
 
         artifacts = collection[key1]

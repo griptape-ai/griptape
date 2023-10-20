@@ -4,7 +4,7 @@ from abc import abstractmethod
 from attr import define
 
 if TYPE_CHECKING:
-    from griptape.memory.tool import BaseToolMemory
+    from griptape.memory import ToolMemory
     from griptape.tools import BaseTool
     from griptape.tasks import ActionSubtask
 
@@ -21,7 +21,7 @@ class ActionSubtaskOriginMixin:
         ...
 
     @abstractmethod
-    def find_memory(self, memory_name: str) -> Optional[BaseToolMemory]:
+    def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
         ...
 
     @abstractmethod

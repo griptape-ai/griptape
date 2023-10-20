@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 import sqlalchemy
 from sqlalchemy.engine import Engine
 from griptape.drivers import BaseSqlDriver
@@ -23,7 +23,7 @@ class SqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         with self.engine.begin() as con:
             results = con.execute(text(query))
 

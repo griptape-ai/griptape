@@ -1,4 +1,6 @@
 from abc import ABC
+from typing import Any
+
 from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.tasks import BaseTask
@@ -10,7 +12,7 @@ class BaseTextInputTask(BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
-    context: dict[str, any] = field(factory=dict, kw_only=True)
+    context: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @property
     def input(self) -> TextArtifact:
@@ -22,7 +24,7 @@ class BaseTextInputTask(BaseTask, ABC):
         )
 
     @property
-    def full_context(self) -> dict[str, any]:
+    def full_context(self) -> dict[str, Any]:
         if self.structure:
             structure_context = self.structure.context(self)
 

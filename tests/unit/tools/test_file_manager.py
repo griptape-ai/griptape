@@ -48,7 +48,7 @@ class TestFileManager:
             memory = defaults.text_tool_memory("Memory1")
             artifact = TextArtifact("foobar")
 
-            memory.query_engine.vector_store_driver.upsert_text_artifact(artifact, namespace="foobar")
+            memory.store_artifact("foobar", artifact)
 
             result = FileManager(
                 workdir=temp_dir,
@@ -79,7 +79,7 @@ class TestFileManager:
             ]
 
             for a in artifacts:
-                memory.query_engine.vector_store_driver.upsert_text_artifact(a, namespace="foobar")
+                memory.store_artifact("foobar", a)
 
             result = FileManager(
                 workdir=temp_dir,

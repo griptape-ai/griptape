@@ -67,13 +67,14 @@ class PromptTask(BaseTextInputTask):
             self.generate_system_template(self)
         )
 
-        if memory:
-            memory.add_to_prompt_stack(stack)
-
         stack.add_user_input(self.input.to_text())
 
         if self.output:
             stack.add_assistant_input(self.output.to_text())
+
+        if memory:
+            # inserting at index 1 to place memory right after system prompt
+            stack.add_conversation_memory(memory, 1)
 
         return stack
 
