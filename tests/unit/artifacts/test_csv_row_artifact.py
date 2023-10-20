@@ -29,3 +29,7 @@ class TestCsvRowArtifact:
 
         assert artifact.name == artifact.id
         assert CsvRowArtifact({}, name="bar").name == "bar"
+
+    def test___bool__(self):
+        assert not bool(CsvRowArtifact({}))
+        assert bool(CsvRowArtifact({"foo": "bar"}))

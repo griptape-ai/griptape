@@ -151,7 +151,6 @@ class TestMarqoVectorStorageDriver:
             "processingTimeMs": 6,
             "index_name": "my-first-index"
         }
-        print(result, type(result))
         assert result == expected_return_value["items"][0]["_id"]
 
     def test_search(self, driver, mock_marqo):

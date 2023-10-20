@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator, Any
 import boto3
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 @define
 class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
     session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
-    sagemaker_client: boto3.client = field(
+    sagemaker_client: Any = field(
         default=Factory(
             lambda self: self.session.client("sagemaker-runtime"),
             takes_self=True,
@@ -24,6 +24,12 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
         default="accept_eula=true",
         kw_only=True
     )
+    stream: bool = field(default=False, kw_only=True)
+
+    @stream.validator
+    def validate_stream(self, _, stream):
+        if stream:
+            raise ValueError("streaming is not supported")
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
@@ -43,3 +49,6 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
             return self.prompt_model_driver.process_output(decoded_body)
         else:
             raise Exception("model response is empty")
+
+    def try_stream(self, _: PromptStack) -> Iterator[TextArtifact]:
+        raise NotImplementedError("streaming is not supported")

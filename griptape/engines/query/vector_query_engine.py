@@ -1,11 +1,15 @@
-from typing import Optional
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
-from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver, OpenAiChatPromptDriver
+from griptape.drivers import OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
 from griptape.tokenizers import OpenAiTokenizer
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver
 
 
 @define

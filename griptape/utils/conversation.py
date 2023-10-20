@@ -19,5 +19,13 @@ class Conversation:
 
         return lines
 
+    def prompt_stack(self) -> list[str]:
+        lines = []
+
+        for stack in self.memory.to_prompt_stack().inputs:
+            lines.append(f"{stack.role}: {stack.content}")
+
+        return lines
+
     def __str__(self) -> str:
         return str.join("\n", self.lines())
