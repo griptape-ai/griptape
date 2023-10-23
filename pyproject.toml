@@ -12,7 +12,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.12"
 python-dotenv = ">=0.21"
 openai = ">=0.27"
 cohere = ">=4"
