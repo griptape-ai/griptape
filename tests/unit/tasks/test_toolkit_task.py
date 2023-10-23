@@ -183,12 +183,3 @@ class TestToolkitSubtask:
     def test_action_types(self):
         assert Agent(tool_memory=None, tools=[MockTool()]).task.action_types == ["tool"]
         assert Agent(tools=[MockTool()]).task.action_types == ["tool", "memory"]
-        
-    def test_to_dict(self):
-        task = ToolkitTask(tools=[MockTool()], max_subtasks=10)
-
-        subtask = ActionSubtask()
-        task.add_subtask(subtask)
-
-        assert task.to_dict()["subtasks"] == [subtask.to_dict()]
-        assert task.to_dict()["max_subtasks"] == 10

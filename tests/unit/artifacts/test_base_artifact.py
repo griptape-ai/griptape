@@ -1,3 +1,4 @@
+import pytest
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 
 
@@ -65,10 +66,5 @@ class TestBaseArtifact:
             "type": "foo",
             "value": "foobar"
         }
-
-        try:
+        with pytest.raises(ValueError):
             BaseArtifact.from_dict(dict_value)
-            assert False
-        except ValueError:
-            assert True
-

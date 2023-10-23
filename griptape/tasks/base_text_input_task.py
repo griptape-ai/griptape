@@ -36,7 +36,7 @@ class BaseTextInputTask(BaseTask, ABC):
 
             return structure_context
         else:
-            return {"args": [], **self.context}
+            return {}
 
     def before_run(self) -> None:
         super().before_run()

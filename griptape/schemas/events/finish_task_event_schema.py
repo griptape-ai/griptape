@@ -1,10 +1,8 @@
-from marshmallow import fields, post_load
-from griptape.schemas import BaseEventSchema, PolymorphicSchema
+from marshmallow import post_load
+from .base_task_event_schema import BaseTaskEventSchema
 
 
-class FinishTaskEventSchema(BaseEventSchema):
-    task = fields.Nested(PolymorphicSchema())
-
+class FinishTaskEventSchema(BaseTaskEventSchema):
     @post_load
     def make_obj(self, data, **kwargs):
         from griptape.events import FinishTaskEvent 

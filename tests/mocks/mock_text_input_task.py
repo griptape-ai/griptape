@@ -7,6 +7,3 @@ from griptape.tasks import BaseTextInputTask
 class MockTextInputTask(BaseTextInputTask):
     def run(self) -> TextArtifact:
         return TextArtifact(self.input.to_text())
-
-    def to_dict(self) -> dict:
-        return {}

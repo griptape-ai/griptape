@@ -3,8 +3,6 @@ from griptape.schemas import BaseSchema, RunSchema
 
 
 class ConversationMemorySchema(BaseSchema):
-    class Meta:
-        ordered = True
     type = fields.Str()
     runs = fields.List(fields.Nested(RunSchema()))
     max_runs = fields.Int(allow_none=True)

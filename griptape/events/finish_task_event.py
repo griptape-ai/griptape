@@ -1,16 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from attrs import define, field
-from griptape.events.base_event import BaseEvent
-
-if TYPE_CHECKING:
-    from griptape.tasks.base_task import BaseTask
+from attrs import define
+from .base_task_event import BaseTaskEvent
 
 
 @define
-class FinishTaskEvent(BaseEvent):
-    task: BaseTask = field(kw_only=True)
-
+class FinishTaskEvent(BaseTaskEvent):
     def to_dict(self) -> dict:
         from griptape.schemas import FinishTaskEventSchema
 

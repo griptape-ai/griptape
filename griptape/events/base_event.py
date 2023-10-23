@@ -17,27 +17,25 @@ class BaseEvent(ABC):
     @classmethod
     def from_dict(cls, event_dict: dict) -> BaseEvent:
         from griptape.schemas import (
-            BaseEventSchema,
             StartPromptEventSchema,
             FinishPromptEventSchema,
             StartTaskEventSchema,
             FinishTaskEventSchema,
-            StartSubtaskEventSchema,
-            FinishSubtaskEventSchema,
+            StartActionSubtaskEventSchema,
+            FinishActionSubtaskEventSchema,
             StartStructureRunEventSchema,
             FinishStructureRunEventSchema,
             CompletionChunkEventSchema,
         )
 
-        class_registry.register("BaseEvent", BaseEventSchema)
         class_registry.register("StartPromptEvent", StartPromptEventSchema)
         class_registry.register("FinishPromptEvent", FinishPromptEventSchema)
         class_registry.register("StartTaskEvent", StartTaskEventSchema)
         class_registry.register("FinishTaskEvent", FinishTaskEventSchema)
-        class_registry.register("StartSubtaskEvent", StartSubtaskEventSchema)
-        class_registry.register("FinishSubtaskEvent", FinishSubtaskEventSchema)
-        class_registry.register("StartStructureEvent", StartStructureRunEventSchema)
-        class_registry.register("FinishStructureEvent", FinishStructureRunEventSchema)
+        class_registry.register("StartActionSubtaskEvent", StartActionSubtaskEventSchema)
+        class_registry.register("FinishActionSubtaskEvent", FinishActionSubtaskEventSchema)
+        class_registry.register("StartStructureRunEvent", StartStructureRunEventSchema)
+        class_registry.register("FinishStructureRunEvent", FinishStructureRunEventSchema)
         class_registry.register("CompletionChunkEvent", CompletionChunkEventSchema)
 
         try:

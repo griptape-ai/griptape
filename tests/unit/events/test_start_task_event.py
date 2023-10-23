@@ -1,19 +1,26 @@
 import pytest
 from griptape.events import StartTaskEvent
+from griptape.structures import Agent
 from griptape.tasks import PromptTask
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStartTaskEvent:
     @pytest.fixture
     def start_task_event(self):
-        return StartTaskEvent(task=PromptTask())
+        task = PromptTask()
+        agent = Agent(prompt_driver=MockPromptDriver())
+        agent.add_task(task)
+        agent.run()
 
-    def test_task(self, start_task_event):
-        assert isinstance(start_task_event.task, PromptTask)
+        return StartTaskEvent.from_task(task)
 
     def test_to_dict(self, start_task_event):
         event_dict = start_task_event.to_dict()
-        del event_dict["task"]["type"]  # remove extra field from PolymorphicSchema
 
         assert "timestamp" in event_dict
-        assert event_dict["task"] == start_task_event.task.to_dict()
+        assert event_dict["task_id"] == start_task_event.task_id
+        assert event_dict["task_parent_ids"] == start_task_event.task_parent_ids
+        assert event_dict["task_child_ids"] == start_task_event.task_child_ids
+        assert event_dict["task_input"] == start_task_event.task_input.to_dict()
+        assert event_dict["task_output"] == start_task_event.task_output.to_dict()

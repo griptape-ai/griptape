@@ -22,40 +22,6 @@ class TestActionSubtask:
         assert json_dict["activity"] == "test action"
         assert json_dict["input"] == "test input"
 
-    def test_to_dict(self):
-        valid_input = (
-            "Thought: need to test\n"
-            'Action: {"type": "tool", "name": "test", "activity": "test action", "input": "test input"}\n'
-            "Observation: test observation\n"
-            "Answer: test output"
-        )
-
-        task = ToolkitTask(tools=[])
-        Pipeline().add_task(task)
-        subtask = task.add_subtask(ActionSubtask(valid_input))
-
-        assert subtask.to_dict() == {
-            "id": subtask.id,
-            "state": 1,
-            "parent_ids": [],
-            "child_ids": [],
-            "output": None,
-            "input": {
-                "id": subtask.input.id,
-                "name": subtask.input.name,
-                "type": "TextArtifact",
-                "value": valid_input,
-            },
-            "input_template": valid_input,
-            "context": {},
-            "parent_task_id": task.id,
-            "thought": "need to test",
-            "action_type": "tool",
-            "action_name": "test",
-            "action_activity": "test action",
-            "action_input": "test input",
-        }
-
     def test_init_from_action_with_newlines(self):
         valid_input = (
             "Thought: need to test\n"

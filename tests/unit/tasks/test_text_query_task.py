@@ -39,7 +39,3 @@ class TestTextQueryTask:
         artifact = task.load("foobar baz", namespace="test")[0]
 
         assert list(task.query_engine.vector_store_driver.entries.values())[0].meta["artifact"] == artifact.to_json()
-
-
-    def test_to_dict(self, task):
-        assert task.to_dict() is not None

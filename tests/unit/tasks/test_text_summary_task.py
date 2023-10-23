@@ -22,6 +22,3 @@ class TestTextSummaryTask:
         Agent().add_task(task)
 
         assert task.input.to_text() == "test value"
-        
-    def test_to_dict(self):
-        assert TextSummaryTask().to_dict() is not None

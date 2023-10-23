@@ -14,8 +14,3 @@ class ExtractionTask(BaseTextInputTask):
             self.input.to_text(),
             **self.args
         )
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import ExtractionTaskSchema
-
-        return dict(ExtractionTaskSchema().dump(self))

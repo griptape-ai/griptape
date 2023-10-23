@@ -20,8 +20,3 @@ class TextSummaryTask(BaseTextInputTask):
         return TextArtifact(
             self.summary_engine.summarize_text(self.input.to_text())
         )
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import TextSummaryTaskSchema
-
-        return dict(TextSummaryTaskSchema().dump(self))

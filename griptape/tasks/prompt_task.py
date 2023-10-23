@@ -93,8 +93,3 @@ class PromptTask(BaseTextInputTask):
             return self.structure.prompt_driver
         else:
             return self.prompt_driver
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import ToolkitTaskSchema
-
-        return dict(ToolkitTaskSchema().dump(self))
