@@ -30,7 +30,11 @@ class FileManager(BaseTool):
             lambda: {
                 "pdf": PdfLoader(),
                 "csv": CsvLoader(),
-                "txt": TextLoader()
+                "txt": TextLoader(),
+                "html": TextLoader(),
+                "json": TextLoader(),
+                "yaml": TextLoader(),
+                "xml": TextLoader()
             }
         ),
         kw_only=True
