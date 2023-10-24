@@ -237,12 +237,14 @@ class AwsS3Client(BaseAwsClient):
                 Key=object_key
             )
 
+            content = obj["Body"].read()
+
             # Return a TextArtifact if the object appears to be text.
             if "text" in obj["ContentType"]:
-                return TextArtifact(obj["Body"].read())
+                return TextArtifact(content)
 
             else:
-                return BlobArtifact(obj["Body"].read())
+                return BlobArtifact(content)
 
         except Exception as e:
             return ErrorArtifact(f"error downloading object from bucket: {e}")
