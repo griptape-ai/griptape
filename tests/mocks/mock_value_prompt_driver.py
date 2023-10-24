@@ -1,3 +1,4 @@
+from typing import Iterator
 from attr import define
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
@@ -12,3 +13,6 @@ class MockValuePromptDriver(BasePromptDriver):
 
     def try_run(self, value: str) -> TextArtifact:
         return TextArtifact(value=self.value)
+
+    def try_stream(self, value: str) -> Iterator[TextArtifact]:
+        yield TextArtifact(value=self.value)

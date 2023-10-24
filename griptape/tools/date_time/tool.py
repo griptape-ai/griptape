@@ -1,5 +1,4 @@
 from datetime import datetime
-from dateparser import parse
 from schema import Schema, Literal
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
@@ -31,6 +30,8 @@ class DateTime(BaseTool):
         })
     })
     def get_relative_datetime(self, params: dict) -> BaseArtifact:
+        from dateparser import parse
+
         try:
             date_string = params["values"]["relative_date_string"]
             relative_datetime = parse(date_string)

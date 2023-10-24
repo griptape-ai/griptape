@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.memory.tool import TextToolMemory
+from griptape.memory import ToolMemory
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -80,7 +80,7 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        assert isinstance(pipeline.tool_memory, TextToolMemory)
+        assert isinstance(pipeline.tool_memory, ToolMemory)
         assert pipeline.tasks[0].tool_memory == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
         assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
@@ -94,9 +94,9 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        assert isinstance(pipeline.tool_memory.query_engine.vector_store_driver.embedding_driver, MockEmbeddingDriver)
-        assert pipeline.tasks[0].tools[0].input_memory[0].query_engine.vector_store_driver.embedding_driver == embedding_driver
-        assert pipeline.tasks[0].tools[0].output_memory["test"][0].query_engine.vector_store_driver.embedding_driver == embedding_driver
+        memory_embedding_driver = list(pipeline.tool_memory.artifact_storages.values())[0].query_engine.vector_store_driver.embedding_driver
+
+        assert memory_embedding_driver == embedding_driver
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()

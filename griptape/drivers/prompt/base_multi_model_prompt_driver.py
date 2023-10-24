@@ -24,6 +24,12 @@ class BaseMultiModelPromptDriver(BasePromptDriver, ABC):
 
     tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
     prompt_model_driver: BasePromptModelDriver = field(kw_only=True)
+    stream: bool = field(default=False, kw_only=True)
+
+    @stream.validator
+    def validate_stream(self, _, stream):
+        if stream and not self.prompt_model_driver.supports_streaming:
+            raise ValueError(f"{self.prompt_model_driver.__class__.__name__} does not support streaming")
 
     def __attrs_post_init__(self) -> None:
         self.prompt_model_driver.prompt_driver = self

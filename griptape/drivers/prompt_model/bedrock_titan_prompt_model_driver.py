@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 import json
 from attr import define, field
@@ -66,7 +67,14 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
             }
         }
 
-    def process_output(self, response_body: str) -> TextArtifact:
+    def process_output(self, response_body: str | bytes) -> TextArtifact:
+        # When streaming, the response body comes back as bytes.
+        if isinstance(response_body, bytes):
+            response_body = response_body.decode()
+        
         body = json.loads(response_body)
-
-        return TextArtifact(body["results"][0]["outputText"])
+        
+        if self.prompt_driver.stream:
+            return TextArtifact(body['outputText'])
+        else:
+            return TextArtifact(body["results"][0]["outputText"])

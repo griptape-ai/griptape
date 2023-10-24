@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Any
 from attr import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
@@ -35,7 +35,7 @@ class Pipeline(Structure):
 
         return task
 
-    def run(self, *args) -> BaseTask:
+    def try_run(self, *args) -> BaseTask:
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
@@ -54,7 +54,7 @@ class Pipeline(Structure):
 
         return self.last_task()
 
-    def context(self, task: BaseTask) -> dict[str, any]:
+    def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
 
         context.update(

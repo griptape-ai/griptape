@@ -62,3 +62,7 @@ class TestBlobArtifact:
 
     def test_name(self):
         assert BlobArtifact(b"foo", name="bar").name == "bar"
+
+    def test___bool__(self):
+        assert not bool(BlobArtifact(b""))
+        assert bool(BlobArtifact(b"foo"))
