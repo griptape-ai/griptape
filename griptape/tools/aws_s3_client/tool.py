@@ -227,17 +227,21 @@ class AwsS3Client(BaseAwsClient):
             }
         )
     })
-    def download_object(self, params: dict) -> ErrorArtifact | BlobArtifact:
+    def download_object(self, params: dict) -> ErrorArtifact | TextArtifact | BlobArtifact:
         bucket_name = params["values"]["bucket_name"]
         object_key = params["values"]["object_key"]
 
         try:
-            object = self.s3_client.get_object(
+            obj = self.s3_client.get_object(
                 Bucket=bucket_name,
                 Key=object_key
             )
 
-            return BlobArtifact(object["Body"].read())
+            # Return a TextArtifact if the object appears to be text.
+            if "text" in obj["ContentType"]:
+                return TextArtifact(obj["Body"].read())
+
+            return BlobArtifact(obj["Body"].read())
 
         except Exception as e:
             return ErrorArtifact(f"error downloading object from bucket: {e}")
