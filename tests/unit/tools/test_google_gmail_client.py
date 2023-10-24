@@ -7,7 +7,7 @@ class TestGoogleGmailClient:
             "to": "recipient@example.com",
             "subject": "stacey's mom",
             "body": "got it going on",
-            "attachment_name": ["/test/foo/bar.txt"],
+            "attachment_names": ["sample1.txt", "testpic.png"],
             "memory_name": "test",
             "artifact_namespace": "1234"
         }

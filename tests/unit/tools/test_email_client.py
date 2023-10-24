@@ -20,7 +20,7 @@ class TestEmailClient:
             "to": "foo@bar.com",
             "subject": "test",
             "body": "hello",
-            "attachment_name": ["/test/foo/bar.txt"],
+            "attachment_names": ["sample1.txt", "testpic.png"],
             "memory_name": "test",
             "artifact_namespace": "1234"
         }

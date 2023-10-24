@@ -143,9 +143,9 @@ class EmailClient(BaseTool):
                 description="Email body")
             : str,
             Literal(
-                "attachment_name",
-                description="Name of the attachment"
-            ): str,
+                "attachment_names",
+                description="Names of the attachments"
+            ): list[str],
             "memory_name": str,
             "artifact_namespace": str
         })
@@ -157,7 +157,7 @@ class EmailClient(BaseTool):
         subject = input_values["subject"]
         memory_name = input_values["memory_name"]
         artifact_namespace = input_values["artifact_namespace"]
-        attachment_name = input_values["attachment_name"]
+        attachment_names = input_values.get("attachment_names")
 
         # email username can be overridden by setting the smtp user explicitly
         smtp_user = self.smtp_user if self.smtp_user else self.username
@@ -182,12 +182,13 @@ class EmailClient(BaseTool):
         if memory:
             list_artifact = memory.load_artifacts(artifact_namespace)
             if list_artifact:
-                file_data = list_artifact.value[0].value.encode()
-                part = MIMEBase("application", "octet-stream")
-                part.set_payload(file_data)
-                encoders.encode_base64(part)
-                part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
-                msg.attach(part)
+                for artifact, attachment_name in zip(list_artifact.value, attachment_names):
+                    file_data = artifact.value.encode()
+                    part = MIMEBase("application", "octet-stream")
+                    part.set_payload(file_data)
+                    encoders.encode_base64(part)
+                    part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
+                    msg.attach(part)
             else:
                 return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
         else:
@@ -212,4 +213,3 @@ class EmailClient(BaseTool):
                     server.quit()
                 except Exception as e:
                     logging.error(e)
-
