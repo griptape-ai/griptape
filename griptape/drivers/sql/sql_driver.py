@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 from griptape.drivers import BaseSqlDriver
 from griptape.utils import import_optional_dependency 
 from attr import define, field
@@ -27,7 +27,7 @@ class SqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
         
         with self.engine.begin() as con:

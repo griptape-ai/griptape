@@ -10,13 +10,13 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class BedrockJurassicTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'ai21.j2-ultra'
+    DEFAULT_MODEL = 'ai21.j2-ultra-v1'
     DEFAULT_MAX_TOKENS = 8192
 
     session: boto3.Session = field(
         default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True
     )
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
             lambda self: self.session.client("bedrock-runtime"),

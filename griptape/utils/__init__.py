@@ -11,6 +11,7 @@ from .prompt_stack import PromptStack
 from .dict_utils import remove_null_values_in_dict_recursively
 from .hash import str_to_hash
 from .import_utils import import_optional_dependency
+from .stream import Stream
 
 
 def minify_json(value: str) -> str:
@@ -31,5 +32,6 @@ __all__ = [
     "execute_futures_dict",
     "TokenCounter",
     "PromptStack",
-    "remove_null_values_in_dict_recursively"
+    "remove_null_values_in_dict_recursively",
+    "Stream"
 ]

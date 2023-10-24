@@ -11,7 +11,7 @@ class CohereTokenizer(BaseTokenizer):
     DEFAULT_MODEL = "command"
     MAX_TOKENS = 2048
 
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
     client: Client = field(kw_only=True)
 
     @property

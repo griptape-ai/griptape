@@ -1,19 +1,21 @@
 import pytest
-from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine
-from griptape.memory.tool import TextToolMemory
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.mocks.mock_tool.tool import MockTool
 from griptape.artifacts import ErrorArtifact
-from griptape.tasks import ToolkitTask, ActionSubtask
-from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
+from griptape.drivers import LocalVectorStoreDriver
+from griptape.engines import VectorQueryEngine
 from griptape.structures import Pipeline, Agent
+from griptape.tasks import ToolkitTask, ActionSubtask
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
+from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
+from tests.utils import defaults
 
 
 class TestToolkitSubtask:
     @pytest.fixture
     def query_engine(self):
         return VectorQueryEngine(
+            prompt_driver=MockPromptDriver(),
             vector_store_driver=LocalVectorStoreDriver(
                 embedding_driver=MockEmbeddingDriver()
             )
@@ -132,8 +134,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_memory(self, query_engine):
-        m1 = TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine())
-        m2 = TextToolMemory(name="Memory2", query_engine=query_engine, summary_engine=PromptSummaryEngine())
+        m1 = defaults.text_tool_memory("Memory1")
+        m2 = defaults.text_tool_memory("Memory2")
 
         tool = MockTool(
             name="Tool1",
@@ -153,8 +155,8 @@ class TestToolkitSubtask:
             name="Tool1",
             output_memory={
                 "test": [
-                    TextToolMemory(name="Memory1", query_engine=query_engine, summary_engine=PromptSummaryEngine()),
-                    TextToolMemory(name="Memory2", query_engine=query_engine, summary_engine=PromptSummaryEngine())
+                    defaults.text_tool_memory("Memory1"),
+                    defaults.text_tool_memory("Memory2")
                 ]
             }
         )
@@ -163,8 +165,8 @@ class TestToolkitSubtask:
             name="Tool2",
             output_memory={
                 "test": [
-                    TextToolMemory(name="Memory2", query_engine=query_engine, summary_engine=PromptSummaryEngine()),
-                    TextToolMemory(name="Memory3", query_engine=query_engine, summary_engine=PromptSummaryEngine())
+                    defaults.text_tool_memory("Memory1"),
+                    defaults.text_tool_memory("Memory3")
                 ]
             }
         )
@@ -173,10 +175,10 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        assert len(task.memory) == 3
-        assert task.memory[0].name == "Memory1"
-        assert task.memory[1].name == "Memory2"
-        assert task.memory[2].name == "Memory3"
+        assert len(task.tool_output_memory) == 3
+        assert task.tool_output_memory[0].name == "Memory1"
+        assert task.tool_output_memory[1].name == "Memory2"
+        assert task.tool_output_memory[2].name == "Memory3"
 
     def test_action_types(self):
         assert Agent(tool_memory=None, tools=[MockTool()]).task.action_types == ["tool"]

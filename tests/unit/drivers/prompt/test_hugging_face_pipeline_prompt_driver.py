@@ -54,7 +54,7 @@ class TestHuggingFacePipelinePromptDriver:
             driver.try_run(prompt_stack)
 
         # Then
-        e.value.args[0] == 'Completion with more than one choice is not supported yet.'
+        e.value.args[0] == 'completion with more than one choice is not supported yet'
 
     def test_try_run_throws_when_unsupported_task_returned(self, prompt_stack, mock_generator):
         # Given
@@ -66,4 +66,4 @@ class TestHuggingFacePipelinePromptDriver:
             driver.try_run(prompt_stack)
 
         # Then
-        assert e.value.args[0].startswith('Only models with the following tasks are supported: ')
+        assert e.value.args[0].startswith('only models with the following tasks are supported: ')

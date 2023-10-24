@@ -8,7 +8,7 @@ class AnthropicTokenizer(BaseTokenizer):
     DEFAULT_MODEL = "claude-2"
     DEFAULT_MAX_TOKENS = 100000
 
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
 
     @property
     def max_tokens(self) -> int:

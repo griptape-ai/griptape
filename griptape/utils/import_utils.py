@@ -1,50 +1,37 @@
 from importlib import import_module
 from types import ModuleType
-from typing import Literal, Optional
+from typing import Optional
 
 
 INSTALL_MAPPING = {
     "huggingface_hub": "huggingface-hub",
     "pinecone": "pinecone-client",
     "opensearchpy": "opensearch-py",
-    "requests_aws4auth": "requests-aws4auth"
+    "requests_aws4auth": "requests-aws4auth",
 }
+
 
 def import_optional_dependency(
     name: str,
-    errors: Literal["raise", "ignore"] = "raise",
 ) -> Optional[ModuleType]:
     """Import an optional dependency.
 
-    By default, if a dependency is missing an ImportError with a nice
-    message will be raised.
+    If a dependency is missing, an ImportError with a nice message will be raised.
 
     Args:
         name: The module name.
-        errors: What to do when a dependency is not found
-                * raise : Raise an ImportError
-                * ignore: If the module is not installed, return None.
     Returns:
         The imported module, when found.
         None is returned when the package is not found and `errors` is False.
     """
 
-    assert errors in {"warn", "raise", "ignore"}
-
     package_name = INSTALL_MAPPING.get(name)
     install_name = package_name if package_name is not None else name
 
-    msg = (
-        f"Missing optional dependency: '{install_name}'. "
-        f"Use poetry or pip to install '{install_name}'."
-    )
+    msg = f"Missing optional dependency: '{install_name}'. " f"Use poetry or pip to install '{install_name}'."
     try:
         module = import_module(name)
     except ImportError:
-        if errors == "raise":
-            raise ImportError(msg)
-        else:
-            return None
+        raise ImportError(msg)
 
     return module
-

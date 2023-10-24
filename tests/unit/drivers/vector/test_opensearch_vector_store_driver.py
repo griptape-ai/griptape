@@ -47,3 +47,4 @@ class TestOpenSearchVectorStoreDriver:
             query_string = "sample query text"
             results = driver.query(query_string, count=5, namespace="company")
             assert len(results) == 1, "Expected results from the query"
+            assert results[0].id == "query_result", "Expected a result id"

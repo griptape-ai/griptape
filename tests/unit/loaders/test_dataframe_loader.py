@@ -3,12 +3,13 @@ import pandas as pd
 import pytest
 from griptape import utils
 from griptape.loaders.dataframe_loader import DataFrameLoader
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestDataFrameLoader:
     @pytest.fixture
     def loader(self):
-        return DataFrameLoader()
+        return DataFrameLoader(embedding_driver=MockEmbeddingDriver())
 
     def test_load_with_path(self, loader):
         # test loading a file delimited by comma
@@ -22,6 +23,8 @@ class TestDataFrameLoader:
         first_artifact = artifacts[0].value
         assert first_artifact["Foo"] == "foo1"
         assert first_artifact["Bar"] == "bar1"
+
+        assert (artifacts[0].embedding == [0, 1])
 
     def test_load_collection_with_path(self, loader):
         path1 = os.path.join(
@@ -37,8 +40,6 @@ class TestDataFrameLoader:
         key1 = loader._dataframe_to_hash(df1)
         key2 = loader._dataframe_to_hash(df2)
 
-        print(list(collection.keys()))
-        print([key1, key2])
         assert list(collection.keys()) == [key1, key2]
 
         artifacts = collection[key1]
@@ -52,3 +53,5 @@ class TestDataFrameLoader:
         first_artifact = artifacts[0].value
         assert first_artifact["Bar"] == "bar1"
         assert first_artifact["Foo"] == "foo1"
+
+        assert (artifacts[0].embedding == [0, 1])

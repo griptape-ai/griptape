@@ -15,9 +15,6 @@ from .memory.conversation.base_conversation_memory_driver import BaseConversatio
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
 from .memory.conversation.amazon_dynamodb_conversation_memory_driver import AmazonDynamoDbConversationMemoryDriver
 
-from .memory.tool.blob.base_blob_tool_memory_driver import BaseBlobToolMemoryDriver
-from .memory.tool.blob.local_blob_tool_memory_driver import LocalBlobToolMemoryDriver
-
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
@@ -31,6 +28,7 @@ from .vector.mongodb_vector_store_driver import MongoDbAtlasVectorStoreDriver
 from .vector.redis_vector_store_driver import RedisVectorStoreDriver
 from .vector.opensearch_vector_store_driver import OpenSearchVectorStoreDriver
 from .vector.amazon_opensearch_vector_store_driver import AmazonOpenSearchVectorStoreDriver
+from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -63,9 +61,6 @@ __all__ = [
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
 
-    "BaseBlobToolMemoryDriver",
-    "LocalBlobToolMemoryDriver",
-
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
@@ -79,13 +74,11 @@ __all__ = [
     "RedisVectorStoreDriver",
     "OpenSearchVectorStoreDriver",
     "AmazonOpenSearchVectorStoreDriver",
-
-
+    "PgVectorVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
     "SqlDriver",
-
     "BasePromptModelDriver",
     "SageMakerLlamaPromptModelDriver",
     "SageMakerFalconPromptModelDriver",

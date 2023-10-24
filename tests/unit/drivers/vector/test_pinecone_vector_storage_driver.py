@@ -16,6 +16,7 @@ class TestPineconeVectorStorageDriver:
         fake_query_response = {
             "matches": [
                 {
+                    "id": "foo",
                     "values": [0, 1, 0],
                     "score": 42,
                     "metadata": {
@@ -54,7 +55,10 @@ class TestPineconeVectorStorageDriver:
         assert isinstance(driver.upsert_text("foo"), str)
 
     def test_query(self, driver):
-        assert driver.query("test")[0].vector == [0, 1, 0]
+        results = driver.query("test")
+
+        assert results[0].vector == [0, 1, 0]
+        assert results[0].id == "foo"
 
     def test_create_index(self, driver):
         assert driver.create_index("test") is None

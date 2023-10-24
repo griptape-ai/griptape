@@ -57,6 +57,9 @@ class BaseArtifact(ABC):
     def from_json(cls, artifact_str: str) -> BaseArtifact:
         return cls.from_dict(json.loads(artifact_str))
 
+    def __bool__(self) -> bool:
+        return bool(self.value)
+
     def __str__(self):
         return json.dumps(self.to_dict())
 

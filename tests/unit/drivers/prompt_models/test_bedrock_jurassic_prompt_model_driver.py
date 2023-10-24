@@ -2,6 +2,7 @@ from unittest import mock
 import json
 import boto3
 import pytest
+from griptape.tokenizers.bedrock_jurassic_tokenizer import BedrockJurassicTokenizer
 from griptape.utils import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockJurassicPromptModelDriver
 
@@ -26,7 +27,7 @@ class TestBedrockJurassicPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model="ai21.j2-ultra",
+            model=BedrockJurassicTokenizer.DEFAULT_MODEL,
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockJurassicPromptModelDriver(),
             temperature=0.12345,
@@ -41,11 +42,24 @@ class TestBedrockJurassicPromptModelDriver:
 
         return stack
 
+    def test_driver_stream(self):
+        with pytest.raises(ValueError):
+            AmazonBedrockPromptDriver(
+                model="ai21.j2-ultra",
+                session=boto3.Session(region_name="us-east-1"),
+                prompt_model_driver=BedrockJurassicPromptModelDriver(),
+                temperature=0.12345,
+                stream=True
+            ).prompt_model_driver
+    
+    def test_init(self, driver):
+        assert driver.prompt_driver is not None
+
     def test_prompt_stack_to_model_input(self, driver, stack):
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input["prompt"].startswith("\nInstructions: foo\n\nUser: bar\n\nBot:")
+        assert model_input["prompt"].startswith("Instructions: foo\nUser: bar\nBot:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
         assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8189

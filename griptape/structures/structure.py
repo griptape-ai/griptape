@@ -3,17 +3,21 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, TYPE_CHECKING, Callable, Type
+from typing import Optional, TYPE_CHECKING, Callable, Type, Any
 from attr import define, field, Factory
 from rich.logging import RichHandler
+from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
+from griptape.events.finish_structure_run_event import FinishStructureRunEvent
+from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.structure import ConversationMemory
-from griptape.memory.tool import BaseToolMemory, TextToolMemory
+from griptape.memory import ToolMemory
+from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.drivers import LocalVectorStoreDriver
 
 if TYPE_CHECKING:
@@ -25,10 +29,12 @@ class Structure(ABC):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
+    stream: bool = field(default=False, kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
-        )),
+        default=Factory(lambda self: OpenAiChatPromptDriver(
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL,
+            stream=self.stream
+        ), takes_self=True),
         kw_only=True
     )
     embedding_driver: BaseEmbeddingDriver = field(
@@ -42,15 +48,32 @@ class Structure(ABC):
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[Callable] | dict[Type[BaseEvent], list[Callable]] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
-    tool_memory: Optional[BaseToolMemory] = field(
-        default=Factory(lambda self: TextToolMemory(
-            query_engine=VectorQueryEngine(
-                vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=self.embedding_driver
-                )
+    tool_memory: Optional[ToolMemory] = field(
+        default=Factory(
+            lambda self: ToolMemory(
+                artifact_storages={
+                    TextArtifact: TextArtifactStorage(
+                        query_engine=VectorQueryEngine(
+                            prompt_driver=self.prompt_driver,
+                            vector_store_driver=LocalVectorStoreDriver(
+                                embedding_driver=self.embedding_driver
+                            )
+                        ),
+                        summary_engine=PromptSummaryEngine(
+                            prompt_driver=self.prompt_driver
+                        ),
+                        csv_extraction_engine=CsvExtractionEngine(
+                            prompt_driver=self.prompt_driver
+                        ),
+                        json_extraction_engine=JsonExtractionEngine(
+                            prompt_driver=self.prompt_driver
+                        )
+                    ),
+                    BlobArtifact: BlobArtifactStorage()
+                }
             ),
-            summary_engine=PromptSummaryEngine()
-        ), takes_self=True),
+            takes_self=True
+        ),
         kw_only=True
     )
     _execution_args: tuple = ()
@@ -120,6 +143,16 @@ class Structure(ABC):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
+    def add_event_listener(self, event_type: Type[BaseEvent], event_listener: Callable) -> None:
+        if isinstance(self.event_listeners, list):
+            if event_listener not in self.event_listeners:
+                self.event_listeners.append(event_listener)
+        elif isinstance(self.event_listeners, dict):
+            if event_type not in self.event_listeners:
+                self.event_listeners[event_type] = [event_listener]
+            elif event_listener not in self.event_listeners[event_type]:
+                self.event_listeners[event_type].append(event_listener)
+
     def publish_event(self, event: BaseEvent) -> None:
         if isinstance(self.event_listeners, dict):
             listeners = self.event_listeners.get(type(event), [])
@@ -129,16 +162,31 @@ class Structure(ABC):
         for listener in listeners:
             listener(event)
 
-    def context(self, task: BaseTask) -> dict[str, any]:
+    def context(self, task: BaseTask) -> dict[str, Any]:
         return {
             "args": self.execution_args,
             "structure": self,
         }
 
+    def before_run(self) -> None:
+        self.publish_event(StartStructureRunEvent())
+
+    def after_run(self) -> None:
+        self.publish_event(FinishStructureRunEvent())
+
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask:
         ...
 
-    @abstractmethod
     def run(self, *args) -> BaseTask | list[BaseTask]:
+        self.before_run()
+
+        result = self.try_run(*args)
+
+        self.after_run()
+        
+        return result
+
+    @abstractmethod
+    def try_run(self, *args) -> BaseTask | list[BaseTask]:
         ...

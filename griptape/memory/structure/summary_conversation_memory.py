@@ -6,20 +6,20 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.schemas import SummaryConversationMemorySchema
-from griptape.utils import J2
+from griptape.utils import J2, PromptStack
 from griptape.memory.structure import ConversationMemory
+from griptape.tokenizers import OpenAiTokenizer
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
     from griptape.memory.structure import Run
-    from griptape.utils import PromptStack
 
 
 @define
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver()),
+        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True
     )
     summary: Optional[str] = field(default=None, kw_only=True)
@@ -41,13 +41,16 @@ class SummaryConversationMemory(ConversationMemory):
     def from_json(cls, memory_json: str) -> SummaryConversationMemory:
         return SummaryConversationMemory.from_dict(json.loads(memory_json))
 
-    def add_to_prompt_stack(self, stack: PromptStack) -> None:
+    def to_prompt_stack(self, last_n: Optional[int]=None) -> PromptStack:
+        stack = PromptStack()
         if self.summary:
             stack.add_user_input(self.summary_template_generator.render(summary=self.summary))
 
-        for r in self.unsummarized_runs():
+        for r in self.unsummarized_runs(last_n):
             stack.add_user_input(r.input)
             stack.add_assistant_input(r.output)
+
+        return stack
 
     def to_dict(self) -> dict:
         return dict(SummaryConversationMemorySchema().dump(self))
@@ -78,10 +81,15 @@ class SummaryConversationMemory(ConversationMemory):
     def summarize_runs(self, previous_summary: str, runs: list[Run]) -> str:
         try:
             if len(runs) > 0:
+                summary = self.summarize_conversation_template_generator.render(
+                    summary=previous_summary,
+                    runs=runs
+                )
                 return self.prompt_driver.run(
-                    prompt_stack=self.summarize_conversation_template_generator.render(
-                        summary=previous_summary,
-                        runs=runs
+                    prompt_stack=PromptStack(
+                        inputs=[
+                            PromptStack.Input(summary, role=PromptStack.USER_ROLE)
+                        ]
                     )
                 ).to_text()
             else:

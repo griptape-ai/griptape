@@ -9,7 +9,30 @@ class TestBlobArtifact:
         assert BlobArtifact(1).value == b"1"
 
     def test_to_text(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").to_text() == "foo/foobar.txt"
+        assert BlobArtifact(b"foobar", name="foobar.txt").to_text() == "foobar"
+
+    def test_to_text_encoding(self):
+        assert BlobArtifact(
+            "ß".encode("ascii", errors='backslashreplace'),
+            name="foobar.txt",
+            encoding="ascii"
+        ).to_text() == "\\xdf"
+
+    def test_to_text_encoding_error(self):
+        with pytest.raises(ValueError):
+            assert BlobArtifact(
+                "ß".encode("utf-8", errors='backslashreplace'),
+                name="foobar.txt",
+                encoding="ascii"
+            ).to_text()
+
+    def test_to_text_encoding_error_handler(self):
+        assert BlobArtifact(
+            "ß".encode("utf-8", errors='backslashreplace'),
+            name="foobar.txt",
+            encoding="ascii",
+            encoding_error_handler="replace"
+        ).to_text() == "��"
 
     def test_to_dict(self):
         assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").to_dict()["name"] == "foobar.txt"
@@ -39,3 +62,7 @@ class TestBlobArtifact:
 
     def test_name(self):
         assert BlobArtifact(b"foo", name="bar").name == "bar"
+
+    def test___bool__(self):
+        assert not bool(BlobArtifact(b""))
+        assert bool(BlobArtifact(b"foo"))

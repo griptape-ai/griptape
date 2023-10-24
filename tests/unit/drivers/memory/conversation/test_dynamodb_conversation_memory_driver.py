@@ -6,7 +6,7 @@ from tests.utils.aws import mock_aws_credentials
 from griptape.memory.structure import ConversationMemory
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
-from griptape.drivers import DynamoDbConversationMemoryDriver
+from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
 
 
 class TestDynamoDbConversationMemoryDriver:
@@ -44,7 +44,7 @@ class TestDynamoDbConversationMemoryDriver:
         dynamodb = session.resource("dynamodb")
         table = dynamodb.Table(self.DYNAMODB_TABLE_NAME)
         prompt_driver = MockPromptDriver()
-        memory_driver = DynamoDbConversationMemoryDriver(
+        memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=session,
             table_name=self.DYNAMODB_TABLE_NAME,
             partition_key=self.DYNAMODB_PARTITION_KEY,
@@ -70,7 +70,7 @@ class TestDynamoDbConversationMemoryDriver:
 
     def test_load(self):
         prompt_driver = MockPromptDriver()
-        memory_driver = DynamoDbConversationMemoryDriver(
+        memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=boto3.Session(region_name=self.AWS_REGION),
             table_name=self.DYNAMODB_TABLE_NAME,
             partition_key=self.DYNAMODB_PARTITION_KEY,

@@ -37,7 +37,6 @@ class PdfLoader(TextLoader):
         })
 
     def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
-        
         reader = PdfReader(stream, strict=True, password=password)
 
         return self.text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))

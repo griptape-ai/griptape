@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Optional, TYPE_CHECKING
+from typing import Callable, Optional, TYPE_CHECKING, Any
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseSqlDriver
 from attr import Factory, define, field
@@ -52,7 +52,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:
