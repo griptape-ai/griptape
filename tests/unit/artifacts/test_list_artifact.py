@@ -14,7 +14,7 @@ class TestListArtifact:
         artifact = ListArtifact([TextArtifact("foo")]) + ListArtifact([TextArtifact("bar")])
 
         assert isinstance(artifact, ListArtifact)
-        assert len(artifact.value) == 2
+        assert len(artifact) == 2
         assert artifact.value[0].value == "foo"
         assert artifact.value[1].value == "bar"
 

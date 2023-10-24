@@ -24,7 +24,7 @@ class ListArtifact(BaseArtifact):
             return None
 
     def __bool__(self) -> bool:
-        return len(self.value) > 0
+        return len(self) > 0
 
     def to_text(self) -> str:
         return self.item_separator.join([v.to_text() for v in self.value])
@@ -44,4 +44,4 @@ class ListArtifact(BaseArtifact):
             return False
 
     def has_items(self) -> bool:
-        return len(self.value) > 0
+        return len(self) > 0
