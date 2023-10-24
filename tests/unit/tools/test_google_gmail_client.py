@@ -7,7 +7,9 @@ class TestGoogleGmailClient:
             "to": "recipient@example.com",
             "subject": "stacey's mom",
             "body": "got it going on",
-            "attachments": ["/test/foo/bar.txt"]
+            "attachment_name": ["/test/foo/bar.txt"],
+            "memory_name": "test",
+            "artifact_namespace": "1234"
         }
 
         assert "error creating draft email" in GoogleGmailClient(

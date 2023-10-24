@@ -20,10 +20,12 @@ class TestEmailClient:
             "to": "foo@bar.com",
             "subject": "test",
             "body": "hello",
-            "attachments": ["/test/foo/bar.txt"]
+            "attachment_name": ["/test/foo/bar.txt"],
+            "memory_name": "test",
+            "artifact_namespace": "1234"
         }
 
-        assert "Error attaching" in EmailClient(
+        assert "memory not found" in EmailClient(
             smtp_host="",
             smtp_port=0
         ).send({"values": value}).value

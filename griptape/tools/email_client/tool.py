@@ -140,12 +140,14 @@ class EmailClient(BaseTool):
             ): str,
             Literal(
                 "body",
-                description="Email body"
+                description="Email body")
+            : str,
+            Literal(
+                "attachment_name",
+                description="Name of the attachment"
             ): str,
-            Optional(
-                "attachments",
-                description="List of file paths to be attached to the email"
-            ): list[str]
+            "memory_name": str,
+            "artifact_namespace": str
         })
     })
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
@@ -153,16 +155,15 @@ class EmailClient(BaseTool):
         server: Optional[smtplib.SMTP] = None
         to_email = input_values["to"]
         subject = input_values["subject"]
+        memory_name = input_values["memory_name"]
+        artifact_namespace = input_values["artifact_namespace"]
+        attachment_name = input_values["attachment_name"]
 
         # email username can be overridden by setting the smtp user explicitly
-        smtp_user = self.smtp_user
-        if smtp_user is None:
-            smtp_user = self.username
+        smtp_user = self.smtp_user if self.smtp_user else self.username
 
         # email password can be overridden by setting the smtp password explicitly
-        smtp_password = self.smtp_password
-        if smtp_password is None:
-            smtp_password = self.password
+        smtp_password = self.smtp_password if self.smtp_password else self.password
 
         smtp_host = self.smtp_host
         smtp_port = int(self.smtp_port)
@@ -176,23 +177,23 @@ class EmailClient(BaseTool):
         # Attach the body to the email
         msg.attach(MIMEText(input_values["body"]))
 
-        # Process attachments
-        attachments = input_values.get("attachments", [])
-        for file_path in attachments:
-            try:
-                with open(file_path, "rb") as attachment:
-                    part = MIMEBase("application", "octet-stream")
-                    part.set_payload(attachment.read())
-                    encoders.encode_base64(part)
-                    part.add_header(
-                        "Content-Disposition",
-                        f"attachment; filename= {file_path.split('/')[-1]}"
-                    )
-                    msg.attach(part)
-            except Exception as e:
-                logging.error(f"Error attaching {file_path}: {e}")
-                return ErrorArtifact(f"Error attaching {file_path}: {e}")
+        # Fetch attachment data from memory
+        memory = self.find_input_memory(memory_name)
+        if memory:
+            list_artifact = memory.load_artifacts(artifact_namespace)
+            if list_artifact:
+                file_data = list_artifact.value[0].value.encode()
+                part = MIMEBase("application", "octet-stream")
+                part.set_payload(file_data)
+                encoders.encode_base64(part)
+                part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
+                msg.attach(part)
+            else:
+                return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
+        else:
+            return ErrorArtifact(f"memory not found")
 
+        # Send the email
         try:
             if self.smtp_use_ssl:
                 server = smtplib.SMTP_SSL(smtp_host, smtp_port)
@@ -200,14 +201,15 @@ class EmailClient(BaseTool):
                 server = smtplib.SMTP(smtp_host, smtp_port)
 
             server.login(smtp_user, smtp_password)
-            server.sendmail(smtp_user, [input_values["to"]], msg.as_string())
-
+            server.sendmail(smtp_user, [to_email], msg.as_string())
             return InfoArtifact("email was successfully sent")
         except Exception as e:
             logging.error(e)
             return ErrorArtifact(f"error sending email: {e}")
         finally:
-            try:
-                server.quit()
-            except Exception as e:
-                logging.error(e)
+            if server:
+                try:
+                    server.quit()
+                except Exception as e:
+                    logging.error(e)
+

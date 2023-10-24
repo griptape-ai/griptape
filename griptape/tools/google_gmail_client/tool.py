@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import base64
 from email.message import EmailMessage
-from schema import Schema, Literal, Optional
+from schema import Schema, Literal
 from attr import define, field
 from griptape.artifacts import InfoArtifact, ErrorArtifact
 from griptape.utils.decorators import activity
@@ -30,10 +30,12 @@ class GoogleGmailClient(BaseGoogleClient):
                 "body",
                 description="body of the email"
             ): str,
-            Optional(
-                "attachments",
-                description="List of file paths to be attached to the email"
-            ): list[str],
+            Literal(
+                "attachment_name",
+                description="Name of the attachment"
+            ): str,
+            "memory_name": str,
+            "artifact_namespace": str
         })
     })
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:
@@ -41,7 +43,9 @@ class GoogleGmailClient(BaseGoogleClient):
         to_address = values.get("to")
         subject = values.get("subject")
         body = values.get("body")
-        attachments = values.get("attachments", [])
+        attachment_name = values.get("attachment_name")
+        memory_name = values.get("memory_name")
+        artifact_namespace = values.get("artifact_namespace")
 
         try:
             service = self._build_client(
@@ -57,12 +61,19 @@ class GoogleGmailClient(BaseGoogleClient):
             message['From'] = self.owner_email
             message['Subject'] = subject
 
-            for attachment in attachments:
-                with open(attachment, "rb") as f:
-                    file_data = f.read()
-                    file_name = attachment.split("/")[-1]
+            memory = self.find_input_memory(memory_name)
+
+            if memory:
+                list_artifact = memory.load_artifacts(artifact_namespace)
+                if list_artifact:
+                    file_data = list_artifact.value[0].value.encode()
                     message.add_attachment(file_data, maintype='application',
-                                           subtype='octet-stream', filename=file_name)
+                                           subtype='octet-stream', filename=attachment_name)
+                else:
+                    return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
+
+            else:
+                return ErrorArtifact(f"memory not found")
 
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
             create_message = {
