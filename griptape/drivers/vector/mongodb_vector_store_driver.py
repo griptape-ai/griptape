@@ -45,21 +45,13 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         if vector_id is None:
             result = collection.insert_one(
-                {
-                    "vector": vector,
-                    "namespace": namespace,
-                    "meta": meta,
-                }
+                {"vector": vector, "namespace": namespace, "meta": meta}
             )
             vector_id = str(result.inserted_id)
         else:
             collection.replace_one(
                 {"_id": vector_id},
-                {
-                    "vector": vector,
-                    "namespace": namespace,
-                    "meta": meta,
-                },
+                {"vector": vector, "namespace": namespace, "meta": meta},
                 upsert=True,
             )
         return vector_id

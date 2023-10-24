@@ -226,9 +226,7 @@ class GoogleDocsClient(BaseGoogleClient):
                 owner_email=self.owner_email,
             )
 
-            body = {
-                "title": file_path,
-            }
+            body = {"title": file_path}
 
             doc = docs_service.documents().create(body=body).execute()
             doc_id = doc["documentId"]
@@ -373,9 +371,7 @@ class GoogleDocsClient(BaseGoogleClient):
         requests = [
             {
                 "insertText": {
-                    "location": {
-                        "index": 1,
-                    },
+                    "location": {"index": 1},
                     "text": params["content"],
                 }
             }

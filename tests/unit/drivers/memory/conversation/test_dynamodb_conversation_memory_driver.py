@@ -35,7 +35,7 @@ class TestDynamoDbConversationMemoryDriver:
                 {
                     "AttributeName": self.DYNAMODB_PARTITION_KEY,
                     "AttributeType": "S",
-                },
+                }
             ],
             BillingMode="PAY_PER_REQUEST",
         )

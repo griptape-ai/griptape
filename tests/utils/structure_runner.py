@@ -72,8 +72,7 @@ PROMPT_DRIVERS = {
         model="claude-2", api_key=os.environ["ANTHROPIC_API_KEY"]
     ),
     "COHERE_COMMAND": CoherePromptDriver(
-        model="command",
-        api_key=os.environ["COHERE_API_KEY"],
+        model="command", api_key=os.environ["COHERE_API_KEY"]
     ),
     "BEDROCK_TITAN": AmazonBedrockPromptDriver(
         model="amazon.titan-tg1-large",

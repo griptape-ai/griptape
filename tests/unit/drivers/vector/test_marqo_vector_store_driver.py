@@ -212,11 +212,7 @@ class TestMarqoVectorStorageDriver:
     def test_load_entries(self, driver, mock_marqo):
         # Arrange
         fake_search_response = {
-            "hits": [
-                {
-                    "_id": "5aed93eb-3878-4f12-bc92-0fda01c7d23d",
-                }
-            ],
+            "hits": [{"_id": "5aed93eb-3878-4f12-bc92-0fda01c7d23d"}],
             "limit": 10,
             "offset": 0,
             "processingTimeMs": 49,

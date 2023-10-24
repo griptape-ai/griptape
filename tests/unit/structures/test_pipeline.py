@@ -115,9 +115,7 @@ class TestPipeline:
         assert pipeline.tasks[0].tools[0].output_memory == {}
 
     def test_without_default_tool_memory(self):
-        pipeline = Pipeline(
-            tool_memory=None,
-        )
+        pipeline = Pipeline(tool_memory=None)
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 

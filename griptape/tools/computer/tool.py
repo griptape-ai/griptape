@@ -100,7 +100,7 @@ class Computer(BaseTool):
                 {
                     Literal(
                         "command", description="shell command to execute"
-                    ): str,
+                    ): str
                 }
             ),
         }

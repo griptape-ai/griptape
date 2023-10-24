@@ -27,7 +27,7 @@ class TestFileManager:
 
     def test_load_files_from_disk_with_encoding(self):
         result = FileManager(
-            workdir=os.path.abspath(os.path.dirname(__file__)),
+            workdir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk(
             {"values": {"paths": ["../../resources/test.txt"]}}
         )
@@ -174,11 +174,7 @@ class TestFileManager:
                 default_loader=FileLoader(encoding="ascii"),
                 loaders={},
             ).load_files_from_disk(
-                {
-                    "values": {
-                        "paths": [os.path.join("test", "foobar.txt")],
-                    }
-                }
+                {"values": {"paths": [os.path.join("test", "foobar.txt")]}}
             )
 
             assert isinstance(result, ListArtifact)

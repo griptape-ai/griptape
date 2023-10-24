@@ -18,24 +18,16 @@ class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     table: any = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        dynamodb = self.session.resource(
-            "dynamodb",
-        )
+        dynamodb = self.session.resource("dynamodb")
 
         self.table = dynamodb.Table(self.table_name)
 
     def store(self, memory: ConversationMemory) -> None:
         self.table.update_item(
-            Key={
-                self.partition_key: self.partition_key_value,
-            },
+            Key={self.partition_key: self.partition_key_value},
             UpdateExpression="set #attr = :value",
-            ExpressionAttributeNames={
-                "#attr": self.value_attribute_key,
-            },
-            ExpressionAttributeValues={
-                ":value": memory.to_json(),
-            },
+            ExpressionAttributeNames={"#attr": self.value_attribute_key},
+            ExpressionAttributeValues={":value": memory.to_json()},
         )
 
     def load(self) -> Optional[ConversationMemory]:

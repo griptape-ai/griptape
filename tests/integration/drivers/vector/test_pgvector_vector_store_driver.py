@@ -36,8 +36,7 @@ class TestPgVectorVectorStoreDriver:
     ):
         with pytest.raises(ValueError):
             driver = PgVectorVectorStoreDriver(
-                embedding_driver=embedding_driver,
-                table_name=self.table_name,
+                embedding_driver=embedding_driver, table_name=self.table_name
             )
             driver.setup()
 

@@ -23,27 +23,16 @@ class RestApiClient(BaseTool):
     """
 
     base_url: str = field(kw_only=True)
-    path: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
+    path: Optional[str] = field(default=None, kw_only=True)
     description: str = field(kw_only=True)
     request_path_params_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
+        default=None, kw_only=True
     )
     request_query_params_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
+        default=None, kw_only=True
     )
-    request_body_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
-    response_body_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
+    request_body_schema: Optional[str] = field(default=None, kw_only=True)
+    response_body_schema: Optional[str] = field(default=None, kw_only=True)
 
     @property
     def full_url(self) -> str:
@@ -60,9 +49,7 @@ class RestApiClient(BaseTool):
                 """
             ),
             "schema": Schema(
-                {
-                    Literal("body", description="The request body."): dict,
-                }
+                {Literal("body", description="The request body."): dict}
             ),
         }
     )
@@ -131,9 +118,7 @@ class RestApiClient(BaseTool):
                 """
             ),
             "schema": Schema(
-                {
-                    Literal("body", description="The request body."): dict,
-                }
+                {Literal("body", description="The request body."): dict}
             ),
         }
     )

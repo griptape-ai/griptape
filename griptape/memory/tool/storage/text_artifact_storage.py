@@ -31,7 +31,7 @@ class TextArtifactStorage(BaseArtifactStorage):
 
     def summarize(self, namespace: str) -> TextArtifact:
         return self.summary_engine.summarize_artifacts(
-            self.load_artifacts(namespace),
+            self.load_artifacts(namespace)
         )
 
     def query(

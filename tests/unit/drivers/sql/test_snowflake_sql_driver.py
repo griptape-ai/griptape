@@ -12,10 +12,7 @@ class TestSnowflakeSqlDriver:
         {"first_name": "Bob", "last_name": "Ross"},
     ]
 
-    TEST_COLUMNS = [
-        ("first_name", "VARCHAR"),
-        ("last_name", "VARCHAR"),
-    ]
+    TEST_COLUMNS = [("first_name", "VARCHAR"), ("last_name", "VARCHAR")]
 
     @pytest.fixture
     def mock_table(self, mocker):
@@ -25,19 +22,13 @@ class TestSnowflakeSqlDriver:
             type: str = "VARCHAR"
 
         mock_table = mocker.MagicMock(
-            name="table",
-            columns=[
-                Column("first_name"),
-                Column("last_name"),
-            ],
+            name="table", columns=[Column("first_name"), Column("last_name")]
         )
         return mock_table
 
     @pytest.fixture
     def mock_metadata(self, mocker):
-        mock_meta = mocker.MagicMock(
-            name="metadata",
-        )
+        mock_meta = mocker.MagicMock(name="metadata")
         mock_meta.reflect.return_value = None
         return mock_meta
 
@@ -105,9 +96,7 @@ class TestSnowflakeSqlDriver:
             return object
 
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(
-                connection_func=get_connection,
-            )
+            SnowflakeSqlDriver(connection_func=get_connection)
 
     def test_connection_validation_no_schema(
         self, mock_snowflake_connection_no_schema
@@ -116,9 +105,7 @@ class TestSnowflakeSqlDriver:
             return mock_snowflake_connection_no_schema
 
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(
-                connection_func=get_connection,
-            )
+            SnowflakeSqlDriver(connection_func=get_connection)
 
     def test_connection_validation_no_database(
         self, mock_snowflake_connection_no_database
@@ -127,9 +114,7 @@ class TestSnowflakeSqlDriver:
             return mock_snowflake_connection_no_database
 
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(
-                connection_func=get_connection,
-            )
+            SnowflakeSqlDriver(connection_func=get_connection)
 
     def test_engine_url_validation_wrong_engine(
         self, mock_snowflake_connection

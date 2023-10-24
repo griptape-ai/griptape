@@ -95,10 +95,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         """Inserts or updates a vector in the collection."""
         with Session(self.engine) as session:
             obj = self._model(
-                id=vector_id,
-                vector=vector,
-                namespace=namespace,
-                meta=meta,
+                id=vector_id, vector=vector, namespace=namespace, meta=meta
             )
 
             obj = session.merge(obj)
@@ -171,8 +168,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             # The query should return both the vector and the distance metric score.
             query = session.query(
-                self._model,
-                op(vector).label("score"),
+                self._model, op(vector).label("score")
             ).order_by(op(vector))
 
             if namespace:

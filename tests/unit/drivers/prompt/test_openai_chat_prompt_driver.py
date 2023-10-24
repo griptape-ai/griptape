@@ -79,7 +79,7 @@ class OpenAiApiResponseWithHeaders:
 class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_init(self):
         assert OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL,
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL
         )
 
     def test_try_run(self, mock_chat_completion_create, prompt_stack, messages):
@@ -138,8 +138,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     ):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
-            max_tokens=1,
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, max_tokens=1
         )
 
         # When
@@ -197,7 +196,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_try_run_throws_when_prompt_stack_is_string(self):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
         )
 
         # When
@@ -260,8 +259,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     def test_max_output_tokens_with_max_tokens(self, messages):
         max_tokens = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
-            max_tokens=42,
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, max_tokens=42
         ).max_output_tokens(messages)
 
         assert max_tokens == 42

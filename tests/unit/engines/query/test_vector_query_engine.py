@@ -15,7 +15,7 @@ class TestVectorQueryEngine:
     def engine(self):
         return VectorQueryEngine(
             vector_store_driver=LocalVectorStoreDriver(
-                embedding_driver=MockEmbeddingDriver(),
+                embedding_driver=MockEmbeddingDriver()
             ),
             prompt_driver=MockPromptDriver(),
         )

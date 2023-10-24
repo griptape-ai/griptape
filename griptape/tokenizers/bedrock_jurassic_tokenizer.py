@@ -16,8 +16,7 @@ class BedrockJurassicTokenizer(BaseTokenizer):
     model: str = field(kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock-runtime"),
-            takes_self=True,
+            lambda self: self.session.client("bedrock-runtime"), takes_self=True
         ),
         kw_only=True,
     )

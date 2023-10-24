@@ -17,8 +17,7 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     )
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock-runtime"),
-            takes_self=True,
+            lambda self: self.session.client("bedrock-runtime"), takes_self=True
         ),
         kw_only=True,
     )
@@ -30,7 +29,7 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
         payload = {
             **self.prompt_model_driver.prompt_stack_to_model_params(
                 prompt_stack
-            ),
+            )
         }
         if isinstance(model_input, dict):
             payload.update(model_input)
@@ -56,7 +55,7 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
         payload = {
             **self.prompt_model_driver.prompt_stack_to_model_params(
                 prompt_stack
-            ),
+            )
         }
         if isinstance(model_input, dict):
             payload.update(model_input)

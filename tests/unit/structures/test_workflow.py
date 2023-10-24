@@ -111,9 +111,7 @@ class TestWorkflow:
         assert workflow.tasks[0].tools[0].output_memory == {}
 
     def test_without_default_tool_memory(self):
-        workflow = Workflow(
-            tool_memory=None,
-        )
+        workflow = Workflow(tool_memory=None)
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 

@@ -20,15 +20,11 @@ class TestSummaryTask:
         from griptape.structures import Agent
 
         agent = Agent(
-            memory=None,
-            prompt_driver=request.param,
-            rulesets=[OUTPUT_RULESET],
+            memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
         )
         agent.add_task(
             TextSummaryTask(
-                summary_engine=PromptSummaryEngine(
-                    prompt_driver=request.param,
-                )
+                summary_engine=PromptSummaryEngine(prompt_driver=request.param)
             )
         )
 

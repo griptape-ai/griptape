@@ -12,28 +12,18 @@ class TestRestApi:
         )
 
     def test_put(self, client):
-        assert isinstance(
-            client.post({"values": {"body": {}}}),
-            BaseArtifact,
-        )
+        assert isinstance(client.post({"values": {"body": {}}}), BaseArtifact)
 
     def test_post(self, client):
-        assert isinstance(
-            client.post({"values": {"body": {}}}),
-            BaseArtifact,
-        )
+        assert isinstance(client.post({"values": {"body": {}}}), BaseArtifact)
 
     def test_get_one(self, client):
         assert isinstance(
-            client.get({"values": {"path_params": ["1"]}}),
-            BaseArtifact,
+            client.get({"values": {"path_params": ["1"]}}), BaseArtifact
         )
 
     def test_get_all(self, client):
-        assert isinstance(
-            client.get({"values": {}}),
-            BaseArtifact,
-        )
+        assert isinstance(client.get({"values": {}}), BaseArtifact)
 
     def test_get_filtered(self, client):
         assert isinstance(
@@ -43,8 +33,7 @@ class TestRestApi:
 
     def test_delete_one(self, client):
         assert isinstance(
-            client.delete({"values": {"path_params": ["1"]}}),
-            BaseArtifact,
+            client.delete({"values": {"path_params": ["1"]}}), BaseArtifact
         )
 
     def test_delete_multiple(self, client):

@@ -45,7 +45,7 @@ class GoogleDriveClient(BaseGoogleClient):
                         default=DEFAULT_FOLDER_PATH,
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
                         "from which files should be listed.",
-                    ): str,
+                    ): str
                 }
             ),
         }
@@ -362,10 +362,7 @@ class GoogleDriveClient(BaseGoogleClient):
         while True:
             results = (
                 service.files()
-                .list(
-                    q=query,
-                    pageToken=next_page_token,
-                )
+                .list(q=query, pageToken=next_page_token)
                 .execute()
             )
 

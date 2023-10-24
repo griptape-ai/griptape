@@ -32,10 +32,7 @@ class TestEventListener:
         event_handler_1 = Mock()
         event_handler_2 = Mock()
 
-        pipeline.event_listeners = [
-            event_handler_1,
-            event_handler_2,
-        ]
+        pipeline.event_listeners = [event_handler_1, event_handler_2]
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()
@@ -91,7 +88,7 @@ class TestEventListener:
     def test_add_event_listener_to_dict(self, pipeline):
         start_prompt_event_handler = Mock()
         pipeline.event_listeners = {
-            StartPromptEvent: [start_prompt_event_handler],
+            StartPromptEvent: [start_prompt_event_handler]
         }
         new_start_prompt_event_handler = Mock()
         pipeline.add_event_listener(

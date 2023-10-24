@@ -52,9 +52,7 @@ class VectorQueryEngine(BaseQueryEngine):
             text_segments.append(artifact.value)
 
             message = self.template_generator.render(
-                metadata=metadata,
-                query=query,
-                text_segments=text_segments,
+                metadata=metadata, query=query, text_segments=text_segments
             )
             message_token_count = self.prompt_driver.token_count(
                 PromptStack(
@@ -71,9 +69,7 @@ class VectorQueryEngine(BaseQueryEngine):
                 text_segments.pop()
 
                 message = self.template_generator.render(
-                    metadata=metadata,
-                    query=query,
-                    text_segments=text_segments,
+                    metadata=metadata, query=query, text_segments=text_segments
                 )
 
                 break

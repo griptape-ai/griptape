@@ -9,9 +9,7 @@ MAX_TOKENS = 500
 class TestPdfChunker:
     @pytest.fixture
     def chunker(self):
-        return PdfChunker(
-            max_tokens=MAX_TOKENS,
-        )
+        return PdfChunker(max_tokens=MAX_TOKENS)
 
     def test_chunk(self, chunker):
         path = os.path.join(

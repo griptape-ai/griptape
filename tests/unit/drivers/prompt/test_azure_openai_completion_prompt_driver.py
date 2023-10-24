@@ -10,9 +10,7 @@ class TestAzureOpenAiCompletionPromptDriver(
 ):
     def test_init(self):
         assert AzureOpenAiCompletionPromptDriver(
-            api_base="foobar",
-            deployment_id="foobar",
-            model="text-davinci-003",
+            api_base="foobar", deployment_id="foobar", model="text-davinci-003"
         )
 
     def test_try_run(self, mock_completion_create, prompt_stack, prompt):

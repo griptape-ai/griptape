@@ -7,9 +7,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 class TestLocalVectorStoreDriver:
     @pytest.fixture
     def driver(self):
-        return LocalVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(),
-        )
+        return LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
 
     def test_upsert(self, driver):
         namespace = driver.upsert_text_artifact(TextArtifact("foobar"))
@@ -41,8 +39,7 @@ class TestLocalVectorStoreDriver:
 
     def test_query(self, driver):
         vector_id = driver.upsert_text_artifact(
-            TextArtifact("foobar"),
-            namespace="test-namespace",
+            TextArtifact("foobar"), namespace="test-namespace"
         )
 
         assert len(driver.query("foobar")) == 1

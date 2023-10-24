@@ -18,9 +18,7 @@ class TestPromptTask:
         from griptape.structures import Agent
 
         return Agent(
-            memory=None,
-            prompt_driver=request.param,
-            rulesets=[OUTPUT_RULESET],
+            memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
         )
 
     def test_prompt_task(self, agent):

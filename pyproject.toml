@@ -75,6 +75,7 @@ pyright = "^1.1.324"
 
 [tool.black]
 line-length=80
+skip_magic_trailing_comma = true
 
 [tool.ruff]
 line-length=80

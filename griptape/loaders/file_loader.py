@@ -13,8 +13,7 @@ class FileLoader(BaseLoader):
     encoding: Optional[str] = field(default=None, kw_only=True)
 
     def load(
-        self,
-        path: str | Path,
+        self, path: str | Path
     ) -> TextArtifact | BlobArtifact | ErrorArtifact:
         return self.file_to_artifact(path)
 

@@ -179,10 +179,7 @@ class Structure(ABC):
             listener(event)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
-        return {
-            "args": self.execution_args,
-            "structure": self,
-        }
+        return {"args": self.execution_args, "structure": self}
 
     def before_run(self) -> None:
         self.publish_event(StartStructureRunEvent())
