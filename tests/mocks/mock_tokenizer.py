@@ -11,4 +11,4 @@ class MockTokenizer(BaseTokenizer):
         return [0] * len(text)
 
     def decode(self, tokens: list[int]) -> str:
-        return 'foo'
+        return "foo"

@@ -12,7 +12,10 @@ class TestFileLoader:
         return FileLoader()
 
     def test_load_with_path(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test.txt")
+        path = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "../../resources/test.txt",
+        )
 
         artifact = loader.load(path)
 
@@ -24,7 +27,10 @@ class TestFileLoader:
 
     def test_load_with_encoding(self):
         loader = FileLoader(encoding="utf-8")
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test.txt")
+        path = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "../../resources/test.txt",
+        )
 
         artifact = loader.load(path)
 
@@ -33,8 +39,14 @@ class TestFileLoader:
         assert artifact.value.startswith("foobar foobar foobar")
 
     def test_load_collection_with_path(self, loader):
-        text_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test.txt")
-        pdf_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/bitcoin.pdf")
+        text_path = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "../../resources/test.txt",
+        )
+        pdf_path = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "../../resources/bitcoin.pdf",
+        )
         artifacts = loader.load_collection([text_path, pdf_path])
 
         text_key = utils.str_to_hash(str(text_path))
@@ -42,7 +54,7 @@ class TestFileLoader:
         assert artifacts[text_key].name == "test.txt"
         assert artifacts[text_key].dir_name.endswith("../../resources")
         assert artifacts[text_key].full_path in str(text_path)
-        
+
         pdf_key = utils.str_to_hash(str(pdf_path))
         assert list(artifacts.keys())[1] == pdf_key
         assert artifacts[pdf_key].name == "bitcoin.pdf"

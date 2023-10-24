@@ -19,4 +19,3 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     @abstractmethod
     def try_embed_string(self, string: str) -> list[float]:
         ...
-    

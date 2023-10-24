@@ -7,7 +7,9 @@ from griptape.memory.structure import ConversationMemory
 
 @define
 class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
-    session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
+    session: boto3.Session = field(
+        default=Factory(lambda: boto3.Session()), kw_only=True
+    )
     table_name: str = field(kw_only=True)
     partition_key: str = field(kw_only=True)
     value_attribute_key: str = field(kw_only=True)

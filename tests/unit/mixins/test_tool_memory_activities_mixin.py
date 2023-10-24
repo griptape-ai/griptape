@@ -11,13 +11,30 @@ class TestToolMemoryActivitiesMixin:
     def test_summarize(self, processor):
         processor.memory.store_artifact("foo", TextArtifact("test"))
 
-        assert processor.summarize(
-            {"values": {"memory_name": processor.memory.name, "artifact_namespace": "foo"}}
-        ).value == "mock output"
+        assert (
+            processor.summarize(
+                {
+                    "values": {
+                        "memory_name": processor.memory.name,
+                        "artifact_namespace": "foo",
+                    }
+                }
+            ).value
+            == "mock output"
+        )
 
     def test_query(self, processor):
         processor.memory.store_artifact("foo", TextArtifact("test"))
 
-        assert processor.query(
-            {"values": {"query": "foobar", "memory_name": processor.memory.name, "artifact_namespace": "foo"}}
-        ).value == "mock output"
+        assert (
+            processor.query(
+                {
+                    "values": {
+                        "query": "foobar",
+                        "memory_name": processor.memory.name,
+                        "artifact_namespace": "foo",
+                    }
+                }
+            ).value
+            == "mock output"
+        )

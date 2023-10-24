@@ -13,7 +13,10 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 class TestWorkflow:
     def test_init(self):
         driver = MockPromptDriver()
-        workflow = Workflow(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
+        workflow = Workflow(
+            prompt_driver=driver,
+            rulesets=[Ruleset("TestRuleset", [Rule("test")])],
+        )
 
         assert workflow.prompt_driver is driver
         assert len(workflow.tasks) == 0
@@ -21,13 +24,11 @@ class TestWorkflow:
         assert workflow.rulesets[0].rules[0].value is "test"
 
     def test_rulesets(self):
-        workflow = Workflow(
-            rulesets=[Ruleset("Foo", [Rule("foo test")])]
-        )
+        workflow = Workflow(rulesets=[Ruleset("Foo", [Rule("foo test")])])
 
         workflow.add_tasks(
             PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])]),
-            PromptTask(rulesets=[Ruleset("Baz", [Rule("baz test")])])
+            PromptTask(rulesets=[Ruleset("Baz", [Rule("baz test")])]),
         )
 
         assert len(workflow.tasks[0].all_rulesets) == 2
@@ -37,15 +38,13 @@ class TestWorkflow:
         assert len(workflow.tasks[1].all_rulesets) == 2
         assert workflow.tasks[1].all_rulesets[0].name == "Foo"
         assert workflow.tasks[1].all_rulesets[1].name == "Baz"
-        
+
     def test_rules(self):
-        workflow = Workflow(
-            rules=[Rule("foo test")]
-        )
+        workflow = Workflow(rules=[Rule("foo test")])
 
         workflow.add_tasks(
             PromptTask(rules=[Rule("bar test")]),
-            PromptTask(rules=[Rule("baz test")])
+            PromptTask(rules=[Rule("baz test")]),
         )
 
         assert len(workflow.tasks[0].all_rulesets) == 2
@@ -55,12 +54,12 @@ class TestWorkflow:
         assert len(workflow.tasks[1].all_rulesets) == 2
         assert workflow.tasks[1].all_rulesets[0].name == "Default Ruleset"
         assert workflow.tasks[1].all_rulesets[1].name == "Additional Ruleset"
-        
+
     def test_rules_and_rulesets(self):
         with pytest.raises(ValueError):
             Workflow(
                 rules=[Rule("foo test")],
-                rulesets=[Ruleset("Bar", [Rule("bar test")])]
+                rulesets=[Ruleset("Bar", [Rule("bar test")])],
             )
 
         with pytest.raises(ValueError):
@@ -68,7 +67,7 @@ class TestWorkflow:
             workflow.add_task(
                 PromptTask(
                     rules=[Rule("foo test")],
-                    rulesets=[Ruleset("Bar", [Rule("bar test")])]
+                    rulesets=[Ruleset("Bar", [Rule("bar test")])],
                 )
             )
 
@@ -78,19 +77,29 @@ class TestWorkflow:
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(workflow.tool_memory, ToolMemory)
-        assert workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
-        assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
-        assert workflow.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
+        assert (
+            workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
+        )
+        assert (
+            workflow.tasks[0].tools[0].output_memory["test"][0]
+            == workflow.tool_memory
+        )
+        assert (
+            workflow.tasks[0]
+            .tools[0]
+            .output_memory.get("test_without_default_memory")
+            is None
+        )
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
-        workflow = Workflow(
-            embedding_driver=embedding_driver
-        )
+        workflow = Workflow(embedding_driver=embedding_driver)
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
-        memory_embedding_driver = list(workflow.tool_memory.artifact_storages.values())[0].query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = list(
+            workflow.tool_memory.artifact_storages.values()
+        )[0].query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -119,9 +128,7 @@ class TestWorkflow:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
 
-        workflow = Workflow(
-            prompt_driver=MockPromptDriver()
-        )
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         workflow + first_task
         workflow + second_task
@@ -140,9 +147,7 @@ class TestWorkflow:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
 
-        workflow = Workflow(
-            prompt_driver=MockPromptDriver()
-        )
+        workflow = Workflow(prompt_driver=MockPromptDriver())
 
         workflow + [first_task, second_task]
 

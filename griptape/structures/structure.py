@@ -8,16 +8,27 @@ from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
-from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
+from griptape.drivers.embedding.openai_embedding_driver import (
+    OpenAiEmbeddingDriver,
+    BaseEmbeddingDriver,
+)
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import ToolMemory
-from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.memory.tool.storage import (
+    BlobArtifactStorage,
+    TextArtifactStorage,
+)
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
+from griptape.engines import (
+    VectorQueryEngine,
+    PromptSummaryEngine,
+    CsvExtractionEngine,
+    JsonExtractionEngine,
+)
 from griptape.drivers import LocalVectorStoreDriver
 
 if TYPE_CHECKING:
@@ -31,22 +42,26 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     stream: bool = field(default=False, kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda self: OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL,
-            stream=self.stream
-        ), takes_self=True),
-        kw_only=True
+        default=Factory(
+            lambda self: OpenAiChatPromptDriver(
+                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL,
+                stream=self.stream,
+            ),
+            takes_self=True,
+        ),
+        kw_only=True,
     )
     embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: OpenAiEmbeddingDriver()),
-        kw_only=True
+        default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: list[Callable] | dict[Type[BaseEvent], list[Callable]] = field(factory=list, kw_only=True)
+    event_listeners: list[Callable] | dict[
+        Type[BaseEvent], list[Callable]
+    ] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
     tool_memory: Optional[ToolMemory] = field(
         default=Factory(
@@ -57,7 +72,7 @@ class Structure(ABC):
                             prompt_driver=self.prompt_driver,
                             vector_store_driver=LocalVectorStoreDriver(
                                 embedding_driver=self.embedding_driver
-                            )
+                            ),
                         ),
                         summary_engine=PromptSummaryEngine(
                             prompt_driver=self.prompt_driver
@@ -67,14 +82,14 @@ class Structure(ABC):
                         ),
                         json_extraction_engine=JsonExtractionEngine(
                             prompt_driver=self.prompt_driver
-                        )
+                        ),
                     ),
-                    BlobArtifact: BlobArtifactStorage()
+                    BlobArtifact: BlobArtifactStorage(),
                 }
             ),
-            takes_self=True
+            takes_self=True,
         ),
-        kw_only=True
+        kw_only=True,
     )
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
@@ -82,7 +97,9 @@ class Structure(ABC):
     @tasks.validator
     def validate_tasks(self, _, tasks: list[BaseTask]) -> None:
         if len(tasks) > 0:
-            raise ValueError("Tasks can't be initialized directly. Use add_task or add_tasks method instead")
+            raise ValueError(
+                "Tasks can't be initialized directly. Use add_task or add_tasks method instead"
+            )
 
     @rulesets.validator
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
@@ -124,10 +141,7 @@ class Structure(ABC):
                 self._logger.level = self.logger_level
 
                 self._logger.handlers = [
-                    RichHandler(
-                        show_time=True,
-                        show_path=False
-                    )
+                    RichHandler(show_time=True, show_path=False)
                 ]
             return self._logger
 
@@ -143,7 +157,9 @@ class Structure(ABC):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
-    def add_event_listener(self, event_type: Type[BaseEvent], event_listener: Callable) -> None:
+    def add_event_listener(
+        self, event_type: Type[BaseEvent], event_listener: Callable
+    ) -> None:
         if isinstance(self.event_listeners, list):
             if event_listener not in self.event_listeners:
                 self.event_listeners.append(event_listener)
@@ -184,7 +200,7 @@ class Structure(ABC):
         result = self.try_run(*args)
 
         self.after_run()
-        
+
         return result
 
     @abstractmethod

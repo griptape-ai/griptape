@@ -17,25 +17,33 @@ class VectorQueryEngine(BaseQueryEngine):
     answer_token_offset: int = field(default=400, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True
+        default=Factory(
+            lambda: OpenAiChatPromptDriver(
+                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
+            )
+        ),
+        kw_only=True,
     )
     template_generator: J2 = field(
         default=Factory(lambda: J2("engines/query/vector_query.j2")),
-        kw_only=True
+        kw_only=True,
     )
 
     def query(
-            self,
-            query: str,
-            metadata: Optional[str] = None,
-            top_n: Optional[int] = None,
-            namespace: Optional[str] = None
+        self,
+        query: str,
+        metadata: Optional[str] = None,
+        top_n: Optional[int] = None,
+        namespace: Optional[str] = None,
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace)
         artifacts = [
-            a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
+            a
+            for a in [
+                BaseArtifact.from_json(r.meta["artifact"]) for r in result
+            ]
+            if isinstance(a, TextArtifact)
         ]
         text_segments = []
         message = ""
@@ -50,11 +58,16 @@ class VectorQueryEngine(BaseQueryEngine):
             )
             message_token_count = self.prompt_driver.token_count(
                 PromptStack(
-                    inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)]
+                    inputs=[
+                        PromptStack.Input(message, role=PromptStack.USER_ROLE)
+                    ]
                 )
             )
 
-            if message_token_count + self.answer_token_offset >= tokenizer.max_tokens:
+            if (
+                message_token_count + self.answer_token_offset
+                >= tokenizer.max_tokens
+            ):
                 text_segments.pop()
 
                 message = self.template_generator.render(
@@ -71,27 +84,28 @@ class VectorQueryEngine(BaseQueryEngine):
             )
         )
 
-    def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
+    def upsert_text_artifact(
+        self, artifact: TextArtifact, namespace: Optional[str] = None
+    ) -> str:
         result = self.vector_store_driver.upsert_text_artifact(
-            artifact,
-            namespace=namespace
+            artifact, namespace=namespace
         )
 
         return result
 
-    def upsert_text_artifacts(self, artifacts: list[TextArtifact], namespace: str) -> None:
-        self.vector_store_driver.upsert_text_artifacts({
-            namespace: artifacts
-        })
+    def upsert_text_artifacts(
+        self, artifacts: list[TextArtifact], namespace: str
+    ) -> None:
+        self.vector_store_driver.upsert_text_artifacts({namespace: artifacts})
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         result = self.vector_store_driver.load_entries(namespace)
         artifacts = [
-            BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta.get("artifact")
+            BaseArtifact.from_json(r.meta["artifact"])
+            for r in result
+            if r.meta.get("artifact")
         ]
 
         return ListArtifact(
-            [
-                a for a in artifacts if isinstance(a, TextArtifact)
-            ]
+            [a for a in artifacts if isinstance(a, TextArtifact)]
         )

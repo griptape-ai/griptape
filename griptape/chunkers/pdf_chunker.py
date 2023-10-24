@@ -7,5 +7,5 @@ class PdfChunker(BaseChunker):
         ChunkSeparator(". "),
         ChunkSeparator("! "),
         ChunkSeparator("? "),
-        ChunkSeparator(" ")
+        ChunkSeparator(" "),
     ]

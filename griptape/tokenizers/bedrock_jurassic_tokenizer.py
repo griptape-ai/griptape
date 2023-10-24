@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class BedrockJurassicTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'ai21.j2-ultra-v1'
+    DEFAULT_MODEL = "ai21.j2-ultra-v1"
     DEFAULT_MAX_TOKENS = 8192
 
     session: boto3.Session = field(
@@ -27,7 +27,7 @@ class BedrockJurassicTokenizer(BaseTokenizer):
         return self.DEFAULT_MAX_TOKENS
 
     def token_count(self, text: str) -> int:
-        payload = { "prompt": text }
+        payload = {"prompt": text}
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),
@@ -40,7 +40,11 @@ class BedrockJurassicTokenizer(BaseTokenizer):
         return len(response_body["prompt"]["tokens"])
 
     def encode(self, _: str) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API.")
+        raise NotImplementedError(
+            "Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API."
+        )
 
     def decode(self, _: list[int]) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API.")
+        raise NotImplementedError(
+            "Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API."
+        )

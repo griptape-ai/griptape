@@ -26,10 +26,16 @@ class TestDynamoDbConversationMemoryDriver:
         dynamodb.create_table(
             TableName=self.DYNAMODB_TABLE_NAME,
             KeySchema=[
-                {"AttributeName": self.DYNAMODB_PARTITION_KEY, "KeyType": "HASH"}
+                {
+                    "AttributeName": self.DYNAMODB_PARTITION_KEY,
+                    "KeyType": "HASH",
+                }
             ],
             AttributeDefinitions=[
-                {"AttributeName": self.DYNAMODB_PARTITION_KEY, "AttributeType": "S"},
+                {
+                    "AttributeName": self.DYNAMODB_PARTITION_KEY,
+                    "AttributeType": "S",
+                },
             ],
             BillingMode="PAY_PER_REQUEST",
         )

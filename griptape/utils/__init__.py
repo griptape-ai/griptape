@@ -16,7 +16,7 @@ from .stream import Stream
 
 
 def minify_json(value: str) -> str:
-    return json.dumps(json.loads(value), separators=(',', ':'))
+    return json.dumps(json.loads(value), separators=(",", ":"))
 
 
 __all__ = [
@@ -33,5 +33,5 @@ __all__ = [
     "TokenCounter",
     "PromptStack",
     "remove_null_values_in_dict_recursively",
-    "Stream"
+    "Stream",
 ]

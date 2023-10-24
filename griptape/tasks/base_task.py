@@ -35,11 +35,15 @@ class BaseTask(ABC):
 
     @property
     def parents(self) -> list[BaseTask]:
-        return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
+        return [
+            self.structure.find_task(parent_id) for parent_id in self.parent_ids
+        ]
 
     @property
     def children(self) -> list[BaseTask]:
-        return [self.structure.find_task(child_id) for child_id in self.child_ids]
+        return [
+            self.structure.find_task(child_id) for child_id in self.child_ids
+        ]
 
     def __rshift__(self, child: BaseTask) -> BaseTask:
         return self.add_child(child)
@@ -118,7 +122,9 @@ class BaseTask(ABC):
 
             self.after_run()
         except Exception as e:
-            self.structure.logger.error(f"{self.__class__.__name__} {self.id}\n{e}", exc_info=True)
+            self.structure.logger.error(
+                f"{self.__class__.__name__} {self.id}\n{e}", exc_info=True
+            )
 
             self.output = ErrorArtifact(str(e))
         finally:
@@ -128,7 +134,9 @@ class BaseTask(ABC):
             return self.output
 
     def can_execute(self) -> bool:
-        return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
+        return self.state == BaseTask.State.PENDING and all(
+            parent.is_finished() for parent in self.parents
+        )
 
     def reset(self) -> BaseTask:
         self.state = BaseTask.State.PENDING

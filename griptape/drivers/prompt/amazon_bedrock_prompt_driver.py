@@ -12,7 +12,9 @@ if TYPE_CHECKING:
 
 @define
 class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
-    session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
+    session: boto3.Session = field(
+        default=Factory(lambda: boto3.Session()), kw_only=True
+    )
     bedrock_client: Any = field(
         default=Factory(
             lambda self: self.session.client("bedrock-runtime"),
@@ -22,9 +24,13 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        model_input = self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack)
+        model_input = self.prompt_model_driver.prompt_stack_to_model_input(
+            prompt_stack
+        )
         payload = {
-            **self.prompt_model_driver.prompt_stack_to_model_params(prompt_stack),
+            **self.prompt_model_driver.prompt_stack_to_model_params(
+                prompt_stack
+            ),
         }
         if isinstance(model_input, dict):
             payload.update(model_input)
@@ -44,9 +50,13 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
             raise Exception("model response is empty")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        model_input = self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack)
+        model_input = self.prompt_model_driver.prompt_stack_to_model_input(
+            prompt_stack
+        )
         payload = {
-            **self.prompt_model_driver.prompt_stack_to_model_params(prompt_stack),
+            **self.prompt_model_driver.prompt_stack_to_model_params(
+                prompt_stack
+            ),
         }
         if isinstance(model_input, dict):
             payload.update(model_input)

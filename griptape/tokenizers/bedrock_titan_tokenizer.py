@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class BedrockTitanTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'amazon.titan-text-express-v1'
+    DEFAULT_MODEL = "amazon.titan-text-express-v1"
     DEFAULT_MAX_TOKENS = 4096
 
     session: boto3.Session = field(
@@ -28,7 +28,7 @@ class BedrockTitanTokenizer(BaseTokenizer):
         return self.DEFAULT_MAX_TOKENS
 
     def token_count(self, text: str) -> int:
-        payload = { "inputText": text }
+        payload = {"inputText": text}
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),
@@ -38,11 +38,14 @@ class BedrockTitanTokenizer(BaseTokenizer):
         )
         response_body = json.loads(response.get("body").read())
 
-        return response_body['inputTextTokenCount']
+        return response_body["inputTextTokenCount"]
 
     def encode(self, _: str) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API.")
+        raise NotImplementedError(
+            "Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API."
+        )
 
     def decode(self, _: list[int]) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API.")
-
+        raise NotImplementedError(
+            "Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API."
+        )

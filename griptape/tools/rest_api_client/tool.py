@@ -21,6 +21,7 @@ class RestApiClient(BaseTool):
         request_path_params_schema: A JSON schema string describing the available path parameters. The schema must describe an array of string values.
         response_body_schema: A JSON schema string describing the response body.
     """
+
     base_url: str = field(kw_only=True)
     path: Optional[str] = field(
         default=None,
@@ -95,7 +96,8 @@ class RestApiClient(BaseTool):
             "schema": Schema(
                 {
                     Literal(
-                        "path_params", description="The request path parameters."
+                        "path_params",
+                        description="The request path parameters.",
                     ): list,
                     Literal("body", description="The request body."): dict,
                 }
@@ -221,7 +223,8 @@ class RestApiClient(BaseTool):
                     ): dict,
                     schema.Optional(
                         Literal(
-                            "path_params", description="The request path parameters."
+                            "path_params",
+                            description="The request path parameters.",
                         )
                     ): list,
                 }
@@ -254,7 +257,4 @@ class RestApiClient(BaseTool):
         if path_params:
             url += f'/{str.join("/", map(str, path_params))}'
 
-        return urljoin(
-            base_url.strip("/"),
-            url
-        )
+        return urljoin(base_url.strip("/"), url)

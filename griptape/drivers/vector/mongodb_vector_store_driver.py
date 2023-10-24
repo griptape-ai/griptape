@@ -7,7 +7,7 @@ from griptape.drivers import BaseVectorStoreDriver
 
 @define
 class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
-    """ A Vector Store Driver for MongoDb Atlas.
+    """A Vector Store Driver for MongoDb Atlas.
 
     Attributes:
         connection_string: The connection string for the MongoDb Atlas cluster.
@@ -15,11 +15,14 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         collection_name: The name of the collection to use.
         client: An optional MongoDb client to use. Defaults to a new client using the connection string.
     """
+
     connection_string: str = field(kw_only=True)
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
     client: Optional[MongoClient] = field(
-        default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True)
+        default=Factory(
+            lambda self: MongoClient(self.connection_string), takes_self=True
+        )
     )
 
     def get_collection(self) -> Collection:
@@ -27,14 +30,14 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return self.client[self.database_name][self.collection_name]
 
     def upsert_vector(
-            self,
-            vector: list[float],
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs
+        self,
+        vector: list[float],
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs
     ) -> str:
-        """Inserts or updates a vector in the collection. 
+        """Inserts or updates a vector in the collection.
 
         If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         """
@@ -62,9 +65,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return vector_id
 
     def load_entry(
-            self, vector_id: str, namespace: Optional[str] = None
+        self, vector_id: str, namespace: Optional[str] = None
     ) -> Optional[BaseVectorStoreDriver.Entry]:
-        """Loads a document entry from the MongoDB collection based on the vector ID. 
+        """Loads a document entry from the MongoDB collection based on the vector ID.
 
         Returns:
             The loaded Entry if found; otherwise, None is returned.
@@ -81,9 +84,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         )
 
     def load_entries(
-            self, namespace: Optional[str] = None
+        self, namespace: Optional[str] = None
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """Loads all document entries from the MongoDB collection. 
+        """Loads all document entries from the MongoDB collection.
 
         Entries can optionally be filtered by namespace.
         """
@@ -102,16 +105,16 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
 
     def query(
-            self,
-            query: str,
-            count: Optional[int] = None,
-            namespace: Optional[str] = None,
-            include_vectors: bool = False,
-            offset: Optional[int] = 0,
-            index: Optional[str] = None,
-            **kwargs
+        self,
+        query: str,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        offset: Optional[int] = 0,
+        index: Optional[str] = None,
+        **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        """Queries the MongoDB collection for documents that match the provided query string. 
+        """Queries the MongoDB collection for documents that match the provided query string.
 
         Results can be customized based on parameters like count, namespace, inclusion of vectors, offset, and index.
         """
@@ -127,7 +130,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "knnBeta": {
                         "vector": vector,
                         "path": "vector",
-                        "k": knn_k + offset
+                        "k": knn_k + offset,
                     }
                 }
             },
@@ -137,11 +140,13 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "vector": 1,
                     "namespace": 1,
                     "meta": 1,
-                    "score": {"$meta": "searchScore"}  # Include the score in the projection
+                    "score": {
+                        "$meta": "searchScore"
+                    },  # Include the score in the projection
                 }
             },
             {"$skip": offset},
-            {"$limit": knn_k}
+            {"$limit": knn_k},
         ]
 
         if index:

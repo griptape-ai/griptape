@@ -2,7 +2,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Iterator, Optional, Callable
 from attr import define, field, Factory
-from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
+from griptape.events import (
+    StartPromptEvent,
+    FinishPromptEvent,
+    CompletionChunkEvent,
+)
 from griptape.utils import PromptStack
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
@@ -20,9 +24,9 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     prompt_stack_to_string: Callable[[PromptStack], str] = field(
         default=Factory(
             lambda self: self.default_prompt_stack_to_string_converter,
-            takes_self=True
+            takes_self=True,
         ),
-        kw_only=True
+        kw_only=True,
     )
     model: str
     tokenizer: BaseTokenizer
@@ -44,11 +48,8 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
             self.structure.publish_event(
-                StartPromptEvent(
-                    token_count=self.token_count(prompt_stack)
-                )
+                StartPromptEvent(token_count=self.token_count(prompt_stack))
             )
-
 
     def after_run(self, result: TextArtifact) -> None:
         if self.structure:
@@ -67,7 +68,9 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
                     tokens = []
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
-                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
+                        self.structure.publish_event(
+                            CompletionChunkEvent(token=chunk.value)
+                        )
                         tokens.append(chunk.value)
                     result = TextArtifact(value="".join(tokens).strip())
                 else:
@@ -80,7 +83,9 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         else:
             raise Exception("prompt driver failed after all retry attempts")
 
-    def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
+    def default_prompt_stack_to_string_converter(
+        self, prompt_stack: PromptStack
+    ) -> str:
         prompt_lines = []
 
         for i in prompt_stack.inputs:

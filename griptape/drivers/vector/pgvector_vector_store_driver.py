@@ -26,10 +26,16 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     create_engine_params: dict = field(factory=dict, kw_only=True)
     engine: Optional[Engine] = field(default=None, kw_only=True)
     table_name: str = field(kw_only=True)
-    _model: any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
+    _model: any = field(
+        default=Factory(
+            lambda self: self.default_vector_model(), takes_self=True
+        )
+    )
 
     @connection_string.validator
-    def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
+    def validate_connection_string(
+        self, _, connection_string: Optional[str]
+    ) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
             return
@@ -39,7 +45,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("An engine or connection string is required")
 
         if not connection_string.startswith("postgresql://"):
-            raise ValueError("The connection string must describe a Postgres database connection")
+            raise ValueError(
+                "The connection string must describe a Postgres database connection"
+            )
 
     @engine.validator
     def validate_engine(self, _, engine: Optional[Engine]) -> None:
@@ -56,7 +64,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
-            self.engine = create_engine(self.connection_string, **self.create_engine_params)
+            self.engine = create_engine(
+                self.connection_string, **self.create_engine_params
+            )
 
     def setup(
         self,
@@ -96,7 +106,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return str(obj.id)
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
+    def load_entry(
+        self, vector_id: str, namespace: Optional[str] = None
+    ) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
         with Session(self.engine) as session:
             result = session.get(self._model, vector_id)
@@ -108,7 +120,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 meta=result.meta,
             )
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(
+        self, namespace: Optional[str] = None
+    ) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from the collection, optionally filtering to only
         those that match the provided namespace.
         """
@@ -184,7 +198,13 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         class VectorModel(Base):
             __tablename__ = self.table_name
 
-            id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+            id = Column(
+                UUID(as_uuid=True),
+                primary_key=True,
+                default=uuid.uuid4,
+                unique=True,
+                nullable=False,
+            )
             vector = Column(Vector())
             namespace = Column(String)
             meta = Column(JSON)

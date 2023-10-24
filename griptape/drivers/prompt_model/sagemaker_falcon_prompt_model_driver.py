@@ -11,11 +11,13 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
     tokenizer: BaseTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=AutoTokenizer.from_pretrained("tiiuae/falcon-40b", model_max_length=self.max_tokens)
+                tokenizer=AutoTokenizer.from_pretrained(
+                    "tiiuae/falcon-40b", model_max_length=self.max_tokens
+                )
             ),
-            takes_self=True
+            takes_self=True,
         ),
-        kw_only=True
+        kw_only=True,
     )
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str:
@@ -29,10 +31,8 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
             "max_new_tokens": self.prompt_driver.max_output_tokens(prompt),
             "temperature": self.prompt_driver.temperature,
             "do_sample": True,
-            "stop": stop_sequences
+            "stop": stop_sequences,
         }
 
     def process_output(self, output: list[dict]) -> TextArtifact:
-        return TextArtifact(
-            output[0]["generated_text"].strip()
-        )
+        return TextArtifact(output[0]["generated_text"].strip())

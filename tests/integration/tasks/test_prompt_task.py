@@ -9,7 +9,11 @@ import pytest
 
 
 class TestPromptTask:
-    @pytest.fixture(autouse=True, params=PROMPT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
+    @pytest.fixture(
+        autouse=True,
+        params=PROMPT_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=prompt_driver_id_fn,
+    )
     def agent(self, request):
         from griptape.structures import Agent
 
@@ -20,6 +24,9 @@ class TestPromptTask:
         )
 
     def test_prompt_task(self, agent):
-        result = run_structure(agent, "Write a haiku about pirates. It must contain the word 'ship'.")
+        result = run_structure(
+            agent,
+            "Write a haiku about pirates. It must contain the word 'ship'.",
+        )
 
         assert fuzz.partial_ratio(result["answer"], "ship") >= 95

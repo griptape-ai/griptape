@@ -7,7 +7,9 @@ class TestRestApi:
     def client(self):
         from griptape.tools import RestApiClient
 
-        return RestApiClient(base_url="http://www.griptape.ai", description="Griptape website.")
+        return RestApiClient(
+            base_url="http://www.griptape.ai", description="Griptape website."
+        )
 
     def test_put(self, client):
         assert isinstance(
@@ -29,7 +31,7 @@ class TestRestApi:
 
     def test_get_all(self, client):
         assert isinstance(
-            client.get({"values":{}}),
+            client.get({"values": {}}),
             BaseArtifact,
         )
 
@@ -58,22 +60,28 @@ class TestRestApi:
         )
 
     def test_build_url(self, client):
-        url = client._build_url('https://foo.bar')
+        url = client._build_url("https://foo.bar")
 
-        assert url == 'https://foo.bar'
+        assert url == "https://foo.bar"
 
-        url = client._build_url('https://foo.bar', path="/foo")
+        url = client._build_url("https://foo.bar", path="/foo")
 
-        assert url == 'https://foo.bar/foo'
+        assert url == "https://foo.bar/foo"
 
-        url = client._build_url('https://foo.bar', path_params=[1, "fizz"])
+        url = client._build_url("https://foo.bar", path_params=[1, "fizz"])
 
-        assert url == 'https://foo.bar/1/fizz'
+        assert url == "https://foo.bar/1/fizz"
 
-        url = client._build_url('https://foo.bar', path="foo/", path_params=["fizz", "buzz", 1, 2, 3])
+        url = client._build_url(
+            "https://foo.bar",
+            path="foo/",
+            path_params=["fizz", "buzz", 1, 2, 3],
+        )
 
-        assert url == 'https://foo.bar/foo/fizz/buzz/1/2/3'
+        assert url == "https://foo.bar/foo/fizz/buzz/1/2/3"
 
-        url = client._build_url('https://foo.bar', path_params=["fizz", "buzz", 1, 2, 3])
+        url = client._build_url(
+            "https://foo.bar", path_params=["fizz", "buzz", 1, 2, 3]
+        )
 
-        assert url == 'https://foo.bar/fizz/buzz/1/2/3'
+        assert url == "https://foo.bar/fizz/buzz/1/2/3"

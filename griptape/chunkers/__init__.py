@@ -10,5 +10,5 @@ __all__ = [
     "BaseChunker",
     "TextChunker",
     "PdfChunker",
-    "MarkdownChunker"
+    "MarkdownChunker",
 ]

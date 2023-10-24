@@ -12,23 +12,27 @@ class TestBaseTool:
     @pytest.fixture
     def tool(self):
         return MockTool(
-            test_field="hello",
-            test_int=5,
-            test_dict={"foo": "bar"}
+            test_field="hello", test_int=5, test_dict={"foo": "bar"}
         )
 
     def test_manifest_path(self, tool):
-        assert tool.manifest_path == os.path.join(tool.abs_dir_path, tool.MANIFEST_FILE)
+        assert tool.manifest_path == os.path.join(
+            tool.abs_dir_path, tool.MANIFEST_FILE
+        )
 
     def test_requirements_path(self, tool):
-        assert tool.requirements_path == os.path.join(tool.abs_dir_path, tool.REQUIREMENTS_FILE)
+        assert tool.requirements_path == os.path.join(
+            tool.abs_dir_path, tool.REQUIREMENTS_FILE
+        )
 
     def test_manifest(self, tool):
         with open(tool.manifest_path, "r") as yaml_file:
             assert tool.manifest == yaml.safe_load(yaml_file)
 
     def test_abs_file_path(self, tool):
-        assert tool.abs_file_path == os.path.abspath(inspect.getfile(tool.__class__))
+        assert tool.abs_file_path == os.path.abspath(
+            inspect.getfile(tool.__class__)
+        )
 
     def test_abs_dir_path(self, tool):
         assert tool.abs_dir_path == os.path.dirname(tool.abs_file_path)
@@ -57,7 +61,7 @@ class TestBaseTool:
             output_memory={
                 "test": [
                     defaults.text_tool_memory("Memory1"),
-                    defaults.text_tool_memory("Memory2")
+                    defaults.text_tool_memory("Memory2"),
                 ]
             }
         )
@@ -70,7 +74,7 @@ class TestBaseTool:
                 output_memory={
                     "test": [
                         defaults.text_tool_memory("Memory1"),
-                        defaults.text_tool_memory("Memory1")
+                        defaults.text_tool_memory("Memory1"),
                     ]
                 }
             )
@@ -78,31 +82,28 @@ class TestBaseTool:
         with pytest.raises(ValueError):
             MockTool(
                 output_memory={
-                    "output_memory": [
-                        defaults.text_tool_memory("Memory1")
-                    ]
+                    "output_memory": [defaults.text_tool_memory("Memory1")]
                 }
             )
 
         assert MockTool(
-                output_memory={
-                    "test": [
-                        defaults.text_tool_memory("Memory1")
-                    ],
-                    "test_str_output": [
-                        defaults.text_tool_memory("Memory1")
-                    ]
-                }
-            )
+            output_memory={
+                "test": [defaults.text_tool_memory("Memory1")],
+                "test_str_output": [defaults.text_tool_memory("Memory1")],
+            }
+        )
 
     def test_find_input_memory(self):
         assert MockTool().find_input_memory("foo") is None
-        assert MockTool(input_memory=[
-            defaults.text_tool_memory("foo")
-        ]).find_input_memory("foo") is not None
+        assert (
+            MockTool(
+                input_memory=[defaults.text_tool_memory("foo")]
+            ).find_input_memory("foo")
+            is not None
+        )
 
     def test_execute(self, tool):
-        assert tool.execute(
-            tool.test_list_output,
-            ActionSubtask("foo")
-        ).to_text() == "foo\n\nbar"
+        assert (
+            tool.execute(tool.test_list_output, ActionSubtask("foo")).to_text()
+            == "foo\n\nbar"
+        )

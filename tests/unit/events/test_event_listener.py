@@ -25,7 +25,7 @@ class TestEventListener:
         pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)
 
-        task.add_subtask(ActionSubtask('foo'))
+        task.add_subtask(ActionSubtask("foo"))
         return pipeline
 
     def test_list_listeners(self, pipeline):
@@ -36,7 +36,7 @@ class TestEventListener:
             event_handler_1,
             event_handler_2,
         ]
-        # can't mock subtask events, so must manually call 
+        # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
@@ -67,7 +67,7 @@ class TestEventListener:
             CompletionChunkEvent: [completion_chunk_handler],
         }
 
-        # can't mock subtask events, so must manually call 
+        # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
@@ -92,10 +92,16 @@ class TestEventListener:
         start_prompt_event_handler = Mock()
         pipeline.event_listeners = {
             StartPromptEvent: [start_prompt_event_handler],
-        } 
+        }
         new_start_prompt_event_handler = Mock()
-        pipeline.add_event_listener(StartPromptEvent, new_start_prompt_event_handler)
-        pipeline.add_event_listener(FinishPromptEvent, new_start_prompt_event_handler)
+        pipeline.add_event_listener(
+            StartPromptEvent, new_start_prompt_event_handler
+        )
+        pipeline.add_event_listener(
+            FinishPromptEvent, new_start_prompt_event_handler
+        )
 
         assert len(pipeline.event_listeners[StartPromptEvent]) == 2
-        assert len(pipeline.event_listeners[FinishPromptEvent]) == 1 # pyright: ignore
+        assert (
+            len(pipeline.event_listeners[FinishPromptEvent]) == 1
+        )  # pyright: ignore

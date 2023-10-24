@@ -48,8 +48,14 @@ class TestSnowflakeSqlDriver:
         items_mock = mocker.MagicMock(name="items")
         items_mock_2 = mocker.MagicMock(name="items2")
 
-        items_mock.items.return_value = [("first_name", "Tony"), ("last_name", "Hawk")]
-        items_mock_2.items.return_value = [("first_name", "Bob"), ("last_name", "Ross")]
+        items_mock.items.return_value = [
+            ("first_name", "Tony"),
+            ("last_name", "Hawk"),
+        ]
+        items_mock_2.items.return_value = [
+            ("first_name", "Bob"),
+            ("last_name", "Ross"),
+        ]
 
         result_mock.return_value.returns_rows = True
         result_mock.__iter__.return_value = iter([items_mock, items_mock_2])
@@ -62,7 +68,9 @@ class TestSnowflakeSqlDriver:
 
     @pytest.fixture
     def mock_snowflake_connection(self, mocker):
-        mock_connection = mocker.MagicMock(spec=SnowflakeConnection, name="connection")
+        mock_connection = mocker.MagicMock(
+            spec=SnowflakeConnection, name="connection"
+        )
         return mock_connection
 
     @pytest.fixture
@@ -75,7 +83,9 @@ class TestSnowflakeSqlDriver:
     @pytest.fixture
     def mock_snowflake_connection_no_database(self, mocker):
         mock_connection = mocker.MagicMock(
-            spec=SnowflakeConnection, name="connection_no_database", database=None
+            spec=SnowflakeConnection,
+            name="connection_no_database",
+            database=None,
         )
         return mock_connection
 
@@ -99,7 +109,9 @@ class TestSnowflakeSqlDriver:
                 connection_func=get_connection,
             )
 
-    def test_connection_validation_no_schema(self, mock_snowflake_connection_no_schema):
+    def test_connection_validation_no_schema(
+        self, mock_snowflake_connection_no_schema
+    ):
         def get_connection():
             return mock_snowflake_connection_no_schema
 
@@ -119,7 +131,9 @@ class TestSnowflakeSqlDriver:
                 connection_func=get_connection,
             )
 
-    def test_engine_url_validation_wrong_engine(self, mock_snowflake_connection):
+    def test_engine_url_validation_wrong_engine(
+        self, mock_snowflake_connection
+    ):
         with pytest.raises(ValueError):
             SnowflakeSqlDriver(
                 connection_func=mock_snowflake_connection,
@@ -128,15 +142,20 @@ class TestSnowflakeSqlDriver:
 
     def test_execute_query(self, driver):
         assert driver.execute_query("query") == [
-            BaseSqlDriver.RowResult(row) for row in TestSnowflakeSqlDriver.TEST_ROWS
+            BaseSqlDriver.RowResult(row)
+            for row in TestSnowflakeSqlDriver.TEST_ROWS
         ]
 
     def test_execute_query_raw(self, driver):
-        assert driver.execute_query_raw("query") == TestSnowflakeSqlDriver.TEST_ROWS
+        assert (
+            driver.execute_query_raw("query")
+            == TestSnowflakeSqlDriver.TEST_ROWS
+        )
 
     def test_table(self, driver, mock_table, mock_metadata):
         with mock.patch(
-            "griptape.drivers.sql.snowflake_sql_driver.Table", return_value=mock_table
+            "griptape.drivers.sql.snowflake_sql_driver.Table",
+            return_value=mock_table,
         ), mock.patch(
             "griptape.drivers.sql.snowflake_sql_driver.MetaData",
             return_value=mock_metadata,

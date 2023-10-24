@@ -23,11 +23,16 @@ class TestPgVectorVectorStoreDriver:
         session = MagicMock()
         mock_session_manager = MagicMock()
         mock_session_manager.__enter__.return_value = session
-        mocker.patch("griptape.drivers.vector.pgvector_vector_store_driver.Session", return_value=mock_session_manager)
+        mocker.patch(
+            "griptape.drivers.vector.pgvector_vector_store_driver.Session",
+            return_value=mock_session_manager,
+        )
 
         return session
 
-    def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
+    def test_initialize_requires_engine_or_connection_string(
+        self, embedding_driver
+    ):
         with pytest.raises(ValueError):
             driver = PgVectorVectorStoreDriver(
                 embedding_driver=embedding_driver,

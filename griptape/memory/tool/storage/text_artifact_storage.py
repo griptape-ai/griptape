@@ -6,8 +6,11 @@ from griptape.memory.tool.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
     from griptape.engines import (
-        BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine, VectorQueryEngine
-)
+        BaseSummaryEngine,
+        CsvExtractionEngine,
+        JsonExtractionEngine,
+        VectorQueryEngine,
+    )
 
 
 @define
@@ -31,9 +34,11 @@ class TextArtifactStorage(BaseArtifactStorage):
             self.load_artifacts(namespace),
         )
 
-    def query(self, namespace: str, query: str, metadata: any = None) -> TextArtifact:
+    def query(
+        self, namespace: str, query: str, metadata: any = None
+    ) -> TextArtifact:
         return self.query_engine.query(
             namespace=namespace,
             query=query,
-            metadata=str(metadata) if metadata else None
+            metadata=str(metadata) if metadata else None,
         )

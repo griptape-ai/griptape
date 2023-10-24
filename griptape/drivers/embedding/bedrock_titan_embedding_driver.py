@@ -14,7 +14,8 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
     tokenizer: BedrockTitanTokenizer = field(
         default=Factory(
-            lambda self: BedrockTitanTokenizer(model=self.model), takes_self=True
+            lambda self: BedrockTitanTokenizer(model=self.model),
+            takes_self=True,
         ),
         kw_only=True,
     )
@@ -30,15 +31,15 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     )
 
     def try_embed_string(self, string: str) -> list[float]:
-        text = string.replace('\n', " ")
+        text = string.replace("\n", " ")
 
-        payload = { "inputText": text }
+        payload = {"inputText": text}
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),
             modelId=self.model,
-            accept='application/json',
-            contentType='application/json'
+            accept="application/json",
+            contentType="application/json",
         )
         response_body = json.loads(response.get("body").read())
 
