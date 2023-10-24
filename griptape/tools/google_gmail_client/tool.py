@@ -45,17 +45,15 @@ class GoogleGmailClient(BaseGoogleClient):
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
 
-        service = self._build_client(
-            scopes=self.CREATE_DRAFT_EMAIL_SCOPES,
-            service_name="gmail",
-            version="v1",
-            owner_email=self.owner_email
-        )
-    
         message = self._create_email_message(values)
         self._attach_files_to_message(message, values)
     
         try:
+            service = self._build_client(
+                scopes=self.CREATE_DRAFT_EMAIL_SCOPES,
+                service_name="gmail", version="v1",
+                owner_email=self.owner_email
+            )
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
             create_message = {"message": {"raw": encoded_message}}
             draft = service.users().drafts().create(userId="me", body=create_message).execute()
