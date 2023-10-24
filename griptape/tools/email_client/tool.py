@@ -142,21 +142,27 @@ class EmailClient(BaseTool):
                 "body",
                 description="Email body")
             : str,
-            Literal(
+            Optional(
                 "attachment_names",
                 description="Names of the attachments"
             ): list[str],
-            "memory_name": str,
-            "artifact_namespace": str
+            Optional(
+                "memory_name",
+                description="Names of the attachments"
+            ): str,
+            Optional(
+                "artifact_namespace",
+                description="Names of the attachments"
+            ): str,
         })
     })
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         input_values = params["values"]
         server: Optional[smtplib.SMTP] = None
-        to_email = input_values["to"]
-        subject = input_values["subject"]
-        memory_name = input_values["memory_name"]
-        artifact_namespace = input_values["artifact_namespace"]
+        to_email = input_values.get("to")
+        subject = input_values.get("subject")
+        memory_name = input_values.get("memory_name")
+        artifact_namespace = input_values.get("artifact_namespace")
         attachment_names = input_values.get("attachment_names")
 
         # email username can be overridden by setting the smtp user explicitly
@@ -178,21 +184,22 @@ class EmailClient(BaseTool):
         msg.attach(MIMEText(input_values["body"]))
 
         # Fetch attachment data from memory
-        memory = self.find_input_memory(memory_name)
-        if memory:
-            list_artifact = memory.load_artifacts(artifact_namespace)
-            if list_artifact:
-                for artifact, attachment_name in zip(list_artifact.value, attachment_names):
-                    file_data = artifact.value.encode()
-                    part = MIMEBase("application", "octet-stream")
-                    part.set_payload(file_data)
-                    encoders.encode_base64(part)
-                    part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
-                    msg.attach(part)
+        if memory_name and artifact_namespace:
+            memory = self.find_input_memory(memory_name)
+            if memory:
+                list_artifact = memory.load_artifacts(artifact_namespace)
+                if list_artifact:
+                    for artifact, attachment_name in zip(list_artifact.value, attachment_names):
+                        file_data = artifact.value.encode()
+                        part = MIMEBase("application", "octet-stream")
+                        part.set_payload(file_data)
+                        encoders.encode_base64(part)
+                        part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
+                        msg.attach(part)
+                else:
+                    return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
             else:
-                return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
-        else:
-            return ErrorArtifact(f"memory not found")
+                return ErrorArtifact(f"memory not found")
 
         # Send the email
         try:
