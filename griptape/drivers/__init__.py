@@ -18,7 +18,7 @@ from .memory.conversation.dynamodb_conversation_memory_driver import DynamoDbCon
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
-from .embedding.bedrock_titan_embedding_driver import BedrockTitanEmbeddingDriver
+from .embedding.bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -64,7 +64,7 @@ __all__ = [
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
-    "BedrockTitanEmbeddingDriver",
+    "AmazonBedrockTitanEmbeddingDriver",
 
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",

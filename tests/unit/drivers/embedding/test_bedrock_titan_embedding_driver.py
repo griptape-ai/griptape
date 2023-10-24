@@ -1,6 +1,6 @@
 import pytest
 from unittest import mock
-from griptape.drivers import BedrockTitanEmbeddingDriver
+from griptape.drivers import AmazonBedrockTitanEmbeddingDriver
 
 
 class TestBedrockTitanEmbeddingDriver:
@@ -20,9 +20,9 @@ class TestBedrockTitanEmbeddingDriver:
         mock_session_class.return_value = mock_session_object
 
     def test_init(self):
-        assert BedrockTitanEmbeddingDriver()
+        assert AmazonBedrockTitanEmbeddingDriver()
 
     def test_try_embed_string(self):
-        assert BedrockTitanEmbeddingDriver().try_embed_string(
+        assert AmazonBedrockTitanEmbeddingDriver().try_embed_string(
             "foobar"
         ) == [0, 1, 0]

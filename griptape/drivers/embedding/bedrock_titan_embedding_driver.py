@@ -7,7 +7,7 @@ from griptape.tokenizers import BedrockTitanTokenizer
 
 
 @define
-class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
+class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "amazon.titan-embed-text-v1"
 
     dimensions: int = field(default=1536, kw_only=True)
