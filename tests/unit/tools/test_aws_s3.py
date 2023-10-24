@@ -71,6 +71,16 @@ class TestAwsS3Client:
             "bucket_name": "bucket_test",
             "object_key": "test.txt",
         }
-        assert AwsS3Client(session=boto3.Session()).upload_content_to_s3(
+        assert "error uploading objects" in AwsS3Client(session=boto3.Session()).upload_content_to_s3(
             {"values": value}
-        )
+        ).value
+
+    def test_download_object(self):
+        value = {
+            "bucket_name": "bucket_test",
+            "object_key": "test.txt",
+
+        }
+        assert "error downloading object" in AwsS3Client(
+            session=boto3.Session()
+        ).download_object({"values": value}).value
