@@ -44,53 +44,56 @@ class GoogleGmailClient(BaseGoogleClient):
     })
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
+
+        service = self._build_client(
+            scopes=self.CREATE_DRAFT_EMAIL_SCOPES,
+            service_name="gmail",
+            version="v1",
+            owner_email=self.owner_email
+        )
+    
+        message = self._create_email_message(values)
+        self._attach_files_to_message(message, values)
+    
+        try:
+            encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+            create_message = {"message": {"raw": encoded_message}}
+            draft = service.users().drafts().create(userId="me", body=create_message).execute()
+            return InfoArtifact(f'An email draft was successfully created (ID: {draft["id"]})')
+    
+        except Exception as error:
+            logging.error(error)
+            return ErrorArtifact(f"error creating draft email: {error}")
+    
+    def _create_email_message(self, values: dict) -> EmailMessage:
         to_address = values.get("to")
         subject = values.get("subject")
         body = values.get("body")
+    
+        message = EmailMessage()
+        message.set_content(body)
+        message["To"] = to_address
+        message["From"] = self.owner_email
+        message["Subject"] = subject
+    
+        return message
+
+    def _attach_files_to_message(self, message: EmailMessage, values: dict) -> None:
         attachment_names = values.get("attachment_names")
         memory_name = values.get("memory_name")
         artifact_namespace = values.get("artifact_namespace")
-
-        try:
-            service = self._build_client(
-                scopes=self.CREATE_DRAFT_EMAIL_SCOPES,
-                service_name='gmail',
-                version='v1',
-                owner_email=self.owner_email
-            )
-
-            message = EmailMessage()
-            message.set_content(body)
-            message['To'] = to_address
-            message['From'] = self.owner_email
-            message['Subject'] = subject
-
-            # Fetch attachment data from memory
-            if memory_name and artifact_namespace:
-                memory = self.find_input_memory(memory_name)
-
-                if memory:
-                    list_artifacts = memory.load_artifacts(artifact_namespace)
-                    if list_artifacts:
-                        for artifact, attachment_name in zip(list_artifacts.value, attachment_names):
-                            file_data = artifact.value.encode()
-                            message.add_attachment(file_data, maintype='application',
-                                                   subtype='octet-stream', filename=attachment_name)
-                    else:
-                        logging.error(f"Artifact with namespace {artifact_namespace} not found.")
-                        return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
+    
+        if memory_name and artifact_namespace:
+            memory = self.find_input_memory(memory_name)
+            if memory:
+                list_artifacts = memory.load_artifacts(artifact_namespace)
+                if list_artifacts:
+                    for artifact, attachment_name in zip(list_artifacts.value, attachment_names):
+                        file_data = artifact.value.encode()
+                        message.add_attachment(
+                            file_data, maintype="application", subtype="octet-stream", filename=attachment_name
+                        )
                 else:
-                    return ErrorArtifact(f"memory not found.")
-
-            encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-            create_message = {
-                'message': {
-                    'raw': encoded_message
-                }
-            }
-            draft = service.users().drafts().create(userId='me', body=create_message).execute()
-            return InfoArtifact(f'An email draft was successfully created (ID: {draft["id"]})')
-
-        except Exception as error:
-            logging.error(error)
-            return ErrorArtifact(f'error creating draft email: {error}')
+                    logging.error(f"Artifact with namespace {artifact_namespace} not found.")
+            else:
+                logging.error("Memory not found.")

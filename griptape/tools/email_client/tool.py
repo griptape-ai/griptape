@@ -148,60 +148,69 @@ class EmailClient(BaseTool):
             ): list[str],
             Optional(
                 "memory_name",
-                description="Names of the attachments"
+                description="Name of the memory being used to store attachments"
             ): str,
             Optional(
                 "artifact_namespace",
-                description="Names of the attachments"
+                description="Namespace of the artifacts being used to store attachments"
             ): str,
         })
     })
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         input_values = params["values"]
-        server: Optional[smtplib.SMTP] = None
-        to_email = input_values.get("to")
-        subject = input_values.get("subject")
+
+        msg = self._create_email(input_values)
+
+        attachments_result = None
+        if input_values.get("memory_name") and input_values.get("artifact_namespace"):
+            attachments_result = self._attach_files_to_email(msg, input_values)
+
+        if attachments_result:
+            return attachments_result
+        else:
+            send_result = self._send_email(msg, input_values.get("to"))
+            return send_result
+
+    def _create_email(self, input_values: dict) -> MIMEMultipart:
+        msg = MIMEMultipart()
+        smtp_user = self.smtp_user if self.smtp_user else self.username
+        msg["From"] = smtp_user
+        msg["To"] = input_values.get("to")
+        msg["Subject"] = input_values.get("subject")
+        msg.attach(MIMEText(input_values.get("body")))
+
+        return msg
+
+    def _attach_files_to_email(self, msg: MIMEMultipart, input_values: dict) -> None | ErrorArtifact:
         memory_name = input_values.get("memory_name")
         artifact_namespace = input_values.get("artifact_namespace")
         attachment_names = input_values.get("attachment_names")
 
-        # email username can be overridden by setting the smtp user explicitly
+        memory = self.find_input_memory(memory_name)
+
+        if memory:
+            list_artifact = memory.load_artifacts(artifact_namespace)
+            if list_artifact:
+                for artifact, attachment_name in zip(list_artifact.value, attachment_names):
+                    file_data = artifact.value.encode()
+                    part = MIMEBase("application", "octet-stream")
+                    part.set_payload(file_data)
+                    encoders.encode_base64(part)
+                    part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
+                    msg.attach(part)
+            else:
+                return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
+        else:
+            return ErrorArtifact(f"memory not found")
+        return None
+
+    def _send_email(self, msg: MIMEMultipart, to_email: str) -> InfoArtifact | ErrorArtifact:
         smtp_user = self.smtp_user if self.smtp_user else self.username
-
-        # email password can be overridden by setting the smtp password explicitly
         smtp_password = self.smtp_password if self.smtp_password else self.password
-
         smtp_host = self.smtp_host
         smtp_port = int(self.smtp_port)
 
-        # Create a multipart email and set headers
-        msg = MIMEMultipart()
-        msg["From"] = smtp_user
-        msg["To"] = to_email
-        msg["Subject"] = subject
-
-        # Attach the body to the email
-        msg.attach(MIMEText(input_values["body"]))
-
-        # Fetch attachment data from memory
-        if memory_name and artifact_namespace:
-            memory = self.find_input_memory(memory_name)
-            if memory:
-                list_artifact = memory.load_artifacts(artifact_namespace)
-                if list_artifact:
-                    for artifact, attachment_name in zip(list_artifact.value, attachment_names):
-                        file_data = artifact.value.encode()
-                        part = MIMEBase("application", "octet-stream")
-                        part.set_payload(file_data)
-                        encoders.encode_base64(part)
-                        part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
-                        msg.attach(part)
-                else:
-                    return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
-            else:
-                return ErrorArtifact(f"memory not found")
-
-        # Send the email
+        server: Optional[smtplib.SMTP] = None
         try:
             if self.smtp_use_ssl:
                 server = smtplib.SMTP_SSL(smtp_host, smtp_port)
@@ -211,9 +220,11 @@ class EmailClient(BaseTool):
             server.login(smtp_user, smtp_password)
             server.sendmail(smtp_user, [to_email], msg.as_string())
             return InfoArtifact("email was successfully sent")
+
         except Exception as e:
             logging.error(e)
             return ErrorArtifact(f"error sending email: {e}")
+
         finally:
             if server:
                 try:
