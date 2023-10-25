@@ -122,15 +122,18 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return "user"
 
     def _extract_ratelimit_metadata(self, response, *args, **kwargs):
-        # The dateparser utility doesn't handle sub-second durations as are sometimes returned by OpenAI's API.
-        # If the API returns, for example, "13ms", dateparser.parse() returns None. In this case, we will set
-        # the time value to the current time plus a one second buffer.
+        # The OpenAI SDK's requestssession variable is global, so this hook will fire for all API requests.
+        # The following headers are not reliably returned in every API call, so we check for the presence of the
+        # headers before reading and parsing their values to prevent other SDK users from encountering KeyErrors.
         if "x-ratelimit-reset-requests" in response.headers:
             self._ratelimit_requests_reset_at = dateparser.parse(
                 response.headers["x-ratelimit-reset-requests"],
                 settings={"PREFER_DATES_FROM": "future"},
             )
 
+            # The dateparser utility doesn't handle sub-second durations as are sometimes returned by OpenAI's API.
+            # If the API returns, for example, "13ms", dateparser.parse() returns None. In this case, we will set
+            # the time value to the current time plus a one second buffer.
             if self._ratelimit_requests_reset_at is None:
                 self._ratelimit_requests_reset_at = datetime.now() + timedelta(seconds=1)
 
