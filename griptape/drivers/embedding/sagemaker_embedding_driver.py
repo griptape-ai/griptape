@@ -13,7 +13,7 @@ class AmazonSagemakerEmbeddingDriver(BaseEmbeddingDriver):
     kw_only = True
   )
   sagemaker_client: Any = field(
-    default = Factory(lambda self: self.session.client(), takes_self=True),
+    default = Factory(lambda self: self.session.client("runtime.sagemaker"), takes_self=True),
     kw_only = True
   )
 
