@@ -38,9 +38,3 @@ class BedrockJurassicTokenizer(BaseTokenizer):
         response_body = json.loads(response.get("body").read())
 
         return len(response_body["prompt"]["tokens"])
-
-    def encode(self, _: str) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API.")
-
-    def decode(self, _: list[int]) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API.")

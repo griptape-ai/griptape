@@ -50,15 +50,6 @@ class OpenAiTokenizer(BaseTokenizer):
 
         return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
 
-    def encode(self, text: str) -> list[int]:
-        return self.encoding.encode(text, allowed_special=set(self.stop_sequences))
-
-    def decode(self, tokens: list[int]) -> str:
-        return self.encoding.decode(tokens)
-
-    def tokens_left(self, text: str | list) -> int:
-        return super().tokens_left(text)
-
     def token_count(self, text: str | list, model: Optional[str] = None) -> int:
         """
         Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
@@ -116,4 +107,4 @@ class OpenAiTokenizer(BaseTokenizer):
 
             return num_tokens
         else:
-            return super().token_count(text)
+            return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))

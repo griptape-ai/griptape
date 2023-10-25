@@ -7,12 +7,6 @@ class TestAnthropicTokenizer:
     def tokenizer(self):
         return AnthropicTokenizer(model=AnthropicTokenizer.DEFAULT_MODEL)
 
-    def test_encode(self, tokenizer):
-        assert tokenizer.encode("foo bar") == [3803, 3871]
-
-    def test_decode(self, tokenizer):
-        assert tokenizer.decode([3803, 3871]) == "foo bar"
-
     def test_token_count(self, tokenizer):
         assert tokenizer.token_count("foo bar huzzah") == 5
 

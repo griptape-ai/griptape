@@ -4,7 +4,7 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import ChunkSeparator
-from griptape.tokenizers import OpenAiTokenizer
+from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
 
 @define
@@ -17,7 +17,7 @@ class BaseChunker(ABC):
         default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True),
         kw_only=True
     )
-    tokenizer: OpenAiTokenizer = field(
+    tokenizer: BaseTokenizer = field(
         default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True
     )
@@ -48,11 +48,13 @@ class BaseChunker(ABC):
                 separators = self.separators
 
             for separator in separators:
-                subchanks = list(filter(None, chunk.split(separator.value)))
+                # split the chunk on the separator
+                subchunks = list(filter(None, chunk.split(separator.value)))
 
-                if len(subchanks) > 1:
-                    for index, subchunk in enumerate(subchanks):
-                        if index < len(subchanks):
+                # did that split yield any subchunks?
+                if len(subchunks) > 1:
+                    for index, subchunk in enumerate(subchunks):
+                        if index < len(subchunks):
                             if separator.is_prefix:
                                 subchunk = separator.value + subchunk
                             else:
@@ -65,11 +67,11 @@ class BaseChunker(ABC):
                             balance_diff = abs(tokens_count - half_token_count)
 
                     if separator.is_prefix:
-                        first_subchunk = separator.value + separator.value.join(subchanks[:balance_index + 1])
-                        second_subchunk = separator.value + separator.value.join(subchanks[balance_index + 1:])
+                        first_subchunk = separator.value + separator.value.join(subchunks[:balance_index + 1])
+                        second_subchunk = separator.value + separator.value.join(subchunks[balance_index + 1:])
                     else:
-                        first_subchunk = separator.value.join(subchanks[:balance_index + 1]) + separator.value
-                        second_subchunk = separator.value.join(subchanks[balance_index + 1:])
+                        first_subchunk = separator.value.join(subchunks[:balance_index + 1]) + separator.value
+                        second_subchunk = separator.value.join(subchunks[balance_index + 1:])
 
                     first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
                     second_subchunk_rec = self._chunk_recursively(second_subchunk.strip(), separator)
