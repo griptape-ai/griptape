@@ -5,7 +5,7 @@ from griptape.drivers import AmazonSagemakerEmbeddingDriver
 class TestAmazonSagemakerEmbeddingDriver:
   @pytest.fixture(autouse=True)
   def mock_session(self, mocker):
-    fake_embeddings = '{"embedding": [[0, 1, 0]]}'   
+    fake_embeddings = '{"embedding": [[0, 1, 0]]}'.encode("utf-8")   
     mock_session_class = mocker.patch("boto3.Session")
     mock_session_object = mock.Mock()
     mock_client = mock.Mock()
