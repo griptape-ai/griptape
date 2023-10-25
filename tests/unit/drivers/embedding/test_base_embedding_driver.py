@@ -12,12 +12,12 @@ class TestBaseEmbeddingDriver:
     def test_embed_text_artifact(self, driver):
         embedding = driver.embed_text_artifact(TextArtifact("foobar"))
 
-        assert embedding == [0] * len("foobar")
+        assert embedding == [0, 1]
 
     def test_embed_string(self, driver):
         embedding = driver.embed_string("foobar")
 
-        assert embedding == [0] * len("foobar")
+        assert embedding == [0, 1]
 
     def test_embed_long_string(self, driver):
         embedding = driver.embed_string("foobar" * 5000)

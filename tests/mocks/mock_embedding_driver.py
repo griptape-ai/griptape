@@ -11,5 +11,5 @@ class MockEmbeddingDriver(BaseEmbeddingDriver):
         factory=lambda: MockTokenizer(model="foo bar"), kw_only=True
     )
 
-    def try_embed_chunk(self, text: str) -> list[float]:
-        return [0] * len(text)
+    def try_embed_chunk(self, _: str) -> list[float]:
+        return [0, 1]

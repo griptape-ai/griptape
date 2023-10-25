@@ -29,7 +29,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
                 ):
                     return self._embed_long_string(string)
                 else:
-                    return self._embed_chunk(string)
+                    return self.try_embed_chunk(string)
 
         else:
             raise RuntimeError("Failed to embed string.")
@@ -37,9 +37,6 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     @abstractmethod
     def try_embed_chunk(self, chunk: str) -> list[float]:
         ...
-
-    def _embed_chunk(self, chunk: str) -> list[float]:
-        return self.try_embed_chunk(chunk)
 
     def _embed_long_string(self, string: str) -> list[float]:
         """Embeds a string that is too long to embed in one go.
@@ -51,7 +48,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
         embedding_chunks = []
         length_chunks = []
         for chunk in chunks:
-            embedding_chunks.append(self._embed_chunk(chunk.value))
+            embedding_chunks.append(self.try_embed_chunk(chunk.value))
             length_chunks.append(len(chunk))
 
         # generate weighted averages

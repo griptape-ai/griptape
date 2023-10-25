@@ -67,6 +67,18 @@ class TestTextChunker:
         assert chunks[2].value.endswith("! foo-24!")
         assert chunks[3].value.endswith(". foo-11.")
 
+    def test_contiguous_chunks(self, chunker):
+        text = [
+            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ""),
+            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ""),
+        ]
+        chunks = chunker.chunk("".join(text))
+
+        assert len(chunks) == 2
+
+        for chunk in chunks:
+            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+        
     def test_separators(self, chunker):
         text = [
             gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, "! "),
@@ -101,3 +113,4 @@ class TestTextChunker:
         assert chunks[5].value.endswith("? foo-12?")
         assert chunks[6].value.endswith(" foo-5")
         assert chunks[7].value.endswith(" foo-16")
+
