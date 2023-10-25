@@ -1,16 +1,14 @@
 from __future__ import annotations
-from typing import Optional
 from attr import define, field
 from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact
-from griptape.memory import ToolMemory
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
 
 @define
 class ToolOutputProcessor(BaseTool):
-    output_memory: Optional[dict[str, list[ToolMemory]]] = field(factory=dict, kw_only=True)
+    enable_output_memory: bool = field(default=False, kw_only=True)
 
     @activity(config={
         "description": "Can be used to summarize memory content",

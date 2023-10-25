@@ -128,7 +128,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             if self.tool_memory:
                 if tool.input_memory is None:
                     tool.input_memory = [self.tool_memory]
-                if tool.output_memory is None:
+                if tool.output_memory is None and tool.enable_output_memory:
                     tool.output_memory = {
                         a.name: [self.tool_memory]
                         for a in tool.activities()

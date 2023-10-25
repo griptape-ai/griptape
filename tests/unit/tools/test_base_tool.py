@@ -3,7 +3,7 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
-from griptape.tasks import ActionSubtask
+from griptape.tasks import ActionSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -16,6 +16,17 @@ class TestBaseTool:
             test_int=5,
             test_dict={"foo": "bar"}
         )
+
+    def test_enable_output_memory(self, tool):
+        assert ToolkitTask(
+            tool_memory=defaults.text_tool_memory("TestMemory"),
+            tools=[MockTool()]
+        ).tools[0].output_memory
+
+        assert not ToolkitTask(
+            tool_memory=defaults.text_tool_memory("TestMemory"),
+            tools=[MockTool(enable_output_memory=False)]
+        ).tools[0].output_memory
 
     def test_manifest_path(self, tool):
         assert tool.manifest_path == os.path.join(tool.abs_dir_path, tool.MANIFEST_FILE)
