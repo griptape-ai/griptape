@@ -46,7 +46,7 @@ class FileManager(BaseTool):
                 "html": TextLoader(),
                 "json": TextLoader(),
                 "yaml": TextLoader(),
-                "xml": TextLoader()
+                "xml": TextLoader(),
             }
         ),
         kw_only=True,

@@ -156,27 +156,37 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         reset_requests_at = response.headers.get("x-ratelimit-reset-requests")
         if reset_requests_at is not None:
             self._ratelimit_requests_reset_at = dateparser.parse(
-                reset_requests_at,
-                settings={"PREFER_DATES_FROM": "future"},
+                reset_requests_at, settings={"PREFER_DATES_FROM": "future"}
             )
 
             # The dateparser utility doesn't handle sub-second durations as are sometimes returned by OpenAI's API.
             # If the API returns, for example, "13ms", dateparser.parse() returns None. In this case, we will set
             # the time value to the current time plus a one second buffer.
             if self._ratelimit_requests_reset_at is None:
-                self._ratelimit_requests_reset_at = datetime.now() + timedelta(seconds=1)
+                self._ratelimit_requests_reset_at = datetime.now() + timedelta(
+                    seconds=1
+                )
 
         reset_tokens_at = response.headers.get("x-ratelimit-reset-tokens")
         if reset_tokens_at is not None:
             self._ratelimit_tokens_reset_at = dateparser.parse(
-                reset_tokens_at,
-                settings={"PREFER_DATES_FROM": "future"},
+                reset_tokens_at, settings={"PREFER_DATES_FROM": "future"}
             )
 
             if self._ratelimit_tokens_reset_at is None:
-                self._ratelimit_tokens_reset_at = datetime.now() + timedelta(seconds=1)
+                self._ratelimit_tokens_reset_at = datetime.now() + timedelta(
+                    seconds=1
+                )
 
-        self._ratelimit_request_limit = response.headers.get("x-ratelimit-limit-requests")
-        self._ratelimit_requests_remaining = response.headers.get("x-ratelimit-remaining-requests")
-        self._ratelimit_token_limit = response.headers.get("x-ratelimit-limit-tokens")
-        self._ratelimit_tokens_remaining = response.headers.get("x-ratelimit-remaining-tokens")
+        self._ratelimit_request_limit = response.headers.get(
+            "x-ratelimit-limit-requests"
+        )
+        self._ratelimit_requests_remaining = response.headers.get(
+            "x-ratelimit-remaining-requests"
+        )
+        self._ratelimit_token_limit = response.headers.get(
+            "x-ratelimit-limit-tokens"
+        )
+        self._ratelimit_tokens_remaining = response.headers.get(
+            "x-ratelimit-remaining-tokens"
+        )
