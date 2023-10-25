@@ -2,6 +2,7 @@ import pytest
 from griptape.events import StartSubtaskEvent
 from griptape.tasks import ActionSubtask
 
+
 class TestStartSubtaskEvent:
     @pytest.fixture
     def start_subtask_event(self):

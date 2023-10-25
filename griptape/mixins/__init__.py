@@ -5,5 +5,5 @@ from .action_subtask_origin_mixin import ActionSubtaskOriginMixin
 __all__ = [
     "ActivityMixin",
     "ExponentialBackoffMixin",
-    "ActionSubtaskOriginMixin"
+    "ActionSubtaskOriginMixin",
 ]

@@ -16,8 +16,8 @@ class TestTextQueryTask:
                 vector_store_driver=LocalVectorStoreDriver(
                     embedding_driver=MockEmbeddingDriver()
                 ),
-                prompt_driver=MockPromptDriver()
-            )
+                prompt_driver=MockPromptDriver(),
+            ),
         )
 
     def test_run(self, task):
@@ -38,4 +38,9 @@ class TestTextQueryTask:
     def test_load(self, task):
         artifact = task.load("foobar baz", namespace="test")[0]
 
-        assert list(task.query_engine.vector_store_driver.entries.values())[0].meta["artifact"] == artifact.to_json()
+        assert (
+            list(task.query_engine.vector_store_driver.entries.values())[
+                0
+            ].meta["artifact"]
+            == artifact.to_json()
+        )

@@ -20,13 +20,13 @@ class TestLocalConversationMemoryDriver:
 
     def test_store(self):
         prompt_driver = MockPromptDriver()
-        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
+        memory_driver = LocalConversationMemoryDriver(
+            file_path=self.MEMORY_FILE_PATH
+        )
         memory = ConversationMemory(driver=memory_driver, autoload=False)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
-        pipeline.add_task(
-            PromptTask("test")
-        )
+        pipeline.add_task(PromptTask("test"))
 
         try:
             with open(self.MEMORY_FILE_PATH, "r"):
@@ -41,13 +41,15 @@ class TestLocalConversationMemoryDriver:
 
     def test_load(self):
         prompt_driver = MockPromptDriver()
-        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = ConversationMemory(driver=memory_driver, autoload=False, max_runs=5)
+        memory_driver = LocalConversationMemoryDriver(
+            file_path=self.MEMORY_FILE_PATH
+        )
+        memory = ConversationMemory(
+            driver=memory_driver, autoload=False, max_runs=5
+        )
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
-        pipeline.add_task(
-            PromptTask("test")
-        )
+        pipeline.add_task(PromptTask("test"))
 
         pipeline.run()
         pipeline.run()
@@ -58,17 +60,17 @@ class TestLocalConversationMemoryDriver:
         assert len(new_memory.runs) == 2
         assert new_memory.runs[0].input == "test"
         assert new_memory.runs[0].output == "mock output"
-        assert new_memory.max_runs == 5 
+        assert new_memory.max_runs == 5
 
     def test_autoload(self):
         prompt_driver = MockPromptDriver()
-        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
+        memory_driver = LocalConversationMemoryDriver(
+            file_path=self.MEMORY_FILE_PATH
+        )
         memory = ConversationMemory(driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
 
-        pipeline.add_task(
-            PromptTask("test")
-        )
+        pipeline.add_task(PromptTask("test"))
 
         pipeline.run()
         pipeline.run()

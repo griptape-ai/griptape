@@ -15,49 +15,62 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     """
     Attributes:
         api_type: Can be changed to use OpenAI models on Azure.
-        api_version: API version. 
+        api_version: API version.
         api_base: API URL.
         api_key: API key to pass directly; by default uses `OPENAI_API_KEY` environment variable.
         max_tokens: Optional maximum return tokens. If not specified, the value will be automatically generated based by the tokenizer.
         model: OpenAI model name. Uses `gpt-4` by default.
         organization: OpenAI organization.
         tokenizer: Custom `OpenAiTokenizer`.
-        user: OpenAI user. 	
+        user: OpenAI user.
     """
+
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)
-    api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
-    organization: Optional[str] = field(default=openai.organization, kw_only=True)
+    api_key: Optional[str] = field(
+        default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True
+    )
+    organization: Optional[str] = field(
+        default=openai.organization, kw_only=True
+    )
     model: str = field(kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
-        kw_only=True
+        default=Factory(
+            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
+        ),
+        kw_only=True,
     )
     user: str = field(default="", kw_only=True)
-    ignored_exception_types: Tuple[Type[Exception], ...] = field(default=Factory(lambda: (openai.InvalidRequestError)), kw_only=True)
+    ignored_exception_types: Tuple[Type[Exception], ...] = field(
+        default=Factory(lambda: (openai.InvalidRequestError)), kw_only=True
+    )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.Completion.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
-            return TextArtifact(
-                value=result.choices[0].text.strip()
-            )
+            return TextArtifact(value=result.choices[0].text.strip())
         else:
-            raise Exception("completion with more than one choice is not supported yet")
+            raise Exception(
+                "completion with more than one choice is not supported yet"
+            )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = openai.Completion.create(**self._base_params(prompt_stack), stream=True)
+        result = openai.Completion.create(
+            **self._base_params(prompt_stack), stream=True
+        )
 
         for chunk in result:
             if len(chunk.choices) == 1:
                 choice = chunk.choices[0]
                 delta_content = choice["text"]
                 yield TextArtifact(value=delta_content)
-                
+
             else:
-                raise Exception("completion with more than one choice is not supported yet")
+                raise Exception(
+                    "completion with more than one choice is not supported yet"
+                )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)

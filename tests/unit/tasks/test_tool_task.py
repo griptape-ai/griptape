@@ -13,16 +13,10 @@ class TestToolTask:
             "type": "tool",
             "name": "MockTool",
             "activity": "test",
-            "input": {
-                "values": {
-                    "test": "foobar"
-                }
-            }
+            "input": {"values": {"test": "foobar"}},
         }
         return Agent(
-            prompt_driver=MockPromptDriver(
-                mock_output=json.dumps(output_dict)
-            )
+            prompt_driver=MockPromptDriver(mock_output=json.dumps(output_dict))
         )
 
     def test_run(self, agent):

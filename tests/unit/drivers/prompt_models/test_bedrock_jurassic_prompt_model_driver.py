@@ -2,9 +2,14 @@ from unittest import mock
 import json
 import boto3
 import pytest
-from griptape.tokenizers.bedrock_jurassic_tokenizer import BedrockJurassicTokenizer
+from griptape.tokenizers.bedrock_jurassic_tokenizer import (
+    BedrockJurassicTokenizer,
+)
 from griptape.utils import PromptStack
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockJurassicPromptModelDriver
+from griptape.drivers import (
+    AmazonBedrockPromptDriver,
+    BedrockJurassicPromptModelDriver,
+)
 
 
 class TestBedrockJurassicPromptModelDriver:
@@ -49,9 +54,9 @@ class TestBedrockJurassicPromptModelDriver:
                 session=boto3.Session(region_name="us-east-1"),
                 prompt_model_driver=BedrockJurassicPromptModelDriver(),
                 temperature=0.12345,
-                stream=True
+                stream=True,
             ).prompt_model_driver
-    
+
     def test_init(self, driver):
         assert driver.prompt_driver is not None
 
@@ -59,15 +64,23 @@ class TestBedrockJurassicPromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input["prompt"].startswith("Instructions: foo\nUser: bar\nBot:")
+        assert model_input["prompt"].startswith(
+            "Instructions: foo\nUser: bar\nBot:"
+        )
 
     def test_prompt_stack_to_model_params(self, driver, stack):
         assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8189
-        assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
+        assert (
+            driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
+        )
 
     def test_process_output(self, driver):
         assert (
-            driver.process_output(json.dumps({"completions": [{"data": {"text": "foobar"}}]}).encode()).value
+            driver.process_output(
+                json.dumps(
+                    {"completions": [{"data": {"text": "foobar"}}]}
+                ).encode()
+            ).value
             == "foobar"
         )
 

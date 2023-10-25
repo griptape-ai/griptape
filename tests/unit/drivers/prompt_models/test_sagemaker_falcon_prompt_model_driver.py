@@ -1,7 +1,10 @@
 import boto3
 import pytest
 from griptape.utils import PromptStack
-from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerFalconPromptModelDriver
+from griptape.drivers import (
+    AmazonSageMakerPromptDriver,
+    SageMakerFalconPromptModelDriver,
+)
 
 
 class TestSageMakerFalconPromptModelDriver:
@@ -11,7 +14,7 @@ class TestSageMakerFalconPromptModelDriver:
             model="foo",
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=SageMakerFalconPromptModelDriver(),
-            temperature=0.12345
+            temperature=0.12345,
         ).prompt_model_driver
 
     @pytest.fixture
@@ -33,20 +36,30 @@ class TestSageMakerFalconPromptModelDriver:
         assert model_input.startswith("foo\n\nUser: bar")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 590
-        assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
+        assert (
+            driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 590
+        )
+        assert (
+            driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
+        )
 
     def test_process_output(self, driver, stack):
-        assert driver.process_output([
-            {"generated_text": "foobar"}
-        ]).value == "foobar"
+        assert (
+            driver.process_output([{"generated_text": "foobar"}]).value
+            == "foobar"
+        )
 
     def test_tokenizer_max_model_length(self, driver):
         assert driver.tokenizer.tokenizer.model_max_length == 600
 
-        assert AmazonSageMakerPromptDriver(
-            model="foo",
-            session=boto3.Session(region_name="us-east-1"),
-            prompt_model_driver=SageMakerFalconPromptModelDriver(max_tokens=10),
-            temperature=0.12345,
-        ).prompt_model_driver.tokenizer.tokenizer.model_max_length == 10
+        assert (
+            AmazonSageMakerPromptDriver(
+                model="foo",
+                session=boto3.Session(region_name="us-east-1"),
+                prompt_model_driver=SageMakerFalconPromptModelDriver(
+                    max_tokens=10
+                ),
+                temperature=0.12345,
+            ).prompt_model_driver.tokenizer.tokenizer.model_max_length
+            == 10
+        )

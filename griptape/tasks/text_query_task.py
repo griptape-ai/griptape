@@ -9,8 +9,7 @@ from griptape.tasks import BaseTextInputTask
 class TextQueryTask(BaseTextInputTask):
     query_engine: BaseQueryEngine = field(kw_only=True)
     loader: BaseLoader = field(
-        default=Factory(lambda: TextLoader()),
-        kw_only=True
+        default=Factory(lambda: TextLoader()), kw_only=True
     )
 
     def run(self) -> TextArtifact:
@@ -20,9 +19,6 @@ class TextQueryTask(BaseTextInputTask):
         result = self.loader.load(content)
         artifacts = result if isinstance(result, list) else [result]
 
-        self.query_engine.upsert_text_artifacts(
-            artifacts,
-            namespace=namespace
-        )
+        self.query_engine.upsert_text_artifacts(artifacts, namespace=namespace)
 
         return artifacts

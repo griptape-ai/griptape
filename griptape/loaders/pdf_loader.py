@@ -14,29 +14,37 @@ class PdfLoader(TextLoader):
     chunker: PdfChunker = field(
         default=Factory(
             lambda self: PdfChunker(
-                tokenizer=self.tokenizer,
-                max_tokens=self.max_tokens
+                tokenizer=self.tokenizer, max_tokens=self.max_tokens
             ),
-            takes_self=True
+            takes_self=True,
         ),
-        kw_only=True
+        kw_only=True,
     )
 
-    def load(self, stream: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:
+    def load(
+        self, stream: str | IO | Path, password: Optional[str] = None
+    ) -> list[TextArtifact]:
         return self._load_pdf(stream, password)
 
     def load_collection(
-            self,
-            streams: list[str | IO | Path],
-            password: Optional[str] = None
+        self, streams: list[str | IO | Path], password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
-        return utils.execute_futures_dict({
-            utils.str_to_hash(s.decode()) if isinstance(s, bytes) else utils.str_to_hash(str(s)):
-                self.futures_executor.submit(self._load_pdf, s, password)
-            for s in streams
-        })
+        return utils.execute_futures_dict(
+            {
+                utils.str_to_hash(s.decode())
+                if isinstance(s, bytes)
+                else utils.str_to_hash(str(s)): self.futures_executor.submit(
+                    self._load_pdf, s, password
+                )
+                for s in streams
+            }
+        )
 
-    def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
+    def _load_pdf(
+        self, stream: str | IO | Path, password: Optional[str]
+    ) -> list[TextArtifact]:
         reader = PdfReader(stream, strict=True, password=password)
 
-        return self.text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))
+        return self.text_to_artifacts(
+            "\n".join([p.extract_text() for p in reader.pages])
+        )

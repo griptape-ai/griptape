@@ -3,10 +3,7 @@ import schema
 from schema import Schema
 
 
-CONFIG_SCHEMA = Schema({
-    "description": str,
-    schema.Optional("schema"): Schema
-})
+CONFIG_SCHEMA = Schema({"description": str, schema.Optional("schema"): Schema})
 
 
 def activity(config: dict):
@@ -29,4 +26,5 @@ def activity(config: dict):
         wrapper.is_activity = True
 
         return wrapper
+
     return decorator
