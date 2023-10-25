@@ -3,11 +3,13 @@ import schema
 from schema import Schema
 
 
-CONFIG_SCHEMA = Schema({
-    "description": str,
-    schema.Optional("uses_default_memory", default=True): bool,
-    schema.Optional("schema"): Schema
-})
+CONFIG_SCHEMA = Schema(
+    {
+        "description": str,
+        schema.Optional("uses_default_memory", default=True): bool,
+        schema.Optional("schema"): Schema,
+    }
+)
 
 
 def activity(config: dict):
@@ -30,4 +32,5 @@ def activity(config: dict):
         wrapper.is_activity = True
 
         return wrapper
+
     return decorator

@@ -8,6 +8,11 @@ class TestGoogleGmailClient:
             "from": "test@test.com",
             "body": "got it going on",
         }
-        assert "error creating draft email" in GoogleGmailClient(
-            service_account_credentials={}, owner_email="tony@griptape.ai"
-        ).create_draft_email({"values": value}).value
+        assert (
+            "error creating draft email"
+            in GoogleGmailClient(
+                service_account_credentials={}, owner_email="tony@griptape.ai"
+            )
+            .create_draft_email({"values": value})
+            .value
+        )

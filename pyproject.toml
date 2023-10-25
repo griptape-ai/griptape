@@ -12,7 +12,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.12"
 python-dotenv = ">=0.21"
 openai = ">=0.27"
 cohere = ">=4"
@@ -54,6 +54,7 @@ psycopg2-binary = "^2.9.9"
 snowflake-connector-python = "^3.2"
 cryptography = "^41.0.4"
 dateparser = "^1.1.8"
+mail-parser = "^3.15.0"
 
 
 [tool.poetry.group.test.dependencies]
@@ -74,10 +75,11 @@ black = "^23.7.0"
 pyright = "^1.1.324"
 
 [tool.black]
-line-length=120
+line-length=80
+skip_magic_trailing_comma = true
 
 [tool.ruff]
-line-length=120
+line-length=80
 
 [tool.pyright]
 include = ["griptape"]

@@ -8,7 +8,9 @@ class TestTextSummaryTask:
     def test_run(self):
         task = TextSummaryTask(
             "test",
-            summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver())
+            summary_engine=PromptSummaryEngine(
+                prompt_driver=MockPromptDriver()
+            ),
         )
         agent = Agent()
 
@@ -22,4 +24,3 @@ class TestTextSummaryTask:
         Agent().add_task(task)
 
         assert task.input.to_text() == "test value"
-        

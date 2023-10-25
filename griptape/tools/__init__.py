@@ -45,5 +45,5 @@ __all__ = [
     "ToolOutputProcessor",
     "Computer",
     "ProxycurlClient",
-    "OpenWeatherClient"
+    "OpenWeatherClient",
 ]

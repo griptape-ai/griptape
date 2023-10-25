@@ -9,7 +9,11 @@ import pytest
 
 
 class TestCalculator:
-    @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
+    @pytest.fixture(
+        autouse=True,
+        params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=prompt_driver_id_fn,
+    )
     def agent(self, request):
         from griptape.structures import Agent
         from griptape.tools import Calculator

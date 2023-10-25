@@ -15,6 +15,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         model: Anthropic model name.
         tokenizer: Custom `AnthropicTokenizer`.
     """
+
     api_key: str = field(kw_only=True)
     model: str = field(kw_only=True)
     tokenizer: AnthropicTokenizer = field(
@@ -32,14 +33,15 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         response = anthropic.Anthropic(api_key=self.api_key).completions.create(
-            **self._base_params(prompt_stack),
-            stream=True
+            **self._base_params(prompt_stack), stream=True
         )
 
         for chunk in response:
             yield TextArtifact(value=chunk.completion)
 
-    def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
+    def default_prompt_stack_to_string_converter(
+        self, prompt_stack: PromptStack
+    ) -> str:
         prompt_lines = []
 
         for i in prompt_stack.inputs:
@@ -54,11 +56,11 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)
-        
+
         return {
             "prompt": self.prompt_stack_to_string(prompt_stack),
             "model": self.model,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
-            "max_tokens_to_sample": self.max_output_tokens(prompt)
+            "max_tokens_to_sample": self.max_output_tokens(prompt),
         }

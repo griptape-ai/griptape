@@ -15,8 +15,5 @@ class CohereTokenizer(BaseTokenizer):
     def max_tokens(self) -> int:
         return self.MAX_TOKENS
 
-    def encode(self, text: str) -> list[int]:
-        return self.client.tokenize(text=text).tokens
-
-    def decode(self, tokens: list[int]) -> str:
-        return self.client.detokenize(tokens=tokens).text
+    def count_tokens(self, text: str) -> int:
+        return len(self.client.tokenize(text=text).tokens)

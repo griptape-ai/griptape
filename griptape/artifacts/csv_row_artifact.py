@@ -19,7 +19,7 @@ class CsvRowArtifact(TextArtifact):
                 csvfile,
                 fieldnames=self.value.keys(),
                 quoting=csv.QUOTE_MINIMAL,
-                delimiter=self.delimiter
+                delimiter=self.delimiter,
             )
 
             writer.writerow(self.value)
@@ -32,4 +32,4 @@ class CsvRowArtifact(TextArtifact):
         return dict(CsvRowArtifactSchema().dump(self))
 
     def __bool__(self) -> bool:
-        return len(self.value) > 0
+        return len(self) > 0
