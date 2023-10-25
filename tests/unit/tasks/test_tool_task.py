@@ -31,6 +31,3 @@ class TestToolTask:
         agent.add_task(task)
 
         assert task.run().to_text() == "ack foobar"
-
-    def test_action_types(self):
-        assert ToolTask(tool=MockTool()).action_types == ["tool"]

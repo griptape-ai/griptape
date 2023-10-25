@@ -2,7 +2,7 @@ import pytest
 from griptape.artifacts import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
-from griptape.structures import Pipeline, Agent
+from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -71,7 +71,6 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_type == "tool"
         assert subtask.action_name == "test"
         assert subtask.action_activity == "test action"
         assert subtask.action_input == "test input"
@@ -179,7 +178,3 @@ class TestToolkitSubtask:
         assert task.tool_output_memory[0].name == "Memory1"
         assert task.tool_output_memory[1].name == "Memory2"
         assert task.tool_output_memory[2].name == "Memory3"
-
-    def test_action_types(self):
-        assert Agent(tool_memory=None, tools=[MockTool()]).task.action_types == ["tool"]
-        assert Agent(tools=[MockTool()]).task.action_types == ["tool", "memory"]

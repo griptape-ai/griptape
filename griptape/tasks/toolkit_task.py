@@ -85,15 +85,6 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return stack
 
-    @property
-    def action_types(self) -> list[str]:
-        memories = [r for r in self.tool_output_memory if r.activities()]
-
-        if memories:
-            return ["tool", "memory"]
-        else:
-            return ["tool"]
-
     def preprocess(self, structure: Structure) -> ToolkitTask:
         super().preprocess(structure)
 
@@ -107,7 +98,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         action_schema = utils.minify_json(
             json.dumps(
-                ActionSubtask.action_schema(self.action_types).json_schema("ActionSchema")
+                ActionSubtask.action_schema().json_schema("ActionSchema")
             )
         )
 

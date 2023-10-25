@@ -27,7 +27,6 @@ class ActionSubtask(PromptTask):
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    action_type: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_activity: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[dict] = field(default=None, kw_only=True)
@@ -52,14 +51,10 @@ class ActionSubtask(PromptTask):
         return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
 
     @classmethod
-    def action_schema(cls, action_types: list) -> Schema:
+    def action_schema(cls) -> Schema:
         return Schema(
             description="Actions have type, name, activity, and input value.",
             schema={
-                Literal(
-                    "type",
-                    description="Action type"
-                ): schema.Or(*action_types),
                 Literal(
                     "name",
                     description="Action name"
@@ -93,18 +88,10 @@ class ActionSubtask(PromptTask):
             if self.action_name == "error":
                 self.output = ErrorArtifact(str(self.action_input))
             else:
-                if self.action_type == "tool":
-                    if self._tool:
-                        observation = self._tool.execute(getattr(self._tool, self.action_activity), self)
-                    else:
-                        observation = ErrorArtifact("tool not found")
-                elif self.action_type == "memory":
-                    if self._memory:
-                        observation = getattr(self._memory, self.action_activity)(self.action_input)
-                    else:
-                        observation = ErrorArtifact("memory not found")
+                if self._tool:
+                    observation = self._tool.execute(getattr(self._tool, self.action_activity), self)
                 else:
-                    observation = ErrorArtifact("invalid action type")
+                    observation = ErrorArtifact("tool not found")
 
                 self.output = observation
         except Exception as e:
@@ -122,9 +109,6 @@ class ActionSubtask(PromptTask):
 
     def action_to_json(self) -> str:
         json_dict = {}
-
-        if self.action_type:
-            json_dict["type"] = self.action_type
 
         if self.action_name:
             json_dict["name"] = self.action_name
@@ -170,12 +154,8 @@ class ActionSubtask(PromptTask):
 
                 validate(
                     instance=action_object,
-                    schema=self.action_schema(self.origin_task.action_types).schema
+                    schema=self.action_schema().schema
                 )
-
-                # Load action type; throw exception if the key is not present
-                if self.action_type is None:
-                    self.action_type = action_object["type"]
 
                 # Load action name; throw exception if the key is not present
                 if self.action_name is None:
@@ -194,18 +174,11 @@ class ActionSubtask(PromptTask):
                     self.action_input = remove_null_values_in_dict_recursively(action_object["input"])
 
                 # Load the action itself
-                if self.action_type == "tool":
-                    if self.action_name:
-                        self._tool = self.origin_task.find_tool(self.action_name)
+                if self.action_name:
+                    self._tool = self.origin_task.find_tool(self.action_name)
 
-                    if self._tool:
-                        self.__validate_action_input(self.action_input, self._tool)
-                elif self.action_type == "memory":
-                    if self.action_name:
-                        self._memory = self.origin_task.find_memory(self.action_input["values"]["memory_name"])
-
-                    if self._memory:
-                        self.__validate_action_input(self.action_input, self._memory)
+                if self._tool:
+                    self.__validate_action_input(self.action_input, self._tool)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
