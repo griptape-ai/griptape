@@ -278,3 +278,21 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         assert abs(driver._ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
         assert abs(driver._ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
+
+    def test_extract_ratelimit_metadata_missing_headers(self):
+        class OpenAiApiResponseNoHeaders:
+            @property
+            def headers(self):
+                return {}
+
+        response_without_headers = OpenAiApiResponseNoHeaders()
+
+        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        driver._extract_ratelimit_metadata(response_without_headers)
+
+        assert driver._ratelimit_request_limit is None
+        assert driver._ratelimit_requests_remaining is None
+        assert driver._ratelimit_requests_reset_at is None
+        assert driver._ratelimit_token_limit is None
+        assert driver._ratelimit_tokens_remaining is None
+        assert driver._ratelimit_tokens_reset_at is None
