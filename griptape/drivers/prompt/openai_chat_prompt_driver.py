@@ -125,9 +125,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         # The OpenAI SDK's requestssession variable is global, so this hook will fire for all API requests.
         # The following headers are not reliably returned in every API call, so we check for the presence of the
         # headers before reading and parsing their values to prevent other SDK users from encountering KeyErrors.
-        if "x-ratelimit-reset-requests" in response.headers:
+        requests_reset_at_header = "x-ratelimit-reset-requests"
+        if requests_reset_at_header in response.headers:
             self._ratelimit_requests_reset_at = dateparser.parse(
-                response.headers["x-ratelimit-reset-requests"],
+                response.headers[requests_reset_at_header],
                 settings={"PREFER_DATES_FROM": "future"},
             )
 
@@ -137,23 +138,28 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             if self._ratelimit_requests_reset_at is None:
                 self._ratelimit_requests_reset_at = datetime.now() + timedelta(seconds=1)
 
-        if "x-ratelimit-reset-tokens" in response.headers:
+        tokens_reset_at_header = "x-ratelimit-reset-tokens"
+        if tokens_reset_at_header in response.headers:
             self._ratelimit_tokens_reset_at = dateparser.parse(
-                response.headers["x-ratelimit-reset-tokens"],
+                response.headers[tokens_reset_at_header],
                 settings={"PREFER_DATES_FROM": "future"},
             )
 
             if self._ratelimit_tokens_reset_at is None:
                 self._ratelimit_tokens_reset_at = datetime.now() + timedelta(seconds=1)
 
-        if "x-ratelimit-limit-requests" in response.headers:
-            self._ratelimit_request_limit = response.headers["x-ratelimit-limit-requests"]
+        request_limit_header = "x-ratelimit-limit-requests"
+        if request_limit_header in response.headers:
+            self._ratelimit_request_limit = response.headers[request_limit_header]
 
-        if "x-ratelimit-remaining-requests" in response.headers:
-            self._ratelimit_requests_remaining = response.headers["x-ratelimit-remaining-requests"]
+        requests_remaining_header = "x-ratelimit-remaining-requests"
+        if requests_remaining_header in response.headers:
+            self._ratelimit_requests_remaining = response.headers[requests_remaining_header]
 
-        if "x-ratelimit-limit-tokens" in response.headers:
-            self._ratelimit_token_limit = response.headers["x-ratelimit-limit-tokens"]
+        token_limit_header = "x-ratelimit-limit-tokens"
+        if token_limit_header in response.headers:
+            self._ratelimit_token_limit = response.headers[token_limit_header]
 
-        if "x-ratelimit-remaining-tokens" in response.headers:
-            self._ratelimit_tokens_remaining = response.headers["x-ratelimit-remaining-tokens"]
+        tokens_remaining_header = "x-ratelimit-remaining-tokens"
+        if tokens_remaining_header in response.headers:
+            self._ratelimit_tokens_remaining = response.headers[tokens_remaining_header]
