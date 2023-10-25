@@ -17,9 +17,9 @@ class TestAmazonSagemakerEmbeddingDriver:
     mock_session_class.return_value = mock_session_object
   
   def test_init(self):
-    assert AmazonSagemakerEmbeddingDriver(endpoint="test-endpoint")
+    assert AmazonSagemakerEmbeddingDriver(endpoint="test-endpoint", dimensions=4096)
 
   def test_try_embed_string(self):
-      assert AmazonSagemakerEmbeddingDriver(endpoint="test-endpoint").try_embed_string(
+      assert AmazonSagemakerEmbeddingDriver(endpoint="test-endpoint", dimensions=4096).try_embed_string(
           "foobar"
       ) == [0, 1, 0]
