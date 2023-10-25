@@ -29,11 +29,12 @@ class BaseMultiModelPromptDriver(BasePromptDriver, ABC):
     @stream.validator
     def validate_stream(self, _, stream):
         if stream and not self.prompt_model_driver.supports_streaming:
-            raise ValueError(f"{self.prompt_model_driver.__class__.__name__} does not support streaming")
+            raise ValueError(
+                f"{self.prompt_model_driver.__class__.__name__} does not support streaming"
+            )
 
     def __attrs_post_init__(self) -> None:
         self.prompt_model_driver.prompt_driver = self
 
         if not self.tokenizer:
             self.tokenizer = self.prompt_model_driver.tokenizer
-

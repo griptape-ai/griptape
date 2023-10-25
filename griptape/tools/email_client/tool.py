@@ -7,7 +7,12 @@ from email.mime.text import MIMEText
 from typing import Optional
 import schema
 from attr import define, field
-from griptape.artifacts import ErrorArtifact, InfoArtifact, TextArtifact, ListArtifact
+from griptape.artifacts import (
+    ErrorArtifact,
+    InfoArtifact,
+    TextArtifact,
+    ListArtifact,
+)
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
@@ -29,6 +34,7 @@ class EmailClient(BaseTool):
         imap_user: Setting this will override whatever is set as the username parameter for IMAP activities.
         imap_password: Setting this will override whatever is set as the username parameter for IMAP activities.
     """
+
     # if you set imap|smtp creds explicitly these fields will be overridden
     username: Optional[str] = field(default=None, kw_only=True)
     password: Optional[str] = field(default=None, kw_only=True)
@@ -51,39 +57,48 @@ class EmailClient(BaseTool):
 
     mailboxes: Optional[dict[str, str]] = field(default=None, kw_only=True)
 
-    @activity(config={
-        "description": "Can be used to retrieve emails."
-                       "{% if _self.mailboxes %} Available mailboxes: {{ _self.mailboxes }}{% endif %}",
-        "schema": Schema({
-            Literal(
-                "label",
-                description="Label to retrieve emails from such as 'INBOX' or 'SENT'"
-            ): str,
-            schema.Optional(
-                Literal(
-                    "key",
-                    description="Optional key for filtering such as 'FROM' or 'SUBJECT'"
-                )
-            ): str,
-            schema.Optional(
-                Literal(
-                    "search_criteria",
-                    description="Optional search criteria to filter emails by key"
-                )
-            ): str,
-            schema.Optional(
-                Literal(
-                    "max_count",
-                    description="Optional max email count"
-                )
-            ): int
-        })
-    })
+    @activity(
+        config={
+            "description": "Can be used to retrieve emails."
+            "{% if _self.mailboxes %} Available mailboxes: {{ _self.mailboxes }}{% endif %}",
+            "schema": Schema(
+                {
+                    Literal(
+                        "label",
+                        description="Label to retrieve emails from such as 'INBOX' or 'SENT'",
+                    ): str,
+                    schema.Optional(
+                        Literal(
+                            "key",
+                            description="Optional key for filtering such as 'FROM' or 'SUBJECT'",
+                        )
+                    ): str,
+                    schema.Optional(
+                        Literal(
+                            "search_criteria",
+                            description="Optional search criteria to filter emails by key",
+                        )
+                    ): str,
+                    schema.Optional(
+                        Literal(
+                            "max_count", description="Optional max email count"
+                        )
+                    ): int,
+                }
+            ),
+        }
+    )
     def retrieve(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
         imap_user = self.imap_user if self.imap_user else self.username
-        imap_password = self.imap_password if self.imap_password else self.password
-        max_count = int(values["max_count"]) if values.get("max_count") else self.email_max_retrieve_count
+        imap_password = (
+            self.imap_password if self.imap_password else self.password
+        )
+        max_count = (
+            int(values["max_count"])
+            if values.get("max_count")
+            else self.email_max_retrieve_count
+        )
         list_artifact = ListArtifact()
 
         try:
@@ -99,8 +114,12 @@ class EmailClient(BaseTool):
                 if values.get("key") and values.get("search_criteria"):
                     messages_count = len(
                         con.search(
-                            None, values["key"], f'"{values["search_criteria"]}"'
-                            )[1][0].decode().split(" ")
+                            None,
+                            values["key"],
+                            f'"{values["search_criteria"]}"',
+                        )[1][0]
+                        .decode()
+                        .split(" ")
                     )
                 else:
                     messages_count = int(mailbox[1][0])
@@ -126,23 +145,18 @@ class EmailClient(BaseTool):
 
             return ErrorArtifact(f"error retrieving email {e}")
 
-    @activity(config={
-        "description": "Can be used to send emails",
-        "schema": Schema({
-            Literal(
-                "to",
-                description="Recipient's email address"
-            ): str,
-            Literal(
-                "subject",
-                description="Email subject"
-            ): str,
-            Literal(
-                "body",
-                description="Email body"
-            ): str
-        })
-    })
+    @activity(
+        config={
+            "description": "Can be used to send emails",
+            "schema": Schema(
+                {
+                    Literal("to", description="Recipient's email address"): str,
+                    Literal("subject", description="Email subject"): str,
+                    Literal("body", description="Email body"): str,
+                }
+            ),
+        }
+    )
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         input_values = params["values"]
         server: Optional[smtplib.SMTP] = None

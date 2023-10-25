@@ -12,7 +12,9 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.999, kw_only=True)
     top_k: int = field(default=250, kw_only=True)
     _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
-    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(
+        default=None, kw_only=True
+    )
 
     @property
     def tokenizer(self) -> BedrockClaudeTokenizer:
@@ -22,7 +24,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         Tokenizer. However, the Prompt Driver is not initialized until after
         the Prompt Model Driver is initialized. To resolve this, we make the `tokenizer`
         field a @property that is only initialized when it is first accessed.
-        This ensures that by the time we need to initialize the Tokenizer, the 
+        This ensures that by the time we need to initialize the Tokenizer, the
         Prompt Driver has already been initialized.
 
         See this thread more more information: https://github.com/griptape-ai/griptape/issues/244
@@ -33,7 +35,9 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockClaudeTokenizer(model=self.prompt_driver.model)
+            self._tokenizer = BedrockClaudeTokenizer(
+                model=self.prompt_driver.model
+            )
             return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
@@ -53,7 +57,9 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         prompt = self.prompt_stack_to_model_input(prompt_stack)["prompt"]
 
         return {
-            "max_tokens_to_sample": self.prompt_driver.max_output_tokens(prompt),
+            "max_tokens_to_sample": self.prompt_driver.max_output_tokens(
+                prompt
+            ),
             "stop_sequences": self.tokenizer.stop_sequences,
             "temperature": self.prompt_driver.temperature,
             "top_p": self.top_p,

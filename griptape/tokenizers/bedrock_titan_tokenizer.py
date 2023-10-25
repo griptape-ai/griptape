@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class BedrockTitanTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'amazon.titan-text-express-v1'
+    DEFAULT_MODEL = "amazon.titan-text-express-v1"
     DEFAULT_MAX_TOKENS = 4096
 
     DEFAULT_EMBEDDING_MODELS = "amazon.titan-embed-text-v1"
@@ -19,8 +19,7 @@ class BedrockTitanTokenizer(BaseTokenizer):
     model: str = field(kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock-runtime"),
-            takes_self=True,
+            lambda self: self.session.client("bedrock-runtime"), takes_self=True
         ),
         kw_only=True,
     )
@@ -30,7 +29,7 @@ class BedrockTitanTokenizer(BaseTokenizer):
         return self.DEFAULT_MAX_TOKENS
 
     def token_count(self, text: str) -> int:
-        payload = { "inputText": text }
+        payload = {"inputText": text}
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),
@@ -40,4 +39,4 @@ class BedrockTitanTokenizer(BaseTokenizer):
         )
         response_body = json.loads(response.get("body").read())
 
-        return response_body['inputTextTokenCount']
+        return response_body["inputTextTokenCount"]

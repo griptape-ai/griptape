@@ -10,7 +10,12 @@ class PolymorphicSchema(BaseSchema):
     PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema
     """
 
-    def get_schema(self, class_name: str, obj: Optional[object], schema_namespace: Optional[str]):
+    def get_schema(
+        self,
+        class_name: str,
+        obj: Optional[object],
+        schema_namespace: Optional[str],
+    ):
         if schema_namespace:
             namespace = schema_namespace
         elif obj is not None and hasattr(obj, "schema_namespace"):
@@ -77,7 +82,10 @@ class PolymorphicSchema(BaseSchema):
         if not obj_type:
             return (
                 None,
-                {"_schema": "Unknown object class: %s" % obj.__class__.__name__},
+                {
+                    "_schema": "Unknown object class: %s"
+                    % obj.__class__.__name__
+                },
             )
 
         type_schema = self.get_schema(obj_type, obj, None)
@@ -85,7 +93,9 @@ class PolymorphicSchema(BaseSchema):
         if not type_schema:
             return None, {"_schema": "Unsupported object type: %s" % obj_type}
 
-        schema = type_schema if isinstance(type_schema, Schema) else type_schema()
+        schema = (
+            type_schema if isinstance(type_schema, Schema) else type_schema()
+        )
 
         schema.context.update(getattr(self, "context", {}))
 
@@ -149,17 +159,23 @@ class PolymorphicSchema(BaseSchema):
             type_schema = self.get_schema(data_type, None, schema_namespace)
         except TypeError:
             # data_type could be unhashable
-            raise ValidationError({self.type_field: ["Invalid value: %s" % data_type]})
+            raise ValidationError(
+                {self.type_field: ["Invalid value: %s" % data_type]}
+            )
         if not type_schema:
             raise ValidationError(
                 {self.type_field: ["Unsupported value: %s" % data_type]}
             )
 
-        schema = type_schema if isinstance(type_schema, Schema) else type_schema()
+        schema = (
+            type_schema if isinstance(type_schema, Schema) else type_schema()
+        )
 
         schema.context.update(getattr(self, "context", {}))
 
-        return schema.load(data, many=False, partial=partial, unknown=unknown, **kwargs)
+        return schema.load(
+            data, many=False, partial=partial, unknown=unknown, **kwargs
+        )
 
     def validate(self, data, *, many=None, partial=None):
         try:

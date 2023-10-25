@@ -6,10 +6,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestActivityMixin:
     @pytest.fixture
     def tool(self):
-        return MockTool(
-            test_field="hello",
-            test_int=5
-        )
+        return MockTool(test_field="hello", test_int=5)
 
     def test_activity_name(self, tool):
         assert tool.activity_name(tool.test) == "test"
@@ -21,23 +18,24 @@ class TestActivityMixin:
 
     def test_activity_uses_default_memory(self, tool):
         assert tool.activity_uses_default_memory(tool.test) is True
-        assert tool.activity_uses_default_memory(tool.test_without_default_memory) is False
+        assert (
+            tool.activity_uses_default_memory(tool.test_without_default_memory)
+            is False
+        )
 
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test)
 
-        assert schema == Schema({"values": tool.test.config["schema"].schema}).json_schema("InputSchema")
+        assert schema == Schema(
+            {"values": tool.test.config["schema"].schema}
+        ).json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
 
     def test_activity_with_no_schema(self, tool):
         assert tool.activity_schema(tool.test_no_schema) is None
 
     def test_find_activity(self):
-        tool = MockTool(
-            test_field="hello",
-            test_int=5,
-            allowlist=["test"]
-        )
+        tool = MockTool(test_field="hello", test_int=5, allowlist=["test"])
         assert tool.find_activity("test") == tool.test
         assert tool.find_activity("test_str_output") is None
 
@@ -47,46 +45,25 @@ class TestActivityMixin:
 
     def test_allowlist_and_denylist_validation(self):
         with pytest.raises(ValueError):
-            MockTool(
-                test_field="hello",
-                test_int=5,
-                allowlist=[],
-                denylist=[]
-            )
+            MockTool(test_field="hello", test_int=5, allowlist=[], denylist=[])
 
     def test_allowlist(self):
-        tool = MockTool(
-            test_field="hello",
-            test_int=5,
-            allowlist=["test"]
-        )
+        tool = MockTool(test_field="hello", test_int=5, allowlist=["test"])
 
         assert len(tool.activities()) == 1
 
     def test_denylist(self):
-        tool = MockTool(
-            test_field="hello",
-            test_int=5,
-            denylist=["test"]
-        )
+        tool = MockTool(test_field="hello", test_int=5, denylist=["test"])
 
         assert len(tool.activities()) == 5
 
     def test_invalid_allowlist(self):
         with pytest.raises(ValueError):
-            MockTool(
-                test_field="hello",
-                test_int=5,
-                allowlist=["test_foo"]
-            )
+            MockTool(test_field="hello", test_int=5, allowlist=["test_foo"])
 
     def test_invalid_denylist(self):
         with pytest.raises(ValueError):
-            MockTool(
-                test_field="hello",
-                test_int=5,
-                denylist=["test_foo"]
-            )
+            MockTool(test_field="hello", test_int=5, denylist=["test_foo"])
 
     def test_disable_activities(self, tool):
         assert len(tool.activities()) > 0

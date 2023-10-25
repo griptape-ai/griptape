@@ -19,4 +19,9 @@ class TestBedrockTitanTokenizer:
         mock_session_class.return_value = mock_session_object
 
     def test_titan_tokens_left(self):
-        assert BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL).tokens_left("foo bar") == 4083
+        assert (
+            BedrockTitanTokenizer(
+                model=BedrockTitanTokenizer.DEFAULT_MODEL
+            ).tokens_left("foo bar")
+            == 4083
+        )

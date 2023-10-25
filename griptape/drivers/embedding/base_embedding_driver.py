@@ -23,7 +23,10 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     def embed_string(self, string: str) -> list[float]:
         for attempt in self.retrying():
             with attempt:
-                if self.tokenizer.token_count(string) > self.tokenizer.max_tokens:
+                if (
+                    self.tokenizer.token_count(string)
+                    > self.tokenizer.max_tokens
+                ):
                     return self._embed_long_string(string)
                 else:
                     return self._embed_chunk(string)
@@ -39,7 +42,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
         return self.try_embed_chunk(chunk)
 
     def _embed_long_string(self, string: str) -> list[float]:
-        """ Embeds a string that is too long to embed in one go.
+        """Embeds a string that is too long to embed in one go.
 
         Adapted from: https://github.com/openai/openai-cookbook/blob/683e5f5a71bc7a1b0e5b7a35e087f53cc55fceea/examples/Embedding_long_inputs.ipynb
         """
@@ -52,10 +55,11 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
             length_chunks.append(len(chunk))
 
         # generate weighted averages
-        embedding_chunks = np.average(embedding_chunks, axis=0, weights=length_chunks)
+        embedding_chunks = np.average(
+            embedding_chunks, axis=0, weights=length_chunks
+        )
 
         # normalize length to 1
         embedding_chunks = embedding_chunks / np.linalg.norm(embedding_chunks)
 
         return embedding_chunks.tolist()
-

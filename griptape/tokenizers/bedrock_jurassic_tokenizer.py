@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define(frozen=True)
 class BedrockJurassicTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'ai21.j2-ultra-v1'
+    DEFAULT_MODEL = "ai21.j2-ultra-v1"
     DEFAULT_MAX_TOKENS = 8192
 
     session: boto3.Session = field(
@@ -16,8 +16,7 @@ class BedrockJurassicTokenizer(BaseTokenizer):
     model: str = field(kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock-runtime"),
-            takes_self=True,
+            lambda self: self.session.client("bedrock-runtime"), takes_self=True
         ),
         kw_only=True,
     )
@@ -27,7 +26,7 @@ class BedrockJurassicTokenizer(BaseTokenizer):
         return self.DEFAULT_MAX_TOKENS
 
     def token_count(self, text: str) -> int:
-        payload = { "prompt": text }
+        payload = {"prompt": text}
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),

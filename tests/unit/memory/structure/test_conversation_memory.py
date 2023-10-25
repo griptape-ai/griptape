@@ -67,5 +67,5 @@ class TestConversationMemory:
         pipeline.run("run5")
 
         assert len(pipeline.memory.runs) == 2
-        assert pipeline.memory.runs[0].input == 'run4'
-        assert pipeline.memory.runs[1].input == 'run5'
+        assert pipeline.memory.runs[0].input == "run4"
+        assert pipeline.memory.runs[1].input == "run5"
