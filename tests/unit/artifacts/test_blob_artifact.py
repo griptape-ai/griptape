@@ -12,36 +12,52 @@ class TestBlobArtifact:
         assert BlobArtifact(b"foobar", name="foobar.txt").to_text() == "foobar"
 
     def test_to_text_encoding(self):
-        assert BlobArtifact(
-            "ß".encode("ascii", errors='backslashreplace'),
-            name="foobar.txt",
-            encoding="ascii"
-        ).to_text() == "\\xdf"
+        assert (
+            BlobArtifact(
+                "ß".encode("ascii", errors="backslashreplace"),
+                name="foobar.txt",
+                encoding="ascii",
+            ).to_text()
+            == "\\xdf"
+        )
 
     def test_to_text_encoding_error(self):
         with pytest.raises(ValueError):
             assert BlobArtifact(
-                "ß".encode("utf-8", errors='backslashreplace'),
+                "ß".encode("utf-8", errors="backslashreplace"),
                 name="foobar.txt",
-                encoding="ascii"
+                encoding="ascii",
             ).to_text()
 
     def test_to_text_encoding_error_handler(self):
-        assert BlobArtifact(
-            "ß".encode("utf-8", errors='backslashreplace'),
-            name="foobar.txt",
-            encoding="ascii",
-            encoding_error_handler="replace"
-        ).to_text() == "��"
+        assert (
+            BlobArtifact(
+                "ß".encode("utf-8", errors="backslashreplace"),
+                name="foobar.txt",
+                encoding="ascii",
+                encoding_error_handler="replace",
+            ).to_text()
+            == "��"
+        )
 
     def test_to_dict(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").to_dict()["name"] == "foobar.txt"
+        assert (
+            BlobArtifact(
+                b"foobar", name="foobar.txt", dir_name="foo"
+            ).to_dict()["name"]
+            == "foobar.txt"
+        )
 
     def test_full_path_with_path(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").full_path == "foo/foobar.txt"
+        assert (
+            BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").full_path
+            == "foo/foobar.txt"
+        )
 
     def test_full_path_without_path(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt").full_path == "foobar.txt"
+        assert (
+            BlobArtifact(b"foobar", name="foobar.txt").full_path == "foobar.txt"
+        )
 
     def test_serialization(self):
         artifact = BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo")
@@ -54,7 +70,9 @@ class TestBlobArtifact:
     def test_deserialization(self):
         artifact = BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo")
         artifact_dict = BlobArtifactSchema().dump(artifact)
-        deserialized_artifact: BlobArtifact = BaseArtifact.from_dict(artifact_dict)
+        deserialized_artifact: BlobArtifact = BaseArtifact.from_dict(
+            artifact_dict
+        )
 
         assert deserialized_artifact.name == "foobar.txt"
         assert deserialized_artifact.dir_name == "foo"

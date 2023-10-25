@@ -20,10 +20,19 @@ class TestBedrockTitanTokenizer:
 
     def test_unsupported_methods(self):
         with pytest.raises(NotImplementedError):
-            BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL).encode("foo bar")
+            BedrockTitanTokenizer(
+                model=BedrockTitanTokenizer.DEFAULT_MODEL
+            ).encode("foo bar")
 
         with pytest.raises(NotImplementedError):
-            BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL).decode([1, 2, 3])
+            BedrockTitanTokenizer(
+                model=BedrockTitanTokenizer.DEFAULT_MODEL
+            ).decode([1, 2, 3])
 
     def test_titan_tokens_left(self):
-        assert BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL).tokens_left("foo bar") == 4083
+        assert (
+            BedrockTitanTokenizer(
+                model=BedrockTitanTokenizer.DEFAULT_MODEL
+            ).tokens_left("foo bar")
+            == 4083
+        )

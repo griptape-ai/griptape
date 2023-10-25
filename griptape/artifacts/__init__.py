@@ -14,5 +14,5 @@ __all__ = [
     "TextArtifact",
     "BlobArtifact",
     "CsvRowArtifact",
-    "ListArtifact"
+    "ListArtifact",
 ]

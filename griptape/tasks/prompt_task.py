@@ -13,19 +13,22 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(BaseTextInputTask):
-    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
+    prompt_driver: Optional[BasePromptDriver] = field(
+        default=None, kw_only=True
+    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(
-            lambda self: self.default_system_template_generator,
-            takes_self=True
+            lambda self: self.default_system_template_generator, takes_self=True
         ),
-        kw_only=True
+        kw_only=True,
     )
 
-    output: Optional[TextArtifact | ErrorArtifact | InfoArtifact] = field(default=None, init=False)
-    
+    output: Optional[TextArtifact | ErrorArtifact | InfoArtifact] = field(
+        default=None, init=False
+    )
+
     @rulesets.validator
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
@@ -48,13 +51,17 @@ class PromptTask(BaseTextInputTask):
         if self.structure.rulesets:
             structure_rulesets = self.structure.rulesets
         elif self.structure.rules:
-            structure_rulesets = [Ruleset(name="Default Ruleset", rules=self.structure.rules)]
+            structure_rulesets = [
+                Ruleset(name="Default Ruleset", rules=self.structure.rules)
+            ]
 
         task_rulesets = []
         if self.rulesets:
             task_rulesets = self.rulesets
         elif self.rules:
-            task_rulesets = [Ruleset(name="Additional Ruleset", rules=self.rules)]
+            task_rulesets = [
+                Ruleset(name="Additional Ruleset", rules=self.rules)
+            ]
 
         return structure_rulesets + task_rulesets
 
@@ -63,9 +70,7 @@ class PromptTask(BaseTextInputTask):
         stack = PromptStack()
         memory = self.structure.memory
 
-        stack.add_system_input(
-            self.generate_system_template(self)
-        )
+        stack.add_system_input(self.generate_system_template(self))
 
         stack.add_user_input(self.input.to_text())
 

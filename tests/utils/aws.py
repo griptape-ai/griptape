@@ -1,5 +1,6 @@
 import os
 
+
 def mock_aws_credentials():
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"

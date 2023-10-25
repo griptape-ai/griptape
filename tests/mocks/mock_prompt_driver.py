@@ -10,7 +10,9 @@ from griptape.artifacts import TextArtifact
 @define
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
-    tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+    tokenizer: BaseTokenizer = OpenAiTokenizer(
+        model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
+    )
     mock_output: str = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:

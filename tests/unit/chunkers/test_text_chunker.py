@@ -9,9 +9,7 @@ MAX_TOKENS = 50
 class TestTextChunker:
     @pytest.fixture
     def chunker(self):
-        return TextChunker(
-            max_tokens=MAX_TOKENS
-        )
+        return TextChunker(max_tokens=MAX_TOKENS)
 
     def test_chunk_with_string(self, chunker):
         chunks = chunker.chunk(
@@ -31,7 +29,7 @@ class TestTextChunker:
         text = [
             gen_paragraph(MAX_TOKENS, chunker.tokenizer, "? "),
             "\n\n",
-            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". ")
+            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". "),
         ]
         chunks = chunker.chunk("".join(text))
 
@@ -50,7 +48,7 @@ class TestTextChunker:
         text = [
             gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, "! "),
             "\n\n",
-            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". ")
+            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". "),
         ]
         chunks = chunker.chunk("".join(text))
 
@@ -77,7 +75,7 @@ class TestTextChunker:
             "\n",
             gen_paragraph(MAX_TOKENS + 1, chunker.tokenizer, "? "),
             "\n\n",
-            gen_paragraph(MAX_TOKENS + 1, chunker.tokenizer, " ")
+            gen_paragraph(MAX_TOKENS + 1, chunker.tokenizer, " "),
         ]
         chunks = chunker.chunk("".join(text))
 

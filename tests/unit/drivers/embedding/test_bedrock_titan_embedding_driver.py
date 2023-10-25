@@ -7,7 +7,7 @@ class TestBedrockTitanEmbeddingDriver:
     @pytest.fixture(autouse=True)
     def mock_session(self, mocker):
         fake_embeddings = '{"embedding": [0, 1, 0]}'
-        
+
         mock_session_class = mocker.patch("boto3.Session")
 
         mock_session_object = mock.Mock()
@@ -23,6 +23,8 @@ class TestBedrockTitanEmbeddingDriver:
         assert BedrockTitanEmbeddingDriver()
 
     def test_try_embed_string(self):
-        assert BedrockTitanEmbeddingDriver().try_embed_string(
-            "foobar"
-        ) == [0, 1, 0]
+        assert BedrockTitanEmbeddingDriver().try_embed_string("foobar") == [
+            0,
+            1,
+            0,
+        ]

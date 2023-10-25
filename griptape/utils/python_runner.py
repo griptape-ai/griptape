@@ -17,7 +17,11 @@ class PythonRunner:
                 imported_lib = importlib.import_module(lib)
                 globals()[alias] = imported_lib
 
-            exec(f"print({code})", {}, {alias: eval(alias) for alias in self.libs.values()})
+            exec(
+                f"print({code})",
+                {},
+                {alias: eval(alias) for alias in self.libs.values()},
+            )
 
             output = local_stdout.getvalue()
         except Exception as e:

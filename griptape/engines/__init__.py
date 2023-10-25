@@ -16,5 +16,5 @@ __all__ = [
     "PromptSummaryEngine",
     "BaseExtractionEngine",
     "CsvExtractionEngine",
-    "JsonExtractionEngine"
+    "JsonExtractionEngine",
 ]

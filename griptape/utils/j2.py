@@ -13,11 +13,11 @@ class J2:
             lambda self: Environment(
                 loader=FileSystemLoader(self.templates_dir),
                 trim_blocks=True,
-                lstrip_blocks=True
+                lstrip_blocks=True,
             ),
-            takes_self=True
+            takes_self=True,
         ),
-        kw_only=True
+        kw_only=True,
     )
 
     def render(self, **kwargs) -> str:

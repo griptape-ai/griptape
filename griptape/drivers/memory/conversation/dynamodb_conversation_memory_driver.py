@@ -7,7 +7,9 @@ from griptape.memory.structure import ConversationMemory
 
 @define
 class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
-    session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
+    session: boto3.Session = field(
+        default=Factory(lambda: boto3.Session()), kw_only=True
+    )
     table_name: str = field(kw_only=True)
     partition_key: str = field(kw_only=True)
     value_attribute_key: str = field(kw_only=True)
@@ -16,24 +18,16 @@ class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     table: any = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        dynamodb = self.session.resource(
-            "dynamodb",
-        )
+        dynamodb = self.session.resource("dynamodb")
 
         self.table = dynamodb.Table(self.table_name)
 
     def store(self, memory: ConversationMemory) -> None:
         self.table.update_item(
-            Key={
-                self.partition_key: self.partition_key_value,
-            },
+            Key={self.partition_key: self.partition_key_value},
             UpdateExpression="set #attr = :value",
-            ExpressionAttributeNames={
-                "#attr": self.value_attribute_key,
-            },
-            ExpressionAttributeValues={
-                ":value": memory.to_json(),
-            },
+            ExpressionAttributeNames={"#attr": self.value_attribute_key},
+            ExpressionAttributeValues={":value": memory.to_json()},
         )
 
     def load(self) -> Optional[ConversationMemory]:

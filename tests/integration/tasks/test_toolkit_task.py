@@ -9,7 +9,11 @@ import pytest
 
 
 class TestToolkitTask:
-    @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
+    @pytest.fixture(
+        autouse=True,
+        params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=prompt_driver_id_fn,
+    )
     def agent(self, request):
         import os
         from griptape.structures import Agent
@@ -30,6 +34,9 @@ class TestToolkitTask:
         )
 
     def test_multi_step_cot(self, agent):
-        result = run_structure(agent, "Give me a summary of the top 2 search results about parrot facts.")
+        result = run_structure(
+            agent,
+            "Give me a summary of the top 2 search results about parrot facts.",
+        )
 
         assert fuzz.partial_ratio(result["result"], "python framework")

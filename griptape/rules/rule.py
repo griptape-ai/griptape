@@ -5,4 +5,3 @@ from attr import define
 @define(frozen=True)
 class Rule:
     value: str
-
