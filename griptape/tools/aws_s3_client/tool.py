@@ -212,30 +212,31 @@ class AwsS3Client(BaseAwsClient):
         except Exception as e:
             return ErrorArtifact(f"error uploading objects to the bucket: {e}")
 
-    @activity(config={
-        "description": "Can be used to download an object from an AWS S3 bucket",
-        "schema": Schema(
-            {
-                Literal(
-                    "bucket_name",
-                    description="The name of the S3 bucket to download from."
-                ): str,
-                Literal(
-                    "object_key",
-                    description="The object key name to download."
-                ): str
-            }
-        )
-    })
-    def download_object(self, params: dict) -> ErrorArtifact | TextArtifact | BlobArtifact:
+    @activity(
+        config={
+            "description": "Can be used to download an object from an AWS S3 bucket",
+            "schema": Schema(
+                {
+                    Literal(
+                        "bucket_name",
+                        description="The name of the S3 bucket to download from.",
+                    ): str,
+                    Literal(
+                        "object_key",
+                        description="The object key name to download.",
+                    ): str,
+                }
+            ),
+        }
+    )
+    def download_object(
+        self, params: dict
+    ) -> ErrorArtifact | TextArtifact | BlobArtifact:
         bucket_name = params["values"]["bucket_name"]
         object_key = params["values"]["object_key"]
 
         try:
-            obj = self.s3_client.get_object(
-                Bucket=bucket_name,
-                Key=object_key
-            )
+            obj = self.s3_client.get_object(Bucket=bucket_name, Key=object_key)
 
             content = obj["Body"].read()
 
