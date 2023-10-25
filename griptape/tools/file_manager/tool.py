@@ -30,7 +30,11 @@ class FileManager(BaseTool):
             lambda: {
                 "pdf": PdfLoader(),
                 "csv": CsvLoader(),
-                "txt": TextLoader()
+                "txt": TextLoader(),
+                "html": TextLoader(),
+                "json": TextLoader(),
+                "yaml": TextLoader(),
+                "xml": TextLoader()
             }
         ),
         kw_only=True
@@ -95,9 +99,9 @@ class FileManager(BaseTool):
         if memory:
             list_artifact = memory.load_artifacts(artifact_namespace)
 
-            if len(list_artifact.value) == 0:
+            if len(list_artifact) == 0:
                 return ErrorArtifact("no artifacts found")
-            elif len(list_artifact.value) == 1:
+            elif len(list_artifact) == 1:
                 try:
                     self._save_to_disk(
                         os.path.join(self.workdir, dir_name, file_name),
