@@ -5,7 +5,6 @@ from schema import Schema
 
 CONFIG_SCHEMA = Schema({
     "description": str,
-    schema.Optional("uses_default_memory", default=True): bool,
     schema.Optional("schema"): Schema
 })
 

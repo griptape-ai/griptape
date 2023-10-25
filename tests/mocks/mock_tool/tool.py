@@ -61,7 +61,6 @@ class MockTool(BaseTool):
 
     @activity(config={
         "description": "test description",
-        "uses_default_memory": False,
         "schema": Schema({
                 Literal("test"): str
             },

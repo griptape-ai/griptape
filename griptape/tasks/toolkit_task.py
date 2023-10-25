@@ -131,7 +131,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                 if tool.output_memory is None:
                     tool.output_memory = {
                         a.name: [self.tool_memory]
-                        for a in tool.activities() if tool.activity_uses_default_memory(a)
+                        for a in tool.activities()
                     }
 
     def run(self) -> TextArtifact:
