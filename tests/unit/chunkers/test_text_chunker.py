@@ -78,7 +78,7 @@ class TestTextChunker:
 
         for chunk in chunks:
             assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
-        
+
     def test_separators(self, chunker):
         text = [
             gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, "! "),
@@ -113,4 +113,3 @@ class TestTextChunker:
         assert chunks[5].value.endswith("? foo-12?")
         assert chunks[6].value.endswith(" foo-5")
         assert chunks[7].value.endswith(" foo-16")
-
