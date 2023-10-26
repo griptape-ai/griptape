@@ -16,6 +16,7 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
         session: Optionally provide custom `boto3.Session`.
         bedrock_client: Optionally provide custom `bedrock-runtime` client.
     """
+
     DEFAULT_MODEL = "amazon.titan-embed-text-v1"
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
