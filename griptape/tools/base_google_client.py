@@ -6,7 +6,7 @@ from typing import Optional, Any
 
 @define
 class BaseGoogleClient(BaseTool, ABC):
-    DRIVE_FILE_SCOPES = ['https://www.googleapis.com/auth/drive.file']
+    DRIVE_FILE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
     DRIVE_AUTH_SCOPES = ["https://www.googleapis.com/auth/drive"]
 

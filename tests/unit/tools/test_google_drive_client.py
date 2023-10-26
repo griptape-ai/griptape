@@ -41,7 +41,6 @@ class TestGoogleDriveClient:
             in result.value
         )
 
-
     def test_search_files(self):
         value = {"search_mode": "name", "file_name": "search_file_name.txt"}
         result = GoogleDriveClient(
@@ -50,18 +49,21 @@ class TestGoogleDriveClient:
 
         assert isinstance(result, ErrorArtifact)
 
-        assert "error searching for file due to malformed credentials" in result.value
-
-    def test_share_file(self):
-        value = {"file_path": "/path/to/your/file.txt", "email_address": "sample_email@example.com", "role": "reader"}
-        result = GoogleDriveClient(owner_email="tony@griptape.ai", service_account_credentials={}).share_file(
-            {"values": value}
-        )
-    
-        assert isinstance(result, ErrorArtifact)
-
         assert (
-            "error sharing file due to malformed credentials"
+            "error searching for file due to malformed credentials"
             in result.value
         )
 
+    def test_share_file(self):
+        value = {
+            "file_path": "/path/to/your/file.txt",
+            "email_address": "sample_email@example.com",
+            "role": "reader",
+        }
+        result = GoogleDriveClient(
+            owner_email="tony@griptape.ai", service_account_credentials={}
+        ).share_file({"values": value})
+
+        assert isinstance(result, ErrorArtifact)
+
+        assert "error sharing file due to malformed credentials" in result.value
