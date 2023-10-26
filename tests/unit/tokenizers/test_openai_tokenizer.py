@@ -14,11 +14,11 @@ class TestOpenAiTokenizer:
         return OpenAiTokenizer(model="gpt-4-32k")
 
     def test_token_count_for_text(self, tokenizer):
-        assert tokenizer.token_count("foo bar huzzah") == 5
+        assert tokenizer.count_tokens("foo bar huzzah") == 5
 
     def test_token_count_for_messages(self, tokenizer):
         assert (
-            tokenizer.token_count(
+            tokenizer.count_tokens(
                 [
                     {"role": "system", "content": "foobar baz"},
                     {"role": "user", "content": "how foobar am I?"},
@@ -29,7 +29,7 @@ class TestOpenAiTokenizer:
         )
 
         assert (
-            tokenizer.token_count(
+            tokenizer.count_tokens(
                 [
                     {"role": "system", "content": "foobar baz"},
                     {"role": "user", "content": "how foobar am I?"},
@@ -40,7 +40,7 @@ class TestOpenAiTokenizer:
         )
 
         assert (
-            tokenizer.token_count(
+            tokenizer.count_tokens(
                 [
                     {"role": "system", "content": "foobar baz"},
                     {"role": "user", "content": "how foobar am I?"},
@@ -51,7 +51,7 @@ class TestOpenAiTokenizer:
         )
 
     def test_tokens_left(self, tokenizer):
-        assert tokenizer.tokens_left("foo bar huzzah") == 4083
+        assert tokenizer.count_tokens_left("foo bar huzzah") == 4083
 
     def test_tokens_left_32k(self, tokenizer_32k):
-        assert tokenizer_32k.tokens_left("foo bar huzzah") == 32755
+        assert tokenizer_32k.count_tokens_left("foo bar huzzah") == 32755

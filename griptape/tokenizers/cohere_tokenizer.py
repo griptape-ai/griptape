@@ -15,5 +15,5 @@ class CohereTokenizer(BaseTokenizer):
     def max_tokens(self) -> int:
         return self.MAX_TOKENS
 
-    def token_count(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         return len(self.client.tokenize(text=text).tokens)

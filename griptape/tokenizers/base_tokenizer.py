@@ -16,8 +16,8 @@ class BaseTokenizer(ABC):
     def max_tokens(self) -> int:
         ...
 
-    def tokens_left(self, text: str) -> int:
-        diff = self.max_tokens - self.token_count(text)
+    def count_tokens_left(self, text: str) -> int:
+        diff = self.max_tokens - self.count_tokens(text)
 
         if diff > 0:
             return diff
@@ -25,5 +25,5 @@ class BaseTokenizer(ABC):
             return 0
 
     @abstractmethod
-    def token_count(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         ...

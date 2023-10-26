@@ -22,6 +22,6 @@ class TestBedrockJurassicTokenizer:
         assert (
             BedrockJurassicTokenizer(
                 model=BedrockJurassicTokenizer.DEFAULT_MODEL
-            ).tokens_left("foo bar")
+            ).count_tokens_left("foo bar")
             == 8189
         )

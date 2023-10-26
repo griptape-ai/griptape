@@ -25,7 +25,7 @@ class BedrockJurassicTokenizer(BaseTokenizer):
     def max_tokens(self) -> int:
         return self.DEFAULT_MAX_TOKENS
 
-    def token_count(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         payload = {"prompt": text}
 
         response = self.bedrock_client.invoke_model(

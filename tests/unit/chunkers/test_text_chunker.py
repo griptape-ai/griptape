@@ -36,7 +36,7 @@ class TestTextChunker:
         assert len(chunks) == 2
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0?")
         assert chunks[1].value.startswith("foo-0.")
@@ -55,7 +55,7 @@ class TestTextChunker:
         assert len(chunks) == 4
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0!")
         assert chunks[1].value.startswith("foo-10!")
@@ -77,7 +77,7 @@ class TestTextChunker:
         assert len(chunks) == 2
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
     def test_separators(self, chunker):
         text = [
@@ -94,7 +94,7 @@ class TestTextChunker:
         assert len(chunks) == 8
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0!")
         assert chunks[1].value.startswith("foo-10!")

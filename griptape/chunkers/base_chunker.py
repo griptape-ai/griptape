@@ -38,7 +38,7 @@ class BaseChunker(ABC):
     def _chunk_recursively(
         self, chunk: str, current_separator: Optional[ChunkSeparator] = None
     ) -> list[str]:
-        token_count = self.tokenizer.token_count(chunk)
+        token_count = self.tokenizer.count_tokens(chunk)
 
         if token_count <= self.max_tokens:
             return [chunk]
@@ -71,7 +71,7 @@ class BaseChunker(ABC):
                             else:
                                 subchunk = subchunk + separator.value
 
-                        tokens_count += self.tokenizer.token_count(subchunk)
+                        tokens_count += self.tokenizer.count_tokens(subchunk)
 
                         # Update the best split if the current one is more balanced.
                         if abs(tokens_count - half_token_count) < balance_diff:

@@ -24,7 +24,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
         for attempt in self.retrying():
             with attempt:
                 if (
-                    self.tokenizer.token_count(string)
+                    self.tokenizer.count_tokens(string)
                     > self.tokenizer.max_tokens
                 ):
                     return self._embed_long_string(string)

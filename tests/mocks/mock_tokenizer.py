@@ -7,5 +7,5 @@ class MockTokenizer(BaseTokenizer):
     model: str = field(kw_only=True)
     max_tokens: int = field(default=1000, kw_only=True)
 
-    def token_count(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         return len(text)

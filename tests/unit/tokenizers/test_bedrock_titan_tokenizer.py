@@ -22,6 +22,6 @@ class TestBedrockTitanTokenizer:
         assert (
             BedrockTitanTokenizer(
                 model=BedrockTitanTokenizer.DEFAULT_MODEL
-            ).tokens_left("foo bar")
+            ).count_tokens_left("foo bar")
             == 4083
         )

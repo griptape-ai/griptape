@@ -51,7 +51,7 @@ class OpenAiTokenizer(BaseTokenizer):
 
         return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
 
-    def token_count(self, text: str | list, model: Optional[str] = None) -> int:
+    def count_tokens(self, text: str | list, model: Optional[str] = None) -> int:
         """
         Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
@@ -85,12 +85,12 @@ class OpenAiTokenizer(BaseTokenizer):
                 logging.info(
                     "gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613."
                 )
-                return self.token_count(text, model="gpt-3.5-turbo-0613")
+                return self.count_tokens(text, model="gpt-3.5-turbo-0613")
             elif "gpt-4" in model:
                 logging.info(
                     "gpt-4 may update over time. Returning num tokens assuming gpt-4-0613."
                 )
-                return self.token_count(text, model="gpt-4-0613")
+                return self.count_tokens(text, model="gpt-4-0613")
             else:
                 raise NotImplementedError(
                     f"""token_count() is not implemented for model {model}. 
