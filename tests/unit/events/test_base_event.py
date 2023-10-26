@@ -10,9 +10,9 @@ from griptape.events import (
     CompletionChunkEvent,
     StartStructureRunEvent,
     FinishStructureRunEvent,
+    BaseEvent,
 )
 from tests.mocks.mock_event import MockEvent
-from griptape.events import BaseEvent
 
 
 class TestBaseEvent:

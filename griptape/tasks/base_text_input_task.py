@@ -14,8 +14,6 @@ class BaseTextInputTask(BaseTask, ABC):
     input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
 
-    _input: TextArtifact = field(default=None, init=False)
-
     @property
     def input(self) -> TextArtifact:
         return TextArtifact(
