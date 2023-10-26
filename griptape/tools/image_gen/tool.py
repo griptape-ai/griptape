@@ -12,7 +12,7 @@ class ImageGenerator(BaseTool):
 
     @activity(
         config={
-            "description": "Generates single image using DALL·E API based on a provided prompt and returns the image data in bytes if the mode is 'save' or returns the URL of the image if the mode is 'url' ",
+            "description": "Generates single image using DALL·E API based on a provided prompt and returns the image data in bytes if the mode is 'download' or returns the URL of the image if the mode is 'url' ",
             "schema": Schema(
                 {
                     "prompt": str,
@@ -32,7 +32,7 @@ class ImageGenerator(BaseTool):
         response = openai.Image.create(prompt=prompt_value, n=n_value, size=size_value)
 
         image_url = response["data"][0]["url"]
-        if mode_value.lower() == "save":
+        if mode_value.lower() == "download":
             response = requests.get(image_url)
             response.raise_for_status()
 
