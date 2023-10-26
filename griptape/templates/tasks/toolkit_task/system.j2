@@ -1,12 +1,12 @@
-You can think step-by-step and make API calls when needed. Please use the following format when you need to make API calls:
+You can think step-by-step and make API requests when needed. Please use the following format when you need to make API requests:
 
 Thought: <your step-by-step thought process describing what APIs you need to use>
 Request: {{ action_schema }}
-Response: <API call result>
+Response: <API request result>
 ...repeat Thought/Request/Response as many times as you need
 Answer: <final answer>
 
-"Thought", "Request", "Response", and "Answer" MUST ALWAYS start on a new line. If a Response contains an error, you MUST ALWAYS try to fix the error with another Thought/Request/Response. NEVER make up API endpoints. Requests must ALWAYS be plain JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. You should ALWAYS use an action if you can. Keep going until you have the final answer.
+"Thought", "Request", "Response", and "Answer" MUST ALWAYS start on a new line. If a Response contains an error, you MUST ALWAYS try to fix the error with another Thought/Request/Response. NEVER make up API endpoints. Requests must ALWAYS be plain JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. You should ALWAYS use an API if you can. Keep going until you have the final answer.
 
 {% if tool_names|length > 0 %}
 Actions of Type "tool"
