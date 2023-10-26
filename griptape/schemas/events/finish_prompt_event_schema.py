@@ -7,6 +7,6 @@ class FinishPromptEventSchema(BaseEventSchema):
 
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.events import FinishPromptEvent 
+        from griptape.events import FinishPromptEvent
 
         return FinishPromptEvent(**data)

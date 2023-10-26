@@ -7,9 +7,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 class TestLocalVectorStoreDriver:
     @pytest.fixture
     def driver(self):
-        return LocalVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(),
-        )
+        return LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
 
     def test_upsert(self, driver):
         namespace = driver.upsert_text_artifact(TextArtifact("foobar"))
@@ -22,22 +20,26 @@ class TestLocalVectorStoreDriver:
         assert len(driver.entries) == 2
 
     def test_upsert_multiple(self, driver):
-        driver.upsert_text_artifacts({
-            "foo": [TextArtifact("foo")],
-            "bar": [TextArtifact("bar")]
-        })
+        driver.upsert_text_artifacts(
+            {"foo": [TextArtifact("foo")], "bar": [TextArtifact("bar")]}
+        )
 
         foo_entries = driver.load_entries("foo")
         bar_entries = driver.load_entries("bar")
 
         assert len(driver.entries) == 2
-        assert BaseArtifact.from_json(foo_entries[0].meta["artifact"]).value == "foo"
-        assert BaseArtifact.from_json(bar_entries[0].meta["artifact"]).value == "bar"
+        assert (
+            BaseArtifact.from_json(foo_entries[0].meta["artifact"]).value
+            == "foo"
+        )
+        assert (
+            BaseArtifact.from_json(bar_entries[0].meta["artifact"]).value
+            == "bar"
+        )
 
     def test_query(self, driver):
         vector_id = driver.upsert_text_artifact(
-            TextArtifact("foobar"),
-            namespace="test-namespace",
+            TextArtifact("foobar"), namespace="test-namespace"
         )
 
         assert len(driver.query("foobar")) == 1
@@ -45,21 +47,34 @@ class TestLocalVectorStoreDriver:
         assert len(driver.query("foobar", namespace="test-namespace")) == 1
         assert driver.query("foobar")[0].vector == []
         assert driver.query("foobar", include_vectors=True)[0].vector == [0, 1]
-        assert BaseArtifact.from_json(driver.query("foobar")[0].meta["artifact"]).value == "foobar"
+        assert (
+            BaseArtifact.from_json(
+                driver.query("foobar")[0].meta["artifact"]
+            ).value
+            == "foobar"
+        )
         assert driver.query("foobar")[0].id == vector_id
 
     def test_load_entry(self, driver):
         vector_id = driver.upsert_text_artifact(
-            TextArtifact("foobar"),
-            namespace="test-namespace"
+            TextArtifact("foobar"), namespace="test-namespace"
         )
 
-        assert driver.load_entry(vector_id, namespace="test-namespace").id == vector_id
+        assert (
+            driver.load_entry(vector_id, namespace="test-namespace").id
+            == vector_id
+        )
 
     def test_load_entries(self, driver):
-        driver.upsert_text_artifact(TextArtifact("foobar 1"), namespace="test-namespace-1")
-        driver.upsert_text_artifact(TextArtifact("foobar 2"), namespace="test-namespace-1")
-        driver.upsert_text_artifact(TextArtifact("foobar 3"), namespace="test-namespace-2")
+        driver.upsert_text_artifact(
+            TextArtifact("foobar 1"), namespace="test-namespace-1"
+        )
+        driver.upsert_text_artifact(
+            TextArtifact("foobar 2"), namespace="test-namespace-1"
+        )
+        driver.upsert_text_artifact(
+            TextArtifact("foobar 3"), namespace="test-namespace-2"
+        )
 
         assert len(driver.load_entries()) == 3
         assert len(driver.load_entries("test-namespace-1")) == 2

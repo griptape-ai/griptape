@@ -12,12 +12,12 @@ class TestVectorStoreClient:
     def mock_try_runt(self, mocker):
         mocker.patch(
             "griptape.drivers.OpenAiChatPromptDriver.try_run",
-            return_value=TextArtifact("foobar")
+            return_value=TextArtifact("foobar"),
         )
 
         mocker.patch(
             "griptape.drivers.OpenAiEmbeddingDriver.embed_chunk",
-            return_value=[0, 1]
+            return_value=[0, 1],
         )
 
     def test_search(self):
@@ -27,9 +27,8 @@ class TestVectorStoreClient:
                 prompt_driver=MockPromptDriver(mock_output="foobar"),
                 vector_store_driver=LocalVectorStoreDriver(
                     embedding_driver=MockEmbeddingDriver()
-                )
-            )
+                ),
+            ),
         )
 
         assert tool.search({"values": {"query": "test"}}).value == "foobar"
-        

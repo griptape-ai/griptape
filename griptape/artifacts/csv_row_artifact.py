@@ -19,7 +19,7 @@ class CsvRowArtifact(TextArtifact):
                 csvfile,
                 fieldnames=self.value.keys(),
                 quoting=csv.QUOTE_MINIMAL,
-                delimiter=self.delimiter
+                delimiter=self.delimiter,
             )
 
             writer.writerow(self.value)

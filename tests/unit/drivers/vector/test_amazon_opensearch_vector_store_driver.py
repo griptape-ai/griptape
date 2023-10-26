@@ -9,12 +9,21 @@ class TestAmazonOpenSearchVectorStoreDriver:
     @pytest.fixture
     def driver(self):
         mock_session = create_autospec(boto3.Session, instance=True)
-        mock_driver = create_autospec(AmazonOpenSearchVectorStoreDriver, instance=True, session=mock_session)
+        mock_driver = create_autospec(
+            AmazonOpenSearchVectorStoreDriver,
+            instance=True,
+            session=mock_session,
+        )
         mock_driver.upsert_vector.return_value = "foo"
         return mock_driver
 
     def test_upsert_vector(self, driver):
-        assert driver.upsert_vector([0.1, 0.2, 0.3], vector_id="foo", namespace="company") == "foo"
+        assert (
+            driver.upsert_vector(
+                [0.1, 0.2, 0.3], vector_id="foo", namespace="company"
+            )
+            == "foo"
+        )
 
     def test_load_entry(self, driver):
         mock_entry = Mock()

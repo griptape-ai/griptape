@@ -11,5 +11,5 @@ class TestStartPromptEvent:
         assert start_prompt_event.token_count == 123
 
     def test_to_dict(self, start_prompt_event):
-        assert 'timestamp' in start_prompt_event.to_dict()
-        assert start_prompt_event.to_dict()['token_count'] == 123
+        assert "timestamp" in start_prompt_event.to_dict()
+        assert start_prompt_event.to_dict()["token_count"] == 123

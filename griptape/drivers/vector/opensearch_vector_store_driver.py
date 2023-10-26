@@ -19,9 +19,12 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         verify_certs: Whether to verify SSL certificates.
         index_name: The name of the index to use.
     """
+
     host: str = field(kw_only=True)
     port: int = field(default=443, kw_only=True)
-    http_auth: Optional[str | Tuple[str, str]] = field(default=None, kw_only=True)
+    http_auth: Optional[str | Tuple[str, str]] = field(
+        default=None, kw_only=True
+    )
     use_ssl: bool = field(default=True, kw_only=True)
     verify_certs: bool = field(default=True, kw_only=True)
     index_name: str = field(kw_only=True)
@@ -29,60 +32,56 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     client: OpenSearch = field(
         default=Factory(
             lambda self: OpenSearch(
-                hosts=[{'host': self.host, 'port': self.port}],
+                hosts=[{"host": self.host, "port": self.port}],
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,
                 verify_certs=self.verify_certs,
-                connection_class=RequestsHttpConnection
+                connection_class=RequestsHttpConnection,
             ),
-            takes_self=True
+            takes_self=True,
         )
     )
 
     def upsert_vector(
-            self,
-            vector: list[float],
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs
+        self,
+        vector: list[float],
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs,
     ) -> str:
         """Inserts or updates a vector in OpenSearch.
 
-        If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted. 
+        If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         Metadata associated with the vector can also be provided.
         """
-        
+
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
-        doc = {
-            "vector": vector,
-            "namespace": namespace,
-            "metadata": meta
-        }
+        doc = {"vector": vector, "namespace": namespace, "metadata": meta}
         doc.update(kwargs)
-        response = self.client.index(index=self.index_name, id=vector_id, body=doc)
+        response = self.client.index(
+            index=self.index_name, id=vector_id, body=doc
+        )
 
         return response["_id"]
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        """Retrieves a specific vector entry from OpenSearch based on its identifier and optional namespace. 
+    def load_entry(
+        self, vector_id: str, namespace: Optional[str] = None
+    ) -> Optional[BaseVectorStoreDriver.Entry]:
+        """Retrieves a specific vector entry from OpenSearch based on its identifier and optional namespace.
 
         Returns:
             If the entry is found, it returns an instance of BaseVectorStoreDriver.Entry; otherwise, None is returned.
         """
         try:
-            query = {
-                "bool": {
-                    "must": [
-                        {"term": {"_id": vector_id}}
-                    ]
-                }
-            }
+            query = {"bool": {"must": [{"term": {"_id": vector_id}}]}}
 
             if namespace:
                 query["bool"]["must"].append({"term": {"namespace": namespace}})
 
-            response = self.client.search(index=self.index_name, body={"query": query, "size": 1})
+            response = self.client.search(
+                index=self.index_name, body={"query": query, "size": 1}
+            )
 
             if response["hits"]["total"]["value"] > 0:
                 vector_data = response["hits"]["hits"][0]["_source"]
@@ -90,7 +89,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                     id=vector_id,
                     meta=vector_data.get("metadata"),
                     vector=vector_data.get("vector"),
-                    namespace=vector_data.get("namespace")
+                    namespace=vector_data.get("namespace"),
                 )
                 return entry
             else:
@@ -99,26 +98,19 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             logging.error(f"Error while loading entry: {e}")
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        """Retrieves all vector entries from OpenSearch that match the optional namespace. 
+    def load_entries(
+        self, namespace: Optional[str] = None
+    ) -> list[BaseVectorStoreDriver.Entry]:
+        """Retrieves all vector entries from OpenSearch that match the optional namespace.
 
         Returns:
             A list of BaseVectorStoreDriver.Entry objects.
         """
 
-        query_body = {
-            "size": 10000,
-            "query": {
-                "match_all": {}
-            }
-        }
+        query_body = {"size": 10000, "query": {"match_all": {}}}
 
         if namespace:
-            query_body["query"] = {
-                "match": {
-                    "namespace": namespace
-                }
-            }
+            query_body["query"] = {"match": {"namespace": namespace}}
 
         response = self.client.search(index=self.index_name, body=query_body)
 
@@ -127,25 +119,25 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 id=hit["_id"],
                 vector=hit["_source"].get("vector"),
                 meta=hit["_source"].get("metadata"),
-                namespace=hit["_source"].get("namespace")
+                namespace=hit["_source"].get("namespace"),
             )
             for hit in response["hits"]["hits"]
         ]
         return entries
 
     def query(
-            self,
-            query: str,
-            count: Optional[int] = None,
-            field_name: str = "vector",
-            namespace: Optional[str] = None,
-            include_vectors: bool = False,
-            include_metadata=True,
-            **kwargs
+        self,
+        query: str,
+        count: Optional[int] = None,
+        field_name: str = "vector",
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        include_metadata=True,
+        **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string. 
+        """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string.
 
-        Results can be limited using the count parameter and optionally filtered by a namespace. 
+        Results can be limited using the count parameter and optionally filtered by a namespace.
 
         Returns:
             A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
@@ -155,33 +147,15 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         # Base k-NN query
         query_body = {
             "size": count,
-            "query": {
-                "knn": {
-                    field_name: {
-                        "vector": vector,
-                        "k": count
-                    }
-                }
-            }
+            "query": {"knn": {field_name: {"vector": vector, "k": count}}},
         }
 
         if namespace:
             query_body["query"] = {
                 "bool": {
                     "must": [
-                        {
-                            "match": {
-                                "namespace": namespace
-                            }
-                        },
-                        {
-                            "knn": {
-                                field_name: {
-                                    "vector": vector,
-                                    "k": count
-                                }
-                            }
-                        }
+                        {"match": {"namespace": namespace}},
+                        {"knn": {field_name: {"vector": vector, "k": count}}},
                     ]
                 }
             }
@@ -191,27 +165,37 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         return [
             BaseVectorStoreDriver.QueryResult(
                 id=hit["_id"],
-                namespace=hit["_source"].get("namespace") if namespace else None,
+                namespace=hit["_source"].get("namespace")
+                if namespace
+                else None,
                 score=hit["_score"],
-                vector=hit["_source"].get("vector") if include_vectors else None,
-                meta=hit["_source"].get("metadata") if include_metadata else None
+                vector=hit["_source"].get("vector")
+                if include_vectors
+                else None,
+                meta=hit["_source"].get("metadata")
+                if include_metadata
+                else None,
             )
             for hit in response["hits"]["hits"]
         ]
 
-    def create_index(self, vector_dimension: Optional[int] = None, settings_override: Optional[dict] = None) -> None:
-        """Creates a new vector index in OpenSearch. 
-        
+    def create_index(
+        self,
+        vector_dimension: Optional[int] = None,
+        settings_override: Optional[dict] = None,
+    ) -> None:
+        """Creates a new vector index in OpenSearch.
+
         The index is structured to support k-NN (k-nearest neighbors) queries.
 
         Args:
-            vector_dimension: The dimension of vectors that will be stored in this index. 
-        
+            vector_dimension: The dimension of vectors that will be stored in this index.
+
         """
         default_settings = {
             "number_of_shards": 1,
             "number_of_replicas": 1,
-            "index.knn": True
+            "index.knn": True,
         }
 
         if settings_override:
@@ -228,17 +212,12 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                         "properties": {
                             "vector": {
                                 "type": "knn_vector",
-                                "dimension": vector_dimension
+                                "dimension": vector_dimension,
                             },
-                            "namespace": {
-                                "type": "keyword"
-                            },
-                            "metadata": {
-                                "type": "object",
-                                "enabled": True
-                            }
+                            "namespace": {"type": "keyword"},
+                            "metadata": {"type": "object", "enabled": True},
                         }
-                    }
+                    },
                 }
 
                 self.client.indices.create(index=self.index_name, body=mapping)

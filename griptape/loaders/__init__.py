@@ -16,5 +16,5 @@ __all__ = [
     "SqlLoader",
     "CsvLoader",
     "DataFrameLoader",
-    "FileLoader"
+    "FileLoader",
 ]

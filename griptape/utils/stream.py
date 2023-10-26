@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class Stream:
     """A wrapper for Structures that converts `CompletionChunkEvent`s into an iterator of TextArtifacts.
 
-    It achieves this by running the Structure in a separate thread, listening for events from the Structure, 
+    It achieves this by running the Structure in a separate thread, listening for events from the Structure,
     and yielding those events.
 
     See relevant Stack Overflow post: https://stackoverflow.com/questions/9968592/turn-functions-with-a-callback-into-python-generators
@@ -30,9 +30,13 @@ class Stream:
     @structure.validator
     def validate_structure(self, _, structure: Structure):
         if structure and not structure.prompt_driver.stream:
-            raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
+            raise ValueError(
+                "prompt driver does not have streaming enabled, enable with stream=True"
+            )
 
-    _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue(maxsize=1)))
+    _event_queue: Queue[BaseEvent] = field(
+        default=Factory(lambda: Queue(maxsize=1))
+    )
 
     def run(self, *args) -> Iterator[TextArtifact]:
         t = Thread(target=self._run_structure, args=args)
@@ -52,6 +56,8 @@ class Stream:
             self._event_queue.join()
 
         self.structure.add_event_listener(CompletionChunkEvent, event_handler)
-        self.structure.add_event_listener(FinishStructureRunEvent, event_handler)
+        self.structure.add_event_listener(
+            FinishStructureRunEvent, event_handler
+        )
 
         self.structure.run(*args)

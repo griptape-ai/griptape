@@ -4,12 +4,13 @@ from griptape.structures import Agent
 from griptape.tasks import ActionSubtask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
+
 class TestFinishActionSubtaskEvent:
     @pytest.fixture
     def finish_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"
-                'Action: {"type": "tool", "name": "test", "activity": "test action", "input": {"test": "value"}}\n'
+            'Action: {"type": "tool", "name": "test", "activity": "test action", "input": {"test": "value"}}\n'
             "Observation: test observation\n"
             "Answer: test output"
         )
@@ -27,13 +28,36 @@ class TestFinishActionSubtaskEvent:
 
         assert "timestamp" in event_dict
         assert event_dict["task_id"] == finish_subtask_event.task_id
-        assert event_dict["task_parent_ids"] == finish_subtask_event.task_parent_ids
-        assert event_dict["task_child_ids"] == finish_subtask_event.task_child_ids
-        assert event_dict["task_input"] == finish_subtask_event.task_input.to_dict()
+        assert (
+            event_dict["task_parent_ids"]
+            == finish_subtask_event.task_parent_ids
+        )
+        assert (
+            event_dict["task_child_ids"] == finish_subtask_event.task_child_ids
+        )
+        assert (
+            event_dict["task_input"]
+            == finish_subtask_event.task_input.to_dict()
+        )
         assert event_dict["task_output"] is None
 
-        assert event_dict["subtask_parent_task_id"] == finish_subtask_event.subtask_parent_task_id
-        assert event_dict["subtask_thought"] == finish_subtask_event.subtask_thought
-        assert event_dict["subtask_action_type"] == finish_subtask_event.subtask_action_type
-        assert event_dict["subtask_action_name"] == finish_subtask_event.subtask_action_name
-        assert event_dict["subtask_action_input"] == finish_subtask_event.subtask_action_input
+        assert (
+            event_dict["subtask_parent_task_id"]
+            == finish_subtask_event.subtask_parent_task_id
+        )
+        assert (
+            event_dict["subtask_thought"]
+            == finish_subtask_event.subtask_thought
+        )
+        assert (
+            event_dict["subtask_action_type"]
+            == finish_subtask_event.subtask_action_type
+        )
+        assert (
+            event_dict["subtask_action_name"]
+            == finish_subtask_event.subtask_action_name
+        )
+        assert (
+            event_dict["subtask_action_input"]
+            == finish_subtask_event.subtask_action_input
+        )

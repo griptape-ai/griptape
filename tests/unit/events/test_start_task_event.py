@@ -23,4 +23,6 @@ class TestStartTaskEvent:
         assert event_dict["task_parent_ids"] == start_task_event.task_parent_ids
         assert event_dict["task_child_ids"] == start_task_event.task_child_ids
         assert event_dict["task_input"] == start_task_event.task_input.to_dict()
-        assert event_dict["task_output"] == start_task_event.task_output.to_dict()
+        assert (
+            event_dict["task_output"] == start_task_event.task_output.to_dict()
+        )

@@ -7,6 +7,7 @@ from .base_event import BaseEvent
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
 
+
 @define
 class BaseTaskEvent(BaseEvent):
     task_id: str = field(kw_only=True)

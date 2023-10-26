@@ -24,5 +24,5 @@ __all__ = [
     "FinishPromptEvent",
     "StartStructureRunEvent",
     "FinishStructureRunEvent",
-    "CompletionChunkEvent"
+    "CompletionChunkEvent",
 ]

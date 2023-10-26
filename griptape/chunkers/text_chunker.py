@@ -8,5 +8,5 @@ class TextChunker(BaseChunker):
         ChunkSeparator(". "),
         ChunkSeparator("! "),
         ChunkSeparator("? "),
-        ChunkSeparator(" ")
+        ChunkSeparator(" "),
     ]

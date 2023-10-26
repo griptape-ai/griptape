@@ -8,7 +8,9 @@ class TestTextSummaryTask:
     def test_run(self):
         task = TextSummaryTask(
             "test",
-            summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver())
+            summary_engine=PromptSummaryEngine(
+                prompt_driver=MockPromptDriver()
+            ),
         )
         agent = Agent()
 

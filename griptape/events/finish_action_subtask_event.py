@@ -9,4 +9,3 @@ class FinishActionSubtaskEvent(BaseActionSubtaskEvent):
         from griptape.schemas import FinishActionSubtaskEventSchema
 
         return dict(FinishActionSubtaskEventSchema().dump(self))
-

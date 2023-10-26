@@ -7,7 +7,6 @@ from griptape.events.base_event import BaseEvent
 class FinishPromptEvent(BaseEvent):
     token_count: int = field(kw_only=True)
 
-    
     def to_dict(self) -> dict:
         from griptape.schemas import FinishPromptEventSchema
 

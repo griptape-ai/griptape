@@ -19,12 +19,10 @@ class TestPineconeVectorStorageDriver:
                     "id": "foo",
                     "values": [0, 1, 0],
                     "score": 42,
-                    "metadata": {
-                        "foo": "bar"
-                    }
+                    "metadata": {"foo": "bar"},
                 }
             ],
-            "namespace": "foobar"
+            "namespace": "foobar",
         }
 
         mocker.patch("pinecone.init", return_value=None)
@@ -38,7 +36,7 @@ class TestPineconeVectorStorageDriver:
             api_key="foobar",
             index_name="test",
             environment="test",
-            embedding_driver=MockEmbeddingDriver()
+            embedding_driver=MockEmbeddingDriver(),
         )
 
     def test_upsert_text_artifact(self, driver):

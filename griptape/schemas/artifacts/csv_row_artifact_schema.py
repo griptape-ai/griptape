@@ -3,10 +3,7 @@ from griptape.schemas import BaseArtifactSchema
 
 
 class CsvRowArtifactSchema(BaseArtifactSchema):
-    value = fields.Dict(
-        keys=fields.Str(),
-        values=fields.Str(allow_none=True)
-    )
+    value = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
     separator = fields.Str()
 
     @post_load

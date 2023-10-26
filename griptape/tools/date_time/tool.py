@@ -6,10 +6,12 @@ from griptape.utils.decorators import activity
 
 
 class DateTime(BaseTool):
-    @activity(config={
-        "uses_default_memory": False,
-        "description": "Can be used to return current date and time."
-    })
+    @activity(
+        config={
+            "uses_default_memory": False,
+            "description": "Can be used to return current date and time.",
+        }
+    )
     def get_current_datetime(self, _: dict) -> BaseArtifact:
         try:
             current_datetime = datetime.now()
@@ -17,18 +19,22 @@ class DateTime(BaseTool):
             return TextArtifact(str(current_datetime))
         except Exception as e:
             return ErrorArtifact(f"error getting current datetime: {e}")
-    
-    @activity(config={
-        "uses_default_memory": False,
-        "description": "Can be used to return a relative date and time.",
-        "schema": Schema({
-            Literal(
-                "relative_date_string",
-                description='Relative date in English. For example, "now EST", "20 minutes ago", '
-                            '"in 2 days", "3 months, 1 week and 1 day ago", or "yesterday at 2pm"'
-            ): str
-        })
-    })
+
+    @activity(
+        config={
+            "uses_default_memory": False,
+            "description": "Can be used to return a relative date and time.",
+            "schema": Schema(
+                {
+                    Literal(
+                        "relative_date_string",
+                        description='Relative date in English. For example, "now EST", "20 minutes ago", '
+                        '"in 2 days", "3 months, 1 week and 1 day ago", or "yesterday at 2pm"',
+                    ): str
+                }
+            ),
+        }
+    )
     def get_relative_datetime(self, params: dict) -> BaseArtifact:
         from dateparser import parse
 

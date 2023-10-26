@@ -7,6 +7,7 @@ from .base_task_event import BaseTaskEvent
 if TYPE_CHECKING:
     from griptape.tasks import ActionSubtask
 
+
 @define
 class BaseActionSubtaskEvent(BaseTaskEvent):
     subtask_parent_task_id: Optional[str] = field(kw_only=True)
@@ -29,4 +30,3 @@ class BaseActionSubtaskEvent(BaseTaskEvent):
             subtask_action_name=task.action_name,
             subtask_action_input=task.action_input,
         )
-

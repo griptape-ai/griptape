@@ -38,27 +38,42 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)
-    api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
-    organization: Optional[str] = field(default=openai.organization, kw_only=True)
+    api_key: Optional[str] = field(
+        default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True
+    )
+    organization: Optional[str] = field(
+        default=openai.organization, kw_only=True
+    )
     model: str = field(kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(
+            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
+        ),
+        kw_only=True,
     )
     user: str = field(default="", kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
         default=Factory(lambda: openai.InvalidRequestError), kw_only=True
     )
     _ratelimit_request_limit: Optional[int] = field(init=False, default=None)
-    _ratelimit_requests_remaining: Optional[int] = field(init=False, default=None)
-    _ratelimit_requests_reset_at: Optional[datetime] = field(init=False, default=None)
+    _ratelimit_requests_remaining: Optional[int] = field(
+        init=False, default=None
+    )
+    _ratelimit_requests_reset_at: Optional[datetime] = field(
+        init=False, default=None
+    )
     _ratelimit_token_limit: Optional[int] = field(init=False, default=None)
     _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
-    _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
+    _ratelimit_tokens_reset_at: Optional[datetime] = field(
+        init=False, default=None
+    )
 
     def __attrs_post_init__(self) -> None:
         # Define a hook to pull rate limit metadata from the OpenAI API response header.
         openai.requestssession = requests.Session()
-        openai.requestssession.hooks = {"response": self._extract_ratelimit_metadata}
+        openai.requestssession.hooks = {
+            "response": self._extract_ratelimit_metadata
+        }
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = openai.ChatCompletion.create(**self._base_params(prompt_stack))
@@ -68,16 +83,22 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 value=result.choices[0]["message"]["content"].strip()
             )
         else:
-            raise Exception("Completion with more than one choice is not supported yet.")
+            raise Exception(
+                "Completion with more than one choice is not supported yet."
+            )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = openai.ChatCompletion.create(**self._base_params(prompt_stack), stream=True)
+        result = openai.ChatCompletion.create(
+            **self._base_params(prompt_stack), stream=True
+        )
 
         for chunk in result:
             if len(chunk.choices) == 1:
                 delta = chunk.choices[0]["delta"]
             else:
-                raise Exception("Completion with more than one choice is not supported yet.")
+                raise Exception(
+                    "Completion with more than one choice is not supported yet."
+                )
 
             if "content" in delta:
                 delta_content = delta["content"]
@@ -85,10 +106,17 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 yield TextArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
-        return self.tokenizer.token_count(self._prompt_stack_to_messages(prompt_stack))
+        return self.tokenizer.token_count(
+            self._prompt_stack_to_messages(prompt_stack)
+        )
 
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
-        return [{"role": self.__to_openai_role(i), "content": i.content} for i in prompt_stack.inputs]
+    def _prompt_stack_to_messages(
+        self, prompt_stack: PromptStack
+    ) -> list[dict]:
+        return [
+            {"role": self.__to_openai_role(i), "content": i.content}
+            for i in prompt_stack.inputs
+        ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -130,16 +158,28 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             settings={"PREFER_DATES_FROM": "future"},
         )
         if self._ratelimit_requests_reset_at is None:
-            self._ratelimit_requests_reset_at = datetime.now() + timedelta(seconds=1)
+            self._ratelimit_requests_reset_at = datetime.now() + timedelta(
+                seconds=1
+            )
 
         self._ratelimit_tokens_reset_at = dateparser.parse(
             response.headers["x-ratelimit-reset-tokens"],
             settings={"PREFER_DATES_FROM": "future"},
         )
         if self._ratelimit_tokens_reset_at is None:
-            self._ratelimit_tokens_reset_at = datetime.now() + timedelta(seconds=1)
+            self._ratelimit_tokens_reset_at = datetime.now() + timedelta(
+                seconds=1
+            )
 
-        self._ratelimit_request_limit = response.headers["x-ratelimit-limit-requests"]
-        self._ratelimit_requests_remaining = response.headers["x-ratelimit-remaining-requests"]
-        self._ratelimit_token_limit = response.headers["x-ratelimit-limit-tokens"]
-        self._ratelimit_tokens_remaining = response.headers["x-ratelimit-remaining-tokens"]
+        self._ratelimit_request_limit = response.headers[
+            "x-ratelimit-limit-requests"
+        ]
+        self._ratelimit_requests_remaining = response.headers[
+            "x-ratelimit-remaining-requests"
+        ]
+        self._ratelimit_token_limit = response.headers[
+            "x-ratelimit-limit-tokens"
+        ]
+        self._ratelimit_tokens_remaining = response.headers[
+            "x-ratelimit-remaining-tokens"
+        ]

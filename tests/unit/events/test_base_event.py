@@ -58,14 +58,8 @@ class TestBaseEvent:
             "task_id": "foo",
             "task_parent_ids": ["bar"],
             "task_child_ids": ["baz"],
-            "task_input": {
-                "type": "TextArtifact",
-                "value": "foo",
-            },
-            "task_output": {
-                "type": "TextArtifact",
-                "value": "bar",
-            },
+            "task_input": {"type": "TextArtifact", "value": "foo"},
+            "task_output": {"type": "TextArtifact", "value": "bar"},
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -85,21 +79,13 @@ class TestBaseEvent:
             "task_id": "foo",
             "task_parent_ids": ["bar"],
             "task_child_ids": ["baz"],
-            "task_input": {
-                "type": "TextArtifact",
-                "value": "foo",
-            },
-            "task_output": {
-                "type": "TextArtifact",
-                "value": "bar",
-            },
+            "task_input": {"type": "TextArtifact", "value": "foo"},
+            "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
             "subtask_action_type": "baz",
             "subtask_action_name": "qux",
-            "subtask_action_input": {
-                "value": "quux",
-            },
+            "subtask_action_input": {"value": "quux"},
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -124,14 +110,8 @@ class TestBaseEvent:
             "task_id": "foo",
             "task_parent_ids": ["bar"],
             "task_child_ids": ["baz"],
-            "task_input": {
-                "type": "TextArtifact",
-                "value": "foo",
-            },
-            "task_output": {
-                "type": "TextArtifact",
-                "value": "bar",
-            },
+            "task_input": {"type": "TextArtifact", "value": "foo"},
+            "task_output": {"type": "TextArtifact", "value": "bar"},
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -151,21 +131,13 @@ class TestBaseEvent:
             "task_id": "foo",
             "task_parent_ids": ["bar"],
             "task_child_ids": ["baz"],
-            "task_input": {
-                "type": "TextArtifact",
-                "value": "foo",
-            },
-            "task_output": {
-                "type": "TextArtifact",
-                "value": "bar",
-            },
+            "task_input": {"type": "TextArtifact", "value": "foo"},
+            "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
             "subtask_action_type": "baz",
             "subtask_action_name": "qux",
-            "subtask_action_input": {
-                "value": "quux",
-            },
+            "subtask_action_input": {"value": "quux"},
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -183,27 +155,21 @@ class TestBaseEvent:
         assert event.subtask_action_input is not None
         assert event.subtask_action_input["value"] == "quux"
 
-    def test_start_structure_run_event_from_dict(self): 
-        dict_value = {
-            "type": "StartStructureRunEvent",
-            "timestamp": 123.0,
-        }
+    def test_start_structure_run_event_from_dict(self):
+        dict_value = {"type": "StartStructureRunEvent", "timestamp": 123.0}
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, StartStructureRunEvent)
         assert event.timestamp == 123
 
-    def test_finish_structure_run_event_from_dict(self): 
-        dict_value = {
-            "type": "FinishStructureRunEvent",
-            "timestamp": 123.0,
-        }
+    def test_finish_structure_run_event_from_dict(self):
+        dict_value = {"type": "FinishStructureRunEvent", "timestamp": 123.0}
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, FinishStructureRunEvent)
-        assert event.timestamp == 123   
+        assert event.timestamp == 123
 
     def test_completion_chunk_event_from_dict(self):
         dict_value = {
@@ -217,7 +183,6 @@ class TestBaseEvent:
         assert isinstance(event, CompletionChunkEvent)
         assert event.token == "foo"
 
-        
     def test_unsupported_from_dict(self):
         dict_value = {"type": "foo", "value": "foobar"}
         with pytest.raises(ValueError):

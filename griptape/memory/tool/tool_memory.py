@@ -2,7 +2,13 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional, Type, Any, Callable
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
+from griptape.artifacts import (
+    BaseArtifact,
+    InfoArtifact,
+    ListArtifact,
+    ErrorArtifact,
+    TextArtifact,
+)
 from griptape.mixins import ActivityMixin
 from griptape.mixins import ToolMemoryActivitiesMixin
 
@@ -17,24 +23,34 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
     )
-    artifact_storages: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
-    namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
+    artifact_storages: dict[Type, BaseArtifactStorage] = field(
+        factory=dict, kw_only=True
+    )
+    namespace_storage: dict[str, BaseArtifactStorage] = field(
+        factory=dict, kw_only=True
+    )
     namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @artifact_storages.validator
-    def validate_artifact_storages(self, _, artifact_storage: dict[Type, BaseArtifactStorage]) -> None:
+    def validate_artifact_storages(
+        self, _, artifact_storage: dict[Type, BaseArtifactStorage]
+    ) -> None:
         seen_types = []
 
         for storage in artifact_storage.values():
             if type(storage) in seen_types:
-                raise ValueError("can't have more than memory storage of the same type")
+                raise ValueError(
+                    "can't have more than memory storage of the same type"
+                )
 
             seen_types.append(type(storage))
 
-    def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
+    def get_storage_for(
+        self, artifact: BaseArtifact
+    ) -> Optional[BaseArtifactStorage]:
         find_storage = lambda a: next(
             (v for k, v in self.artifact_storages.items() if isinstance(a, k)),
-            None
+            None,
         )
 
         if isinstance(artifact, ListArtifact):
@@ -46,10 +62,10 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
             return find_storage(artifact)
 
     def process_output(
-            self,
-            tool_activity: Callable,
-            subtask: ActionSubtask,
-            output_artifact: BaseArtifact
+        self,
+        tool_activity: Callable,
+        subtask: ActionSubtask,
+        output_artifact: BaseArtifact,
     ) -> BaseArtifact:
         from griptape.utils import J2
 
@@ -69,14 +85,16 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
                     memory_name=self.name,
                     tool_name=tool_name,
                     activity_name=activity_name,
-                    artifact_namespace=namespace
+                    artifact_namespace=namespace,
                 )
 
                 return InfoArtifact(output)
         else:
             return InfoArtifact("tool output is empty")
 
-    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> Optional[BaseArtifact]:
+    def store_artifact(
+        self, namespace: str, artifact: BaseArtifact
+    ) -> Optional[BaseArtifact]:
         namespace_storage = self.namespace_storage.get(namespace)
         storage = self.get_storage_for(artifact)
 
@@ -118,7 +136,9 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         else:
             return None
 
-    def summarize_namespace(self, namespace: str) -> TextArtifact | InfoArtifact:
+    def summarize_namespace(
+        self, namespace: str
+    ) -> TextArtifact | InfoArtifact:
         storage = self.namespace_storage.get(namespace)
 
         if storage:
@@ -126,14 +146,16 @@ class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
         else:
             return InfoArtifact("Can't find memory content")
 
-    def query_namespace(self, namespace: str, query: str) -> TextArtifact | InfoArtifact:
+    def query_namespace(
+        self, namespace: str, query: str
+    ) -> TextArtifact | InfoArtifact:
         storage = self.namespace_storage.get(namespace)
 
         if storage:
             return storage.query(
                 namespace=namespace,
                 query=query,
-                metadata=self.namespace_metadata.get(namespace)
+                metadata=self.namespace_metadata.get(namespace),
             )
         else:
             return InfoArtifact("Can't find memory content")
