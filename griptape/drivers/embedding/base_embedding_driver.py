@@ -6,6 +6,10 @@ from griptape.mixins import ExponentialBackoffMixin
 
 @define
 class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
+    """
+    Attributes:
+        dimensions: Vector dimensions.
+    """
     dimensions: int = field(kw_only=True)
 
     def embed_text_artifact(self, artifact: TextArtifact) -> list[float]:
