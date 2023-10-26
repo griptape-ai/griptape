@@ -21,10 +21,10 @@ class TestPipeline:
         )
 
         assert pipeline.prompt_driver is driver
-        assert pipeline.first_task() is None
-        assert pipeline.last_task() is None
-        assert pipeline.rulesets[0].name is "TestRuleset"
-        assert pipeline.rulesets[0].rules[0].value is "test"
+        assert pipeline.first_task is None
+        assert pipeline.last_task is None
+        assert pipeline.rulesets[0].name == "TestRuleset"
+        assert pipeline.rulesets[0].rules[0].value == "test"
         assert pipeline.memory is None
 
     def test_rulesets(self):
@@ -157,10 +157,10 @@ class TestPipeline:
         pipeline + second_task
         pipeline + third_task
 
-        assert pipeline.first_task().id is first_task.id
+        assert pipeline.first_task.id is first_task.id
         assert pipeline.tasks[1].id is second_task.id
         assert pipeline.tasks[2].id is third_task.id
-        assert pipeline.last_task().id is third_task.id
+        assert pipeline.last_task.id is third_task.id
 
     def test_add_task(self):
         first_task = PromptTask("test1")
@@ -265,7 +265,7 @@ class TestPipeline:
 
         result = pipeline.run()
 
-        assert "mock output" in result.output.to_text()
+        assert "mock output" in result.output_task.output.to_text()
         assert task.state == BaseTask.State.FINISHED
 
     def test_run_with_args(self):

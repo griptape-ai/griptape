@@ -14,13 +14,16 @@ class Workflow(Structure):
     futures_executor: futures.Executor = field(
         default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
-
-    def __add__(self, other: BaseTask | list[BaseTask]) -> BaseTask:
+    def __add__(self, other: BaseTask | list[BaseTask]) -> BaseTask | list[BaseTask]:
         return (
             [self.add_task(o) for o in other]
             if isinstance(other, list)
             else self + [other]
         )
+
+    @property
+    def output_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.children]
 
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
@@ -29,7 +32,7 @@ class Workflow(Structure):
 
         return task
 
-    def try_run(self, *args) -> list[BaseTask]:
+    def try_run(self, *args) -> Workflow:
         self._execution_args = args
         ordered_tasks = self.order_tasks()
         exit_loop = False
@@ -51,7 +54,7 @@ class Workflow(Structure):
 
         self._execution_args = ()
 
-        return self.output_tasks()
+        return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
@@ -69,8 +72,6 @@ class Workflow(Structure):
 
         return context
 
-    def output_tasks(self) -> list[BaseTask]:
-        return [task for task in self.tasks if not task.children]
 
     def to_graph(self) -> dict[str, set[str]]:
         graph: dict[str, set[str]] = {}
@@ -84,7 +85,7 @@ class Workflow(Structure):
 
         return graph
 
-    def order_tasks(self) -> list[BaseTask]:
+    def order_tasks(self) -> list[BaseTask | None]:
         return [
             self.find_task(task_id)
             for task_id in TopologicalSorter(self.to_graph()).static_order()

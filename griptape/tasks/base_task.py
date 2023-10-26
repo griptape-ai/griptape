@@ -33,16 +33,19 @@ class BaseTask(ABC):
         ...
 
     @property
-    def parents(self) -> list[BaseTask]:
+    def parents(self) -> list[Optional[BaseTask]]:
         return [
             self.structure.find_task(parent_id) for parent_id in self.parent_ids
         ]
 
     @property
-    def children(self) -> list[BaseTask]:
+    def children(self) -> list[Optional[BaseTask]]:
         return [
             self.structure.find_task(child_id) for child_id in self.child_ids
         ]
+
+    def __str__(self) -> str:
+        return str(self.output.value)
 
     def __rshift__(self, child: BaseTask) -> BaseTask:
         return self.add_child(child)
@@ -112,7 +115,7 @@ class BaseTask(ABC):
         if self.structure:
             self.structure.publish_event(FinishTaskEvent.from_task(self))
 
-    def execute(self) -> BaseArtifact:
+    def execute(self) -> Optional[BaseArtifact]:
         try:
             self.state = BaseTask.State.EXECUTING
 

@@ -11,15 +11,6 @@ if TYPE_CHECKING:
 
 @define
 class Pipeline(Structure):
-    def first_task(self) -> Optional[BaseTask]:
-        return self.tasks[0] if self.tasks else None
-
-    def last_task(self) -> Optional[BaseTask]:
-        return self.tasks[-1] if self.tasks else None
-
-    def finished_tasks(self) -> list[BaseTask]:
-        return [s for s in self.tasks if s.is_finished()]
-
     def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
         return (
             [self.add_task(o) for o in other]
@@ -27,11 +18,23 @@ class Pipeline(Structure):
             else self + [other]
         )
 
+    @property
+    def finished_tasks(self) -> list[BaseTask]:
+        return [s for s in self.tasks if s.is_finished()]
+
+    @property
+    def first_task(self) -> Optional[BaseTask]:
+        return self.tasks[0] if self.tasks else None
+
+    @property
+    def last_task(self) -> Optional[BaseTask]:
+        return self.tasks[-1] if self.tasks else None
+
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
 
-        if self.last_task():
-            self.last_task().add_child(task)
+        if self.last_task:
+            self.last_task.add_child(task)
         else:
             task.structure = self
 
@@ -39,24 +42,24 @@ class Pipeline(Structure):
 
         return task
 
-    def try_run(self, *args) -> BaseTask:
+    def try_run(self, *args) -> Pipeline:
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
 
-        self.__run_from_task(self.first_task())
+        self.__run_from_task(self.first_task)
 
         if self.memory:
             run = Run(
-                input=self.first_task().input.to_text(),
-                output=self.last_task().output.to_text(),
+                input=self.first_task.input.to_text(),
+                output=self.last_task.output.to_text(),
             )
 
             self.memory.add_run(run)
 
         self._execution_args = ()
 
-        return self.last_task()
+        return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)

@@ -195,7 +195,7 @@ class TestAgent:
 
         result = agent.run()
 
-        assert "mock output" in result.output.to_text()
+        assert "mock output" in result.output_task.output.to_text()
         assert task.state == BaseTask.State.FINISHED
 
     def test_run_with_args(self):
