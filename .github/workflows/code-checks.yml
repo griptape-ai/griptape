@@ -1,0 +1,20 @@
+name: Code Checks
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run formatter
+        run: black --check .
