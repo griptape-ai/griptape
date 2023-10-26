@@ -171,11 +171,8 @@ class Structure(ABC):
             handler = event_listener.handler
             event_types = event_listener.event_types
 
-            if event_types is None:
+            if event_types is None or type(event) in event_types:
                 handler(event)
-            else:
-                if type(event) in event_types:
-                    handler(event)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
