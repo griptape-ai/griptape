@@ -1,3 +1,4 @@
+from __future__ import annotations
 import json
 import boto3
 from typing import Any
@@ -11,16 +12,17 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     """
     Attributes:
         model: Embedding model name. Defaults to DEFAULT_MODEL.
-        dimensions: Vector dimensions. Defaults to `1536`.
+        dimensions: Vector dimensions. Defaults to DEFAULT_MAX_TOKENS.
         tokenizer: Optionally provide custom `BedrockTitanTokenizer`.
         session: Optionally provide custom `boto3.Session`.
         bedrock_client: Optionally provide custom `bedrock-runtime` client.
     """
 
     DEFAULT_MODEL = "amazon.titan-embed-text-v1"
+    DEFAULT_MAX_TOKENS = 1536
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
-    dimensions: int = field(default=1536, kw_only=True)
+    dimensions: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
     tokenizer: BedrockTitanTokenizer = field(
         default=Factory(
             lambda self: BedrockTitanTokenizer(model=self.model),
@@ -38,10 +40,8 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
         kw_only=True,
     )
 
-    def try_embed_string(self, string: str) -> list[float]:
-        text = string.replace("\n", " ")
-
-        payload = {"inputText": text}
+    def try_embed_chunk(self, chunk: str) -> list[float]:
+        payload = {"inputText": chunk}
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),

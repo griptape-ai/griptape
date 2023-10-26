@@ -10,6 +10,8 @@ class BedrockTitanTokenizer(BaseTokenizer):
     DEFAULT_MODEL = "amazon.titan-text-express-v1"
     DEFAULT_MAX_TOKENS = 4096
 
+    DEFAULT_EMBEDDING_MODELS = "amazon.titan-embed-text-v1"
+
     session: boto3.Session = field(
         default=Factory(lambda: boto3.Session()), kw_only=True
     )
@@ -26,7 +28,7 @@ class BedrockTitanTokenizer(BaseTokenizer):
     def max_tokens(self) -> int:
         return self.DEFAULT_MAX_TOKENS
 
-    def token_count(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         payload = {"inputText": text}
 
         response = self.bedrock_client.invoke_model(
@@ -38,13 +40,3 @@ class BedrockTitanTokenizer(BaseTokenizer):
         response_body = json.loads(response.get("body").read())
 
         return response_body["inputTextTokenCount"]
-
-    def encode(self, _: str) -> str:
-        raise NotImplementedError(
-            "Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API."
-        )
-
-    def decode(self, _: list[int]) -> str:
-        raise NotImplementedError(
-            "Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API."
-        )
