@@ -61,7 +61,7 @@ class TestGoogleDriveClient:
         assert isinstance(result, ErrorArtifact)
 
         assert (
-            "error searching for file due to malformed credentials"
+            "error sharing file due to malformed credentials"
             in result.value
         )
 
