@@ -17,7 +17,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         api_type: OpenAI API type, for example 'open_ai' or 'azure'. Defaults to 'open_ai'.
         api_version: API version. Defaults to 'OPENAI_API_VERSION' environment variable.
         api_base: API URL. Defaults to OpenAI's v1 API URL.
-        api_key: API key to pass directly. Defaults to `OPENAI_API_KEY_PATH` environment variable.
+        api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
         organization: OpenAI organization. Defaults to 'OPENAI_ORGANIZATION' environment variable.
         tokenizer: Optionally provide custom `OpenAiTokenizer`.
     """
