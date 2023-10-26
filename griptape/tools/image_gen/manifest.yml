@@ -1,0 +1,3 @@
+version: "v1"
+name: DALL-E Image Generator
+description: Tool for generating images using DALL·E API.
