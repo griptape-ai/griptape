@@ -22,6 +22,5 @@ __all__ = [
     "StartStructureRunEvent",
     "FinishStructureRunEvent",
     "CompletionChunkEvent",
-
-    "EventListener"
+    "EventListener",
 ]

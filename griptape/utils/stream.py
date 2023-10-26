@@ -55,6 +55,8 @@ class Stream:
             self._event_queue.put(event, True)
             self._event_queue.join()
 
-        self.structure.add_event_listener(event_handler, [CompletionChunkEvent, FinishStructureRunEvent])
+        self.structure.add_event_listener(
+            event_handler, [CompletionChunkEvent, FinishStructureRunEvent]
+        )
 
         self.structure.run(*args)

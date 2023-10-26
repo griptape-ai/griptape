@@ -35,6 +35,7 @@ from griptape.events import EventListener
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
 
+
 @define
 class Structure(ABC):
     LOGGER_NAME = "griptape"
@@ -155,7 +156,11 @@ class Structure(ABC):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
-    def add_event_listener(self, handler: Callable[[BaseEvent], Any], event_types: Optional[list[Type[BaseEvent]]]=None) -> None:
+    def add_event_listener(
+        self,
+        handler: Callable[[BaseEvent], Any],
+        event_types: Optional[list[Type[BaseEvent]]] = None,
+    ) -> None:
         event_listener = EventListener(handler, event_types=event_types)
 
         if event_listener not in self.event_listeners:
@@ -171,7 +176,7 @@ class Structure(ABC):
             else:
                 if type(event) in event_types:
                     handler(event)
-            
+
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
 
