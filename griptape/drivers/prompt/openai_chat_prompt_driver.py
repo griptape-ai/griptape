@@ -106,7 +106,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 yield TextArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
-        return self.tokenizer.token_count(
+        return self.tokenizer.count_tokens(
             self._prompt_stack_to_messages(prompt_stack)
         )
 

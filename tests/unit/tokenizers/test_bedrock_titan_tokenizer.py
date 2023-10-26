@@ -18,21 +18,10 @@ class TestBedrockTitanTokenizer:
         mock_session_object.client.return_value = mock_client
         mock_session_class.return_value = mock_session_object
 
-    def test_unsupported_methods(self):
-        with pytest.raises(NotImplementedError):
-            BedrockTitanTokenizer(
-                model=BedrockTitanTokenizer.DEFAULT_MODEL
-            ).encode("foo bar")
-
-        with pytest.raises(NotImplementedError):
-            BedrockTitanTokenizer(
-                model=BedrockTitanTokenizer.DEFAULT_MODEL
-            ).decode([1, 2, 3])
-
     def test_titan_tokens_left(self):
         assert (
             BedrockTitanTokenizer(
                 model=BedrockTitanTokenizer.DEFAULT_MODEL
-            ).tokens_left("foo bar")
+            ).count_tokens_left("foo bar")
             == 4083
         )

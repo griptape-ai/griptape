@@ -252,7 +252,7 @@ class TestPipeline:
             )
         ) == OpenAiTokenizer(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
-        ).token_count(
+        ).count_tokens(
             text
         )
 
