@@ -5,7 +5,9 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 class TestBedrockClaudeTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return BedrockClaudeTokenizer(model=BedrockClaudeTokenizer.DEFAULT_MODEL)
+        return BedrockClaudeTokenizer(
+            model=BedrockClaudeTokenizer.DEFAULT_MODEL
+        )
 
     def test_encode(self, tokenizer):
         assert tokenizer.encode("foo bar") == [3803, 3871]

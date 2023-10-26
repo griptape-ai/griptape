@@ -7,9 +7,7 @@ from griptape.artifacts import TextArtifact, ListArtifact
 class BaseSummaryEngine(ABC):
     def summarize_text(self, text: str) -> str:
         return self.summarize_artifacts(
-            ListArtifact(
-                [TextArtifact(text)]
-            )
+            ListArtifact([TextArtifact(text)])
         ).value
 
     @abstractmethod

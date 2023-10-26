@@ -16,6 +16,7 @@ class VectorStoreClient(BaseTool):
         query_engine: `BaseQueryEngine`.
         top_n: Max number of results returned for the query engine query.
     """
+
     DEFAULT_TOP_N = 5
 
     description: str = field(kw_only=True)
@@ -23,24 +24,25 @@ class VectorStoreClient(BaseTool):
     top_n: int = field(default=DEFAULT_TOP_N, kw_only=True)
     namespace: Optional[str] = field(default=None, kw_only=True)
 
-    @activity(config={
-        "description":
-            "Can be used to search a vector database with the following description: {{ _self.description }}",
-        "schema": Schema({
-            Literal(
-                "query",
-                description="A natural language search query to run against the vector database"
-            ): str
-        })
-    })
+    @activity(
+        config={
+            "description": "Can be used to search a vector database with the following description: {{ _self.description }}",
+            "schema": Schema(
+                {
+                    Literal(
+                        "query",
+                        description="A natural language search query to run against the vector database",
+                    ): str
+                }
+            ),
+        }
+    )
     def search(self, params: dict) -> BaseArtifact:
         query = params["values"]["query"]
 
         try:
             return self.query_engine.query(
-                query,
-                top_n=self.top_n,
-                namespace=self.namespace
+                query, top_n=self.top_n, namespace=self.namespace
             )
         except Exception as e:
             return ErrorArtifact(f"error querying vector store: {e}")

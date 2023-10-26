@@ -13,7 +13,9 @@ from griptape.drivers import AmazonBedrockPromptDriver
 class BedrockTitanPromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.9, kw_only=True)
     _tokenizer: BedrockTitanTokenizer = field(default=None, kw_only=True)
-    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(
+        default=None, kw_only=True
+    )
 
     @property
     def tokenizer(self) -> BedrockTitanTokenizer:
@@ -23,7 +25,7 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         Tokenizer. However, the Prompt Driver is not initialized until after
         the Prompt Model Driver is initialized. To resolve this, we make the `tokenizer`
         field a @property that is only initialized when it is first accessed.
-        This ensures that by the time we need to initialize the Tokenizer, the 
+        This ensures that by the time we need to initialize the Tokenizer, the
         Prompt Driver has already been initialized.
 
         See this thread more more information: https://github.com/griptape-ai/griptape/issues/244
@@ -34,7 +36,10 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockTitanTokenizer(model=self.prompt_driver.model, session=self.prompt_driver.session)
+            self._tokenizer = BedrockTitanTokenizer(
+                model=self.prompt_driver.model,
+                session=self.prompt_driver.session,
+            )
             return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
@@ -51,9 +56,9 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
                 prompt_lines.append(i.content)
         prompt_lines.append("Bot:")
 
-        prompt = '\n\n'.join(prompt_lines)
+        prompt = "\n\n".join(prompt_lines)
 
-        return { "inputText": prompt }
+        return {"inputText": prompt}
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_model_input(prompt_stack)["inputText"]
@@ -71,10 +76,10 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         # When streaming, the response body comes back as bytes.
         if isinstance(response_body, bytes):
             response_body = response_body.decode()
-        
+
         body = json.loads(response_body)
-        
+
         if self.prompt_driver.stream:
-            return TextArtifact(body['outputText'])
+            return TextArtifact(body["outputText"])
         else:
             return TextArtifact(body["results"][0]["outputText"])

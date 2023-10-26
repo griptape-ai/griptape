@@ -6,10 +6,12 @@ class ManifestValidator:
         return self.schema().validate(manifest)
 
     def schema(self) -> Schema:
-        return Schema({
-            "version": "v1",
-            "name": str,
-            "description": str,
-            "contact_email": str,
-            "legal_info_url": str
-        })
+        return Schema(
+            {
+                "version": "v1",
+                "name": str,
+                "description": str,
+                "contact_email": str,
+                "legal_info_url": str,
+            }
+        )

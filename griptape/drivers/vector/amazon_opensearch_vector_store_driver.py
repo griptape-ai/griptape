@@ -16,6 +16,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
         http_auth: The HTTP authentication credentials to use. Defaults to using credentials in the boto3 session.
         client: An optional OpenSearch client to use. Defaults to a new client using the host, port, http_auth, use_ssl, and verify_certs attributes.
     """
+
     session: boto3.session.Session = field(kw_only=True)
 
     http_auth: Optional[str | Tuple[str, str]] = field(
@@ -24,20 +25,21 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
                 self.session.get_credentials().access_key,
                 self.session.get_credentials().secret_key,
                 self.session.region_name,
-                'es'
+                "es",
             ),
-            takes_self=True)
+            takes_self=True,
+        )
     )
 
     client: Optional[OpenSearch] = field(
         default=Factory(
             lambda self: OpenSearch(
-                hosts=[{'host': self.host, 'port': self.port}],
+                hosts=[{"host": self.host, "port": self.port}],
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,
                 verify_certs=self.verify_certs,
-                connection_class=RequestsHttpConnection
+                connection_class=RequestsHttpConnection,
             ),
-            takes_self=True
+            takes_self=True,
         )
     )

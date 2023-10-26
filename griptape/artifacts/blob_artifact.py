@@ -17,12 +17,15 @@ class BlobArtifact(BaseArtifact):
 
     @property
     def full_path(self) -> str:
-        return os.path.join(self.dir_name, self.name) if self.dir_name else self.name
+        return (
+            os.path.join(self.dir_name, self.name)
+            if self.dir_name
+            else self.name
+        )
 
     def to_text(self) -> str:
         return self.value.decode(
-            encoding=self.encoding,
-            errors=self.encoding_error_handler
+            encoding=self.encoding, errors=self.encoding_error_handler
         )
 
     def to_dict(self) -> dict:

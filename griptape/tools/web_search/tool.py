@@ -14,50 +14,63 @@ class WebSearch(BaseTool):
     google_api_search_id: str = field(kw_only=True)
     google_api_country: str = field(default="us", kw_only=True)
 
-    @activity(config={
-        "description": "Can be used for searching the web",
-        "uses_default_memory": False,
-        "schema": Schema({
-            Literal(
-                "query",
-                description="Search engine request that returns a list of pages with titles, descriptions, and URLs"
-            ): str
-        })
-    })
+    @activity(
+        config={
+            "description": "Can be used for searching the web",
+            "uses_default_memory": False,
+            "schema": Schema(
+                {
+                    Literal(
+                        "query",
+                        description="Search engine request that returns a list of pages with titles, descriptions, and URLs",
+                    ): str
+                }
+            ),
+        }
+    )
     def search(self, props: dict) -> ListArtifact | ErrorArtifact:
         query = props["values"]["query"]
 
         try:
-            return ListArtifact([
-                TextArtifact(str(result))
-                for result in self._search_google(query)
-            ])
+            return ListArtifact(
+                [
+                    TextArtifact(str(result))
+                    for result in self._search_google(query)
+                ]
+            )
         except Exception as e:
             return ErrorArtifact(f"error searching Google: {e}")
 
     def _search_google(self, query: str) -> list[dict]:
         import requests
 
-        url = f"https://www.googleapis.com/customsearch/v1?" \
-              f"key={self.google_api_key}&" \
-              f"cx={self.google_api_search_id}&" \
-              f"q={query}&" \
-              f"start=0&" \
-              f"lr={self.google_api_lang}&" \
-              f"num={self.results_count}&" \
-              f"gl={self.google_api_country}"
+        url = (
+            f"https://www.googleapis.com/customsearch/v1?"
+            f"key={self.google_api_key}&"
+            f"cx={self.google_api_search_id}&"
+            f"q={query}&"
+            f"start=0&"
+            f"lr={self.google_api_lang}&"
+            f"num={self.results_count}&"
+            f"gl={self.google_api_country}"
+        )
         response = requests.get(url)
 
         if response.status_code == 200:
             data = response.json()
 
-            links = [{
-                "url": r["link"],
-                "title": r["title"],
-                "description": r["snippet"],
-            } for r in data["items"]]
+            links = [
+                {
+                    "url": r["link"],
+                    "title": r["title"],
+                    "description": r["snippet"],
+                }
+                for r in data["items"]
+            ]
 
             return links
         else:
-            raise Exception(f"Google Search API returned an error with status code "
-                            f"{response.status_code} and reason '{response.reason}'")
+            raise Exception(
+                f"Google Search API returned an error with status code "
+                f"{response.status_code} and reason '{response.reason}'"
+            )

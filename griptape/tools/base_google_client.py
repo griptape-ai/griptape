@@ -12,7 +12,13 @@ class BaseGoogleClient(BaseTool, ABC):
 
     service_account_credentials: dict = field(kw_only=True)
 
-    def _build_client(self, scopes: list[str], service_name: str, version: str, owner_email: str) -> Any:
+    def _build_client(
+        self,
+        scopes: list[str],
+        service_name: str,
+        version: str,
+        owner_email: str,
+    ) -> Any:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
 
@@ -23,10 +29,12 @@ class BaseGoogleClient(BaseTool, ABC):
         return build(
             serviceName=service_name,
             version=version,
-            credentials=credentials.with_subject(owner_email)
+            credentials=credentials.with_subject(owner_email),
         )
 
-    def _convert_path_to_file_id(self, service: Any, path: str) -> Optional[str]:
+    def _convert_path_to_file_id(
+        self, service: Any, path: str
+    ) -> Optional[str]:
         parts = path.split("/")
         current_id = "root"
 
@@ -46,7 +54,11 @@ class BaseGoogleClient(BaseTool, ABC):
                         "mimeType": "application/vnd.google-apps.folder",
                         "parents": [current_id],
                     }
-                    folder = service.files().create(body=folder_metadata, fields="id").execute()
+                    folder = (
+                        service.files()
+                        .create(body=folder_metadata, fields="id")
+                        .execute()
+                    )
                     current_id = folder.get("id")
                 else:
                     current_id = None

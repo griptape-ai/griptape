@@ -4,9 +4,4 @@ from griptape.structures.pipeline import Pipeline
 from griptape.structures.workflow import Workflow
 
 
-__all__ = [
-    "Structure",
-    "Agent",
-    "Pipeline",
-    "Workflow"
-]
+__all__ = ["Structure", "Agent", "Pipeline", "Workflow"]

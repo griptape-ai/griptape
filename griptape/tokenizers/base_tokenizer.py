@@ -11,7 +11,7 @@ class BaseTokenizer(ABC):
 
     stop_sequences: list[str] = field(
         default=Factory(lambda: BaseTokenizer.DEFAULT_STOP_SEQUENCES),
-        kw_only=True
+        kw_only=True,
     )
 
     @property
