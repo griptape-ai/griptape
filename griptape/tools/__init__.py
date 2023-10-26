@@ -45,5 +45,5 @@ __all__ = [
     "Computer",
     "ProxycurlClient",
     "OpenWeatherClient",
-    "ImageGenerator"
+    "ImageGenerator",
 ]

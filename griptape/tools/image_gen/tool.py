@@ -29,7 +29,9 @@ class ImageGenerator(BaseTool):
         size_value = params["values"].get("size", "1024x1024")
         mode_value = params["values"].get("mode", "url")
 
-        response = openai.Image.create(prompt=prompt_value, n=n_value, size=size_value)
+        response = openai.Image.create(
+            prompt=prompt_value, n=n_value, size=size_value
+        )
 
         image_url = response["data"][0]["url"]
         if mode_value.lower() == "download":
