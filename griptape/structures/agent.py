@@ -47,7 +47,7 @@ class Agent(Structure):
             "Method is not implemented: agents can only have one task."
         )
 
-    def try_run(self, *args) -> BaseTask:
+    def try_run(self, *args) -> Agent:
         self._execution_args = args
 
         self.task.reset()
@@ -64,4 +64,4 @@ class Agent(Structure):
 
         self._execution_args = ()
 
-        return self.task
+        return self

@@ -144,6 +144,14 @@ class Structure(ABC):
                 ]
             return self._logger
 
+    @property
+    def input_task(self) -> Optional[BaseTask]:
+        return self.tasks[0]
+
+    @property
+    def output_task(self) -> Optional[BaseTask]:
+        return self.tasks[-1]
+
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)
 
@@ -187,7 +195,7 @@ class Structure(ABC):
     def add_task(self, task: BaseTask) -> BaseTask:
         ...
 
-    def run(self, *args) -> BaseTask | list[BaseTask]:
+    def run(self, *args) -> Structure:
         self.before_run()
 
         result = self.try_run(*args)
@@ -197,5 +205,5 @@ class Structure(ABC):
         return result
 
     @abstractmethod
-    def try_run(self, *args) -> BaseTask | list[BaseTask]:
+    def try_run(self, *args) -> Structure:
         ...
