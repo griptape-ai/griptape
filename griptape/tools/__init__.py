@@ -20,7 +20,7 @@ from .google_cal.tool import GoogleCalendarClient
 from .google_docs.tool import GoogleDocsClient
 from .google_drive.tool import GoogleDriveClient
 from .openweather_client.tool import OpenWeatherClient
-from .image_gen.tool import ImageGenerator
+from .image_gen.tool import DalleImageGenerator
 
 __all__ = [
     "BaseTool",
@@ -45,5 +45,5 @@ __all__ = [
     "Computer",
     "ProxycurlClient",
     "OpenWeatherClient",
-    "ImageGenerator",
+    "DalleImageGenerator",
 ]
