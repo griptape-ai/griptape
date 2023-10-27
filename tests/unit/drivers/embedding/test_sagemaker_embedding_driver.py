@@ -1,6 +1,7 @@
 import pytest
 from unittest import mock
 from griptape.drivers import AmazonSagemakerEmbeddingDriver
+from griptape.tokenizers.openai_tokenizer import OpenAiTokenizer
 
 
 class TestAmazonSagemakerEmbeddingDriver:
@@ -19,7 +20,11 @@ class TestAmazonSagemakerEmbeddingDriver:
 
     def test_init(self):
         assert AmazonSagemakerEmbeddingDriver(
-            endpoint="test-endpoint", dimensions=4096
+            endpoint="test-endpoint",
+            dimensions=4096,
+            tokenizer=OpenAiTokenizer(
+                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
+            ),
         )
 
     def test_try_embed_chunk(self):
