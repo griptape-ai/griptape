@@ -29,5 +29,9 @@ class TestAmazonSagemakerEmbeddingDriver:
 
     def test_try_embed_chunk(self):
         assert AmazonSagemakerEmbeddingDriver(
-            endpoint="test-endpoint", dimensions=4096
+            endpoint="test-endpoint",
+            dimensions=4096,
+            tokenizer=OpenAiTokenizer(
+                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
+            ),
         ).try_embed_chunk("foobar") == [0, 1, 0]
