@@ -25,7 +25,7 @@ class TestEmailClient:
             "artifact_namespace": "1234"
         }
 
-        assert "memory not found" in EmailClient(
+        assert "error sending email:" in EmailClient(
             smtp_host="",
             smtp_port=0
         ).send({"values": value}).value

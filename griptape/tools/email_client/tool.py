@@ -142,27 +142,18 @@ class EmailClient(BaseTool):
                 "body",
                 description="Email body")
             : str,
-            Optional(
-                "attachment_names",
-                description="Names of the attachments"
-            ): list[str],
-            Optional(
-                "memory_name",
-                description="Name of the memory being used to store attachments"
-            ): str,
-            Optional(
-                "artifact_namespace",
-                description="Namespace of the artifacts being used to store attachments"
-            ): str,
+            Optional("attachments", description="Optional list of attachments loaded from memory"): [
+                {"attachment_name": str, "memory_name": str, "artifact_namespace": str}
+            ],
         })
     })
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         input_values = params["values"]
-
+    
         msg = self._create_email(input_values)
 
         attachments_result = None
-        if input_values.get("memory_name") and input_values.get("artifact_namespace"):
+        if input_values.get("attachments"):
             attachments_result = self._attach_files_to_email(msg, input_values)
 
         if attachments_result:
@@ -182,26 +173,32 @@ class EmailClient(BaseTool):
         return msg
 
     def _attach_files_to_email(self, msg: MIMEMultipart, input_values: dict) -> None | ErrorArtifact:
-        memory_name = input_values.get("memory_name")
-        artifact_namespace = input_values.get("artifact_namespace")
-        attachment_names = input_values.get("attachment_names")
+        attachments = input_values.get("attachments")
+    
+        for index, attachment in enumerate(attachments):
+            memory_name = attachment.get("memory_name")
+            artifact_namespace = attachment.get("artifact_namespace")
+            attachment_name = attachment.get("attachment_name")
+    
+            memory = self.find_input_memory(memory_name)
+    
+            if memory:
+                list_artifact = memory.load_artifacts(artifact_namespace)
 
-        memory = self.find_input_memory(memory_name)
-
-        if memory:
-            list_artifact = memory.load_artifacts(artifact_namespace)
-            if list_artifact:
-                for artifact, attachment_name in zip(list_artifact.value, attachment_names):
-                    file_data = artifact.value.encode()
-                    part = MIMEBase("application", "octet-stream")
-                    part.set_payload(file_data)
-                    encoders.encode_base64(part)
-                    part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
-                    msg.attach(part)
+                if list_artifact:
+                    if len(list_artifact.value) > index:
+                        file_data = list_artifact.value[index].value.encode()
+                        part = MIMEBase("application", "octet-stream")
+                        part.set_payload(file_data)
+                        encoders.encode_base64(part)
+                        part.add_header("Content-Disposition", f"attachment; filename={attachment_name}")
+                        msg.attach(part)
+                    else:
+                        logging.error(f"artifact index {index} out of bounds for namespace {artifact_namespace}.")
+                else:
+                    return ErrorArtifact(f"artifact with namespace {artifact_namespace} not found.")
             else:
-                return ErrorArtifact(f"Artifact with namespace {artifact_namespace} not found.")
-        else:
-            return ErrorArtifact(f"memory not found")
+                return ErrorArtifact(f"memory not found")
         return None
 
     def _send_email(self, msg: MIMEMultipart, to_email: str) -> InfoArtifact | ErrorArtifact:
