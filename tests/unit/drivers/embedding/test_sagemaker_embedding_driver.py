@@ -22,7 +22,7 @@ class TestAmazonSagemakerEmbeddingDriver:
             endpoint="test-endpoint", dimensions=4096
         )
 
-    def test_try_embed_string(self):
+    def test_try_embed_chunk(self):
         assert AmazonSagemakerEmbeddingDriver(
             endpoint="test-endpoint", dimensions=4096
-        ).try_embed_string("foobar") == [0, 1, 0]
+        ).try_embed_chunk("foobar") == [0, 1, 0]

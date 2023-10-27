@@ -19,7 +19,7 @@ class AmazonSagemakerEmbeddingDriver(BaseEmbeddingDriver):
         kw_only=True,
     )
 
-    def try_embed_string(self, string: str) -> list[float]:
+    def try_embed_chunk(self, string: str) -> list[float]:
         # text_inputs can take a list of string and generate a list of embeddings
         # the length of the embedding key in the response will be the same as the text_inputs array
         payload = {"text_inputs": string}
