@@ -2,6 +2,7 @@ import pytest
 from griptape.tools.youtube.tool import YouTubeTool
 from griptape.artifacts import TextArtifact
 
+
 # Test the search method of YouTubeTool
 def test_search_youtube_videos():
     # Create an instance of the YouTubeTool
@@ -19,5 +20,6 @@ def test_search_youtube_videos():
     # Check if the length of the result is greater than 0
     assert len(result) > 0
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     pytest.main()
