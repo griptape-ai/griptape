@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     REQUEST_PATTERN = r"(?s)Request:[^{]*({.*})"
-    RESPONSE_PATTERN = r"(?s)^Response:\s?([\s\S]*)$"
+    RESPONSE_PATTERN = r"(?s)^<|Response|>:\s?([\s\S]*)$"
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
@@ -116,7 +116,7 @@ class ActionSubtask(PromptTask):
 
         self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(
-            f"Subtask {self.id}\nObservation: {observation}"
+            f"Subtask {self.id}\nResponse: {observation}"
         )
 
     def action_to_json(self) -> str:

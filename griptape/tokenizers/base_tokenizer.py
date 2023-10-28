@@ -4,7 +4,7 @@ from attr import define, field, Factory
 
 @define(frozen=True)
 class BaseTokenizer(ABC):
-    DEFAULT_STOP_SEQUENCES = ["Observation:"]
+    DEFAULT_STOP_SEQUENCES = ["<|Response|>:"]
 
     stop_sequences: list[str] = field(
         default=Factory(lambda: BaseTokenizer.DEFAULT_STOP_SEQUENCES),
