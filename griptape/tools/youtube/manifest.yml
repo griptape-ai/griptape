@@ -1,0 +1,5 @@
+version: "v1"
+name: YouTube Tool
+description: A tool to search for YouTube videos based on a search query and get their transcriptions.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
