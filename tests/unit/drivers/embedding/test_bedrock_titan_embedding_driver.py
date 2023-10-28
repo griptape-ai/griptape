@@ -22,8 +22,8 @@ class TestBedrockTitanEmbeddingDriver:
     def test_init(self):
         assert BedrockTitanEmbeddingDriver()
 
-    def test_try_embed_string(self):
-        assert BedrockTitanEmbeddingDriver().try_embed_string("foobar") == [
+    def test_try_embed_chunk(self):
+        assert BedrockTitanEmbeddingDriver().try_embed_chunk("foobar") == [
             0,
             1,
             0,

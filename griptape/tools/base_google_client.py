@@ -6,6 +6,10 @@ from typing import Optional, Any
 
 @define
 class BaseGoogleClient(BaseTool, ABC):
+    DRIVE_FILE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+
+    DRIVE_AUTH_SCOPES = ["https://www.googleapis.com/auth/drive"]
+
     service_account_credentials: dict = field(kw_only=True)
 
     def _build_client(

@@ -22,8 +22,9 @@ class TestPdfLoader:
 
         artifacts = loader.load(path)
 
-        assert len(artifacts) == 149
+        assert len(artifacts) == 151
         assert artifacts[0].value.startswith("Bitcoin: A Peer-to-Peer")
+        assert artifacts[-1].value.endswith('its applications," 1957.\n9')
 
         assert artifacts[0].embedding == [0, 1]
 
@@ -42,9 +43,11 @@ class TestPdfLoader:
         artifacts = loader.load_collection([path1, path2])
 
         assert list(artifacts.keys()) == [key1, key2]
-        assert len(artifacts[key1]) == 149
+        assert len(artifacts[key1]) == 151
         assert artifacts[key1][0].value.startswith("Bitcoin: A Peer-to-Peer")
-        assert len(artifacts[key2]) == 149
+        assert artifacts[key1][-1].value.endswith('its applications," 1957.\n9')
+        assert len(artifacts[key2]) == 151
         assert artifacts[key2][0].value.startswith("Bitcoin: A Peer-to-Peer")
+        assert artifacts[key2][-1].value.endswith('its applications," 1957.\n9')
 
         assert artifacts[key1][0].embedding == [0, 1]
