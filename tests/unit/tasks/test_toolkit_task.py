@@ -2,7 +2,7 @@ import pytest
 from griptape.artifacts import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
-from griptape.structures import Pipeline
+from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ApiRequestSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -44,11 +44,11 @@ class TestToolkitSubtask:
         task = ToolkitTask(
             "test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]
         )
-        pipeline = Pipeline(prompt_driver=MockValuePromptDriver(output))
+        agent = Agent(prompt_driver=MockValuePromptDriver(output))
 
-        pipeline.add_task(task)
+        agent.add_task(task)
 
-        result = pipeline.run()
+        result = agent.run()
 
         assert len(task.tools) == 2
         assert len(task.subtasks) == 1
@@ -60,11 +60,11 @@ class TestToolkitSubtask:
         task = ToolkitTask(
             "test", tools=[MockTool(name="Tool1")], max_subtasks=3
         )
-        pipeline = Pipeline(prompt_driver=MockValuePromptDriver(output))
+        agent = Agent(prompt_driver=MockValuePromptDriver(output))
 
-        pipeline.add_task(task)
+        agent.add_task(task)
 
-        pipeline.run()
+        agent.run()
 
         assert len(task.subtasks) == 3
         assert isinstance(task.output, ErrorArtifact)
@@ -78,7 +78,7 @@ class TestToolkitSubtask:
         )
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
-        Pipeline().add_task(task)
+        Agent().add_task(task)
 
         subtask = task.add_subtask(ApiRequestSubtask(valid_input))
 
@@ -93,7 +93,7 @@ class TestToolkitSubtask:
         observation\nAnswer: test output"""
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
-        Pipeline().add_task(task)
+        Agent().add_task(task)
 
         subtask = task.add_subtask(ApiRequestSubtask(valid_input))
 
@@ -118,7 +118,7 @@ class TestToolkitSubtask:
             api_input={"values": {"f": "b"}},
         )
 
-        Pipeline().add_task(task)
+        Agent().add_task(task)
 
         task.add_subtask(subtask1)
         task.add_subtask(subtask2)
@@ -148,7 +148,7 @@ class TestToolkitSubtask:
             api_input={"values": {"f": "b"}},
         )
 
-        Pipeline().add_task(task)
+        Agent().add_task(task)
 
         task.add_subtask(subtask1)
         task.add_subtask(subtask2)
@@ -160,7 +160,7 @@ class TestToolkitSubtask:
         tool = MockTool()
         task = ToolkitTask("test", tools=[tool])
 
-        Pipeline().add_task(task)
+        Agent().add_task(task)
 
         assert task.find_tool(tool.name) == tool
 
@@ -171,7 +171,7 @@ class TestToolkitSubtask:
         tool = MockTool(name="Tool1", output_memory={"test": [m1, m2]})
         task = ToolkitTask("test", tools=[tool])
 
-        Pipeline().add_task(task)
+        Agent().add_task(task)
 
         assert task.find_memory("Memory1") == m1
         assert task.find_memory("Memory2") == m2
@@ -199,7 +199,7 @@ class TestToolkitSubtask:
 
         task = ToolkitTask(tools=[tool1, tool2])
 
-        Pipeline().add_task(task)
+        Agent().add_task(task)
 
         assert len(task.tool_output_memory) == 3
         assert task.tool_output_memory[0].name == "Memory1"
