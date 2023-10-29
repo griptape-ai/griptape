@@ -1,11 +1,11 @@
-tool name: {{ tool.name }}
-{{ tool.name }} activities:
+API name: {{ tool.name }}
+{{ tool.name }} paths:
 {% for activity in tool.activities() %}
-activity name: {{ tool.activity_name(activity) }}
-{{ tool.name }}.{{ tool.activity_name(activity) }} activity description: {{ tool.activity_description(activity) }}
+path name: {{ tool.activity_name(activity) }}
+{{ tool.name }}.{{ tool.activity_name(activity) }} path description: {{ tool.activity_description(activity) }}
 {% if tool.activity_schema(activity) %}
-{{ tool.name }}.{{ tool.activity_name(activity) }} activity input value schema: {{ tool.activity_schema(activity) }}
+{{ tool.name }}.{{ tool.activity_name(activity) }} path input value schema: {{ tool.activity_schema(activity) }}
 {% else %}
-{{ tool.name }}.{{ tool.activity_name(activity) }} activity has no input value
+{{ tool.name }}.{{ tool.activity_name(activity) }} path doesn't have an input value
 {% endif %}
 {% endfor %}

@@ -16,13 +16,13 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        action_schema = utils.minify_json(
-            json.dumps(ActionSubtask.action_schema().json_schema("ToolSchema"))
+        api_schema = utils.minify_json(
+            json.dumps(ActionSubtask.api_schema().json_schema("APIRequestSchema"))
         )
 
         return J2("tasks/tool_task/system.j2").render(
             rulesets=self.all_rulesets,
-            action_schema=action_schema,
+            api_schema=api_schema,
             tool=J2("tasks/partials/_tool.j2").render(tool=self.tool),
         )
 

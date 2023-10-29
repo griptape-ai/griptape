@@ -100,15 +100,15 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             r for r in self.tool_output_memory if len(r.activities()) > 0
         ]
 
-        action_schema = utils.minify_json(
+        api_schema = utils.minify_json(
             json.dumps(
-                ActionSubtask.action_schema().json_schema("ActionSchema")
+                ActionSubtask.api_schema().json_schema("APIRequestSchema")
             )
         )
 
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=self.all_rulesets,
-            action_schema=action_schema,
+            api_schema=api_schema,
             tool_names=str.join(", ", [tool.name for tool in self.tools]),
             tools=[
                 J2("tasks/partials/_tool.j2").render(tool=tool)

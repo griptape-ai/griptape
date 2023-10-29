@@ -57,21 +57,16 @@ class ActionSubtask(PromptTask):
         ]
 
     @classmethod
-    def action_schema(cls) -> Schema:
+    def api_schema(cls) -> Schema:
         return Schema(
-            description="Actions have type, name, activity, and input value.",
+            description="API requests have name, path, and input object.",
             schema={
-                Literal("name", description="Action name"): str,
-                Literal("activity", description="Action activity"): str,
+                Literal("name", description="API name"): str,
+                Literal("path", description="API path"): str,
                 schema.Optional(
-                    Literal(
-                        "input",
-                        description="Optional action activity input object",
-                    )
+                    Literal("input", description="Optional API path input values object")
                 ): {
-                    schema.Optional(
-                        "values", description="Optional activity values field"
-                    ): dict
+                    "values": dict
                 },
             },
         )
@@ -126,7 +121,7 @@ class ActionSubtask(PromptTask):
             json_dict["name"] = self.action_name
 
         if self.action_activity:
-            json_dict["activity"] = self.action_activity
+            json_dict["path"] = self.action_activity
 
         if self.action_input:
             json_dict["input"] = self.action_input
@@ -165,7 +160,7 @@ class ActionSubtask(PromptTask):
                 action_object: dict = json.loads(data, strict=False)
 
                 validate(
-                    instance=action_object, schema=self.action_schema().schema
+                    instance=action_object, schema=self.api_schema().schema
                 )
 
                 # Load action name; throw exception if the key is not present
@@ -174,7 +169,7 @@ class ActionSubtask(PromptTask):
 
                 # Load action method; throw exception if the key is not present
                 if self.action_activity is None:
-                    self.action_activity = action_object["activity"]
+                    self.action_activity = action_object["path"]
 
                 # Load optional input value; don't throw exceptions if key is not present
                 if self.action_input is None and "input" in action_object:
