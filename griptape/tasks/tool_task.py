@@ -17,7 +17,7 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         api_schema = utils.minify_json(
-            json.dumps(ApiRequestSubtask.api_schema().json_schema("APIRequestSchema"))
+            json.dumps(ApiRequestSubtask.API_SCHEMA.json_schema("APIRequestSchema"))
         )
 
         return J2("tasks/tool_task/system.j2").render(

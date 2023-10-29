@@ -102,7 +102,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
 
         api_schema = utils.minify_json(
             json.dumps(
-                ApiRequestSubtask.api_schema().json_schema("APIRequestSchema")
+                ApiRequestSubtask.API_SCHEMA.json_schema("APIRequestSchema")
             )
         )
 

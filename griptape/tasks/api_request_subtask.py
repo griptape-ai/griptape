@@ -24,6 +24,18 @@ class ApiRequestSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     REQUEST_PATTERN = r"(?s)Request:[^{]*({.*})"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
+    API_SCHEMA = Schema(
+        description="API requests have name, path, and input object.",
+        schema={
+            Literal("name", description="API name"): str,
+            Literal("path", description="API path"): str,
+            schema.Optional(
+                Literal("input", description="Optional API path input values object")
+            ): {
+                "values": dict
+            },
+        },
+    )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
@@ -55,21 +67,6 @@ class ApiRequestSubtask(PromptTask):
             self.origin_task.find_subtask(child_id)
             for child_id in self.child_ids
         ]
-
-    @classmethod
-    def api_schema(cls) -> Schema:
-        return Schema(
-            description="API requests have name, path, and input object.",
-            schema={
-                Literal("name", description="API name"): str,
-                Literal("path", description="API path"): str,
-                schema.Optional(
-                    Literal("input", description="Optional API path input values object")
-                ): {
-                    "values": dict
-                },
-            },
-        )
 
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
@@ -160,7 +157,7 @@ class ApiRequestSubtask(PromptTask):
                 action_object: dict = json.loads(data, strict=False)
 
                 validate(
-                    instance=action_object, schema=self.api_schema().schema
+                    instance=action_object, schema=self.API_SCHEMA.schema
                 )
 
                 # Load action name; throw exception if the key is not present
