@@ -4,20 +4,20 @@ from attr import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact
 from griptape.memory import ToolMemory
-from griptape.tasks import PromptTask, ActionSubtask
+from griptape.tasks import PromptTask, ApiRequestSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
-from griptape.mixins import ActionSubtaskOriginMixin
+from griptape.mixins import ApiRequestSubtaskOriginMixin
 
 
 @define
-class ToolTask(PromptTask, ActionSubtaskOriginMixin):
+class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
-    subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
+    subtask: Optional[ApiRequestSubtask] = field(default=None, kw_only=True)
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         api_schema = utils.minify_json(
-            json.dumps(ActionSubtask.api_schema().json_schema("APIRequestSchema"))
+            json.dumps(ApiRequestSubtask.api_schema().json_schema("APIRequestSchema"))
         )
 
         return J2("tasks/tool_task/system.j2").render(
@@ -31,7 +31,7 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
             self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
         )
 
-        subtask = self.add_subtask(ActionSubtask(f"Action: {output}"))
+        subtask = self.add_subtask(ApiRequestSubtask(f"Action: {output}"))
 
         subtask.before_run()
         subtask.run()
@@ -53,10 +53,10 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
         return None
 
-    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+    def find_subtask(self, subtask_id: str) -> Optional[ApiRequestSubtask]:
         return self.subtask if self.subtask.id == subtask_id else None
 
-    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
+    def add_subtask(self, subtask: ApiRequestSubtask) -> ApiRequestSubtask:
         self.subtask = subtask
         self.subtask.attach_to(self)
 

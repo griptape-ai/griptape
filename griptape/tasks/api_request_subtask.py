@@ -7,9 +7,10 @@ from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, Literal
+from griptape import utils
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.utils import remove_null_values_in_dict_recursively
-from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
+from griptape.mixins import ActivityMixin, ApiRequestSubtaskOriginMixin
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
@@ -20,16 +21,16 @@ if TYPE_CHECKING:
 
 
 @define
-class ActionSubtask(PromptTask):
+class ApiRequestSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     REQUEST_PATTERN = r"(?s)Request:[^{]*({.*})"
-    RESPONSE_PATTERN = r"(?s)^<|Response|>:\s?([\s\S]*)$"
+    RESPONSE_PATTERN = r"(?s)^{}:\s?([\s\S]*)$".format(utils.constants.RESPONSE_STOP_SEQUENCE)
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    action_name: Optional[str] = field(default=None, kw_only=True)
-    action_activity: Optional[str] = field(default=None, kw_only=True)
-    action_input: Optional[dict] = field(default=None, kw_only=True)
+    api_name: Optional[str] = field(default=None, kw_only=True)
+    api_path: Optional[str] = field(default=None, kw_only=True)
+    api_input: Optional[dict] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
     _memory: Optional[ToolMemory] = None
@@ -39,18 +40,18 @@ class ActionSubtask(PromptTask):
         return TextArtifact(self.input_template)
 
     @property
-    def origin_task(self) -> Optional[ActionSubtaskOriginMixin]:
+    def origin_task(self) -> Optional[ApiRequestSubtaskOriginMixin]:
         return self.structure.find_task(self.parent_task_id)
 
     @property
-    def parents(self) -> list[ActionSubtask]:
+    def parents(self) -> list[ApiRequestSubtask]:
         return [
             self.origin_task.find_subtask(parent_id)
             for parent_id in self.parent_ids
         ]
 
     @property
-    def children(self) -> list[ActionSubtask]:
+    def children(self) -> list[ApiRequestSubtask]:
         return [
             self.origin_task.find_subtask(child_id)
             for child_id in self.child_ids
@@ -82,12 +83,12 @@ class ActionSubtask(PromptTask):
 
     def run(self) -> BaseArtifact:
         try:
-            if self.action_name == "error":
-                self.output = ErrorArtifact(str(self.action_input))
+            if self.api_name == "error":
+                self.output = ErrorArtifact(str(self.api_input))
             else:
                 if self._tool:
                     observation = self._tool.execute(
-                        getattr(self._tool, self.action_activity), self
+                        getattr(self._tool, self.api_path), self
                     )
                 else:
                     observation = ErrorArtifact("tool not found")
@@ -117,18 +118,18 @@ class ActionSubtask(PromptTask):
     def action_to_json(self) -> str:
         json_dict = {}
 
-        if self.action_name:
-            json_dict["name"] = self.action_name
+        if self.api_name:
+            json_dict["name"] = self.api_name
 
-        if self.action_activity:
-            json_dict["path"] = self.action_activity
+        if self.api_path:
+            json_dict["path"] = self.api_path
 
-        if self.action_input:
-            json_dict["input"] = self.action_input
+        if self.api_input:
+            json_dict["input"] = self.api_input
 
         return json.dumps(json_dict)
 
-    def add_child(self, child: ActionSubtask) -> ActionSubtask:
+    def add_child(self, child: ApiRequestSubtask) -> ApiRequestSubtask:
         if child.id not in self.child_ids:
             self.child_ids.append(child.id)
 
@@ -137,7 +138,7 @@ class ActionSubtask(PromptTask):
 
         return child
 
-    def add_parent(self, parent: ActionSubtask) -> ActionSubtask:
+    def add_parent(self, parent: ApiRequestSubtask) -> ApiRequestSubtask:
         if parent.id not in self.parent_ids:
             self.parent_ids.append(parent.id)
 
@@ -164,43 +165,43 @@ class ActionSubtask(PromptTask):
                 )
 
                 # Load action name; throw exception if the key is not present
-                if self.action_name is None:
-                    self.action_name = action_object["name"]
+                if self.api_name is None:
+                    self.api_name = action_object["name"]
 
                 # Load action method; throw exception if the key is not present
-                if self.action_activity is None:
-                    self.action_activity = action_object["path"]
+                if self.api_path is None:
+                    self.api_path = action_object["path"]
 
                 # Load optional input value; don't throw exceptions if key is not present
-                if self.action_input is None and "input" in action_object:
+                if self.api_input is None and "input" in action_object:
                     # The schema library has a bug, where something like `Or(str, None)` doesn't get
                     # correctly translated into JSON schema. For some optional input fields LLMs sometimes
                     # still provide null value, which trips up the validator. The temporary solution that
                     # works is to strip all key-values where value is null.
-                    self.action_input = remove_null_values_in_dict_recursively(
+                    self.api_input = remove_null_values_in_dict_recursively(
                         action_object["input"]
                     )
 
                 # Load the action itself
-                if self.action_name:
-                    self._tool = self.origin_task.find_tool(self.action_name)
+                if self.api_name:
+                    self._tool = self.origin_task.find_tool(self.api_name)
 
                 if self._tool:
-                    self.__validate_action_input(self.action_input, self._tool)
+                    self.__validate_action_input(self.api_input, self._tool)
             except SyntaxError as e:
                 self.structure.logger.error(
                     f"Subtask {self.origin_task.id}\nSyntax error: {e}"
                 )
 
-                self.action_name = "error"
-                self.action_input = {"error": f"syntax error: {e}"}
+                self.api_name = "error"
+                self.api_input = {"error": f"syntax error: {e}"}
             except ValidationError as e:
                 self.structure.logger.error(
                     f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}"
                 )
 
-                self.action_name = "error"
-                self.action_input = {
+                self.api_name = "error"
+                self.api_input = {
                     "error": f"Action JSON validation error: {e}"
                 }
             except Exception as e:
@@ -208,8 +209,8 @@ class ActionSubtask(PromptTask):
                     f"Subtask {self.origin_task.id}\nError parsing tool action: {e}"
                 )
 
-                self.action_name = "error"
-                self.action_input = {
+                self.api_name = "error"
+                self.api_input = {
                     "error": f"Action input parsing error: {e}"
                 }
         elif self.output is None and len(answer_matches) > 0:
@@ -220,7 +221,7 @@ class ActionSubtask(PromptTask):
     ) -> None:
         try:
             activity_schema = mixin.activity_schema(
-                getattr(mixin, self.action_activity)
+                getattr(mixin, self.api_path)
             )
 
             if activity_schema:
@@ -230,7 +231,7 @@ class ActionSubtask(PromptTask):
                 f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}"
             )
 
-            self.action_name = "error"
-            self.action_input = {
+            self.api_name = "error"
+            self.api_input = {
                 "error": f"Activity input JSON validation error: {e}"
             }

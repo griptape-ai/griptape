@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 import pytest
 from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask, ActionSubtask
+from griptape.tasks import ToolkitTask, ApiRequestSubtask
 from griptape.events import (
     StartTaskEvent,
     FinishTaskEvent,
@@ -25,7 +25,7 @@ class TestEventListener:
         pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)
 
-        task.add_subtask(ActionSubtask("foo"))
+        task.add_subtask(ApiRequestSubtask("foo"))
         return pipeline
 
     def test_list_listeners(self, pipeline):

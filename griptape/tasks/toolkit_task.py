@@ -5,8 +5,8 @@ from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.utils import PromptStack
-from griptape.mixins import ActionSubtaskOriginMixin
-from griptape.tasks import ActionSubtask
+from griptape.mixins import ApiRequestSubtaskOriginMixin
+from griptape.tasks import ApiRequestSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
 
@@ -17,21 +17,21 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
+class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
     DEFAULT_MAX_STEPS = 20
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
-    subtasks: list[ActionSubtask] = field(factory=list)
-    generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
+    subtasks: list[ApiRequestSubtask] = field(factory=list)
+    generate_assistant_subtask_template: Callable[[ApiRequestSubtask], str] = field(
         default=Factory(
             lambda self: self.default_assistant_subtask_template_generator,
             takes_self=True,
         ),
         kw_only=True,
     )
-    generate_user_subtask_template: Callable[[ActionSubtask], str] = field(
+    generate_user_subtask_template: Callable[[ApiRequestSubtask], str] = field(
         default=Factory(
             lambda self: self.default_user_subtask_template_generator,
             takes_self=True,
@@ -102,7 +102,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         api_schema = utils.minify_json(
             json.dumps(
-                ActionSubtask.api_schema().json_schema("APIRequestSchema")
+                ApiRequestSubtask.api_schema().json_schema("APIRequestSchema")
             )
         )
 
@@ -119,19 +119,23 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                 J2("tasks/partials/_tool_memory.j2").render(memory=memory)
                 for memory in memories
             ],
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE
         )
 
     def default_assistant_subtask_template_generator(
-        self, subtask: ActionSubtask
+        self, subtask: ApiRequestSubtask
     ) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
             subtask=subtask
         )
 
     def default_user_subtask_template_generator(
-        self, subtask: ActionSubtask
+        self, subtask: ApiRequestSubtask
     ) -> str:
-        return J2("tasks/toolkit_task/user_subtask.j2").render(subtask=subtask)
+        return J2("tasks/toolkit_task/user_subtask.j2").render(
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
+            subtask=subtask
+        )
 
     def set_default_tools_memory(self, memory: ToolMemory) -> None:
         self.tool_memory = memory
@@ -146,12 +150,12 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     }
 
     def run(self) -> TextArtifact:
-        from griptape.tasks import ActionSubtask
+        from griptape.tasks import ApiRequestSubtask
 
         self.subtasks.clear()
 
         subtask = self.add_subtask(
-            ActionSubtask(
+            ApiRequestSubtask(
                 self.active_driver()
                 .run(prompt_stack=self.prompt_stack)
                 .to_text()
@@ -164,7 +168,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     subtask.output = ErrorArtifact(
                         f"Exceeded tool limit of {self.max_subtasks} subtasks per task"
                     )
-                elif subtask.action_name is None:
+                elif subtask.api_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
                     subtask.output = TextArtifact(subtask.input_template)
                 else:
@@ -173,7 +177,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     subtask.after_run()
 
                     subtask = self.add_subtask(
-                        ActionSubtask(
+                        ApiRequestSubtask(
                             self.active_driver()
                             .run(prompt_stack=self.prompt_stack)
                             .to_text()
@@ -186,13 +190,13 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return self.output
 
-    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+    def find_subtask(self, subtask_id: str) -> Optional[ApiRequestSubtask]:
         return next(
             (subtask for subtask in self.subtasks if subtask.id == subtask_id),
             None,
         )
 
-    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
+    def add_subtask(self, subtask: ApiRequestSubtask) -> ApiRequestSubtask:
         subtask.attach_to(self)
 
         if len(self.subtasks) > 0:

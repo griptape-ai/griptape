@@ -11,7 +11,7 @@ from griptape.memory.tool.storage import (
     BlobArtifactStorage,
     TextArtifactStorage,
 )
-from griptape.tasks import ActionSubtask
+from griptape.tasks import ApiRequestSubtask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -71,7 +71,7 @@ class TestToolMemory:
 
     def test_process_output(self, memory):
         artifact = TextArtifact("foo")
-        subtask = ActionSubtask()
+        subtask = ApiRequestSubtask()
 
         assert (
             memory.process_output(MockTool().test, subtask, artifact)
@@ -86,7 +86,7 @@ class TestToolMemory:
         assert (
             memory.process_output(
                 MockTool().test,
-                ActionSubtask(),
+                ApiRequestSubtask(),
                 ListArtifact([TextArtifact("foo")]),
             )
             .to_text()
@@ -95,14 +95,14 @@ class TestToolMemory:
 
     def test_load_artifacts_for_text_artifact(self, memory):
         memory.process_output(
-            MockTool().test, ActionSubtask(), TextArtifact("foo", name="test")
+            MockTool().test, ApiRequestSubtask(), TextArtifact("foo", name="test")
         )
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_blob_artifact(self, memory):
         memory.process_output(
-            MockTool().test, ActionSubtask(), BlobArtifact(b"foo", name="test")
+            MockTool().test, ApiRequestSubtask(), BlobArtifact(b"foo", name="test")
         )
 
         assert len(memory.load_artifacts("test")) == 1
@@ -110,7 +110,7 @@ class TestToolMemory:
     def test_load_artifacts_for_text_list_artifact(self, memory):
         memory.process_output(
             MockTool().test,
-            ActionSubtask(),
+            ApiRequestSubtask(),
             ListArtifact(
                 [
                     TextArtifact("foo", name="test1"),
@@ -125,7 +125,7 @@ class TestToolMemory:
     def test_load_artifacts_for_blob_list_artifact(self, memory):
         memory.process_output(
             MockTool().test,
-            ActionSubtask(),
+            ApiRequestSubtask(),
             ListArtifact(
                 [
                     BlobArtifact(b"foo", name="test1"),

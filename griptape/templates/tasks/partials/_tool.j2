@@ -2,10 +2,10 @@ API name: {{ tool.name }}
 {{ tool.name }} paths:
 {% for activity in tool.activities() %}
 path name: {{ tool.activity_name(activity) }}
-{{ tool.name }}.{{ tool.activity_name(activity) }} path description: {{ tool.activity_description(activity) }}
+path description: {{ tool.activity_description(activity) }}
 {% if tool.activity_schema(activity) %}
-{{ tool.name }}.{{ tool.activity_name(activity) }} path input value schema: {{ tool.activity_schema(activity) }}
+path input value schema: {{ tool.activity_schema(activity) }}
 {% else %}
-{{ tool.name }}.{{ tool.activity_name(activity) }} path doesn't have an input value
+path input value is not required
 {% endif %}
 {% endfor %}

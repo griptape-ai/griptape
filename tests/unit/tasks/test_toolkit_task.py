@@ -3,7 +3,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask, ActionSubtask
+from griptape.tasks import ToolkitTask, ApiRequestSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -80,12 +80,12 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ApiRequestSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_name == "test"
-        assert subtask.action_activity == "test action"
-        assert subtask.action_input == "test input"
+        assert subtask.api_name == "test"
+        assert subtask.api_path == "test action"
+        assert subtask.api_input == "test input"
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
@@ -95,27 +95,27 @@ class TestToolkitSubtask:
 
         Pipeline().add_task(task)
 
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ApiRequestSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_name is None
-        assert subtask.action_activity is None
-        assert subtask.action_input is None
+        assert subtask.api_name is None
+        assert subtask.api_path is None
+        assert subtask.api_input is None
         assert subtask.output.to_text() == "test output"
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask(
+        subtask1 = ApiRequestSubtask(
             "test1",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            api_name="test",
+            api_path="test",
+            api_input={"values": {"f": "b"}},
         )
-        subtask2 = ActionSubtask(
+        subtask2 = ApiRequestSubtask(
             "test2",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            api_name="test",
+            api_path="test",
+            api_input={"values": {"f": "b"}},
         )
 
         Pipeline().add_task(task)
@@ -135,17 +135,17 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask(
+        subtask1 = ApiRequestSubtask(
             "test1",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            api_name="test",
+            api_path="test",
+            api_input={"values": {"f": "b"}},
         )
-        subtask2 = ActionSubtask(
+        subtask2 = ApiRequestSubtask(
             "test2",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            api_name="test",
+            api_path="test",
+            api_input={"values": {"f": "b"}},
         )
 
         Pipeline().add_task(task)

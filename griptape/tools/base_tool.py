@@ -14,7 +14,7 @@ from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.memory import ToolMemory
-    from griptape.tasks import ActionSubtask
+    from griptape.tasks import ApiRequestSubtask
 
 
 @define
@@ -83,9 +83,9 @@ class BaseTool(ActivityMixin, ABC):
         return os.path.dirname(self.abs_file_path)
 
     def execute(
-        self, activity: Callable, subtask: ActionSubtask
+        self, activity: Callable, subtask: ApiRequestSubtask
     ) -> BaseArtifact:
-        preprocessed_input = self.before_run(activity, subtask.action_input)
+        preprocessed_input = self.before_run(activity, subtask.api_input)
         output = self.run(activity, subtask, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, output)
 
@@ -97,7 +97,7 @@ class BaseTool(ActivityMixin, ABC):
         return value
 
     def run(
-        self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]
+        self, activity: Callable, subtask: ApiRequestSubtask, value: Optional[dict]
     ) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -113,7 +113,7 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-        self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact
+        self, activity: Callable, subtask: ApiRequestSubtask, value: BaseArtifact
     ) -> BaseArtifact:
         if value:
             if self.output_memory:
