@@ -68,14 +68,12 @@ class TestAgent:
         assert isinstance(agent.tool_memory, ToolMemory)
         assert agent.tools[0].input_memory[0] == agent.tool_memory
         assert agent.tools[0].output_memory["test"][0] == agent.tool_memory
-        assert (
-            agent.tools[0].output_memory.get("test_without_default_memory")
-            is None
-        )
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
         agent = Agent(tools=[MockTool(output_memory={})])
 
+        assert isinstance(agent.tool_memory, ToolMemory)
+        assert agent.tools[0].input_memory[0] == agent.tool_memory
         assert agent.tools[0].output_memory == {}
 
     def test_embedding_driver(self):

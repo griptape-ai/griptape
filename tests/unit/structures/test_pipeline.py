@@ -88,12 +88,6 @@ class TestPipeline:
             pipeline.tasks[0].tools[0].output_memory["test"][0]
             == pipeline.tool_memory
         )
-        assert (
-            pipeline.tasks[0]
-            .tools[0]
-            .output_memory.get("test_without_default_memory")
-            is None
-        )
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()

@@ -109,16 +109,12 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=self.all_rulesets,
             api_schema=api_schema,
-            tool_names=str.join(", ", [tool.name for tool in self.tools]),
-            tools=[
-                J2("tasks/partials/_tool.j2").render(tool=tool)
+            api_names=str.join(", ", [tool.name for tool in self.tools]),
+            apis=[
+                J2("tasks/partials/_api.j2").render(tool=tool)
                 for tool in self.tools
             ],
             memory_names=str.join(", ", [memory.name for memory in memories]),
-            memories=[
-                J2("tasks/partials/_tool_memory.j2").render(memory=memory)
-                for memory in memories
-            ],
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE
         )
 
