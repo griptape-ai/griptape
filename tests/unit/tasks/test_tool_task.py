@@ -10,9 +10,8 @@ class TestToolTask:
     @pytest.fixture
     def agent(self):
         output_dict = {
-            "type": "tool",
             "name": "MockTool",
-            "activity": "test",
+            "path": "test",
             "input": {"values": {"test": "foobar"}},
         }
         return Agent(

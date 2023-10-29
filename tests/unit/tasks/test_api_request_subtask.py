@@ -15,7 +15,7 @@ class TestApiRequestSubtask:
         task = ToolkitTask(tools=[])
         Pipeline().add_task(task)
         subtask = task.add_subtask(ApiRequestSubtask(valid_input))
-        json_dict = json.loads(subtask.action_to_json())
+        json_dict = json.loads(subtask.request_to_json())
 
         assert json_dict["name"] == "test"
         assert json_dict["path"] == "test action"
@@ -32,7 +32,7 @@ class TestApiRequestSubtask:
         task = ToolkitTask(tools=[])
         Pipeline().add_task(task)
         subtask = task.add_subtask(ApiRequestSubtask(valid_input))
-        json_dict = json.loads(subtask.action_to_json())
+        json_dict = json.loads(subtask.request_to_json())
 
         assert json_dict["name"] == "test"
         assert json_dict["path"] == "test action"

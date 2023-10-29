@@ -7,7 +7,6 @@ from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, Literal
-from griptape import utils
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ApiRequestSubtaskOriginMixin
@@ -24,7 +23,7 @@ if TYPE_CHECKING:
 class ApiRequestSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     REQUEST_PATTERN = r"(?s)Request:[^{]*({.*})"
-    RESPONSE_PATTERN = r"(?s)^{}:\s?([\s\S]*)$".format(utils.constants.RESPONSE_STOP_SEQUENCE)
+    ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
@@ -87,13 +86,13 @@ class ApiRequestSubtask(PromptTask):
                 self.output = ErrorArtifact(str(self.api_input))
             else:
                 if self._tool:
-                    observation = self._tool.execute(
+                    response = self._tool.execute(
                         getattr(self._tool, self.api_path), self
                     )
                 else:
-                    observation = ErrorArtifact("tool not found")
+                    response = ErrorArtifact("tool not found")
 
-                self.output = observation
+                self.output = response
         except Exception as e:
             self.structure.logger.error(
                 f"Subtask {self.id}\n{e}", exc_info=True
@@ -104,7 +103,7 @@ class ApiRequestSubtask(PromptTask):
             return self.output
 
     def after_run(self) -> None:
-        observation = (
+        response = (
             self.output.to_text()
             if isinstance(self.output, BaseArtifact)
             else str(self.output)
@@ -112,10 +111,10 @@ class ApiRequestSubtask(PromptTask):
 
         self.structure.publish_event(FinishSubtaskEvent(subtask=self))
         self.structure.logger.info(
-            f"Subtask {self.id}\nResponse: {observation}"
+            f"Subtask {self.id}\nResponse: {response}"
         )
 
-    def action_to_json(self) -> str:
+    def request_to_json(self) -> str:
         json_dict = {}
 
         if self.api_name:
@@ -150,7 +149,7 @@ class ApiRequestSubtask(PromptTask):
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
         action_matches = re.findall(self.REQUEST_PATTERN, value, re.DOTALL)
-        answer_matches = re.findall(self.RESPONSE_PATTERN, value, re.MULTILINE)
+        answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
         if self.thought is None and len(thought_matches) > 0:
             self.thought = thought_matches[-1]

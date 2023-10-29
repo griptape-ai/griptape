@@ -77,7 +77,7 @@ class ToolMemory(ActivityMixin):
             if result:
                 return result
             else:
-                self.namespace_metadata[namespace] = subtask.action_to_json()
+                self.namespace_metadata[namespace] = subtask.request_to_json()
 
                 output = J2("memory/tool.j2").render(
                     memory_name=self.name,

@@ -31,7 +31,7 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
             self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
         )
 
-        subtask = self.add_subtask(ApiRequestSubtask(f"Action: {output}"))
+        subtask = self.add_subtask(ApiRequestSubtask(f"Request: {output}"))
 
         subtask.before_run()
         subtask.run()
