@@ -1,9 +1,10 @@
-import json  
+import json
 import requests
 from griptape.artifacts import TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
+
 
 class OpenStreetMapTool(BaseTool):
     @activity(
@@ -12,8 +13,7 @@ class OpenStreetMapTool(BaseTool):
             "schema": Schema(
                 {
                     Literal(
-                        "query",
-                        description="Query in the format 'location'",
+                        "query", description="Query in the format 'location'"
                     ): str
                 }
             ),
@@ -23,9 +23,13 @@ class OpenStreetMapTool(BaseTool):
         query = params["query"]
         try:
             location_details = self._search(query)
-            return TextArtifact(json.dumps({"location": query}))  # Converts the dictionary to a string
+            return TextArtifact(
+                json.dumps({"location": query})
+            )  # Converts the dictionary to a string
         except Exception as e:
-            raise Exception("An error occurred while searching for the location.") from e
+            raise Exception(
+                "An error occurred while searching for the location."
+            ) from e
 
     def _search(self, search_query: str) -> dict:
         overpass_ql_query = f"""
