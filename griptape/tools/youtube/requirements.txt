@@ -1,4 +1,4 @@
-youtube_search
-youtube_transcript_api
-griptape
+beautifulsoup4
+requests
 schema
+youtube-transcript-api

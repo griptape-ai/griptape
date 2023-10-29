@@ -1,6 +1,7 @@
 import re
 import json
-from youtube_search import YoutubeSearch
+import requests  # Import the requests library
+from bs4 import BeautifulSoup
 from youtube_transcript_api import YouTubeTranscriptApi
 from griptape.artifacts import TextArtifact
 from griptape.tools import BaseTool
@@ -8,7 +9,7 @@ from griptape.utils.decorators import activity
 from schema import Schema, Literal, Optional
 
 
-class YouTubeTool(BaseTool):  # Renamed the class to YouTubeTool
+class YouTubeTool(BaseTool):
     @activity(
         config={
             "description": "Search YouTube videos based on a search query and get their transcriptions.",
@@ -44,12 +45,17 @@ class YouTubeTool(BaseTool):  # Renamed the class to YouTubeTool
         return search_query, num_results
 
     def _search(self, search_query: str, num_results: int) -> list[str]:
-        results = YoutubeSearch(search_query, max_results=num_results).to_json()
-        data = json.loads(results)
-        url_suffix_list = [
-            video["url_suffix"].split("=")[-1] for video in data["videos"]
+        # Perform a YouTube search and scrape video URLs using requests and BeautifulSoup
+        search_url = (
+            f"https://www.youtube.com/results?search_query={search_query}"
+        )
+        page = requests.get(search_url)
+        soup = BeautifulSoup(page.content, "html.parser")
+        video_links = soup.find_all("a", {"class": "yt-uix-tile-link"})
+        video_urls = [
+            "https://www.youtube.com" + link["href"] for link in video_links
         ]
-        return url_suffix_list
+        return video_urls
 
     def _get_transcriptions(
         self, video_ids: list[str]
