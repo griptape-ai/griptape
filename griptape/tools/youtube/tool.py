@@ -5,7 +5,6 @@ from griptape.artifacts import TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal, Optional
-from bs4 import BeautifulSoup
 
 
 class YouTubeTool(BaseTool):
@@ -13,8 +12,8 @@ class YouTubeTool(BaseTool):
     def search(self, params: dict) -> TextArtifact:
         from youtube_transcript_api import (
             YouTubeTranscriptApi,
-        )  # Import youtube_transcript_api at the method level
-        from bs4 import BeautifulSoup  # Import bs4 at the method level
+        ) 
+        from bs4 import BeautifulSoup  
 
         query = params["query"]
         search_query, num_results = self.parse_query(query)
