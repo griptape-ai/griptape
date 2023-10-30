@@ -1,10 +1,10 @@
 import json
 import logging
 from attr import define
+import trafilatura
 from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
 from griptape.loaders import TextLoader
-import trafilatura
 
 
 @define

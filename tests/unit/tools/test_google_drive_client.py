@@ -35,6 +35,7 @@ class TestGoogleDriveClient:
         ).download_files({"values": value})
 
         assert isinstance(result, ErrorArtifact)
+
         assert (
             "error downloading file due to malformed credentials"
             in result.value
@@ -47,6 +48,7 @@ class TestGoogleDriveClient:
         ).search_files({"values": value})
 
         assert isinstance(result, ErrorArtifact)
+
         assert (
             "error searching for file due to malformed credentials"
             in result.value

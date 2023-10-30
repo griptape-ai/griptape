@@ -2,12 +2,14 @@ from __future__ import annotations
 import logging
 from attr import field, define
 from schema import Schema, Optional, Literal
+
 from griptape.artifacts import (
     ErrorArtifact,
     InfoArtifact,
     ListArtifact,
     TextArtifact,
 )
+
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 

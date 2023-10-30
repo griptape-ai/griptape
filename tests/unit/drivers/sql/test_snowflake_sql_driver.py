@@ -139,10 +139,10 @@ class TestSnowflakeSqlDriver:
 
     def test_table(self, driver, mock_table, mock_metadata):
         with mock.patch(
-            "griptape.drivers.sql.snowflake_sql_driver.Table",
+            "sqlalchemy.Table",
             return_value=mock_table,
         ), mock.patch(
-            "griptape.drivers.sql.snowflake_sql_driver.MetaData",
+            "sqlalchemy.MetaData",
             return_value=mock_metadata,
         ):
             assert driver.get_table_schema("table") == str(

@@ -6,12 +6,12 @@ import tempfile
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
-from griptape.tools import BaseTool
-from griptape.utils.decorators import activity
 from schema import Schema, Literal
 import stringcase
 import docker
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
+from griptape.tools import BaseTool
+from griptape.utils.decorators import activity
 
 
 if TYPE_CHECKING:

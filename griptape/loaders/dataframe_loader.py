@@ -1,12 +1,12 @@
 from __future__ import annotations
 import hashlib
 from typing import Optional, TYPE_CHECKING
+import pandas as pd
 from attr import define, field
 from griptape import utils
 from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
-import pandas as pd
 
 if TYPE_CHECKING:
     from pandas import DataFrame
