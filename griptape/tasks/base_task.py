@@ -33,13 +33,13 @@ class BaseTask(ABC):
         ...
 
     @property
-    def parents(self) -> list[Optional[BaseTask]]:
+    def parents(self) -> list[BaseTask]:
         return [
             self.structure.find_task(parent_id) for parent_id in self.parent_ids
         ]
 
     @property
-    def children(self) -> list[Optional[BaseTask]]:
+    def children(self) -> list[BaseTask]:
         return [
             self.structure.find_task(child_id) for child_id in self.child_ids
         ]
@@ -47,56 +47,10 @@ class BaseTask(ABC):
     def __str__(self) -> str:
         return str(self.output.value)
 
-    def __rshift__(self, child: BaseTask) -> BaseTask:
-        return self.add_child(child)
-
-    def __lshift__(self, child: BaseTask) -> BaseTask:
-        return self.add_parent(child)
-
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure
 
         return self
-
-    def add_child(self, child: BaseTask) -> BaseTask:
-        if self.structure:
-            child.structure = self.structure
-        elif child.structure:
-            self.structure = child.structure
-
-        if child not in self.structure.tasks:
-            self.structure.tasks.append(child)
-
-        if self not in self.structure.tasks:
-            self.structure.tasks.append(self)
-
-        if child.id not in self.child_ids:
-            self.child_ids.append(child.id)
-
-        if self.id not in child.parent_ids:
-            child.parent_ids.append(self.id)
-
-        return child
-
-    def add_parent(self, parent: BaseTask) -> BaseTask:
-        if self.structure:
-            parent.structure = self.structure
-        elif parent.structure:
-            self.structure = parent.structure
-
-        if parent not in self.structure.tasks:
-            self.structure.tasks.append(parent)
-
-        if self not in self.structure.tasks:
-            self.structure.tasks.append(self)
-
-        if parent.id not in self.parent_ids:
-            self.parent_ids.append(parent.id)
-
-        if self.id not in parent.child_ids:
-            parent.child_ids.append(self.id)
-
-        return parent
 
     def is_pending(self) -> bool:
         return self.state == BaseTask.State.PENDING

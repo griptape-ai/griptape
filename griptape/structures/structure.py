@@ -121,7 +121,6 @@ class Structure(ABC):
             self.memory.structure = self
 
         [task.preprocess(self) for task in self.tasks]
-
         self.prompt_driver.structure = self
 
     @property
@@ -146,11 +145,15 @@ class Structure(ABC):
 
     @property
     def input_task(self) -> Optional[BaseTask]:
-        return self.tasks[0]
+        return self.tasks[0] if self.tasks else None
 
     @property
     def output_task(self) -> Optional[BaseTask]:
-        return self.tasks[-1]
+        return self.tasks[-1] if self.tasks else None
+
+    @property
+    def finished_tasks(self) -> list[BaseTask]:
+        return [s for s in self.tasks if s.is_finished()]
 
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)
@@ -158,8 +161,11 @@ class Structure(ABC):
     def is_executing(self) -> bool:
         return any(s for s in self.tasks if s.is_executing())
 
-    def find_task(self, task_id: str) -> Optional[BaseTask]:
-        return next((task for task in self.tasks if task.id == task_id), None)
+    def find_task(self, task_id: str) -> BaseTask:
+        for task in self.tasks:
+            if task.id == task_id:
+                return task
+        raise ValueError(f"Task with id {task_id} doesn't exist.")
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]

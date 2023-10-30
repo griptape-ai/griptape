@@ -18,27 +18,43 @@ class Pipeline(Structure):
             else self + [other]
         )
 
-    @property
-    def finished_tasks(self) -> list[BaseTask]:
-        return [s for s in self.tasks if s.is_finished()]
-
-    @property
-    def first_task(self) -> Optional[BaseTask]:
-        return self.tasks[0] if self.tasks else None
-
-    @property
-    def last_task(self) -> Optional[BaseTask]:
-        return self.tasks[-1] if self.tasks else None
 
     def add_task(self, task: BaseTask) -> BaseTask:
+        return self.append_task(task)
+
+    def append_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
 
-        if self.last_task:
-            self.last_task.add_child(task)
-        else:
-            task.structure = self
+        if self.output_task:
+            self.output_task.child_ids.append(task.id)
+            task.parent_ids.append(self.output_task.id)
 
-            self.tasks.append(task)
+        self.tasks.append(task)
+
+        return task
+
+    def insert_task(
+        self,
+        parent_task: BaseTask,
+        task: BaseTask,
+    ) -> BaseTask:
+        task.preprocess(self)
+
+        if parent_task.children:
+            child_task = parent_task.children[0]
+
+            task.child_ids.append(child_task.id)
+            child_task.parent_ids.append(task.id)
+
+            child_task.parent_ids.remove(parent_task.id)
+            parent_task.child_ids.remove(child_task.id)
+
+        task.parent_ids.append(parent_task.id)
+        parent_task.child_ids.append(task.id)
+
+        parent_index = self.tasks.index(parent_task)
+
+        self.tasks.insert(parent_index + 1, task)
 
         return task
 
@@ -47,12 +63,12 @@ class Pipeline(Structure):
 
         [task.reset() for task in self.tasks]
 
-        self.__run_from_task(self.first_task)
+        self.__run_from_task(self.input_task)
 
         if self.memory:
             run = Run(
-                input=self.first_task.input.to_text(),
-                output=self.last_task.output.to_text(),
+                input=self.input_task.input.to_text(),
+                output=self.output_task.output.to_text(),
             )
 
             self.memory.add_run(run)

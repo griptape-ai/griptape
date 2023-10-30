@@ -52,7 +52,7 @@ class TestToolkitSubtask:
 
         assert len(task.tools) == 2
         assert len(task.subtasks) == 1
-        assert result.output.to_text() == "done"
+        assert result.output_task.output.to_text() == "done"
 
     def test_run_max_subtasks(self):
         output = """Action: {"tool": "test"}"""
