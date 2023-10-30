@@ -14,7 +14,7 @@ class TestBasePromptDriver:
 
         pipeline.add_task(PromptTask("test"))
 
-        assert isinstance(pipeline.run()[0], TextArtifact)
+        assert isinstance(pipeline.run().output_task.output, TextArtifact)
 
     def test_run_via_pipeline_retries_failure(self):
         driver = MockFailingPromptDriver(max_failures=2, max_attempts=1)
@@ -22,7 +22,7 @@ class TestBasePromptDriver:
 
         pipeline.add_task(PromptTask("test"))
 
-        assert isinstance(pipeline.run()[0], ErrorArtifact)
+        assert isinstance(pipeline.run().output_task.output, ErrorArtifact)
 
     def test_run_via_pipeline_publishes_events(self, mocker):
         mock_publish_event = mocker.patch.object(Pipeline, "publish_event")
@@ -39,7 +39,7 @@ class TestBasePromptDriver:
         assert instance_count(events, FinishPromptEvent) == 1
 
     def test_run(self):
-        assert isinstance(MockPromptDriver().run("prompt-stack"), TextArtifact)
+        assert isinstance(MockPromptDriver().run(PromptStack(inputs=[])), TextArtifact)
 
     def test_token_count(self):
         assert (
