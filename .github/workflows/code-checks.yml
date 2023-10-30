@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
+        python-version: ["3.9"]
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3

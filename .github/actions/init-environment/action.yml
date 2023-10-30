@@ -31,7 +31,7 @@ runs:
         shell: bash
 
       - name: Install project
-        run: poetry install --no-interaction --with test --all-extras
+        run: poetry install --no-interaction --with test --with dev --all-extras
         shell: bash
       
       - name: Activate venv 
