@@ -6,9 +6,7 @@ import pytest
 class TestHuggingFaceHubPromptDriver:
     @pytest.fixture(autouse=True)
     def mock_client(self, mocker):
-        mock_client = mocker.patch(
-            "huggingface_hub.InferenceApi"
-        ).return_value
+        mock_client = mocker.patch("huggingface_hub.InferenceApi").return_value
         mock_client.task = "text-generation"
         mock_client.return_value = [{"generated_text": "model-output"}]
         return mock_client

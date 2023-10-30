@@ -6,9 +6,7 @@ import pytest
 class TestHuggingFacePipelinePromptDriver:
     @pytest.fixture(autouse=True)
     def mock_pipeline(self, mocker):
-        mock_pipeline = mocker.patch(
-            "transformers.pipeline"
-        )
+        mock_pipeline = mocker.patch("transformers.pipeline")
         return mock_pipeline
 
     @pytest.fixture(autouse=True)
