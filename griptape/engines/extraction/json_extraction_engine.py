@@ -48,7 +48,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         )
 
         if (
-            self.prompt_driver.tokenizer.tokens_left(full_text)
+            self.prompt_driver.tokenizer.count_tokens_left(full_text)
             >= self.min_response_tokens
         ):
             extractions.extend(

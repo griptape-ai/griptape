@@ -19,8 +19,6 @@ from io import BytesIO
 class GoogleDriveClient(BaseGoogleClient):
     LIST_FILES_SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
-    UPLOAD_FILE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-
     GOOGLE_EXPORT_MIME_MAPPING = {
         "application/vnd.google-apps.document": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/vnd.google-apps.spreadsheet": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -116,7 +114,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
             if artifacts:
                 service = self._build_client(
-                    self.UPLOAD_FILE_SCOPES,
+                    self.DRIVE_FILE_SCOPES,
                     self.SERVICE_NAME,
                     self.SERVICE_VERSION,
                     self.owner_email,
@@ -317,13 +315,82 @@ class GoogleDriveClient(BaseGoogleClient):
         except Exception as e:
             return ErrorArtifact(f"error searching file to Google Drive: {e}")
 
+    @activity(
+        config={
+            "description": "Can be used to share a file with a specified user.",
+            "schema": Schema(
+                {
+                    Literal(
+                        "file_path", description="The path of the file to share"
+                    ): str,
+                    Literal(
+                        "email_address",
+                        description="The email address of the user to share with",
+                    ): str,
+                    Optional(
+                        "role",
+                        default="reader",
+                        description="The role to give to the user, e.g., 'reader', 'writer', or 'commenter'",
+                    ): Or("reader", "writer", "commenter"),
+                }
+            ),
+        }
+    )
+    def share_file(self, params: dict) -> InfoArtifact | ErrorArtifact:
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError
+
+        values = params["values"]
+        file_path = values.get("file_path")
+        email_address = values.get("email_address")
+        role = values.get("role", "reader")
+
+        try:
+            service = self._build_client(
+                scopes=self.DRIVE_AUTH_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email,
+            )
+
+            if file_path.lower() == self.DEFAULT_FOLDER_PATH:
+                file_id = self.DEFAULT_FOLDER_PATH
+            else:
+                file_id = self._convert_path_to_file_id(service, file_path)
+
+            if file_id:
+                batch_update_permission_request_body = {
+                    "role": role,
+                    "type": "user",
+                    "emailAddress": email_address,
+                }
+                request = service.permissions().create(
+                    fileId=file_id,
+                    body=batch_update_permission_request_body,
+                    fields="id",
+                )
+                request.execute()
+                return InfoArtifact(
+                    f"File at {file_path} shared with {email_address} as a {role}"
+                )
+            else:
+                return ErrorArtifact(f"error finding file at path: {file_path}")
+        except HttpError as e:
+            return ErrorArtifact(f"error sharing file due to http error: {e}")
+        except MalformedError as e:
+            return ErrorArtifact(
+                f"error sharing file due to malformed credentials: {e}"
+            )
+        except Exception as e:
+            return ErrorArtifact(f"error sharing file: {e}")
+
     def _save_to_drive(
         self, filename: str, value: any, parent_folder_id=None
     ) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaIoBaseUpload
 
         service = self._build_client(
-            self.UPLOAD_FILE_SCOPES,
+            self.DRIVE_FILE_SCOPES,
             self.SERVICE_NAME,
             self.SERVICE_VERSION,
             self.owner_email,

@@ -36,7 +36,7 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     stream: bool = field(default=False, kw_only=True)
 
     def max_output_tokens(self, text: str) -> int:
-        tokens_left = self.tokenizer.tokens_left(text)
+        tokens_left = self.tokenizer.count_tokens_left(text)
 
         if self.max_tokens:
             return min(self.max_tokens, tokens_left)
@@ -44,7 +44,7 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
             return tokens_left
 
     def token_count(self, prompt_stack: PromptStack) -> int:
-        return self.tokenizer.token_count(
+        return self.tokenizer.count_tokens(
             self.prompt_stack_to_string(prompt_stack)
         )
 

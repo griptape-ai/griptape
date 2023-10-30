@@ -98,14 +98,14 @@ class TestToolMemory:
             MockTool().test, ActionSubtask(), TextArtifact("foo", name="test")
         )
 
-        assert len(memory.load_artifacts("test").value) == 1
+        assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_blob_artifact(self, memory):
         memory.process_output(
             MockTool().test, ActionSubtask(), BlobArtifact(b"foo", name="test")
         )
 
-        assert len(memory.load_artifacts("test").value) == 1
+        assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_text_list_artifact(self, memory):
         memory.process_output(
@@ -120,7 +120,7 @@ class TestToolMemory:
             ),
         )
 
-        assert len(memory.load_artifacts("test").value) == 2
+        assert len(memory.load_artifacts("test")) == 2
 
     def test_load_artifacts_for_blob_list_artifact(self, memory):
         memory.process_output(
@@ -135,7 +135,7 @@ class TestToolMemory:
             ),
         )
 
-        assert len(memory.load_artifacts("test").value) == 2
+        assert len(memory.load_artifacts("test")) == 2
 
     def test_summarize_namespace(self, memory):
         memory.store_artifact("foo", TextArtifact("test"))

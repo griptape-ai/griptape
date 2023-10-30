@@ -169,7 +169,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             max_tokens=max_tokens_request,
         )
-        tokens_left = driver.tokenizer.tokens_left(
+        tokens_left = driver.tokenizer.count_tokens_left(
             driver._prompt_stack_to_messages(prompt_stack)
         )
 
@@ -228,7 +228,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_token_count(self, prompt_stack, messages):
         # Given
         mock_tokenizer = Mock()
-        mock_tokenizer.token_count.return_value = 42
+        mock_tokenizer.count_tokens.return_value = 42
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             tokenizer=mock_tokenizer,
@@ -238,13 +238,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         token_count = driver.token_count(prompt_stack)
 
         # Then
-        mock_tokenizer.token_count.assert_called_once_with(messages)
+        mock_tokenizer.count_tokens.assert_called_once_with(messages)
         assert token_count == 42
 
     def test_max_output_tokens(self, messages):
         # Given
         mock_tokenizer = Mock()
-        mock_tokenizer.tokens_left.return_value = 42
+        mock_tokenizer.count_tokens_left.return_value = 42
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             tokenizer=mock_tokenizer,
@@ -254,7 +254,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         max_output_tokens = driver.max_output_tokens(messages)
 
         # Then
-        mock_tokenizer.tokens_left.assert_called_once_with(messages)
+        mock_tokenizer.count_tokens_left.assert_called_once_with(messages)
         assert max_output_tokens == 42
 
     def test_max_output_tokens_with_max_tokens(self, messages):
@@ -333,3 +333,23 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert abs(
             driver._ratelimit_tokens_reset_at - expected_token_reset_time
         ) < datetime.timedelta(seconds=1)
+
+    def test_extract_ratelimit_metadata_missing_headers(self):
+        class OpenAiApiResponseNoHeaders:
+            @property
+            def headers(self):
+                return {}
+
+        response_without_headers = OpenAiApiResponseNoHeaders()
+
+        driver = OpenAiChatPromptDriver(
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
+        )
+        driver._extract_ratelimit_metadata(response_without_headers)
+
+        assert driver._ratelimit_request_limit is None
+        assert driver._ratelimit_requests_remaining is None
+        assert driver._ratelimit_requests_reset_at is None
+        assert driver._ratelimit_token_limit is None
+        assert driver._ratelimit_tokens_remaining is None
+        assert driver._ratelimit_tokens_reset_at is None

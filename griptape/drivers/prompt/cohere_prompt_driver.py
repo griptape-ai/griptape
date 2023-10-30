@@ -21,7 +21,7 @@ class CoherePromptDriver(BasePromptDriver):
     """
 
     api_key: str = field(kw_only=True)
-    model: str = field(default=CohereTokenizer.DEFAULT_MODEL, kw_only=True)
+    model: str = field(kw_only=True)
     client: Client = field(
         default=Factory(
             lambda self: import_optional_dependency("cohere").Client(

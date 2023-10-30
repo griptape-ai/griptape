@@ -16,8 +16,6 @@ from griptape.tools import BaseGoogleClient
 class GoogleDocsClient(BaseGoogleClient):
     DOCS_SCOPES = ["https://www.googleapis.com/auth/documents"]
 
-    DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-
     DEFAULT_FOLDER_PATH = "root"
 
     owner_email: str = field(kw_only=True)
@@ -55,7 +53,7 @@ class GoogleDocsClient(BaseGoogleClient):
                 owner_email=self.owner_email,
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
+                scopes=self.DRIVE_FILE_SCOPES,
                 service_name="drive",
                 version="v3",
                 owner_email=self.owner_email,
@@ -135,7 +133,7 @@ class GoogleDocsClient(BaseGoogleClient):
                 owner_email=self.owner_email,
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
+                scopes=self.DRIVE_FILE_SCOPES,
                 service_name="drive",
                 version="v3",
                 owner_email=self.owner_email,
@@ -220,7 +218,7 @@ class GoogleDocsClient(BaseGoogleClient):
                 owner_email=self.owner_email,
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
+                scopes=self.DRIVE_FILE_SCOPES,
                 service_name="drive",
                 version="v3",
                 owner_email=self.owner_email,
@@ -313,52 +311,6 @@ class GoogleDocsClient(BaseGoogleClient):
                 return ErrorArtifact("no artifacts found")
         else:
             return ErrorArtifact("memory not found")
-
-    @activity(
-        config={
-            "description": "Can be used to download multiple Google Docs based on their paths.",
-            "schema": Schema(
-                {
-                    Literal(
-                        "file_paths",
-                        description="Destination file paths of Google Docs in the POSIX format. "
-                        "For example, 'foo/bar/baz.txt, foo/bar/baz2.txt'",
-                    ): list[str]
-                }
-            ),
-        }
-    )
-    def download_google_docs(
-        self, params: dict
-    ) -> ListArtifact | ErrorArtifact:
-        values = params["values"]
-        file_paths = values.get("file_paths")
-        downloaded_files = []
-
-        try:
-            service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email,
-            )
-
-            for file_path in file_paths:
-                file_id = self._convert_path_to_file_id(service, file_path)
-                if file_id:
-                    request = service.files().export_media(
-                        fileId=file_id, mimeType="text/plain"
-                    )
-
-                    downloaded_files.append(TextArtifact(request.execute()))
-                else:
-                    logging.error(f"Could not find file: {file_path}")
-
-            return ListArtifact(downloaded_files)
-
-        except Exception as e:
-            logging.error(e)
-            return ErrorArtifact(f"Error downloading Google Docs: {e}")
 
     def _save_to_doc(self, params: dict) -> str:
         service = self._build_client(

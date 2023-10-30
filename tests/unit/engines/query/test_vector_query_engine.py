@@ -76,5 +76,5 @@ class TestVectorQueryEngine:
             namespace="test",
         )
 
-        assert len(engine.load_artifacts("doesntexist").value) == 0
-        assert len(engine.load_artifacts("test").value) == 2
+        assert len(engine.load_artifacts("doesntexist")) == 0
+        assert len(engine.load_artifacts("test")) == 2

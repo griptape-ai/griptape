@@ -14,12 +14,5 @@ class AnthropicTokenizer(BaseTokenizer):
     def max_tokens(self) -> int:
         return self.DEFAULT_MAX_TOKENS
 
-    def encode(self, text: str) -> list[int]:
-        anthropic = import_optional_dependency("anthropic")
-
-        return anthropic._client.sync_get_tokenizer().encode(text).ids
-
-    def decode(self, tokens: list[int]) -> str:
-        anthropic = import_optional_dependency("anthropic")
-
-        return anthropic._client.sync_get_tokenizer().decode(tokens)
+    def count_tokens(self, text: str) -> int:
+        return len(anthropic._client.sync_get_tokenizer().encode(text).ids)

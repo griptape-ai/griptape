@@ -1,7 +1,6 @@
 from __future__ import annotations
 import os
 from typing import Optional
-import numpy as np
 import openai
 from attr import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
@@ -12,15 +11,14 @@ from griptape.tokenizers import OpenAiTokenizer
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     """
     Attributes:
-        api_type: Can be changed to use OpenAI models on Azure.
-        api_version: API version.
-        api_base: API URL.
-        api_key: API key to pass directly; by default uses `OPENAI_API_KEY_PATH` environment variable.
+        model: OpenAI embedding model name. Defaults to `text-embedding-ada-002`.
         dimensions: Vector dimensions. Defaults to `1536`.
-        model: OpenAI embedding model name. Uses `text-embedding-ada-002` by default.
-        organization: OpenAI organization.
-        tokenizer: Custom `OpenAiTokenizer`.
-        user: OpenAI user.
+        api_type: OpenAI API type, for example 'open_ai' or 'azure'. Defaults to 'open_ai'.
+        api_version: API version. Defaults to 'OPENAI_API_VERSION' environment variable.
+        api_base: API URL. Defaults to OpenAI's v1 API URL.
+        api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
+        organization: OpenAI organization. Defaults to 'OPENAI_ORGANIZATION' environment variable.
+        tokenizer: Optionally provide custom `OpenAiTokenizer`.
     """
 
     DEFAULT_MODEL = "text-embedding-ada-002"
@@ -51,43 +49,16 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         openai.api_key = self.api_key
         openai.organization = self.organization
 
-    def try_embed_string(self, string: str) -> list[float]:
+    def try_embed_chunk(self, chunk: str) -> list[float]:
         # Address a performance issue in older ada models
         # https://github.com/openai/openai-python/issues/418#issuecomment-1525939500
         if self.model.endswith("001"):
-            string = string.replace("\n", " ")
-
-        if self.tokenizer.token_count(string) > self.tokenizer.max_tokens:
-            return self.embed_long_string(string)
-        else:
-            return self.embed_chunk(string)
-
-    def embed_chunk(self, chunk: list[int] | str) -> list[float]:
+            chunk = chunk.replace("\n", " ")
         return openai.Embedding.create(**self._params(chunk))["data"][0][
             "embedding"
         ]
 
-    def embed_long_string(self, string: str) -> list[float]:
-        tokens = self.tokenizer.encode(string)
-        chunked_tokens = self.tokenizer.chunk_tokens(tokens)
-        embedding_chunks = []
-        length_chunks = []
-
-        for chunk in chunked_tokens:
-            embedding_chunks.append(self.embed_chunk(chunk))
-            length_chunks.append(len(chunk))
-
-        # generate weighted averages
-        embedding_chunks = np.average(
-            embedding_chunks, axis=0, weights=length_chunks
-        )
-
-        # normalize length to 1
-        embedding_chunks = embedding_chunks / np.linalg.norm(embedding_chunks)
-
-        return embedding_chunks.tolist()
-
-    def _params(self, chunk: list[int] | str) -> dict:
+    def _params(self, chunk: str) -> dict:
         return {
             "input": chunk,
             "model": self.model,

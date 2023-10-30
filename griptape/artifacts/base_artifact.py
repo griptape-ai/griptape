@@ -67,6 +67,9 @@ class BaseArtifact(ABC):
     def __bool__(self) -> bool:
         return bool(self.value)
 
+    def __len__(self) -> int:
+        return len(self.value)
+
     def __str__(self):
         return json.dumps(self.to_dict())
 

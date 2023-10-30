@@ -6,7 +6,9 @@ import pytest
 class TestHuggingFacePipelinePromptDriver:
     @pytest.fixture(autouse=True)
     def mock_pipeline(self, mocker):
-        mock_pipeline = mocker.patch("transformers.pipeline")
+        mock_pipeline = mocker.patch(
+            "griptape.drivers.prompt.hugging_face_pipeline_prompt_driver.pipeline"
+        )
         return mock_pipeline
 
     @pytest.fixture(autouse=True)

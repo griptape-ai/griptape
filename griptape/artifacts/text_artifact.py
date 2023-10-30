@@ -30,7 +30,7 @@ class TextArtifact(BaseArtifact):
         return self.embedding
 
     def token_count(self, tokenizer: BaseTokenizer) -> int:
-        return tokenizer.token_count(str(self.value))
+        return tokenizer.count_tokens(str(self.value))
 
     def to_text(self) -> str:
         return self.value

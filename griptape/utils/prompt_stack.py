@@ -85,7 +85,9 @@ class PromptStack:
 
                 # Convert the prompt stack into tokens left.
                 prompt_string = prompt_driver.prompt_stack_to_string(temp_stack)
-                tokens_left = prompt_driver.tokenizer.tokens_left(prompt_string)
+                tokens_left = prompt_driver.tokenizer.count_tokens_left(
+                    prompt_string
+                )
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.
                     should_prune = False
