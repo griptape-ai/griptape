@@ -3,7 +3,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, TYPE_CHECKING, Callable, Type, Any
+from typing import Optional, TYPE_CHECKING, Callable, Type, Any, Tuple
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.artifacts import TextArtifact, BlobArtifact
@@ -30,6 +30,7 @@ from griptape.engines import (
     JsonExtractionEngine,
 )
 from griptape.drivers import LocalVectorStoreDriver
+from griptape.events import EventListener
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -59,9 +60,7 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: list[Callable] | dict[
-        Type[BaseEvent], list[Callable]
-    ] = field(factory=list, kw_only=True)
+    event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
     tool_memory: Optional[ToolMemory] = field(
         default=Factory(
@@ -158,25 +157,22 @@ class Structure(ABC):
         return [self.add_task(s) for s in tasks]
 
     def add_event_listener(
-        self, event_type: Type[BaseEvent], event_listener: Callable
+        self,
+        handler: Callable[[BaseEvent], Any],
+        event_types: Optional[list[Type[BaseEvent]]] = None,
     ) -> None:
-        if isinstance(self.event_listeners, list):
-            if event_listener not in self.event_listeners:
-                self.event_listeners.append(event_listener)
-        elif isinstance(self.event_listeners, dict):
-            if event_type not in self.event_listeners:
-                self.event_listeners[event_type] = [event_listener]
-            elif event_listener not in self.event_listeners[event_type]:
-                self.event_listeners[event_type].append(event_listener)
+        event_listener = EventListener(handler, event_types=event_types)
+
+        if event_listener not in self.event_listeners:
+            self.event_listeners.append(event_listener)
 
     def publish_event(self, event: BaseEvent) -> None:
-        if isinstance(self.event_listeners, dict):
-            listeners = self.event_listeners.get(type(event), [])
-        else:
-            listeners = self.event_listeners
+        for event_listener in self.event_listeners:
+            handler = event_listener.handler
+            event_types = event_listener.event_types
 
-        for listener in listeners:
-            listener(event)
+            if event_types is None or type(event) in event_types:
+                handler(event)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}

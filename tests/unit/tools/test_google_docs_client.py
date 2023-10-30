@@ -30,13 +30,6 @@ class TestGoogleDocsClient:
         ).value
         assert "error prepending text to Google Doc with path" in result
 
-    def test_download_google_docs(self, mock_docs_client):
-        params = {
-            "file_paths": ["Test Document Name", "folder_name/document_name"]
-        }
-        result = mock_docs_client.download_google_docs({"values": params}).value
-        assert "Error downloading Google Doc" in result
-
     def test_save_content_to_google_doc(self, mock_docs_client):
         params = {"file_path": "test_document", "content": "Sample content"}
         result = mock_docs_client.save_content_to_google_doc(

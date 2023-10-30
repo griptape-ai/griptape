@@ -26,7 +26,7 @@ class TestTextChunker:
         assert len(chunks) == 6
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("## Header 1\nfoo-0")
         assert chunks[1].value.startswith("## Header 2\nfoo-0")
