@@ -16,7 +16,7 @@ class TestVectorStoreClient:
         )
 
         mocker.patch(
-            "griptape.drivers.OpenAiEmbeddingDriver.embed_chunk",
+            "griptape.drivers.OpenAiEmbeddingDriver.try_embed_chunk",
             return_value=[0, 1],
         )
 

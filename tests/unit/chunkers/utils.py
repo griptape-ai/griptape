@@ -9,7 +9,7 @@ def gen_paragraph(
     index = 0
     add_word = lambda base, w, i: sentence_separator.join([base, f"{w}-{i}"])
 
-    while max_tokens >= tokenizer.token_count(add_word(all_text, word, index)):
+    while max_tokens >= tokenizer.count_tokens(add_word(all_text, word, index)):
         all_text = (
             f"{word}-{index}"
             if all_text == ""

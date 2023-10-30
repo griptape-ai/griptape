@@ -17,8 +17,5 @@ class HuggingFaceTokenizer(BaseTokenizer):
         kw_only=True,
     )
 
-    def encode(self, text: str) -> list[int]:
-        return self.tokenizer.encode(text)
-
-    def decode(self, tokens: list[int]) -> str:
-        return self.tokenizer.decode(tokens)
+    def count_tokens(self, text: str) -> int:
+        return len(self.tokenizer.encode(text))

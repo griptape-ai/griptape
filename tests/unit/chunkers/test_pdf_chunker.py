@@ -24,6 +24,6 @@ class TestPdfChunker:
         assert len(chunks) == 16
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("Bitcoin: A Peer-to-Peer")

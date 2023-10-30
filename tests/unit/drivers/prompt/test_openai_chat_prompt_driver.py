@@ -169,7 +169,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             max_tokens=max_tokens_request,
         )
-        tokens_left = driver.tokenizer.tokens_left(
+        tokens_left = driver.tokenizer.count_tokens_left(
             driver._prompt_stack_to_messages(prompt_stack)
         )
 
@@ -228,7 +228,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_token_count(self, prompt_stack, messages):
         # Given
         mock_tokenizer = Mock()
-        mock_tokenizer.token_count.return_value = 42
+        mock_tokenizer.count_tokens.return_value = 42
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             tokenizer=mock_tokenizer,
@@ -238,13 +238,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         token_count = driver.token_count(prompt_stack)
 
         # Then
-        mock_tokenizer.token_count.assert_called_once_with(messages)
+        mock_tokenizer.count_tokens.assert_called_once_with(messages)
         assert token_count == 42
 
     def test_max_output_tokens(self, messages):
         # Given
         mock_tokenizer = Mock()
-        mock_tokenizer.tokens_left.return_value = 42
+        mock_tokenizer.count_tokens_left.return_value = 42
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             tokenizer=mock_tokenizer,
@@ -254,7 +254,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         max_output_tokens = driver.max_output_tokens(messages)
 
         # Then
-        mock_tokenizer.tokens_left.assert_called_once_with(messages)
+        mock_tokenizer.count_tokens_left.assert_called_once_with(messages)
         assert max_output_tokens == 42
 
     def test_max_output_tokens_with_max_tokens(self, messages):
