@@ -1,29 +1,26 @@
 import re
 import json
-import requests  # Import the requests library
-from bs4 import BeautifulSoup
+import requests
 from youtube_transcript_api import YouTubeTranscriptApi
 from griptape.artifacts import TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal, Optional
 
-
 class YouTubeTool(BaseTool):
     @activity(
         config={
-            "description": "Search YouTube videos based on a search query and get their transcriptions.",
             "schema": Schema(
                 {
                     Literal(
                         "query",
-                        description="Query in the format 'search_query, num_results'",
                     ): str
                 }
             ),
         }
     )
     def search(self, params: dict) -> TextArtifact:
+        from bs4 import BeautifulSoup
         query = params["query"]
         search_query, num_results = self.parse_query(query)
         video_urls = self._search(search_query, num_results)
@@ -45,7 +42,7 @@ class YouTubeTool(BaseTool):
         return search_query, num_results
 
     def _search(self, search_query: str, num_results: int) -> list[str]:
-        # Perform a YouTube search and scrape video URLs using requests and BeautifulSoup
+        from bs4 import BeautifulSoup
         search_url = (
             f"https://www.youtube.com/results?search_query={search_query}"
         )
