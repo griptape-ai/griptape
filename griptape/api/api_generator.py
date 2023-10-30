@@ -1,0 +1,52 @@
+import functools
+import json
+from typing import Optional, Callable
+import stringcase
+import yaml
+from attr import define, field
+from fastapi import FastAPI
+from griptape.artifacts import ErrorArtifact
+from griptape.tools import BaseTool
+
+
+@define
+class ApiGenerator:
+    host: str = field()
+    tool: BaseTool = field(kw_only=True)
+    path_prefix: Optional[str] = field(default=None, kw_only=True)
+    api: FastAPI = field(init=False)
+
+    def __attrs_post_init__(self) -> None:
+        self.api = self.generate_api()
+
+    @property
+    def full_host_path(self) -> str:
+        return "/".join(
+            s.strip("/") for s in [self.host, self.path_prefix] if s
+        )
+
+    def generate_yaml_api_spec(self) -> str:
+        return yaml.safe_dump(self.api.openapi())
+
+    def generate_json_api_spec(self) -> str:
+        return json.dumps(self.api.openapi())
+
+    def generate_api(self) -> FastAPI:
+        api = FastAPI()
+        api.title = f"{self.tool.name} API"
+
+        for activity in self.tool.activities():
+            api.add_api_route(
+                stringcase.spinalcase(self.tool.activity_name(activity)),
+                functools.partial(self.execute_activity, activity),
+                methods=["GET"],
+                description=self.tool.activity_description(activity)
+            )
+
+        return api
+
+    def execute_activity(self, action: Callable, value: str) -> dict:
+        try:
+            return action(value).to_dict()
+        except Exception as e:
+            return ErrorArtifact(str(e)).to_dict()
