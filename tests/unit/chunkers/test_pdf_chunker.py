@@ -9,13 +9,12 @@ MAX_TOKENS = 500
 class TestPdfChunker:
     @pytest.fixture
     def chunker(self):
-        return PdfChunker(
-            max_tokens=MAX_TOKENS,
-        )
+        return PdfChunker(max_tokens=MAX_TOKENS)
 
     def test_chunk(self, chunker):
         path = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "../../resources/bitcoin.pdf"
+            os.path.abspath(os.path.dirname(__file__)),
+            "../../resources/bitcoin.pdf",
         )
 
         reader = PdfReader(path)

@@ -9,51 +9,58 @@ from griptape.utils import PromptStack, import_optional_dependency
 if TYPE_CHECKING:
     from cohere import Client
 
+
 @define
 class CoherePromptDriver(BasePromptDriver):
     """
-    Attributes: 
+    Attributes:
         api_key: Cohere API key.
         model: 	Cohere model name.
         client: Custom `cohere.Client`.
         tokenizer: Custom `CohereTokenizer`.
     """
+
     api_key: str = field(kw_only=True)
     model: str = field(default=CohereTokenizer.DEFAULT_MODEL, kw_only=True)
     client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True), kw_only=True
+        default=Factory(
+            lambda self: import_optional_dependency("cohere").Client(
+                self.api_key
+            ),
+            takes_self=True,
+        ),
+        kw_only=True,
     )
     tokenizer: CohereTokenizer = field(
-        default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
-        kw_only=True
+        default=Factory(
+            lambda self: CohereTokenizer(model=self.model, client=self.client),
+            takes_self=True,
+        ),
+        kw_only=True,
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        result = self.client.generate(
-            **self._base_params(prompt_stack)
-        )
+        result = self.client.generate(**self._base_params(prompt_stack))
 
         if result.generations:
             if len(result.generations) == 1:
                 generation = result.generations[0]
 
-                return TextArtifact(
-                    value=generation.text.strip()
-                )
+                return TextArtifact(value=generation.text.strip())
             else:
-                raise Exception("completion with more than one choice is not supported yet")
+                raise Exception(
+                    "completion with more than one choice is not supported yet"
+                )
         else:
             raise Exception("model response is empty")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         result = self.client.generate(
-            **self._base_params(prompt_stack),
-            stream=True
+            **self._base_params(prompt_stack), stream=True
         )
 
         for chunk in result:
             yield TextArtifact(value=chunk.text)
-
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)

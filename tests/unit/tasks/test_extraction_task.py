@@ -12,7 +12,7 @@ class TestTextQueryTask:
             extraction_engine=CsvExtractionEngine(
                 prompt_driver=MockPromptDriver()
             ),
-            args={"column_names": ["test1"]}
+            args={"column_names": ["test1"]},
         )
 
     def test_run(self, task):
@@ -23,4 +23,4 @@ class TestTextQueryTask:
         result = task.run()
 
         assert len(result.value) == 1
-        assert result.value[0].value == {'test1': 'mock output'}
+        assert result.value[0].value == {"test1": "mock output"}

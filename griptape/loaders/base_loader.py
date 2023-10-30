@@ -8,8 +8,7 @@ from griptape.artifacts import BaseArtifact
 @define
 class BaseLoader(ABC):
     futures_executor: futures.Executor = field(
-        default=Factory(lambda: futures.ThreadPoolExecutor()),
-        kw_only=True
+        default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
 
     @abstractmethod
@@ -17,5 +16,7 @@ class BaseLoader(ABC):
         ...
 
     @abstractmethod
-    def load_collection(self, *args, **kwargs) -> dict[str, list[BaseArtifact | list[BaseArtifact]]]:
+    def load_collection(
+        self, *args, **kwargs
+    ) -> dict[str, list[BaseArtifact | list[BaseArtifact]]]:
         ...

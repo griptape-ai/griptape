@@ -11,9 +11,7 @@ INSTALL_MAPPING = {
 }
 
 
-def import_optional_dependency(
-    name: str,
-) -> Optional[ModuleType]:
+def import_optional_dependency(name: str) -> Optional[ModuleType]:
     """Import an optional dependency.
 
     If a dependency is missing, an ImportError with a nice message will be raised.
@@ -28,7 +26,10 @@ def import_optional_dependency(
     package_name = INSTALL_MAPPING.get(name)
     install_name = package_name if package_name is not None else name
 
-    msg = f"Missing optional dependency: '{install_name}'. " f"Use poetry or pip to install '{install_name}'."
+    msg = (
+        f"Missing optional dependency: '{install_name}'. "
+        f"Use poetry or pip to install '{install_name}'."
+    )
     try:
         module = import_module(name)
     except ImportError:

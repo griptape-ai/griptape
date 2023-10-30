@@ -1,5 +1,10 @@
 from attr import define, field
-from griptape.artifacts import BaseArtifact, ListArtifact, BlobArtifact, InfoArtifact
+from griptape.artifacts import (
+    BaseArtifact,
+    ListArtifact,
+    BlobArtifact,
+    InfoArtifact,
+)
 from griptape.memory.tool.storage import BaseArtifactStorage
 
 
@@ -19,13 +24,19 @@ class BlobArtifactStorage(BaseArtifactStorage):
     def load_artifacts(self, namespace: str) -> ListArtifact:
         return ListArtifact(
             next(
-                (blobs for key, blobs in self.blobs.items() if key == namespace),
-                []
+                (
+                    blobs
+                    for key, blobs in self.blobs.items()
+                    if key == namespace
+                ),
+                [],
             )
         )
 
     def summarize(self, namespace: str) -> InfoArtifact:
         return InfoArtifact("can't summarize artifacts")
 
-    def query(self, namespace: str, query: str, metadata: any = None) -> InfoArtifact:
+    def query(
+        self, namespace: str, query: str, metadata: any = None
+    ) -> InfoArtifact:
         return InfoArtifact("can't query artifacts")

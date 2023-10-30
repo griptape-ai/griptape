@@ -15,7 +15,9 @@ class Chat:
     intro_text: Optional[str] = field(default=None, kw_only=True)
     prompt_prefix: str = field(default="Q: ", kw_only=True)
     response_prefix: str = field(default="A: ", kw_only=True)
-    output_fn: Callable[[str], None] = field(default=Factory(lambda: print), kw_only=True)
+    output_fn: Callable[[str], None] = field(
+        default=Factory(lambda: print), kw_only=True
+    )
 
     def start(self) -> None:
         if self.intro_text:
@@ -30,4 +32,6 @@ class Chat:
             else:
                 self.output_fn(self.processing_text)
 
-            self.output_fn(f"{self.response_prefix}{self.structure.run(question).output.to_text()}")
+            self.output_fn(
+                f"{self.response_prefix}{self.structure.run(question).output.to_text()}"
+            )

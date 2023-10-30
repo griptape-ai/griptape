@@ -7,5 +7,5 @@ __all__ = [
     "ActivityMixin",
     "ExponentialBackoffMixin",
     "ActionSubtaskOriginMixin",
-    "ToolMemoryActivitiesMixin"
+    "ToolMemoryActivitiesMixin",
 ]

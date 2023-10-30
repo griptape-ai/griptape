@@ -4,10 +4,21 @@ import logging
 import os
 from pathlib import Path
 from attr import define, field, Factory
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
+from griptape.artifacts import (
+    ErrorArtifact,
+    InfoArtifact,
+    ListArtifact,
+    BaseArtifact,
+)
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader
+from griptape.loaders import (
+    FileLoader,
+    BaseLoader,
+    PdfLoader,
+    CsvLoader,
+    TextLoader,
+)
 from schema import Schema, Literal
 from typing import Optional
 
@@ -23,6 +34,7 @@ class FileManager(BaseTool):
         default_loader: The loader to use when loading files in load_files_from_disk without any matching loader in `loaders`.
         save_file_encoding: The encoding to use when saving files to disk.
     """
+
     workdir: str = field(default=os.getcwd(), kw_only=True)
     default_loader: BaseLoader = field(default=Factory(lambda: FileLoader()))
     loaders: dict[str, BaseLoader] = field(
@@ -30,10 +42,10 @@ class FileManager(BaseTool):
             lambda: {
                 "pdf": PdfLoader(),
                 "csv": CsvLoader(),
-                "txt": TextLoader()
+                "txt": TextLoader(),
             }
         ),
-        kw_only=True
+        kw_only=True,
     )
     save_file_encoding: Optional[str] = field(default=None, kw_only=True)
 
@@ -42,16 +54,22 @@ class FileManager(BaseTool):
         if not Path(workdir).is_absolute():
             raise ValueError("workdir has to be absolute absolute")
 
-    @activity(config={
-        "description": "Can be used to load files from disk",
-        "schema": Schema({
-            Literal(
-                "paths",
-                description="Paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']"
-            ): []
-        })
-    })
-    def load_files_from_disk(self, params: dict) -> ListArtifact | ErrorArtifact:
+    @activity(
+        config={
+            "description": "Can be used to load files from disk",
+            "schema": Schema(
+                {
+                    Literal(
+                        "paths",
+                        description="Paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
+                    ): []
+                }
+            ),
+        }
+    )
+    def load_files_from_disk(
+        self, params: dict
+    ) -> ListArtifact | ErrorArtifact:
         list_artifact = ListArtifact()
 
         for path in params["values"]["paths"]:
@@ -69,24 +87,28 @@ class FileManager(BaseTool):
 
         return list_artifact
 
-    @activity(config={
-        "description": "Can be used to save memory artifacts to disk",
-        "schema": Schema(
-            {
-                Literal(
-                    "dir_name",
-                    description="Destination directory name on disk in the POSIX format. For example, 'foo/bar'"
-                ): str,
-                Literal(
-                    "file_name",
-                    description="Destination file name. For example, 'baz.txt'"
-                ): str,
-                "memory_name": str,
-                "artifact_namespace": str
-            }
-        )
-    })
-    def save_memory_artifacts_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
+    @activity(
+        config={
+            "description": "Can be used to save memory artifacts to disk",
+            "schema": Schema(
+                {
+                    Literal(
+                        "dir_name",
+                        description="Destination directory name on disk in the POSIX format. For example, 'foo/bar'",
+                    ): str,
+                    Literal(
+                        "file_name",
+                        description="Destination file name. For example, 'baz.txt'",
+                    ): str,
+                    "memory_name": str,
+                    "artifact_namespace": str,
+                }
+            ),
+        }
+    )
+    def save_memory_artifacts_to_disk(
+        self, params: dict
+    ) -> ErrorArtifact | InfoArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         dir_name = params["values"]["dir_name"]
@@ -101,7 +123,7 @@ class FileManager(BaseTool):
                 try:
                     self._save_to_disk(
                         os.path.join(self.workdir, dir_name, file_name),
-                        list_artifact.value[0].value
+                        list_artifact.value[0].value,
                     )
 
                     return InfoArtifact(f"saved successfully")
@@ -111,8 +133,10 @@ class FileManager(BaseTool):
                 try:
                     for a in list_artifact.value:
                         self._save_to_disk(
-                            os.path.join(self.workdir, dir_name, f"{a.name}-{file_name}"),
-                            a.to_text()
+                            os.path.join(
+                                self.workdir, dir_name, f"{a.name}-{file_name}"
+                            ),
+                            a.to_text(),
                         )
 
                     return InfoArtifact(f"saved successfully")
@@ -121,19 +145,23 @@ class FileManager(BaseTool):
         else:
             return ErrorArtifact("memory not found")
 
-    @activity(config={
-        "description": "Can be used to save content to a file",
-        "schema": Schema(
-            {
-                Literal(
-                    "path",
-                    description="Destination file path on disk in the POSIX format. For example, 'foo/bar/baz.txt'"
-                ): str,
-                "content": str
-            }
-        )
-    })
-    def save_content_to_file(self, params: dict) -> ErrorArtifact | InfoArtifact:
+    @activity(
+        config={
+            "description": "Can be used to save content to a file",
+            "schema": Schema(
+                {
+                    Literal(
+                        "path",
+                        description="Destination file path on disk in the POSIX format. For example, 'foo/bar/baz.txt'",
+                    ): str,
+                    "content": str,
+                }
+            ),
+        }
+    )
+    def save_content_to_file(
+        self, params: dict
+    ) -> ErrorArtifact | InfoArtifact:
         content = params["values"]["content"]
         new_path = params["values"]["path"]
         full_path = os.path.join(self.workdir, new_path)

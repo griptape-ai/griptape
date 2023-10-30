@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from docker import DockerClient
     from docker.errors import NotFound
 
+
 @define
 class Computer(BaseTool):
     local_workdir: Optional[str] = field(default=None, kw_only=True)
@@ -38,11 +39,15 @@ class Computer(BaseTool):
         kw_only=True,
     )
     docker_client: DockerClient = field(
-        default=Factory(lambda self: self.default_docker_client(), takes_self=True),
+        default=Factory(
+            lambda self: self.default_docker_client(), takes_self=True
+        ),
         kw_only=True,
     )
 
-    __tempdir: Optional[tempfile.TemporaryDirectory] = field(default=None, kw_only=True)
+    __tempdir: Optional[tempfile.TemporaryDirectory] = field(
+        default=None, kw_only=True
+    )
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -56,9 +61,13 @@ class Computer(BaseTool):
     @docker_client.validator
     def validate_docker_client(self, _, docker_client: DockerClient) -> None:
         if not docker_client:
-            raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")
+            raise ValueError(
+                "Docker client can't be initialized: make sure the Docker daemon is running"
+            )
 
-    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
+    def install_dependencies(
+        self, env: Optional[dict[str, str]] = None
+    ) -> None:
         super().install_dependencies(env)
 
         self.remove_existing_container(self.container_name(self))
@@ -67,9 +76,9 @@ class Computer(BaseTool):
     @activity(
         config={
             "description": "Can be used to execute Python code to solve any programmatic tasks and access and analyze"
-                           " files in the file system. If you need to use code output use `print` statements. "
-                           "You have access to the following external Python libraries: "
-                           "{{ _self.dependencies() }}",
+            " files in the file system. If you need to use code output use `print` statements. "
+            "You have access to the following external Python libraries: "
+            "{{ _self.dependencies() }}",
             "schema": Schema(
                 {
                     Literal("code", description="Python code to execute"): str,
@@ -92,7 +101,9 @@ class Computer(BaseTool):
             "description": "Can be used to execute shell commands in Linux",
             "schema": Schema(
                 {
-                    Literal("command", description="shell command to execute"): str,
+                    Literal(
+                        "command", description="shell command to execute"
+                    ): str
                 }
             ),
         }
@@ -104,7 +115,12 @@ class Computer(BaseTool):
 
     def execute_command_in_container(self, command: str) -> BaseArtifact:
         try:
-            binds = {self.local_workdir: {"bind": self.container_workdir, "mode": "rw"}}
+            binds = {
+                self.local_workdir: {
+                    "bind": self.container_workdir,
+                    "mode": "rw",
+                }
+            }
 
             container = self.docker_client.containers.run(
                 self.image_name(self),
@@ -132,7 +148,9 @@ class Computer(BaseTool):
         except Exception as e:
             return ErrorArtifact(f"error executing command: {e}")
 
-    def execute_code_in_container(self, filename: str, code: str) -> BaseArtifact:
+    def execute_code_in_container(
+        self, filename: str, code: str
+    ) -> BaseArtifact:
         container_file_path = os.path.join(self.container_workdir, filename)
 
         if self.local_workdir:

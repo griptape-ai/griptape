@@ -6,6 +6,7 @@ from griptape.tokenizers import BaseTokenizer
 if TYPE_CHECKING:
     from cohere import Client
 
+
 @define(frozen=True)
 class CohereTokenizer(BaseTokenizer):
     DEFAULT_MODEL = "command"

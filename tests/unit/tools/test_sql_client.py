@@ -8,9 +8,7 @@ import sqlite3
 class TestSqlClient:
     @pytest.fixture
     def driver(self):
-        new_driver = SqlDriver(
-            engine_url="sqlite:///:memory:"
-        )
+        new_driver = SqlDriver(engine_url="sqlite:///:memory:")
 
         new_driver.execute_query(
             "CREATE TABLE test_table (id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INTEGER, city TEXT);"
@@ -27,22 +25,35 @@ class TestSqlClient:
             client = SqlClient(
                 sql_loader=SqlLoader(sql_driver=driver),
                 table_name="test_table",
-                engine_name="sqlite"
+                engine_name="sqlite",
             )
-            result = client.execute_query({"values": {"sql_query": "SELECT * from test_table;"}})
+            result = client.execute_query(
+                {"values": {"sql_query": "SELECT * from test_table;"}}
+            )
 
             assert len(result.value) == 1
-            assert result.value[0].value == {"id": 1, "name": "Alice", "age": 25, "city": "New York"}
+            assert result.value[0].value == {
+                "id": 1,
+                "name": "Alice",
+                "age": 25,
+                "city": "New York",
+            }
 
     def test_execute_query_description(self, driver):
         client = SqlClient(
             sql_loader=SqlLoader(sql_driver=driver),
             table_name="test_table",
             table_description="foobar",
-            engine_name="sqlite"
+            engine_name="sqlite",
         )
         description = client.activity_description(client.execute_query)
 
-        assert "Can be used to execute sqlite SQL SELECT queries in table test_table" in description
-        assert "test_table schema: [('id', INTEGER()), ('name', TEXT()), ('age', INTEGER()), ('city', TEXT())]" in description
+        assert (
+            "Can be used to execute sqlite SQL SELECT queries in table test_table"
+            in description
+        )
+        assert (
+            "test_table schema: [('id', INTEGER()), ('name', TEXT()), ('age', INTEGER()), ('city', TEXT())]"
+            in description
+        )
         assert "test_table description: foobar" in description

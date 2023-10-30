@@ -8,19 +8,20 @@ from griptape.tokenizers import BaseTokenizer
 if TYPE_CHECKING:
     import boto3
 
+
 @define(frozen=True)
 class BedrockJurassicTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = 'ai21.j2-ultra-v1'
+    DEFAULT_MODEL = "ai21.j2-ultra-v1"
     DEFAULT_MAX_TOKENS = 8192
 
     session: boto3.Session = field(
-        default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True
+        default=Factory(lambda: import_optional_dependency("boto3").Session()),
+        kw_only=True,
     )
     model: str = field(kw_only=True)
     bedrock_client: Any = field(
         default=Factory(
-            lambda self: self.session.client("bedrock-runtime"),
-            takes_self=True,
+            lambda self: self.session.client("bedrock-runtime"), takes_self=True
         ),
         kw_only=True,
     )
@@ -30,7 +31,7 @@ class BedrockJurassicTokenizer(BaseTokenizer):
         return self.DEFAULT_MAX_TOKENS
 
     def token_count(self, text: str) -> int:
-        payload = { "prompt": text }
+        payload = {"prompt": text}
 
         response = self.bedrock_client.invoke_model(
             body=json.dumps(payload),
@@ -43,7 +44,11 @@ class BedrockJurassicTokenizer(BaseTokenizer):
         return len(response_body["prompt"]["tokens"])
 
     def encode(self, _: str) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API.")
+        raise NotImplementedError(
+            "Method is not implemented: Amazon Bedrock does not provide a compatible tokenization API."
+        )
 
     def decode(self, _: list[int]) -> str:
-        raise NotImplementedError("Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API.")
+        raise NotImplementedError(
+            "Method is not implemented: Amazon Bedrock does not provide a compatible de-tokenization API."
+        )

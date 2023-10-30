@@ -9,7 +9,6 @@ if TYPE_CHECKING:
     from snowflake.connector import SnowflakeConnection
 
 
-
 @define
 class SnowflakeSqlDriver(BaseSqlDriver):
     connection_func: Callable[[], SnowflakeConnection] = field(kw_only=True)
@@ -32,8 +31,12 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         snowflake_connection = connection_func()
         snowflake = import_optional_dependency("snowflake")
 
-        if not isinstance(snowflake_connection, snowflake.connector.SnowflakeConnection):
-            raise ValueError("The connection_func must return a SnowflakeConnection")
+        if not isinstance(
+            snowflake_connection, snowflake.connector.SnowflakeConnection
+        ):
+            raise ValueError(
+                "The connection_func must return a SnowflakeConnection"
+            )
         if not snowflake_connection.schema or not snowflake_connection.database:
             raise ValueError(
                 "Provide a schema and database for the Snowflake connection"
@@ -44,7 +47,9 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         if not engine.url.render_as_string().startswith("snowflake://"):
             raise ValueError("Provide a Snowflake connection")
 
-    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
+    def execute_query(
+        self, query: str
+    ) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)
 
         if rows:
