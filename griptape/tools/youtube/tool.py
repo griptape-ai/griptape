@@ -8,12 +8,23 @@ from schema import Schema, Literal, Optional
 
 
 class YouTubeTool(BaseTool):
-    @activity(config={"schema": Schema({Literal("query"): str})})
+    # Renamed the class to YouTubeTool
+    @activity(
+        config={
+            "description": "Search YouTube videos based on a search query and get their transcriptions.",
+            "schema": Schema(
+                {
+                    Literal(
+                        "query",
+                        description="Query in the format 'search_query, num_results'",
+                    ): str
+                }
+            ),
+        }
+    )
     def search(self, params: dict) -> TextArtifact:
-        from youtube_transcript_api import (
-            YouTubeTranscriptApi,
-        ) 
-        from bs4 import BeautifulSoup  
+        from youtube_transcript_api import YouTubeTranscriptApi
+        from bs4 import BeautifulSoup
 
         query = params["query"]
         search_query, num_results = self.parse_query(query)
@@ -36,7 +47,7 @@ class YouTubeTool(BaseTool):
         return search_query, num_results
 
     def _search(self, search_query: str, num_results: int) -> list[str]:
-        from bs4 import BeautifulSoup  # Import bs4 at the method level
+        from bs4 import BeautifulSoup
 
         search_url = (
             f"https://www.youtube.com/results?search_query={search_query}"
@@ -52,9 +63,7 @@ class YouTubeTool(BaseTool):
     def _get_transcriptions(
         self, video_ids: list[str]
     ) -> dict[str, list[dict]]:
-        from youtube_transcript_api import (
-            YouTubeTranscriptApi,
-        )  # Import youtube_transcript_api at the method level
+        from youtube_transcript_api import YouTubeTranscriptApi
 
         transcriptions = {}
         for video_id in video_ids:
