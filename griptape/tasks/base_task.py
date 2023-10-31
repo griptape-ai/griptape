@@ -9,7 +9,6 @@ from griptape.artifacts import ErrorArtifact
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
-    from griptape.tasks import BaseTask
     from griptape.structures import Structure
 
 
@@ -106,16 +105,17 @@ class BaseTask(ABC):
         return self.state == BaseTask.State.EXECUTING
 
     def before_run(self) -> None:
-        pass
+        if self.structure:
+            self.structure.publish_event(StartTaskEvent.from_task(self))
 
     def after_run(self) -> None:
-        pass
+        if self.structure:
+            self.structure.publish_event(FinishTaskEvent.from_task(self))
 
     def execute(self) -> BaseArtifact:
         try:
             self.state = BaseTask.State.EXECUTING
 
-            self.structure.publish_event(StartTaskEvent(task=self))
             self.before_run()
 
             self.output = self.run()
@@ -129,7 +129,6 @@ class BaseTask(ABC):
             self.output = ErrorArtifact(str(e))
         finally:
             self.state = BaseTask.State.FINISHED
-            self.structure.publish_event(FinishTaskEvent(task=self))
 
             return self.output
 
