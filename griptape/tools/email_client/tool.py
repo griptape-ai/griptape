@@ -62,7 +62,7 @@ class EmailClient(BaseTool):
     email_loader: EmailLoader = field(
         default=Factory(
             lambda self: EmailLoader(
-                url=self.imap_url,
+                imap_url=self.imap_url,
                 username=self.imap_user,
                 password=self.imap_password,
             ),
