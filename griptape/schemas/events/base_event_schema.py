@@ -3,10 +3,8 @@ from marshmallow import fields
 from griptape.schemas import BaseSchema
 
 
-class BaseArtifactSchema(BaseSchema):
-    id = fields.Str()
-    name = fields.Str()
-    meta = fields.Dict(keys=fields.Str())
+class BaseEventSchema(BaseSchema):
+    timestamp = fields.Float()
     type = fields.Str()
 
     @abstractmethod
