@@ -1,6 +1,5 @@
 from unittest.mock import Mock
 import pytest
-from typing import Any
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, ActionSubtask
 from griptape.events import (
@@ -71,10 +70,12 @@ class TestEventListener:
                 finish_task_event_handler, event_types=[FinishTaskEvent]
             ),
             EventListener(
-                start_subtask_event_handler, event_types=[StartSubtaskEvent]
+                start_subtask_event_handler,
+                event_types=[StartActionSubtaskEvent],
             ),
             EventListener(
-                finish_subtask_event_handler, event_types=[FinishSubtaskEvent]
+                finish_subtask_event_handler,
+                event_types=[FinishActionSubtaskEvent],
             ),
             EventListener(
                 start_structure_run_event_handler,
