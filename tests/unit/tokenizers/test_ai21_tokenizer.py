@@ -14,10 +14,12 @@ class TestAi21Tokenizer:
         monkeypatch.setattr(
             ai21.Tokenization,
             "execute",
-            lambda *args, **kwargs: {"tokens": [{"token": "foo"}, {"token": "bar"}]},
+            lambda *args, **kwargs: {
+                "tokens": [{"token": "foo"}, {"token": "bar"}]
+            },
         )
         try:
-           tokenizer.encode("foo bar")
+            tokenizer.encode("foo bar")
         except NotImplementedError:
             assert True
 
@@ -32,7 +34,11 @@ class TestAi21Tokenizer:
             ai21.Tokenization,
             "execute",
             lambda *args, **kwargs: {
-                "tokens": [{"token": "foo"}, {"token": "bar"}, {"token": "huzzah"}]
+                "tokens": [
+                    {"token": "foo"},
+                    {"token": "bar"},
+                    {"token": "huzzah"},
+                ]
             },
         )
         assert tokenizer.token_count("foo bar huzzah") == 3
@@ -42,7 +48,11 @@ class TestAi21Tokenizer:
             ai21.Tokenization,
             "execute",
             lambda *args, **kwargs: {
-                "tokens": [{"token": "foo"}, {"token": "bar"}, {"token": "huzzah"}]
+                "tokens": [
+                    {"token": "foo"},
+                    {"token": "bar"},
+                    {"token": "huzzah"},
+                ]
             },
         )
         assert tokenizer.tokens_left("foo bar huzzah") == 8189
