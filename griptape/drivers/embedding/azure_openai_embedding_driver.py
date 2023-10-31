@@ -23,10 +23,7 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
     api_type: str = field(default="azure", kw_only=True)
     api_version: str = field(default="2023-05-15", kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def _params(self, chunk: list[int] | str) -> dict:

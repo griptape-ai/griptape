@@ -20,9 +20,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
     client: Optional[MongoClient] = field(
-        default=Factory(
-            lambda self: MongoClient(self.connection_string), takes_self=True
-        )
+        default=Factory(lambda self: MongoClient(self.connection_string), takes_self=True)
     )
 
     def get_collection(self) -> Collection:
@@ -44,21 +42,15 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         collection = self.get_collection()
 
         if vector_id is None:
-            result = collection.insert_one(
-                {"vector": vector, "namespace": namespace, "meta": meta}
-            )
+            result = collection.insert_one({"vector": vector, "namespace": namespace, "meta": meta})
             vector_id = str(result.inserted_id)
         else:
             collection.replace_one(
-                {"_id": vector_id},
-                {"vector": vector, "namespace": namespace, "meta": meta},
-                upsert=True,
+                {"_id": vector_id}, {"vector": vector, "namespace": namespace, "meta": meta}, upsert=True
             )
         return vector_id
 
-    def load_entry(
-        self, vector_id: str, namespace: Optional[str] = None
-    ) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Loads a document entry from the MongoDB collection based on the vector ID.
 
         Returns:
@@ -69,15 +61,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         if doc is None:
             return None
         return BaseVectorStoreDriver.Entry(
-            id=str(doc["_id"]),
-            vector=doc["vector"],
-            namespace=doc["namespace"],
-            meta=doc["meta"],
+            id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
         )
 
-    def load_entries(
-        self, namespace: Optional[str] = None
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Loads all document entries from the MongoDB collection.
 
         Entries can optionally be filtered by namespace.
@@ -90,10 +77,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         for doc in cursor:
             yield BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]),
-                vector=doc["vector"],
-                namespace=doc["namespace"],
-                meta=doc["meta"],
+                id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
             )
 
     def query(
@@ -117,24 +101,14 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         knn_k = count if count else 10
         pipeline = [
-            {
-                "$search": {
-                    "knnBeta": {
-                        "vector": vector,
-                        "path": "vector",
-                        "k": knn_k + offset,
-                    }
-                }
-            },
+            {"$search": {"knnBeta": {"vector": vector, "path": "vector", "k": knn_k + offset}}},
             {
                 "$project": {
                     "_id": 1,
                     "vector": 1,
                     "namespace": 1,
                     "meta": 1,
-                    "score": {
-                        "$meta": "searchScore"
-                    },  # Include the score in the projection
+                    "score": {"$meta": "searchScore"},  # Include the score in the projection
                 }
             },
             {"$skip": offset},

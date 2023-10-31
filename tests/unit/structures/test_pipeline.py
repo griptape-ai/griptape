@@ -15,10 +15,7 @@ from tests.unit.structures.test_agent import MockEmbeddingDriver
 class TestPipeline:
     def test_init(self):
         driver = MockPromptDriver()
-        pipeline = Pipeline(
-            prompt_driver=driver,
-            rulesets=[Ruleset("TestRuleset", [Rule("test")])],
-        )
+        pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert pipeline.prompt_driver is driver
         assert pipeline.first_task() is None
@@ -46,10 +43,7 @@ class TestPipeline:
     def test_rules(self):
         pipeline = Pipeline(rules=[Rule("foo test")])
 
-        pipeline.add_tasks(
-            PromptTask(rules=[Rule("bar test")]),
-            PromptTask(rules=[Rule("baz test")]),
-        )
+        pipeline.add_tasks(PromptTask(rules=[Rule("bar test")]), PromptTask(rules=[Rule("baz test")]))
 
         assert len(pipeline.tasks[0].all_rulesets) == 2
         assert pipeline.tasks[0].all_rulesets[0].name == "Default Ruleset"
@@ -60,19 +54,11 @@ class TestPipeline:
 
     def test_rules_and_rulesets(self):
         with pytest.raises(ValueError):
-            Pipeline(
-                rules=[Rule("foo test")],
-                rulesets=[Ruleset("Bar", [Rule("bar test")])],
-            )
+            Pipeline(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
         with pytest.raises(ValueError):
             pipeline = Pipeline()
-            pipeline.add_task(
-                PromptTask(
-                    rules=[Rule("foo test")],
-                    rulesets=[Ruleset("Bar", [Rule("bar test")])],
-                )
-            )
+            pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_default_tool_memory(self):
         pipeline = Pipeline()
@@ -81,19 +67,9 @@ class TestPipeline:
 
         assert isinstance(pipeline.tool_memory, ToolMemory)
         assert pipeline.tasks[0].tool_memory == pipeline.tool_memory
-        assert (
-            pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
-        )
-        assert (
-            pipeline.tasks[0].tools[0].output_memory["test"][0]
-            == pipeline.tool_memory
-        )
-        assert (
-            pipeline.tasks[0]
-            .tools[0]
-            .output_memory.get("test_without_default_memory")
-            is None
-        )
+        assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
+        assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
+        assert pipeline.tasks[0].tools[0].output_memory.get("test_without_default_memory") is None
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
@@ -101,9 +77,9 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        memory_embedding_driver = list(
-            pipeline.tool_memory.artifact_storages.values()
-        )[0].query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = list(pipeline.tool_memory.artifact_storages.values())[
+            0
+        ].query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -127,9 +103,7 @@ class TestPipeline:
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
 
-        pipeline = Pipeline(
-            prompt_driver=MockPromptDriver(), memory=ConversationMemory()
-        )
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
 
         pipeline + [first_task, second_task, third_task]
 
@@ -221,9 +195,7 @@ class TestPipeline:
         assert len(task2.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
-        pipeline = Pipeline(
-            prompt_driver=MockPromptDriver(), memory=ConversationMemory()
-        )
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
 
         task1 = PromptTask("test")
         task2 = PromptTask("test")
@@ -247,14 +219,8 @@ class TestPipeline:
         text = "foobar"
 
         assert TextArtifact(text).token_count(
-            OpenAiTokenizer(
-                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
-            )
-        ) == OpenAiTokenizer(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
-        ).count_tokens(
-            text
-        )
+            OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        ) == OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL).count_tokens(text)
 
     def test_run(self):
         task = PromptTask("test")

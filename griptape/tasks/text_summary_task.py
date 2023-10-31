@@ -11,11 +11,7 @@ if TYPE_CHECKING:
 
 @define
 class TextSummaryTask(BaseTextInputTask):
-    summary_engine: BaseSummaryEngine = field(
-        kw_only=True, default=Factory(lambda: PromptSummaryEngine())
-    )
+    summary_engine: BaseSummaryEngine = field(kw_only=True, default=Factory(lambda: PromptSummaryEngine()))
 
     def run(self) -> TextArtifact:
-        return TextArtifact(
-            self.summary_engine.summarize_text(self.input.to_text())
-        )
+        return TextArtifact(self.summary_engine.summarize_text(self.input.to_text()))

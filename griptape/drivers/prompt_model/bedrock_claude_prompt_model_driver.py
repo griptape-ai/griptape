@@ -12,9 +12,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.999, kw_only=True)
     top_k: int = field(default=250, kw_only=True)
     _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
-    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(
-        default=None, kw_only=True
-    )
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 
     @property
     def tokenizer(self) -> BedrockClaudeTokenizer:
@@ -35,9 +33,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockClaudeTokenizer(
-                model=self.prompt_driver.model
-            )
+            self._tokenizer = BedrockClaudeTokenizer(model=self.prompt_driver.model)
             return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
@@ -57,9 +53,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         prompt = self.prompt_stack_to_model_input(prompt_stack)["prompt"]
 
         return {
-            "max_tokens_to_sample": self.prompt_driver.max_output_tokens(
-                prompt
-            ),
+            "max_tokens_to_sample": self.prompt_driver.max_output_tokens(prompt),
             "stop_sequences": self.tokenizer.stop_sequences,
             "temperature": self.prompt_driver.temperature,
             "top_p": self.top_p,

@@ -15,13 +15,9 @@ class BaseQueryEngine(ABC):
         ...
 
     @abstractmethod
-    def upsert_text_artifact(
-        self, artifact: TextArtifact, namespace: Optional[str] = None
-    ) -> str:
+    def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         ...
 
     @abstractmethod
-    def upsert_text_artifacts(
-        self, artifacts: list[TextArtifact], namespace: str
-    ) -> None:
+    def upsert_text_artifacts(self, artifacts: list[TextArtifact], namespace: str) -> None:
         ...

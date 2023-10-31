@@ -10,11 +10,7 @@ class J2:
     templates_dir: str = field(default=abs_path("templates"), kw_only=True)
     environment: Environment = field(
         default=Factory(
-            lambda self: Environment(
-                loader=FileSystemLoader(self.templates_dir),
-                trim_blocks=True,
-                lstrip_blocks=True,
-            ),
+            lambda self: Environment(loader=FileSystemLoader(self.templates_dir), trim_blocks=True, lstrip_blocks=True),
             takes_self=True,
         ),
         kw_only=True,

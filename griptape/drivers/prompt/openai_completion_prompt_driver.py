@@ -28,18 +28,11 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)
-    api_key: Optional[str] = field(
-        default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True
-    )
-    organization: Optional[str] = field(
-        default=openai.organization, kw_only=True
-    )
+    api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
+    organization: Optional[str] = field(default=openai.organization, kw_only=True)
     model: str = field(kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     user: str = field(default="", kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
@@ -52,14 +45,10 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
         if len(result.choices) == 1:
             return TextArtifact(value=result.choices[0].text.strip())
         else:
-            raise Exception(
-                "completion with more than one choice is not supported yet"
-            )
+            raise Exception("completion with more than one choice is not supported yet")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = openai.Completion.create(
-            **self._base_params(prompt_stack), stream=True
-        )
+        result = openai.Completion.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
             if len(chunk.choices) == 1:
@@ -68,9 +57,7 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
                 yield TextArtifact(value=delta_content)
 
             else:
-                raise Exception(
-                    "completion with more than one choice is not supported yet"
-                )
+                raise Exception("completion with more than one choice is not supported yet")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)

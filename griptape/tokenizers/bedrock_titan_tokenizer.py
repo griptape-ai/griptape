@@ -12,16 +12,11 @@ class BedrockTitanTokenizer(BaseTokenizer):
 
     DEFAULT_EMBEDDING_MODELS = "amazon.titan-embed-text-v1"
 
-    session: boto3.Session = field(
-        default=Factory(lambda: boto3.Session()), kw_only=True
-    )
+    session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
     stop_sequences: list[str] = field(factory=list, kw_only=True)
     model: str = field(kw_only=True)
     bedrock_client: Any = field(
-        default=Factory(
-            lambda self: self.session.client("bedrock-runtime"), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True
     )
 
     @property
@@ -32,10 +27,7 @@ class BedrockTitanTokenizer(BaseTokenizer):
         payload = {"inputText": text}
 
         response = self.bedrock_client.invoke_model(
-            body=json.dumps(payload),
-            modelId=self.model,
-            accept="application/json",
-            contentType="application/json",
+            body=json.dumps(payload), modelId=self.model, accept="application/json", contentType="application/json"
         )
         response_body = json.loads(response.get("body").read())
 

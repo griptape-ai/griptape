@@ -33,10 +33,7 @@ class TestEventListener:
         event_handler_1 = Mock()
         event_handler_2 = Mock()
 
-        pipeline.event_listeners = [
-            EventListener(handler=event_handler_1),
-            EventListener(handler=event_handler_2),
-        ]
+        pipeline.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()
@@ -57,37 +54,15 @@ class TestEventListener:
         completion_chunk_handler = Mock()
 
         pipeline.event_listeners = [
-            EventListener(
-                start_prompt_event_handler, event_types=[StartPromptEvent]
-            ),
-            EventListener(
-                finish_prompt_event_handler, event_types=[FinishPromptEvent]
-            ),
-            EventListener(
-                start_task_event_handler, event_types=[StartTaskEvent]
-            ),
-            EventListener(
-                finish_task_event_handler, event_types=[FinishTaskEvent]
-            ),
-            EventListener(
-                start_subtask_event_handler,
-                event_types=[StartActionSubtaskEvent],
-            ),
-            EventListener(
-                finish_subtask_event_handler,
-                event_types=[FinishActionSubtaskEvent],
-            ),
-            EventListener(
-                start_structure_run_event_handler,
-                event_types=[StartStructureRunEvent],
-            ),
-            EventListener(
-                finish_structure_run_event_handler,
-                event_types=[FinishStructureRunEvent],
-            ),
-            EventListener(
-                completion_chunk_handler, event_types=[CompletionChunkEvent]
-            ),
+            EventListener(start_prompt_event_handler, event_types=[StartPromptEvent]),
+            EventListener(finish_prompt_event_handler, event_types=[FinishPromptEvent]),
+            EventListener(start_task_event_handler, event_types=[StartTaskEvent]),
+            EventListener(finish_task_event_handler, event_types=[FinishTaskEvent]),
+            EventListener(start_subtask_event_handler, event_types=[StartActionSubtaskEvent]),
+            EventListener(finish_subtask_event_handler, event_types=[FinishActionSubtaskEvent]),
+            EventListener(start_structure_run_event_handler, event_types=[StartStructureRunEvent]),
+            EventListener(finish_structure_run_event_handler, event_types=[FinishStructureRunEvent]),
+            EventListener(completion_chunk_handler, event_types=[CompletionChunkEvent]),
         ]
 
         # can't mock subtask events, so must manually call

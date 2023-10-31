@@ -3,12 +3,7 @@ import io
 import boto3
 from schema import Schema, Literal
 from attr import define, field, Factory
-from griptape.artifacts import (
-    TextArtifact,
-    ErrorArtifact,
-    InfoArtifact,
-    ListArtifact,
-)
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
 
@@ -16,10 +11,7 @@ from griptape.tools import BaseAwsClient
 @define
 class AwsS3Client(BaseAwsClient):
     s3_client: boto3.client = field(
-        default=Factory(
-            lambda self: self.session.client("s3"), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: self.session.client("s3"), takes_self=True), kw_only=True
     )
 
     @activity(
@@ -37,9 +29,7 @@ class AwsS3Client(BaseAwsClient):
     )
     def get_bucket_acl(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
-            acl = self.s3_client.get_bucket_acl(
-                Bucket=params["values"]["bucket_name"]
-            )
+            acl = self.s3_client.get_bucket_acl(Bucket=params["values"]["bucket_name"])
             return TextArtifact(acl)
         except Exception as e:
             return ErrorArtifact(f"error getting bucket acl: {e}")
@@ -48,20 +38,13 @@ class AwsS3Client(BaseAwsClient):
         config={
             "description": "Can be used to get an AWS S3 bucket policy.",
             "schema": Schema(
-                {
-                    Literal(
-                        "bucket_name",
-                        description="The bucket name for which to get the bucket policy.",
-                    ): str
-                }
+                {Literal("bucket_name", description="The bucket name for which to get the bucket policy."): str}
             ),
         }
     )
     def get_bucket_policy(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
-            policy = self.s3_client.get_bucket_policy(
-                Bucket=params["values"]["bucket_name"]
-            )
+            policy = self.s3_client.get_bucket_policy(Bucket=params["values"]["bucket_name"])
             return TextArtifact(policy)
         except Exception as e:
             return ErrorArtifact(f"error getting bucket policy: {e}")
@@ -71,14 +54,8 @@ class AwsS3Client(BaseAwsClient):
             "description": "Can be used to get an access control list (ACL) of an object in the AWS S3 bucket.",
             "schema": Schema(
                 {
-                    Literal(
-                        "bucket_name",
-                        description="Name of the AWS S3 bucket for which to get an ACL.",
-                    ): str,
-                    Literal(
-                        "object_key",
-                        description="Key of the object for which to get the ACL information.",
-                    ): str,
+                    Literal("bucket_name", description="Name of the AWS S3 bucket for which to get an ACL."): str,
+                    Literal("object_key", description="Key of the object for which to get the ACL information."): str,
                 }
             ),
         }
@@ -86,8 +63,7 @@ class AwsS3Client(BaseAwsClient):
     def get_object_acl(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
             acl = self.s3_client.get_object_acl(
-                Bucket=params["values"]["bucket_name"],
-                Key=params["values"]["object_key"],
+                Bucket=params["values"]["bucket_name"], Key=params["values"]["object_key"]
             )
             return TextArtifact(acl)
         except Exception as e:
@@ -98,34 +74,21 @@ class AwsS3Client(BaseAwsClient):
         try:
             buckets = self.s3_client.list_buckets()
 
-            return ListArtifact(
-                [TextArtifact(str(b)) for b in buckets["Buckets"]]
-            )
+            return ListArtifact([TextArtifact(str(b)) for b in buckets["Buckets"]])
         except Exception as e:
             return ErrorArtifact(f"error listing s3 buckets: {e}")
 
     @activity(
         config={
             "description": "Can be used to list all objects in an AWS S3 bucket.",
-            "schema": Schema(
-                {
-                    Literal(
-                        "bucket_name",
-                        description="The name of the S3 bucket to list.",
-                    ): str
-                }
-            ),
+            "schema": Schema({Literal("bucket_name", description="The name of the S3 bucket to list."): str}),
         }
     )
     def list_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
         try:
-            objects = self.s3_client.list_objects_v2(
-                Bucket=params["values"]["bucket_name"]
-            )
+            objects = self.s3_client.list_objects_v2(Bucket=params["values"]["bucket_name"])
 
-            return ListArtifact(
-                [TextArtifact(str(o)) for o in objects["Contents"]]
-            )
+            return ListArtifact([TextArtifact(str(o)) for o in objects["Contents"]])
         except Exception as e:
             return ErrorArtifact(f"error listing objects in bucket: {e}")
 
@@ -137,17 +100,12 @@ class AwsS3Client(BaseAwsClient):
                     "memory_name": str,
                     "artifact_namespace": str,
                     "bucket_name": str,
-                    Literal(
-                        "object_key",
-                        description="Destination object key name. For example, 'baz.txt'",
-                    ): str,
+                    Literal("object_key", description="Destination object key name. For example, 'baz.txt'"): str,
                 }
             ),
         }
     )
-    def upload_memory_artifacts_to_s3(
-        self, params: dict
-    ) -> InfoArtifact | ErrorArtifact:
+    def upload_memory_artifacts_to_s3(self, params: dict) -> InfoArtifact | ErrorArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         bucket_name = params["values"]["bucket_name"]
@@ -160,15 +118,11 @@ class AwsS3Client(BaseAwsClient):
                 return ErrorArtifact("no artifacts found")
             elif len(artifacts) == 1:
                 try:
-                    self._upload_object(
-                        bucket_name, object_key, artifacts.value[0].value
-                    )
+                    self._upload_object(bucket_name, object_key, artifacts.value[0].value)
 
                     return InfoArtifact(f"uploaded successfully")
                 except Exception as e:
-                    return ErrorArtifact(
-                        f"error uploading objects to the bucket: {e}"
-                    )
+                    return ErrorArtifact(f"error uploading objects to the bucket: {e}")
             else:
                 try:
                     for a in artifacts.value:
@@ -176,9 +130,7 @@ class AwsS3Client(BaseAwsClient):
 
                     return InfoArtifact(f"uploaded successfully")
                 except Exception as e:
-                    return ErrorArtifact(
-                        f"error uploading objects to the bucket: {e}"
-                    )
+                    return ErrorArtifact(f"error uploading objects to the bucket: {e}")
         else:
             return ErrorArtifact("memory not found")
 
@@ -188,18 +140,13 @@ class AwsS3Client(BaseAwsClient):
             "schema": Schema(
                 {
                     "bucket_name": str,
-                    Literal(
-                        "object_key",
-                        description="Destination object key name. For example, 'baz.txt'",
-                    ): str,
+                    Literal("object_key", description="Destination object key name. For example, 'baz.txt'"): str,
                     "content": str,
                 }
             ),
         }
     )
-    def upload_content_to_s3(
-        self, params: dict
-    ) -> ErrorArtifact | InfoArtifact:
+    def upload_content_to_s3(self, params: dict) -> ErrorArtifact | InfoArtifact:
         content = params["values"]["content"]
         bucket_name = params["values"]["bucket_name"]
         object_key = params["values"]["object_key"]
@@ -211,15 +158,9 @@ class AwsS3Client(BaseAwsClient):
         except Exception as e:
             return ErrorArtifact(f"error uploading objects to the bucket: {e}")
 
-    def _upload_object(
-        self, bucket_name: str, object_name: str, value: any
-    ) -> None:
+    def _upload_object(self, bucket_name: str, object_name: str, value: any) -> None:
         self.s3_client.create_bucket(Bucket=bucket_name)
 
         self.s3_client.upload_fileobj(
-            Fileobj=io.BytesIO(
-                value.encode() if isinstance(value, str) else value
-            ),
-            Bucket=bucket_name,
-            Key=object_name,
+            Fileobj=io.BytesIO(value.encode() if isinstance(value, str) else value), Bucket=bucket_name, Key=object_name
         )

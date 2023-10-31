@@ -11,9 +11,7 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
     tokenizer: BaseTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=AutoTokenizer.from_pretrained(
-                    "tiiuae/falcon-40b", model_max_length=self.max_tokens
-                )
+                tokenizer=AutoTokenizer.from_pretrained("tiiuae/falcon-40b", model_max_length=self.max_tokens)
             ),
             takes_self=True,
         ),

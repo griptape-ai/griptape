@@ -15,9 +15,7 @@ class InvalidMockTool(BaseTool):
         }
     }
 
-    test_field: str = field(
-        default="test", kw_only=True, metadata={"env": "TEST_FIELD"}
-    )
+    test_field: str = field(default="test", kw_only=True, metadata={"env": "TEST_FIELD"})
 
     @activity(config=configs["test"])
     def test(self, value: any) -> str:

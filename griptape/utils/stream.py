@@ -30,13 +30,9 @@ class Stream:
     @structure.validator
     def validate_structure(self, _, structure: Structure):
         if structure and not structure.prompt_driver.stream:
-            raise ValueError(
-                "prompt driver does not have streaming enabled, enable with stream=True"
-            )
+            raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
 
-    _event_queue: Queue[BaseEvent] = field(
-        default=Factory(lambda: Queue(maxsize=1))
-    )
+    _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue(maxsize=1)))
 
     def run(self, *args) -> Iterator[TextArtifact]:
         t = Thread(target=self._run_structure, args=args)
@@ -55,8 +51,6 @@ class Stream:
             self._event_queue.put(event, True)
             self._event_queue.join()
 
-        self.structure.add_event_listener(
-            event_handler, [CompletionChunkEvent, FinishStructureRunEvent]
-        )
+        self.structure.add_event_listener(event_handler, [CompletionChunkEvent, FinishStructureRunEvent])
 
         self.structure.run(*args)

@@ -25,18 +25,8 @@ class TestDynamoDbConversationMemoryDriver:
         dynamodb = boto3.Session(region_name=self.AWS_REGION).client("dynamodb")
         dynamodb.create_table(
             TableName=self.DYNAMODB_TABLE_NAME,
-            KeySchema=[
-                {
-                    "AttributeName": self.DYNAMODB_PARTITION_KEY,
-                    "KeyType": "HASH",
-                }
-            ],
-            AttributeDefinitions=[
-                {
-                    "AttributeName": self.DYNAMODB_PARTITION_KEY,
-                    "AttributeType": "S",
-                }
-            ],
+            KeySchema=[{"AttributeName": self.DYNAMODB_PARTITION_KEY, "KeyType": "HASH"}],
+            AttributeDefinitions=[{"AttributeName": self.DYNAMODB_PARTITION_KEY, "AttributeType": "S"}],
             BillingMode="PAY_PER_REQUEST",
         )
 
@@ -62,16 +52,12 @@ class TestDynamoDbConversationMemoryDriver:
 
         pipeline.add_task(PromptTask("test"))
 
-        response = table.get_item(
-            TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"}
-        )
+        response = table.get_item(TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"})
         assert "Item" not in response
 
         pipeline.run()
 
-        response = table.get_item(
-            TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"}
-        )
+        response = table.get_item(TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"})
         assert "Item" in response
 
     def test_load(self):

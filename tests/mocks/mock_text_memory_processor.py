@@ -7,9 +7,7 @@ from tests.utils import defaults
 
 @define
 class MockToolMemoryProcessor(ToolMemoryActivitiesMixin):
-    memory: ToolMemory = field(
-        default=Factory(lambda: defaults.text_tool_memory("TestMemory"))
-    )
+    memory: ToolMemory = field(default=Factory(lambda: defaults.text_tool_memory("TestMemory")))
 
     def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
         return self.memory

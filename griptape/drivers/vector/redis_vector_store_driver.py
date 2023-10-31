@@ -37,11 +37,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     client: redis.Redis = field(
         default=Factory(
             lambda self: redis.Redis(
-                host=self.host,
-                port=self.port,
-                db=self.db,
-                password=self.password,
-                decode_responses=False,
+                host=self.host, port=self.port, db=self.db, password=self.password, decode_responses=False
             ),
             takes_self=True,
         )
@@ -64,10 +60,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         key = self._generate_key(vector_id, namespace)
         bytes_vector = json.dumps(vector).encode("utf-8")
 
-        mapping = {
-            "vector": np.array(vector, dtype=np.float32).tobytes(),
-            "vec_string": bytes_vector,
-        }
+        mapping = {"vector": np.array(vector, dtype=np.float32).tobytes(), "vec_string": bytes_vector}
 
         if meta:
             mapping["metadata"] = json.dumps(meta)
@@ -76,9 +69,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(
-        self, vector_id: str, namespace: Optional[str] = None
-    ) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Retrieves a specific vector entry from Redis based on its identifier and optional namespace.
 
         Returns:
@@ -87,17 +78,11 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         key = self._generate_key(vector_id, namespace)
         result = self.client.hgetall(key)
         vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()
-        meta = (
-            json.loads(result[b"metadata"]) if b"metadata" in result else None
-        )
+        meta = json.loads(result[b"metadata"]) if b"metadata" in result else None
 
-        return BaseVectorStoreDriver.Entry(
-            id=vector_id, meta=meta, vector=vector, namespace=namespace
-        )
+        return BaseVectorStoreDriver.Entry(id=vector_id, meta=meta, vector=vector, namespace=namespace)
 
-    def load_entries(
-        self, namespace: Optional[str] = None
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from Redis that match the optional namespace.
 
         Returns:
@@ -106,17 +91,10 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         pattern = f"{namespace}:*" if namespace else "*"
         keys = self.client.keys(pattern)
 
-        return [
-            self.load_entry(key.decode("utf-8"), namespace=namespace)
-            for key in keys
-        ]
+        return [self.load_entry(key.decode("utf-8"), namespace=namespace) for key in keys]
 
     def query(
-        self,
-        query: str,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        **kwargs,
+        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
     ) -> List[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on Redis to find vectors similar to the provided input vector.
 
@@ -137,21 +115,13 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_params = {"vector": np.array(vector, dtype=np.float32).tobytes()}
 
-        results = (
-            self.client.ft(self.index)
-            .search(query_expression, query_params)
-            .docs
-        )
+        results = self.client.ft(self.index).search(query_expression, query_params).docs
 
         query_results = []
         for document in results:
             metadata = getattr(document, "metadata", None)
-            namespace = (
-                document.id.split(":")[0] if ":" in document.id else None
-            )
-            vector_id = (
-                document.id.split(":")[1] if ":" in document.id else document.id
-            )
+            namespace = document.id.split(":")[0] if ":" in document.id else None
+            vector_id = document.id.split(":")[1] if ":" in document.id else document.id
             vector_float_list = json.loads(document["vec_string"])
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
@@ -164,11 +134,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             )
         return query_results
 
-    def create_index(
-        self,
-        namespace: Optional[str] = None,
-        vector_dimension: Optional[int] = None,
-    ) -> None:
+    def create_index(self, namespace: Optional[str] = None, vector_dimension: Optional[int] = None) -> None:
         """Creates a new index in Redis with the specified properties.
 
         If an index with the given name already exists, a warning is logged and the method does not proceed.
@@ -183,27 +149,15 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             schema = (
                 TagField("tag"),
                 VectorField(
-                    "vector",
-                    "FLAT",
-                    {
-                        "TYPE": "FLOAT32",
-                        "DIM": vector_dimension,
-                        "DISTANCE_METRIC": "COSINE",
-                    },
+                    "vector", "FLAT", {"TYPE": "FLOAT32", "DIM": vector_dimension, "DISTANCE_METRIC": "COSINE"}
                 ),
             )
 
             doc_prefix = self._get_doc_prefix(namespace)
-            definition = IndexDefinition(
-                prefix=[doc_prefix], index_type=IndexType.HASH
-            )
-            self.client.ft(self.index).create_index(
-                fields=schema, definition=definition
-            )
+            definition = IndexDefinition(prefix=[doc_prefix], index_type=IndexType.HASH)
+            self.client.ft(self.index).create_index(fields=schema, definition=definition)
 
-    def _generate_key(
-        self, vector_id: str, namespace: Optional[str] = None
-    ) -> str:
+    def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
         """Generates a Redis key using the provided vector ID and optionally a namespace."""
         return f"{namespace}:{vector_id}" if namespace else vector_id
 

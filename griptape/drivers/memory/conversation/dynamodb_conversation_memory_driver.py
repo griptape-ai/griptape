@@ -7,9 +7,7 @@ from griptape.memory.structure import ConversationMemory
 
 @define
 class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
-    session: boto3.Session = field(
-        default=Factory(lambda: boto3.Session()), kw_only=True
-    )
+    session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
     table_name: str = field(kw_only=True)
     partition_key: str = field(kw_only=True)
     value_attribute_key: str = field(kw_only=True)
@@ -31,9 +29,7 @@ class DynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
         )
 
     def load(self) -> Optional[ConversationMemory]:
-        response = self.table.get_item(
-            Key={self.partition_key: self.partition_key_value}
-        )
+        response = self.table.get_item(Key={self.partition_key: self.partition_key_value})
 
         if "Item" in response and self.value_attribute_key in response["Item"]:
             memory_value = response["Item"][self.value_attribute_key]

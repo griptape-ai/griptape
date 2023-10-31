@@ -11,16 +11,10 @@ from griptape.tasks import BaseTask
 
 @define
 class Workflow(Structure):
-    futures_executor: futures.Executor = field(
-        default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True
-    )
+    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def __add__(self, other: BaseTask | list[BaseTask]) -> BaseTask:
-        return (
-            [self.add_task(o) for o in other]
-            if isinstance(other, list)
-            else self + [other]
-        )
+        return [self.add_task(o) for o in other] if isinstance(other, list) else self + [other]
 
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
@@ -59,8 +53,7 @@ class Workflow(Structure):
         context.update(
             {
                 "parent_outputs": {
-                    parent.id: parent.output.to_text() if parent.output else ""
-                    for parent in task.parents
+                    parent.id: parent.output.to_text() if parent.output else "" for parent in task.parents
                 },
                 "parents": {parent.id: parent for parent in task.parents},
                 "children": {child.id: child for child in task.children},
@@ -85,7 +78,4 @@ class Workflow(Structure):
         return graph
 
     def order_tasks(self) -> list[BaseTask]:
-        return [
-            self.find_task(task_id)
-            for task_id in TopologicalSorter(self.to_graph()).static_order()
-        ]
+        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]

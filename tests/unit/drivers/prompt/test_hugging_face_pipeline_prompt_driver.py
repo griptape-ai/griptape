@@ -6,9 +6,7 @@ import pytest
 class TestHuggingFacePipelinePromptDriver:
     @pytest.fixture(autouse=True)
     def mock_pipeline(self, mocker):
-        mock_pipeline = mocker.patch(
-            "griptape.drivers.prompt.hugging_face_pipeline_prompt_driver.pipeline"
-        )
+        mock_pipeline = mocker.patch("griptape.drivers.prompt.hugging_face_pipeline_prompt_driver.pipeline")
         return mock_pipeline
 
     @pytest.fixture(autouse=True)
@@ -20,9 +18,7 @@ class TestHuggingFacePipelinePromptDriver:
 
     @pytest.fixture(autouse=True)
     def mock_autotokenizer(self, mocker):
-        mock_autotokenizer = mocker.patch(
-            "transformers.AutoTokenizer.from_pretrained"
-        ).return_value
+        mock_autotokenizer = mocker.patch("transformers.AutoTokenizer.from_pretrained").return_value
         mock_autotokenizer.model_max_length = 42
         return mock_autotokenizer
 
@@ -49,9 +45,7 @@ class TestHuggingFacePipelinePromptDriver:
         assert text_artifact.value == "model-output"
 
     @pytest.mark.parametrize("choices", [[], [1, 2]])
-    def test_try_run_throws_when_multiple_choices_returned(
-        self, choices, mock_generator, prompt_stack
-    ):
+    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_generator, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo")
         mock_generator.return_value = choices
@@ -61,13 +55,9 @@ class TestHuggingFacePipelinePromptDriver:
             driver.try_run(prompt_stack)
 
         # Then
-        e.value.args[
-            0
-        ] == "completion with more than one choice is not supported yet"
+        e.value.args[0] == "completion with more than one choice is not supported yet"
 
-    def test_try_run_throws_when_unsupported_task_returned(
-        self, prompt_stack, mock_generator
-    ):
+    def test_try_run_throws_when_unsupported_task_returned(self, prompt_stack, mock_generator):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo")
         mock_generator.task = "obviously-an-unsupported-task"
@@ -77,6 +67,4 @@ class TestHuggingFacePipelinePromptDriver:
             driver.try_run(prompt_stack)
 
         # Then
-        assert e.value.args[0].startswith(
-            "only models with the following tasks are supported: "
-        )
+        assert e.value.args[0].startswith("only models with the following tasks are supported: ")

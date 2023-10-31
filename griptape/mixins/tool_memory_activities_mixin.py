@@ -49,9 +49,7 @@ class ToolMemoryActivitiesMixin:
         query = params["values"]["query"]
 
         if memory:
-            return memory.query_namespace(
-                namespace=artifact_namespace, query=query
-            )
+            return memory.query_namespace(namespace=artifact_namespace, query=query)
         else:
             return ErrorArtifact("memory not found")
 

@@ -13,10 +13,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 class TestAgent:
     def test_init(self):
         driver = MockPromptDriver()
-        agent = Agent(
-            prompt_driver=driver,
-            rulesets=[Ruleset("TestRuleset", [Rule("test")])],
-        )
+        agent = Agent(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
         assert agent.prompt_driver is driver
         assert isinstance(agent.task, PromptTask)
@@ -29,9 +26,7 @@ class TestAgent:
     def test_rulesets(self):
         agent = Agent(rulesets=[Ruleset("Foo", [Rule("foo test")])])
 
-        agent.add_task(
-            PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])])
-        )
+        agent.add_task(PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
         assert len(agent.task.all_rulesets) == 2
         assert agent.task.all_rulesets[0].name == "Foo"
@@ -48,19 +43,11 @@ class TestAgent:
 
     def test_rules_and_rulesets(self):
         with pytest.raises(ValueError):
-            Agent(
-                rules=[Rule("foo test")],
-                rulesets=[Ruleset("Bar", [Rule("bar test")])],
-            )
+            Agent(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
         with pytest.raises(ValueError):
             agent = Agent()
-            agent.add_task(
-                PromptTask(
-                    rules=[Rule("foo test")],
-                    rulesets=[Ruleset("Bar", [Rule("bar test")])],
-                )
-            )
+            agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_default_tool_memory(self):
         agent = Agent(tools=[MockTool()])
@@ -68,10 +55,7 @@ class TestAgent:
         assert isinstance(agent.tool_memory, ToolMemory)
         assert agent.tools[0].input_memory[0] == agent.tool_memory
         assert agent.tools[0].output_memory["test"][0] == agent.tool_memory
-        assert (
-            agent.tools[0].output_memory.get("test_without_default_memory")
-            is None
-        )
+        assert agent.tools[0].output_memory.get("test_without_default_memory") is None
 
     def test_with_default_tool_memory_and_empty_tool_output_memory(self):
         agent = Agent(tools=[MockTool(output_memory={})])
@@ -82,9 +66,9 @@ class TestAgent:
         embedding_driver = MockEmbeddingDriver()
         agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
 
-        memory_embedding_driver = list(
-            agent.tool_memory.artifact_storages.values()
-        )[0].query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = list(agent.tool_memory.artifact_storages.values())[
+            0
+        ].query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -95,9 +79,7 @@ class TestAgent:
         assert agent.tools[0].output_memory is None
 
     def test_with_memory(self):
-        agent = Agent(
-            prompt_driver=MockPromptDriver(), memory=ConversationMemory()
-        )
+        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
 
         assert agent.memory is not None
         assert len(agent.memory.runs) == 0
@@ -168,9 +150,7 @@ class TestAgent:
         assert len(task1.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
-        agent = Agent(
-            prompt_driver=MockPromptDriver(), memory=ConversationMemory()
-        )
+        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
 
         task1 = PromptTask("test")
 
@@ -226,19 +206,12 @@ class TestAgent:
     def test_tool_memory_defaults(self):
         prompt_driver = MockPromptDriver()
         embedding_driver = MockEmbeddingDriver()
-        agent = Agent(
-            prompt_driver=prompt_driver, embedding_driver=embedding_driver
-        )
+        agent = Agent(prompt_driver=prompt_driver, embedding_driver=embedding_driver)
 
-        storage: TextArtifactStorage = list(
-            agent.tool_memory.artifact_storages.values()
-        )[0]
+        storage: TextArtifactStorage = list(agent.tool_memory.artifact_storages.values())[0]
 
         assert storage.query_engine.prompt_driver == prompt_driver
-        assert (
-            storage.query_engine.vector_store_driver.embedding_driver
-            == embedding_driver
-        )
+        assert storage.query_engine.vector_store_driver.embedding_driver == embedding_driver
         assert storage.summary_engine.prompt_driver == prompt_driver
         assert storage.csv_extraction_engine.prompt_driver == prompt_driver
         assert storage.json_extraction_engine.prompt_driver == prompt_driver

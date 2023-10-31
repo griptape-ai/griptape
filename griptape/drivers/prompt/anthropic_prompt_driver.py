@@ -19,16 +19,11 @@ class AnthropicPromptDriver(BasePromptDriver):
     api_key: str = field(kw_only=True)
     model: str = field(kw_only=True)
     tokenizer: AnthropicTokenizer = field(
-        default=Factory(
-            lambda self: AnthropicTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        response = anthropic.Anthropic(api_key=self.api_key).completions.create(
-            **self._base_params(prompt_stack)
-        )
+        response = anthropic.Anthropic(api_key=self.api_key).completions.create(**self._base_params(prompt_stack))
         return TextArtifact(value=response.completion)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
@@ -39,9 +34,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         for chunk in response:
             yield TextArtifact(value=chunk.completion)
 
-    def default_prompt_stack_to_string_converter(
-        self, prompt_stack: PromptStack
-    ) -> str:
+    def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
         prompt_lines = []
 
         for i in prompt_stack.inputs:
