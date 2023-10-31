@@ -9,12 +9,12 @@ from griptape.tokenizers import OpenAiTokenizer
 class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
     """
     Attributes:
-        model: OpenAI embedding model name. Uses `text-embedding-ada-002` by default.
-        deployment_id: Azure OpenAi deployment ID.
+        model: OpenAI embedding model name.
+        deployment_id: Azure OpenAI deployment ID.
         api_base: API URL.
-        api_type: Can be changed to use OpenAI models on Azure.
-        api_version: API version.
-        tokenizer: Custom `OpenAiTokenizer`.
+        api_type: OpenAI API type. Defaults to 'azure'.
+        api_version: API version. Defaults to '2023-05-15'.
+        tokenizer: Optionally provide custom `OpenAiTokenizer`.
     """
 
     model: str = field(kw_only=True)

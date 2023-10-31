@@ -11,15 +11,14 @@ from griptape.tokenizers import OpenAiTokenizer
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     """
     Attributes:
-        api_type: Can be changed to use OpenAI models on Azure.
-        api_version: API version.
-        api_base: API URL.
-        api_key: API key to pass directly; by default uses `OPENAI_API_KEY_PATH` environment variable.
+        model: OpenAI embedding model name. Defaults to `text-embedding-ada-002`.
         dimensions: Vector dimensions. Defaults to `1536`.
-        model: OpenAI embedding model name. Uses `text-embedding-ada-002` by default.
-        organization: OpenAI organization.
-        tokenizer: Custom `OpenAiTokenizer`.
-        user: OpenAI user.
+        api_type: OpenAI API type, for example 'open_ai' or 'azure'. Defaults to 'open_ai'.
+        api_version: API version. Defaults to 'OPENAI_API_VERSION' environment variable.
+        api_base: API URL. Defaults to OpenAI's v1 API URL.
+        api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
+        organization: OpenAI organization. Defaults to 'OPENAI_ORGANIZATION' environment variable.
+        tokenizer: Optionally provide custom `OpenAiTokenizer`.
     """
 
     DEFAULT_MODEL = "text-embedding-ada-002"

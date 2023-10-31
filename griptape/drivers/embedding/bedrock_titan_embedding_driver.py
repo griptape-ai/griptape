@@ -9,11 +9,20 @@ from griptape.tokenizers import BedrockTitanTokenizer
 
 @define
 class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
+    """
+    Attributes:
+        model: Embedding model name. Defaults to DEFAULT_MODEL.
+        dimensions: Vector dimensions. Defaults to DEFAULT_MAX_TOKENS.
+        tokenizer: Optionally provide custom `BedrockTitanTokenizer`.
+        session: Optionally provide custom `boto3.Session`.
+        bedrock_client: Optionally provide custom `bedrock-runtime` client.
+    """
+
     DEFAULT_MODEL = "amazon.titan-embed-text-v1"
     DEFAULT_MAX_TOKENS = 1536
 
-    dimensions: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
+    dimensions: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
     tokenizer: BedrockTitanTokenizer = field(
         default=Factory(
             lambda self: BedrockTitanTokenizer(model=self.model),
