@@ -36,7 +36,7 @@ class GoogleSheetsClient(BaseGoogleClient):
                         default=DEFAULT_FOLDER_PATH,
                         description="Path of the folder (like 'MainFolder/Subfolder1/Subfolder2') "
                         "from which spreadsheets should be listed.",
-                    ): str,
+                    ): str
                 }
             ),
         }
@@ -47,7 +47,7 @@ class GoogleSheetsClient(BaseGoogleClient):
 
         values = params["values"]
         folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
-    
+
         try:
             service = self._build_client(
                 scopes=self.DRIVE_READ_SCOPES,
@@ -55,7 +55,7 @@ class GoogleSheetsClient(BaseGoogleClient):
                 version="v3",
                 owner_email=self.owner_email,
             )
-    
+
             if folder_path == self.DEFAULT_FOLDER_PATH:
                 query = "mimeType='application/vnd.google-apps.spreadsheet' and 'root' in parents and trashed=false"
             else:
@@ -66,11 +66,13 @@ class GoogleSheetsClient(BaseGoogleClient):
                         f"and trashed=false"
                     )
                 else:
-                    return ErrorArtifact(f"Could not find folder: {folder_path}")
-    
+                    return ErrorArtifact(
+                        f"Could not find folder: {folder_path}"
+                    )
+
             spreadsheets = []
             page_token = None
-    
+
             while page_token is not None:
                 response = (
                     service.files()
@@ -82,17 +84,25 @@ class GoogleSheetsClient(BaseGoogleClient):
                     )
                     .execute()
                 )
-    
+
                 for file in response.get("files", []):
-                    spreadsheets.append(InfoArtifact(f"Spreadsheet ID: {file['id']}, Name: {file['name']}"))
-    
+                    spreadsheets.append(
+                        InfoArtifact(
+                            f"Spreadsheet ID: {file['id']}, Name: {file['name']}"
+                        )
+                    )
+
                 page_token = response.get("nextPageToken")
             return ListArtifact(spreadsheets)
-    
+
         except HttpError as e:
-            return ErrorArtifact(f"error listing spreadsheet due to http error: {e}")
+            return ErrorArtifact(
+                f"error listing spreadsheet due to http error: {e}"
+            )
         except MalformedError as e:
-            return ErrorArtifact(f"error listing spreadsheet due to malformed credentials: {e}")
+            return ErrorArtifact(
+                f"error listing spreadsheet due to malformed credentials: {e}"
+            )
         except Exception as e:
             return ErrorArtifact(f"error listing spreadsheets: {e}")
 
@@ -197,9 +207,7 @@ class GoogleSheetsClient(BaseGoogleClient):
                 "name": file_name,
                 "mimeType": "application/vnd.google-apps.spreadsheet",
             }
-            media = MediaFileUpload(
-                file_path, mimetype=mime_mapping[file_type]
-            )
+            media = MediaFileUpload(file_path, mimetype=mime_mapping[file_type])
             file = (
                 service.files()
                 .create(body=file_metadata, media_body=media, fields="id")
@@ -230,22 +238,19 @@ class GoogleSheetsClient(BaseGoogleClient):
                 {
                     Literal(
                         "file_path",
-                        description="The file path of the spreadsheet to modify"
+                        description="The file path of the spreadsheet to modify",
                     ): str,
                     Literal(
-                        "range",
-                        description="The cell range to modify"
+                        "range", description="The cell range to modify"
                     ): str,
                     Optional(
                         "values",
-                        description="The values to be added or updated"
+                        description="The values to be added or updated",
                     ): list,
                     Literal(
                         "operation",
-                        description="The operation type (append, update, or delete)"
-                    ): Or(
-                        "append", "update", "delete"
-                          ),
+                        description="The operation type (append, update, or delete)",
+                    ): Or("append", "update", "delete"),
                 }
             ),
         }
@@ -259,7 +264,7 @@ class GoogleSheetsClient(BaseGoogleClient):
         range_ = input_values.get("range")
         values = input_values.get("values")
         operation = input_values["operation"]
-    
+
         try:
             sheets_service = self._build_client(
                 scopes=self.SHEETS_SCOPES,
@@ -273,33 +278,57 @@ class GoogleSheetsClient(BaseGoogleClient):
                 version="v3",
                 owner_email=self.owner_email,
             )
-    
-            spreadsheet_id = self._convert_path_to_file_id(drive_service, file_path)
-    
+
+            spreadsheet_id = self._convert_path_to_file_id(
+                drive_service, file_path
+            )
+
             if spreadsheet_id:
                 if operation == "append":
                     sheets_service.spreadsheets().values().append(
-                        spreadsheetId=spreadsheet_id, range=range_, valueInputOption="RAW", body={"values": [values]}
+                        spreadsheetId=spreadsheet_id,
+                        range=range_,
+                        valueInputOption="RAW",
+                        body={"values": [values]},
                     ).execute()
-                    result = InfoArtifact(f"Value appended to {file_path} at range {range_}")
+                    result = InfoArtifact(
+                        f"Value appended to {file_path} at range {range_}"
+                    )
                 elif operation == "update":
                     sheets_service.spreadsheets().values().update(
-                        spreadsheetId=spreadsheet_id, range=range_, valueInputOption="RAW", body={"values": [values]}
+                        spreadsheetId=spreadsheet_id,
+                        range=range_,
+                        valueInputOption="RAW",
+                        body={"values": [values]},
                     ).execute()
-                    result = InfoArtifact(f"Value updated in {file_path} at range {range_}")
+                    result = InfoArtifact(
+                        f"Value updated in {file_path} at range {range_}"
+                    )
                 elif operation == "delete":
-                    sheets_service.spreadsheets().values().clear(spreadsheetId=spreadsheet_id, range=range_).execute()
-                    result = InfoArtifact(f"Value cleared in {file_path} at range {range_}")
+                    sheets_service.spreadsheets().values().clear(
+                        spreadsheetId=spreadsheet_id, range=range_
+                    ).execute()
+                    result = InfoArtifact(
+                        f"Value cleared in {file_path} at range {range_}"
+                    )
                 else:
-                    result = ErrorArtifact(f"Unsupported operation: {operation}")
+                    result = ErrorArtifact(
+                        f"Unsupported operation: {operation}"
+                    )
             else:
-                result = ErrorArtifact(f"Could not find spreadsheet: {file_path}")
-    
+                result = ErrorArtifact(
+                    f"Could not find spreadsheet: {file_path}"
+                )
+
             return result
-    
+
         except HttpError as e:
-            return ErrorArtifact(f"error modifying value in cell due to http error: {e}")
+            return ErrorArtifact(
+                f"error modifying value in cell due to http error: {e}"
+            )
         except MalformedError as e:
-            return ErrorArtifact(f"error modifying value in cell due to malformed credentials: {e}")
+            return ErrorArtifact(
+                f"error modifying value in cell due to malformed credentials: {e}"
+            )
         except Exception as e:
             return ErrorArtifact(f"error in modifying value in cell: {e}")
