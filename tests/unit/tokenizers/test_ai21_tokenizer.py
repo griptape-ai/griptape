@@ -6,30 +6,13 @@ from griptape.tokenizers import Ai21Tokenizer
 class TestAi21Tokenizer:
     @pytest.fixture
     def tokenizer(self):
-        tokenizer = Ai21Tokenizer(api_key="foo")
+        tokenizer = Ai21Tokenizer(
+            model=Ai21Tokenizer.DEFAULT_MODEL, api_key="foo"
+        )
 
         return tokenizer
 
-    def test_encode(self, tokenizer, monkeypatch):
-        monkeypatch.setattr(
-            ai21.Tokenization,
-            "execute",
-            lambda *args, **kwargs: {
-                "tokens": [{"token": "foo"}, {"token": "bar"}]
-            },
-        )
-        try:
-            tokenizer.encode("foo bar")
-        except NotImplementedError:
-            assert True
-
-    def test_decode(self, tokenizer):
-        try:
-            assert tokenizer.decode([6713199, 6447474]) == "foo bar"
-        except NotImplementedError:
-            assert True
-
-    def test_token_count(self, tokenizer, monkeypatch):
+    def test_count_tokens(self, tokenizer, monkeypatch):
         monkeypatch.setattr(
             ai21.Tokenization,
             "execute",
@@ -41,9 +24,9 @@ class TestAi21Tokenizer:
                 ]
             },
         )
-        assert tokenizer.token_count("foo bar huzzah") == 3
+        assert tokenizer.count_tokens("foo bar huzzah") == 3
 
-    def test_tokens_left(self, tokenizer, monkeypatch):
+    def test_count_tokens_left(self, tokenizer, monkeypatch):
         monkeypatch.setattr(
             ai21.Tokenization,
             "execute",
@@ -55,4 +38,4 @@ class TestAi21Tokenizer:
                 ]
             },
         )
-        assert tokenizer.tokens_left("foo bar huzzah") == 8189
+        assert tokenizer.count_tokens_left("foo bar huzzah") == 8189

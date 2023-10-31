@@ -1,4 +1,5 @@
 import ai21
+from typing import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
@@ -38,7 +39,7 @@ class Ai21PromptDriver(BasePromptDriver):
             model=self.model,
             prompt=self.prompt_stack_to_string(prompt_stack),
             numResults=1,
-            maxTokens=self.tokenizer.tokens_left(
+            maxTokens=self.tokenizer.count_tokens_left(
                 self.prompt_stack_to_string(prompt_stack)
             ),
             temperature=self.temperature,
@@ -48,3 +49,6 @@ class Ai21PromptDriver(BasePromptDriver):
         generation = result.completions[0].data.text
 
         return TextArtifact(generation)
+
+    def try_stream(self, _: PromptStack) -> Iterator[TextArtifact]:
+        raise ValueError("Streaming not supported for AI21 Prompt Driver")
