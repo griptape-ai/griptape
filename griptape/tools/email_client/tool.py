@@ -18,9 +18,9 @@ class EmailClient(BaseTool):
 
     Attributes:
         username: Username/email address used to send email via the SMTP protocol and retrieve email via the IMAP protocol.
-          Example: bender@futurama.com
+            Example: bender@futurama.com
         password: Password used to send email via the SMTP protocol and retrieve email via the IMAP protocol. If using gmail,
-          this would be an App Password.
+            this would be an App Password.
         email_max_retrieve_count: Used to limit the number of messages retrieved during any given activities.
         smtp_host: Hostname or url of the SMTP server. Example: smtp.gmail.com
         smtp_port: Port of the SMTP server. Example: 465
@@ -31,7 +31,7 @@ class EmailClient(BaseTool):
         imap_user: Username/email address used to retrieve email via the IMAP protocol. Overrides username for IMAP only.
         imap_password: Password to retrieve email via the IMAP protocol.  Overrides password for IMAP only.
         mailboxes: Descriptions of mailboxes available for retrieving email via the IMAP protocol.
-          Example: {'INBOX': 'default mailbox for incoming email', 'SENT': 'default mailbox for sent email'}
+            Example: {'INBOX': 'default mailbox for incoming email', 'SENT': 'default mailbox for sent email'}
         email_loader: Used to retrieve email.
     """
 
@@ -62,7 +62,7 @@ class EmailClient(BaseTool):
     email_loader: EmailLoader = field(
         default=Factory(
             lambda self: EmailLoader(
-                url=self.imap_url,
+                imap_url=self.imap_url,
                 username=self.imap_user,
                 password=self.imap_password,
             ),
