@@ -10,7 +10,6 @@ from griptape.artifacts import (
     ListArtifact,
     BlobArtifact,
 )
-from griptape.loaders import PdfLoader, TextLoader
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
 
