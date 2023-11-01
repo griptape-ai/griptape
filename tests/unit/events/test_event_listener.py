@@ -5,8 +5,8 @@ from griptape.tasks import ToolkitTask, ApiRequestSubtask
 from griptape.events import (
     StartTaskEvent,
     FinishTaskEvent,
-    StartActionSubtaskEvent,
-    FinishActionSubtaskEvent,
+    StartApiRequestSubtaskEvent,
+    FinishApiRequestSubtaskEvent,
     StartPromptEvent,
     FinishPromptEvent,
     StartStructureRunEvent,
@@ -71,11 +71,11 @@ class TestEventListener:
             ),
             EventListener(
                 start_subtask_event_handler,
-                event_types=[StartActionSubtaskEvent],
+                event_types=[StartApiRequestSubtaskEvent],
             ),
             EventListener(
                 finish_subtask_event_handler,
-                event_types=[FinishActionSubtaskEvent],
+                event_types=[FinishApiRequestSubtaskEvent],
             ),
             EventListener(
                 start_structure_run_event_handler,

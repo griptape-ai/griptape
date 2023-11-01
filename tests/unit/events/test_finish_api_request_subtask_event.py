@@ -1,11 +1,11 @@
 import pytest
-from griptape.events import FinishActionSubtaskEvent
+from griptape.events import FinishApiRequestSubtaskEvent
 from griptape.structures import Agent
-from griptape.tasks import ActionSubtask, ToolkitTask
+from griptape.tasks import ApiRequestSubtask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-class TestFinishActionSubtaskEvent:
+class TestFinishApiRequestSubtaskEvent:
     @pytest.fixture
     def finish_subtask_event(self):
         valid_input = (
@@ -17,11 +17,11 @@ class TestFinishActionSubtaskEvent:
         task = ToolkitTask()
         agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
-        subtask = ActionSubtask(valid_input)
+        subtask = ApiRequestSubtask(valid_input)
         task.add_subtask(subtask)
         agent.run()
 
-        return FinishActionSubtaskEvent.from_task(subtask)
+        return FinishApiRequestSubtaskEvent.from_task(subtask)
 
     def test_to_dict(self, finish_subtask_event):
         event_dict = finish_subtask_event.to_dict()
@@ -39,7 +39,7 @@ class TestFinishActionSubtaskEvent:
             event_dict["task_input"]
             == finish_subtask_event.task_input.to_dict()
         )
-        assert event_dict["task_output"] is None
+        assert event_dict["task_output"]["value"] == "test output"
 
         assert (
             event_dict["subtask_parent_task_id"]
@@ -50,14 +50,14 @@ class TestFinishActionSubtaskEvent:
             == finish_subtask_event.subtask_thought
         )
         assert (
-            event_dict["subtask_action_type"]
-            == finish_subtask_event.subtask_action_type
+            event_dict["subtask_api_name"]
+            == finish_subtask_event.subtask_api_name
         )
         assert (
-            event_dict["subtask_action_name"]
-            == finish_subtask_event.subtask_action_name
+                event_dict["subtask_api_path"]
+                == finish_subtask_event.subtask_api_path
         )
         assert (
-            event_dict["subtask_action_input"]
-            == finish_subtask_event.subtask_action_input
+            event_dict["subtask_api_input"]
+            == finish_subtask_event.subtask_api_input
         )

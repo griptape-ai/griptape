@@ -22,8 +22,8 @@ class BaseEvent(ABC):
             FinishPromptEventSchema,
             StartTaskEventSchema,
             FinishTaskEventSchema,
-            StartActionSubtaskEventSchema,
-            FinishActionSubtaskEventSchema,
+            StartApiRequestSubtaskEventSchema,
+            FinishApiRequestSubtaskEventSchema,
             StartStructureRunEventSchema,
             FinishStructureRunEventSchema,
             CompletionChunkEventSchema,
@@ -34,10 +34,10 @@ class BaseEvent(ABC):
         class_registry.register("StartTaskEvent", StartTaskEventSchema)
         class_registry.register("FinishTaskEvent", FinishTaskEventSchema)
         class_registry.register(
-            "StartActionSubtaskEvent", StartActionSubtaskEventSchema
+            "StartApiRequestSubtaskEvent", StartApiRequestSubtaskEventSchema
         )
         class_registry.register(
-            "FinishActionSubtaskEvent", FinishActionSubtaskEventSchema
+            "FinishApiRequestSubtaskEvent", FinishApiRequestSubtaskEventSchema
         )
         class_registry.register(
             "StartStructureRunEvent", StartStructureRunEventSchema

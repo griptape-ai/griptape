@@ -1,11 +1,11 @@
 import pytest
-from griptape.events import StartActionSubtaskEvent
+from griptape.events import StartApiRequestSubtaskEvent
 from griptape.structures import Agent
-from griptape.tasks import ActionSubtask, ToolkitTask
+from griptape.tasks import ApiRequestSubtask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-class TestStartActionSubtaskEvent:
+class TestStartApiRequestSubtaskEvent:
     @pytest.fixture
     def start_subtask_event(self):
         valid_input = (
@@ -17,11 +17,11 @@ class TestStartActionSubtaskEvent:
         task = ToolkitTask()
         agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
-        subtask = ActionSubtask(valid_input)
+        subtask = ApiRequestSubtask(valid_input)
         task.add_subtask(subtask)
         agent.run()
 
-        return StartActionSubtaskEvent.from_task(subtask)
+        return StartApiRequestSubtaskEvent.from_task(subtask)
 
     def test_to_dict(self, start_subtask_event):
         event_dict = start_subtask_event.to_dict()
@@ -37,7 +37,7 @@ class TestStartActionSubtaskEvent:
         assert (
             event_dict["task_input"] == start_subtask_event.task_input.to_dict()
         )
-        assert event_dict["task_output"] is None
+        assert event_dict["task_output"]["value"] == "test output"
 
         assert (
             event_dict["subtask_parent_task_id"]
@@ -47,14 +47,14 @@ class TestStartActionSubtaskEvent:
             event_dict["subtask_thought"] == start_subtask_event.subtask_thought
         )
         assert (
-            event_dict["subtask_action_type"]
-            == start_subtask_event.subtask_action_type
+            event_dict["subtask_api_name"]
+            == start_subtask_event.subtask_api_name
         )
         assert (
-            event_dict["subtask_action_name"]
-            == start_subtask_event.subtask_action_name
+                event_dict["subtask_api_path"]
+                == start_subtask_event.subtask_api_path
         )
         assert (
-            event_dict["subtask_action_input"]
-            == start_subtask_event.subtask_action_input
+            event_dict["subtask_api_input"]
+            == start_subtask_event.subtask_api_input
         )
