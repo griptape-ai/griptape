@@ -1,10 +1,12 @@
 from __future__ import annotations
+from typing import Optional
 import json
 from attr import field, Factory, define
 from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.utils import PromptStack
+from griptape.rules import Ruleset, rule
 
 
 @define
@@ -15,7 +17,10 @@ class JsonExtractionEngine(BaseExtractionEngine):
     )
 
     def extract(
-        self, text: str | ListArtifact, template_schema: dict, **kwargs
+        self,
+        text: str | ListArtifact,
+        template_schema: dict,
+        rulesets: Optional[Ruleset] = None,
     ) -> ListArtifact | ErrorArtifact:
         try:
             json_schema = json.dumps(template_schema)
@@ -27,6 +32,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
                     else [TextArtifact(text)],
                     json_schema,
                     [],
+                    rulesets=rulesets,
                 ),
                 item_separator="\n",
             )
@@ -41,10 +47,13 @@ class JsonExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         json_template_schema: str,
         extractions: list[TextArtifact],
+        rulesets: Optional[Ruleset] = None,
     ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
-            json_template_schema=json_template_schema, text=artifacts_text
+            json_template_schema=json_template_schema,
+            text=artifacts_text,
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
         if (
@@ -69,7 +78,9 @@ class JsonExtractionEngine(BaseExtractionEngine):
         else:
             chunks = self.chunker.chunk(artifacts_text)
             partial_text = self.template_generator.render(
-                template_schema=json_template_schema, text=chunks[0].value
+                template_schema=json_template_schema,
+                text=chunks[0].value,
+                rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
 
             extractions.extend(
@@ -87,5 +98,5 @@ class JsonExtractionEngine(BaseExtractionEngine):
             )
 
             return self._extract_rec(
-                chunks[1:], json_template_schema, extractions
+                chunks[1:], json_template_schema, extractions, rulesets=rulesets
             )

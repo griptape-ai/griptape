@@ -36,16 +36,4 @@ Memory Descriptions:
 If tool output is stored in memory, ALWAYS pass it to another tool OR use memory activities to access it.
 {% endif %}
 
-{% if rulesets|length > 0 %}
-When responding, always use rules from the following rulesets. Rulesets can override and complement each other:
-
-{% for ruleset in rulesets %}
-Ruleset name: {{ ruleset.name }}
-"{{ ruleset.name }}" rules:
-{% for rule in ruleset.rules %}
-Rule #{{loop.index}}
-{{ rule.value }}
-{% endfor %}
-
-{% endfor %}
-{% endif %}
+{{ rulesets }}

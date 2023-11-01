@@ -3,15 +3,20 @@ Current text summary: """
 {{ summary }}
 """
 
-Additional text: """
+Rewrite the current text summary to include the following additional text: """
 {{ text }}
 """
 
-Rewrite the current text summary to include additional text:
+{{ rulesets }}
+
+Rewritten summary:
 {% else %}
+
 Summarize the following text: """
 {{ text }}
 """
+
+{{ rulesets }}
 
 Summary:
 {% endif %}

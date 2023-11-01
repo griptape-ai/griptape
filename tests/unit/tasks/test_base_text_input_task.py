@@ -1,5 +1,6 @@
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
+from griptape.rules import Ruleset, Rule
 from tests.mocks.mock_text_input_task import MockTextInputTask
 
 
@@ -24,3 +25,22 @@ class TestBaseTextInputTask:
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child
+
+    def test_rulesets(self):
+        prompt_task = MockTextInputTask(
+            rulesets=[
+                Ruleset("Foo", [Rule("foo test")]),
+                Ruleset("Bar", [Rule("bar test")]),
+            ]
+        )
+
+        assert len(prompt_task.all_rulesets) == 2
+        assert prompt_task.all_rulesets[0].name == "Foo"
+        assert prompt_task.all_rulesets[1].name == "Bar"
+
+    def test_rules(self):
+        prompt_task = MockTextInputTask(
+            rules=[Rule("foo test"), Rule("bar test")]
+        )
+
+        assert prompt_task.all_rulesets[0].name == "Default Ruleset"
