@@ -1,4 +1,4 @@
-version:
+publish:
 	@poetry version $(v)
 	@git add pyproject.toml
 	@git commit -m "Version bump v$$(poetry version -s)"
