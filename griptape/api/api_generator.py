@@ -39,6 +39,7 @@ class ApiGenerator:
                 stringcase.spinalcase(self.tool.activity_name(activity)),
                 self.execute_activity_fn(activity),
                 methods=["GET"],
+                operation_id=stringcase.pascalcase(self.tool.activity_name(activity)),
                 description=self.tool.activity_description(activity)
             )
 
