@@ -4,6 +4,7 @@ from griptape.artifacts import TextArtifact, ErrorArtifact, ListArtifact
 from schema import Schema, Literal
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+import requests
 
 
 @define
@@ -42,8 +43,6 @@ class WebSearch(BaseTool):
             return ErrorArtifact(f"error searching Google: {e}")
 
     def _search_google(self, query: str) -> list[dict]:
-        import requests
-
         url = (
             f"https://www.googleapis.com/customsearch/v1?"
             f"key={self.google_api_key}&"
