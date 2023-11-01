@@ -241,13 +241,7 @@ class AwsS3Client(BaseAwsClient):
                     Bucket=bucket_name, Key=object_key
                 )
                 content = obj["Body"].read()
-
-                # Best-effort handling based on reported content type.
-                if "text" in obj["ContentType"]:
-                    artifact.value.append(TextArtifact(content))
-
-                else:
-                    artifact.value.append(BlobArtifact(content))
+                artifact.value.append(BlobArtifact(content))
 
             except Exception as e:
                 return ErrorArtifact(
