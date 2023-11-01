@@ -23,6 +23,8 @@ class AwsS3Client(BaseAwsClient):
         ),
         kw_only=True,
     )
+    pdf_loader: PdfLoader = field(default=Factory(PdfLoader), kw_only=True)
+    text_loader: TextLoader = field(default=Factory(TextLoader), kw_only=True)
 
     @activity(
         config={
@@ -246,11 +248,11 @@ class AwsS3Client(BaseAwsClient):
                 # Best-effort handling based on reported content type.
                 if "application/pdf" in content_type:
                     buffer = io.BytesIO(content)
-                    content_artifacts = PdfLoader().load(buffer)
+                    content_artifacts = self.pdf_loader.load(buffer)
                     artifact.value.extend(content_artifacts)
 
                 if "text" in content_type:
-                    content_artifacts = TextLoader().load(
+                    content_artifacts = self.text_loader.load(
                         content.decode("utf-8")
                     )
                     artifact.value.extend(content_artifacts)
