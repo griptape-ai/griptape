@@ -1,4 +1,3 @@
-import functools
 import json
 from typing import Optional, Callable
 import stringcase
@@ -38,15 +37,18 @@ class ApiGenerator:
         for activity in self.tool.activities():
             api.add_api_route(
                 stringcase.spinalcase(self.tool.activity_name(activity)),
-                functools.partial(self.execute_activity, activity),
+                self.execute_activity_fn(activity),
                 methods=["GET"],
                 description=self.tool.activity_description(activity)
             )
 
         return api
 
-    def execute_activity(self, action: Callable, value: str) -> dict:
-        try:
-            return action(value).to_dict()
-        except Exception as e:
-            return ErrorArtifact(str(e)).to_dict()
+    def execute_activity_fn(self, action: Callable) -> Callable:
+        def execute_activity(value: str) -> dict:
+            try:
+                return action(value).to_dict()
+            except Exception as e:
+                return ErrorArtifact(str(e)).to_dict()
+
+        return execute_activity
