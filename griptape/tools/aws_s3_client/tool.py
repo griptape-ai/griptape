@@ -214,7 +214,7 @@ class AwsS3Client(BaseAwsClient):
 
     @activity(
         config={
-            "description": "Can be used to download an object from an AWS S3 bucket",
+            "description": "Can be used to download objects from an AWS S3 bucket",
             "schema": Schema(
                 {
                     Literal(
@@ -222,33 +222,36 @@ class AwsS3Client(BaseAwsClient):
                         description="The name of the S3 bucket to download from.",
                     ): str,
                     Literal(
-                        "object_key",
+                        "object_keys",
                         description="The object key name to download.",
-                    ): str,
+                    ): [],
                 }
             ),
         }
     )
-    def download_object(
+    def download_objects(
         self, params: dict
-    ) -> ErrorArtifact | TextArtifact | BlobArtifact:
+    ) -> ListArtifact | ErrorArtifact:
         bucket_name = params["values"]["bucket_name"]
-        object_key = params["values"]["object_key"]
+        object_keys = params["values"]["object_keys"]
 
-        try:
-            obj = self.s3_client.get_object(Bucket=bucket_name, Key=object_key)
+        artifact = ListArtifact()
+        for object_key in object_keys:
+            try:
+                obj = self.s3_client.get_object(Bucket=bucket_name, Key=object_key)
+                content = obj["Body"].read()
 
-            content = obj["Body"].read()
+                # Append a TextArtifact if the object appears to be text.
+                if "text" in obj["ContentType"]:
+                    artifact.value.append(TextArtifact(content))
 
-            # Return a TextArtifact if the object appears to be text.
-            if "text" in obj["ContentType"]:
-                return TextArtifact(content)
+                else:
+                    artifact.value.append(BlobArtifact(content))
 
-            else:
-                return BlobArtifact(content)
+            except Exception as e:
+                return ErrorArtifact(f"error downloading object from bucket: {e}")
 
-        except Exception as e:
-            return ErrorArtifact(f"error downloading object from bucket: {e}")
+        return artifact
 
     def _upload_object(
         self, bucket_name: str, object_name: str, value: any
