@@ -22,17 +22,17 @@ class TestApiGenerator:
 
         assert spec.startswith("components:\n  schemas:\n    HTTPValidationError")
         assert "test" in spec
-        assert "test_error" in spec
-        assert "test_str_output" in spec
-        assert spec.endswith("description: Validation Error\n      summary: Partial\n")
+        assert "test-error" in spec
+        assert "test-str-output" in spec
+        assert spec.endswith("description: Validation Error\n      summary: Execute Activity\n")
 
     def test_generate_json_api_spec(self, generator):
         spec = generator.generate_json_api_spec()
 
         assert spec.startswith('{"openapi": "3.1.0", "info": {"title": "MockTool API"')
         assert "test" in spec
-        assert "test_error" in spec
-        assert "test_str_output" in spec
+        assert "test-error" in spec
+        assert "test-str-output" in spec
         assert spec.endswith('"required": ["loc", "msg", "type"], "title": "ValidationError"}}}}')
 
     def test_generate_api(self, generator):
