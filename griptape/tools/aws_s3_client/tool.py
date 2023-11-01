@@ -10,6 +10,7 @@ from griptape.artifacts import (
     ListArtifact,
     BlobArtifact,
 )
+from griptape.loaders import PdfLoader, TextLoader
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
 
@@ -229,27 +230,38 @@ class AwsS3Client(BaseAwsClient):
             ),
         }
     )
-    def download_objects(
-        self, params: dict
-    ) -> ListArtifact | ErrorArtifact:
+    def download_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
         bucket_name = params["values"]["bucket_name"]
         object_keys = params["values"]["object_keys"]
 
         artifact = ListArtifact()
         for object_key in object_keys:
             try:
-                obj = self.s3_client.get_object(Bucket=bucket_name, Key=object_key)
+                obj = self.s3_client.get_object(
+                    Bucket=bucket_name, Key=object_key
+                )
                 content = obj["Body"].read()
+                content_type = obj["ContentType"]
 
-                # Append a TextArtifact if the object appears to be text.
-                if "text" in obj["ContentType"]:
-                    artifact.value.append(TextArtifact(content))
+                # Best-effort handling based on reported content type.
+                if "application/pdf" in content_type:
+                    buffer = io.BytesIO(content)
+                    content_artifacts = PdfLoader().load(buffer)
+                    artifact.value.extend(content_artifacts)
+
+                if "text" in content_type:
+                    content_artifacts = TextLoader().load(
+                        content.decode("utf-8")
+                    )
+                    artifact.value.extend(content_artifacts)
 
                 else:
                     artifact.value.append(BlobArtifact(content))
 
             except Exception as e:
-                return ErrorArtifact(f"error downloading object from bucket: {e}")
+                return ErrorArtifact(
+                    f"error downloading object from bucket: {e}"
+                )
 
         return artifact
 
