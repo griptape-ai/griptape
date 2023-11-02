@@ -222,8 +222,7 @@ class AwsS3Client(BaseAwsClient):
                         description="The name of the S3 bucket to download from.",
                     ): str,
                     Literal(
-                        "object_keys",
-                        description="Object keys to download.",
+                        "object_keys", description="Object keys to download."
                     ): [],
                 }
             ),
