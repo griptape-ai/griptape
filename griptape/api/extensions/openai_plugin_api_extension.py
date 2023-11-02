@@ -10,7 +10,7 @@ from starlette.responses import Response
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.api import ApiGenerator
+    from griptape.api import ToolApiGenerator
 
 
 @define
@@ -25,7 +25,7 @@ class OpenAiPluginApiExtension(BaseApiExtension):
         self.route_fns.append(self.generate_manifest_route)
         self.route_fns.append(self.generate_spec_route)
 
-    def generate_manifest_route(self, generator: ApiGenerator) -> dict:
+    def generate_manifest_route(self, generator: ToolApiGenerator) -> dict:
         return {
             "path": f"{generator.full_host_path}/{self.OPENAI_TEMPLATE_PATH}",
             "endpoint": functools.partial(self._generate_manifest, generator.tool),
@@ -34,7 +34,7 @@ class OpenAiPluginApiExtension(BaseApiExtension):
             "description": "ChatGPT plugin manifest"
         }
 
-    def generate_spec_route(self, generator: ApiGenerator) -> dict:
+    def generate_spec_route(self, generator: ToolApiGenerator) -> dict:
         return {
             "path": f"{generator.full_host_path}/{self.OPENAPI_SPEC_FILE}",
             "endpoint": self._generate_api_spec_fn(generator.api),
@@ -44,7 +44,7 @@ class OpenAiPluginApiExtension(BaseApiExtension):
             "description": "ChatGPT plugin spec"
         }
 
-    def _generate_manifest(self, generator: ApiGenerator) -> dict:
+    def _generate_manifest(self, generator: ToolApiGenerator) -> dict:
         return json.loads(
             J2(self.OPENAI_TEMPLATE_PATH).render(
                 name_for_human=generator.tool.manifest["name"],

@@ -10,7 +10,7 @@ from griptape.tools import BaseTool
 
 
 @define
-class ApiGenerator:
+class ToolApiGenerator:
     host: str = field()
     tool: BaseTool = field(kw_only=True)
     path_prefix: Optional[str] = field(default=None, kw_only=True)

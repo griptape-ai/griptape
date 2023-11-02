@@ -1,17 +1,17 @@
 import pytest
-from griptape.api import ApiGenerator
+from griptape.api import ToolApiGenerator
 from griptape.artifacts import BaseArtifact
 from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestApiGenerator:
+class TestToolApiGenerator:
     @pytest.fixture
     def generator(self):
-        return ApiGenerator("localhost:3000", tool=MockTool())
+        return ToolApiGenerator("localhost:3000", tool=MockTool())
 
     def test_full_host_path(self):
-        assert ApiGenerator("localhost:3000", tool=MockTool()).full_host_path == "localhost:3000"
-        assert ApiGenerator(
+        assert ToolApiGenerator("localhost:3000", tool=MockTool()).full_host_path == "localhost:3000"
+        assert ToolApiGenerator(
             "localhost:3000",
             tool=MockTool(),
             path_prefix="foobar"
