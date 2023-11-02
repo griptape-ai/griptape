@@ -1,7 +1,7 @@
 from .base_api_extension import BaseApiExtension
-from .openai_plugin_api_extension import OpenAiPluginApiExtension
+from .chatgpt_plugin_api_extension import ChatGptPluginApiExtension
 
 __all__ = [
     "BaseApiExtension",
-    "OpenAiPluginApiExtension"
+    "ChatGptPluginApiExtension"
 ]

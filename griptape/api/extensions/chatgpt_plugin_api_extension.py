@@ -1,5 +1,4 @@
 from __future__ import annotations
-import functools
 import json
 from typing import Callable, TYPE_CHECKING
 import yaml
@@ -14,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class OpenAiPluginApiExtension(BaseApiExtension):
+class ChatGptPluginApiExtension(BaseApiExtension):
     class YAMLResponse(Response):
         media_type = "text/yaml"
 
