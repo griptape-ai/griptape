@@ -40,43 +40,66 @@ With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, FileManager
+from griptape.tools import WebScraper, FileManager, ToolOutputProcessor
 
 
 agent = Agent(
-    input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.", 
-    tools=[WebScraper(), FileManager()]
+    input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
+    tools=[
+        WebScraper(),
+        FileManager(),
+        ToolOutputProcessor(enable_output_memory=True)
+    ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
 ```
 
 And here is the output:
 ```
-INFO     ToolkitTask 51b46eff74a64133a1b6d47c630f1db5
-         Input: Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt
-INFO     Subtask 13a7772aea2840259c521f6dcaf8a7b0
-         Thought: To complete this task, I need to first load the webpage using the WebScraper tool's get_content activity. Then, I will summarize the content using the TextToolMemory's summarize activity. Finally, I will store the summarized content in a file
-         named "griptape.txt" using the FileManager tool's save_content_to_file activity.
-         Action: {"type": "tool", "name": "WebScraper", "activity": "get_content", "input": {"values": {"url": "https://www.griptape.ai"}}}
-INFO     Subtask 13a7772aea2840259c521f6dcaf8a7b0
-         Observation: Output of "WebScraper.get_content" was stored in memory with memory_name "TextToolMemory" and artifact_namespace "a84ab9258aa540f99607c5df73da2d2d"
-INFO     Subtask 905bc561be3f4ff48894d8984814a44f
-         Thought: Now that the webpage content is stored in memory, I can use the TextToolMemory's summarize activity to summarize the content.
-         Action: {"type": "memory", "name": "TextToolMemory", "activity": "summarize", "input": {"values": {"memory_name": "TextToolMemory", "artifact_namespace": "a84ab9258aa540f99607c5df73da2d2d"}}}
-INFO     Subtask 905bc561be3f4ff48894d8984814a44f
-         Observation: The text describes Griptape, an open-source Python framework and managed cloud platform for building and deploying AI applications for enterprise use. Griptape allows users to easily create AI-powered agents, compose event-driven pipelines,
-         and orchestrate complex workflows. It provides tools for connecting to data sources securely and controlling data access. The text also provides examples of creating a Griptape agent, pipeline, and workflow. Griptape Cloud is mentioned as a managed
-         platform for running AI agents, pipelines, and workflows. The text concludes by offering customers the opportunity to contact Griptape for further information and assistance.
-INFO     Subtask 459f35e5af4e49f7ac87a5989447dcb4
-         Thought: Now that I have summarized the content of the webpage, I can store this summary in a file named "griptape.txt" using the FileManager tool's save_content_to_file activity.
-         Action: {"type": "tool", "name": "FileManager", "activity": "save_content_to_file", "input": {"values": {"path": "griptape.txt", "content": "The text describes Griptape, an open-source Python framework and managed cloud platform for building and deploying
-         AI applications for enterprise use. Griptape allows users to easily create AI-powered agents, compose event-driven pipelines, and orchestrate complex workflows. It provides tools for connecting to data sources securely and controlling data access. The
-         text also provides examples of creating a Griptape agent, pipeline, and workflow. Griptape Cloud is mentioned as a managed platform for running AI agents, pipelines, and workflows. The text concludes by offering customers the opportunity to contact
-         Griptape for further information and assistance."}}}
-INFO     Subtask 459f35e5af4e49f7ac87a5989447dcb4
-         Observation: saved successfully
-INFO     ToolkitTask 51b46eff74a64133a1b6d47c630f1db5
-         Output: The summarized content of the webpage "https://www.griptape.ai" has been successfully stored in a file named "griptape.txt".
+[11/02/23 15:28:24] INFO     ToolkitTask 72b89a905be84245a0563b206795ac73       
+                             Input: Load https://griptape.ai, summarize it, and 
+                             store it in a file called griptape.txt.            
+[11/02/23 15:28:37] INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
+                             Thought: First, I need to use the WebScraper API to
+                             load the content of the webpage.                   
+                                                                                
+                             Request: {"name": "WebScraper", "path":            
+                             "get_content", "input": {"values": {"url":         
+                             "https://griptape.ai"}}}                           
+                    INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
+                             Response: Output of "WebScraper.get_content" was   
+                             stored in memory with memory_name "ToolMemory" and 
+                             artifact_namespace                                 
+                             "c497d83c1d134db694b9994596016320"                 
+[11/02/23 15:28:50] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
+                             Thought: Now that the webpage content is stored in 
+                             memory, I need to use the ToolOutputProcessor API  
+                             to summarize the content.                          
+                             Request: {"name": "ToolOutputProcessor", "path":   
+                             "summarize", "input": {"values": {"memory_name":   
+                             "ToolMemory", "artifact_namespace":                
+                             "c497d83c1d134db694b9994596016320"}}}              
+[11/02/23 15:29:06] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
+                             Response: Output of "ToolOutputProcessor.summarize"
+                             was stored in memory with memory_name "ToolMemory" 
+                             and artifact_namespace                             
+                             "77584322d33d40e992da9767d02a9018"                 
+[11/02/23 15:29:25] INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
+                             Thought: Now that the summary is stored in memory, 
+                             I need to use the FileManager API to save the      
+                             summary to a file named griptape.txt.              
+                             Request: {"name": "FileManager", "path":           
+                             "save_memory_artifacts_to_disk", "input":          
+                             {"values": {"dir_name": ".", "file_name":          
+                             "griptape.txt", "memory_name": "ToolMemory",       
+                             "artifact_namespace":                              
+                             "77584322d33d40e992da9767d02a9018"}}}              
+                    INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
+                             Response: saved successfully                       
+[11/02/23 15:29:30] INFO     ToolkitTask 72b89a905be84245a0563b206795ac73       
+                             Output: The summary of the webpage                 
+                             https://griptape.ai has been successfully stored in
+                             a file named griptape.txt.
 ```
 
 During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Tool Memory**, queried it to answer the original question, and finally saved the answer to a file.
