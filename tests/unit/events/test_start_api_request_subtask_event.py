@@ -10,8 +10,8 @@ class TestStartApiRequestSubtaskEvent:
     def start_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"type": "tool", "name": "test", "activity": "test action", "input": {"test": "value"}}\n'
-            "Observation: test observation\n"
+            'Request: {"name": "test", "path": "test action", "input": {"values": {"foo": "test input"}}}\n'
+            "<|Response|>: test observation\n"
             "Answer: test output"
         )
         task = ToolkitTask()
@@ -37,7 +37,7 @@ class TestStartApiRequestSubtaskEvent:
         assert (
             event_dict["task_input"] == start_subtask_event.task_input.to_dict()
         )
-        assert event_dict["task_output"]["value"] == "test output"
+        assert event_dict["task_output"] is None
 
         assert (
             event_dict["subtask_parent_task_id"]
