@@ -33,7 +33,7 @@ class Workflow(Structure):
         parent_task: BaseTask,
         child_task: BaseTask,
         task: BaseTask,
-        sever=True,
+        sever: bool = True,
     ) -> BaseTask:
         """Insert a task between two tasks in the workflow.
 

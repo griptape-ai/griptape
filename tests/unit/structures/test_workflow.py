@@ -182,9 +182,9 @@ class TestWorkflow:
         assert len(second_task.children) == 0
 
     def test_run(self):
-        workflow = Workflow(prompt_driver=MockPromptDriver())
         task1 = PromptTask("test")
         task2 = PromptTask("test")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
         workflow + [task1, task2]
 
         assert task1.state == BaseTask.State.PENDING
