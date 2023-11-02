@@ -1,20 +1,18 @@
+from __future__ import annotations
 from abc import ABC
-from dataclasses import dataclass
-from typing import Callable
 from attr import define, field
+from typing import TYPE_CHECKING, Callable
 
-from griptape.tools import BaseTool
+if TYPE_CHECKING:
+    from griptape.api import ApiGenerator
 
 
 @define
 class BaseApiExtension(ABC):
-    @dataclass
-    class Route:
-        path: str
-        endpoint: Callable
-        methods: list[str]
-        description: str
+    route_fns: list[Callable[[ApiGenerator], dict]] = field(factory=list, kw_only=True)
 
-    tool: BaseTool = field(kw_only=True)
-    path_prefix: str = field(default="/", kw_only=True)
-    routes: list[Route] = field(factory=list, kw_only=True)
+    def extend(self, generator: ApiGenerator) -> ApiGenerator:
+        for route_fn in self.route_fns:
+            generator.api.add_api_route(**route_fn(generator))
+
+        return generator

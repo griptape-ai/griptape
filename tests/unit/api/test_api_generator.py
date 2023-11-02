@@ -41,9 +41,9 @@ class TestApiGenerator:
         assert api.title == "MockTool API"
         assert len(api.routes) == 10
 
-    def test_execute_activity(self, generator):
+    def test_execute_activity_fn(self, generator):
         activity = generator.tool.test
 
         assert BaseArtifact.from_dict(
-            generator.execute_activity(activity, {"values": {"test": "foobar"}})
+            generator.execute_activity_fn(activity)({"values": {"test": "foobar"}})
         ).value == "ack foobar"

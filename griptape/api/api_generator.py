@@ -4,6 +4,7 @@ import stringcase
 import yaml
 from attr import define, field
 from fastapi import FastAPI
+from griptape.api.extensions import BaseApiExtension
 from griptape.artifacts import ErrorArtifact
 from griptape.tools import BaseTool
 
@@ -13,6 +14,7 @@ class ApiGenerator:
     host: str = field()
     tool: BaseTool = field(kw_only=True)
     path_prefix: Optional[str] = field(default=None, kw_only=True)
+    extensions: list[BaseApiExtension] = field(factory=list, kw_only=True)
     api: FastAPI = field(init=False)
 
     def __attrs_post_init__(self) -> None:
@@ -36,12 +38,15 @@ class ApiGenerator:
 
         for activity in self.tool.activities():
             api.add_api_route(
-                stringcase.spinalcase(self.tool.activity_name(activity)),
-                self.execute_activity_fn(activity),
+                path=stringcase.spinalcase(self.tool.activity_name(activity)),
+                endpoint=self.execute_activity_fn(activity),
                 methods=["GET"],
                 operation_id=stringcase.pascalcase(self.tool.activity_name(activity)),
                 description=self.tool.activity_description(activity)
             )
+
+        for extension in self.extensions:
+            extension.extend(self)
 
         return api
 
