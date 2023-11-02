@@ -223,7 +223,7 @@ class AwsS3Client(BaseAwsClient):
                     ): str,
                     Literal(
                         "object_keys",
-                        description="The object key name to download.",
+                        description="Object keys to download.",
                     ): [],
                 }
             ),
@@ -244,7 +244,7 @@ class AwsS3Client(BaseAwsClient):
 
             except Exception as e:
                 return ErrorArtifact(
-                    f"error downloading object from bucket: {e}"
+                    f"error downloading objects from bucket: {e}"
                 )
 
         return artifact

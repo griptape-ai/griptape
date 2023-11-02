@@ -78,10 +78,10 @@ class TestAwsS3Client:
             .value
         )
 
-    def test_download_object(self):
+    def test_download_objects(self):
         value = {"bucket_name": "bucket_test", "object_keys": "test.txt"}
         assert (
-            "error downloading object"
+            "error downloading objects"
             in AwsS3Client(session=boto3.Session())
             .download_objects({"values": value})
             .value
