@@ -1,13 +1,10 @@
 import pytest
-from griptape import tasks
 
-from griptape.memory import ToolMemory
 from griptape.memory.tool.storage import TextArtifactStorage
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.structures import Workflow
-from griptape.engines import VectorQueryEngine
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
