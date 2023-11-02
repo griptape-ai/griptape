@@ -107,11 +107,11 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        storage = list(
-            pipeline.tool_memory.artifact_storages.values()
-        )[0]
+        storage = list(pipeline.tool_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = (
+            storage.query_engine.vector_store_driver.embedding_driver
+        )
 
         assert memory_embedding_driver == embedding_driver
 
@@ -152,9 +152,22 @@ class TestPipeline:
 
         assert len(pipeline.memory.runs) == 3
 
-    def test_tasks_validation(self):
-        with pytest.raises(ValueError):
-            Pipeline(tasks=[PromptTask()])
+    def test_tasks_initialization(self):
+        first_task = PromptTask(id="test1")
+        second_task = PromptTask(id="test2")
+        third_task = PromptTask(id="test3")
+        pipeline = Pipeline(tasks=[first_task, second_task, third_task])
+
+        assert len(pipeline.tasks) == 3
+        assert pipeline.tasks[0].id == "test1"
+        assert pipeline.tasks[1].id == "test2"
+        assert pipeline.tasks[2].id == "test3"
+        assert len(first_task.parents) == 0
+        assert len(first_task.children) == 1
+        assert len(second_task.parents) == 1
+        assert len(second_task.children) == 1
+        assert len(third_task.parents) == 1
+        assert len(third_task.children) == 0
 
     def test_tasks_order(self):
         first_task = PromptTask("test1")
@@ -227,12 +240,12 @@ class TestPipeline:
         assert second_task.structure == pipeline
         assert third_task.structure == pipeline
         assert [parent.id for parent in first_task.parents] == []
-        assert [child.id for child in first_task.children] == ['test3']
-        assert [parent.id for parent in second_task.parents] == ['test3']
+        assert [child.id for child in first_task.children] == ["test3"]
+        assert [parent.id for parent in second_task.parents] == ["test3"]
         assert [child.id for child in second_task.children] == []
-        assert [parent.id for parent in third_task.parents] == ['test1']
-        assert [child.id for child in third_task.children] == ['test2']
-        
+        assert [parent.id for parent in third_task.parents] == ["test1"]
+        assert [child.id for child in third_task.children] == ["test2"]
+
     def test_insert_task_at_end(self):
         first_task = PromptTask("test1", id="test1")
         second_task = PromptTask("test2", id="test2")
@@ -251,13 +264,11 @@ class TestPipeline:
         assert second_task.structure == pipeline
         assert third_task.structure == pipeline
         assert [parent.id for parent in first_task.parents] == []
-        assert [child.id for child in first_task.children] == ['test2']
-        assert [parent.id for parent in second_task.parents] == ['test1']
+        assert [child.id for child in first_task.children] == ["test2"]
+        assert [parent.id for parent in second_task.parents] == ["test1"]
         assert [child.id for child in second_task.children] == ["test3"]
-        assert [parent.id for parent in third_task.parents] == ['test2']
+        assert [parent.id for parent in third_task.parents] == ["test2"]
         assert [child.id for child in third_task.children] == []
-        
-
 
     def test_prompt_stack_without_memory(self):
         pipeline = Pipeline(prompt_driver=MockPromptDriver())

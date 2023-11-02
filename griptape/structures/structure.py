@@ -93,13 +93,6 @@ class Structure(ABC):
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
-    @tasks.validator
-    def validate_tasks(self, _, tasks: list[BaseTask]) -> None:
-        if len(tasks) > 0:
-            raise ValueError(
-                "Tasks can't be initialized directly. Use add_task or add_tasks method instead"
-            )
-
     @rulesets.validator
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
@@ -120,7 +113,9 @@ class Structure(ABC):
         if self.memory:
             self.memory.structure = self
 
-        [task.preprocess(self) for task in self.tasks]
+        tasks = self.tasks.copy()
+        self.tasks.clear()
+        self.add_tasks(*tasks)
         self.prompt_driver.structure = self
 
     @property
