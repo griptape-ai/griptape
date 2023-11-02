@@ -18,7 +18,6 @@ class Pipeline(Structure):
             else self + [other]
         )
 
-
     def add_task(self, task: BaseTask) -> BaseTask:
         return self.append_task(task)
 
@@ -33,11 +32,7 @@ class Pipeline(Structure):
 
         return task
 
-    def insert_task(
-        self,
-        parent_task: BaseTask,
-        task: BaseTask,
-    ) -> BaseTask:
+    def insert_task(self, parent_task: BaseTask, task: BaseTask) -> BaseTask:
         task.preprocess(self)
 
         if parent_task.children:
@@ -53,7 +48,6 @@ class Pipeline(Structure):
         parent_task.child_ids.append(task.id)
 
         parent_index = self.tasks.index(parent_task)
-
         self.tasks.insert(parent_index + 1, task)
 
         return task

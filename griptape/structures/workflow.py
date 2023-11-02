@@ -42,7 +42,7 @@ class Workflow(Structure):
         task: BaseTask,
         sever=True,
     ) -> BaseTask:
-        """ Insert a task between two tasks in the workflow.
+        """Insert a task between two tasks in the workflow.
 
         Args:
             parent_task: The task that will be the parent of the new task.
@@ -63,7 +63,6 @@ class Workflow(Structure):
         if task.id not in child_task.parent_ids:
             child_task.parent_ids.append(task.id)
 
-        
         if sever:
             if child_task.id in parent_task.child_ids:
                 parent_task.child_ids.remove(child_task.id)

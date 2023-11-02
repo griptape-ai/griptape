@@ -43,9 +43,9 @@ class Agent(Structure):
         return task
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
-        raise NotImplementedError(
-            "Method is not implemented: agents can only have one task."
-        )
+        if len(tasks) > 1:
+            raise ValueError("Agents can only have one task.")
+        return super().add_tasks(*tasks)
 
     def try_run(self, *args) -> Agent:
         self._execution_args = args

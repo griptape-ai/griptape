@@ -105,11 +105,11 @@ class TestWorkflow:
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
-        storage = list(
-            workflow.tool_memory.artifact_storages.values()
-        )[0]
+        storage = list(workflow.tool_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = (
+            storage.query_engine.vector_store_driver.embedding_driver
+        )
 
         assert memory_embedding_driver == embedding_driver
 
@@ -130,9 +130,22 @@ class TestWorkflow:
         assert workflow.tasks[0].tools[0].input_memory is None
         assert workflow.tasks[0].tools[0].output_memory is None
 
-    def test_tasks_validation(self):
-        with pytest.raises(ValueError):
-            Workflow(tasks=[PromptTask()])
+    def test_tasks_initialization(self):
+        first_task = PromptTask(id="test1")
+        second_task = PromptTask(id="test2")
+        third_task = PromptTask(id="test3")
+        workflow = Workflow(tasks=[first_task, second_task, third_task])
+
+        assert len(workflow.tasks) == 3
+        assert workflow.tasks[0].id == "test1"
+        assert workflow.tasks[1].id == "test2"
+        assert workflow.tasks[2].id == "test3"
+        assert len(first_task.parents) == 0
+        assert len(first_task.children) == 1
+        assert len(second_task.parents) == 1
+        assert len(second_task.children) == 1
+        assert len(third_task.parents) == 1
+        assert len(third_task.children) == 0
 
     def test_add_task(self):
         first_task = PromptTask("test1")
@@ -231,8 +244,7 @@ class TestWorkflow:
         assert task4.child_ids == []
 
     def test_run_topology_2(self):
-        """Adapted from https://en.wikipedia.org/wiki/Directed_acyclic_graph#/media/File:Tred-G.svg
-        """
+        """Adapted from https://en.wikipedia.org/wiki/Directed_acyclic_graph#/media/File:Tred-G.svg"""
         taska = PromptTask("testa", id="taska")
         taskb = PromptTask("testb", id="taskb")
         taskc = PromptTask("testc", id="taskc")
@@ -341,9 +353,9 @@ class TestWorkflow:
 
         graph = workflow.to_graph()
 
-        assert graph['task2'] == {"task1"}
-        assert graph['task3'] == {"task1"}
-        assert graph['task4'] == {"task2", "task3"}
+        assert graph["task2"] == {"task1"}
+        assert graph["task3"] == {"task1"}
+        assert graph["task4"] == {"task2", "task3"}
 
     def test_order_tasks(self):
         task1 = PromptTask("prompt1", id="task1")

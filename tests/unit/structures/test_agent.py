@@ -116,9 +116,15 @@ class TestAgent:
 
         assert len(agent.memory.runs) == 3
 
-    def test_tasks_validation(self):
+    def test_tasks_initialization(self):
         with pytest.raises(ValueError):
-            Agent(tasks=[PromptTask()])
+            Agent(tasks=[PromptTask(), PromptTask()])
+
+        task = PromptTask()
+        agent = Agent(tasks=[task])
+
+        assert len(agent.tasks) == 1
+        assert agent.tasks[0] == task
 
     def test_add_task(self):
         first_task = PromptTask("test1")
@@ -155,7 +161,7 @@ class TestAgent:
         try:
             agent.add_tasks(first_task, second_task)
             assert False
-        except NotImplementedError:
+        except ValueError:
             assert True
 
     def test_prompt_stack_without_memory(self):
