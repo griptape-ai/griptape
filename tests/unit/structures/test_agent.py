@@ -127,19 +127,18 @@ class TestAgent:
         assert agent.tasks[0] == task
 
     def test_add_task(self):
-        first_task = PromptTask("test1")
-        second_task = PromptTask("test2")
-
         agent = Agent(prompt_driver=MockPromptDriver())
 
         assert len(agent.tasks) == 1
 
+        first_task = PromptTask("test1")
+        second_task = PromptTask("test2")
         agent.add_task(first_task)
 
         assert len(agent.tasks) == 1
         assert agent.task == first_task
 
-        agent.add_task(second_task)
+        agent + second_task
 
         assert len(agent.tasks) == 1
         assert agent.task == second_task
@@ -160,6 +159,12 @@ class TestAgent:
 
         try:
             agent.add_tasks(first_task, second_task)
+            assert False
+        except ValueError:
+            assert True
+
+        try:
+            agent + [first_task, second_task]
             assert False
         except ValueError:
             assert True

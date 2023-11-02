@@ -14,13 +14,6 @@ class Workflow(Structure):
         default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
 
-    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
-        return (
-            [self.add_task(o) for o in other]
-            if isinstance(other, list)
-            else self + [other]
-        )
-
     def add_task(self, task: BaseTask) -> BaseTask:
         return self.append_task(task)
 

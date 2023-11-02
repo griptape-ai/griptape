@@ -118,6 +118,13 @@ class Structure(ABC):
         self.add_tasks(*tasks)
         self.prompt_driver.structure = self
 
+    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
+        return (
+            self.add_tasks(*other)
+            if isinstance(other, list)
+            else self + [other]
+        )
+
     @property
     def execution_args(self) -> tuple:
         return self._execution_args
