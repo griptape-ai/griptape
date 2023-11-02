@@ -20,6 +20,9 @@ class ToolApiGenerator:
     def __attrs_post_init__(self) -> None:
         self.api = self.generate_api()
 
+        for extension in self.extensions:
+            extension.extend(self)
+
     @property
     def full_host_path(self) -> str:
         return "/".join(
@@ -44,9 +47,6 @@ class ToolApiGenerator:
                 operation_id=stringcase.pascalcase(self.tool.activity_name(activity)),
                 description=self.tool.activity_description(activity)
             )
-
-        for extension in self.extensions:
-            extension.extend(self)
 
         return api
 

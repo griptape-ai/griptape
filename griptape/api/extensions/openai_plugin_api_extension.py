@@ -28,7 +28,7 @@ class OpenAiPluginApiExtension(BaseApiExtension):
     def generate_manifest_route(self, generator: ToolApiGenerator) -> dict:
         return {
             "path": f"{generator.full_host_path}/{self.OPENAI_TEMPLATE_PATH}",
-            "endpoint": functools.partial(self._generate_manifest, generator.tool),
+            "endpoint": self._generate_manifest_fn(generator),
             "methods": ["GET"],
             "operation_id": "OpenAPIManifest",
             "description": "ChatGPT plugin manifest"
@@ -44,19 +44,22 @@ class OpenAiPluginApiExtension(BaseApiExtension):
             "description": "ChatGPT plugin spec"
         }
 
-    def _generate_manifest(self, generator: ToolApiGenerator) -> dict:
-        return json.loads(
-            J2(self.OPENAI_TEMPLATE_PATH).render(
-                name_for_human=generator.tool.manifest["name"],
-                name_for_model=generator.tool.manifest["name"],
-                description_for_human=generator.tool.manifest["description"],
-                description_for_model=generator.tool.manifest["description"],
-                api_url=f"{generator.full_host_path}/{self.OPENAPI_SPEC_FILE}",
-                logo_url=f"{generator.full_host_path}/logo.png",
-                contact_email=generator.tool.manifest["contact_email"],
-                legal_info_url=generator.tool.manifest["legal_info_url"]
+    def _generate_manifest_fn(self, generator: ToolApiGenerator) -> Callable:
+        def generate_manifest() -> dict:
+            return json.loads(
+                J2(self.OPENAI_TEMPLATE_PATH).render(
+                    name_for_human=generator.tool.manifest["name"],
+                    name_for_model=generator.tool.manifest["name"],
+                    description_for_human=generator.tool.manifest["description"],
+                    description_for_model=generator.tool.manifest["description"],
+                    api_url=f"{generator.full_host_path}/{self.OPENAPI_SPEC_FILE}",
+                    logo_url=f"{generator.full_host_path}/logo.png",
+                    contact_email=generator.tool.manifest["contact_email"],
+                    legal_info_url=generator.tool.manifest["legal_info_url"]
+                )
             )
-        )
+
+        return generate_manifest
 
     def _generate_api_spec_fn(self, api: FastAPI) -> Callable:
         def generate_api_spec() -> str:
