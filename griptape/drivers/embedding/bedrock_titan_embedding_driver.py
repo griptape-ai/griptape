@@ -23,15 +23,17 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
     dimensions: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
+    session: boto3.Session = field(
+        default=Factory(lambda: boto3.Session()), kw_only=True
+    )
     tokenizer: BedrockTitanTokenizer = field(
         default=Factory(
-            lambda self: BedrockTitanTokenizer(model=self.model),
+            lambda self: BedrockTitanTokenizer(
+                model=self.model, session=self.session
+            ),
             takes_self=True,
         ),
         kw_only=True,
-    )
-    session: boto3.Session = field(
-        default=Factory(lambda: boto3.Session()), kw_only=True
     )
     bedrock_client: Any = field(
         default=Factory(

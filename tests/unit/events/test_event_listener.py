@@ -103,18 +103,31 @@ class TestEventListener:
         finish_structure_run_event_handler.assert_called_once()
         completion_chunk_handler.assert_called_once()
 
-    def test_add_event_listener(self, pipeline):
+    def test_add_remove_event_listener(self, pipeline):
         pipeline.event_listeners = []
         mock1 = Mock()
         mock2 = Mock()
         # duplicate event listeners will only get added once
-        pipeline.add_event_listener(mock1, [StartPromptEvent])
-        pipeline.add_event_listener(mock1, [StartPromptEvent])
+        event_listener_1 = pipeline.add_event_listener(
+            EventListener(mock1, event_types=[StartPromptEvent])
+        )
+        pipeline.add_event_listener(
+            EventListener(mock1, event_types=[StartPromptEvent])
+        )
 
-        # uniqueness is based off of the handler + event type
-        pipeline.add_event_listener(mock1, [FinishPromptEvent])
-        pipeline.add_event_listener(mock2, [StartPromptEvent])
+        event_listener_3 = pipeline.add_event_listener(
+            EventListener(mock1, event_types=[FinishPromptEvent])
+        )
+        event_listener_4 = pipeline.add_event_listener(
+            EventListener(mock2, event_types=[StartPromptEvent])
+        )
 
-        pipeline.add_event_listener(mock2)
+        event_listener_5 = pipeline.add_event_listener(EventListener(mock2))
 
         assert len(pipeline.event_listeners) == 4
+
+        pipeline.remove_event_listener(event_listener_1)
+        pipeline.remove_event_listener(event_listener_3)
+        pipeline.remove_event_listener(event_listener_4)
+        pipeline.remove_event_listener(event_listener_5)
+        assert len(pipeline.event_listeners) == 0
