@@ -29,7 +29,9 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         )
 
         return J2("tasks/tool_task/system.j2").render(
-            rulesets=self.all_rulesets,
+            rulesets=J2("rulesets/rulesets.j2").render(
+                rulesets=self.all_rulesets
+            ),
             action_schema=action_schema,
             tool=J2("tasks/partials/_tool.j2").render(tool=self.tool),
         )

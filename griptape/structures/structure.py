@@ -93,13 +93,6 @@ class Structure(ABC):
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
-    @tasks.validator
-    def validate_tasks(self, _, tasks: list[BaseTask]) -> None:
-        if len(tasks) > 0:
-            raise ValueError(
-                "Tasks can't be initialized directly. Use add_task or add_tasks method instead"
-            )
-
     @rulesets.validator
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
@@ -120,9 +113,17 @@ class Structure(ABC):
         if self.memory:
             self.memory.structure = self
 
-        [task.preprocess(self) for task in self.tasks]
-
+        tasks = self.tasks.copy()
+        self.tasks.clear()
+        self.add_tasks(*tasks)
         self.prompt_driver.structure = self
+
+    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
+        return (
+            self.add_tasks(*other)
+            if isinstance(other, list)
+            else self + [other]
+        )
 
     @property
     def execution_args(self) -> tuple:
@@ -144,27 +145,46 @@ class Structure(ABC):
                 ]
             return self._logger
 
+    @property
+    def input_task(self) -> Optional[BaseTask]:
+        return self.tasks[0] if self.tasks else None
+
+    @property
+    def output_task(self) -> Optional[BaseTask]:
+        return self.tasks[-1] if self.tasks else None
+
+    @property
+    def finished_tasks(self) -> list[BaseTask]:
+        return [s for s in self.tasks if s.is_finished()]
+
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)
 
     def is_executing(self) -> bool:
         return any(s for s in self.tasks if s.is_executing())
 
-    def find_task(self, task_id: str) -> Optional[BaseTask]:
-        return next((task for task in self.tasks if task.id == task_id), None)
+    def find_task(self, task_id: str) -> BaseTask:
+        for task in self.tasks:
+            if task.id == task_id:
+                return task
+        raise ValueError(f"Task with id {task_id} doesn't exist.")
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
     def add_event_listener(
-        self,
-        handler: Callable[[BaseEvent], Any],
-        event_types: Optional[list[Type[BaseEvent]]] = None,
-    ) -> None:
-        event_listener = EventListener(handler, event_types=event_types)
-
+        self, event_listener: EventListener
+    ) -> EventListener:
         if event_listener not in self.event_listeners:
             self.event_listeners.append(event_listener)
+
+        return event_listener
+
+    def remove_event_listener(self, event_listener: EventListener) -> None:
+        if event_listener in self.event_listeners:
+            self.event_listeners.remove(event_listener)
+        else:
+            raise ValueError(f"Event Listener not found.")
 
     def publish_event(self, event: BaseEvent) -> None:
         for event_listener in self.event_listeners:
@@ -187,7 +207,7 @@ class Structure(ABC):
     def add_task(self, task: BaseTask) -> BaseTask:
         ...
 
-    def run(self, *args) -> BaseTask | list[BaseTask]:
+    def run(self, *args) -> Structure:
         self.before_run()
 
         result = self.try_run(*args)
@@ -197,5 +217,5 @@ class Structure(ABC):
         return result
 
     @abstractmethod
-    def try_run(self, *args) -> BaseTask | list[BaseTask]:
+    def try_run(self, *args) -> Structure:
         ...

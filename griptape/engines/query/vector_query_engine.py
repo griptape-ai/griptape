@@ -35,6 +35,7 @@ class VectorQueryEngine(BaseQueryEngine):
         metadata: Optional[str] = None,
         top_n: Optional[int] = None,
         namespace: Optional[str] = None,
+        rulesets: Optional[str] = None,
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace)
@@ -52,7 +53,10 @@ class VectorQueryEngine(BaseQueryEngine):
             text_segments.append(artifact.value)
 
             message = self.template_generator.render(
-                metadata=metadata, query=query, text_segments=text_segments
+                metadata=metadata,
+                query=query,
+                text_segments=text_segments,
+                rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
             message_token_count = self.prompt_driver.token_count(
                 PromptStack(
@@ -69,7 +73,12 @@ class VectorQueryEngine(BaseQueryEngine):
                 text_segments.pop()
 
                 message = self.template_generator.render(
-                    metadata=metadata, query=query, text_segments=text_segments
+                    metadata=metadata,
+                    query=query,
+                    text_segments=text_segments,
+                    rulesets=J2("rulesets/rulesets.j2").render(
+                        rulesets=rulesets
+                    ),
                 )
 
                 break
