@@ -12,7 +12,7 @@ from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
-from griptape.events import StartSubtaskEvent, FinishSubtaskEvent
+from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
 
 if TYPE_CHECKING:
     from griptape.memory import ToolMemory
@@ -86,7 +86,7 @@ class ActionSubtask(PromptTask):
         self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
-        self.structure.publish_event(StartSubtaskEvent(subtask=self))
+        self.structure.publish_event(StartActionSubtaskEvent.from_task(self))
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
@@ -128,7 +128,7 @@ class ActionSubtask(PromptTask):
             else str(self.output)
         )
 
-        self.structure.publish_event(FinishSubtaskEvent(subtask=self))
+        self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
         self.structure.logger.info(
             f"Subtask {self.id}\nObservation: {observation}"
         )

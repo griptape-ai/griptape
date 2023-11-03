@@ -5,13 +5,14 @@ from griptape.tasks import ToolkitTask, ActionSubtask
 from griptape.events import (
     StartTaskEvent,
     FinishTaskEvent,
-    StartSubtaskEvent,
-    FinishSubtaskEvent,
+    StartActionSubtaskEvent,
+    FinishActionSubtaskEvent,
     StartPromptEvent,
     FinishPromptEvent,
     StartStructureRunEvent,
     FinishStructureRunEvent,
     CompletionChunkEvent,
+    EventListener,
 )
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -28,11 +29,14 @@ class TestEventListener:
         task.add_subtask(ActionSubtask("foo"))
         return pipeline
 
-    def test_list_listeners(self, pipeline):
+    def test_untyped_listeners(self, pipeline):
         event_handler_1 = Mock()
         event_handler_2 = Mock()
 
-        pipeline.event_listeners = [event_handler_1, event_handler_2]
+        pipeline.event_listeners = [
+            EventListener(handler=event_handler_1),
+            EventListener(handler=event_handler_2),
+        ]
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()
@@ -41,7 +45,7 @@ class TestEventListener:
         assert event_handler_1.call_count == 9
         assert event_handler_2.call_count == 9
 
-    def test_dict_listeners(self, pipeline):
+    def test_typed_listeners(self, pipeline):
         start_prompt_event_handler = Mock()
         finish_prompt_event_handler = Mock()
         start_task_event_handler = Mock()
@@ -52,17 +56,39 @@ class TestEventListener:
         finish_structure_run_event_handler = Mock()
         completion_chunk_handler = Mock()
 
-        pipeline.event_listeners = {
-            StartPromptEvent: [start_prompt_event_handler],
-            FinishPromptEvent: [finish_prompt_event_handler],
-            StartTaskEvent: [start_task_event_handler],
-            FinishTaskEvent: [finish_task_event_handler],
-            StartSubtaskEvent: [start_subtask_event_handler],
-            FinishSubtaskEvent: [finish_subtask_event_handler],
-            StartStructureRunEvent: [start_structure_run_event_handler],
-            FinishStructureRunEvent: [finish_structure_run_event_handler],
-            CompletionChunkEvent: [completion_chunk_handler],
-        }
+        pipeline.event_listeners = [
+            EventListener(
+                start_prompt_event_handler, event_types=[StartPromptEvent]
+            ),
+            EventListener(
+                finish_prompt_event_handler, event_types=[FinishPromptEvent]
+            ),
+            EventListener(
+                start_task_event_handler, event_types=[StartTaskEvent]
+            ),
+            EventListener(
+                finish_task_event_handler, event_types=[FinishTaskEvent]
+            ),
+            EventListener(
+                start_subtask_event_handler,
+                event_types=[StartActionSubtaskEvent],
+            ),
+            EventListener(
+                finish_subtask_event_handler,
+                event_types=[FinishActionSubtaskEvent],
+            ),
+            EventListener(
+                start_structure_run_event_handler,
+                event_types=[StartStructureRunEvent],
+            ),
+            EventListener(
+                finish_structure_run_event_handler,
+                event_types=[FinishStructureRunEvent],
+            ),
+            EventListener(
+                completion_chunk_handler, event_types=[CompletionChunkEvent]
+            ),
+        ]
 
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
@@ -77,28 +103,18 @@ class TestEventListener:
         finish_structure_run_event_handler.assert_called_once()
         completion_chunk_handler.assert_called_once()
 
-    def test_add_event_listener_to_list(self, pipeline):
+    def test_add_event_listener(self, pipeline):
         pipeline.event_listeners = []
-        mock = Mock()
-        pipeline.add_event_listener(StartPromptEvent, mock)
-        pipeline.add_event_listener(StartPromptEvent, mock)
+        mock1 = Mock()
+        mock2 = Mock()
+        # duplicate event listeners will only get added once
+        pipeline.add_event_listener(mock1, [StartPromptEvent])
+        pipeline.add_event_listener(mock1, [StartPromptEvent])
 
-        assert len(pipeline.event_listeners) == 1
+        # uniqueness is based off of the handler + event type
+        pipeline.add_event_listener(mock1, [FinishPromptEvent])
+        pipeline.add_event_listener(mock2, [StartPromptEvent])
 
-    def test_add_event_listener_to_dict(self, pipeline):
-        start_prompt_event_handler = Mock()
-        pipeline.event_listeners = {
-            StartPromptEvent: [start_prompt_event_handler]
-        }
-        new_start_prompt_event_handler = Mock()
-        pipeline.add_event_listener(
-            StartPromptEvent, new_start_prompt_event_handler
-        )
-        pipeline.add_event_listener(
-            FinishPromptEvent, new_start_prompt_event_handler
-        )
+        pipeline.add_event_listener(mock2)
 
-        assert len(pipeline.event_listeners[StartPromptEvent]) == 2
-        assert (
-            len(pipeline.event_listeners[FinishPromptEvent]) == 1
-        )  # pyright: ignore
+        assert len(pipeline.event_listeners) == 4

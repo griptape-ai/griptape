@@ -3,9 +3,6 @@ from griptape.schemas import BaseSchema
 
 
 class RunSchema(BaseSchema):
-    class Meta:
-        ordered = True
-
     id = fields.Str()
     input = fields.Str()
     output = fields.Str()

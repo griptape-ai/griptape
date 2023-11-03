@@ -44,15 +44,11 @@ from griptape.structures import Agent
 from griptape.tools import WebScraper, FileManager
 
 
-agent = Agent()
-agent.add_task(
-    ToolkitTask(
-        "Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt", 
-        tools=[WebScraper(), FileManager()]
-    ),
+agent = Agent(
+    input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.", 
+    tools=[WebScraper(), FileManager()]
 )
-
-agent.run()
+agent.run("https://griptape.ai", "griptape.txt")
 ```
 
 And here is the output:
@@ -84,7 +80,7 @@ INFO     ToolkitTask 51b46eff74a64133a1b6d47c630f1db5
          Output: The summarized content of the webpage "https://www.griptape.ai" has been successfully stored in a file named "griptape.txt".
 ```
 
-During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **short-term memory**, queried it to answer the original question, and finally saved the answer to a file.
+During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Tool Memory**, queried it to answer the original question, and finally saved the answer to a file.
 The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content never goes back to the main prompt.
 
 [Check out our docs](https://docs.griptape.ai/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
@@ -95,7 +91,23 @@ Griptape is in constant development and its APIs and documentation are subject t
 
 ## Contributing
 
-Contributions in the form of bug reports, feature ideas, or pull requests are super welcome! Take a look at the current issues and if you'd like to help please submit a pull request with some tests.
+Thank you for considering contributing to Griptape! Before you start, please read the following guidelines.
+
+### Submitting Issues
+
+If you have identified a bug, want to propose a new feature, or have a question, please submit an issue through our public [issue tracker](https://github.com/griptape-ai/griptape/issues). Before submitting a new issue, please check the existing issues to ensure it hasn't been reported or discussed before.
+
+### Submitting Pull Requests
+
+We welcome and encourage pull requests. To streamline the process, please follow these guidelines:
+
+1. **Existing Issues:** Please submit pull requests only for existing issues. If you want to work on new functionality or fix a bug that hasn't been addressed yet, please first submit an issue. This allows the Griptape team to internally process the request and provide a public response.
+
+2. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
+
+3. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
+
+4. **Documentation:** Every pull request must include a corresponding pull request in the [docs repository](https://github.com/griptape-ai/griptape-docs) or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
 
 ## License
 
