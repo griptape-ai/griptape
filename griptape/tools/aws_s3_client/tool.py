@@ -214,30 +214,38 @@ class AwsS3Client(BaseAwsClient):
 
     @activity(
         config={
-            "description": "Can be used to download objects from an AWS S3 bucket",
+            "description": "Can be used to download objects from AWS S3",
             "schema": Schema(
                 {
                     Literal(
-                        "bucket_name",
-                        description="The name of the S3 bucket to download from.",
-                    ): str,
-                    Literal(
-                        "object_keys", description="Object keys to download."
-                    ): [],
+                        "objects",
+                        description="A list of bucket name and object key pairs to download",
+                    ): [
+                        {
+                            Literal(
+                                "bucket_name",
+                                description="The name of the bucket to download the object from",
+                            ): str,
+                            Literal(
+                                "object_key",
+                                description="The name of the object key to download from the bucket",
+                            ): str,
+                        }
+                    ],
                 }
             ),
         }
     )
     def download_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
-        bucket_name = params["values"]["bucket_name"]
-        object_keys = params["values"]["object_keys"]
-
+        objects = params["values"]["objects"]
         artifact = ListArtifact()
-        for object_key in object_keys:
+        for object_info in objects:
             try:
                 obj = self.s3_client.get_object(
-                    Bucket=bucket_name, Key=object_key
+                    Bucket=object_info["bucket_name"],
+                    Key=object_info["object_key"],
                 )
+
                 content = obj["Body"].read()
                 artifact.value.append(BlobArtifact(content))
 
