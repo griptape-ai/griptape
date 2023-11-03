@@ -231,7 +231,7 @@ class AwsS3Client(BaseAwsClient):
                                 description="The name of the object key to download from the bucket",
                             ): str,
                         }
-                    ],
+                    ]
                 }
             ),
         }
