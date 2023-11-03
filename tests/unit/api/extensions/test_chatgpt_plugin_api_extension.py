@@ -21,7 +21,7 @@ class TestChatGptPluginApiExtension:
     def test_generate_manifest_route(self, generator):
         route = ChatGptPluginApiExtension().generate_manifest_route(generator)
 
-        assert route["path"] == "/tools/chat_gpt_plugin_manifest.json.j2"
+        assert route["path"] == "/.well-known/ai-plugin.json"
         assert isinstance(route["endpoint"](), dict)
         assert route["methods"] == ["GET"]
         assert route["operation_id"] == "OpenAPIManifest"

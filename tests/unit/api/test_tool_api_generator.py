@@ -1,3 +1,4 @@
+import json
 import pytest
 from griptape.api import ToolApiGenerator
 from griptape.artifacts import BaseArtifact
@@ -7,15 +8,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestToolApiGenerator:
     @pytest.fixture
     def generator(self):
-        return ToolApiGenerator("localhost:3000", tool=MockTool())
-
-    def test_full_host_path(self):
-        assert ToolApiGenerator("localhost:3000", tool=MockTool()).full_host_path == "localhost:3000"
-        assert ToolApiGenerator(
-            "localhost:3000",
-            tool=MockTool(),
-            path_prefix="foobar"
-        ).full_host_path == "localhost:3000/foobar"
+        return ToolApiGenerator(tool=MockTool())
 
     def test_generate_yaml_api_spec(self, generator):
         spec = generator.generate_yaml_api_spec()
@@ -45,5 +38,5 @@ class TestToolApiGenerator:
         activity = generator.tool.test
 
         assert BaseArtifact.from_dict(
-            generator.execute_activity_fn(activity)({"values": {"test": "foobar"}})
+            generator.execute_activity_fn(activity)(json.dumps({"values": {"test": "foobar"}}))
         ).value == "ack foobar"

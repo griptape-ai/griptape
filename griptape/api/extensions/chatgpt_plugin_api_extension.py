@@ -17,7 +17,8 @@ class ChatGptPluginApiExtension(BaseApiExtension):
     class YAMLResponse(Response):
         media_type = "text/yaml"
 
-    OPENAI_TEMPLATE_PATH = "tools/chat_gpt_plugin_manifest.json.j2"
+    OPENAI_MANIFEST_TEMPLATE_PATH = "api/extensions/chat_gpt_plugin_manifest.json.j2"
+    OPENAI_MANIFEST_PATH = ".well-known/ai-plugin.json"
     OPENAPI_SPEC_FILE = "openapi.yaml"
     LOGO_FILE = "logo.png"
 
@@ -27,7 +28,7 @@ class ChatGptPluginApiExtension(BaseApiExtension):
 
     def generate_manifest_route(self, generator: ToolApiGenerator) -> dict:
         return {
-            "path": f"/{self.OPENAI_TEMPLATE_PATH}",
+            "path": f"/{self.OPENAI_MANIFEST_PATH}",
             "endpoint": self._generate_manifest_fn(generator),
             "methods": ["GET"],
             "operation_id": "OpenAPIManifest",
@@ -47,7 +48,7 @@ class ChatGptPluginApiExtension(BaseApiExtension):
     def _generate_manifest_fn(self, generator: ToolApiGenerator) -> Callable:
         def generate_manifest() -> dict:
             return json.loads(
-                J2(self.OPENAI_TEMPLATE_PATH).render(
+                J2(self.OPENAI_MANIFEST_TEMPLATE_PATH).render(
                     name_for_human=generator.tool.manifest["name"],
                     name_for_model=generator.tool.manifest["name"],
                     description_for_human=generator.tool.manifest["description"],
