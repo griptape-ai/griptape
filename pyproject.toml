@@ -73,6 +73,7 @@ drivers-vector-mongodb = ["pymongo"]
 drivers-vector-redis = ["redis"]
 drivers-vector-opensearch = ["opensearch-py"]
 drivers-vector-amazon-opensearch = ["opensearch-py", "boto3", "requests-aws4auth"]
+drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
 
 all = [
     "cohere",
@@ -90,6 +91,8 @@ all = [
     "redis",
     "opensearch-py",
     "requests-aws4auth",
+    "pgvector",
+    "psycopg2-binary",
 ]
 
 [tool.poetry.group.test]
