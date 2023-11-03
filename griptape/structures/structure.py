@@ -157,14 +157,18 @@ class Structure(ABC):
         return [self.add_task(s) for s in tasks]
 
     def add_event_listener(
-        self,
-        handler: Callable[[BaseEvent], Any],
-        event_types: Optional[list[Type[BaseEvent]]] = None,
-    ) -> None:
-        event_listener = EventListener(handler, event_types=event_types)
-
+        self, event_listener: EventListener
+    ) -> EventListener:
         if event_listener not in self.event_listeners:
             self.event_listeners.append(event_listener)
+
+        return event_listener
+
+    def remove_event_listener(self, event_listener: EventListener) -> None:
+        if event_listener in self.event_listeners:
+            self.event_listeners.remove(event_listener)
+        else:
+            raise ValueError(f"Event Listener not found.")
 
     def publish_event(self, event: BaseEvent) -> None:
         for event_listener in self.event_listeners:
