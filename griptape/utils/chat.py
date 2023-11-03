@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
-from copy import deepcopy
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
