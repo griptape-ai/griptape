@@ -7,11 +7,10 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestChatGptPluginApiExtension:
     @pytest.fixture
     def generator(self):
-        return ToolApiGenerator("localhost:3000", tool=MockTool())
+        return ToolApiGenerator(tool=MockTool())
 
     def test_generator_extension(self, generator):
         generator_with_extension = ToolApiGenerator(
-            "localhost:3000",
             tool=MockTool(),
             extensions=[ChatGptPluginApiExtension()]
         )
@@ -22,7 +21,7 @@ class TestChatGptPluginApiExtension:
     def test_generate_manifest_route(self, generator):
         route = ChatGptPluginApiExtension().generate_manifest_route(generator)
 
-        assert route["path"] == "localhost:3000/tools/chat_gpt_plugin_manifest.json.j2"
+        assert route["path"] == "/tools/chat_gpt_plugin_manifest.json.j2"
         assert isinstance(route["endpoint"](), dict)
         assert route["methods"] == ["GET"]
         assert route["operation_id"] == "OpenAPIManifest"
@@ -31,7 +30,7 @@ class TestChatGptPluginApiExtension:
     def test_generate_spec_route(self, generator):
         route = ChatGptPluginApiExtension().generate_spec_route(generator)
 
-        assert route["path"] == "localhost:3000/openapi.yaml"
+        assert route["path"] == "/openapi.yaml"
         assert isinstance(route["endpoint"](), str)
         assert route["methods"] == ["GET"]
         assert str(route["response_class"]) == str(ChatGptPluginApiExtension.YAMLResponse)
