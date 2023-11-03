@@ -15,7 +15,6 @@ from .dict_utils import remove_null_values_in_dict_recursively
 from .stream import Stream
 
 
-
 def minify_json(value: str) -> str:
     return json.dumps(json.loads(value), separators=(",", ":"))
 
