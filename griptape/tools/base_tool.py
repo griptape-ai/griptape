@@ -57,13 +57,6 @@ class BaseTool(ActivityMixin, ABC):
                         f"memory names have to be unique in activity '{activity_name}' output"
                     )
 
-    @off_prompt.validator
-    def validate_off_prompt(self, _, off_prompt: bool) -> None:
-        if off_prompt and not self.output_memory:
-            raise ValueError(
-                f"off_prompt can't be set to True is output_memory is not set"
-            )
-
     @property
     def class_name(self):
         return self.__class__.__name__
