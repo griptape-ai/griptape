@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional
 import csv
 import io
 from attr import field, Factory, define
@@ -11,6 +12,7 @@ from griptape.artifacts import (
 from griptape.utils import PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
+from griptape.rules import Ruleset, rule
 
 
 @define
@@ -21,7 +23,10 @@ class CsvExtractionEngine(BaseExtractionEngine):
     )
 
     def extract(
-        self, text: str | ListArtifact, column_names: list[str], **kwargs
+        self,
+        text: str | ListArtifact,
+        column_names: list[str],
+        rulesets: Optional[Ruleset] = None,
     ) -> ListArtifact | ErrorArtifact:
         try:
             return ListArtifact(
@@ -31,6 +36,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                     else [TextArtifact(text)],
                     column_names,
                     [],
+                    rulesets=rulesets,
                 ),
                 item_separator="\n",
             )
@@ -57,10 +63,13 @@ class CsvExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         column_names: list[str],
         rows: list[CsvRowArtifact],
+        rulesets: Optional[Ruleset] = None,
     ) -> list[CsvRowArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
-            column_names=column_names, text=artifacts_text
+            column_names=column_names,
+            text=artifacts_text,
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
         if (
@@ -86,7 +95,9 @@ class CsvExtractionEngine(BaseExtractionEngine):
         else:
             chunks = self.chunker.chunk(artifacts_text)
             partial_text = self.template_generator.render(
-                column_names=column_names, text=chunks[0].value
+                column_names=column_names,
+                text=chunks[0].value,
+                rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
 
             rows.extend(
@@ -104,4 +115,6 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 )
             )
 
-            return self._extract_rec(chunks[1:], column_names, rows)
+            return self._extract_rec(
+                chunks[1:], column_names, rows, rulesets=rulesets
+            )
