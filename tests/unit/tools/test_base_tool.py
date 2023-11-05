@@ -112,6 +112,14 @@ class TestBaseTool:
             }
         )
 
+    def test_off_prompt_validation(self):
+        with pytest.raises(ValueError):
+            MockTool(output_memory=None, off_prompt=True)
+
+        assert MockTool(output_memory=None, off_prompt=False)
+        assert MockTool(output_memory={"test": [defaults.text_tool_memory("Memory1")]}, off_prompt=True)
+        assert MockTool(output_memory={"test": [defaults.text_tool_memory("Memory1")]}, off_prompt=False)
+
     def test_find_input_memory(self):
         assert MockTool().find_input_memory("foo") is None
         assert (
