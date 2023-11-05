@@ -8,8 +8,6 @@ from griptape.utils.decorators import activity
 
 @define
 class ToolOutputProcessor(BaseTool):
-    enable_output_memory: bool = field(default=False, kw_only=True)
-
     @activity(
         config={
             "description": "Can be used to summarize memory content",

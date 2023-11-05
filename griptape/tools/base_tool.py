@@ -35,7 +35,7 @@ class BaseTool(ActivityMixin, ABC):
         default=None, kw_only=True
     )
     verbose: bool = field(default=False, kw_only=True)
-    enable_output_memory: bool = field(default=True, kw_only=True)
+    off_prompt: bool = field(default=True, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:

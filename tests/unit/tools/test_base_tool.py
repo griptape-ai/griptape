@@ -15,7 +15,7 @@ class TestBaseTool:
             test_field="hello", test_int=5, test_dict={"foo": "bar"}
         )
 
-    def test_enable_output_memory(self, tool):
+    def test_off_prompt(self, tool):
         assert (
             ToolkitTask(
                 tool_memory=defaults.text_tool_memory("TestMemory"),
@@ -28,7 +28,7 @@ class TestBaseTool:
         assert (
             not ToolkitTask(
                 tool_memory=defaults.text_tool_memory("TestMemory"),
-                tools=[MockTool(enable_output_memory=False)],
+                tools=[MockTool(off_prompt=False)],
             )
             .tools[0]
             .output_memory

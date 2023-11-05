@@ -48,7 +48,7 @@ agent = Agent(
     tools=[
         WebScraper(),
         FileManager(),
-        ToolOutputProcessor(enable_output_memory=True)
+        ToolOutputProcessor(off_prompt=False)
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
