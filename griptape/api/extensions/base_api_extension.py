@@ -9,7 +9,9 @@ if TYPE_CHECKING:
 
 @define
 class BaseApiExtension(ABC):
-    route_fns: list[Callable[[ToolApiGenerator], dict]] = field(factory=list, kw_only=True)
+    route_fns: list[Callable[[ToolApiGenerator], dict]] = field(
+        factory=list, kw_only=True
+    )
 
     def extend(self, generator: ToolApiGenerator) -> ToolApiGenerator:
         for route_fn in self.route_fns:

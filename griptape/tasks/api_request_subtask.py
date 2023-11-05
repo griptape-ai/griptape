@@ -12,7 +12,10 @@ from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ApiRequestSubtaskOriginMixin
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
-from griptape.events import StartApiRequestSubtaskEvent, FinishApiRequestSubtaskEvent
+from griptape.events import (
+    StartApiRequestSubtaskEvent,
+    FinishApiRequestSubtaskEvent,
+)
 
 if TYPE_CHECKING:
     from griptape.memory import ToolMemory
@@ -30,10 +33,10 @@ class ApiRequestSubtask(PromptTask):
             Literal("name", description="API name"): str,
             Literal("path", description="API path"): str,
             schema.Optional(
-                Literal("input", description="Optional API path input values object")
-            ): {
-                "values": dict
-            },
+                Literal(
+                    "input", description="Optional API path input values object"
+                )
+            ): {"values": dict},
         },
     )
 
@@ -74,7 +77,9 @@ class ApiRequestSubtask(PromptTask):
         self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
-        self.structure.publish_event(StartApiRequestSubtaskEvent.from_task(self))
+        self.structure.publish_event(
+            StartApiRequestSubtaskEvent.from_task(self)
+        )
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
@@ -106,10 +111,10 @@ class ApiRequestSubtask(PromptTask):
             else str(self.output)
         )
 
-        self.structure.publish_event(FinishApiRequestSubtaskEvent.from_task(self))
-        self.structure.logger.info(
-            f"Subtask {self.id}\nResponse: {response}"
+        self.structure.publish_event(
+            FinishApiRequestSubtaskEvent.from_task(self)
         )
+        self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
 
     def request_to_json(self) -> str:
         json_dict = {}
@@ -156,9 +161,7 @@ class ApiRequestSubtask(PromptTask):
                 data = action_matches[-1]
                 action_object: dict = json.loads(data, strict=False)
 
-                validate(
-                    instance=action_object, schema=self.API_SCHEMA.schema
-                )
+                validate(instance=action_object, schema=self.API_SCHEMA.schema)
 
                 # Load action name; throw exception if the key is not present
                 if self.api_name is None:
@@ -197,18 +200,14 @@ class ApiRequestSubtask(PromptTask):
                 )
 
                 self.api_name = "error"
-                self.api_input = {
-                    "error": f"Action JSON validation error: {e}"
-                }
+                self.api_input = {"error": f"Action JSON validation error: {e}"}
             except Exception as e:
                 self.structure.logger.error(
                     f"Subtask {self.origin_task.id}\nError parsing tool action: {e}"
                 )
 
                 self.api_name = "error"
-                self.api_input = {
-                    "error": f"Action input parsing error: {e}"
-                }
+                self.api_input = {"error": f"Action input parsing error: {e}"}
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 

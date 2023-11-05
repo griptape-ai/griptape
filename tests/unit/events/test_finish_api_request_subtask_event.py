@@ -54,8 +54,8 @@ class TestFinishApiRequestSubtaskEvent:
             == finish_subtask_event.subtask_api_name
         )
         assert (
-                event_dict["subtask_api_path"]
-                == finish_subtask_event.subtask_api_path
+            event_dict["subtask_api_path"]
+            == finish_subtask_event.subtask_api_path
         )
         assert (
             event_dict["subtask_api_input"]

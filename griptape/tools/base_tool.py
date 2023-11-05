@@ -97,7 +97,10 @@ class BaseTool(ActivityMixin, ABC):
         return value
 
     def run(
-        self, activity: Callable, subtask: ApiRequestSubtask, value: Optional[dict]
+        self,
+        activity: Callable,
+        subtask: ApiRequestSubtask,
+        value: Optional[dict],
     ) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -113,7 +116,10 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-        self, activity: Callable, subtask: ApiRequestSubtask, value: BaseArtifact
+        self,
+        activity: Callable,
+        subtask: ApiRequestSubtask,
+        value: BaseArtifact,
     ) -> BaseArtifact:
         if value:
             if self.output_memory:

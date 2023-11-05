@@ -116,7 +116,9 @@ class TestEmailClient:
             "'INBOX': 'default mailbox for incoming email'"
             in retrieve_description
         )
-        assert "'SENT': 'default mailbox for sent email'" in retrieve_description
+        assert (
+            "'SENT': 'default mailbox for sent email'" in retrieve_description
+        )
 
     @pytest.mark.parametrize(
         "params",

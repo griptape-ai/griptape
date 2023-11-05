@@ -24,7 +24,9 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
     subtasks: list[ApiRequestSubtask] = field(factory=list)
-    generate_assistant_subtask_template: Callable[[ApiRequestSubtask], str] = field(
+    generate_assistant_subtask_template: Callable[
+        [ApiRequestSubtask], str
+    ] = field(
         default=Factory(
             lambda self: self.default_assistant_subtask_template_generator,
             takes_self=True,
@@ -115,7 +117,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
                 for tool in self.tools
             ],
             memory_names=str.join(", ", [memory.name for memory in memories]),
-            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
 
     def default_assistant_subtask_template_generator(
@@ -130,7 +132,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
     ) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
-            subtask=subtask
+            subtask=subtask,
         )
 
     def set_default_tools_memory(self, memory: ToolMemory) -> None:

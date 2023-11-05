@@ -11,12 +11,14 @@ class TestChatGptPluginApiExtension:
 
     def test_generator_extension(self, generator):
         generator_with_extension = ToolApiGenerator(
-            tool=MockTool(),
-            extensions=[ChatGptPluginApiExtension()]
+            tool=MockTool(), extensions=[ChatGptPluginApiExtension()]
         )
 
         assert len(generator_with_extension.extensions[0].route_fns) == 2
-        assert len(generator_with_extension.api.routes) - len(generator.api.routes) == 2
+        assert (
+            len(generator_with_extension.api.routes) - len(generator.api.routes)
+            == 2
+        )
 
     def test_generate_manifest_route(self, generator):
         route = ChatGptPluginApiExtension().generate_manifest_route(generator)
@@ -33,6 +35,8 @@ class TestChatGptPluginApiExtension:
         assert route["path"] == "/openapi.yaml"
         assert isinstance(route["endpoint"](), str)
         assert route["methods"] == ["GET"]
-        assert str(route["response_class"]) == str(ChatGptPluginApiExtension.YAMLResponse)
+        assert str(route["response_class"]) == str(
+            ChatGptPluginApiExtension.YAMLResponse
+        )
         assert route["operation_id"] == "OpenAPISpec"
         assert route["description"] == "ChatGPT plugin spec"

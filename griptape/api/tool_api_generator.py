@@ -28,9 +28,7 @@ class ToolApiGenerator:
         return json.dumps(self.api.openapi())
 
     def generate_api(self) -> FastAPI:
-        api = FastAPI(
-
-        )
+        api = FastAPI()
         api.title = f"{self.tool.name} API"
 
         for activity in self.tool.activities():
@@ -38,8 +36,10 @@ class ToolApiGenerator:
                 path=f"/{stringcase.spinalcase(self.tool.activity_name(activity))}",
                 endpoint=self.execute_activity_fn(activity),
                 methods=["GET"],
-                operation_id=stringcase.pascalcase(self.tool.activity_name(activity)),
-                description=self.tool.activity_description(activity)
+                operation_id=stringcase.pascalcase(
+                    self.tool.activity_name(activity)
+                ),
+                description=self.tool.activity_description(activity),
             )
 
         return api

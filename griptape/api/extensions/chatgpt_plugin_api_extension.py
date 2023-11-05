@@ -17,7 +17,9 @@ class ChatGptPluginApiExtension(BaseApiExtension):
     class YAMLResponse(Response):
         media_type = "text/yaml"
 
-    OPENAI_MANIFEST_TEMPLATE_PATH = "api/extensions/chat_gpt_plugin_manifest.json.j2"
+    OPENAI_MANIFEST_TEMPLATE_PATH = (
+        "api/extensions/chat_gpt_plugin_manifest.json.j2"
+    )
     OPENAI_MANIFEST_PATH = ".well-known/ai-plugin.json"
     OPENAPI_SPEC_FILE = "openapi.yaml"
     LOGO_FILE = "logo.png"
@@ -32,7 +34,7 @@ class ChatGptPluginApiExtension(BaseApiExtension):
             "endpoint": self._generate_manifest_fn(generator),
             "methods": ["GET"],
             "operation_id": "OpenAPIManifest",
-            "description": "ChatGPT plugin manifest"
+            "description": "ChatGPT plugin manifest",
         }
 
     def generate_spec_route(self, generator: ToolApiGenerator) -> dict:
@@ -42,7 +44,7 @@ class ChatGptPluginApiExtension(BaseApiExtension):
             "methods": ["GET"],
             "response_class": self.YAMLResponse,
             "operation_id": "OpenAPISpec",
-            "description": "ChatGPT plugin spec"
+            "description": "ChatGPT plugin spec",
         }
 
     def _generate_manifest_fn(self, generator: ToolApiGenerator) -> Callable:
@@ -51,12 +53,16 @@ class ChatGptPluginApiExtension(BaseApiExtension):
                 J2(self.OPENAI_MANIFEST_TEMPLATE_PATH).render(
                     name_for_human=generator.tool.manifest["name"],
                     name_for_model=generator.tool.manifest["name"],
-                    description_for_human=generator.tool.manifest["description"],
-                    description_for_model=generator.tool.manifest["description"],
+                    description_for_human=generator.tool.manifest[
+                        "description"
+                    ],
+                    description_for_model=generator.tool.manifest[
+                        "description"
+                    ],
                     api_url=f"/{self.OPENAPI_SPEC_FILE}",
                     logo_url=f"/{self.LOGO_FILE}",
                     contact_email=generator.tool.manifest["contact_email"],
-                    legal_info_url=generator.tool.manifest["legal_info_url"]
+                    legal_info_url=generator.tool.manifest["legal_info_url"],
                 )
             )
 
