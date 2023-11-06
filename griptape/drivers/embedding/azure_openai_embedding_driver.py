@@ -3,6 +3,7 @@ from __future__ import annotations
 from attr import define, field, Factory
 from griptape.drivers import OpenAiEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
+import openai
 
 
 @define
@@ -17,7 +18,6 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         tokenizer: Optionally provide custom `OpenAiTokenizer`.
     """
 
-    model: str = field(kw_only=True)
     deployment_id: str = field(kw_only=True)
     api_base: str = field(kw_only=True)
     api_type: str = field(default="azure", kw_only=True)
@@ -28,6 +28,17 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         ),
         kw_only=True,
     )
+    client: openai.AzureOpenAI = field(
+        init=False,
+        default=Factory(
+            lambda self: openai.AzureOpenAI(
+                api_key=self.api_key,
+                base_url=self.base_url,
+                organization=self.organization,
+            ),
+            takes_self=True,
+        ),
+    )
 
-    def _params(self, chunk: list[int] | str) -> dict:
+    def _params(self, chunk: str) -> dict:
         return super()._params(chunk) | {"deployment_id": self.deployment_id}

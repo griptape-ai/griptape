@@ -1,3 +1,5 @@
+import pytest
+from unittest.mock import Mock
 from griptape.drivers import AzureOpenAiCompletionPromptDriver
 from tests.unit.drivers.prompt.test_openai_completion_prompt_driver import (
     TestOpenAiCompletionPromptDriverFixtureMixin,
@@ -8,16 +10,40 @@ from unittest.mock import ANY
 class TestAzureOpenAiCompletionPromptDriver(
     TestOpenAiCompletionPromptDriverFixtureMixin
 ):
+    @pytest.fixture
+    def mock_completion_create(self, mocker):
+        mock_chat_create = mocker.patch(
+            "openai.AzureOpenAI"
+        ).return_value.completions.with_raw_response.create
+        mock_choice = Mock()
+        mock_choice.text = "model-output"
+        mock_chat_create.return_value.choices = [mock_choice]
+        return mock_chat_create
+
+    @pytest.fixture
+    def mock_completion_stream_create(self, mocker):
+        mock_chat_create = mocker.patch(
+            "openai.AzureOpenAI"
+        ).return_value.completions.create
+        mock_chunk = Mock()
+        mock_choice = Mock()
+        mock_choice.text = "model-output"
+        mock_chunk.choices = [mock_choice]
+        mock_chat_create.return_value = iter([mock_chunk])
+        return mock_chat_create
+
     def test_init(self):
         assert AzureOpenAiCompletionPromptDriver(
-            api_base="foobar", deployment_id="foobar", model="text-davinci-003"
+            azure_endpoint="endpoint",
+            azure_deployment="deployment",
+            model="text-davinci-003",
         )
 
     def test_try_run(self, mock_completion_create, prompt_stack, prompt):
         # Given
         driver = AzureOpenAiCompletionPromptDriver(
-            api_base="api-base",
-            deployment_id="deployment-id",
+            azure_endpoint="endpoint",
+            azure_deployment="deployment",
             model="text-davinci-003",
         )
 
@@ -31,13 +57,7 @@ class TestAzureOpenAiCompletionPromptDriver(
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             prompt=prompt,
-            deployment_id="deployment-id",
         )
         assert text_artifact.value == "model-output"
 
@@ -46,8 +66,8 @@ class TestAzureOpenAiCompletionPromptDriver(
     ):
         # Given
         driver = AzureOpenAiCompletionPromptDriver(
-            api_base="api-base",
-            deployment_id="deployment-id",
+            azure_endpoint="endpoint",
+            azure_deployment="deployment",
             model="text-davinci-003",
             stream=True,
         )
@@ -62,13 +82,7 @@ class TestAzureOpenAiCompletionPromptDriver(
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
-            stream=driver.stream,
+            stream=True,
             prompt=prompt,
-            deployment_id="deployment-id",
         )
         assert text_artifact.value == "model-output"

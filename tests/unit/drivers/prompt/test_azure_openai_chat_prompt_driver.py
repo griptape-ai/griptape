@@ -1,3 +1,5 @@
+import pytest
+from unittest.mock import Mock
 from griptape.drivers import AzureOpenAiChatPromptDriver
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import (
     TestOpenAiChatPromptDriverFixtureMixin,
@@ -5,15 +7,40 @@ from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import (
 
 
 class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
+    @pytest.fixture
+    def mock_chat_completion_create(self, mocker):
+        mock_chat_create = mocker.patch(
+            "openai.AzureOpenAI"
+        ).return_value.chat.completions.with_raw_response.create
+        mock_choice = Mock()
+        mock_choice.message.content = "model-output"
+        mock_chat_create.return_value.headers = {}
+        mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
+        return mock_chat_create
+
+    @pytest.fixture
+    def mock_chat_completion_stream_create(self, mocker):
+        mock_chat_create = mocker.patch(
+            "openai.AzureOpenAI"
+        ).return_value.chat.completions.create
+        mock_chunk = Mock()
+        mock_choice = Mock()
+        mock_choice.delta.content = "model-output"
+        mock_chunk.choices = [mock_choice]
+        mock_chat_create.return_value = iter([mock_chunk])
+        return mock_chat_create
+
     def test_init(self):
         assert AzureOpenAiChatPromptDriver(
-            api_base="foobar", deployment_id="foobar", model="gpt-4"
+            azure_endpoint="foobar", azure_deployment="foobar", model="gpt-4"
         )
 
     def test_try_run(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
         driver = AzureOpenAiChatPromptDriver(
-            api_base="api-base", deployment_id="deployment-id", model="gpt-4"
+            azure_endpoint="endpoint",
+            azure_deployment="deployment-id",
+            model="gpt-4",
         )
 
         # When
@@ -25,13 +52,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             messages=messages,
-            deployment_id="deployment-id",
         )
         assert text_artifact.value == "model-output"
 
@@ -40,8 +61,8 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     ):
         # Given
         driver = AzureOpenAiChatPromptDriver(
-            api_base="api-base",
-            deployment_id="deployment-id",
+            azure_endpoint="endpoint",
+            azure_deployment="deployment-id",
             model="gpt-4",
             stream=True,
         )
@@ -55,13 +76,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             stream=True,
             messages=messages,
-            deployment_id="deployment-id",
         )
         assert text_artifact.value == "model-output"

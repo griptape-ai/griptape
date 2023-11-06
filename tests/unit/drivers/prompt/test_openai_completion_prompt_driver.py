@@ -8,16 +8,23 @@ import pytest
 class TestOpenAiCompletionPromptDriverFixtureMixin:
     @pytest.fixture
     def mock_completion_create(self, mocker):
-        mock_chat_create = mocker.patch("openai.Completion").create
-        mock_chat_create.return_value.choices = [Mock()]
-        mock_chat_create.return_value.choices[0].text = "model-output"
+        mock_chat_create = mocker.patch(
+            "openai.OpenAI"
+        ).return_value.completions.create
+        mock_choice = Mock()
+        mock_choice.text = "model-output"
+        mock_chat_create.return_value.choices = [mock_choice]
         return mock_chat_create
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_completion_stream_create(self, mocker):
-        mock_chat_create = mocker.patch("openai.Completion").create
+        mock_chat_create = mocker.patch(
+            "openai.OpenAI"
+        ).return_value.completions.create
         mock_chunk = Mock()
-        mock_chunk.choices = [{"text": "model-output"}]
+        mock_choice = Mock()
+        mock_choice.text = "model-output"
+        mock_chunk.choices = [mock_choice]
         mock_chat_create.return_value = iter([mock_chunk])
         return mock_chat_create
 
@@ -67,11 +74,6 @@ class TestOpenAiCompletionPromptDriver(
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             prompt=prompt,
         )
         assert text_artifact.value == "model-output"
@@ -94,11 +96,6 @@ class TestOpenAiCompletionPromptDriver(
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             stream=True,
             prompt=prompt,
         )
@@ -112,7 +109,7 @@ class TestOpenAiCompletionPromptDriver(
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run("prompt-stack")
+            driver.try_run("prompt-stack")  # pyright: ignore
 
         # Then
         assert e.value.args[0] == "'str' object has no attribute 'inputs'"

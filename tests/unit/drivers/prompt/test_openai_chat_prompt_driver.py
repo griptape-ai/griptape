@@ -10,17 +10,24 @@ import pytest
 class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def mock_chat_completion_create(self, mocker):
-        mock_chat_create = mocker.patch("openai.ChatCompletion").create
-        mock_chat_create.return_value.choices = [
-            {"message": {"content": "model-output"}}
-        ]
+        mock_chat_create = mocker.patch(
+            "openai.OpenAI"
+        ).return_value.chat.completions.with_raw_response.create
+        mock_choice = Mock()
+        mock_choice.message.content = "model-output"
+        mock_chat_create.return_value.headers = {}
+        mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
         return mock_chat_create
 
     @pytest.fixture
     def mock_chat_completion_stream_create(self, mocker):
-        mock_chat_create = mocker.patch("openai.ChatCompletion").create
+        mock_chat_create = mocker.patch(
+            "openai.OpenAI"
+        ).return_value.chat.completions.create
         mock_chunk = Mock()
-        mock_chunk.choices = [{"delta": {"content": "model-output"}}]
+        mock_choice = Mock()
+        mock_choice.delta.content = "model-output"
+        mock_chunk.choices = [mock_choice]
         mock_chat_create.return_value = iter([mock_chunk])
         return mock_chat_create
 
@@ -97,12 +104,38 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             messages=messages,
+            seed=driver.seed,
+        )
+        assert text_artifact.value == "model-output"
+
+    def test_try_run_response_format(
+        self, mock_chat_completion_create, prompt_stack, messages
+    ):
+        # Given
+        driver = OpenAiChatPromptDriver(
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            response_format="json_object",
+        )
+
+        # When
+        text_artifact = driver.try_run(prompt_stack)
+
+        # Then
+        mock_chat_completion_create.assert_called_once_with(
+            model=driver.model,
+            temperature=driver.temperature,
+            stop=driver.tokenizer.stop_sequences,
+            user=driver.user,
+            messages=[
+                *messages,
+                {
+                    "role": "system",
+                    "content": "Provide your response as a valid JSON object.",
+                },
+            ],
+            seed=driver.seed,
+            response_format={"type": "json_object"},
         )
         assert text_artifact.value == "model-output"
 
@@ -123,13 +156,9 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             stream=True,
             messages=messages,
+            seed=driver.seed,
         )
         assert text_artifact.value == "model-output"
 
@@ -150,13 +179,9 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             messages=messages,
             max_tokens=1,
+            seed=driver.seed,
         )
         assert text_artifact.value == "model-output"
 
@@ -182,13 +207,9 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            api_key=driver.api_key,
-            organization=driver.organization,
-            api_version=driver.api_version,
-            api_base=driver.api_base,
-            api_type=driver.api_type,
             messages=messages,
             max_tokens=tokens_left,
+            seed=driver.seed,
         )
         assert max_tokens_request > tokens_left
         assert text_artifact.value == "model-output"
@@ -201,7 +222,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run("prompt-stack")
+            driver.try_run("prompt-stack")  # pyright: ignore
 
         # Then
         assert e.value.args[0] == "'str' object has no attribute 'inputs'"
@@ -212,9 +233,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     ):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            api_key="api-key",
         )
-        mock_chat_completion_create.return_value.choices = choices
+        mock_chat_completion_create.return_value.parse.return_value.choices = [
+            choices
+        ]
 
         # When
         with pytest.raises(Exception) as e:
@@ -299,9 +323,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             + datetime.timedelta(seconds=response_with_headers.reset_tokens_in)
         )
 
+        assert driver._ratelimit_requests_reset_at is not None
         assert abs(
             driver._ratelimit_requests_reset_at - expected_request_reset_time
         ) < datetime.timedelta(seconds=1)
+        assert driver._ratelimit_tokens_reset_at is not None
         assert abs(
             driver._ratelimit_tokens_reset_at - expected_token_reset_time
         ) < datetime.timedelta(seconds=1)
@@ -314,7 +340,8 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             reset_tokens_in_unit="ms",
         )
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            api_key="api-key",
         )
         driver._extract_ratelimit_metadata(response_with_headers)
 
@@ -327,9 +354,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             datetime.datetime.now() + datetime.timedelta(seconds=1)
         )
 
+        assert driver._ratelimit_requests_reset_at is not None
         assert abs(
             driver._ratelimit_requests_reset_at - expected_request_reset_time
         ) < datetime.timedelta(seconds=1)
+        assert driver._ratelimit_tokens_reset_at is not None
         assert abs(
             driver._ratelimit_tokens_reset_at - expected_token_reset_time
         ) < datetime.timedelta(seconds=1)

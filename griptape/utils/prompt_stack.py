@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 from dataclasses import dataclass
 from attr import define, field
 
@@ -16,7 +16,7 @@ class PromptStack:
 
     @dataclass
     class Input:
-        content: str
+        content: str | Any
         role: str
 
         def is_generic(self) -> bool:
@@ -49,6 +49,15 @@ class PromptStack:
 
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, self.ASSISTANT_ROLE)
+
+    def get_system_inputs(self) -> list[Input]:
+        return [i for i in self.inputs if i.is_system()]
+
+    def get_user_inputs(self) -> list[Input]:
+        return [i for i in self.inputs if i.is_user()]
+
+    def get_assistant_inputs(self) -> list[Input]:
+        return [i for i in self.inputs if i.is_assistant()]
 
     def add_conversation_memory(
         self, memory: ConversationMemory, index: Optional[int] = None
