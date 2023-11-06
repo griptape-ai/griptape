@@ -39,7 +39,6 @@ Second, configure an OpenAI client by [getting an API key](https://platform.open
 With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses two tools with shared short-term memory.
 
 ```python
-from griptape.tasks import ToolkitTask
 from griptape.structures import Agent
 from griptape.tools import WebScraper, FileManager
 
