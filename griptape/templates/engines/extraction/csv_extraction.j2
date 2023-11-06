@@ -3,7 +3,9 @@ Text: """{{ text }}"""
 Column Names: """{{ column_names }}"""
 
 Extract information from the Text based on the Column Names and output it as a CSV file. Don't add the header row. Don't use markdown formatting for output. Fields containing line breaks (CRLF), double quotes, and commas should be enclosed in double-quotes.
+{% if rulesets %}
 
 {{ rulesets }}
+{% endif %}
 
 Answer:

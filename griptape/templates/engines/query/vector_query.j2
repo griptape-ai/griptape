@@ -12,7 +12,9 @@ Text segment: """
 {% endfor %}
 
 Query: {{ query }}
+{% if rulesets %}
 
 {{ rulesets }}
+{% endif %}
 
 Answer:

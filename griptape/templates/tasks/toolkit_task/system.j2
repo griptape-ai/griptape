@@ -35,5 +35,7 @@ Memory Descriptions:
 {% if tool_names|length > 0 and memory_names|length > 0 %}
 If tool output is stored in memory, ALWAYS pass it to another tool OR use memory activities to access it.
 {% endif %}
+{% if rulesets %}
 
 {{ rulesets }}
+{% endif %}
