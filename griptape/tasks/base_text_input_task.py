@@ -65,15 +65,18 @@ class BaseTextInputTask(BaseTask, ABC):
                         name=default_ruleset_name, rules=self.structure.rules
                     )
                 ]
-        else:
-            additional_ruleset_name = default_ruleset_name
 
         task_rulesets = []
         if self.rulesets:
             task_rulesets = self.rulesets
         elif self.rules:
+            if structure_rulesets:
+                task_ruleset_name = additional_ruleset_name
+            else:
+                task_ruleset_name = default_ruleset_name
+
             task_rulesets = [
-                Ruleset(name=additional_ruleset_name, rules=self.rules)
+                Ruleset(name=task_ruleset_name, rules=self.rules)
             ]
 
         return structure_rulesets + task_rulesets
