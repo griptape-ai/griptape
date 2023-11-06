@@ -12,9 +12,6 @@ if TYPE_CHECKING:
 @define
 class Pipeline(Structure):
     def add_task(self, task: BaseTask) -> BaseTask:
-        return self.append_task(task)
-
-    def append_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
 
         if self.output_task:
