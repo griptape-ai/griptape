@@ -6,8 +6,10 @@ Current text summary: """
 Rewrite the current text summary to include the following additional text: """
 {{ text }}
 """
+{% if rulesets %}
 
 {{ rulesets }}
+{% endif %}
 
 Rewritten summary:
 {% else %}
