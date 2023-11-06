@@ -11,6 +11,8 @@ from griptape.utils import J2
 @define
 class BaseTextInputTask(BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
+    DEFAULT_RULESET_NAME = "Default Ruleset"
+    ADDITIONAL_RULESET_NAME = "Additional Ruleset"
 
     input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
@@ -40,7 +42,7 @@ class BaseTextInputTask(BaseTask, ABC):
             return
 
         if self.rules:
-            raise ValueError("can't have both rulesets and rules specified")
+            raise ValueError("Can't have both rulesets and rules specified.")
 
     @rules.validator
     def validate_rules(self, _, rules: list[Rule]) -> None:
@@ -48,13 +50,11 @@ class BaseTextInputTask(BaseTask, ABC):
             return
 
         if self.rulesets:
-            raise ValueError("can't have both rules and rulesets specified")
+            raise ValueError("Can't have both rules and rulesets specified.")
 
     @property
     def all_rulesets(self) -> list[Ruleset]:
         structure_rulesets = []
-        default_ruleset_name = "Default Ruleset"
-        additional_ruleset_name = "Additional Ruleset"
 
         if self.structure:
             if self.structure.rulesets:
@@ -62,7 +62,8 @@ class BaseTextInputTask(BaseTask, ABC):
             elif self.structure.rules:
                 structure_rulesets = [
                     Ruleset(
-                        name=default_ruleset_name, rules=self.structure.rules
+                        name=self.DEFAULT_RULESET_NAME,
+                        rules=self.structure.rules,
                     )
                 ]
 
@@ -71,13 +72,11 @@ class BaseTextInputTask(BaseTask, ABC):
             task_rulesets = self.rulesets
         elif self.rules:
             if structure_rulesets:
-                task_ruleset_name = additional_ruleset_name
+                task_ruleset_name = self.ADDITIONAL_RULESET_NAME
             else:
-                task_ruleset_name = default_ruleset_name
+                task_ruleset_name = self.DEFAULT_RULESET_NAME
 
-            task_rulesets = [
-                Ruleset(name=task_ruleset_name, rules=self.rules)
-            ]
+            task_rulesets = [Ruleset(name=task_ruleset_name, rules=self.rules)]
 
         return structure_rulesets + task_rulesets
 

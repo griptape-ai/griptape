@@ -21,7 +21,11 @@ class J2:
     )
 
     def render(self, **kwargs) -> str:
-        return self.environment.get_template(self.template_name).render(kwargs).rstrip()
+        return (
+            self.environment.get_template(self.template_name)
+            .render(kwargs)
+            .rstrip()
+        )
 
     def render_from_string(self, value: str, **kwargs) -> str:
         return self.environment.from_string(value).render(kwargs)
