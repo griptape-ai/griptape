@@ -7,6 +7,7 @@ from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.rules import Ruleset
 
 
 @define
@@ -57,18 +58,27 @@ class PromptSummaryEngine(BaseSummaryEngine):
             * self.max_token_multiplier
         )
 
-    def summarize_artifacts(self, artifacts: ListArtifact) -> TextArtifact:
-        return self.summarize_artifacts_rec(artifacts.value, None)
+    def summarize_artifacts(
+        self, artifacts: ListArtifact, rulesets: Optional[Ruleset] = None
+    ) -> TextArtifact:
+        return self.summarize_artifacts_rec(
+            artifacts.value, None, rulesets=rulesets
+        )
 
     def summarize_artifacts_rec(
-        self, artifacts: list[BaseArtifact], summary: Optional[str]
+        self,
+        artifacts: list[BaseArtifact],
+        summary: Optional[str],
+        rulesets: Optional[Ruleset] = None,
     ) -> TextArtifact:
         artifacts_text = self.chunk_joiner.join(
             [a.to_text() for a in artifacts]
         )
 
         full_text = self.template_generator.render(
-            summary=summary, text=artifacts_text
+            summary=summary,
+            text=artifacts_text,
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
         if (
@@ -86,7 +96,9 @@ class PromptSummaryEngine(BaseSummaryEngine):
             chunks = self.chunker.chunk(artifacts_text)
 
             partial_text = self.template_generator.render(
-                summary=summary, text=chunks[0].value
+                summary=summary,
+                text=chunks[0].value,
+                rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
 
             return self.summarize_artifacts_rec(
@@ -100,4 +112,5 @@ class PromptSummaryEngine(BaseSummaryEngine):
                         ]
                     )
                 ).value,
+                rulesets=rulesets,
             )
