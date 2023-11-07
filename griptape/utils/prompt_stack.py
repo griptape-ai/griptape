@@ -50,15 +50,6 @@ class PromptStack:
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, self.ASSISTANT_ROLE)
 
-    def get_system_inputs(self) -> list[Input]:
-        return [i for i in self.inputs if i.is_system()]
-
-    def get_user_inputs(self) -> list[Input]:
-        return [i for i in self.inputs if i.is_user()]
-
-    def get_assistant_inputs(self) -> list[Input]:
-        return [i for i in self.inputs if i.is_assistant()]
-
     def add_conversation_memory(
         self, memory: ConversationMemory, index: Optional[int] = None
     ) -> list[Input]:
