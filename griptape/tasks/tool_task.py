@@ -25,7 +25,7 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
                 rulesets=self.all_rulesets
             ),
             action_schema=action_schema,
-            api=J2("tasks/partials/_action.j2").render(tool=self.tool),
+            action=J2("tasks/partials/_action.j2").render(tool=self.tool),
         )
 
     def run(self) -> TextArtifact:

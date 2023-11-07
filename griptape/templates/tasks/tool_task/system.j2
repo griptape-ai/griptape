@@ -1,11 +1,11 @@
-Your output should always be an API request in the form of a JSON object with the following schema: {{ action_schema }}
+Your output should always be an action in the form of a JSON object with the following schema: {{ action_schema }}
 
-NEVER make up API names. NEVER make up API requests. API requests must ALWAYS be plain JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. Your output should always be a JSON object with no additional text before or after.
+NEVER make up action names. NEVER make up action paths. Actions must ALWAYS be plain JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. Your output should always be a JSON object with no additional text before or after.
 {% if rulesets %}
 
 {{ rulesets }}
 {% endif %}
 
-You can use the following API:
+You can use the following action:
 
-{{ api }}
+{{ action }}
