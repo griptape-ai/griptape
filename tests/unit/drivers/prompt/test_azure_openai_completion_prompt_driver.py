@@ -14,7 +14,7 @@ class TestAzureOpenAiCompletionPromptDriver(
     def mock_completion_create(self, mocker):
         mock_chat_create = mocker.patch(
             "openai.AzureOpenAI"
-        ).return_value.completions.with_raw_response.create
+        ).return_value.completions.create
         mock_choice = Mock()
         mock_choice.text = "model-output"
         mock_chat_create.return_value.choices = [mock_choice]

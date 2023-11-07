@@ -1,7 +1,7 @@
 from attr import define, field, Factory
 from typing import Optional
+from griptape.utils import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.utils.prompt_stack import PromptStack
 from griptape.tokenizers import OpenAiTokenizer
 import openai
 
