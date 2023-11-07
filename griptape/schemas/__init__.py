@@ -23,9 +23,7 @@ from .events.base_action_subtask_event_schema import (
 )
 from .events.start_task_event_schema import StartTaskEventSchema
 from .events.finish_task_event_schema import FinishTaskEventSchema
-from .events.start_action_event_schema import (
-    StartActionSubtaskEventSchema,
-)
+from .events.start_action_event_schema import StartActionSubtaskEventSchema
 from .events.finish_action_subtask_event_schema import (
     FinishActionSubtaskEventSchema,
 )
