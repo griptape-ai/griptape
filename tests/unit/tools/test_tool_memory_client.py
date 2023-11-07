@@ -1,13 +1,13 @@
 import pytest
 from griptape.artifacts import TextArtifact
-from griptape.tools import ToolOutputProcessor
+from griptape.tools import ToolMemoryClient
 from tests.utils import defaults
 
 
-class TestToolOutputProcessor:
+class TestToolMemoryClient:
     @pytest.fixture
     def tool(self):
-        return ToolOutputProcessor(
+        return ToolMemoryClient(
             input_memory=[defaults.text_tool_memory("TestMemory")]
         )
 

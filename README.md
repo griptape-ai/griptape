@@ -40,15 +40,14 @@ With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, FileManager, ToolOutputProcessor
-
+from griptape.tools import WebScraper, FileManager, ToolMemoryClient
 
 agent = Agent(
     input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
         WebScraper(),
         FileManager(),
-        ToolOutputProcessor(off_prompt=False)
+        ToolMemoryClient(off_prompt=False)
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
@@ -73,14 +72,14 @@ And here is the output:
                              "c497d83c1d134db694b9994596016320"                 
 [11/02/23 15:28:50] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
                              Thought: Now that the webpage content is stored in 
-                             memory, I need to use the ToolOutputProcessor API  
+                             memory, I need to use the ToolMemoryClient API  
                              to summarize the content.                          
-                             Action: {"name": "ToolOutputProcessor", "path":   
+                             Action: {"name": "ToolMemoryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
                              "ToolMemory", "artifact_namespace":                
                              "c497d83c1d134db694b9994596016320"}}}              
 [11/02/23 15:29:06] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
-                             Response: Output of "ToolOutputProcessor.summarize"
+                             Response: Output of "ToolMemoryClient.summarize"
                              was stored in memory with memory_name "ToolMemory" 
                              and artifact_namespace                             
                              "77584322d33d40e992da9767d02a9018"                 

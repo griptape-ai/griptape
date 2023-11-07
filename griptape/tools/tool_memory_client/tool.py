@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attr import define
 from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.tools import BaseTool
@@ -7,7 +7,7 @@ from griptape.utils.decorators import activity
 
 
 @define
-class ToolOutputProcessor(BaseTool):
+class ToolMemoryClient(BaseTool):
     @activity(
         config={
             "description": "Can be used to summarize memory content",
