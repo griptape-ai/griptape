@@ -123,8 +123,6 @@ class TestBaseTool:
 
     def test_execute(self, tool):
         assert (
-            tool.execute(
-                tool.test_list_output, ActionSubtask("foo")
-            ).to_text()
+            tool.execute(tool.test_list_output, ActionSubtask("foo")).to_text()
             == "foo\n\nbar"
         )

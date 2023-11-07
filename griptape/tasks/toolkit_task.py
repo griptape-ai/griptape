@@ -24,9 +24,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
-    generate_assistant_subtask_template: Callable[
-        [ActionSubtask], str
-    ] = field(
+    generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(
             lambda self: self.default_assistant_subtask_template_generator,
             takes_self=True,
@@ -103,9 +101,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
         ]
 
         action_schema = utils.minify_json(
-            json.dumps(
-                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
-            )
+            json.dumps(ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema"))
         )
 
         return J2("tasks/toolkit_task/system.j2").render(

@@ -12,10 +12,7 @@ from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ApiRequestSubtaskOriginMixin
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
-from griptape.events import (
-    StartActionSubtaskEvent,
-    FinishActionSubtaskEvent,
-)
+from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
 
 if TYPE_CHECKING:
     from griptape.memory import ToolMemory
@@ -34,7 +31,8 @@ class ActionSubtask(PromptTask):
             Literal("path", description="Action path"): str,
             schema.Optional(
                 Literal(
-                    "input", description="Optional action path input values object"
+                    "input",
+                    description="Optional action path input values object",
                 )
             ): {"values": dict},
         },
@@ -77,9 +75,7 @@ class ActionSubtask(PromptTask):
         self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
-        self.structure.publish_event(
-            StartActionSubtaskEvent.from_task(self)
-        )
+        self.structure.publish_event(StartActionSubtaskEvent.from_task(self))
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
@@ -111,9 +107,7 @@ class ActionSubtask(PromptTask):
             else str(self.output)
         )
 
-        self.structure.publish_event(
-            FinishActionSubtaskEvent.from_task(self)
-        )
+        self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
 
     def request_to_json(self) -> str:
@@ -161,7 +155,9 @@ class ActionSubtask(PromptTask):
                 data = action_matches[-1]
                 action_object: dict = json.loads(data, strict=False)
 
-                validate(instance=action_object, schema=self.ACTION_SCHEMA.schema)
+                validate(
+                    instance=action_object, schema=self.ACTION_SCHEMA.schema
+                )
 
                 # Load action name; throw exception if the key is not present
                 if self.action_name is None:
@@ -200,14 +196,18 @@ class ActionSubtask(PromptTask):
                 )
 
                 self.action_name = "error"
-                self.action_input = {"error": f"Action JSON validation error: {e}"}
+                self.action_input = {
+                    "error": f"Action JSON validation error: {e}"
+                }
             except Exception as e:
                 self.structure.logger.error(
                     f"Subtask {self.origin_task.id}\nError parsing tool action: {e}"
                 )
 
                 self.action_name = "error"
-                self.action_input = {"error": f"Action input parsing error: {e}"}
+                self.action_input = {
+                    "error": f"Action input parsing error: {e}"
+                }
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 

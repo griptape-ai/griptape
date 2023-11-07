@@ -95,18 +95,14 @@ class TestToolMemory:
 
     def test_load_artifacts_for_text_artifact(self, memory):
         memory.process_output(
-            MockTool().test,
-            ActionSubtask(),
-            TextArtifact("foo", name="test"),
+            MockTool().test, ActionSubtask(), TextArtifact("foo", name="test")
         )
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_blob_artifact(self, memory):
         memory.process_output(
-            MockTool().test,
-            ActionSubtask(),
-            BlobArtifact(b"foo", name="test"),
+            MockTool().test, ActionSubtask(), BlobArtifact(b"foo", name="test")
         )
 
         assert len(memory.load_artifacts("test")) == 1
