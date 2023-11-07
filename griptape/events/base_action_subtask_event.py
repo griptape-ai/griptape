@@ -6,11 +6,11 @@ from .base_task_event import BaseTaskEvent
 
 
 if TYPE_CHECKING:
-    from griptape.tasks import ApiRequestSubtask
+    from griptape.tasks import ActionSubtask
 
 
 @define
-class BaseApiRequestSubtaskEvent(BaseTaskEvent, ABC):
+class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
     subtask_parent_task_id: Optional[str] = field(kw_only=True)
     subtask_thought: Optional[str] = field(kw_only=True)
     subtask_api_name: Optional[str] = field(kw_only=True)
@@ -18,7 +18,7 @@ class BaseApiRequestSubtaskEvent(BaseTaskEvent, ABC):
     subtask_api_input: Optional[dict] = field(kw_only=True)
 
     @classmethod
-    def from_task(cls, task: ApiRequestSubtask) -> BaseApiRequestSubtaskEvent:
+    def from_task(cls, task: ActionSubtask) -> BaseActionSubtaskEvent:
         return cls(
             task_id=task.id,
             task_parent_ids=task.parent_ids,

@@ -1,9 +1,9 @@
 import json
-from griptape.tasks import ToolkitTask, ApiRequestSubtask
+from griptape.tasks import ToolkitTask, ActionSubtask
 from griptape.structures import Pipeline
 
 
-class TestApiRequestSubtask:
+class TestActionSubtask:
     def test_to_json(self):
         valid_input = (
             "Thought: need to test\n"
@@ -14,7 +14,7 @@ class TestApiRequestSubtask:
 
         task = ToolkitTask(tools=[])
         Pipeline().add_task(task)
-        subtask = task.add_subtask(ApiRequestSubtask(valid_input))
+        subtask = task.add_subtask(ActionSubtask(valid_input))
         json_dict = json.loads(subtask.request_to_json())
 
         assert json_dict["name"] == "test"
@@ -31,7 +31,7 @@ class TestApiRequestSubtask:
 
         task = ToolkitTask(tools=[])
         Pipeline().add_task(task)
-        subtask = task.add_subtask(ApiRequestSubtask(valid_input))
+        subtask = task.add_subtask(ActionSubtask(valid_input))
         json_dict = json.loads(subtask.request_to_json())
 
         assert json_dict["name"] == "test"
@@ -39,4 +39,4 @@ class TestApiRequestSubtask:
         assert json_dict["input"] == "test\n\ninput\n\nwith\nnewlines"
 
     def test_input(self):
-        assert ApiRequestSubtask("{{ hello }}").input.value == "{{ hello }}"
+        assert ActionSubtask("{{ hello }}").input.value == "{{ hello }}"

@@ -3,7 +3,7 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError
-from griptape.tasks import ApiRequestSubtask, ToolkitTask
+from griptape.tasks import ActionSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -124,7 +124,7 @@ class TestBaseTool:
     def test_execute(self, tool):
         assert (
             tool.execute(
-                tool.test_list_output, ApiRequestSubtask("foo")
+                tool.test_list_output, ActionSubtask("foo")
             ).to_text()
             == "foo\n\nbar"
         )

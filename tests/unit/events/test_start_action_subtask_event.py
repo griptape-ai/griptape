@@ -1,11 +1,11 @@
 import pytest
-from griptape.events import StartApiRequestSubtaskEvent
+from griptape.events import StartActionSubtaskEvent
 from griptape.structures import Agent
-from griptape.tasks import ApiRequestSubtask, ToolkitTask
+from griptape.tasks import ActionSubtask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-class TestStartApiRequestSubtaskEvent:
+class TestStartActionSubtaskEvent:
     @pytest.fixture
     def start_subtask_event(self):
         valid_input = (
@@ -17,11 +17,11 @@ class TestStartApiRequestSubtaskEvent:
         task = ToolkitTask()
         agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
-        subtask = ApiRequestSubtask(valid_input)
+        subtask = ActionSubtask(valid_input)
         task.add_subtask(subtask)
         agent.run()
 
-        return StartApiRequestSubtaskEvent.from_task(subtask)
+        return StartActionSubtaskEvent.from_task(subtask)
 
     def test_to_dict(self, start_subtask_event):
         event_dict = start_subtask_event.to_dict()

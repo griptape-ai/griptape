@@ -4,7 +4,7 @@ from attr import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact
 from griptape.memory import ToolMemory
-from griptape.tasks import PromptTask, ApiRequestSubtask
+from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
 from griptape.mixins import ApiRequestSubtaskOriginMixin
@@ -13,12 +13,12 @@ from griptape.mixins import ApiRequestSubtaskOriginMixin
 @define
 class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
-    subtask: Optional[ApiRequestSubtask] = field(default=None, kw_only=True)
+    subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         api_schema = utils.minify_json(
             json.dumps(
-                ApiRequestSubtask.API_SCHEMA.json_schema("APIRequestSchema")
+                ActionSubtask.API_SCHEMA.json_schema("APIRequestSchema")
             )
         )
 
@@ -35,7 +35,7 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
             self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
         )
 
-        subtask = self.add_subtask(ApiRequestSubtask(f"Request: {output}"))
+        subtask = self.add_subtask(ActionSubtask(f"Request: {output}"))
 
         subtask.before_run()
         subtask.run()
@@ -57,10 +57,10 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
     def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
         return None
 
-    def find_subtask(self, subtask_id: str) -> Optional[ApiRequestSubtask]:
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
         return self.subtask if self.subtask.id == subtask_id else None
 
-    def add_subtask(self, subtask: ApiRequestSubtask) -> ApiRequestSubtask:
+    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         self.subtask = subtask
         self.subtask.attach_to(self)
 

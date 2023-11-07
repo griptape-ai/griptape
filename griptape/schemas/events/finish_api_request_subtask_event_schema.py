@@ -5,6 +5,6 @@ from griptape.schemas import BaseApiRequestSubtaskEventSchema
 class FinishApiRequestSubtaskEventSchema(BaseApiRequestSubtaskEventSchema):
     @post_load
     def make_obj(self, data, **kwargs):
-        from griptape.events import FinishApiRequestSubtaskEvent
+        from griptape.events import FinishActionSubtaskEvent
 
-        return FinishApiRequestSubtaskEvent(**data)
+        return FinishActionSubtaskEvent(**data)

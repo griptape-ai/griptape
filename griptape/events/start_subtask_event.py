@@ -4,9 +4,9 @@ from attrs import define, field
 from griptape.events.base_event import BaseEvent
 
 if TYPE_CHECKING:
-    from griptape.tasks import ApiRequestSubtask
+    from griptape.tasks import ActionSubtask
 
 
 @define
 class StartSubtaskEvent(BaseEvent):
-    subtask: ApiRequestSubtask = field(kw_only=True)
+    subtask: ActionSubtask = field(kw_only=True)

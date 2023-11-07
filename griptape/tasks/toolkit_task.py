@@ -6,7 +6,7 @@ from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.utils import PromptStack
 from griptape.mixins import ApiRequestSubtaskOriginMixin
-from griptape.tasks import ApiRequestSubtask
+from griptape.tasks import ActionSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
 
@@ -23,9 +23,9 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
-    subtasks: list[ApiRequestSubtask] = field(factory=list)
+    subtasks: list[ActionSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[
-        [ApiRequestSubtask], str
+        [ActionSubtask], str
     ] = field(
         default=Factory(
             lambda self: self.default_assistant_subtask_template_generator,
@@ -33,7 +33,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
         ),
         kw_only=True,
     )
-    generate_user_subtask_template: Callable[[ApiRequestSubtask], str] = field(
+    generate_user_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(
             lambda self: self.default_user_subtask_template_generator,
             takes_self=True,
@@ -104,7 +104,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
 
         api_schema = utils.minify_json(
             json.dumps(
-                ApiRequestSubtask.API_SCHEMA.json_schema("APIRequestSchema")
+                ActionSubtask.API_SCHEMA.json_schema("APIRequestSchema")
             )
         )
 
@@ -123,14 +123,14 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
         )
 
     def default_assistant_subtask_template_generator(
-        self, subtask: ApiRequestSubtask
+        self, subtask: ActionSubtask
     ) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
             subtask=subtask
         )
 
     def default_user_subtask_template_generator(
-        self, subtask: ApiRequestSubtask
+        self, subtask: ActionSubtask
     ) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
@@ -150,12 +150,12 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
                     }
 
     def run(self) -> TextArtifact:
-        from griptape.tasks import ApiRequestSubtask
+        from griptape.tasks import ActionSubtask
 
         self.subtasks.clear()
 
         subtask = self.add_subtask(
-            ApiRequestSubtask(
+            ActionSubtask(
                 self.active_driver()
                 .run(prompt_stack=self.prompt_stack)
                 .to_text()
@@ -177,7 +177,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
                     subtask.after_run()
 
                     subtask = self.add_subtask(
-                        ApiRequestSubtask(
+                        ActionSubtask(
                             self.active_driver()
                             .run(prompt_stack=self.prompt_stack)
                             .to_text()
@@ -190,13 +190,13 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
 
         return self.output
 
-    def find_subtask(self, subtask_id: str) -> Optional[ApiRequestSubtask]:
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
         return next(
             (subtask for subtask in self.subtasks if subtask.id == subtask_id),
             None,
         )
 
-    def add_subtask(self, subtask: ApiRequestSubtask) -> ApiRequestSubtask:
+    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         subtask.attach_to(self)
 
         if len(self.subtasks) > 0:

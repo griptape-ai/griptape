@@ -13,8 +13,8 @@ from griptape.mixins import ActivityMixin, ApiRequestSubtaskOriginMixin
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import (
-    StartApiRequestSubtaskEvent,
-    FinishApiRequestSubtaskEvent,
+    StartActionSubtaskEvent,
+    FinishActionSubtaskEvent,
 )
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ApiRequestSubtask(PromptTask):
+class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     REQUEST_PATTERN = r"(?s)Request:[^{]*({.*})"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -58,14 +58,14 @@ class ApiRequestSubtask(PromptTask):
         return self.structure.find_task(self.parent_task_id)
 
     @property
-    def parents(self) -> list[ApiRequestSubtask]:
+    def parents(self) -> list[ActionSubtask]:
         return [
             self.origin_task.find_subtask(parent_id)
             for parent_id in self.parent_ids
         ]
 
     @property
-    def children(self) -> list[ApiRequestSubtask]:
+    def children(self) -> list[ActionSubtask]:
         return [
             self.origin_task.find_subtask(child_id)
             for child_id in self.child_ids
@@ -78,7 +78,7 @@ class ApiRequestSubtask(PromptTask):
 
     def before_run(self) -> None:
         self.structure.publish_event(
-            StartApiRequestSubtaskEvent.from_task(self)
+            StartActionSubtaskEvent.from_task(self)
         )
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
@@ -112,7 +112,7 @@ class ApiRequestSubtask(PromptTask):
         )
 
         self.structure.publish_event(
-            FinishApiRequestSubtaskEvent.from_task(self)
+            FinishActionSubtaskEvent.from_task(self)
         )
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
 
@@ -130,7 +130,7 @@ class ApiRequestSubtask(PromptTask):
 
         return json.dumps(json_dict)
 
-    def add_child(self, child: ApiRequestSubtask) -> ApiRequestSubtask:
+    def add_child(self, child: ActionSubtask) -> ActionSubtask:
         if child.id not in self.child_ids:
             self.child_ids.append(child.id)
 
@@ -139,7 +139,7 @@ class ApiRequestSubtask(PromptTask):
 
         return child
 
-    def add_parent(self, parent: ApiRequestSubtask) -> ApiRequestSubtask:
+    def add_parent(self, parent: ActionSubtask) -> ActionSubtask:
         if parent.id not in self.parent_ids:
             self.parent_ids.append(parent.id)
 

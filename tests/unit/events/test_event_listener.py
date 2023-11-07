@@ -1,12 +1,12 @@
 from unittest.mock import Mock
 import pytest
 from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask, ApiRequestSubtask
+from griptape.tasks import ToolkitTask, ActionSubtask
 from griptape.events import (
     StartTaskEvent,
     FinishTaskEvent,
-    StartApiRequestSubtaskEvent,
-    FinishApiRequestSubtaskEvent,
+    StartActionSubtaskEvent,
+    FinishActionSubtaskEvent,
     StartPromptEvent,
     FinishPromptEvent,
     StartStructureRunEvent,
@@ -26,7 +26,7 @@ class TestEventListener:
         pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)
 
-        task.add_subtask(ApiRequestSubtask("foo"))
+        task.add_subtask(ActionSubtask("foo"))
         return pipeline
 
     def test_untyped_listeners(self, pipeline):
@@ -71,11 +71,11 @@ class TestEventListener:
             ),
             EventListener(
                 start_subtask_event_handler,
-                event_types=[StartApiRequestSubtaskEvent],
+                event_types=[StartActionSubtaskEvent],
             ),
             EventListener(
                 finish_subtask_event_handler,
-                event_types=[FinishApiRequestSubtaskEvent],
+                event_types=[FinishActionSubtaskEvent],
             ),
             EventListener(
                 start_structure_run_event_handler,

@@ -3,7 +3,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
-from griptape.tasks import ToolkitTask, ApiRequestSubtask
+from griptape.tasks import ToolkitTask, ActionSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -80,7 +80,7 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        subtask = task.add_subtask(ApiRequestSubtask(valid_input))
+        subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
         assert subtask.api_name == "test"
@@ -95,7 +95,7 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        subtask = task.add_subtask(ApiRequestSubtask(valid_input))
+        subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
         assert subtask.api_name is None
@@ -105,13 +105,13 @@ class TestToolkitSubtask:
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ApiRequestSubtask(
+        subtask1 = ActionSubtask(
             "test1",
             api_name="test",
             api_path="test",
             api_input={"values": {"f": "b"}},
         )
-        subtask2 = ApiRequestSubtask(
+        subtask2 = ActionSubtask(
             "test2",
             api_name="test",
             api_path="test",
@@ -135,13 +135,13 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ApiRequestSubtask(
+        subtask1 = ActionSubtask(
             "test1",
             api_name="test",
             api_path="test",
             api_input={"values": {"f": "b"}},
         )
-        subtask2 = ApiRequestSubtask(
+        subtask2 = ActionSubtask(
             "test2",
             api_name="test",
             api_path="test",

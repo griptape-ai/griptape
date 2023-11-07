@@ -6,7 +6,7 @@ from attr import define
 if TYPE_CHECKING:
     from griptape.memory import ToolMemory
     from griptape.tools import BaseTool
-    from griptape.tasks import ApiRequestSubtask
+    from griptape.tasks import ActionSubtask
 
 
 @define(slots=False)
@@ -20,9 +20,9 @@ class ApiRequestSubtaskOriginMixin:
         ...
 
     @abstractmethod
-    def find_subtask(self, subtask_id: str) -> Optional[ApiRequestSubtask]:
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
         ...
 
     @abstractmethod
-    def add_subtask(self, subtask: ApiRequestSubtask) -> ApiRequestSubtask:
+    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         ...

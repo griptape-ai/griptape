@@ -1,7 +1,7 @@
 from .base_task import BaseTask
 from .base_text_input_task import BaseTextInputTask
 from .prompt_task import PromptTask
-from .api_request_subtask import ApiRequestSubtask
+from .action_subtask import ActionSubtask
 from .toolkit_task import ToolkitTask
 from .text_summary_task import TextSummaryTask
 from .tool_task import ToolTask
@@ -12,7 +12,7 @@ __all__ = [
     "BaseTask",
     "BaseTextInputTask",
     "PromptTask",
-    "ApiRequestSubtask",
+    "ActionSubtask",
     "ToolkitTask",
     "TextSummaryTask",
     "ToolTask",
