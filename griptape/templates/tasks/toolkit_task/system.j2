@@ -20,17 +20,7 @@ API Descriptions:
 {% if memory_names|length > 0 %}
 Tools might store their output in memory as artifacts (with `memory_name` and `artifact_namespace`). If API response is stored in memory, ALWAYS try to pass it to another API. You ONLY have access to memory with the following names: [{{ memory_names }}]. NEVER make up memory names or artifact namespaces.
 {% endif %}
+{% if rulesets %}
 
-{% if rulesets|length > 0 %}
-When responding, always use rules from the following rulesets. Rulesets can override and complement each other:
-
-{% for ruleset in rulesets %}
-Ruleset name: {{ ruleset.name }}
-"{{ ruleset.name }}" rules:
-{% for rule in ruleset.rules %}
-Rule #{{loop.index}}
-{{ rule.value }}
-{% endfor %}
-
-{% endfor %}
+{{ rulesets }}
 {% endif %}

@@ -109,7 +109,9 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
         )
 
         return J2("tasks/toolkit_task/system.j2").render(
-            rulesets=self.all_rulesets,
+            rulesets=J2("rulesets/rulesets.j2").render(
+                rulesets=self.all_rulesets
+            ),
             api_schema=api_schema,
             api_names=str.join(", ", [tool.name for tool in self.tools]),
             apis=[

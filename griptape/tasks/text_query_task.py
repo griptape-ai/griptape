@@ -16,7 +16,9 @@ class TextQueryTask(BaseTextInputTask):
 
     def run(self) -> TextArtifact:
         return self.query_engine.query(
-            self.input.to_text(), namespace=self.namespace
+            self.input.to_text(),
+            namespace=self.namespace,
+            rulesets=self.all_rulesets,
         )
 
     def load(self, content: Any) -> list[TextArtifact]:

@@ -17,5 +17,7 @@ class TextSummaryTask(BaseTextInputTask):
 
     def run(self) -> TextArtifact:
         return TextArtifact(
-            self.summary_engine.summarize_text(self.input.to_text())
+            self.summary_engine.summarize_text(
+                self.input.to_text(), rulesets=self.all_rulesets
+            )
         )
