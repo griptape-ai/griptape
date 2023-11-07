@@ -1,9 +1,11 @@
 from __future__ import annotations
+from typing import Optional
 from abc import ABC, abstractmethod
 from attr import define, field, Factory
 from griptape.artifacts import ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
+from griptape.rules import Ruleset
 from griptape.tokenizers import OpenAiTokenizer
 
 
@@ -54,5 +56,10 @@ class BaseExtractionEngine(ABC):
         )
 
     @abstractmethod
-    def extract(self, text: str | ListArtifact, **kwargs) -> ListArtifact:
+    def extract(
+        self,
+        text: str | ListArtifact,
+        rulesets: Optional[list[Ruleset]] = None,
+        **kwargs,
+    ) -> ListArtifact:
         ...
