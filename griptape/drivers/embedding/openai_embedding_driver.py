@@ -28,7 +28,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     dimensions: int = field(default=DEFAULT_DIMENSIONS, kw_only=True)
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
-    api_base: str = field(default=openai.api_base, kw_only=True)
+    api_base: str = field(default=openai.base_url, kw_only=True)
     api_key: Optional[str] = field(
         default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True
     )
@@ -45,7 +45,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     def __attrs_post_init__(self) -> None:
         openai.api_type = self.api_type
         openai.api_version = self.api_version
-        openai.api_base = self.api_base
+        openai.base_url = self.api_base
         openai.api_key = self.api_key
         openai.organization = self.organization
 
