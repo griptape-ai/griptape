@@ -25,16 +25,16 @@ if TYPE_CHECKING:
 @define
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
-    REQUEST_PATTERN = r"(?s)Request:[^{]*({.*})"
+    ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
-    API_SCHEMA = Schema(
-        description="API requests have name, path, and input object.",
+    ACTION_SCHEMA = Schema(
+        description="Actions have name, path, and input object.",
         schema={
-            Literal("name", description="API name"): str,
-            Literal("path", description="API path"): str,
+            Literal("name", description="Action name"): str,
+            Literal("path", description="Action path"): str,
             schema.Optional(
                 Literal(
-                    "input", description="Optional API path input values object"
+                    "input", description="Optional action path input values object"
                 )
             ): {"values": dict},
         },
@@ -42,9 +42,9 @@ class ActionSubtask(PromptTask):
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    api_name: Optional[str] = field(default=None, kw_only=True)
-    api_path: Optional[str] = field(default=None, kw_only=True)
-    api_input: Optional[dict] = field(default=None, kw_only=True)
+    action_name: Optional[str] = field(default=None, kw_only=True)
+    action_path: Optional[str] = field(default=None, kw_only=True)
+    action_input: Optional[dict] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
     _memory: Optional[ToolMemory] = None
@@ -84,12 +84,12 @@ class ActionSubtask(PromptTask):
 
     def run(self) -> BaseArtifact:
         try:
-            if self.api_name == "error":
-                self.output = ErrorArtifact(str(self.api_input))
+            if self.action_name == "error":
+                self.output = ErrorArtifact(str(self.action_input))
             else:
                 if self._tool:
                     response = self._tool.execute(
-                        getattr(self._tool, self.api_path), self
+                        getattr(self._tool, self.action_path), self
                     )
                 else:
                     response = ErrorArtifact("tool not found")
@@ -119,14 +119,14 @@ class ActionSubtask(PromptTask):
     def request_to_json(self) -> str:
         json_dict = {}
 
-        if self.api_name:
-            json_dict["name"] = self.api_name
+        if self.action_name:
+            json_dict["name"] = self.action_name
 
-        if self.api_path:
-            json_dict["path"] = self.api_path
+        if self.action_path:
+            json_dict["path"] = self.action_path
 
-        if self.api_input:
-            json_dict["input"] = self.api_input
+        if self.action_input:
+            json_dict["input"] = self.action_input
 
         return json.dumps(json_dict)
 
@@ -150,7 +150,7 @@ class ActionSubtask(PromptTask):
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
-        action_matches = re.findall(self.REQUEST_PATTERN, value, re.DOTALL)
+        action_matches = re.findall(self.ACTION_PATTERN, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
         if self.thought is None and len(thought_matches) > 0:
@@ -161,53 +161,53 @@ class ActionSubtask(PromptTask):
                 data = action_matches[-1]
                 action_object: dict = json.loads(data, strict=False)
 
-                validate(instance=action_object, schema=self.API_SCHEMA.schema)
+                validate(instance=action_object, schema=self.ACTION_SCHEMA.schema)
 
                 # Load action name; throw exception if the key is not present
-                if self.api_name is None:
-                    self.api_name = action_object["name"]
+                if self.action_name is None:
+                    self.action_name = action_object["name"]
 
                 # Load action method; throw exception if the key is not present
-                if self.api_path is None:
-                    self.api_path = action_object["path"]
+                if self.action_path is None:
+                    self.action_path = action_object["path"]
 
                 # Load optional input value; don't throw exceptions if key is not present
-                if self.api_input is None and "input" in action_object:
+                if self.action_input is None and "input" in action_object:
                     # The schema library has a bug, where something like `Or(str, None)` doesn't get
                     # correctly translated into JSON schema. For some optional input fields LLMs sometimes
                     # still provide null value, which trips up the validator. The temporary solution that
                     # works is to strip all key-values where value is null.
-                    self.api_input = remove_null_values_in_dict_recursively(
+                    self.action_input = remove_null_values_in_dict_recursively(
                         action_object["input"]
                     )
 
                 # Load the action itself
-                if self.api_name:
-                    self._tool = self.origin_task.find_tool(self.api_name)
+                if self.action_name:
+                    self._tool = self.origin_task.find_tool(self.action_name)
 
                 if self._tool:
-                    self.__validate_action_input(self.api_input, self._tool)
+                    self.__validate_action_input(self.action_input, self._tool)
             except SyntaxError as e:
                 self.structure.logger.error(
                     f"Subtask {self.origin_task.id}\nSyntax error: {e}"
                 )
 
-                self.api_name = "error"
-                self.api_input = {"error": f"syntax error: {e}"}
+                self.action_name = "error"
+                self.action_input = {"error": f"syntax error: {e}"}
             except ValidationError as e:
                 self.structure.logger.error(
                     f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}"
                 )
 
-                self.api_name = "error"
-                self.api_input = {"error": f"Action JSON validation error: {e}"}
+                self.action_name = "error"
+                self.action_input = {"error": f"Action JSON validation error: {e}"}
             except Exception as e:
                 self.structure.logger.error(
                     f"Subtask {self.origin_task.id}\nError parsing tool action: {e}"
                 )
 
-                self.api_name = "error"
-                self.api_input = {"error": f"Action input parsing error: {e}"}
+                self.action_name = "error"
+                self.action_input = {"error": f"Action input parsing error: {e}"}
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 
@@ -216,7 +216,7 @@ class ActionSubtask(PromptTask):
     ) -> None:
         try:
             activity_schema = mixin.activity_schema(
-                getattr(mixin, self.api_path)
+                getattr(mixin, self.action_path)
             )
 
             if activity_schema:
@@ -226,7 +226,7 @@ class ActionSubtask(PromptTask):
                 f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}"
             )
 
-            self.api_name = "error"
-            self.api_input = {
+            self.action_name = "error"
+            self.action_input = {
                 "error": f"Activity input JSON validation error: {e}"
             }

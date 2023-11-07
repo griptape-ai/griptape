@@ -16,9 +16,9 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
     subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        api_schema = utils.minify_json(
+        action_schema = utils.minify_json(
             json.dumps(
-                ActionSubtask.API_SCHEMA.json_schema("APIRequestSchema")
+                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
             )
         )
 
@@ -26,8 +26,8 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
             rulesets=J2("rulesets/rulesets.j2").render(
                 rulesets=self.all_rulesets
             ),
-            api_schema=api_schema,
-            api=J2("tasks/partials/_api.j2").render(tool=self.tool),
+            action_schema=action_schema,
+            api=J2("tasks/partials/_action.j2").render(tool=self.tool),
         )
 
     def run(self) -> TextArtifact:
@@ -35,7 +35,7 @@ class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
             self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
         )
 
-        subtask = self.add_subtask(ActionSubtask(f"Request: {output}"))
+        subtask = self.add_subtask(ActionSubtask(f"Action: {output}"))
 
         subtask.before_run()
         subtask.run()

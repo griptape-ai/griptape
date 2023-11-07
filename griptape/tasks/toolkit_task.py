@@ -102,9 +102,9 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
             r for r in self.tool_output_memory if len(r.activities()) > 0
         ]
 
-        api_schema = utils.minify_json(
+        action_schema = utils.minify_json(
             json.dumps(
-                ActionSubtask.API_SCHEMA.json_schema("APIRequestSchema")
+                ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")
             )
         )
 
@@ -112,10 +112,10 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
             rulesets=J2("rulesets/rulesets.j2").render(
                 rulesets=self.all_rulesets
             ),
-            api_schema=api_schema,
-            api_names=str.join(", ", [tool.name for tool in self.tools]),
-            apis=[
-                J2("tasks/partials/_api.j2").render(tool=tool)
+            action_schema=action_schema,
+            action_names=str.join(", ", [tool.name for tool in self.tools]),
+            actions=[
+                J2("tasks/partials/_action.j2").render(tool=tool)
                 for tool in self.tools
             ],
             memory_names=str.join(", ", [memory.name for memory in memories]),
@@ -168,7 +168,7 @@ class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
                     subtask.output = ErrorArtifact(
                         f"Exceeded tool limit of {self.max_subtasks} subtasks per task"
                     )
-                elif subtask.api_name is None:
+                elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
                     subtask.output = TextArtifact(subtask.input_template)
                 else:

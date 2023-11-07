@@ -104,13 +104,13 @@ class TestEmailClient:
         )
 
         # When
-        llm_input = J2("tasks/partials/_api.j2").render(tool=client)
+        llm_input = J2("tasks/partials/_action.j2").render(tool=client)
 
         # Then
         retrieve_description = next(
             line
             for line in llm_input.split("\n")
-            if line.startswith("path description:")
+            if line.startswith("retrieve path description:")
         )
         assert (
             "'INBOX': 'default mailbox for incoming email'"

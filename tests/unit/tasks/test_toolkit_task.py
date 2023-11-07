@@ -55,7 +55,7 @@ class TestToolkitSubtask:
         assert result.output.to_text() == "done"
 
     def test_run_max_subtasks(self):
-        output = """Request: {"name": "blah"}"""
+        output = """Action: {"name": "blah"}"""
 
         task = ToolkitTask(
             "test", tools=[MockTool(name="Tool1")], max_subtasks=3
@@ -72,7 +72,7 @@ class TestToolkitSubtask:
     def test_init_from_prompt_1(self):
         valid_input = (
             "Thought: need to test\n"
-            'Request: {"name": "test", "path": "test action", "input": "test input"}\n'
+            'Action: {"name": "test", "path": "test action", "input": "test input"}\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -83,9 +83,9 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.api_name == "test"
-        assert subtask.api_path == "test action"
-        assert subtask.api_input == "test input"
+        assert subtask.action_name == "test"
+        assert subtask.action_path == "test action"
+        assert subtask.action_input == "test input"
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
@@ -98,24 +98,24 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.api_name is None
-        assert subtask.api_path is None
-        assert subtask.api_input is None
+        assert subtask.action_name is None
+        assert subtask.action_path is None
+        assert subtask.action_input is None
         assert subtask.output.to_text() == "test output"
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionSubtask(
             "test1",
-            api_name="test",
-            api_path="test",
-            api_input={"values": {"f": "b"}},
+            action_name="test",
+            action_path="test",
+            action_input={"values": {"f": "b"}},
         )
         subtask2 = ActionSubtask(
             "test2",
-            api_name="test",
-            api_path="test",
-            api_input={"values": {"f": "b"}},
+            action_name="test",
+            action_path="test",
+            action_input={"values": {"f": "b"}},
         )
 
         Agent().add_task(task)
@@ -137,15 +137,15 @@ class TestToolkitSubtask:
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionSubtask(
             "test1",
-            api_name="test",
-            api_path="test",
-            api_input={"values": {"f": "b"}},
+            action_name="test",
+            action_path="test",
+            action_input={"values": {"f": "b"}},
         )
         subtask2 = ActionSubtask(
             "test2",
-            api_name="test",
-            api_path="test",
-            api_input={"values": {"f": "b"}},
+            action_name="test",
+            action_path="test",
+            action_input={"values": {"f": "b"}},
         )
 
         Agent().add_task(task)

@@ -27,7 +27,7 @@ class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
             task_output=task.output,
             subtask_parent_task_id=task.parent_task_id,
             subtask_thought=task.thought,
-            subtask_api_name=task.api_name,
-            subtask_api_path=task.api_path,
-            subtask_api_input=task.api_input,
+            subtask_api_name=task.action_name,
+            subtask_api_path=task.action_path,
+            subtask_api_input=task.action_input,
         )

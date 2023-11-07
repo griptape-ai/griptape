@@ -85,7 +85,7 @@ class BaseTool(ActivityMixin, ABC):
     def execute(
         self, activity: Callable, subtask: ActionSubtask
     ) -> BaseArtifact:
-        preprocessed_input = self.before_run(activity, subtask.api_input)
+        preprocessed_input = self.before_run(activity, subtask.action_input)
         output = self.run(activity, subtask, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, output)
 

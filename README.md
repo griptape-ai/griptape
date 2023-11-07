@@ -63,7 +63,7 @@ And here is the output:
                              Thought: First, I need to use the WebScraper API to
                              load the content of the webpage.                   
                                                                                 
-                             Request: {"name": "WebScraper", "path":            
+                             Action: {"name": "WebScraper", "path":            
                              "get_content", "input": {"values": {"url":         
                              "https://griptape.ai"}}}                           
                     INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
@@ -75,7 +75,7 @@ And here is the output:
                              Thought: Now that the webpage content is stored in 
                              memory, I need to use the ToolOutputProcessor API  
                              to summarize the content.                          
-                             Request: {"name": "ToolOutputProcessor", "path":   
+                             Action: {"name": "ToolOutputProcessor", "path":   
                              "summarize", "input": {"values": {"memory_name":   
                              "ToolMemory", "artifact_namespace":                
                              "c497d83c1d134db694b9994596016320"}}}              
@@ -88,7 +88,7 @@ And here is the output:
                              Thought: Now that the summary is stored in memory, 
                              I need to use the FileManager API to save the      
                              summary to a file named griptape.txt.              
-                             Request: {"name": "FileManager", "path":           
+                             Action: {"name": "FileManager", "path":           
                              "save_memory_artifacts_to_disk", "input":          
                              {"values": {"dir_name": ".", "file_name":          
                              "griptape.txt", "memory_name": "ToolMemory",       
