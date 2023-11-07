@@ -5,7 +5,7 @@ from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.utils import PromptStack
-from griptape.mixins import ApiRequestSubtaskOriginMixin
+from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import ActionSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolkitTask(PromptTask, ApiRequestSubtaskOriginMixin):
+class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     DEFAULT_MAX_STEPS = 20
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)

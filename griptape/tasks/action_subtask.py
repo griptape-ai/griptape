@@ -9,7 +9,7 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.utils import remove_null_values_in_dict_recursively
-from griptape.mixins import ActivityMixin, ApiRequestSubtaskOriginMixin
+from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
 from griptape.tasks import PromptTask, BaseTask
 from griptape.artifacts import BaseArtifact
 from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
@@ -52,7 +52,7 @@ class ActionSubtask(PromptTask):
         return TextArtifact(self.input_template)
 
     @property
-    def origin_task(self) -> Optional[ApiRequestSubtaskOriginMixin]:
+    def origin_task(self) -> Optional[ActionSubtaskOriginMixin]:
         return self.structure.find_task(self.parent_task_id)
 
     @property

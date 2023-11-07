@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @define(slots=False)
-class ApiRequestSubtaskOriginMixin:
+class ActionSubtaskOriginMixin:
     @abstractmethod
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         ...

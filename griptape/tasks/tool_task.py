@@ -7,11 +7,11 @@ from griptape.memory import ToolMemory
 from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
-from griptape.mixins import ApiRequestSubtaskOriginMixin
+from griptape.mixins import ActionSubtaskOriginMixin
 
 
 @define
-class ToolTask(PromptTask, ApiRequestSubtaskOriginMixin):
+class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
