@@ -2,7 +2,6 @@ from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
 from typing import Any
-
 from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
@@ -15,21 +14,57 @@ class Workflow(Structure):
         default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
 
-    def __add__(self, other: BaseTask | list[BaseTask]) -> BaseTask:
-        return (
-            [self.add_task(o) for o in other]
-            if isinstance(other, list)
-            else self + [other]
-        )
-
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
+
+        if self.output_task:
+            self.output_task.child_ids.append(task.id)
+            task.parent_ids.append(self.output_task.id)
 
         self.tasks.append(task)
 
         return task
 
-    def try_run(self, *args) -> list[BaseTask]:
+    def insert_task(
+        self,
+        parent_task: BaseTask,
+        child_task: BaseTask,
+        task: BaseTask,
+        preserve_relationship: bool = False,
+    ) -> BaseTask:
+        """Insert a task between two tasks in the workflow.
+
+        Args:
+            parent_task: The task that will be the parent of the new task.
+            child_task: The task that will be the child of the new task.
+            task: The task to insert.
+            preserve_relationship: Whether to preserve the parent/child relationship when inserting between parent and child tasks.
+        """
+        task.preprocess(self)
+
+        if parent_task.id not in task.parent_ids:
+            task.parent_ids.append(parent_task.id)
+        if child_task.id not in task.child_ids:
+            task.child_ids.append(child_task.id)
+
+        if task.id not in parent_task.child_ids:
+            parent_task.child_ids.append(task.id)
+        if task.id not in child_task.parent_ids:
+            child_task.parent_ids.append(task.id)
+
+        if not preserve_relationship:
+            if child_task.id in parent_task.child_ids:
+                parent_task.child_ids.remove(child_task.id)
+            if parent_task.id in child_task.parent_ids:
+                child_task.parent_ids.remove(parent_task.id)
+
+        parent_index = self.tasks.index(parent_task)
+
+        self.tasks.insert(parent_index + 1, task)
+
+        return task
+
+    def try_run(self, *args) -> Workflow:
         self._execution_args = args
         ordered_tasks = self.order_tasks()
         exit_loop = False
@@ -51,7 +86,7 @@ class Workflow(Structure):
 
         self._execution_args = ()
 
-        return self.output_tasks()
+        return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
@@ -68,9 +103,6 @@ class Workflow(Structure):
         )
 
         return context
-
-    def output_tasks(self) -> list[BaseTask]:
-        return [task for task in self.tasks if not task.children]
 
     def to_graph(self) -> dict[str, set[str]]:
         graph: dict[str, set[str]] = {}
