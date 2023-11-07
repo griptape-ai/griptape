@@ -18,16 +18,16 @@ from .memory.summary_conversation_memory_schema import (
 
 from .events.base_event_schema import BaseEventSchema
 from .events.base_task_event_schema import BaseTaskEventSchema
-from .events.base_api_request_subtask_event_schema import (
-    BaseApiRequestSubtaskEventSchema,
+from .events.base_action_subtask_event_schema import (
+    BaseActionSubtaskEventSchema,
 )
 from .events.start_task_event_schema import StartTaskEventSchema
 from .events.finish_task_event_schema import FinishTaskEventSchema
-from .events.start_api_request_subtask_event_schema import (
-    StartApiRequestSubtaskEventSchema,
+from .events.start_action_event_schema import (
+    StartActionSubtaskEventSchema,
 )
-from .events.finish_api_request_subtask_event_schema import (
-    FinishApiRequestSubtaskEventSchema,
+from .events.finish_action_subtask_event_schema import (
+    FinishActionSubtaskEventSchema,
 )
 from .events.start_prompt_event_schema import StartPromptEventSchema
 from .events.finish_prompt_event_schema import FinishPromptEventSchema
@@ -54,11 +54,11 @@ __all__ = [
     "SummaryConversationMemorySchema",
     "BaseEventSchema",
     "BaseTaskEventSchema",
-    "BaseApiRequestSubtaskEventSchema",
+    "BaseActionSubtaskEventSchema",
     "StartTaskEventSchema",
     "FinishTaskEventSchema",
-    "StartApiRequestSubtaskEventSchema",
-    "FinishApiRequestSubtaskEventSchema",
+    "StartActionSubtaskEventSchema",
+    "FinishActionSubtaskEventSchema",
     "StartPromptEventSchema",
     "FinishPromptEventSchema",
     "StartStructureRunEventSchema",

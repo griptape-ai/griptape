@@ -1,8 +1,8 @@
 from marshmallow import post_load
-from griptape.schemas import BaseApiRequestSubtaskEventSchema
+from griptape.schemas import BaseActionSubtaskEventSchema
 
 
-class FinishApiRequestSubtaskEventSchema(BaseApiRequestSubtaskEventSchema):
+class FinishActionSubtaskEventSchema(BaseActionSubtaskEventSchema):
     @post_load
     def make_obj(self, data, **kwargs):
         from griptape.events import FinishActionSubtaskEvent

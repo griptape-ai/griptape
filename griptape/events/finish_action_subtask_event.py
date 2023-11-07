@@ -6,6 +6,6 @@ from .base_action_subtask_event import BaseActionSubtaskEvent
 @define
 class FinishActionSubtaskEvent(BaseActionSubtaskEvent):
     def to_dict(self) -> dict:
-        from griptape.schemas import FinishApiRequestSubtaskEventSchema
+        from griptape.schemas import FinishActionSubtaskEventSchema
 
-        return dict(FinishApiRequestSubtaskEventSchema().dump(self))
+        return dict(FinishActionSubtaskEventSchema().dump(self))
