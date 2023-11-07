@@ -34,10 +34,10 @@ class BaseEvent(ABC):
         class_registry.register("StartTaskEvent", StartTaskEventSchema)
         class_registry.register("FinishTaskEvent", FinishTaskEventSchema)
         class_registry.register(
-            "StartApiRequestSubtaskEvent", StartActionSubtaskEventSchema
+            "StartActionSubtaskEvent", StartActionSubtaskEventSchema
         )
         class_registry.register(
-            "FinishApiRequestSubtaskEvent", FinishActionSubtaskEventSchema
+            "FinishActionSubtaskEvent", FinishActionSubtaskEventSchema
         )
         class_registry.register(
             "StartStructureRunEvent", StartStructureRunEventSchema
