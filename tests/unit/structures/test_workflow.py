@@ -251,10 +251,10 @@ class TestWorkflow:
 
         workflow.add_task(taska)
         workflow.add_task(taske)
-        workflow.insert_task(taska, taske, taskd, sever=False)
-        workflow.insert_task(taska, taskd, taskb, sever=False)
-        workflow.insert_task(taska, taskd, taskc, sever=False)
-        workflow.insert_task(taska, taske, taskc, sever=False)
+        workflow.insert_task(taska, taske, taskd, preserve_relationship=True)
+        workflow.insert_task(taska, taskd, taskb, preserve_relationship=True)
+        workflow.insert_task(taska, taskd, taskc, preserve_relationship=True)
+        workflow.insert_task(taska, taske, taskc, preserve_relationship=True)
 
         workflow.run()
 

@@ -30,7 +30,7 @@ class Workflow(Structure):
         parent_task: BaseTask,
         child_task: BaseTask,
         task: BaseTask,
-        sever: bool = True,
+        preserve_relationship: bool = False,
     ) -> BaseTask:
         """Insert a task between two tasks in the workflow.
 
@@ -38,8 +38,7 @@ class Workflow(Structure):
             parent_task: The task that will be the parent of the new task.
             child_task: The task that will be the child of the new task.
             task: The task to insert.
-            sever: Whether to sever the parent/child relationship between the
-                parent and child tasks.
+            preserve_relationship: Whether to preserve the parent/child relationship when inserting between parent and child tasks.
         """
         task.preprocess(self)
 
@@ -53,7 +52,7 @@ class Workflow(Structure):
         if task.id not in child_task.parent_ids:
             child_task.parent_ids.append(task.id)
 
-        if sever:
+        if not preserve_relationship:
             if child_task.id in parent_task.child_ids:
                 parent_task.child_ids.remove(child_task.id)
             if parent_task.id in child_task.parent_ids:
