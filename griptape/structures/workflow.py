@@ -31,6 +31,17 @@ class Workflow(Structure):
         child_task: BaseTask,
         preserve_relationship: bool = False,
     ) -> BaseTask:
+        return self.insert_tasks(
+            parent_task, [task], child_task, preserve_relationship
+        )[0]
+
+    def insert_tasks(
+        self,
+        parent_task: BaseTask,
+        tasks: list[BaseTask],
+        child_task: BaseTask,
+        preserve_relationship: bool = False,
+    ) -> list[BaseTask]:
         """Insert a task between two tasks in the workflow.
 
         Args:
@@ -39,29 +50,30 @@ class Workflow(Structure):
             task: The task to insert.
             preserve_relationship: Whether to preserve the parent/child relationship when inserting between parent and child tasks.
         """
-        task.preprocess(self)
+        for task in tasks:
+            task.preprocess(self)
 
-        if parent_task.id not in task.parent_ids:
-            task.parent_ids.append(parent_task.id)
-        if child_task.id not in task.child_ids:
-            task.child_ids.append(child_task.id)
+            if parent_task.id not in task.parent_ids:
+                task.parent_ids.append(parent_task.id)
+            if child_task.id not in task.child_ids:
+                task.child_ids.append(child_task.id)
 
-        if task.id not in parent_task.child_ids:
-            parent_task.child_ids.append(task.id)
-        if task.id not in child_task.parent_ids:
-            child_task.parent_ids.append(task.id)
+            if task.id not in parent_task.child_ids:
+                parent_task.child_ids.append(task.id)
+            if task.id not in child_task.parent_ids:
+                child_task.parent_ids.append(task.id)
 
-        if not preserve_relationship:
-            if child_task.id in parent_task.child_ids:
-                parent_task.child_ids.remove(child_task.id)
-            if parent_task.id in child_task.parent_ids:
-                child_task.parent_ids.remove(parent_task.id)
+            if not preserve_relationship:
+                if child_task.id in parent_task.child_ids:
+                    parent_task.child_ids.remove(child_task.id)
+                if parent_task.id in child_task.parent_ids:
+                    child_task.parent_ids.remove(parent_task.id)
 
-        parent_index = self.tasks.index(parent_task)
+            parent_index = self.tasks.index(parent_task)
 
-        self.tasks.insert(parent_index + 1, task)
+            self.tasks.insert(parent_index + 1, task)
 
-        return task
+        return tasks
 
     def try_run(self, *args) -> Workflow:
         self._execution_args = args
