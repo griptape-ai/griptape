@@ -130,6 +130,8 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 4. **Documentation:** Every pull request must include a corresponding pull request in the [docs repository](https://github.com/griptape-ai/griptape-docs) or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
 
+5. **Formatting:** Griptape uses [Black](https://github.com/ambv/black) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. In your local repository, simply run `poetry run pre-commit install` and Black will reformat files as they are committed.
+
 ## License
 
 Griptape is available under the Apache 2.0 License.
