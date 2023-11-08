@@ -15,39 +15,26 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
     cluster_identifier: Optional[str] = field(default=None, kw_only=True)
     workgroup_name: Optional[str] = field(default=None, kw_only=True)
     db_user: Optional[str] = field(default=None, kw_only=True)
-    database_credentials_secret_arn: Optional[str] = field(
-        default=None, kw_only=True
-    )
+    database_credentials_secret_arn: Optional[str] = field(default=None, kw_only=True)
     wait_for_query_completion_sec: float = field(default=0.3, kw_only=True)
     client: Any = field(
-        default=Factory(
-            lambda self: self.session.client("redshift-data"), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: self.session.client("redshift-data"), takes_self=True), kw_only=True
     )
 
     @workgroup_name.validator
     def validate_params(self, _, workgroup_name: Optional[str]) -> None:
         if not self.cluster_identifier and not self.workgroup_name:
-            raise ValueError(
-                "Provide a value for one of `cluster_identifier` or `workgroup_name`"
-            )
+            raise ValueError("Provide a value for one of `cluster_identifier` or `workgroup_name`")
         elif self.cluster_identifier and self.workgroup_name:
-            raise ValueError(
-                "Provide a value for either `cluster_identifier` or `workgroup_name`, but not both"
-            )
+            raise ValueError("Provide a value for either `cluster_identifier` or `workgroup_name`, but not both")
 
     @classmethod
     def _process_rows_from_records(cls, records) -> list[list]:
         return [[c[list(c.keys())[0]] for c in r] for r in records]
 
     @classmethod
-    def _process_cells_from_rows_and_columns(
-        cls, columns: list, rows: list[list]
-    ) -> list[dict[str, Any]]:
-        return [
-            {column: r[idx] for idx, column in enumerate(columns)} for r in rows
-        ]
+    def _process_cells_from_rows_and_columns(cls, columns: list, rows: list[list]) -> list[dict[str, Any]]:
+        return [{column: r[idx] for idx, column in enumerate(columns)} for r in rows]
 
     @classmethod
     def _process_columns_from_column_metadata(cls, meta) -> list:
@@ -59,9 +46,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         rows = cls._process_rows_from_records(records)
         return cls._process_cells_from_rows_and_columns(columns, rows)
 
-    def execute_query(
-        self, query: str
-    ) -> Optional[list[BaseSqlDriver.RowResult]]:
+    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)
         if rows:
             return [BaseSqlDriver.RowResult(row) for row in rows]
@@ -98,16 +83,12 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
                 )
                 results = results + response.get("Records", [])
 
-            return self._post_process(
-                statement_result["ColumnMetadata"], results
-            )
+            return self._post_process(statement_result["ColumnMetadata"], results)
 
         elif statement["Status"] in ["FAILED", "ABORTED"]:
             return None
 
-    def get_table_schema(
-        self, table: str, schema: Optional[str] = None
-    ) -> Optional[str]:
+    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
         function_kwargs = {"Database": self.database, "Table": table}
         if schema:
             function_kwargs["Schema"] = schema

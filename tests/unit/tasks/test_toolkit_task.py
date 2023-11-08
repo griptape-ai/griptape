@@ -16,21 +16,11 @@ class TestToolkitSubtask:
     def query_engine(self):
         return VectorQueryEngine(
             prompt_driver=MockPromptDriver(),
-            vector_store_driver=LocalVectorStoreDriver(
-                embedding_driver=MockEmbeddingDriver()
-            ),
+            vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver()),
         )
 
     def test_init(self):
-        assert (
-            len(
-                ToolkitTask(
-                    "test",
-                    tools=[MockTool(name="Tool1"), MockTool(name="Tool2")],
-                ).tools
-            )
-            == 2
-        )
+        assert len(ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]).tools) == 2
 
         try:
             ToolkitTask("test", tools=[MockTool(), MockTool()])
@@ -41,9 +31,7 @@ class TestToolkitSubtask:
     def test_run(self):
         output = """Answer: done"""
 
-        task = ToolkitTask(
-            "test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]
-        )
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         pipeline = Pipeline(prompt_driver=MockValuePromptDriver(output))
 
         pipeline.add_task(task)
@@ -57,9 +45,7 @@ class TestToolkitSubtask:
     def test_run_max_subtasks(self):
         output = """Action: {"tool": "test"}"""
 
-        task = ToolkitTask(
-            "test", tools=[MockTool(name="Tool1")], max_subtasks=3
-        )
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         pipeline = Pipeline(prompt_driver=MockValuePromptDriver(output))
 
         pipeline.add_task(task)
@@ -107,16 +93,10 @@ class TestToolkitSubtask:
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionSubtask(
-            "test1",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            "test1", action_name="test", action_activity="test", action_input={"values": {"f": "b"}}
         )
         subtask2 = ActionSubtask(
-            "test2",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            "test2", action_name="test", action_activity="test", action_input={"values": {"f": "b"}}
         )
 
         Pipeline().add_task(task)
@@ -137,16 +117,10 @@ class TestToolkitSubtask:
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionSubtask(
-            "test1",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            "test1", action_name="test", action_activity="test", action_input={"values": {"f": "b"}}
         )
         subtask2 = ActionSubtask(
-            "test2",
-            action_name="test",
-            action_activity="test",
-            action_input={"values": {"f": "b"}},
+            "test2", action_name="test", action_activity="test", action_input={"values": {"f": "b"}}
         )
 
         Pipeline().add_task(task)
@@ -180,22 +154,12 @@ class TestToolkitSubtask:
     def test_memory(self, query_engine):
         tool1 = MockTool(
             name="Tool1",
-            output_memory={
-                "test": [
-                    defaults.text_tool_memory("Memory1"),
-                    defaults.text_tool_memory("Memory2"),
-                ]
-            },
+            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory2")]},
         )
 
         tool2 = MockTool(
             name="Tool2",
-            output_memory={
-                "test": [
-                    defaults.text_tool_memory("Memory1"),
-                    defaults.text_tool_memory("Memory3"),
-                ]
-            },
+            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory3")]},
         )
 
         task = ToolkitTask(tools=[tool1, tool2])
@@ -208,7 +172,5 @@ class TestToolkitSubtask:
         assert task.tool_output_memory[2].name == "Memory3"
 
     def test_action_types(self):
-        assert Agent(
-            tool_memory=None, tools=[MockTool()]
-        ).task.action_types == ["tool"]
+        assert Agent(tool_memory=None, tools=[MockTool()]).task.action_types == ["tool"]
         assert Agent(tools=[MockTool()]).task.action_types == ["tool", "memory"]

@@ -21,25 +21,17 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         action_schema = utils.minify_json(
-            json.dumps(
-                ActionSubtask.action_schema(self.action_types).json_schema(
-                    "ToolSchema"
-                )
-            )
+            json.dumps(ActionSubtask.action_schema(self.action_types).json_schema("ToolSchema"))
         )
 
         return J2("tasks/tool_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(
-                rulesets=self.all_rulesets
-            ),
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=action_schema,
             tool=J2("tasks/partials/_tool.j2").render(tool=self.tool),
         )
 
     def run(self) -> TextArtifact:
-        output = (
-            self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
-        )
+        output = self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
 
         subtask = self.add_subtask(ActionSubtask(f"Action: {output}"))
 

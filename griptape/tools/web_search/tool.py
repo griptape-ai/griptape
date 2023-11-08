@@ -33,12 +33,7 @@ class WebSearch(BaseTool):
         query = props["values"]["query"]
 
         try:
-            return ListArtifact(
-                [
-                    TextArtifact(str(result))
-                    for result in self._search_google(query)
-                ]
-            )
+            return ListArtifact([TextArtifact(str(result)) for result in self._search_google(query)])
         except Exception as e:
             return ErrorArtifact(f"error searching Google: {e}")
 
@@ -58,14 +53,7 @@ class WebSearch(BaseTool):
         if response.status_code == 200:
             data = response.json()
 
-            links = [
-                {
-                    "url": r["link"],
-                    "title": r["title"],
-                    "description": r["snippet"],
-                }
-                for r in data["items"]
-            ]
+            links = [{"url": r["link"], "title": r["title"], "description": r["snippet"]} for r in data["items"]]
 
             return links
         else:

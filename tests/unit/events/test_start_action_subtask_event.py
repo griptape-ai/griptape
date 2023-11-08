@@ -28,33 +28,13 @@ class TestStartActionSubtaskEvent:
 
         assert "timestamp" in event_dict
         assert event_dict["task_id"] == start_subtask_event.task_id
-        assert (
-            event_dict["task_parent_ids"] == start_subtask_event.task_parent_ids
-        )
-        assert (
-            event_dict["task_child_ids"] == start_subtask_event.task_child_ids
-        )
-        assert (
-            event_dict["task_input"] == start_subtask_event.task_input.to_dict()
-        )
+        assert event_dict["task_parent_ids"] == start_subtask_event.task_parent_ids
+        assert event_dict["task_child_ids"] == start_subtask_event.task_child_ids
+        assert event_dict["task_input"] == start_subtask_event.task_input.to_dict()
         assert event_dict["task_output"] is None
 
-        assert (
-            event_dict["subtask_parent_task_id"]
-            == start_subtask_event.subtask_parent_task_id
-        )
-        assert (
-            event_dict["subtask_thought"] == start_subtask_event.subtask_thought
-        )
-        assert (
-            event_dict["subtask_action_type"]
-            == start_subtask_event.subtask_action_type
-        )
-        assert (
-            event_dict["subtask_action_name"]
-            == start_subtask_event.subtask_action_name
-        )
-        assert (
-            event_dict["subtask_action_input"]
-            == start_subtask_event.subtask_action_input
-        )
+        assert event_dict["subtask_parent_task_id"] == start_subtask_event.subtask_parent_task_id
+        assert event_dict["subtask_thought"] == start_subtask_event.subtask_thought
+        assert event_dict["subtask_action_type"] == start_subtask_event.subtask_action_type
+        assert event_dict["subtask_action_name"] == start_subtask_event.subtask_action_name
+        assert event_dict["subtask_action_input"] == start_subtask_event.subtask_action_input

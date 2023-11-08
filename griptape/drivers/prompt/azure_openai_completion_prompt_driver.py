@@ -12,13 +12,8 @@ class AzureOpenAiCompletionPromptDriver(OpenAiCompletionPromptDriver):
     api_type: str = field(default="azure", kw_only=True)
     api_version: str = field(default="2023-05-15", kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        return super()._base_params(prompt_stack) | {
-            "deployment_id": self.deployment_id
-        }
+        return super()._base_params(prompt_stack) | {"deployment_id": self.deployment_id}

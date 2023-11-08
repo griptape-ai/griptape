@@ -236,14 +236,7 @@ def get_fake_diff():
 
 def get_fake_events():
     status_code = 200
-    response = [
-        {
-            "status": "stop",
-            "id": FAKE_CONTAINER_ID,
-            "from": FAKE_IMAGE_ID,
-            "time": 1423247867,
-        }
-    ]
+    response = [{"status": "stop", "id": FAKE_CONTAINER_ID, "from": FAKE_IMAGE_ID, "time": 1423247867}]
     return status_code, response
 
 
@@ -390,18 +383,7 @@ def get_fake_stats():
 
 def get_fake_top():
     return 200, {
-        "Processes": [
-            [
-                "root",
-                "26501",
-                "6907",
-                "0",
-                "10:32",
-                "pts/55",
-                "00:00:00",
-                "sleep 60",
-            ]
-        ],
+        "Processes": [["root", "26501", "6907", "0", "10:32", "pts/55", "00:00:00", "sleep 60"]],
         "Titles": ["UID", "PID", "PPID", "C", "STIME", "TTY", "TIME", "CMD"],
     }
 
@@ -464,10 +446,7 @@ def get_fake_network_list():
             "Driver": "bridge",
             "EnableIPv6": False,
             "Internal": False,
-            "IPAM": {
-                "Driver": "default",
-                "Config": [{"Subnet": "172.17.0.0/16"}],
-            },
+            "IPAM": {"Driver": "default", "Config": [{"Subnet": "172.17.0.0/16"}]},
             "Containers": {
                 FAKE_CONTAINER_ID: {
                     "EndpointID": "ed2419a97c1d99",
@@ -565,41 +544,20 @@ fake_responses = {
     f"{prefix}/{CURRENT_VERSION}/events": get_fake_events,
     (f"{prefix}/{CURRENT_VERSION}/volumes", "GET"): get_fake_volume_list,
     (f"{prefix}/{CURRENT_VERSION}/volumes/create", "POST"): get_fake_volume,
-    (
-        "{1}/{0}/volumes/{2}".format(CURRENT_VERSION, prefix, FAKE_VOLUME_NAME),
-        "GET",
-    ): get_fake_volume,
-    (
-        "{1}/{0}/volumes/{2}".format(CURRENT_VERSION, prefix, FAKE_VOLUME_NAME),
-        "DELETE",
-    ): fake_remove_volume,
-    (
-        "{1}/{0}/nodes/{2}/update?version=1".format(
-            CURRENT_VERSION, prefix, FAKE_NODE_ID
-        ),
-        "POST",
-    ): post_fake_update_node,
+    ("{1}/{0}/volumes/{2}".format(CURRENT_VERSION, prefix, FAKE_VOLUME_NAME), "GET"): get_fake_volume,
+    ("{1}/{0}/volumes/{2}".format(CURRENT_VERSION, prefix, FAKE_VOLUME_NAME), "DELETE"): fake_remove_volume,
+    ("{1}/{0}/nodes/{2}/update?version=1".format(CURRENT_VERSION, prefix, FAKE_NODE_ID), "POST"): post_fake_update_node,
     (f"{prefix}/{CURRENT_VERSION}/swarm/join", "POST"): post_fake_join_swarm,
     (f"{prefix}/{CURRENT_VERSION}/networks", "GET"): get_fake_network_list,
     (f"{prefix}/{CURRENT_VERSION}/networks/create", "POST"): post_fake_network,
+    ("{1}/{0}/networks/{2}".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID), "GET"): get_fake_network,
+    ("{1}/{0}/networks/{2}".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID), "DELETE"): delete_fake_network,
     (
-        "{1}/{0}/networks/{2}".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID),
-        "GET",
-    ): get_fake_network,
-    (
-        "{1}/{0}/networks/{2}".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID),
-        "DELETE",
-    ): delete_fake_network,
-    (
-        "{1}/{0}/networks/{2}/connect".format(
-            CURRENT_VERSION, prefix, FAKE_NETWORK_ID
-        ),
+        "{1}/{0}/networks/{2}/connect".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID),
         "POST",
     ): post_fake_network_connect,
     (
-        "{1}/{0}/networks/{2}/disconnect".format(
-            CURRENT_VERSION, prefix, FAKE_NETWORK_ID
-        ),
+        "{1}/{0}/networks/{2}/disconnect".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID),
         "POST",
     ): post_fake_network_disconnect,
     f"{prefix}/{CURRENT_VERSION}/secrets/create": post_fake_secret,
