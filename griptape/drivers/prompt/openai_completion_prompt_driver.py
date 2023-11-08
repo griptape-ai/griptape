@@ -43,7 +43,8 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     )
     user: str = field(default="", kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
-        default=Factory(lambda: (openai.InvalidRequestError)), kw_only=True
+        default=Factory(lambda: (ImportError, openai.InvalidRequestError)),
+        kw_only=True,
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:

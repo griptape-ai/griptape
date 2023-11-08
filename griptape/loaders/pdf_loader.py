@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import IO, Optional
 from PyPDF2 import PdfReader
 from attr import define, field, Factory
-from griptape import utils
+from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import PdfChunker
 from griptape.loaders import TextLoader
@@ -29,11 +29,11 @@ class PdfLoader(TextLoader):
     def load_collection(
         self, streams: list[str | IO | Path], password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
-        return utils.execute_futures_dict(
+        return execute_futures_dict(
             {
-                utils.str_to_hash(s.decode())
+                str_to_hash(s.decode())
                 if isinstance(s, bytes)
-                else utils.str_to_hash(str(s)): self.futures_executor.submit(
+                else str_to_hash(str(s)): self.futures_executor.submit(
                     self._load_pdf, s, password
                 )
                 for s in streams

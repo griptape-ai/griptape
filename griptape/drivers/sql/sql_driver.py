@@ -1,9 +1,12 @@
-from typing import Optional, Any
-import sqlalchemy
-from sqlalchemy.engine import Engine
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING, Any
 from griptape.drivers import BaseSqlDriver
-from sqlalchemy import create_engine, text, MetaData, Table
+from griptape.utils import import_optional_dependency
 from attr import define, field
+
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Engine
 
 
 @define
@@ -13,7 +16,9 @@ class SqlDriver(BaseSqlDriver):
     engine: Engine = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        self.engine = create_engine(
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+
+        self.engine = sqlalchemy.create_engine(
             self.engine_url, **self.create_engine_params
         )
 
@@ -28,8 +33,10 @@ class SqlDriver(BaseSqlDriver):
             return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+
         with self.engine.begin() as con:
-            results = con.execute(text(query))
+            results = con.execute(sqlalchemy.text(query))
 
             if results.returns_rows:
                 return [
@@ -42,10 +49,12 @@ class SqlDriver(BaseSqlDriver):
     def get_table_schema(
         self, table: str, schema: Optional[str] = None
     ) -> Optional[str]:
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+
         try:
-            table = Table(
+            table = sqlalchemy.Table(
                 table,
-                MetaData(bind=self.engine),
+                sqlalchemy.MetaData(bind=self.engine),
                 schema=schema,
                 autoload=True,
                 autoload_with=self.engine,

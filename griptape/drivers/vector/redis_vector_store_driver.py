@@ -1,16 +1,17 @@
-import redis
+from __future__ import annotations
 import json
 import logging
 import numpy as np
-from griptape import utils
-from typing import Optional, List
+from griptape.utils import import_optional_dependency
+from typing import Optional, List, TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.drivers import BaseVectorStoreDriver
-from redis.commands.search.query import Query
-from redis.commands.search.field import TagField, VectorField
-from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 logging.basicConfig(level=logging.WARNING)
+
+
+if TYPE_CHECKING:
+    from redis import Redis
 
 
 @define
@@ -34,9 +35,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     password: Optional[str] = field(default=None, kw_only=True)
     index: str = field(kw_only=True)
 
-    client: redis.Redis = field(
+    client: Redis = field(
         default=Factory(
-            lambda self: redis.Redis(
+            lambda self: import_optional_dependency("redis").Redis(
                 host=self.host,
                 port=self.port,
                 db=self.db,
@@ -125,6 +126,8 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
+        Query = import_optional_dependency("redis.commands.search.query").Query
+
         vector = self.embedding_driver.embed_string(query)
 
         query_expression = (
@@ -176,6 +179,19 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Optionally, a namespace can be provided which will determine the prefix for document keys.
         The index is constructed with a TagField named "tag" and a VectorField that utilizes the cosine distance metric on FLOAT32 type vectors.
         """
+        TagField = import_optional_dependency(
+            "redis.commands.search.field"
+        ).TagField
+        VectorField = import_optional_dependency(
+            "redis.commands.search.field"
+        ).VectorField
+        IndexDefinition = import_optional_dependency(
+            "redis.commands.search.indexDefinition"
+        ).IndexDefinition
+        IndexType = import_optional_dependency(
+            "redis.commands.search.indexDefinition"
+        ).IndexType
+
         try:
             self.client.ft(self.index).info()
             logging.warning("Index already exists!")

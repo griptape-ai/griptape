@@ -1,10 +1,10 @@
 import json
 import logging
 from attr import define
-from griptape import utils
+import trafilatura
+from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
 from griptape.loaders import TextLoader
-import trafilatura
 
 
 @define
@@ -15,9 +15,9 @@ class WebLoader(TextLoader):
     def load_collection(
         self, urls: list[str], include_links: bool = True
     ) -> dict[str, list[TextArtifact]]:
-        return utils.execute_futures_dict(
+        return execute_futures_dict(
             {
-                utils.str_to_hash(u): self.futures_executor.submit(
+                str_to_hash(u): self.futures_executor.submit(
                     self._load_page_to_artifacts, u, include_links
                 )
                 for u in urls

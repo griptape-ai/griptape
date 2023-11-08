@@ -1,17 +1,22 @@
+from __future__ import annotations
 import logging
 import os
 import shutil
 import tempfile
 from pathlib import Path
-import stringcase
-from typing import Optional
-import docker
+from typing import Optional, TYPE_CHECKING
 from attr import define, field, Factory
-from docker.errors import NotFound
+from schema import Schema, Literal
+import stringcase
+import docker
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
+
+
+if TYPE_CHECKING:
+    from docker import DockerClient
+    from docker.errors import NotFound
 
 
 @define
@@ -33,7 +38,7 @@ class Computer(BaseTool):
         ),
         kw_only=True,
     )
-    docker_client: docker.DockerClient = field(
+    docker_client: DockerClient = field(
         default=Factory(
             lambda self: self.default_docker_client(), takes_self=True
         ),
@@ -54,9 +59,7 @@ class Computer(BaseTool):
             self.local_workdir = self.__tempdir.name
 
     @docker_client.validator
-    def validate_docker_client(
-        self, _, docker_client: docker.DockerClient
-    ) -> None:
+    def validate_docker_client(self, _, docker_client: DockerClient) -> None:
         if not docker_client:
             raise ValueError(
                 "Docker client can't be initialized: make sure the Docker daemon is running"
@@ -172,7 +175,7 @@ class Computer(BaseTool):
             if tempdir:
                 tempdir.cleanup()
 
-    def default_docker_client(self) -> Optional[docker.DockerClient]:
+    def default_docker_client(self) -> Optional[DockerClient]:
         try:
             return docker.from_env()
         except Exception as e:

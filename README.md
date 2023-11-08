@@ -31,7 +31,7 @@ Please check out [Griptape Trade School](https://learn.griptape.ai/) for free on
 First, install **griptape**:
 
 ```
-pip install griptape -U
+pip install griptape[all] -U
 ```
 
 Second, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api) to execute LLM prompts.

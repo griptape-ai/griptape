@@ -1,19 +1,21 @@
 from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any, Iterator
-import boto3
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
+from griptape.utils import import_optional_dependency
 from .base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 
 if TYPE_CHECKING:
     from griptape.utils import PromptStack
+    import boto3
 
 
 @define
 class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
     session: boto3.Session = field(
-        default=Factory(lambda: boto3.Session()), kw_only=True
+        default=Factory(lambda: import_optional_dependency("boto3").Session()),
+        kw_only=True,
     )
     bedrock_client: Any = field(
         default=Factory(
