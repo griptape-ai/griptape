@@ -74,7 +74,7 @@ class TestBaseEvent:
 
     def test_start_subtask_event_from_dict(self):
         dict_value = {
-            "type": "StartApiRequestSubtaskEvent",
+            "type": "StartActionSubtaskEvent",
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
@@ -126,7 +126,7 @@ class TestBaseEvent:
 
     def test_finish_subtask_event_from_dict(self):
         dict_value = {
-            "type": "FinishApiRequestSubtaskEvent",
+            "type": "FinishActionSubtaskEvent",
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
