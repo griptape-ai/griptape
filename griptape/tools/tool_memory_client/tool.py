@@ -1,17 +1,13 @@
 from __future__ import annotations
-from abc import abstractmethod
-from typing import TYPE_CHECKING, Optional
 from attr import define
 from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
-if TYPE_CHECKING:
-    from griptape.memory import ToolMemory
 
-
-@define(slots=False)
-class ToolMemoryActivitiesMixin:
+@define
+class ToolMemoryClient(BaseTool):
     @activity(
         config={
             "description": "Can be used to summarize memory content",
@@ -52,7 +48,3 @@ class ToolMemoryActivitiesMixin:
             return memory.query_namespace(namespace=artifact_namespace, query=query)
         else:
             return ErrorArtifact("memory not found")
-
-    @abstractmethod
-    def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
-        ...

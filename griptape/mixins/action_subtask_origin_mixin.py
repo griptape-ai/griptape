@@ -11,11 +11,6 @@ if TYPE_CHECKING:
 
 @define(slots=False)
 class ActionSubtaskOriginMixin:
-    @property
-    @abstractmethod
-    def action_types(self) -> list[str]:
-        ...
-
     @abstractmethod
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         ...

@@ -117,6 +117,7 @@ optional = true
 ruff = "^0.0.286"
 black = "^23.7.0"
 pyright = "^1.1.324"
+pre-commit = "^3.5.0"
 
 [tool.black]
 line-length=120

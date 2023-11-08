@@ -73,12 +73,6 @@ class ActivityMixin:
         else:
             return Template(activity.config["description"]).render({"_self": self})
 
-    def activity_uses_default_memory(self, activity: Callable) -> bool:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not an activity.")
-        else:
-            return activity.config["uses_default_memory"]
-
     def activity_schema(self, activity: Callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")

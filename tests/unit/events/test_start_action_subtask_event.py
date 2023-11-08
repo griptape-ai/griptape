@@ -10,8 +10,8 @@ class TestStartActionSubtaskEvent:
     def start_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"type": "tool", "name": "test", "activity": "test action", "input": {"test": "value"}}\n'
-            "Observation: test observation\n"
+            'Action: {"name": "test", "path": "test action", "input": {"values": {"foo": "test input"}}}\n'
+            "<|Response|>: test observation\n"
             "Answer: test output"
         )
         task = ToolkitTask()
@@ -35,6 +35,6 @@ class TestStartActionSubtaskEvent:
 
         assert event_dict["subtask_parent_task_id"] == start_subtask_event.subtask_parent_task_id
         assert event_dict["subtask_thought"] == start_subtask_event.subtask_thought
-        assert event_dict["subtask_action_type"] == start_subtask_event.subtask_action_type
         assert event_dict["subtask_action_name"] == start_subtask_event.subtask_action_name
+        assert event_dict["subtask_action_path"] == start_subtask_event.subtask_action_path
         assert event_dict["subtask_action_input"] == start_subtask_event.subtask_action_input

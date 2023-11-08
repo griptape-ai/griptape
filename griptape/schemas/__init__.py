@@ -19,7 +19,7 @@ from .events.base_task_event_schema import BaseTaskEventSchema
 from .events.base_action_subtask_event_schema import BaseActionSubtaskEventSchema
 from .events.start_task_event_schema import StartTaskEventSchema
 from .events.finish_task_event_schema import FinishTaskEventSchema
-from .events.start_action_subtask_event_schema import StartActionSubtaskEventSchema
+from .events.start_action_event_schema import StartActionSubtaskEventSchema
 from .events.finish_action_subtask_event_schema import FinishActionSubtaskEventSchema
 from .events.start_prompt_event_schema import StartPromptEventSchema
 from .events.finish_prompt_event_schema import FinishPromptEventSchema

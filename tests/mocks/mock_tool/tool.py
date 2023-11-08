@@ -47,11 +47,7 @@ class MockTool(BaseTool):
         return ListArtifact([TextArtifact("foo"), TextArtifact("bar")])
 
     @activity(
-        config={
-            "description": "test description",
-            "uses_default_memory": False,
-            "schema": Schema({Literal("test"): str}, description="Test input"),
-        }
+        config={"description": "test description", "schema": Schema({Literal("test"): str}, description="Test input")}
     )
     def test_without_default_memory(self, value: dict) -> str:
         return f"ack {value['values']['test']}"

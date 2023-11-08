@@ -16,10 +16,6 @@ class TestActivityMixin:
 
         assert description == f"test description: {tool.foo()}"
 
-    def test_activity_uses_default_memory(self, tool):
-        assert tool.activity_uses_default_memory(tool.test) is True
-        assert tool.activity_uses_default_memory(tool.test_without_default_memory) is False
-
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test)
 
