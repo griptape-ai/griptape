@@ -50,15 +50,8 @@ class Workflow(Structure):
         for task in tasks:
             task.preprocess(self)
 
-            for parent_task in parent_tasks:
-                # Link the new task to the parent
-                if parent_task.id not in task.parent_ids:
-                    task.parent_ids.append(parent_task.id)
-                if task.id not in parent_task.child_ids:
-                    parent_task.child_ids.append(task.id)
-
             for child_task in child_tasks:
-                # Link the new task to the child
+                # Link the new task to the child task
                 if child_task.id not in task.child_ids:
                     task.child_ids.append(child_task.id)
                 if task.id not in child_task.parent_ids:
@@ -73,8 +66,15 @@ class Workflow(Structure):
                         if parent_task.id in child_task.parent_ids:
                             child_task.parent_ids.remove(parent_task.id)
 
-                        parent_index = self.tasks.index(parent_task)
-                        self.tasks.insert(parent_index + 1, task)
+            for parent_task in parent_tasks:
+                # Link the new task to the parent task
+                if parent_task.id not in task.parent_ids:
+                    task.parent_ids.append(parent_task.id)
+                if task.id not in parent_task.child_ids:
+                    parent_task.child_ids.append(task.id)
+
+                parent_index = self.tasks.index(parent_task)
+                self.tasks.insert(parent_index + 1, task)
 
         return tasks
 
