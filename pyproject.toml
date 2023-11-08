@@ -107,6 +107,7 @@ twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
 pytest-xdist = "^3.3.1"
 pytest-cov = "^4.1.0"
+pytest-env = "^1.1.1"
 fuzzywuzzy = "^0.18.0"
 
 
@@ -133,6 +134,10 @@ exclude = [
 ]
 pythonVersion = "3.9"
 reportOptionalMemberAccess = "none"
+
+[tool.pytest_env]
+OPENAI_API_KEY = {value = "api-key", skip_if_set = true}
+AZURE_OPENAI_API_KEY = { value = "api-key", skip_if_set = true}
 
 [build-system]
 requires = ["poetry-core"]
