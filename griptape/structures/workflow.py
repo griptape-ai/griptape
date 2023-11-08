@@ -6,6 +6,7 @@ from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
 from griptape.tasks import BaseTask
+from griptape.memory.structure import Run
 
 
 @define
@@ -83,6 +84,14 @@ class Workflow(Structure):
                     exit_loop = True
 
                     break
+
+        if self.memory:
+            run = Run(
+                input=self.input_task.input.to_text(),
+                output=self.output_task.output.to_text(),
+            )
+
+            self.memory.add_run(run)
 
         self._execution_args = ()
 

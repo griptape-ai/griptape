@@ -5,6 +5,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.structures import Workflow
+from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -126,6 +127,26 @@ class TestWorkflow:
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is None
         assert workflow.tasks[0].tools[0].output_memory is None
+
+    def test_with_memory(self):
+        first_task = PromptTask("test1")
+        second_task = PromptTask("test2")
+        third_task = PromptTask("test3")
+
+        workflow = Workflow(
+            prompt_driver=MockPromptDriver(), memory=ConversationMemory()
+        )
+
+        workflow + [first_task, second_task, third_task]
+
+        assert workflow.memory is not None
+        assert len(workflow.memory.runs) == 0
+
+        workflow.run()
+        workflow.run()
+        workflow.run()
+
+        assert len(workflow.memory.runs) == 3
 
     def test_tasks_initialization(self):
         first_task = PromptTask(id="test1")
