@@ -59,7 +59,7 @@ And here is the output:
                              Input: Load https://griptape.ai, summarize it, and 
                              store it in a file called griptape.txt.            
 [11/02/23 15:28:37] INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
-                             Thought: First, I need to use the WebScraper API to
+                             Thought: First, I need to use the WebScraper action to
                              load the content of the webpage.                   
                                                                                 
                              Action: {"name": "WebScraper", "path":            
