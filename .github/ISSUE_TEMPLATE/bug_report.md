@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-[ ] I have read and agree to the [contributing guidelines](https://github.com/griptape-ai/griptape#contributing).
+ - [ ] I have read and agree to the [contributing guidelines](https://github.com/griptape-ai/griptape#contributing).
 
 **Describe the bug**
 A clear and concise description of what the bug is.
