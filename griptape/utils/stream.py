@@ -30,9 +30,7 @@ class Stream:
     @structure.validator
     def validate_structure(self, _, structure: Structure):
         if structure and not structure.prompt_driver.stream:
-            raise ValueError(
-                "prompt driver does not have streaming enabled, enable with stream=True"
-            )
+            raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
 
@@ -53,8 +51,7 @@ class Stream:
             self._event_queue.put(event)
 
         stream_event_listener = EventListener(
-            event_handler,
-            event_types=[CompletionChunkEvent, FinishStructureRunEvent],
+            event_handler, event_types=[CompletionChunkEvent, FinishStructureRunEvent]
         )
         self.structure.add_event_listener(stream_event_listener)
 

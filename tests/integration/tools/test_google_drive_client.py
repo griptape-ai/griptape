@@ -9,11 +9,7 @@ from tests.utils.structure_runner import (
 
 
 class TestGoogleDriveClient:
-    @pytest.fixture(
-        autouse=True,
-        params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=prompt_driver_id_fn,
-    )
+    @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
     def agent(self, request):
         from griptape.structures import Agent
         from griptape.tools import GoogleDriveClient
@@ -48,34 +44,24 @@ class TestGoogleDriveClient:
         assert result["task_output"] is not None
 
     def test_download_file(self, agent):
-        result = run_structure(
-            agent, 'Download the file called "sample1.txt" from Google Drive.'
-        )
+        result = run_structure(agent, 'Download the file called "sample1.txt" from Google Drive.')
 
         assert result["task_result"] == "success"
         assert result["task_output"] is not None
 
     def test_save_content(self, agent):
-        result = run_structure(
-            agent,
-            'Save content "Hello, Google Drive!" on Google Drive as "hello.txt".',
-        )
+        result = run_structure(agent, 'Save content "Hello, Google Drive!" on Google Drive as "hello.txt".')
 
         assert result["task_result"] == "success"
 
     def test_search_files_by_name(self, agent):
-        result = run_structure(
-            agent, 'Search files with name "hello.txt" on Google Drive.'
-        )
+        result = run_structure(agent, 'Search files with name "hello.txt" on Google Drive.')
 
         assert result["task_result"] == "success"
         assert result["task_output"] is not None
 
     def test_search_files_by_content(self, agent):
-        result = run_structure(
-            agent,
-            'Search files with content "Hello, Google Drive!" on Google Drive.',
-        )
+        result = run_structure(agent, 'Search files with content "Hello, Google Drive!" on Google Drive.')
 
         assert result["task_result"] == "success"
         assert result["task_output"] is not None

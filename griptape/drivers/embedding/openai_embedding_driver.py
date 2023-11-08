@@ -29,19 +29,12 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     client: openai.OpenAI = field(
         init=False,
         default=Factory(
-            lambda self: openai.OpenAI(
-                api_key=self.api_key,
-                base_url=self.base_url,
-                organization=self.organization,
-            ),
+            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
         ),
     )
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
@@ -49,11 +42,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         # https://github.com/openai/openai-python/issues/418#issuecomment-1525939500
         if self.model.endswith("001"):
             chunk = chunk.replace("\n", " ")
-        return (
-            self.client.embeddings.create(**self._params(chunk))
-            .data[0]
-            .embedding
-        )
+        return self.client.embeddings.create(**self._params(chunk)).data[0].embedding
 
     def _params(self, chunk: str) -> dict:
         return {"input": chunk, "model": self.model}

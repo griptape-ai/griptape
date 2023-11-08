@@ -10,9 +10,7 @@ from griptape.tasks import BaseTask
 
 @define
 class Workflow(Structure):
-    futures_executor: futures.Executor = field(
-        default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True
-    )
+    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
@@ -26,11 +24,7 @@ class Workflow(Structure):
         return task
 
     def insert_task(
-        self,
-        parent_task: BaseTask,
-        child_task: BaseTask,
-        task: BaseTask,
-        preserve_relationship: bool = False,
+        self, parent_task: BaseTask, child_task: BaseTask, task: BaseTask, preserve_relationship: bool = False
     ) -> BaseTask:
         """Insert a task between two tasks in the workflow.
 
@@ -94,8 +88,7 @@ class Workflow(Structure):
         context.update(
             {
                 "parent_outputs": {
-                    parent.id: parent.output.to_text() if parent.output else ""
-                    for parent in task.parents
+                    parent.id: parent.output.to_text() if parent.output else "" for parent in task.parents
                 },
                 "parents": {parent.id: parent for parent in task.parents},
                 "children": {child.id: child for child in task.children},
@@ -117,7 +110,4 @@ class Workflow(Structure):
         return graph
 
     def order_tasks(self) -> list[BaseTask]:
-        return [
-            self.find_task(task_id)
-            for task_id in TopologicalSorter(self.to_graph()).static_order()
-        ]
+        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]

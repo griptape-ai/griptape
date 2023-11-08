@@ -3,12 +3,7 @@ import logging
 import datetime
 from schema import Schema, Literal, Optional
 from attr import define, field
-from griptape.artifacts import (
-    TextArtifact,
-    ErrorArtifact,
-    InfoArtifact,
-    ListArtifact,
-)
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 
@@ -26,14 +21,8 @@ class GoogleCalendarClient(BaseGoogleClient):
             "description": "Can be used to get upcoming events from a google calendar",
             "schema": Schema(
                 {
-                    Literal(
-                        "calendar_id",
-                        description="id of the google calendar such as 'primary'",
-                    ): str,
-                    Literal(
-                        "max_events",
-                        description="maximum number of events to return",
-                    ): int,
+                    Literal("calendar_id", description="id of the google calendar such as 'primary'"): str,
+                    Literal("max_events", description="maximum number of events to return"): int,
                 }
             ),
         }
@@ -94,16 +83,11 @@ class GoogleCalendarClient(BaseGoogleClient):
                         "according to IANA time zone data base name, such as 'Europe/Zurich'",
                     ): str,
                     Literal("title", description="title of the event"): str,
+                    Literal("description", description="description of the event"): str,
                     Literal(
-                        "description", description="description of the event"
-                    ): str,
-                    Literal(
-                        "attendees",
-                        description="list of the email addresses of attendees using 'email' as key",
+                        "attendees", description="list of the email addresses of attendees using 'email' as key"
                     ): list,
-                    Optional(
-                        Literal("location", description="location of the event")
-                    ): str,
+                    Optional(Literal("location", description="location of the event")): str,
                 }
             ),
         }
@@ -113,34 +97,19 @@ class GoogleCalendarClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                scopes=self.CREATE_EVENT_SCOPES,
-                service_name="calendar",
-                version="v3",
-                owner_email=self.owner_email,
+                scopes=self.CREATE_EVENT_SCOPES, service_name="calendar", version="v3", owner_email=self.owner_email
             )
 
             event = {
                 "summary": values["title"],
                 "location": values.get("location"),
                 "description": values["description"],
-                "start": {
-                    "dateTime": values["start_datetime"],
-                    "timeZone": values["start_time_zone"],
-                },
-                "end": {
-                    "dateTime": values["end_datetime"],
-                    "timeZone": values["end_time_zone"],
-                },
+                "start": {"dateTime": values["start_datetime"], "timeZone": values["start_time_zone"]},
+                "end": {"dateTime": values["end_datetime"], "timeZone": values["end_time_zone"]},
                 "attendees": values["attendees"],
             }
-            event = (
-                service.events()
-                .insert(calendarId="primary", body=event)
-                .execute()
-            )
-            return InfoArtifact(
-                f'A calendar event was successfully created. (Link:{event.get("htmlLink")})'
-            )
+            event = service.events().insert(calendarId="primary", body=event).execute()
+            return InfoArtifact(f'A calendar event was successfully created. (Link:{event.get("htmlLink")})')
         except Exception as e:
             logging.error(e)
             return ErrorArtifact(f"error creating calendar event: {e}")

@@ -6,9 +6,7 @@ from griptape.drivers import AzureOpenAiEmbeddingDriver
 class TestAzureOpenAiEmbeddingDriver:
     @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
-        mock_chat_create = mocker.patch(
-            "openai.AzureOpenAI"
-        ).return_value.embeddings.create
+        mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.embeddings.create
 
         mock_embedding = Mock()
         mock_embedding.embedding = [0, 1, 0]
@@ -21,9 +19,7 @@ class TestAzureOpenAiEmbeddingDriver:
 
     @pytest.fixture
     def driver(self):
-        return AzureOpenAiEmbeddingDriver(
-            api_base="foobar", model="gpt-4", deployment_id="foobar"
-        )
+        return AzureOpenAiEmbeddingDriver(api_base="foobar", model="gpt-4", deployment_id="foobar")
 
     def test_init(self, driver):
         assert driver

@@ -126,7 +126,7 @@ frozenlist = ">=1.1.0"
 name = "anthropic"
 version = "0.3.11"
 description = "Client library for the anthropic API"
-optional = false
+optional = true
 python-versions = ">=3.7,<4.0"
 files = [
     {file = "anthropic-0.3.11-py3-none-any.whl", hash = "sha256:5c81105cd9ee7388bff3fdb739aaddedc83bbae9b95d51c2d50c13b1ad106138"},
@@ -145,7 +145,7 @@ typing-extensions = ">=4.5,<5"
 name = "anyio"
 version = "3.7.1"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "anyio-3.7.1-py3-none-any.whl", hash = "sha256:91dee416e570e92c64041bd18b900d1d6fa78dff7048769ce5ac5ddad004fbb5"},
@@ -166,7 +166,7 @@ trio = ["trio (<0.22)"]
 name = "asn1crypto"
 version = "1.5.1"
 description = "Fast ASN.1 parser and serializer with definitions for private keys, public keys, certificates, CRL, OCSP, CMS, PKCS#3, PKCS#7, PKCS#8, PKCS#12, PKCS#5, X.509 and TSP"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "asn1crypto-1.5.1-py2.py3-none-any.whl", hash = "sha256:db4e40728b728508912cbb3d44f19ce188f218e9eba635821bb4b68564f8fd67"},
@@ -206,7 +206,7 @@ tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pyte
 name = "backoff"
 version = "2.2.1"
 description = "Function decoration for backoff and retry"
-optional = false
+optional = true
 python-versions = ">=3.7,<4.0"
 files = [
     {file = "backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8"},
@@ -372,6 +372,17 @@ files = [
 pycparser = "*"
 
 [[package]]
+name = "cfgv"
+version = "3.4.0"
+description = "Validate configuration and produce human readable error messages."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "cfgv-3.4.0-py2.py3-none-any.whl", hash = "sha256:b7265b1f29fd3316bfcd2b330d63d024f2bfd8bcb8b0272f8e19a504856c48f9"},
+    {file = "cfgv-3.4.0.tar.gz", hash = "sha256:e52591d4c5f5dead8e0f673fb16db7949d2cfb3f7da4582893288f0ded8fe560"},
+]
+
+[[package]]
 name = "charset-normalizer"
 version = "3.3.2"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
@@ -488,7 +499,7 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 name = "cohere"
 version = "4.32"
 description = ""
-optional = false
+optional = true
 python-versions = ">=3.7,<4.0"
 files = [
     {file = "cohere-4.32-py3-none-any.whl", hash = "sha256:b5ab3509a34c20d51b246e38eb64adc839c8bc131c41ed92ec3613998df9a8e0"},
@@ -676,10 +687,21 @@ fasttext = ["fasttext"]
 langdetect = ["langdetect"]
 
 [[package]]
+name = "distlib"
+version = "0.3.7"
+description = "Distribution utilities"
+optional = false
+python-versions = "*"
+files = [
+    {file = "distlib-0.3.7-py2.py3-none-any.whl", hash = "sha256:2e24928bc811348f0feb63014e97aaae3037f2cf48712d51ae61df7fd6075057"},
+    {file = "distlib-0.3.7.tar.gz", hash = "sha256:9dafe54b34a028eafd95039d5e5d4851a13734540f1331060d31c9916e7147a8"},
+]
+
+[[package]]
 name = "distro"
 version = "1.8.0"
 description = "Distro - an OS platform information API"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "distro-1.8.0-py3-none-any.whl", hash = "sha256:99522ca3e365cac527b44bde033f64c6945d90eb9f769703caaec52b09bbd3ff"},
@@ -690,7 +712,7 @@ files = [
 name = "dnspython"
 version = "2.4.2"
 description = "DNS toolkit"
-optional = false
+optional = true
 python-versions = ">=3.8,<4.0"
 files = [
     {file = "dnspython-2.4.2-py3-none-any.whl", hash = "sha256:57c6fbaaeaaf39c891292012060beb141791735dbb4004798328fc2c467402d8"},
@@ -789,7 +811,7 @@ all = ["email-validator (>=2.0.0)", "httpx (>=0.23.0)", "itsdangerous (>=1.1.0)"
 name = "fastavro"
 version = "1.8.2"
 description = "Fast read/write of AVRO files"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "fastavro-1.8.2-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:0e08964b2e9a455d831f2557402a683d4c4d45206f2ab9ade7c69d3dc14e0e58"},
@@ -915,7 +937,7 @@ files = [
 name = "fsspec"
 version = "2023.10.0"
 description = "File-system specification"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "fsspec-2023.10.0-py3-none-any.whl", hash = "sha256:346a8f024efeb749d2a5fca7ba8854474b1ff9af7c3faaf636a4548781136529"},
@@ -1034,7 +1056,7 @@ test = ["objgraph", "psutil"]
 name = "h11"
 version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
@@ -1070,7 +1092,7 @@ speed = ["backports-datetime-fromisoformat", "cchardet (>=2.1.7)", "faust-cchard
 name = "httpcore"
 version = "1.0.1"
 description = "A minimal low-level HTTP client."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "httpcore-1.0.1-py3-none-any.whl", hash = "sha256:c5e97ef177dca2023d0b9aad98e49507ef5423e9f1d94ffe2cfe250aa28e63b0"},
@@ -1091,7 +1113,7 @@ trio = ["trio (>=0.22.0,<0.23.0)"]
 name = "httpx"
 version = "0.25.1"
 description = "The next generation HTTP client."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "httpx-0.25.1-py3-none-any.whl", hash = "sha256:fec7d6cc5c27c578a391f7e87b9aa7d3d8fbcd034f6399f9f79b45bcc12a866a"},
@@ -1115,7 +1137,7 @@ socks = ["socksio (==1.*)"]
 name = "huggingface-hub"
 version = "0.18.0"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
-optional = false
+optional = true
 python-versions = ">=3.8.0"
 files = [
     {file = "huggingface_hub-0.18.0-py3-none-any.whl", hash = "sha256:ee0b6b68acbf6aeb6d083ea081e981c277a1104b82ab67fdf6780ff5396830af"},
@@ -1143,6 +1165,20 @@ tensorflow = ["graphviz", "pydot", "tensorflow"]
 testing = ["InquirerPy (==0.3.4)", "Jinja2", "Pillow", "aiohttp", "gradio", "jedi", "numpy", "pydantic (<2.0)", "pytest", "pytest-asyncio", "pytest-cov", "pytest-env", "pytest-vcr", "pytest-xdist", "soundfile", "urllib3 (<2.0)"]
 torch = ["torch"]
 typing = ["pydantic (<2.0)", "types-PyYAML", "types-requests", "types-simplejson", "types-toml", "types-tqdm", "types-urllib3"]
+
+[[package]]
+name = "identify"
+version = "2.5.31"
+description = "File identification library for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "identify-2.5.31-py2.py3-none-any.whl", hash = "sha256:90199cb9e7bd3c5407a9b7e81b4abec4bb9d249991c79439ec8af740afc6293d"},
+    {file = "identify-2.5.31.tar.gz", hash = "sha256:7736b3c7a28233637e3c36550646fc6389bedd74ae84cb788200cc8e2dd60b75"},
+]
+
+[package.extras]
+license = ["ukkonen"]
 
 [[package]]
 name = "idna"
@@ -1336,7 +1372,7 @@ data = ["language-data (>=1.1,<2.0)"]
 name = "loguru"
 version = "0.7.2"
 description = "Python logging made (stupidly) simple"
-optional = false
+optional = true
 python-versions = ">=3.5"
 files = [
     {file = "loguru-0.7.2-py3-none-any.whl", hash = "sha256:003d71e3d3ed35f0f8984898359d65b79e5b21943f78af86aa5491210429b8eb"},
@@ -1661,7 +1697,7 @@ files = [
 name = "marqo"
 version = "2.0.0"
 description = "Tensor search for humans"
-optional = false
+optional = true
 python-versions = ">=3"
 files = [
     {file = "marqo-2.0.0-py3-none-any.whl", hash = "sha256:3edff6b90e10752d0b4d8321dc60580b9dbe2eb71139e2f55fe86286840ba09c"},
@@ -1997,7 +2033,7 @@ datalib = ["numpy (>=1)", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)"]
 name = "opensearch-py"
 version = "2.3.2"
 description = "Python client for OpenSearch"
-optional = false
+optional = true
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
 files = [
     {file = "opensearch-py-2.3.2.tar.gz", hash = "sha256:96e470b55107fd5bfd873722dc9808c333360eacfa174341f5cc2d021aa30448"},
@@ -2110,7 +2146,7 @@ files = [
 name = "pgvector"
 version = "0.2.3"
 description = "pgvector support for Python"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "pgvector-0.2.3-py2.py3-none-any.whl", hash = "sha256:9d53dc01138ecc7c9aca64e4680cfa9edf4c38f9cb8ed7098317871fdd211824"},
@@ -2123,7 +2159,7 @@ numpy = "*"
 name = "pinecone-client"
 version = "2.2.4"
 description = "Pinecone client and SDK"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "pinecone-client-2.2.4.tar.gz", hash = "sha256:2c1cc1d6648b2be66e944db2ffa59166a37b9164d1135ad525d9cd8b1e298168"},
@@ -2189,10 +2225,28 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "pre-commit"
+version = "3.5.0"
+description = "A framework for managing and maintaining multi-language pre-commit hooks."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pre_commit-3.5.0-py2.py3-none-any.whl", hash = "sha256:841dc9aef25daba9a0238cd27984041fa0467b4199fc4852e27950664919f660"},
+    {file = "pre_commit-3.5.0.tar.gz", hash = "sha256:5804465c675b659b0862f07907f96295d490822a450c4c40e747d0b1c6ebcb32"},
+]
+
+[package.dependencies]
+cfgv = ">=2.0.0"
+identify = ">=1.0.0"
+nodeenv = ">=0.11.1"
+pyyaml = ">=5.1"
+virtualenv = ">=20.10.0"
+
+[[package]]
 name = "psycopg2-binary"
 version = "2.9.9"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "psycopg2-binary-2.9.9.tar.gz", hash = "sha256:7f01846810177d829c7692f1f5ada8096762d9172af1b1a28d4ab5b77c923c1c"},
@@ -2298,7 +2352,7 @@ files = [
 name = "pydantic"
 version = "1.10.13"
 description = "Data validation and settings management using python type hints"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "pydantic-1.10.13-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:efff03cc7a4f29d9009d1c96ceb1e7a70a65cfe86e89d34e4a5f2ab1e5693737"},
@@ -2364,7 +2418,7 @@ plugins = ["importlib-metadata"]
 name = "pyjwt"
 version = "2.8.0"
 description = "JSON Web Token implementation in Python"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "PyJWT-2.8.0-py3-none-any.whl", hash = "sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320"},
@@ -2381,7 +2435,7 @@ tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
 name = "pymongo"
 version = "4.6.0"
 description = "Python driver for MongoDB <http://www.mongodb.org>"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "pymongo-4.6.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:c011bd5ad03cc096f99ffcfdd18a1817354132c1331bed7a837a25226659845f"},
@@ -2646,31 +2700,6 @@ files = [
 six = ">=1.5"
 
 [[package]]
-name = "python-decouple"
-version = "3.8"
-description = "Strict separation of settings from code."
-optional = false
-python-versions = "*"
-files = [
-    {file = "python-decouple-3.8.tar.gz", hash = "sha256:ba6e2657d4f376ecc46f77a3a615e058d93ba5e465c01bbe57289bfb7cce680f"},
-    {file = "python_decouple-3.8-py3-none-any.whl", hash = "sha256:d0d45340815b25f4de59c974b855bb38d03151d81b037d9e3f463b0c9f8cbd66"},
-]
-
-[[package]]
-name = "python-dotenv"
-version = "1.0.0"
-description = "Read key-value pairs from a .env file and set them as environment variables"
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "python-dotenv-1.0.0.tar.gz", hash = "sha256:a8df96034aae6d2d50a4ebe8216326c61c3eb64836776504fcca410e5937a3ba"},
-    {file = "python_dotenv-1.0.0-py3-none-any.whl", hash = "sha256:f5971a9226b701070a4bf2c38c89e5a3f0d64de8debda981d1db98583009122a"},
-]
-
-[package.extras]
-cli = ["click (>=5.0)"]
-
-[[package]]
 name = "pytz"
 version = "2023.3.post1"
 description = "World timezone definitions, modern and historical"
@@ -2797,7 +2826,7 @@ md = ["cmarkgfm (>=0.8.0)"]
 name = "redis"
 version = "4.6.0"
 description = "Python client for Redis database and key-value store"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "redis-4.6.0-py3-none-any.whl", hash = "sha256:e2b03db868160ee4591de3cb90d40ebb50a90dd302138775937f6a42b7ed183c"},
@@ -2948,7 +2977,7 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 name = "requests-aws4auth"
 version = "1.2.3"
 description = "AWS4 authentication for Requests"
-optional = false
+optional = true
 python-versions = ">=3.3"
 files = [
     {file = "requests-aws4auth-1.2.3.tar.gz", hash = "sha256:d4c73c19f37f80d4aa9c5bd4fa376cfd0c69299c48b00a8eb2ae6b0416164fb8"},
@@ -3474,7 +3503,7 @@ files = [
 name = "sniffio"
 version = "1.3.0"
 description = "Sniff out which async library your code is running under"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "sniffio-1.3.0-py3-none-any.whl", hash = "sha256:eecefdce1e5bbfb7ad2eeaabf7c1eeb404d7757c379bd1f7e5cce9d8bf425384"},
@@ -3485,7 +3514,7 @@ files = [
 name = "snowflake-connector-python"
 version = "3.4.0"
 description = "Snowflake Connector for Python"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "snowflake-connector-python-3.4.0.tar.gz", hash = "sha256:09939c300d4e40705db1388c9ba596dce7dd9ee4fa8eea0b6fd67b07756597cb"},
@@ -3539,7 +3568,7 @@ secure-local-storage = ["keyring (!=16.1.0,<25.0.0)"]
 name = "snowflake-sqlalchemy"
 version = "1.5.1"
 description = "Snowflake SQLAlchemy Dialect"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "snowflake-sqlalchemy-1.5.1.tar.gz", hash = "sha256:4f1383402ffc89311974bd810dee22003aef4af0f312a0fdb55778333ad1abf7"},
@@ -3558,7 +3587,7 @@ pandas = ["snowflake-connector-python[pandas] (<4.0.0)"]
 name = "sortedcontainers"
 version = "2.4.0"
 description = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
@@ -3627,7 +3656,7 @@ sqlcipher = ["sqlcipher3-binary"]
 name = "sqlalchemy-redshift"
 version = "0.8.14"
 description = "Amazon Redshift Dialect for sqlalchemy"
-optional = false
+optional = true
 python-versions = ">=3.4"
 files = [
     {file = "sqlalchemy-redshift-0.8.14.tar.gz", hash = "sha256:1f1f78d8ef7febaf0553d64fe247fc08acbfec84d8e1d2dc8264c656cc623622"},
@@ -3637,34 +3666,6 @@ files = [
 [package.dependencies]
 packaging = "*"
 SQLAlchemy = ">=0.9.2,<2.0.0"
-
-[[package]]
-name = "starlette"
-version = "0.27.0"
-description = "The little ASGI library that shines."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "starlette-0.27.0-py3-none-any.whl", hash = "sha256:918416370e846586541235ccd38a474c08b80443ed31c578a418e2209b3eef91"},
-    {file = "starlette-0.27.0.tar.gz", hash = "sha256:6a6b0d042acb8d469a01eba54e9cda6cbd24ac602c4cd016723117d6a7e73b75"},
-]
-
-[package.dependencies]
-anyio = ">=3.4.0,<5"
-typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""}
-
-[package.extras]
-full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart", "pyyaml"]
-
-[[package]]
-name = "stopit"
-version = "1.1.2"
-description = "Timeout control decorator and context managers, raise any exception in another thread"
-optional = false
-python-versions = "*"
-files = [
-    {file = "stopit-1.1.2.tar.gz", hash = "sha256:f7f39c583fd92027bd9d06127b259aee7a5b7945c1f1fa56263811e1e766996d"},
-]
 
 [[package]]
 name = "stringcase"
@@ -3750,7 +3751,7 @@ files = [
 name = "tokenizers"
 version = "0.13.3"
 description = "Fast and Customizable Tokenizers"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "tokenizers-0.13.3-cp310-cp310-macosx_10_11_x86_64.whl", hash = "sha256:f3835c5be51de8c0a092058a4d4380cb9244fb34681fd0a295fbf0a52a5fdf33"},
@@ -3815,7 +3816,7 @@ files = [
 name = "tomlkit"
 version = "0.12.2"
 description = "Style preserving TOML library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "tomlkit-0.12.2-py3-none-any.whl", hash = "sha256:eeea7ac7563faeab0a1ed8fe12c2e5a51c61f933f2502f7e9db0241a65163ad0"},
@@ -3873,7 +3874,7 @@ gui = ["Gooey (>=1.0.1)"]
 name = "transformers"
 version = "4.33.3"
 description = "State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow"
-optional = false
+optional = true
 python-versions = ">=3.8.0"
 files = [
     {file = "transformers-4.33.3-py3-none-any.whl", hash = "sha256:7150bbf6781ddb3338ce7d74f4d6f557e6c236a0a1dd3de57412214caae7fd71"},
@@ -4020,19 +4021,20 @@ name = "uvicorn"
 version = "0.24.0.post1"
 description = "The lightning-fast ASGI server."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 files = [
     {file = "uvicorn-0.24.0.post1-py3-none-any.whl", hash = "sha256:7c84fea70c619d4a710153482c0d230929af7bcf76c7bfa6de151f0a3a80121e"},
     {file = "uvicorn-0.24.0.post1.tar.gz", hash = "sha256:09c8e5a79dc466bdf28dead50093957db184de356fcdc48697bad3bde4c2588e"},
 ]
 
 [package.dependencies]
-click = ">=7.0"
-h11 = ">=0.8"
-typing-extensions = {version = ">=4.0", markers = "python_version < \"3.11\""}
+distlib = ">=0.3.7,<1"
+filelock = ">=3.12.2,<4"
+platformdirs = ">=3.9.1,<4"
 
 [package.extras]
-standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "watchfiles (>=0.13)", "websockets (>=10.4)"]
+docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.2)", "sphinx-argparse (>=0.4)", "sphinxcontrib-towncrier (>=0.2.1a0)", "towncrier (>=23.6)"]
+test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8)", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10)"]
 
 [[package]]
 name = "websocket-client"
@@ -4071,7 +4073,7 @@ watchdog = ["watchdog (>=2.3)"]
 name = "win32-setctime"
 version = "1.1.0"
 description = "A small Python utility to set file creation time on Windows"
-optional = false
+optional = true
 python-versions = ">=3.5"
 files = [
     {file = "win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad"},
@@ -4193,6 +4195,25 @@ files = [
 [package.extras]
 docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (<7.2.5)", "sphinx (>=3.5)", "sphinx-lint"]
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
+
+[extras]
+all = ["anthropic", "boto3", "cohere", "marqo", "opensearch-py", "pgvector", "pinecone-client", "psycopg2-binary", "pymongo", "redis", "requests-aws4auth", "snowflake-sqlalchemy", "sqlalchemy", "sqlalchemy-redshift", "transformers"]
+drivers-memory-conversation-amazon-dynamodb = ["boto3"]
+drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
+drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
+drivers-prompt-anthropic = ["anthropic"]
+drivers-prompt-cohere = ["cohere"]
+drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
+drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
+drivers-sql-redshift = ["boto3", "sqlalchemy", "sqlalchemy-redshift"]
+drivers-sql-snowflake = ["snowflake-sqlalchemy", "sqlalchemy"]
+drivers-vector-amazon-opensearch = ["boto3", "opensearch-py", "requests-aws4auth"]
+drivers-vector-marqo = ["marqo"]
+drivers-vector-mongodb = ["pymongo"]
+drivers-vector-opensearch = ["opensearch-py"]
+drivers-vector-pinecone = ["pinecone-client"]
+drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
+drivers-vector-redis = ["redis"]
 
 [metadata]
 lock-version = "2.0"

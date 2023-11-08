@@ -23,18 +23,13 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
     api_type: str = field(default="azure", kw_only=True)
     api_version: str = field(default="2023-05-15", kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     client: openai.AzureOpenAI = field(
         init=False,
         default=Factory(
             lambda self: openai.AzureOpenAI(
-                api_key=self.api_key,
-                base_url=self.base_url,
-                organization=self.organization,
+                api_key=self.api_key, base_url=self.base_url, organization=self.organization
             ),
             takes_self=True,
         ),

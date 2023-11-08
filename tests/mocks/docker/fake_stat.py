@@ -13,21 +13,12 @@ OBJ = {
     "cpu_stats": {
         "cpu_usage": {
             "total_usage": 157260874053,
-            "percpu_usage": [
-                52196306950,
-                24118413549,
-                53292684398,
-                27653469156,
-            ],
+            "percpu_usage": [52196306950, 24118413549, 53292684398, 27653469156],
             "usage_in_kernelmode": 37140000000,
             "usage_in_usermode": 62140000000,
         },
         "system_cpu_usage": 3.0881377e14,
-        "throttling_data": {
-            "periods": 0,
-            "throttled_periods": 0,
-            "throttled_time": 0,
-        },
+        "throttling_data": {"periods": 0, "throttled_periods": 0, "throttled_time": 0},
     },
     "memory_stats": {
         "usage": 179314688,

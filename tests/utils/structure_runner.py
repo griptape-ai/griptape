@@ -35,12 +35,8 @@ OUTPUT_RULESET = Ruleset(
 
 
 PROMPT_DRIVERS = {
-    "OPENAI_CHAT_35": OpenAiChatPromptDriver(
-        model="gpt-3.5-turbo", api_key=os.environ["OPENAI_API_KEY"]
-    ),
-    "OPENAI_CHAT_4": OpenAiChatPromptDriver(
-        model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]
-    ),
+    "OPENAI_CHAT_35": OpenAiChatPromptDriver(model="gpt-3.5-turbo", api_key=os.environ["OPENAI_API_KEY"]),
+    "OPENAI_CHAT_4": OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]),
     "OPENAI_COMPLETION_DAVINCI": OpenAiCompletionPromptDriver(
         api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"
     ),
@@ -68,31 +64,23 @@ PROMPT_DRIVERS = {
         azure_deployment=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
         azure_endpoint=os.environ["AZURE_OPENAI_API_BASE_2"],
     ),
-    "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(
-        model="claude-2", api_key=os.environ["ANTHROPIC_API_KEY"]
-    ),
-    "COHERE_COMMAND": CoherePromptDriver(
-        model="command", api_key=os.environ["COHERE_API_KEY"]
-    ),
+    "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(model="claude-2", api_key=os.environ["ANTHROPIC_API_KEY"]),
+    "COHERE_COMMAND": CoherePromptDriver(model="command", api_key=os.environ["COHERE_API_KEY"]),
     "BEDROCK_TITAN": AmazonBedrockPromptDriver(
-        model="amazon.titan-tg1-large",
-        prompt_model_driver=BedrockTitanPromptModelDriver(),
+        model="amazon.titan-tg1-large", prompt_model_driver=BedrockTitanPromptModelDriver()
     ),
     "BEDROCK_CLAUDE_2": AmazonBedrockPromptDriver(
-        model="anthropic.claude-v2",
-        prompt_model_driver=BedrockClaudePromptModelDriver(),
+        model="anthropic.claude-v2", prompt_model_driver=BedrockClaudePromptModelDriver()
     ),
     "BEDROCK_J2": AmazonBedrockPromptDriver(
-        model="ai21.j2-ultra",
-        prompt_model_driver=BedrockJurassicPromptModelDriver(),
+        model="ai21.j2-ultra", prompt_model_driver=BedrockJurassicPromptModelDriver()
     ),
     "SAGEMAKER_LLAMA_7B": AmazonSageMakerPromptDriver(
         model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
         prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
     ),
     "SAGEMAKER_FALCON_7b": AmazonSageMakerPromptDriver(
-        model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-        prompt_model_driver=SageMakerFalconPromptModelDriver(),
+        model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"], prompt_model_driver=SageMakerFalconPromptModelDriver()
     ),
 }
 

@@ -37,10 +37,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
         )
     )
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:

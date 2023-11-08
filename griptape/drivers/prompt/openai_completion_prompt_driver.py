@@ -27,20 +27,13 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     organization: Optional[str] = field(default=None, kw_only=True)
     client: openai.OpenAI = field(
         default=Factory(
-            lambda self: openai.OpenAI(
-                api_key=self.api_key,
-                base_url=self.base_url,
-                organization=self.organization,
-            ),
+            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
         )
     )
     model: str = field(kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     user: str = field(default="", kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
@@ -58,21 +51,15 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        result = self.client.completions.create(
-            **self._base_params(prompt_stack)
-        )
+        result = self.client.completions.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
             return TextArtifact(value=result.choices[0].text.strip())
         else:
-            raise Exception(
-                "completion with more than one choice is not supported yet"
-            )
+            raise Exception("completion with more than one choice is not supported yet")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = self.client.completions.create(
-            **self._base_params(prompt_stack), stream=True
-        )
+        result = self.client.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
             if len(chunk.choices) == 1:
@@ -81,9 +68,7 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
                 yield TextArtifact(value=delta_content)
 
             else:
-                raise Exception(
-                    "completion with more than one choice is not supported yet"
-                )
+                raise Exception("completion with more than one choice is not supported yet")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)
