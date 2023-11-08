@@ -14,6 +14,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
 python-dotenv = ">=0.21"
+openai = "^1.1.1"
 cohere = ">=4"
 attrs = ">=22"
 jinja2 = ">=3.1"
@@ -55,8 +56,6 @@ cryptography = "^41.0.4"
 dateparser = "^1.1.8"
 mail-parser = "^3.15.0"
 requests = "^2"
-openai = "^1.1.1"
-urllib3 = "<2"
 
 
 [tool.poetry.group.test.dependencies]
