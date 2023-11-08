@@ -50,14 +50,14 @@ class TestFinishActionSubtaskEvent:
             == finish_subtask_event.subtask_thought
         )
         assert (
-            event_dict["subtask_api_name"]
-            == finish_subtask_event.subtask_api_name
+            event_dict["subtask_action_name"]
+            == finish_subtask_event.subtask_action_name
         )
         assert (
-            event_dict["subtask_api_path"]
-            == finish_subtask_event.subtask_api_path
+            event_dict["subtask_action_path"]
+            == finish_subtask_event.subtask_action_path
         )
         assert (
-            event_dict["subtask_api_input"]
-            == finish_subtask_event.subtask_api_input
+            event_dict["subtask_action_input"]
+            == finish_subtask_event.subtask_action_input
         )

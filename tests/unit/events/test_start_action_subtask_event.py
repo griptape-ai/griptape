@@ -47,14 +47,14 @@ class TestStartActionSubtaskEvent:
             event_dict["subtask_thought"] == start_subtask_event.subtask_thought
         )
         assert (
-            event_dict["subtask_api_name"]
-            == start_subtask_event.subtask_api_name
+            event_dict["subtask_action_name"]
+            == start_subtask_event.subtask_action_name
         )
         assert (
-            event_dict["subtask_api_path"]
-            == start_subtask_event.subtask_api_path
+            event_dict["subtask_action_path"]
+            == start_subtask_event.subtask_action_path
         )
         assert (
-            event_dict["subtask_api_input"]
-            == start_subtask_event.subtask_api_input
+            event_dict["subtask_action_input"]
+            == start_subtask_event.subtask_action_input
         )

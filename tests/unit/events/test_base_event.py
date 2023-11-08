@@ -83,9 +83,9 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_api_name": "qux",
-            "subtask_api_path": "foopath",
-            "subtask_api_input": {"value": "quux"},
+            "subtask_action_name": "qux",
+            "subtask_action_path": "foopath",
+            "subtask_action_input": {"value": "quux"},
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -98,10 +98,10 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_api_name == "qux"
-        assert event.subtask_api_path == "foopath"
-        assert event.subtask_api_input is not None
-        assert event.subtask_api_input["value"] == "quux"
+        assert event.subtask_action_name == "qux"
+        assert event.subtask_action_path == "foopath"
+        assert event.subtask_action_input is not None
+        assert event.subtask_action_input["value"] == "quux"
 
     def test_finish_task_event_from_dict(self):
         dict_value = {
@@ -135,9 +135,9 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_api_name": "qux",
-            "subtask_api_path": "foopath",
-            "subtask_api_input": {"value": "quux"},
+            "subtask_action_name": "qux",
+            "subtask_action_path": "foopath",
+            "subtask_action_input": {"value": "quux"},
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -150,10 +150,10 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_api_name == "qux"
-        assert event.subtask_api_path == "foopath"
-        assert event.subtask_api_input is not None
-        assert event.subtask_api_input["value"] == "quux"
+        assert event.subtask_action_name == "qux"
+        assert event.subtask_action_path == "foopath"
+        assert event.subtask_action_input is not None
+        assert event.subtask_action_input["value"] == "quux"
 
     def test_start_structure_run_event_from_dict(self):
         dict_value = {"type": "StartStructureRunEvent", "timestamp": 123.0}
