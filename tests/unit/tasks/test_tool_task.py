@@ -10,9 +10,8 @@ class TestToolTask:
     @pytest.fixture
     def agent(self):
         output_dict = {
-            "type": "tool",
             "name": "MockTool",
-            "activity": "test",
+            "path": "test",
             "input": {"values": {"test": "foobar"}},
         }
         return Agent(
@@ -25,6 +24,3 @@ class TestToolTask:
         agent.add_task(task)
 
         assert task.run().to_text() == "ack foobar"
-
-    def test_action_types(self):
-        assert ToolTask(tool=MockTool()).action_types == ["tool"]

@@ -87,15 +87,6 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return stack
 
-    @property
-    def action_types(self) -> list[str]:
-        memories = [r for r in self.tool_output_memory if r.activities()]
-
-        if memories:
-            return ["tool", "memory"]
-        else:
-            return ["tool"]
-
     def preprocess(self, structure: Structure) -> ToolkitTask:
         super().preprocess(structure)
 
@@ -110,11 +101,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         ]
 
         action_schema = utils.minify_json(
-            json.dumps(
-                ActionSubtask.action_schema(self.action_types).json_schema(
-                    "ActionSchema"
-                )
-            )
+            json.dumps(ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema"))
         )
 
         return J2("tasks/toolkit_task/system.j2").render(
@@ -122,16 +109,13 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                 rulesets=self.all_rulesets
             ),
             action_schema=action_schema,
-            tool_names=str.join(", ", [tool.name for tool in self.tools]),
-            tools=[
-                J2("tasks/partials/_tool.j2").render(tool=tool)
+            action_names=str.join(", ", [tool.name for tool in self.tools]),
+            actions=[
+                J2("tasks/partials/_action.j2").render(tool=tool)
                 for tool in self.tools
             ],
             memory_names=str.join(", ", [memory.name for memory in memories]),
-            memories=[
-                J2("tasks/partials/_tool_memory.j2").render(memory=memory)
-                for memory in memories
-            ],
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
 
     def default_assistant_subtask_template_generator(
@@ -144,7 +128,10 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     def default_user_subtask_template_generator(
         self, subtask: ActionSubtask
     ) -> str:
-        return J2("tasks/toolkit_task/user_subtask.j2").render(subtask=subtask)
+        return J2("tasks/toolkit_task/user_subtask.j2").render(
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
+            subtask=subtask,
+        )
 
     def set_default_tools_memory(self, memory: ToolMemory) -> None:
         self.tool_memory = memory
@@ -153,11 +140,9 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             if self.tool_memory:
                 if tool.input_memory is None:
                     tool.input_memory = [self.tool_memory]
-                if tool.output_memory is None:
+                if tool.output_memory is None and tool.off_prompt:
                     tool.output_memory = {
-                        a.name: [self.tool_memory]
-                        for a in tool.activities()
-                        if tool.activity_uses_default_memory(a)
+                        a.name: [self.tool_memory] for a in tool.activities()
                     }
 
     def run(self) -> TextArtifact:

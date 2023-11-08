@@ -19,6 +19,18 @@ if TYPE_CHECKING:
 
 @define
 class BaseTool(ActivityMixin, ABC):
+    """Abstract class for all tools to inherit from for.
+
+    Attributes:
+        name: Tool name.
+        input_memory: ToolMemory available in tool activities. Gets automatically set if None.
+        output_memory: ToolMemory that activities write to be default. Gets automatically set if None.
+        install_dependencies_on_init: Determines whether dependencies from the tool requirements.txt file are installed in init.
+        dependencies_install_directory: Custom dependency install directory.
+        verbose: Determines whether tool operations (such as dependency installation) should be verbose.
+        off_prompt: Determines whether tool activity output goes to the output memory.
+    """
+
     MANIFEST_FILE = "manifest.yml"
     REQUIREMENTS_FILE = "requirements.txt"
 
@@ -35,6 +47,7 @@ class BaseTool(ActivityMixin, ABC):
         default=None, kw_only=True
     )
     verbose: bool = field(default=False, kw_only=True)
+    off_prompt: bool = field(default=True, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:

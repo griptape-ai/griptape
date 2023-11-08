@@ -30,7 +30,7 @@ class TestEmailClient:
     @pytest.fixture
     def client(self):
         return EmailClient(
-            username="fake-username", password="fake-password", smtp_port="86"
+            username="fake-username", password="fake-password", smtp_port=86
         )
 
     @pytest.fixture
@@ -96,7 +96,7 @@ class TestEmailClient:
         client = EmailClient(
             username="fake-username",
             password="fake-password",
-            smtp_port="86",
+            smtp_port=86,
             mailboxes={
                 "INBOX": "default mailbox for incoming email",
                 "SENT": "default mailbox for sent email",
@@ -104,19 +104,21 @@ class TestEmailClient:
         )
 
         # When
-        llm_input = J2("tasks/partials/_tool.j2").render(tool=client)
+        llm_input = J2("tasks/partials/_action.j2").render(tool=client)
 
         # Then
-        retrive_description = next(
+        retrieve_description = next(
             line
             for line in llm_input.split("\n")
-            if line.startswith("EmailClient.retrieve activity description:")
+            if line.startswith("retrieve path description:")
         )
         assert (
             "'INBOX': 'default mailbox for incoming email'"
-            in retrive_description
+            in retrieve_description
         )
-        assert "'SENT': 'default mailbox for sent email'" in retrive_description
+        assert (
+            "'SENT': 'default mailbox for sent email'" in retrieve_description
+        )
 
     @pytest.mark.parametrize(
         "params",
@@ -142,11 +144,11 @@ class TestEmailClient:
         assert isinstance(artifact, InfoArtifact)
         assert artifact.value == "email was successfully sent"
 
-    def test_send_when_stmp_overrides_set(self, send_params):
+    def test_send_when_smtp_overrides_set(self, send_params):
         # Given
         client = EmailClient(
             smtp_host="smtp-host",
-            smtp_port="86",
+            smtp_port=86,
             smtp_use_ssl=False,
             smtp_user="smtp-user",
             smtp_password="smtp-password",

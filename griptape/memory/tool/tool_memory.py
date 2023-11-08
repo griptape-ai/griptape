@@ -1,5 +1,4 @@
 from __future__ import annotations
-import logging
 from typing import TYPE_CHECKING, Optional, Type, Any, Callable
 from attr import define, field, Factory
 from griptape.artifacts import (
@@ -10,7 +9,6 @@ from griptape.artifacts import (
     TextArtifact,
 )
 from griptape.mixins import ActivityMixin
-from griptape.mixins import ToolMemoryActivitiesMixin
 
 if TYPE_CHECKING:
     from griptape.memory.tool.storage import BaseArtifactStorage
@@ -18,7 +16,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolMemory(ToolMemoryActivitiesMixin, ActivityMixin):
+class ToolMemory(ActivityMixin):
     name: str = field(
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,

@@ -83,8 +83,8 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_action_type": "baz",
             "subtask_action_name": "qux",
+            "subtask_action_path": "foopath",
             "subtask_action_input": {"value": "quux"},
         }
 
@@ -98,8 +98,8 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_action_type == "baz"
         assert event.subtask_action_name == "qux"
+        assert event.subtask_action_path == "foopath"
         assert event.subtask_action_input is not None
         assert event.subtask_action_input["value"] == "quux"
 
@@ -135,8 +135,8 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_action_type": "baz",
             "subtask_action_name": "qux",
+            "subtask_action_path": "foopath",
             "subtask_action_input": {"value": "quux"},
         }
 
@@ -150,8 +150,8 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_action_type == "baz"
         assert event.subtask_action_name == "qux"
+        assert event.subtask_action_path == "foopath"
         assert event.subtask_action_input is not None
         assert event.subtask_action_input["value"] == "quux"
 

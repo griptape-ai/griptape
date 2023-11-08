@@ -7,10 +7,7 @@ from griptape.utils.decorators import activity
 
 class DateTime(BaseTool):
     @activity(
-        config={
-            "uses_default_memory": False,
-            "description": "Can be used to return current date and time.",
-        }
+        config={"description": "Can be used to return current date and time."}
     )
     def get_current_datetime(self, _: dict) -> BaseArtifact:
         try:
@@ -22,7 +19,6 @@ class DateTime(BaseTool):
 
     @activity(
         config={
-            "uses_default_memory": False,
             "description": "Can be used to return a relative date and time.",
             "schema": Schema(
                 {
