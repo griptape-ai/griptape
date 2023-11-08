@@ -242,10 +242,9 @@ class TestWorkflow:
 
         workflow.add_task(taska)
         workflow.add_task(taske)
-        workflow.insert_task(taska, taskd, taske, preserve_relationship=True)
-        workflow.insert_task(taska, taskb, taskd, preserve_relationship=True)
-        workflow.insert_task(taska, taskc, taskd, preserve_relationship=True)
-        workflow.insert_task(taska, taskc, taske, preserve_relationship=True)
+        workflow.insert_tasks(taska, taskd, taske, preserve_relationship=True)
+        workflow.insert_tasks(taska, [taskc], [taskd, taske], preserve_relationship=True)
+        workflow.insert_tasks(taska, taskb, taskd, preserve_relationship=True)
 
         workflow.run()
 
@@ -279,7 +278,7 @@ class TestWorkflow:
         workflow + task1
         workflow + task2
         workflow + task3
-        workflow.insert_task(task1, task4, task2)
+        workflow.insert_tasks(task1, task4, task2)
 
         workflow.run()
 
