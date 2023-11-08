@@ -29,10 +29,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
     SUPPORTED_TASKS = ["text2text-generation", "text-generation"]
     MAX_NEW_TOKENS = 250
-    DEFAULT_PARAMS = {
-        "return_full_text": False,
-        "max_new_tokens": MAX_NEW_TOKENS,
-    }
+    DEFAULT_PARAMS = {"return_full_text": False, "max_new_tokens": MAX_NEW_TOKENS}
 
     api_token: str = field(kw_only=True)
     use_gpu: bool = field(default=False, kw_only=True)
@@ -40,9 +37,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     model: str = field(kw_only=True)
     client: InferenceApi = field(
         default=Factory(
-            lambda self: import_optional_dependency(
-                "huggingface_hub"
-            ).InferenceApi(
+            lambda self: import_optional_dependency("huggingface_hub").InferenceApi(
                 repo_id=self.model, token=self.api_token, gpu=self.use_gpu
             ),
             takes_self=True,
@@ -52,9 +47,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency(
-                    "transformers"
-                ).AutoTokenizer.from_pretrained(self.model),
+                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model),
                 max_tokens=self.MAX_NEW_TOKENS,
             ),
             takes_self=True,
@@ -72,20 +65,14 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         if self.client.task in self.SUPPORTED_TASKS:
-            response = self.client(
-                inputs=prompt, params=self.DEFAULT_PARAMS | self.params
-            )
+            response = self.client(inputs=prompt, params=self.DEFAULT_PARAMS | self.params)
 
             if len(response) == 1:
                 return TextArtifact(value=response[0]["generated_text"].strip())
             else:
-                raise Exception(
-                    "completion with more than one choice is not supported yet"
-                )
+                raise Exception("completion with more than one choice is not supported yet")
         else:
-            raise Exception(
-                f"only models with the following tasks are supported: {self.SUPPORTED_TASKS}"
-            )
+            raise Exception(f"only models with the following tasks are supported: {self.SUPPORTED_TASKS}")
 
     def try_stream(self, _: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")

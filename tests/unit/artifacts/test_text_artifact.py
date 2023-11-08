@@ -13,9 +13,7 @@ class TestTextArtifact:
         assert (TextArtifact("foo") + TextArtifact("bar")).value == "foobar"
 
     def test_generate_embedding(self):
-        assert TextArtifact("foobar").generate_embedding(
-            MockEmbeddingDriver()
-        ) == [0, 1]
+        assert TextArtifact("foobar").generate_embedding(MockEmbeddingDriver()) == [0, 1]
 
     def test_embedding(self):
         artifact = TextArtifact("foobar")
@@ -30,9 +28,7 @@ class TestTextArtifact:
     def test_token_count(self):
         assert (
             TextArtifact("foobarbaz").token_count(
-                OpenAiTokenizer(
-                    model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
-                )
+                OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
             )
             == 2
         )
@@ -41,19 +37,13 @@ class TestTextArtifact:
         assert TextArtifact("foobar").to_dict()["value"] == "foobar"
 
     def test_from_dict(self):
-        assert (
-            BaseArtifact.from_dict(TextArtifact("foobar").to_dict()).value
-            == "foobar"
-        )
+        assert BaseArtifact.from_dict(TextArtifact("foobar").to_dict()).value == "foobar"
 
     def test_to_json(self):
         assert json.loads(TextArtifact("foobar").to_json())["value"] == "foobar"
 
     def test_from_json(self):
-        assert (
-            BaseArtifact.from_json(TextArtifact("foobar").to_json()).value
-            == "foobar"
-        )
+        assert BaseArtifact.from_json(TextArtifact("foobar").to_json()).value == "foobar"
 
     def test_name(self):
         artifact = TextArtifact("foo")

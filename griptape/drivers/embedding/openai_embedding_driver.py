@@ -29,17 +29,10 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)
-    api_key: Optional[str] = field(
-        default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True
-    )
-    organization: Optional[str] = field(
-        default=openai.organization, kw_only=True
-    )
+    api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
+    organization: Optional[str] = field(default=openai.organization, kw_only=True)
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(
-            lambda self: OpenAiTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def __attrs_post_init__(self) -> None:
@@ -54,9 +47,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         # https://github.com/openai/openai-python/issues/418#issuecomment-1525939500
         if self.model.endswith("001"):
             chunk = chunk.replace("\n", " ")
-        return openai.Embedding.create(**self._params(chunk))["data"][0][
-            "embedding"
-        ]
+        return openai.Embedding.create(**self._params(chunk))["data"][0]["embedding"]
 
     def _params(self, chunk: str) -> dict:
         return {

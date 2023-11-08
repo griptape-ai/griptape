@@ -16,21 +16,11 @@ class TestToolkitSubtask:
     def query_engine(self):
         return VectorQueryEngine(
             prompt_driver=MockPromptDriver(),
-            vector_store_driver=LocalVectorStoreDriver(
-                embedding_driver=MockEmbeddingDriver()
-            ),
+            vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver()),
         )
 
     def test_init(self):
-        assert (
-            len(
-                ToolkitTask(
-                    "test",
-                    tools=[MockTool(name="Tool1"), MockTool(name="Tool2")],
-                ).tools
-            )
-            == 2
-        )
+        assert len(ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]).tools) == 2
 
         try:
             ToolkitTask("test", tools=[MockTool(), MockTool()])
@@ -41,9 +31,7 @@ class TestToolkitSubtask:
     def test_run(self):
         output = """Answer: done"""
 
-        task = ToolkitTask(
-            "test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]
-        )
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         agent = Agent(prompt_driver=MockValuePromptDriver(output))
 
         agent.add_task(task)
@@ -57,9 +45,7 @@ class TestToolkitSubtask:
     def test_run_max_subtasks(self):
         output = """Action: {"name": "blah"}"""
 
-        task = ToolkitTask(
-            "test", tools=[MockTool(name="Tool1")], max_subtasks=3
-        )
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockValuePromptDriver(output))
 
         agent.add_task(task)
@@ -105,18 +91,8 @@ class TestToolkitSubtask:
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask(
-            "test1",
-            action_name="test",
-            action_path="test",
-            action_input={"values": {"f": "b"}},
-        )
-        subtask2 = ActionSubtask(
-            "test2",
-            action_name="test",
-            action_path="test",
-            action_input={"values": {"f": "b"}},
-        )
+        subtask1 = ActionSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask2 = ActionSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
 
         Agent().add_task(task)
 
@@ -135,18 +111,8 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask(
-            "test1",
-            action_name="test",
-            action_path="test",
-            action_input={"values": {"f": "b"}},
-        )
-        subtask2 = ActionSubtask(
-            "test2",
-            action_name="test",
-            action_path="test",
-            action_input={"values": {"f": "b"}},
-        )
+        subtask1 = ActionSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask2 = ActionSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
 
         Agent().add_task(task)
 
@@ -179,22 +145,12 @@ class TestToolkitSubtask:
     def test_memory(self, query_engine):
         tool1 = MockTool(
             name="Tool1",
-            output_memory={
-                "test": [
-                    defaults.text_tool_memory("Memory1"),
-                    defaults.text_tool_memory("Memory2"),
-                ]
-            },
+            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory2")]},
         )
 
         tool2 = MockTool(
             name="Tool2",
-            output_memory={
-                "test": [
-                    defaults.text_tool_memory("Memory1"),
-                    defaults.text_tool_memory("Memory3"),
-                ]
-            },
+            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory3")]},
         )
 
         task = ToolkitTask(tools=[tool1, tool2])

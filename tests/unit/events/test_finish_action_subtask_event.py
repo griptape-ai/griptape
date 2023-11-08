@@ -28,36 +28,13 @@ class TestFinishActionSubtaskEvent:
 
         assert "timestamp" in event_dict
         assert event_dict["task_id"] == finish_subtask_event.task_id
-        assert (
-            event_dict["task_parent_ids"]
-            == finish_subtask_event.task_parent_ids
-        )
-        assert (
-            event_dict["task_child_ids"] == finish_subtask_event.task_child_ids
-        )
-        assert (
-            event_dict["task_input"]
-            == finish_subtask_event.task_input.to_dict()
-        )
+        assert event_dict["task_parent_ids"] == finish_subtask_event.task_parent_ids
+        assert event_dict["task_child_ids"] == finish_subtask_event.task_child_ids
+        assert event_dict["task_input"] == finish_subtask_event.task_input.to_dict()
         assert event_dict["task_output"] is None
 
-        assert (
-            event_dict["subtask_parent_task_id"]
-            == finish_subtask_event.subtask_parent_task_id
-        )
-        assert (
-            event_dict["subtask_thought"]
-            == finish_subtask_event.subtask_thought
-        )
-        assert (
-            event_dict["subtask_action_name"]
-            == finish_subtask_event.subtask_action_name
-        )
-        assert (
-            event_dict["subtask_action_path"]
-            == finish_subtask_event.subtask_action_path
-        )
-        assert (
-            event_dict["subtask_action_input"]
-            == finish_subtask_event.subtask_action_input
-        )
+        assert event_dict["subtask_parent_task_id"] == finish_subtask_event.subtask_parent_task_id
+        assert event_dict["subtask_thought"] == finish_subtask_event.subtask_thought
+        assert event_dict["subtask_action_name"] == finish_subtask_event.subtask_action_name
+        assert event_dict["subtask_action_path"] == finish_subtask_event.subtask_action_path
+        assert event_dict["subtask_action_input"] == finish_subtask_event.subtask_action_input

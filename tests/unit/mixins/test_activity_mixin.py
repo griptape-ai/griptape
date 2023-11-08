@@ -19,9 +19,7 @@ class TestActivityMixin:
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test)
 
-        assert schema == Schema(
-            {"values": tool.test.config["schema"].schema}
-        ).json_schema("InputSchema")
+        assert schema == Schema({"values": tool.test.config["schema"].schema}).json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
 
     def test_activity_with_no_schema(self, tool):

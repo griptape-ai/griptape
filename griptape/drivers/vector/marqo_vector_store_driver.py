@@ -24,10 +24,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     url: str = field(kw_only=True)
     mq: Optional[marqo.Client] = field(
         default=Factory(
-            lambda self: import_optional_dependency("marqo").Client(
-                self.url, api_key=self.api_key
-            ),
-            takes_self=True,
+            lambda self: import_optional_dependency("marqo").Client(self.url, api_key=self.api_key), takes_self=True
         ),
         kw_only=True,
     )
@@ -53,10 +50,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             str: The ID of the document that was added.
         """
 
-        doc = {
-            "_id": vector_id,
-            "Description": string,  # Description will be treated as tensor field
-        }
+        doc = {"_id": vector_id, "Description": string}  # Description will be treated as tensor field
 
         # Non-tensor fields
         if meta:
@@ -64,17 +58,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         if namespace:
             doc["namespace"] = namespace
 
-        response = self.mq.index(self.index).add_documents(
-            [doc], tensor_fields=["Description"]
-        )
+        response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description"])
         return response["items"][0]["_id"]
 
     def upsert_text_artifact(
-        self,
-        artifact: TextArtifact,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        **kwargs,
+        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
     ) -> str:
         """Upsert a text artifact into the Marqo index.
 
@@ -96,14 +84,10 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             "namespace": namespace,
         }
 
-        response = self.mq.index(self.index).add_documents(
-            [doc], tensor_fields=["Description", "artifact"]
-        )
+        response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
         return response["items"][0]["_id"]
 
-    def load_entry(
-        self, vector_id: str, namespace: Optional[str] = None
-    ) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Load a document entry from the Marqo index.
 
         Args:
@@ -113,15 +97,9 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             The loaded Entry if found, otherwise None.
         """
-        result = self.mq.index(self.index).get_document(
-            document_id=vector_id, expose_facets=True
-        )
+        result = self.mq.index(self.index).get_document(document_id=vector_id, expose_facets=True)
 
-        if (
-            result
-            and "_tensor_facets" in result
-            and len(result["_tensor_facets"]) > 0
-        ):
+        if result and "_tensor_facets" in result and len(result["_tensor_facets"]) > 0:
             return BaseVectorStoreDriver.Entry(
                 id=result["_id"],
                 meta={k: v for k, v in result.items() if k not in ["_id"]},
@@ -130,9 +108,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return None
 
-    def load_entries(
-        self, namespace: Optional[str] = None
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load all document entries from the Marqo index.
 
         Args:
@@ -143,17 +119,13 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         filter_string = f"namespace:{namespace}" if namespace else None
-        results = self.mq.index(self.index).search(
-            "", limit=10000, filter_string=filter_string
-        )
+        results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
 
         # get all _id's from search results
         ids = [r["_id"] for r in results["hits"]]
 
         # get documents corresponding to the ids
-        documents = self.mq.index(self.index).get_documents(
-            document_ids=ids, expose_facets=True
-        )
+        documents = self.mq.index(self.index).get_documents(document_ids=ids, expose_facets=True)
 
         # for each document, if it's found, create an Entry object
         entries = []
@@ -163,11 +135,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
                     BaseVectorStoreDriver.Entry(
                         id=doc["_id"],
                         vector=doc["_tensor_facets"][0]["_embedding"],
-                        meta={
-                            k: v
-                            for k, v in doc.items()
-                            if k not in ["_id", "_tensor_facets", "_found"]
-                        },
+                        meta={k: v for k, v in doc.items() if k not in ["_id", "_tensor_facets", "_found"]},
                         namespace=doc.get("namespace"),
                     )
                 )
@@ -197,9 +165,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         params = {
-            "limit": count
-            if count
-            else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            "limit": count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
             "attributes_to_retrieve": ["*"] if include_metadata else ["_id"],
             "filter_string": f"namespace:{namespace}" if namespace else None,
         } | kwargs
@@ -208,27 +174,15 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
 
         if include_vectors:
             results["hits"] = [
-                {
-                    **r,
-                    **self.mq.index(self.index).get_document(
-                        r["_id"], expose_facets=True
-                    ),
-                }
-                for r in results["hits"]
+                {**r, **self.mq.index(self.index).get_document(r["_id"], expose_facets=True)} for r in results["hits"]
             ]
 
         return [
             BaseVectorStoreDriver.QueryResult(
                 id=r["_id"],
-                vector=r["_tensor_facets"][0]["_embedding"]
-                if include_vectors
-                else [],
+                vector=r["_tensor_facets"][0]["_embedding"] if include_vectors else [],
                 score=r["_score"],
-                meta={
-                    k: v
-                    for k, v in r.items()
-                    if k not in ["_score", "_tensor_facets"]
-                },
+                meta={k: v for k, v in r.items() if k not in ["_score", "_tensor_facets"]},
             )
             for r in results["hits"]
         ]

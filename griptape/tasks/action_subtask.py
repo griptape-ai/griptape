@@ -29,12 +29,7 @@ class ActionSubtask(PromptTask):
         schema={
             Literal("name", description="Action name"): str,
             Literal("path", description="Action path"): str,
-            schema.Optional(
-                Literal(
-                    "input",
-                    description="Optional action path input values object",
-                )
-            ): {"values": dict},
+            schema.Optional(Literal("input", description="Optional action path input values object")): {"values": dict},
         },
     )
 
@@ -57,17 +52,11 @@ class ActionSubtask(PromptTask):
 
     @property
     def parents(self) -> list[ActionSubtask]:
-        return [
-            self.origin_task.find_subtask(parent_id)
-            for parent_id in self.parent_ids
-        ]
+        return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
 
     @property
     def children(self) -> list[ActionSubtask]:
-        return [
-            self.origin_task.find_subtask(child_id)
-            for child_id in self.child_ids
-        ]
+        return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
 
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
@@ -84,28 +73,20 @@ class ActionSubtask(PromptTask):
                 self.output = ErrorArtifact(str(self.action_input))
             else:
                 if self._tool:
-                    response = self._tool.execute(
-                        getattr(self._tool, self.action_path), self
-                    )
+                    response = self._tool.execute(getattr(self._tool, self.action_path), self)
                 else:
                     response = ErrorArtifact("tool not found")
 
                 self.output = response
         except Exception as e:
-            self.structure.logger.error(
-                f"Subtask {self.id}\n{e}", exc_info=True
-            )
+            self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
             self.output = ErrorArtifact(str(e))
         finally:
             return self.output
 
     def after_run(self) -> None:
-        response = (
-            self.output.to_text()
-            if isinstance(self.output, BaseArtifact)
-            else str(self.output)
-        )
+        response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
 
         self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
@@ -155,9 +136,7 @@ class ActionSubtask(PromptTask):
                 data = action_matches[-1]
                 action_object: dict = json.loads(data, strict=False)
 
-                validate(
-                    instance=action_object, schema=self.ACTION_SCHEMA.schema
-                )
+                validate(instance=action_object, schema=self.ACTION_SCHEMA.schema)
 
                 # Load action name; throw exception if the key is not present
                 if self.action_name is None:
@@ -173,9 +152,7 @@ class ActionSubtask(PromptTask):
                     # correctly translated into JSON schema. For some optional input fields LLMs sometimes
                     # still provide null value, which trips up the validator. The temporary solution that
                     # works is to strip all key-values where value is null.
-                    self.action_input = remove_null_values_in_dict_recursively(
-                        action_object["input"]
-                    )
+                    self.action_input = remove_null_values_in_dict_recursively(action_object["input"])
 
                 # Load the action itself
                 if self.action_name:
@@ -184,49 +161,31 @@ class ActionSubtask(PromptTask):
                 if self._tool:
                     self.__validate_action_input(self.action_input, self._tool)
             except SyntaxError as e:
-                self.structure.logger.error(
-                    f"Subtask {self.origin_task.id}\nSyntax error: {e}"
-                )
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
                 self.action_name = "error"
                 self.action_input = {"error": f"syntax error: {e}"}
             except ValidationError as e:
-                self.structure.logger.error(
-                    f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}"
-                )
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
                 self.action_name = "error"
-                self.action_input = {
-                    "error": f"Action JSON validation error: {e}"
-                }
+                self.action_input = {"error": f"Action JSON validation error: {e}"}
             except Exception as e:
-                self.structure.logger.error(
-                    f"Subtask {self.origin_task.id}\nError parsing tool action: {e}"
-                )
+                self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
 
                 self.action_name = "error"
-                self.action_input = {
-                    "error": f"Action input parsing error: {e}"
-                }
+                self.action_input = {"error": f"Action input parsing error: {e}"}
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 
-    def __validate_action_input(
-        self, action_input: dict, mixin: ActivityMixin
-    ) -> None:
+    def __validate_action_input(self, action_input: dict, mixin: ActivityMixin) -> None:
         try:
-            activity_schema = mixin.activity_schema(
-                getattr(mixin, self.action_path)
-            )
+            activity_schema = mixin.activity_schema(getattr(mixin, self.action_path))
 
             if activity_schema:
                 validate(instance=action_input, schema=activity_schema)
         except ValidationError as e:
-            self.structure.logger.error(
-                f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}"
-            )
+            self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 
             self.action_name = "error"
-            self.action_input = {
-                "error": f"Activity input JSON validation error: {e}"
-            }
+            self.action_input = {"error": f"Activity input JSON validation error: {e}"}

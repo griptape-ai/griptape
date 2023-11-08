@@ -13,9 +13,7 @@ if TYPE_CHECKING:
 @define
 class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
-    memory: Optional[ConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()), kw_only=True
-    )
+    memory: Optional[ConversationMemory] = field(default=Factory(lambda: ConversationMemory()), kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
@@ -55,10 +53,7 @@ class Agent(Structure):
         self.task.execute()
 
         if self.memory:
-            run = Run(
-                input=self.task.input.to_text(),
-                output=self.task.output.to_text(),
-            )
+            run = Run(input=self.task.input.to_text(), output=self.task.output.to_text())
 
             self.memory.add_run(run)
 

@@ -1,24 +1,16 @@
 from griptape.drivers import AzureOpenAiCompletionPromptDriver
-from tests.unit.drivers.prompt.test_openai_completion_prompt_driver import (
-    TestOpenAiCompletionPromptDriverFixtureMixin,
-)
+from tests.unit.drivers.prompt.test_openai_completion_prompt_driver import TestOpenAiCompletionPromptDriverFixtureMixin
 from unittest.mock import ANY
 
 
-class TestAzureOpenAiCompletionPromptDriver(
-    TestOpenAiCompletionPromptDriverFixtureMixin
-):
+class TestAzureOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMixin):
     def test_init(self):
-        assert AzureOpenAiCompletionPromptDriver(
-            api_base="foobar", deployment_id="foobar", model="text-davinci-003"
-        )
+        assert AzureOpenAiCompletionPromptDriver(api_base="foobar", deployment_id="foobar", model="text-davinci-003")
 
     def test_try_run(self, mock_completion_create, prompt_stack, prompt):
         # Given
         driver = AzureOpenAiCompletionPromptDriver(
-            api_base="api-base",
-            deployment_id="deployment-id",
-            model="text-davinci-003",
+            api_base="api-base", deployment_id="deployment-id", model="text-davinci-003"
         )
 
         # When
@@ -41,15 +33,10 @@ class TestAzureOpenAiCompletionPromptDriver(
         )
         assert text_artifact.value == "model-output"
 
-    def test_try_stream_run(
-        self, mock_completion_stream_create, prompt_stack, prompt
-    ):
+    def test_try_stream_run(self, mock_completion_stream_create, prompt_stack, prompt):
         # Given
         driver = AzureOpenAiCompletionPromptDriver(
-            api_base="api-base",
-            deployment_id="deployment-id",
-            model="text-davinci-003",
-            stream=True,
+            api_base="api-base", deployment_id="deployment-id", model="text-davinci-003", stream=True
         )
 
         # When

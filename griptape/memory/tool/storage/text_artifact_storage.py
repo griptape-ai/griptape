@@ -5,12 +5,7 @@ from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.memory.tool.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
-    from griptape.engines import (
-        BaseSummaryEngine,
-        CsvExtractionEngine,
-        JsonExtractionEngine,
-        VectorQueryEngine,
-    )
+    from griptape.engines import BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine, VectorQueryEngine
 
 
 @define
@@ -30,15 +25,7 @@ class TextArtifactStorage(BaseArtifactStorage):
         return self.query_engine.load_artifacts(namespace)
 
     def summarize(self, namespace: str) -> TextArtifact:
-        return self.summary_engine.summarize_artifacts(
-            self.load_artifacts(namespace)
-        )
+        return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
-    def query(
-        self, namespace: str, query: str, metadata: any = None
-    ) -> TextArtifact:
-        return self.query_engine.query(
-            namespace=namespace,
-            query=query,
-            metadata=str(metadata) if metadata else None,
-        )
+    def query(self, namespace: str, query: str, metadata: any = None) -> TextArtifact:
+        return self.query_engine.query(namespace=namespace, query=query, metadata=str(metadata) if metadata else None)

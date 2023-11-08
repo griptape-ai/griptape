@@ -11,25 +11,17 @@ from griptape.rules import Ruleset, rule
 
 @define
 class JsonExtractionEngine(BaseExtractionEngine):
-    template_generator: J2 = field(
-        default=Factory(lambda: J2("engines/extraction/json_extraction.j2")),
-        kw_only=True,
-    )
+    template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/json_extraction.j2")), kw_only=True)
 
     def extract(
-        self,
-        text: str | ListArtifact,
-        template_schema: dict,
-        rulesets: Optional[Ruleset] = None,
+        self, text: str | ListArtifact, template_schema: dict, rulesets: Optional[Ruleset] = None
     ) -> ListArtifact | ErrorArtifact:
         try:
             json_schema = json.dumps(template_schema)
 
             return ListArtifact(
                 self._extract_rec(
-                    text.value
-                    if isinstance(text, ListArtifact)
-                    else [TextArtifact(text)],
+                    text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
                     json_schema,
                     [],
                     rulesets=rulesets,
@@ -56,20 +48,11 @@ class JsonExtractionEngine(BaseExtractionEngine):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
-        if (
-            self.prompt_driver.tokenizer.count_tokens_left(full_text)
-            >= self.min_response_tokens
-        ):
+        if self.prompt_driver.tokenizer.count_tokens_left(full_text) >= self.min_response_tokens:
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(
-                        PromptStack(
-                            inputs=[
-                                PromptStack.Input(
-                                    full_text, role=PromptStack.USER_ROLE
-                                )
-                            ]
-                        )
+                        PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
                     ).value
                 )
             )
@@ -86,17 +69,9 @@ class JsonExtractionEngine(BaseExtractionEngine):
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(
-                        PromptStack(
-                            inputs=[
-                                PromptStack.Input(
-                                    partial_text, role=PromptStack.USER_ROLE
-                                )
-                            ]
-                        )
+                        PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)])
                     ).value
                 )
             )
 
-            return self._extract_rec(
-                chunks[1:], json_template_schema, extractions, rulesets=rulesets
-            )
+            return self._extract_rec(chunks[1:], json_template_schema, extractions, rulesets=rulesets)

@@ -5,10 +5,7 @@ from griptape import utils
 
 @define(frozen=True)
 class BaseTokenizer(ABC):
-    stop_sequences: list[str] = field(
-        default=Factory(lambda: [utils.constants.RESPONSE_STOP_SEQUENCE]),
-        kw_only=True,
-    )
+    stop_sequences: list[str] = field(default=Factory(lambda: [utils.constants.RESPONSE_STOP_SEQUENCE]), kw_only=True)
 
     @property
     @abstractmethod

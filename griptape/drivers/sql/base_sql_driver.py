@@ -19,7 +19,5 @@ class BaseSqlDriver(ABC):
         ...
 
     @abstractmethod
-    def get_table_schema(
-        self, table: str, schema: Optional[str] = None
-    ) -> Optional[str]:
+    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
         ...

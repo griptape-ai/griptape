@@ -8,27 +8,16 @@ from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
-from griptape.drivers.embedding.openai_embedding_driver import (
-    OpenAiEmbeddingDriver,
-    BaseEmbeddingDriver,
-)
+from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import ToolMemory
-from griptape.memory.tool.storage import (
-    BlobArtifactStorage,
-    TextArtifactStorage,
-)
+from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.engines import (
-    VectorQueryEngine,
-    PromptSummaryEngine,
-    CsvExtractionEngine,
-    JsonExtractionEngine,
-)
+from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.events import EventListener
 
@@ -44,17 +33,12 @@ class Structure(ABC):
     stream: bool = field(default=False, kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(
-            lambda self: OpenAiChatPromptDriver(
-                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL,
-                stream=self.stream,
-            ),
+            lambda self: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL, stream=self.stream),
             takes_self=True,
         ),
         kw_only=True,
     )
-    embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True
-    )
+    embedding_driver: BaseEmbeddingDriver = field(default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
@@ -69,19 +53,11 @@ class Structure(ABC):
                     TextArtifact: TextArtifactStorage(
                         query_engine=VectorQueryEngine(
                             prompt_driver=self.prompt_driver,
-                            vector_store_driver=LocalVectorStoreDriver(
-                                embedding_driver=self.embedding_driver
-                            ),
+                            vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.embedding_driver),
                         ),
-                        summary_engine=PromptSummaryEngine(
-                            prompt_driver=self.prompt_driver
-                        ),
-                        csv_extraction_engine=CsvExtractionEngine(
-                            prompt_driver=self.prompt_driver
-                        ),
-                        json_extraction_engine=JsonExtractionEngine(
-                            prompt_driver=self.prompt_driver
-                        ),
+                        summary_engine=PromptSummaryEngine(prompt_driver=self.prompt_driver),
+                        csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.prompt_driver),
+                        json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
                     ),
                     BlobArtifact: BlobArtifactStorage(),
                 }
@@ -119,11 +95,7 @@ class Structure(ABC):
         self.prompt_driver.structure = self
 
     def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
-        return (
-            self.add_tasks(*other)
-            if isinstance(other, list)
-            else self + [other]
-        )
+        return self.add_tasks(*other) if isinstance(other, list) else self + [other]
 
     @property
     def execution_args(self) -> tuple:
@@ -140,9 +112,7 @@ class Structure(ABC):
                 self._logger.propagate = False
                 self._logger.level = self.logger_level
 
-                self._logger.handlers = [
-                    RichHandler(show_time=True, show_path=False)
-                ]
+                self._logger.handlers = [RichHandler(show_time=True, show_path=False)]
             return self._logger
 
     @property
@@ -172,9 +142,7 @@ class Structure(ABC):
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
 
-    def add_event_listener(
-        self, event_listener: EventListener
-    ) -> EventListener:
+    def add_event_listener(self, event_listener: EventListener) -> EventListener:
         if event_listener not in self.event_listeners:
             self.event_listeners.append(event_listener)
 

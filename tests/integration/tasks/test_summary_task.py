@@ -11,22 +11,12 @@ import pytest
 
 
 class TestSummaryTask:
-    @pytest.fixture(
-        autouse=True,
-        params=SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=prompt_driver_id_fn,
-    )
+    @pytest.fixture(autouse=True, params=SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
     def agent(self, request):
         from griptape.structures import Agent
 
-        agent = Agent(
-            memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
-        )
-        agent.add_task(
-            TextSummaryTask(
-                summary_engine=PromptSummaryEngine(prompt_driver=request.param)
-            )
-        )
+        agent = Agent(memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET])
+        agent.add_task(TextSummaryTask(summary_engine=PromptSummaryEngine(prompt_driver=request.param)))
 
         return agent
 
