@@ -110,7 +110,7 @@ class ActionSubtask(PromptTask):
         self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
 
-    def request_to_json(self) -> str:
+    def action_to_json(self) -> str:
         json_dict = {}
 
         if self.action_name:
