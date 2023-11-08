@@ -211,8 +211,8 @@ class TestWorkflow:
         # task2 and task3 converge into task4
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_task(task1, task2, task4)
+        workflow.insert_task(task1, task3, task4)
 
         workflow.run()
 
@@ -243,10 +243,10 @@ class TestWorkflow:
 
         workflow.add_task(taska)
         workflow.add_task(taske)
-        workflow.insert_task(taska, taske, taskd, preserve_relationship=True)
-        workflow.insert_task(taska, taskd, taskb, preserve_relationship=True)
-        workflow.insert_task(taska, taskd, taskc, preserve_relationship=True)
-        workflow.insert_task(taska, taske, taskc, preserve_relationship=True)
+        workflow.insert_task(taska, taskd, taske, preserve_relationship=True)
+        workflow.insert_task(taska, taskb, taskd, preserve_relationship=True)
+        workflow.insert_task(taska, taskc, taskd, preserve_relationship=True)
+        workflow.insert_task(taska, taskc, taske, preserve_relationship=True)
 
         workflow.run()
 
@@ -280,7 +280,7 @@ class TestWorkflow:
         workflow + task1
         workflow + task2
         workflow + task3
-        workflow.insert_task(task1, task2, task4)
+        workflow.insert_task(task1, task4, task2)
 
         workflow.run()
 
@@ -309,8 +309,8 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_task(task1, task2, task4)
+        workflow.insert_task(task1, task3, task4)
 
         assert task1 == workflow.input_task
 
@@ -323,8 +323,8 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_task(task1, task2, task4)
+        workflow.insert_task(task1, task3, task4)
 
         assert task4 == workflow.output_task
 
@@ -337,8 +337,8 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_task(task1, task2, task4)
+        workflow.insert_task(task1, task3, task4)
 
         graph = workflow.to_graph()
 
@@ -355,8 +355,8 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_task(task1, task2, task4)
+        workflow.insert_task(task1, task3, task4)
 
         ordered_tasks = workflow.order_tasks()
 

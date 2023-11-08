@@ -25,7 +25,11 @@ class Workflow(Structure):
         return task
 
     def insert_task(
-        self, parent_task: BaseTask, child_task: BaseTask, task: BaseTask, preserve_relationship: bool = False
+        self,
+        parent_task: BaseTask,
+        task: BaseTask,
+        child_task: BaseTask,
+        preserve_relationship: bool = False,
     ) -> BaseTask:
         """Insert a task between two tasks in the workflow.
 
