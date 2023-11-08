@@ -72,7 +72,7 @@ And here is the output:
                              "c497d83c1d134db694b9994596016320"                 
 [11/02/23 15:28:50] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
                              Thought: Now that the webpage content is stored in 
-                             memory, I need to use the ToolMemoryClient API  
+                             memory, I need to use the ToolMemoryClient action  
                              to summarize the content.                          
                              Action: {"name": "ToolMemoryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
@@ -85,7 +85,7 @@ And here is the output:
                              "77584322d33d40e992da9767d02a9018"                 
 [11/02/23 15:29:25] INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
                              Thought: Now that the summary is stored in memory, 
-                             I need to use the FileManager API to save the      
+                             I need to use the FileManager action to save the      
                              summary to a file named griptape.txt.              
                              Action: {"name": "FileManager", "path":           
                              "save_memory_artifacts_to_disk", "input":          
