@@ -7,7 +7,7 @@ class TestActionSubtask:
     def test_to_json(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"type": "tool", "name": "test", "path": "test action", "input": "test input"}\n'
+            'Action: {"name": "test", "path": "test action", "input": "test input"}\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -21,10 +21,10 @@ class TestActionSubtask:
         assert json_dict["path"] == "test action"
         assert json_dict["input"] == "test input"
 
-    def test_init_from_request_with_newlines(self):
+    def test_init_from_action_with_newlines(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n{"type":\n "tool",\n\n"name": "test",\n"path": \n"test action", \n"input": "test\n\ninput\n\nwith\nnewlines"}\n\nFoobizbar1)(*&^%$#@!)'
+            'Action:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n{"name": "test",\n\n"path": \n"test action", \n"input": "test\n\ninput\n\nwith\nnewlines"}\n\nFoobizbar1)(*&^%$#@!)'
             "Response: test response\n"
             "Answer: test output"
         )
