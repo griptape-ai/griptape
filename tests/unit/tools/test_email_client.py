@@ -29,44 +29,22 @@ class TestEmailClient:
 
     @pytest.fixture
     def client(self):
-        return EmailClient(
-            username="fake-username", password="fake-password", smtp_port=86
-        )
+        return EmailClient(username="fake-username", password="fake-password", smtp_port=86)
 
     @pytest.fixture
     def send_params(self):
-        return {
-            "values": {
-                "to": "fake@fake.fake",
-                "subject": "fake-subject",
-                "body": "fake-body",
-            }
-        }
+        return {"values": {"to": "fake@fake.fake", "subject": "fake-subject", "body": "fake-body"}}
 
     @pytest.mark.parametrize(
         "values,query",
         [
+            ({"label": "fake-label"}, EmailLoader.EmailQuery(label="fake-label")),
+            ({"label": "fake-label", "key": "fake-key"}, EmailLoader.EmailQuery(label="fake-label", key="fake-key")),
             (
-                {"label": "fake-label"},
-                EmailLoader.EmailQuery(label="fake-label"),
+                {"label": "fake-label", "search_criteria": "fake-search-criteria"},
+                EmailLoader.EmailQuery(label="fake-label", search_criteria="fake-search-criteria"),
             ),
-            (
-                {"label": "fake-label", "key": "fake-key"},
-                EmailLoader.EmailQuery(label="fake-label", key="fake-key"),
-            ),
-            (
-                {
-                    "label": "fake-label",
-                    "search_criteria": "fake-search-criteria",
-                },
-                EmailLoader.EmailQuery(
-                    label="fake-label", search_criteria="fake-search-criteria"
-                ),
-            ),
-            (
-                {"label": "fake-label", "max_count": "32"},
-                EmailLoader.EmailQuery(label="fake-label", max_count=32),
-            ),
+            ({"label": "fake-label", "max_count": "32"}, EmailLoader.EmailQuery(label="fake-label", max_count=32)),
         ],
     )
     def test_retrieve(self, client, mock_email_loader, values, query):
@@ -77,9 +55,7 @@ class TestEmailClient:
         mock_email_loader.load.assert_called_once_with(query)
         assert artifact.value == "fake-email-content"
 
-    def test_retrieve_when_email_max_retrieve_count_set(
-        self, mock_email_loader
-    ):
+    def test_retrieve_when_email_max_retrieve_count_set(self, mock_email_loader):
         # Given
         client = EmailClient(email_max_retrieve_count=84)
 
@@ -87,9 +63,7 @@ class TestEmailClient:
         client.retrieve({"values": {"label": "fake-label"}})
 
         # Then
-        mock_email_loader.load.assert_called_once_with(
-            EmailLoader.EmailQuery(label="fake-label", max_count=84)
-        )
+        mock_email_loader.load.assert_called_once_with(EmailLoader.EmailQuery(label="fake-label", max_count=84))
 
     def test_retrieve_activity_description_includes_available_mailboxes(self):
         # Given
@@ -97,10 +71,7 @@ class TestEmailClient:
             username="fake-username",
             password="fake-password",
             smtp_port=86,
-            mailboxes={
-                "INBOX": "default mailbox for incoming email",
-                "SENT": "default mailbox for sent email",
-            },
+            mailboxes={"INBOX": "default mailbox for incoming email", "SENT": "default mailbox for sent email"},
         )
 
         # When
@@ -108,25 +79,13 @@ class TestEmailClient:
 
         # Then
         retrieve_description = next(
-            line
-            for line in llm_input.split("\n")
-            if line.startswith("retrieve path description:")
+            line for line in llm_input.split("\n") if line.startswith("retrieve path description:")
         )
-        assert (
-            "'INBOX': 'default mailbox for incoming email'"
-            in retrieve_description
-        )
-        assert (
-            "'SENT': 'default mailbox for sent email'" in retrieve_description
-        )
+        assert "'INBOX': 'default mailbox for incoming email'" in retrieve_description
+        assert "'SENT': 'default mailbox for sent email'" in retrieve_description
 
     @pytest.mark.parametrize(
-        "params",
-        [
-            {},
-            {"values": {}},
-            {"values": {"label": "fake-label", "max_count": "not-an-int"}},
-        ],
+        "params", [{}, {"values": {}}, {"values": {"label": "fake-label", "max_count": "not-an-int"}}]
     )
     def test_retrieve_throws_when_params_invalid(self, client, params):
         # When
@@ -179,9 +138,7 @@ class TestEmailClient:
         # Then
         assert isinstance(e.value, Exception)
 
-    def test_send_returns_error_artifact_when_sendmail_throws(
-        self, client, mock_smtp_ssl, send_params
-    ):
+    def test_send_returns_error_artifact_when_sendmail_throws(self, client, mock_smtp_ssl, send_params):
         # Given
         mock_smtp_ssl.sendmail.side_effect = Exception("sendmail-failed")
 

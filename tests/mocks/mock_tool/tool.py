@@ -1,11 +1,6 @@
 from attr import define, field
 from schema import Schema, Literal
-from griptape.artifacts import (
-    TextArtifact,
-    ErrorArtifact,
-    BaseArtifact,
-    ListArtifact,
-)
+from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -52,10 +47,7 @@ class MockTool(BaseTool):
         return ListArtifact([TextArtifact("foo"), TextArtifact("bar")])
 
     @activity(
-        config={
-            "description": "test description",
-            "schema": Schema({Literal("test"): str}, description="Test input"),
-        }
+        config={"description": "test description", "schema": Schema({Literal("test"): str}, description="Test input")}
     )
     def test_without_default_memory(self, value: dict) -> str:
         return f"ack {value['values']['test']}"

@@ -21,9 +21,7 @@ class BaseTextInputTask(BaseTask, ABC):
 
     @property
     def input(self) -> TextArtifact:
-        return TextArtifact(
-            J2().render_from_string(self.input_template, **self.full_context)
-        )
+        return TextArtifact(J2().render_from_string(self.input_template, **self.full_context))
 
     @property
     def full_context(self) -> dict[str, Any]:
@@ -60,12 +58,7 @@ class BaseTextInputTask(BaseTask, ABC):
             if self.structure.rulesets:
                 structure_rulesets = self.structure.rulesets
             elif self.structure.rules:
-                structure_rulesets = [
-                    Ruleset(
-                        name=self.DEFAULT_RULESET_NAME,
-                        rules=self.structure.rules,
-                    )
-                ]
+                structure_rulesets = [Ruleset(name=self.DEFAULT_RULESET_NAME, rules=self.structure.rules)]
 
         task_rulesets = []
         if self.rulesets:
@@ -83,13 +76,9 @@ class BaseTextInputTask(BaseTask, ABC):
     def before_run(self) -> None:
         super().before_run()
 
-        self.structure.logger.info(
-            f"{self.__class__.__name__} {self.id}\nInput: {self.input.to_text()}"
-        )
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {self.input.to_text()}")
 
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info(
-            f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}"
-        )
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")

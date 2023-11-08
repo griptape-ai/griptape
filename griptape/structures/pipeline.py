@@ -50,10 +50,7 @@ class Pipeline(Structure):
         self.__run_from_task(self.input_task)
 
         if self.memory:
-            run = Run(
-                input=self.input_task.input.to_text(),
-                output=self.output_task.output.to_text(),
-            )
+            run = Run(input=self.input_task.input.to_text(), output=self.output_task.output.to_text())
 
             self.memory.add_run(run)
 
@@ -66,9 +63,7 @@ class Pipeline(Structure):
 
         context.update(
             {
-                "parent_output": task.parents[0].output.to_text()
-                if task.parents and task.parents[0].output
-                else None,
+                "parent_output": task.parents[0].output.to_text() if task.parents and task.parents[0].output else None,
                 "parent": task.parents[0] if task.parents else None,
                 "child": task.children[0] if task.children else None,
             }

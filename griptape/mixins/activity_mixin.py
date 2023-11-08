@@ -45,21 +45,11 @@ class ActivityMixin:
     def activities(self) -> list[Callable]:
         methods = []
 
-        for name, method in inspect.getmembers(
-            self, predicate=inspect.ismethod
-        ):
-            allowlist_condition = (
-                self.allowlist is None or name in self.allowlist
-            )
-            denylist_condition = (
-                self.denylist is None or name not in self.denylist
-            )
+        for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
+            allowlist_condition = self.allowlist is None or name in self.allowlist
+            denylist_condition = self.denylist is None or name not in self.denylist
 
-            if (
-                getattr(method, "is_activity", False)
-                and allowlist_condition
-                and denylist_condition
-            ):
+            if getattr(method, "is_activity", False) and allowlist_condition and denylist_condition:
                 methods.append(method)
 
         return methods
@@ -81,19 +71,13 @@ class ActivityMixin:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
-            return Template(activity.config["description"]).render(
-                {"_self": self}
-            )
+            return Template(activity.config["description"]).render({"_self": self})
 
     def activity_schema(self, activity: Callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         elif activity.config["schema"]:
-            full_schema = {
-                "values": activity.config["schema"].schema
-                if activity.config["schema"]
-                else {}
-            }
+            full_schema = {"values": activity.config["schema"].schema if activity.config["schema"] else {}}
 
             return Schema(full_schema).json_schema("InputSchema")
         else:
@@ -105,6 +89,4 @@ class ActivityMixin:
         activity = getattr(tool, activity_name, None)
 
         if not activity or not getattr(activity, "is_activity", False):
-            raise ValueError(
-                f"activity {activity_name} is not a valid activity for {tool}"
-            )
+            raise ValueError(f"activity {activity_name} is not a valid activity for {tool}")

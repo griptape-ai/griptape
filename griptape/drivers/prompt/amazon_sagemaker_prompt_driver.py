@@ -13,16 +13,9 @@ if TYPE_CHECKING:
 
 @define
 class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
-    session: boto3.Session = field(
-        default=Factory(lambda: import_optional_dependency("boto3").Session()),
-        kw_only=True,
-    )
+    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     sagemaker_client: Any = field(
-        default=Factory(
-            lambda self: self.session.client("sagemaker-runtime"),
-            takes_self=True,
-        ),
-        kw_only=True,
+        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True), kw_only=True
     )
     custom_attributes: str = field(default="accept_eula=true", kw_only=True)
     stream: bool = field(default=False, kw_only=True)
@@ -34,12 +27,8 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         payload = {
-            "inputs": self.prompt_model_driver.prompt_stack_to_model_input(
-                prompt_stack
-            ),
-            "parameters": self.prompt_model_driver.prompt_stack_to_model_params(
-                prompt_stack
-            ),
+            "inputs": self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack),
+            "parameters": self.prompt_model_driver.prompt_stack_to_model_params(prompt_stack),
         }
         response = self.sagemaker_client.invoke_endpoint(
             EndpointName=self.model,

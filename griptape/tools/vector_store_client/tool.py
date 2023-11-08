@@ -30,8 +30,7 @@ class VectorStoreClient(BaseTool):
             "schema": Schema(
                 {
                     Literal(
-                        "query",
-                        description="A natural language search query to run against the vector database",
+                        "query", description="A natural language search query to run against the vector database"
                     ): str
                 }
             ),
@@ -41,8 +40,6 @@ class VectorStoreClient(BaseTool):
         query = params["values"]["query"]
 
         try:
-            return self.query_engine.query(
-                query, top_n=self.top_n, namespace=self.namespace
-            )
+            return self.query_engine.query(query, top_n=self.top_n, namespace=self.namespace)
         except Exception as e:
             return ErrorArtifact(f"error querying vector store: {e}")

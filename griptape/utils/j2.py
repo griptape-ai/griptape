@@ -10,22 +10,14 @@ class J2:
     templates_dir: str = field(default=abs_path("templates"), kw_only=True)
     environment: Environment = field(
         default=Factory(
-            lambda self: Environment(
-                loader=FileSystemLoader(self.templates_dir),
-                trim_blocks=True,
-                lstrip_blocks=True,
-            ),
+            lambda self: Environment(loader=FileSystemLoader(self.templates_dir), trim_blocks=True, lstrip_blocks=True),
             takes_self=True,
         ),
         kw_only=True,
     )
 
     def render(self, **kwargs) -> str:
-        return (
-            self.environment.get_template(self.template_name)
-            .render(kwargs)
-            .rstrip()
-        )
+        return self.environment.get_template(self.template_name).render(kwargs).rstrip()
 
     def render_from_string(self, value: str, **kwargs) -> str:
         return self.environment.from_string(value).render(kwargs)

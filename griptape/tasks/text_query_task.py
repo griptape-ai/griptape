@@ -9,23 +9,15 @@ from griptape.tasks import BaseTextInputTask
 @define
 class TextQueryTask(BaseTextInputTask):
     query_engine: BaseQueryEngine = field(kw_only=True)
-    loader: TextLoader = field(
-        default=Factory(lambda: TextLoader()), kw_only=True
-    )
+    loader: TextLoader = field(default=Factory(lambda: TextLoader()), kw_only=True)
     namespace: str = field(kw_only=True)
 
     def run(self) -> TextArtifact:
-        return self.query_engine.query(
-            self.input.to_text(),
-            namespace=self.namespace,
-            rulesets=self.all_rulesets,
-        )
+        return self.query_engine.query(self.input.to_text(), namespace=self.namespace, rulesets=self.all_rulesets)
 
     def load(self, content: Any) -> list[TextArtifact]:
         artifacts = self.loader.load(content)
 
-        self.query_engine.upsert_text_artifacts(
-            artifacts, namespace=self.namespace
-        )
+        self.query_engine.upsert_text_artifacts(artifacts, namespace=self.namespace)
 
         return artifacts

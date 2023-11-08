@@ -10,10 +10,7 @@ from attr import define, field, Factory
 @define
 class BaseEvent(ABC):
     timestamp: float = field(default=Factory(lambda: time.time()), kw_only=True)
-    type: str = field(
-        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
-        kw_only=True,
-    )
+    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
 
     @classmethod
     def from_dict(cls, event_dict: dict) -> BaseEvent:
@@ -33,26 +30,14 @@ class BaseEvent(ABC):
         class_registry.register("FinishPromptEvent", FinishPromptEventSchema)
         class_registry.register("StartTaskEvent", StartTaskEventSchema)
         class_registry.register("FinishTaskEvent", FinishTaskEventSchema)
-        class_registry.register(
-            "StartActionSubtaskEvent", StartActionSubtaskEventSchema
-        )
-        class_registry.register(
-            "FinishActionSubtaskEvent", FinishActionSubtaskEventSchema
-        )
-        class_registry.register(
-            "StartStructureRunEvent", StartStructureRunEventSchema
-        )
-        class_registry.register(
-            "FinishStructureRunEvent", FinishStructureRunEventSchema
-        )
-        class_registry.register(
-            "CompletionChunkEvent", CompletionChunkEventSchema
-        )
+        class_registry.register("StartActionSubtaskEvent", StartActionSubtaskEventSchema)
+        class_registry.register("FinishActionSubtaskEvent", FinishActionSubtaskEventSchema)
+        class_registry.register("StartStructureRunEvent", StartStructureRunEventSchema)
+        class_registry.register("FinishStructureRunEvent", FinishStructureRunEventSchema)
+        class_registry.register("CompletionChunkEvent", CompletionChunkEventSchema)
 
         try:
-            return class_registry.get_class(event_dict["type"])().load(
-                event_dict
-            )
+            return class_registry.get_class(event_dict["type"])().load(event_dict)
         except RegistryError:
             raise ValueError("Unsupported event type")
 

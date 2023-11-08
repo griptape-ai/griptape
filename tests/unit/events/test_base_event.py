@@ -26,11 +26,7 @@ class TestBaseEvent:
         assert "timestamp" in MockEvent().to_dict()
 
     def test_start_prompt_event_from_dict(self):
-        dict_value = {
-            "type": "StartPromptEvent",
-            "timestamp": 123.0,
-            "token_count": 10,
-        }
+        dict_value = {"type": "StartPromptEvent", "timestamp": 123.0, "token_count": 10}
 
         event = BaseEvent.from_dict(dict_value)
 
@@ -39,11 +35,7 @@ class TestBaseEvent:
         assert event.token_count == 10
 
     def test_finish_prompt_event_from_dict(self):
-        dict_value = {
-            "type": "FinishPromptEvent",
-            "timestamp": 123.0,
-            "token_count": 10,
-        }
+        dict_value = {"type": "FinishPromptEvent", "timestamp": 123.0, "token_count": 10}
 
         event = BaseEvent.from_dict(dict_value)
 
@@ -172,11 +164,7 @@ class TestBaseEvent:
         assert event.timestamp == 123
 
     def test_completion_chunk_event_from_dict(self):
-        dict_value = {
-            "type": "CompletionChunkEvent",
-            "timestamp": 123.0,
-            "token": "foo",
-        }
+        dict_value = {"type": "CompletionChunkEvent", "timestamp": 123.0, "token": "foo"}
 
         event = BaseEvent.from_dict(dict_value)
 

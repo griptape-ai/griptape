@@ -12,10 +12,7 @@ class TestPdfChunker:
         return PdfChunker(max_tokens=MAX_TOKENS)
 
     def test_chunk(self, chunker):
-        path = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)),
-            "../../resources/bitcoin.pdf",
-        )
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/bitcoin.pdf")
 
         reader = PdfReader(path)
         text = "".join([p.extract_text() for p in reader.pages])
