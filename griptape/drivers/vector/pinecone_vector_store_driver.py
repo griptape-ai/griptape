@@ -1,8 +1,11 @@
-from typing import Optional
-from griptape import utils
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
+from griptape.utils import str_to_hash, import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
-import pinecone
 from attr import define, field
+
+if TYPE_CHECKING:
+    import pinecone
 
 
 @define
@@ -14,6 +17,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     index: pinecone.Index = field(init=False)
 
     def __attrs_post_init__(self) -> None:
+        pinecone = import_optional_dependency("pinecone")
         pinecone.init(
             api_key=self.api_key,
             environment=self.environment,
@@ -28,9 +32,9 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
-        vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
+        vector_id = vector_id if vector_id else str_to_hash(str(vector))
 
         params = {"namespace": namespace} | kwargs
 
@@ -90,7 +94,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         # PineconeVectorStorageDriver-specific params:
         include_metadata=True,
-        **kwargs
+        **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         vector = self.embedding_driver.embed_string(query)
 
@@ -122,4 +126,5 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             "dimension": self.embedding_driver.dimensions,
         } | kwargs
 
+        pinecone = import_optional_dependency("pinecone")
         pinecone.create_index(**params)

@@ -1,10 +1,12 @@
-from typing import Callable, Optional, Any
+from __future__ import annotations
+from typing import Callable, Optional, TYPE_CHECKING, Any
+from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseSqlDriver
 from attr import Factory, define, field
-from sqlalchemy import create_engine, text, MetaData, Table
-from sqlalchemy.engine import Engine
-from sqlalchemy.exc import NoSuchTableError
-from snowflake.connector import SnowflakeConnection
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Engine
+    from snowflake.connector import SnowflakeConnection
 
 
 @define
@@ -14,7 +16,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         default=Factory(
             # Creator bypasses the URL param
             # https://docs.sqlalchemy.org/en/14/core/engines.html#sqlalchemy.create_engine.params.creator
-            lambda self: create_engine(
+            lambda self: import_optional_dependency("sqlalchemy").create_engine(
                 "snowflake://not@used/db", creator=self.connection_func
             ),
             takes_self=True,
@@ -27,7 +29,11 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         self, _, connection_func: Callable[[], SnowflakeConnection]
     ) -> None:
         snowflake_connection = connection_func()
-        if not isinstance(snowflake_connection, SnowflakeConnection):
+        snowflake = import_optional_dependency("snowflake")
+
+        if not isinstance(
+            snowflake_connection, snowflake.connector.SnowflakeConnection
+        ):
             raise ValueError(
                 "The connection_func must return a SnowflakeConnection"
             )
@@ -52,8 +58,10 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+
         with self.engine.connect() as con:
-            results = con.execute(text(query))
+            results = con.execute(sqlalchemy.text(query))
 
             if results.returns_rows:
                 return [
@@ -66,10 +74,12 @@ class SnowflakeSqlDriver(BaseSqlDriver):
     def get_table_schema(
         self, table: str, schema: Optional[str] = None
     ) -> Optional[str]:
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+
         try:
-            metadata_obj = MetaData()
+            metadata_obj = sqlalchemy.MetaData()
             metadata_obj.reflect(bind=self.engine)
-            table = Table(
+            table = sqlalchemy.Table(
                 table,
                 metadata_obj,
                 schema=schema,
@@ -77,5 +87,5 @@ class SnowflakeSqlDriver(BaseSqlDriver):
                 autoload_with=self.engine,
             )
             return str([(c.name, c.type) for c in table.columns])
-        except NoSuchTableError:
+        except sqlalchemy.exc.NoSuchTableError:
             return None

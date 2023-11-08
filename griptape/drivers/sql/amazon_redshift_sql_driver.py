@@ -1,14 +1,17 @@
+from __future__ import annotations
 import time
-from typing import Optional, Any
-import boto3
+from typing import Optional, TYPE_CHECKING, Any
 from griptape.drivers import BaseSqlDriver
 from attr import Factory, define, field
+
+if TYPE_CHECKING:
+    import boto3
 
 
 @define
 class AmazonRedshiftSqlDriver(BaseSqlDriver):
     database: str = field(kw_only=True)
-    session: boto3.session = field(kw_only=True)
+    session: boto3.Session = field(kw_only=True)
     cluster_identifier: Optional[str] = field(default=None, kw_only=True)
     workgroup_name: Optional[str] = field(default=None, kw_only=True)
     db_user: Optional[str] = field(default=None, kw_only=True)
@@ -16,7 +19,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         default=None, kw_only=True
     )
     wait_for_query_completion_sec: float = field(default=0.3, kw_only=True)
-    client: boto3.client = field(
+    client: Any = field(
         default=Factory(
             lambda self: self.session.client("redshift-data"), takes_self=True
         ),

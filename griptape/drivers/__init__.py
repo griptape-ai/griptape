@@ -21,8 +21,8 @@ from .memory.conversation.base_conversation_memory_driver import (
 from .memory.conversation.local_conversation_memory_driver import (
     LocalConversationMemoryDriver,
 )
-from .memory.conversation.dynamodb_conversation_memory_driver import (
-    DynamoDbConversationMemoryDriver,
+from .memory.conversation.amazon_dynamodb_conversation_memory_driver import (
+    AmazonDynamoDbConversationMemoryDriver,
 )
 
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
@@ -82,7 +82,7 @@ __all__ = [
     "BaseMultiModelPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
-    "DynamoDbConversationMemoryDriver",
+    "AmazonDynamoDbConversationMemoryDriver",
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
