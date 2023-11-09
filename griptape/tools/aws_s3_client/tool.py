@@ -3,13 +3,7 @@ import io
 from typing import TYPE_CHECKING
 from schema import Schema, Literal
 from attr import define, field, Factory
-from griptape.artifacts import (
-    TextArtifact,
-    ErrorArtifact,
-    InfoArtifact,
-    ListArtifact,
-    BlobArtifact,
-)
+from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
 
@@ -172,18 +166,13 @@ class AwsS3Client(BaseAwsClient):
             "description": "Can be used to download objects from AWS S3",
             "schema": Schema(
                 {
-                    Literal(
-                        "objects",
-                        description="A list of bucket name and object key pairs to download",
-                    ): [
+                    Literal("objects", description="A list of bucket name and object key pairs to download"): [
                         {
                             Literal(
-                                "bucket_name",
-                                description="The name of the bucket to download the object from",
+                                "bucket_name", description="The name of the bucket to download the object from"
                             ): str,
                             Literal(
-                                "object_key",
-                                description="The name of the object key to download from the bucket",
+                                "object_key", description="The name of the object key to download from the bucket"
                             ): str,
                         }
                     ]
@@ -196,24 +185,15 @@ class AwsS3Client(BaseAwsClient):
         artifact = ListArtifact()
         for object_info in objects:
             try:
-                obj = self.s3_client.get_object(
-                    Bucket=object_info["bucket_name"],
-                    Key=object_info["object_key"],
-                )
+                obj = self.s3_client.get_object(Bucket=object_info["bucket_name"], Key=object_info["object_key"])
 
                 content = obj["Body"].read()
                 artifact.value.append(BlobArtifact(content))
 
             except Exception as e:
-                return ErrorArtifact(
-                    f"error downloading objects from bucket: {e}"
-                )
+                return ErrorArtifact(f"error downloading objects from bucket: {e}")
 
         return artifact
-
-    def _upload_object(
-        self, bucket_name: str, object_name: str, value: any
-    ) -> None:
 
     def _upload_object(self, bucket_name: str, object_name: str, value: any) -> None:
         self.s3_client.create_bucket(Bucket=bucket_name)
