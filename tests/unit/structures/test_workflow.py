@@ -298,6 +298,45 @@ class TestWorkflow:
         assert task4.parent_ids == ["task1"]
         assert task4.child_ids == ["task2"]
 
+    def test_run_topology_4(self):
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+        collect_movie_info = PromptTask(id="collect_movie_info")
+        summarize_to_slack = PromptTask(id="summarize_to_slack")
+        movie_info_1 = PromptTask(id="movie_info_1")
+        movie_info_2 = PromptTask(id="movie_info_2")
+        movie_info_3 = PromptTask(id="movie_info_3")
+        compare_movies = PromptTask(id="compare_movies")
+        prepare_email_task = PromptTask(id="prepare_email_task")
+        send_email_task = PromptTask(id="send_email_task")
+        save_to_disk = PromptTask(id="save_to_disk")
+        publish_website = PromptTask(id="publish_website")
+        movie_info_3 = PromptTask(id="movie_info_3")
+
+        workflow.add_tasks(collect_movie_info, summarize_to_slack)
+        workflow.insert_tasks(collect_movie_info, [movie_info_1, movie_info_2, movie_info_3], summarize_to_slack)
+        workflow.insert_tasks([movie_info_1, movie_info_2, movie_info_3], compare_movies, summarize_to_slack)
+        workflow.insert_tasks(compare_movies, [send_email_task, save_to_disk, publish_website], summarize_to_slack)
+
+        assert set(collect_movie_info.child_ids) == {"movie_info_1", "movie_info_2", "movie_info_3"}
+
+        assert set(movie_info_1.parent_ids) == {"collect_movie_info"}
+        assert set(movie_info_2.parent_ids) == {"collect_movie_info"}
+        assert set(movie_info_3.parent_ids) == {"collect_movie_info"}
+        assert set(movie_info_1.child_ids) == {"compare_movies"}
+        assert set(movie_info_2.child_ids) == {"compare_movies"}
+        assert set(movie_info_3.child_ids) == {"compare_movies"}
+
+        assert set(compare_movies.parent_ids) == {"movie_info_1", "movie_info_2", "movie_info_3"}
+        assert set(compare_movies.child_ids) == {"send_email_task", "save_to_disk", "publish_website"}
+
+        assert set(send_email_task.parent_ids) == {"compare_movies"}
+        assert set(save_to_disk.parent_ids) == {"compare_movies"}
+        assert set(publish_website.parent_ids) == {"compare_movies"}
+
+        assert set(send_email_task.child_ids) == {"summarize_to_slack"}
+        assert set(save_to_disk.child_ids) == {"summarize_to_slack"}
+        assert set(publish_website.child_ids) == {"summarize_to_slack"}
+
     def test_input_task(self):
         task1 = PromptTask("prompt1")
         task2 = PromptTask("prompt2")

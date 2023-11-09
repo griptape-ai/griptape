@@ -35,7 +35,7 @@ class Workflow(Structure):
 
         Args:
             parent_tasks: The tasks that will be the parents of the new tasks.
-            tasks: The tasks to insert.
+            tasks: The tasks to insert between the parent and child tasks.
             child_tasks: The tasks that will be the children of the new tasks.
             preserve_relationship: Whether to preserve the parent/child relationship when inserting between parent and child tasks.
         """
@@ -48,35 +48,46 @@ class Workflow(Structure):
             child_tasks = [child_tasks]
 
         for task in tasks:
-            task.preprocess(self)
-
-            for child_task in child_tasks:
-                # Link the new task to the child task
-                if child_task.id not in task.child_ids:
-                    task.child_ids.append(child_task.id)
-                if task.id not in child_task.parent_ids:
-                    child_task.parent_ids.append(task.id)
-
-            if not preserve_relationship:
-                for parent_task in parent_tasks:
-                    for child_task in child_tasks:
-                        # Remove the old parent/child relationship
-                        if child_task.id in parent_task.child_ids:
-                            parent_task.child_ids.remove(child_task.id)
-                        if parent_task.id in child_task.parent_ids:
-                            child_task.parent_ids.remove(parent_task.id)
-
-            for parent_task in parent_tasks:
-                # Link the new task to the parent task
-                if parent_task.id not in task.parent_ids:
-                    task.parent_ids.append(parent_task.id)
-                if task.id not in parent_task.child_ids:
-                    parent_task.child_ids.append(task.id)
-
-                parent_index = self.tasks.index(parent_task)
-                self.tasks.insert(parent_index + 1, task)
+            self.insert_task(parent_tasks, task, child_tasks, preserve_relationship)
 
         return tasks
+
+    def insert_task(
+        self,
+        parent_tasks: list[BaseTask],
+        task: BaseTask,
+        child_tasks: list[BaseTask],
+        preserve_relationship: bool = False,
+    ) -> BaseTask:
+        task.preprocess(self)
+
+        for child_task in child_tasks:
+            # Link the new task to the child task
+            if child_task.id not in task.child_ids:
+                task.child_ids.append(child_task.id)
+            if task.id not in child_task.parent_ids:
+                child_task.parent_ids.append(task.id)
+
+        if not preserve_relationship:
+            for parent_task in parent_tasks:
+                for child_task in child_tasks:
+                    # Remove the old parent/child relationship
+                    if child_task.id in parent_task.child_ids:
+                        parent_task.child_ids.remove(child_task.id)
+                    if parent_task.id in child_task.parent_ids:
+                        child_task.parent_ids.remove(parent_task.id)
+
+        for parent_task in parent_tasks:
+            # Link the new task to the parent task
+            if parent_task.id not in task.parent_ids:
+                task.parent_ids.append(parent_task.id)
+            if task.id not in parent_task.child_ids:
+                parent_task.child_ids.append(task.id)
+
+            parent_index = self.tasks.index(parent_task)
+            self.tasks.insert(parent_index + 1, task)
+
+        return task
 
     def try_run(self, *args) -> Workflow:
         self._execution_args = args
