@@ -12,13 +12,8 @@ if TYPE_CHECKING:
 
 @define
 class ConversationMemory:
-    type: str = field(
-        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
-        kw_only=True,
-    )
-    driver: Optional[BaseConversationMemoryDriver] = field(
-        default=None, kw_only=True
-    )
+    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    driver: Optional[BaseConversationMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True)
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)

@@ -14,8 +14,5 @@ class TestPromptSummaryEngine:
 
     def test_summarize_artifacts(self, engine):
         assert (
-            engine.summarize_artifacts(
-                ListArtifact([TextArtifact("foo"), TextArtifact("bar")])
-            ).value
-            == "mock output"
+            engine.summarize_artifacts(ListArtifact([TextArtifact("foo"), TextArtifact("bar")])).value == "mock output"
         )

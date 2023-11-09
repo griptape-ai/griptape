@@ -22,7 +22,5 @@ class BaseArtifactStorage(ABC):
         ...
 
     @abstractmethod
-    def query(
-        self, namespace: str, query: str, metadata: any = None
-    ) -> TextArtifact:
+    def query(self, namespace: str, query: str, metadata: any = None) -> TextArtifact:
         ...

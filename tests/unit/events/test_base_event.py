@@ -26,11 +26,7 @@ class TestBaseEvent:
         assert "timestamp" in MockEvent().to_dict()
 
     def test_start_prompt_event_from_dict(self):
-        dict_value = {
-            "type": "StartPromptEvent",
-            "timestamp": 123.0,
-            "token_count": 10,
-        }
+        dict_value = {"type": "StartPromptEvent", "timestamp": 123.0, "token_count": 10}
 
         event = BaseEvent.from_dict(dict_value)
 
@@ -39,11 +35,7 @@ class TestBaseEvent:
         assert event.token_count == 10
 
     def test_finish_prompt_event_from_dict(self):
-        dict_value = {
-            "type": "FinishPromptEvent",
-            "timestamp": 123.0,
-            "token_count": 10,
-        }
+        dict_value = {"type": "FinishPromptEvent", "timestamp": 123.0, "token_count": 10}
 
         event = BaseEvent.from_dict(dict_value)
 
@@ -83,8 +75,8 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_action_type": "baz",
             "subtask_action_name": "qux",
+            "subtask_action_path": "foopath",
             "subtask_action_input": {"value": "quux"},
         }
 
@@ -98,8 +90,8 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_action_type == "baz"
         assert event.subtask_action_name == "qux"
+        assert event.subtask_action_path == "foopath"
         assert event.subtask_action_input is not None
         assert event.subtask_action_input["value"] == "quux"
 
@@ -135,8 +127,8 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_action_type": "baz",
             "subtask_action_name": "qux",
+            "subtask_action_path": "foopath",
             "subtask_action_input": {"value": "quux"},
         }
 
@@ -150,8 +142,8 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_action_type == "baz"
         assert event.subtask_action_name == "qux"
+        assert event.subtask_action_path == "foopath"
         assert event.subtask_action_input is not None
         assert event.subtask_action_input["value"] == "quux"
 
@@ -172,11 +164,7 @@ class TestBaseEvent:
         assert event.timestamp == 123
 
     def test_completion_chunk_event_from_dict(self):
-        dict_value = {
-            "type": "CompletionChunkEvent",
-            "timestamp": 123.0,
-            "token": "foo",
-        }
+        dict_value = {"type": "CompletionChunkEvent", "timestamp": 123.0, "token": "foo"}
 
         event = BaseEvent.from_dict(dict_value)
 

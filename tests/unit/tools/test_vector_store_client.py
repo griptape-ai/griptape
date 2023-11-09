@@ -10,24 +10,16 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestVectorStoreClient:
     @pytest.fixture(autouse=True)
     def mock_try_runt(self, mocker):
-        mocker.patch(
-            "griptape.drivers.OpenAiChatPromptDriver.try_run",
-            return_value=TextArtifact("foobar"),
-        )
+        mocker.patch("griptape.drivers.OpenAiChatPromptDriver.try_run", return_value=TextArtifact("foobar"))
 
-        mocker.patch(
-            "griptape.drivers.OpenAiEmbeddingDriver.try_embed_chunk",
-            return_value=[0, 1],
-        )
+        mocker.patch("griptape.drivers.OpenAiEmbeddingDriver.try_embed_chunk", return_value=[0, 1])
 
     def test_search(self):
         tool = VectorStoreClient(
             description="Test",
             query_engine=VectorQueryEngine(
                 prompt_driver=MockPromptDriver(mock_output="foobar"),
-                vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=MockEmbeddingDriver()
-                ),
+                vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver()),
             ),
         )
 

@@ -12,19 +12,12 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(BaseTextInputTask):
-    prompt_driver: Optional[BasePromptDriver] = field(
-        default=None, kw_only=True
-    )
+    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
-        default=Factory(
-            lambda self: self.default_system_template_generator, takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
     )
 
-    output: Optional[TextArtifact | ErrorArtifact | InfoArtifact] = field(
-        default=None, init=False
-    )
+    output: Optional[TextArtifact | ErrorArtifact | InfoArtifact] = field(default=None, init=False)
 
     @property
     def prompt_stack(self) -> PromptStack:
@@ -46,9 +39,7 @@ class PromptTask(BaseTextInputTask):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(
-                rulesets=self.all_rulesets
-            )
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets)
         )
 
     def run(self) -> TextArtifact:

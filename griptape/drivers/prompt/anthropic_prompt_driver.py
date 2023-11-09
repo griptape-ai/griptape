@@ -1,8 +1,7 @@
 from typing import Iterator
-import anthropic
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
-from griptape.utils import PromptStack
+from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
 
@@ -19,19 +18,18 @@ class AnthropicPromptDriver(BasePromptDriver):
     api_key: str = field(kw_only=True)
     model: str = field(kw_only=True)
     tokenizer: AnthropicTokenizer = field(
-        default=Factory(
-            lambda self: AnthropicTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        response = anthropic.Anthropic(api_key=self.api_key).completions.create(
-            **self._base_params(prompt_stack)
-        )
+        anthropic = import_optional_dependency("anthropic")
+
+        response = anthropic.Anthropic(api_key=self.api_key).completions.create(**self._base_params(prompt_stack))
         return TextArtifact(value=response.completion)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        anthropic = import_optional_dependency("anthropic")
+
         response = anthropic.Anthropic(api_key=self.api_key).completions.create(
             **self._base_params(prompt_stack), stream=True
         )
@@ -39,9 +37,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         for chunk in response:
             yield TextArtifact(value=chunk.completion)
 
-    def default_prompt_stack_to_string_converter(
-        self, prompt_stack: PromptStack
-    ) -> str:
+    def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
         prompt_lines = []
 
         for i in prompt_stack.inputs:
