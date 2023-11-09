@@ -3,7 +3,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, TYPE_CHECKING, Callable, Type, Any, Tuple
+from typing import Optional, TYPE_CHECKING, Any
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.artifacts import TextArtifact, BlobArtifact
