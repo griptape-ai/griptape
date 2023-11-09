@@ -61,8 +61,8 @@ drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 
-drivers-sql-redshift = ["sqlalchemy", "sqlalchemy-redshift", "boto3"]
-drivers-sql-snowflake = ["sqlalchemy", "snowflake-sqlalchemy", "snowflake", "snowflake-connector-python"]
+drivers-sql-redshift = ["sqlalchemy-redshift", "boto3"]
+drivers-sql-snowflake = ["snowflake-sqlalchemy", "snowflake", "snowflake-connector-python"]
 drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
 
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
@@ -80,7 +80,6 @@ all = [
     "anthropic",
     "hugginface-hub",
     "transformers",
-    "sqlalchemy",
     "sqlalchemy-redshift",
     "boto3",
     "snowflake-sqlalchemy",
