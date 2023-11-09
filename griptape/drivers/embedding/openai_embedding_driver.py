@@ -16,6 +16,12 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
         organization: OpenAI organization. Defaults to 'OPENAI_ORGANIZATION' environment variable.
         tokenizer: Optionally provide custom `OpenAiTokenizer`.
+        client: Optionally provide custom `openai.OpenAI` client.
+        azure_deployment: An Azure OpenAi deployment id.
+        azure_endpoint: An Azure OpenAi endpoint.
+        azure_ad_token: An optional Azure Active Directory token.
+        azure_ad_token_provider: An optional Azure Active Directory token provider.
+        api_version: An Azure OpenAi API version.
     """
 
     DEFAULT_MODEL = "text-embedding-ada-002"
@@ -27,11 +33,10 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=None, kw_only=True)
     client: openai.OpenAI = field(
-        init=False,
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        ),
+        )
     )
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True

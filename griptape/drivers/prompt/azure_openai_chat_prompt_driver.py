@@ -2,7 +2,6 @@ from attr import define, field, Factory
 from typing import Optional
 from griptape.utils import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.tokenizers import OpenAiTokenizer
 import openai
 
 
@@ -10,11 +9,12 @@ import openai
 class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     """
     Attributes:
-        azure_deployment: Azure deployment id.
-        azure_endpoint: Azure endpoint.
-        azure_ad_token: Azure Active Directory token.
-        azure_ad_token_provider: Azure Active Directory token provider.
-        api_version: API version.
+        azure_deployment: An Azure OpenAi deployment id.
+        azure_endpoint: An Azure OpenAi endpoint.
+        azure_ad_token: An optional Azure Active Directory token.
+        azure_ad_token_provider: An optional Azure Active Directory token provider.
+        api_version: An Azure OpenAi API version.
+        client: An `openai.AzureOpenAI` client.
     """
 
     azure_deployment: str = field(kw_only=True)
@@ -35,9 +35,6 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
             ),
             takes_self=True,
         )
-    )
-    tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:

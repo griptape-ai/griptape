@@ -15,6 +15,7 @@ class OpenAiTokenizer(BaseTokenizer):
     DEFAULT_MAX_TOKENS = 2049
     TOKEN_OFFSET = 8
 
+    # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
     MODEL_PREFIXES_TO_MAX_TOKENS = {
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,

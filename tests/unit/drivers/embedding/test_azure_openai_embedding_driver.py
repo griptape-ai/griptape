@@ -19,7 +19,7 @@ class TestAzureOpenAiEmbeddingDriver:
 
     @pytest.fixture
     def driver(self):
-        return AzureOpenAiEmbeddingDriver(api_base="foobar", model="gpt-4", deployment_id="foobar")
+        return AzureOpenAiEmbeddingDriver(azure_endpoint="foobar", model="gpt-4", azure_deployment="foobar")
 
     def test_init(self, driver):
         assert driver

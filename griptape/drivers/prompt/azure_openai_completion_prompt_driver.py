@@ -6,6 +6,16 @@ import openai
 
 @define
 class AzureOpenAiCompletionPromptDriver(OpenAiCompletionPromptDriver):
+    """
+    Attributes:
+        azure_deployment: An Azure OpenAi deployment id.
+        azure_endpoint: An Azure OpenAi endpoint.
+        azure_ad_token: An optional Azure Active Directory token.
+        azure_ad_token_provider: An optional Azure Active Directory token provider.
+        api_version: An Azure OpenAi API version.
+        client: An `openai.AzureOpenAI` client.
+    """
+
     azure_deployment: str = field(kw_only=True)
     azure_endpoint: str = field(kw_only=True)
     azure_ad_token: Optional[str] = field(kw_only=True, default=None)

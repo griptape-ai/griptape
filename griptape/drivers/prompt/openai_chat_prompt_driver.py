@@ -15,17 +15,16 @@ from datetime import datetime, timedelta
 class OpenAiChatPromptDriver(BasePromptDriver):
     """
     Attributes:
-        base_url: API URL.
-        api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
-        max_tokens: Optional maximum return tokens. If not specified, no value will be passed to the API. If set, the
-            value will be bounded to the maximum possible as determined by the tokenizer.
-        model: OpenAI model name.
-        organization: OpenAI organization. Defaults to `OPENAI_ORG_ID` environment variable.
-        client: OpenAI client. Defaults to `openai.OpenAI`.
-        tokenizer: Custom `OpenAiTokenizer`.
-        user: OpenAI user.
-        response_format: Optional response format. Currently only supports `json_object` which will enable OpenAi's JSON mode.
-        seed: Optional seed.
+        base_url: An optional OpenAi API URL.
+        api_key: An optional OpenAi API key. If not provided, the `OPENAI_API_KEY` environment variable will be used.
+        organization: An optional OpenAI organization. If not provided, the `OPENAI_ORG_ID` environment variable will be used.
+        client: An `openai.OpenAI` client.
+        model: An OpenAI model name.
+        tokenizer: An `OpenAiTokenizer`.
+        user: An optional user id. Can be used to track requests by user.
+        response_format: An optional OpenAi Chat Completion response format. Currently only supports `json_object` which will enable OpenAi's JSON mode.
+        seed: An optional OpenAi Chat Completion seed.
+        ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
         _ratelimit_request_limit: The maximum number of requests allowed in the current rate limit window.
         _ratelimit_requests_remaining: The number of requests remaining in the current rate limit window.
         _ratelimit_requests_reset_at: The time at which the current rate limit window resets.
@@ -34,10 +33,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         _ratelimit_tokens_reset_at: The time at which the current rate limit window resets.
     """
 
-    base_url: str = field(default=None, kw_only=True)
+    base_url: Optional[str] = field(default=None, kw_only=True)
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=None, kw_only=True)
-    seed: Optional[int] = field(default=None, kw_only=True)
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
@@ -48,8 +46,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
-    user: str = field(default="", kw_only=True)
+    user: Optional[str] = field(default=None, kw_only=True)
     response_format: Optional[Literal["json_object"]] = field(default=None, kw_only=True)
+    seed: Optional[int] = field(default=None, kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
         default=Factory(
             lambda: (

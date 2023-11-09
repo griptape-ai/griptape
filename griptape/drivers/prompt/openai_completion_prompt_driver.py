@@ -12,17 +12,17 @@ import openai
 class OpenAiCompletionPromptDriver(BasePromptDriver):
     """
     Attributes:
-        base_url: API URL.
-        api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
-        max_tokens: Optional maximum return tokens. If not specified, the value will be automatically generated based by the tokenizer.
-        model: OpenAI model name. Uses `gpt-4` by default.
-        organization: OpenAI organization. Defaults to `OPENAI_ORG_ID` environment variable.
-        client: OpenAI client. Defaults to `openai.OpenAI`.
-        tokenizer: Custom `OpenAiTokenizer`.
-        user: OpenAI user.
+        base_url: An optional OpenAi API URL.
+        api_key: An optional OpenAi API key. If not provided, the `OPENAI_API_KEY` environment variable will be used.
+        organization: An optional OpenAI organization. If not provided, the `OPENAI_ORG_ID` environment variable will be used.
+        client: An `openai.OpenAI` client.
+        model: An OpenAI model name.
+        tokenizer: An `OpenAiTokenizer`.
+        user: An optional user id. Can be used to track requests by user.
+        ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
     """
 
-    base_url: str = field(default=None, kw_only=True)
+    base_url: Optional[str] = field(default=None, kw_only=True)
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=None, kw_only=True)
     client: openai.OpenAI = field(
@@ -35,7 +35,7 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
-    user: str = field(default="", kw_only=True)
+    user: Optional[str] = field(default=None, kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
         default=Factory(
             lambda: (
