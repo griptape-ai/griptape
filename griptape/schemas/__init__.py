@@ -9,6 +9,7 @@ from .artifacts.error_artifact_schema import ErrorArtifactSchema
 from .artifacts.blob_artifact_schema import BlobArtifactSchema
 from .artifacts.csv_row_artifact_schema import CsvRowArtifactSchema
 from .artifacts.list_artifact_schema import ListArtifactSchema
+from .artifacts.image_artifact_schema import ImageArtifactSchema
 
 from .memory.structure.run_schema import RunSchema
 from .memory.structure.conversation_memory_schema import ConversationMemorySchema
@@ -39,6 +40,7 @@ __all__ = [
     "BlobArtifactSchema",
     "CsvRowArtifactSchema",
     "ListArtifactSchema",
+    "ImageArtifactSchema",
     "RunSchema",
     "ConversationMemorySchema",
     "SummaryConversationMemorySchema",
