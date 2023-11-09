@@ -16,33 +16,38 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     Attributes:
         session: Boto3 session.
         region_name: AWS region name.
-        bedrock_client: Bedrock client.
+        client: Bedrock runtime client.
         model_id: Bedrock model ID.
+        image_width: Width of output images. Defaults to 512 and must be a multiple of 64.
+        image_height: Height of output images. Defaults to 512 and must be a multiple of 64.
         cfg_scale: Stable Diffusion cfg_scale parameter.
         seed: Stable Diffusion seed parameter.
         steps: Stable Diffusion steps parameter.
-        style_preset: Stable Diffusion style_preset parameter.
-        clip_guidance_preset: Stable Diffusion clip_guidance_preset parameter.
-        sampler: Stable Diffusion sampler parameter.
-        image_width: Stable Diffusion image_width parameter.
+        style_preset: Optional Stable Diffusion style preset name.
+        clip_guidance_preset: Optional Stable Diffusion clip guidance preset name.
+        sampler: Optional Stable Diffusion sampler name.
+
+    Details on Stable Diffusion image generation parameters can be found here:
+    https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage
     """
 
     session: boto3.Session = field(kw_only=True)
     region_name: str = field(kw_only=True)
-    bedrock_client: any = field(
+    client: any = field(
         default=Factory(
             lambda self: self.session.client(service_name="bedrock-runtime", region_name=self.region_name),
             takes_self=True,
         )
     )
     model_id: str = field(default="stability.stable-diffusion-xl", kw_only=True)
+    image_width: int = field(default=512, kw_only=True)
+    image_height: int = field(default=512, kw_only=True)
     cfg_scale: int = field(default=7, kw_only=True)
     seed: int = field(default=0, kw_only=True)
     steps: int = field(default=60, kw_only=True)
     style_preset: Optional[str] = field(default=None, kw_only=True)
     clip_guidance_preset: Optional[str] = field(default=None, kw_only=True)
     sampler: Optional[str] = field(default=None, kw_only=True)
-    image_width: int = field(default=512, kw_only=True)
 
     def generate_image(self, prompts: list[str], negative_prompts: list[str] = None, **kwargs) -> ImageArtifact:
         if negative_prompts is None:
@@ -60,7 +65,7 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
             "width": self.image_width,
         }
 
-        response = self.bedrock_client.invoke_model(
+        response = self.client.invoke_model(
             body=json.dumps(request), modelId=self.model_id, accept="application/json", contentType="application/json"
         )
 

@@ -18,6 +18,11 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         api_base: The base URL of the Leonardo API.
         max_attempts: The maximum number of times to poll the Leonardo API for a completed image.
         model_id: The ID of the model to use when generating images. If None, the default model will be used.
+        image_width: The width of the generated image in the range [32, 1024] and divisible by 8.
+        image_height: The height of the generated image in the range [32, 1024] and divisible by 8.
+
+    Details on Leonardo image generation parameters can be found here:
+    https://docs.leonardo.ai/reference/creategeneration
     """
 
     api_key: str = field(default=Factory(lambda: os.environ.get("LEONARDO_API_KEY")), kw_only=True)

@@ -12,8 +12,8 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for OpenAI DALLE image generation API.
 
     Attributes:
-        api_type: OpenAI API type. Defaults to 'davinci'.
-        api_version: API version. Defaults to '2020-12-15'.
+        api_type: OpenAI API type, for example 'open_ai' or 'azure'.
+        api_version: API version.
         api_base: API URL.
         api_key: OpenAI API key.
         organization: OpenAI organization ID.
