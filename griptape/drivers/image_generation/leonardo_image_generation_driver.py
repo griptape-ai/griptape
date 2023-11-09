@@ -10,7 +10,6 @@ from griptape.drivers import BaseImageGenerationDriver
 @define
 class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the Leonardo image generation API.
-    See https://docs.leonardo.ai/reference/creategeneration for more information.
 
     Attributes:
         api_key: The API key to use when making requests to the Leonardo API.

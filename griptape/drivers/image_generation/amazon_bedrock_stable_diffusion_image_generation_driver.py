@@ -1,12 +1,14 @@
+from __future__ import annotations
 import base64
 import json
-import random
-from typing import Optional
-
-import boto3
+from typing import Optional, TYPE_CHECKING, Any
 from attr import define, field, Factory
 from griptape.artifacts import ImageArtifact
+from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseImageGenerationDriver
+
+if TYPE_CHECKING:
+    import boto3
 
 
 @define
@@ -14,9 +16,8 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     """Driver for Stable Diffusion provided by Amazon Bedrock.
 
     Attributes:
-        session: Boto3 session.
-        region_name: AWS region name.
-        client: Bedrock runtime client.
+        session: boto3 session.
+        bedrock_client: Bedrock runtime client.
         model_id: Bedrock model ID.
         image_width: Width of output images. Defaults to 512 and must be a multiple of 64.
         image_height: Height of output images. Defaults to 512 and must be a multiple of 64.
@@ -31,13 +32,9 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage
     """
 
-    session: boto3.Session = field(kw_only=True)
-    region_name: str = field(kw_only=True)
-    client: any = field(
-        default=Factory(
-            lambda self: self.session.client(service_name="bedrock-runtime", region_name=self.region_name),
-            takes_self=True,
-        )
+    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
+    bedrock_client: Any = field(
+        default=Factory(lambda self: self.session.bedrock_client(service_name="bedrock-runtime"), takes_self=True)
     )
     model_id: str = field(default="stability.stable-diffusion-xl", kw_only=True)
     image_width: int = field(default=512, kw_only=True)
@@ -65,7 +62,7 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
             "width": self.image_width,
         }
 
-        response = self.client.invoke_model(
+        response = self.bedrock_client.invoke_model(
             body=json.dumps(request), modelId=self.model_id, accept="application/json", contentType="application/json"
         )
 

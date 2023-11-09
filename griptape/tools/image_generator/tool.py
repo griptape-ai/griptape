@@ -1,7 +1,7 @@
-from attrs import define, field, Factory
+from attrs import define, field
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, ImageArtifact
-from griptape.engines.image_generation.image_generation_engine import ImageGenerationEngine
+from griptape.engines import ImageGenerationEngine
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -32,9 +32,7 @@ class ImageGenerator(BaseTool):
         negative_prompts = params["values"]["negative_prompts"]
 
         try:
-            image = self.image_generation_engine.generate_image(prompts=prompts, negative_prompts=negative_prompts)
-
-            return image
+            return self.image_generation_engine.generate_image(prompts=prompts, negative_prompts=negative_prompts)
 
         except Exception as e:
             return ErrorArtifact(value=str(e))
