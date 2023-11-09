@@ -4177,7 +4177,7 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [extras]
-all = ["anthropic", "boto3", "cohere", "marqo", "opensearch-py", "pgvector", "pinecone-client", "psycopg2-binary", "pymongo", "redis", "requests-aws4auth", "snowflake-sqlalchemy", "sqlalchemy", "sqlalchemy-redshift", "transformers"]
+all = ["anthropic", "boto3", "cohere", "marqo", "opensearch-py", "pgvector", "pinecone-client", "psycopg2-binary", "pymongo", "redis", "requests-aws4auth", "snowflake-sqlalchemy", "sqlalchemy-redshift", "transformers"]
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
 drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
@@ -4185,8 +4185,8 @@ drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
-drivers-sql-redshift = ["boto3", "sqlalchemy", "sqlalchemy-redshift"]
-drivers-sql-snowflake = ["snowflake-sqlalchemy", "sqlalchemy"]
+drivers-sql-redshift = ["boto3", "sqlalchemy-redshift"]
+drivers-sql-snowflake = ["snowflake-sqlalchemy"]
 drivers-vector-amazon-opensearch = ["boto3", "opensearch-py", "requests-aws4auth"]
 drivers-vector-marqo = ["marqo"]
 drivers-vector-mongodb = ["pymongo"]
@@ -4198,4 +4198,4 @@ drivers-vector-redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.12"
-content-hash = "699692ce9664ab4cd658984657e0ac7e65dba9dbf8ed674618becb0f74ae0d97"
+content-hash = "2fb2daa829ba39a32e17a3b8ec62ea0fd1cc9aa685ee3692cc9218fa06cb51f3"
