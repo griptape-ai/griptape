@@ -1,18 +1,21 @@
-from attr import define, field, Factory
-from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageGenerationDriver, OpenAiDalleImageGenerationDriver
-from griptape.engines.image_generation.base_image_generation_engine import BaseImageGenerationEngine
-from griptape.engines.image_generation.openai_dalle_image_generation_engine import OpenAiDalleImageGenerationEngine
+from __future__ import annotations
+from attr import define, field
+from griptape.artifacts import ImageArtifact, ErrorArtifact
+from griptape.engines import ImageGenerationEngine
 from griptape.tasks import BaseTextInputTask
 
 
 @define
 class ImageGenerationTask(BaseTextInputTask):
-    image_generation_engine: BaseImageGenerationEngine = field(
-        default=Factory(lambda self: OpenAiDalleImageGenerationEngine()), kw_only=True
-    )
+    image_generation_engine: ImageGenerationEngine = field(kw_only=True)
 
-    def run(self) -> ImageArtifact:
-        images = self.image_generation_engine.generate_image(self.input.to_text())
+    def run(self) -> ImageArtifact | ErrorArtifact:
+        try:
+            image_artifact = self.image_generation_engine.generate_image(
+                prompts=[self.input.to_text()], negative_prompts=[]
+            )
 
-        return images
+            return image_artifact
+
+        except Exception as e:
+            return ErrorArtifact(str(e))
