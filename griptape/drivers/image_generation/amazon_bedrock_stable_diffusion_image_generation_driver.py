@@ -34,7 +34,7 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
 
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.bedrock_client(service_name="bedrock-runtime"), takes_self=True)
+        default=Factory(lambda self: self.session.client(service_name="bedrock-runtime"), takes_self=True)
     )
     model_id: str = field(default="stability.stable-diffusion-xl", kw_only=True)
     image_width: int = field(default=512, kw_only=True)
@@ -68,7 +68,7 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
 
         response_body = json.loads(response.get("body").read())
         image_response = response_body["artifacts"][0]
-        if image_response.get("finishReason") is not "SUCCESS":
+        if image_response.get("finishReason") != "SUCCESS":
             raise ValueError(f"Image generation failed: {image_response.get('finishReason')}")
 
         image_bytes = base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))
