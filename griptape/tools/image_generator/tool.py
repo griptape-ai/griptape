@@ -16,7 +16,8 @@ class ImageGenerator(BaseTool):
             "schema": Schema(
                 {
                     Literal(
-                        "prompts", description="A detailed list of features and descriptions of the generated image."
+                        "prompts",
+                        description="A detailed list of features and descriptions to include in the generated image.",
                     ): list[str],
                     Literal(
                         "negative_prompts",

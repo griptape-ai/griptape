@@ -11,6 +11,22 @@ from griptape.drivers import BaseImageGenerationDriver
 
 @define
 class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDriver):
+    """Driver for Stable Diffusion provided by Amazon Bedrock.
+
+    Attributes:
+        session: Boto3 session.
+        region_name: AWS region name.
+        bedrock_client: Bedrock client.
+        model_id: Bedrock model ID.
+        cfg_scale: Stable Diffusion cfg_scale parameter.
+        seed: Stable Diffusion seed parameter.
+        steps: Stable Diffusion steps parameter.
+        style_preset: Stable Diffusion style_preset parameter.
+        clip_guidance_preset: Stable Diffusion clip_guidance_preset parameter.
+        sampler: Stable Diffusion sampler parameter.
+        image_width: Stable Diffusion image_width parameter.
+    """
+
     session: boto3.Session = field(kw_only=True)
     region_name: str = field(kw_only=True)
     bedrock_client: any = field(
@@ -47,12 +63,12 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
         response = self.bedrock_client.invoke_model(
             body=json.dumps(request), modelId=self.model_id, accept="application/json", contentType="application/json"
         )
-        response_body = json.loads(response.get("body").read())
 
+        response_body = json.loads(response.get("body").read())
         image_response = response_body["artifacts"][0]
-        image_response.get("base64")
-        # image_response.get("finishReason")
-        # image_response.get("seed")
+        if image_response.get("finishReason") is not "SUCCESS":
+            raise ValueError(f"Image generation failed: {image_response.get('finishReason')}")
+
         image_bytes = base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))
 
         return ImageArtifact(

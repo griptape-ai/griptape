@@ -9,6 +9,18 @@ from griptape.drivers import BaseImageGenerationDriver
 
 @define
 class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
+    """Driver for OpenAI DALLE image generation API.
+
+    Attributes:
+        api_type: OpenAI API type. Defaults to 'davinci'.
+        api_version: API version. Defaults to '2020-12-15'.
+        api_base: API URL.
+        api_key: OpenAI API key.
+        organization: OpenAI organization ID.
+        requests_session: Optionally provide custom `requests.Session`.
+        image_size: Image size. Defaults to '512x512'.
+    """
+
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
     api_base: str = field(default=openai.api_base, kw_only=True)
