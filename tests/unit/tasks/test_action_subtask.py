@@ -1,6 +1,6 @@
 import json
 from griptape.tasks import ToolkitTask, ActionSubtask
-from griptape.structures import Pipeline
+from griptape.structures import Agent
 
 
 class TestActionSubtask:
@@ -13,7 +13,7 @@ class TestActionSubtask:
         )
 
         task = ToolkitTask(tools=[])
-        Pipeline().add_task(task)
+        Agent().add_task(task)
         subtask = task.add_subtask(ActionSubtask(valid_input))
         json_dict = json.loads(subtask.action_to_json())
 
@@ -30,7 +30,7 @@ class TestActionSubtask:
         )
 
         task = ToolkitTask(tools=[])
-        Pipeline().add_task(task)
+        Agent().add_task(task)
         subtask = task.add_subtask(ActionSubtask(valid_input))
         json_dict = json.loads(subtask.action_to_json())
 
