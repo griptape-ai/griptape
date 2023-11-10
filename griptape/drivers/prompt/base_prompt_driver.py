@@ -14,6 +14,19 @@ if TYPE_CHECKING:
 
 @define
 class BasePromptDriver(ExponentialBackoffMixin, ABC):
+    """Base class for Prompt Drivers.
+
+    Attributes:
+        temperature: The temperature to use for the completion.
+        max_tokens: The maximum number of tokens to generate. If not specified, the value will be automatically generated based by the tokenizer.
+        structure: An optional `Structure` to publish events to.
+        prompt_stack_to_string: A function that converts a `PromptStack` to a string.
+        ignored_exception_types: A tuple of exception types to ignore.
+        model: The model name.
+        tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
+        stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
+    """
+
     temperature: float = field(default=0.1, kw_only=True)
     max_tokens: Optional[int] = field(default=None, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
@@ -25,7 +38,7 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True)
 
-    def max_output_tokens(self, text: str) -> int:
+    def max_output_tokens(self, text: str | list) -> int:
         tokens_left = self.tokenizer.count_tokens_left(text)
 
         if self.max_tokens:

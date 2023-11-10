@@ -16,7 +16,7 @@ class PromptStack:
 
     @dataclass
     class Input:
-        content: str
+        content: str | list[dict]
         role: str
 
         def is_generic(self) -> bool:
