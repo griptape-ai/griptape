@@ -18,13 +18,9 @@ Action Descriptions:
 {% endif %}
 
 Actions might store their output in memory as artifacts (with `memory_name` and `artifact_namespace`). If action response is stored in memory, ALWAYS try to pass it to another action. NEVER make up memory names or artifact namespaces.
-{% if meta_memories|length > 0 %}
-
-You have access to the following extra information from related conversations. Use it when appropriate:
-{% for meta_memory in meta_memories %}
+{% if meta_memory %}
 
 {{ meta_memory }}
-{% endfor %}
 {% endif %}
 {% if rulesets %}
 

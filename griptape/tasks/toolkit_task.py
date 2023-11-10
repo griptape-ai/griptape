@@ -92,7 +92,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             action_schema=action_schema,
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions=[J2("tasks/partials/_action.j2").render(tool=tool) for tool in self.tools],
-            meta_memories=[J2("tasks/partials/_meta_memory.j2").render(memory=m) for m in meta_memories],
+            meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=meta_memories),
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
 
