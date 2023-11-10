@@ -53,11 +53,6 @@ class ToolMemory(ActivityMixin):
             if result:
                 return result
             else:
-                if subtask.structure.meta_memory:
-                    subtask.structure.meta_memory.add_entry(
-                        ActionSubtaskEntry.from_action_subtask(subtask)
-                    )
-
                 self.namespace_metadata[namespace] = subtask.action_to_json()
 
                 output = J2("memory/tool.j2").render(
@@ -66,6 +61,15 @@ class ToolMemory(ActivityMixin):
                     activity_name=activity_name,
                     artifact_namespace=namespace,
                 )
+
+                if subtask.structure.meta_memory:
+                    subtask.structure.meta_memory.add_entry(
+                        ActionSubtaskEntry(
+                            thought=subtask.thought,
+                            action=subtask.action_to_json(),
+                            answer=output
+                        )
+                    )
 
                 return InfoArtifact(output)
         else:

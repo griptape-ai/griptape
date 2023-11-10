@@ -84,16 +84,15 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        memories = [r for r in self.tool_output_memory if len(r.activities()) > 0]
-
         action_schema = utils.minify_json(json.dumps(ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")))
+        meta_memories = self.structure.meta_memory.entries if self.structure.meta_memory else []
 
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=action_schema,
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions=[J2("tasks/partials/_action.j2").render(tool=tool) for tool in self.tools],
-            memory_names=str.join(", ", [memory.name for memory in memories]),
+            meta_memories=[J2("tasks/partials/_meta_memory.j2").render(memory=m) for m in meta_memories],
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
 
