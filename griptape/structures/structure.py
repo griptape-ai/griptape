@@ -11,6 +11,7 @@ from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
+from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import ToolMemory
 from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
@@ -66,6 +67,7 @@ class Structure(ABC):
         ),
         kw_only=True,
     )
+    meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
