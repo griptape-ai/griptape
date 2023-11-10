@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field
 from griptape.tools import BaseTool
 from griptape.memory.structure import Run
@@ -14,13 +14,16 @@ if TYPE_CHECKING:
 class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
+    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if len(self.tasks) == 0:
             if self.tools:
-                task = ToolkitTask(self.input_template, tools=self.tools)
+                task = ToolkitTask(
+                    self.input_template, tools=self.tools, max_meta_memory_entries=self.max_meta_memory_entries
+                )
             else:
-                task = PromptTask(self.input_template)
+                task = PromptTask(self.input_template, max_meta_memory_entries=self.max_meta_memory_entries)
 
             self.add_task(task)
 
