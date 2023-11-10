@@ -7,7 +7,10 @@ from tests.utils import defaults
 class TestToolMemoryClient:
     @pytest.fixture
     def tool(self):
-        return ToolMemoryClient(input_memory=[defaults.text_tool_memory("TestMemory")])
+        return ToolMemoryClient(
+            off_prompt=True,
+            input_memory=[defaults.text_tool_memory("TestMemory")]
+        )
 
     def test_summarize(self, tool):
         tool.input_memory[0].store_artifact("foo", TextArtifact("test"))
