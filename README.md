@@ -36,7 +36,7 @@ pip install griptape[all] -U
 
 Second, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses two tools with shared short-term memory.
+With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses three tools and moves the data around in short-term memory.
 
 ```python
 from griptape.structures import Agent
@@ -47,7 +47,7 @@ agent = Agent(
     tools=[
         WebScraper(),
         FileManager(),
-        ToolMemoryClient()
+        ToolMemoryClient(off_prompt=True)
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
@@ -102,7 +102,10 @@ And here is the output:
 ```
 
 During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Tool Memory**, queried it to answer the original question, and finally saved the answer to a file.
-The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content never goes back to the main prompt.
+
+The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
+
+All tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `ToolMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other tools.
 
 [Check out our docs](https://docs.griptape.ai/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
