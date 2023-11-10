@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Type, Any, Callable
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
-from griptape.memory.meta.action_subtask_entry import ActionSubtaskEntry
+from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -64,7 +64,7 @@ class ToolMemory(ActivityMixin):
 
                 if subtask.structure.meta_memory:
                     subtask.structure.meta_memory.add_entry(
-                        ActionSubtaskEntry(
+                        ActionSubtaskMetaEntry(
                             thought=subtask.thought,
                             action=subtask.action_to_json(),
                             answer=output
