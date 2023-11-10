@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Type, Any, Callable
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
+from griptape.memory.meta.action_subtask_entry import ActionSubtaskEntry
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -52,6 +53,11 @@ class ToolMemory(ActivityMixin):
             if result:
                 return result
             else:
+                if subtask.structure.meta_memory:
+                    subtask.structure.meta_memory.add_entry(
+                        ActionSubtaskEntry.from_action_subtask(subtask)
+                    )
+
                 self.namespace_metadata[namespace] = subtask.action_to_json()
 
                 output = J2("memory/tool.j2").render(
