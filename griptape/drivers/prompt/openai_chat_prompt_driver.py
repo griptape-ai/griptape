@@ -21,7 +21,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         client: An `openai.OpenAI` client.
         model: An OpenAI model name.
         tokenizer: An `OpenAiTokenizer`.
-        user: An optional user id. Can be used to track requests by user.
+        user: A user id. Can be used to track requests by user.
         response_format: An optional OpenAi Chat Completion response format. Currently only supports `json_object` which will enable OpenAi's JSON mode.
         seed: An optional OpenAi Chat Completion seed.
         ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
@@ -46,7 +46,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
-    user: Optional[str] = field(default=None, kw_only=True)
+    user: str = field(default="", kw_only=True)
     response_format: Optional[Literal["json_object"]] = field(default=None, kw_only=True)
     seed: Optional[int] = field(default=None, kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
