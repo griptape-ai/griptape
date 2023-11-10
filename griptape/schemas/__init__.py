@@ -10,9 +10,9 @@ from .artifacts.blob_artifact_schema import BlobArtifactSchema
 from .artifacts.csv_row_artifact_schema import CsvRowArtifactSchema
 from .artifacts.list_artifact_schema import ListArtifactSchema
 
-from .memory.run_schema import RunSchema
-from .memory.conversation_memory_schema import ConversationMemorySchema
-from .memory.summary_conversation_memory_schema import SummaryConversationMemorySchema
+from .memory.conversation.run_schema import RunSchema
+from .memory.conversation.conversation_memory_schema import ConversationMemorySchema
+from .memory.conversation.summary_conversation_memory_schema import SummaryConversationMemorySchema
 
 from .events.base_event_schema import BaseEventSchema
 from .events.base_task_event_schema import BaseTaskEventSchema
