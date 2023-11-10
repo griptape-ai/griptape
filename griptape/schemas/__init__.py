@@ -14,6 +14,8 @@ from .memory.structure.run_schema import RunSchema
 from .memory.structure.conversation_memory_schema import ConversationMemorySchema
 from .memory.structure.summary_conversation_memory_schema import SummaryConversationMemorySchema
 
+from .memory.meta.action_subtask_meta_entry_schema import ActionSubtaskMetaEntrySchema
+
 from .events.base_event_schema import BaseEventSchema
 from .events.base_task_event_schema import BaseTaskEventSchema
 from .events.base_action_subtask_event_schema import BaseActionSubtaskEventSchema
@@ -40,6 +42,7 @@ __all__ = [
     "RunSchema",
     "ConversationMemorySchema",
     "SummaryConversationMemorySchema",
+    "ActionSubtaskMetaEntrySchema",
     "BaseEventSchema",
     "BaseTaskEventSchema",
     "BaseActionSubtaskEventSchema",

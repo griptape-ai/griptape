@@ -10,8 +10,6 @@ class ActionSubtaskMetaEntry(BaseMetaEntry):
     answer: str = field(kw_only=True)
 
     def to_dict(self) -> dict:
-        return {
-            "thought": self.thought,
-            "action": self.action,
-            "answer": self.answer
-        }
+        from griptape.schemas import ActionSubtaskMetaEntrySchema
+
+        return dict(ActionSubtaskMetaEntrySchema().dump(self))
