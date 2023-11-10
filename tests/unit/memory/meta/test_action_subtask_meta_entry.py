@@ -8,9 +8,4 @@ class TestActionSubtaskMetaEntry:
         return ActionSubtaskMetaEntry(thought="foo", action="bar", answer="baz")
 
     def test_to_dict(self, entry):
-        assert entry.to_dict() == {
-            "thought": "foo",
-            "action": "bar",
-            "answer": "baz"
-        }
-
+        assert entry.to_dict() == {"thought": "foo", "action": "bar", "answer": "baz"}

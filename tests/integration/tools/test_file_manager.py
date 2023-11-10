@@ -14,7 +14,9 @@ class TestFileManager:
         from griptape.structures import Agent
         from griptape.tools import FileManager
 
-        return Agent(tools=[FileManager()], conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET])
+        return Agent(
+            tools=[FileManager()], conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
+        )
 
     def test_save_content_to_disk(self, agent):
         result = run_structure(agent, 'Write the content "Hello World!" to a file called "poem.txt".')

@@ -46,10 +46,11 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
-    conversation_memory: Optional[ConversationMemory] = field(default=Factory(lambda: ConversationMemory()), kw_only=True)
+    conversation_memory: Optional[ConversationMemory] = field(
+        default=Factory(lambda: ConversationMemory()), kw_only=True
+    )
     tool_memory: Optional[ToolMemory] = field(
-        default=Factory(lambda self: self.default_tool_memory(), takes_self=True),
-        kw_only=True,
+        default=Factory(lambda self: self.default_tool_memory(), takes_self=True), kw_only=True
     )
     meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     _execution_args: tuple = ()

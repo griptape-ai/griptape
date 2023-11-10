@@ -12,11 +12,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture
     def task(self):
-        agent = Agent(
-            prompt_driver=MockPromptDriver(),
-            embedding_driver=MockEmbeddingDriver(),
-            tools=[MockTool()]
-        )
+        agent = Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tools=[MockTool()])
 
         agent.add_task(MockTask("foobar", max_meta_memory_entries=2))
 

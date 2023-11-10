@@ -14,7 +14,9 @@ class TestCalculator:
         from griptape.structures import Agent
         from griptape.tools import Calculator
 
-        return Agent(tools=[Calculator()], conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET])
+        return Agent(
+            tools=[Calculator()], conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
+        )
 
     def test_calculate(self, agent):
         result = run_structure(agent, "What is 7 times 3 divided by 5 plus 10.")

@@ -46,7 +46,7 @@ class BaseTask(ABC):
     def meta_memories(self) -> list[BaseMetaMemory]:
         if self.structure.meta_memory:
             if self.max_meta_memory_entries:
-                return self.structure.meta_memory.entries[:self.max_meta_memory_entries]
+                return self.structure.meta_memory.entries[: self.max_meta_memory_entries]
             else:
                 return self.structure.meta_memory.entries
         else:
