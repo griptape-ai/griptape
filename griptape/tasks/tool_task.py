@@ -1,13 +1,16 @@
+from __future__ import annotations
 import json
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from attr import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact
-from griptape.memory import ToolMemory
 from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
 from griptape.mixins import ActionSubtaskOriginMixin
+
+if TYPE_CHECKING:
+    from griptape.memory import ToolMemory
 
 
 @define

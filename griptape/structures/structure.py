@@ -46,25 +46,9 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
-    memory: Optional[ConversationMemory] = field(default=None, kw_only=True)
+    conversation_memory: Optional[ConversationMemory] = field(default=Factory(lambda: ConversationMemory()), kw_only=True)
     tool_memory: Optional[ToolMemory] = field(
-        default=Factory(
-            lambda self: ToolMemory(
-                artifact_storages={
-                    TextArtifact: TextArtifactStorage(
-                        query_engine=VectorQueryEngine(
-                            prompt_driver=self.prompt_driver,
-                            vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.embedding_driver),
-                        ),
-                        summary_engine=PromptSummaryEngine(prompt_driver=self.prompt_driver),
-                        csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.prompt_driver),
-                        json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
-                    ),
-                    BlobArtifact: BlobArtifactStorage(),
-                }
-            ),
-            takes_self=True,
-        ),
+        default=Factory(lambda self: self.default_tool_memory(), takes_self=True),
         kw_only=True,
     )
     meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
@@ -88,8 +72,8 @@ class Structure(ABC):
             raise ValueError("can't have both rules and rulesets specified")
 
     def __attrs_post_init__(self) -> None:
-        if self.memory:
-            self.memory.structure = self
+        if self.conversation_memory:
+            self.conversation_memory.structure = self
 
         tasks = self.tasks.copy()
         self.tasks.clear()
@@ -185,6 +169,22 @@ class Structure(ABC):
         self.after_run()
 
         return result
+
+    def default_tool_memory(self) -> ToolMemory:
+        return ToolMemory(
+            artifact_storages={
+                TextArtifact: TextArtifactStorage(
+                    query_engine=VectorQueryEngine(
+                        prompt_driver=self.prompt_driver,
+                        vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.embedding_driver),
+                    ),
+                    summary_engine=PromptSummaryEngine(prompt_driver=self.prompt_driver),
+                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.prompt_driver),
+                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
+                ),
+                BlobArtifact: BlobArtifactStorage(),
+            }
+        )
 
     @abstractmethod
     def try_run(self, *args) -> Structure:
