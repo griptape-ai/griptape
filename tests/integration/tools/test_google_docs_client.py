@@ -32,7 +32,7 @@ class TestGoogleDocsClient:
                     owner_email=os.environ["GOOGLE_OWNER_EMAIL"],
                 )
             ],
-            memory=None,
+            conversation_memory=None,
             prompt_driver=request.param,
             rulesets=[OUTPUT_RULESET],
         )

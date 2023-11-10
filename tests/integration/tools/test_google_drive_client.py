@@ -33,7 +33,7 @@ class TestGoogleDriveClient:
                 )
             ],
             prompt_driver=request.param,
-            memory=None,
+            conversation_memory=None,
             rulesets=[OUTPUT_RULESET],
         )
 

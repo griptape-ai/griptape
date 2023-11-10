@@ -23,7 +23,7 @@ class TestToolkitTask:
                 ),
                 WebScraper(),
             ],
-            memory=None,
+            conversation_memory=None,
             prompt_driver=request.param,
             rulesets=[OUTPUT_RULESET],
         )

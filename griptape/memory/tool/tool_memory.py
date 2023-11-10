@@ -62,7 +62,7 @@ class ToolMemory(ActivityMixin):
                     artifact_namespace=namespace,
                 )
 
-                if subtask.structure.meta_memory:
+                if subtask.structure and subtask.structure.meta_memory:
                     subtask.structure.meta_memory.add_entry(
                         ActionSubtaskMetaEntry(
                             thought=subtask.thought,
