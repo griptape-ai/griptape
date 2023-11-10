@@ -18,7 +18,7 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
         client: An `openai.OpenAI` client.
         model: An OpenAI model name.
         tokenizer: An `OpenAiTokenizer`.
-        user: An optional user id. Can be used to track requests by user.
+        user: A user id. Can be used to track requests by user.
         ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
     """
 
@@ -35,7 +35,7 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
-    user: Optional[str] = field(default=None, kw_only=True)
+    user: str = field(default="", kw_only=True)
     ignored_exception_types: Tuple[Type[Exception], ...] = field(
         default=Factory(
             lambda: (
