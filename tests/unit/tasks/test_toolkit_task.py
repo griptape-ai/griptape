@@ -1,9 +1,10 @@
 import pytest
-from griptape.artifacts import ErrorArtifact
+from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ActionSubtask
+from griptape.utils import PromptStack
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -161,3 +162,20 @@ class TestToolkitSubtask:
         assert task.tool_output_memory[0].name == "Memory1"
         assert task.tool_output_memory[1].name == "Memory2"
         assert task.tool_output_memory[2].name == "Memory3"
+
+    def test_meta_memory(self):
+        memory = defaults.text_tool_memory("TestMemory")
+        subtask = ActionSubtask()
+        agent = Agent(tool_memory=memory)
+
+        subtask.structure = agent
+
+        memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+
+        task = ToolkitTask(tools=[MockTool()])
+
+        agent.add_task(task)
+
+        system_template = task.generate_system_template(PromptStack())
+
+        assert "You have access to additional contextual information" in system_template

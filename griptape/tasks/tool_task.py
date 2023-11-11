@@ -24,6 +24,7 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         return J2("tasks/tool_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=action_schema,
+            meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             action=J2("tasks/partials/_action.j2").render(tool=self.tool),
         )
 
