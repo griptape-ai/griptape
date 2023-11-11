@@ -13,6 +13,7 @@ class ActionSubtaskMetaEntry(BaseMetaEntry):
         action: ReAct action JSON string from the LLM.
         answer: tool-generated and memory-processed response from Griptape.
     """
+
     thought: str = field(kw_only=True)
     action: str = field(kw_only=True)
     answer: str = field(kw_only=True)
