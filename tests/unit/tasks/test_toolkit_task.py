@@ -132,8 +132,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_memory(self, query_engine):
-        m1 = defaults.text_tool_memory("Memory1")
-        m2 = defaults.text_tool_memory("Memory2")
+        m1 = defaults.text_task_memory("Memory1")
+        m2 = defaults.text_task_memory("Memory2")
 
         tool = MockTool(name="Tool1", output_memory={"test": [m1, m2]})
         task = ToolkitTask("test", tools=[tool])
@@ -146,12 +146,12 @@ class TestToolkitSubtask:
     def test_memory(self, query_engine):
         tool1 = MockTool(
             name="Tool1",
-            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory2")]},
+            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},
         )
 
         tool2 = MockTool(
             name="Tool2",
-            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory3")]},
+            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory3")]},
         )
 
         task = ToolkitTask(tools=[tool1, tool2])
@@ -164,9 +164,9 @@ class TestToolkitSubtask:
         assert task.tool_output_memory[2].name == "Memory3"
 
     def test_meta_memory(self):
-        memory = defaults.text_tool_memory("TestMemory")
+        memory = defaults.text_task_memory("TestMemory")
         subtask = ActionSubtask()
-        agent = Agent(tool_memory=memory)
+        agent = Agent(task_memory=memory)
 
         subtask.structure = agent
 

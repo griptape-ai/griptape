@@ -13,7 +13,7 @@ from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.memory import ToolMemory
+    from griptape.memory import TaskMemory
     from griptape.tasks import ActionSubtask
 
 
@@ -23,8 +23,8 @@ class BaseTool(ActivityMixin, ABC):
 
     Attributes:
         name: Tool name.
-        input_memory: ToolMemory available in tool activities. Gets automatically set if None.
-        output_memory: ToolMemory that activities write to be default. Gets automatically set if None.
+        input_memory: TaskMemory available in tool activities. Gets automatically set if None.
+        output_memory: TaskMemory that activities write to be default. Gets automatically set if None.
         install_dependencies_on_init: Determines whether dependencies from the tool requirements.txt file are installed in init.
         dependencies_install_directory: Custom dependency install directory.
         verbose: Determines whether tool operations (such as dependency installation) should be verbose.
@@ -35,8 +35,8 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    input_memory: Optional[list[ToolMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[dict[str, list[ToolMemory]]] = field(default=None, kw_only=True)
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
+    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
@@ -47,7 +47,7 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator
-    def validate_output_memory(self, _, output_memory: Optional[dict[str, list[ToolMemory]]]) -> None:
+    def validate_output_memory(self, _, output_memory: Optional[dict[str, list[TaskMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
@@ -156,7 +156,7 @@ class BaseTool(ActivityMixin, ABC):
             stderr=None if self.verbose else subprocess.DEVNULL,
         )
 
-    def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
+    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if self.input_memory:
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:

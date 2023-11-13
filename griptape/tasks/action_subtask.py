@@ -15,7 +15,7 @@ from griptape.artifacts import BaseArtifact
 from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
 
 if TYPE_CHECKING:
-    from griptape.memory import ToolMemory
+    from griptape.memory import TaskMemory
     from griptape.tools import BaseTool
 
 
@@ -40,7 +40,7 @@ class ActionSubtask(PromptTask):
     action_input: Optional[dict] = field(default=None, kw_only=True)
 
     _tool: Optional[BaseTool] = None
-    _memory: Optional[ToolMemory] = None
+    _memory: Optional[TaskMemory] = None
 
     @property
     def input(self) -> TextArtifact:

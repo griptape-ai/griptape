@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolMemory(ActivityMixin):
+class TaskMemory(ActivityMixin):
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     artifact_storages: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
@@ -107,7 +107,7 @@ class ToolMemory(ActivityMixin):
         else:
             return ListArtifact()
 
-    def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
+    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if memory_name == self.name:
             return self
         else:
