@@ -7,10 +7,11 @@ if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
     from griptape.processors.base_processors import BasePromptStackProcessor
 
+
 @define
 class PromptStack:
     """A class representing a stack of prompts for a conversation."""
-    
+
     GENERIC_ROLE = "generic"
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
@@ -19,6 +20,7 @@ class PromptStack:
     @dataclass
     class Input:
         """A class representing an input item in the prompt stack."""
+
         content: str
         role: str
 
@@ -35,7 +37,9 @@ class PromptStack:
             return self.role == PromptStack.ASSISTANT_ROLE
 
     inputs: list[Input] = field(factory=list, kw_only=True)
-    prompt_stack_processors: list[BasePromptStackProcessor] = field(factory=list, kw_only=True)
+    prompt_stack_processors: list[BasePromptStackProcessor] = field(
+        factory=list, kw_only=True
+    )
 
     def before_run(self) -> None:
         """Run before_run method in all prompt stack processors."""

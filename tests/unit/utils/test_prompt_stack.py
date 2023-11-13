@@ -6,6 +6,7 @@ from griptape.structures.agent import Agent
 from griptape.memory.structure import ConversationMemory, Run
 from griptape.processors.base_processors import BasePromptStackProcessor
 
+
 class MockProcessor(BasePromptStackProcessor):
     def before_run(self, prompt_stack):
         for input_item in prompt_stack.inputs:
@@ -16,6 +17,7 @@ class MockProcessor(BasePromptStackProcessor):
         for input_item in prompt_stack.inputs:
             input_item.content = f"Unmocked: {input_item.content}"
         return prompt_stack
+
 
 class TestPromptStack:
     @pytest.fixture

@@ -1,5 +1,6 @@
 from .base_processors import BasePromptStackProcessor
 
+
 class PromptDriverPiiProcessor(BasePromptStackProcessor):
     def __init__(self, prompt_driver, mask_pii_func, unmask_pii_func):
         self.prompt_driver = prompt_driver
