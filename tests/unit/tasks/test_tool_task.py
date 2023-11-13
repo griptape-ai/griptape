@@ -15,12 +15,19 @@ class TestToolTask:
         output_dict = {"name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
         return Agent(prompt_driver=MockPromptDriver(mock_output=json.dumps(output_dict)))
 
-    def test_run(self, agent):
-        task = ToolTask(tool=MockTool())
+    def test_run_without_memory(self, agent):
+        task = ToolTask(tool=MockTool(off_prompt=False))
 
         agent.add_task(task)
 
         assert task.run().to_text() == "ack foobar"
+
+    def test_run_with_memory(self, agent):
+        task = ToolTask(tool=MockTool())
+
+        agent.add_task(task)
+
+        assert task.run().to_text().startswith('Output of "MockTool.test" was stored in memory')
 
     def test_meta_memory(self):
         memory = defaults.text_tool_memory("TestMemory")
