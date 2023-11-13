@@ -11,12 +11,25 @@ from griptape.mixins import ActionSubtaskOriginMixin
 
 if TYPE_CHECKING:
     from griptape.memory import ToolMemory
+    from griptape.structures import Structure
 
 
 @define
 class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
+    tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
+
+    def __attrs_post_init__(self) -> None:
+        self.set_default_tools_memory(self.tool_memory)
+
+    def preprocess(self, structure: Structure) -> ToolTask:
+        super().preprocess(structure)
+
+        if self.tool_memory is None:
+            self.set_default_tools_memory(structure.tool_memory)
+
+        return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         action_schema = utils.minify_json(json.dumps(ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")))
@@ -29,9 +42,9 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         )
 
     def run(self) -> TextArtifact:
-        output = self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
+        prompt_output = self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
 
-        subtask = self.add_subtask(ActionSubtask(f"Action: {output}"))
+        subtask = self.add_subtask(ActionSubtask(f"Action: {prompt_output}"))
 
         subtask.before_run()
         subtask.run()
@@ -61,3 +74,12 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         self.subtask.attach_to(self)
 
         return self.subtask
+
+    def set_default_tools_memory(self, memory: ToolMemory) -> None:
+        self.tool_memory = memory
+
+        if self.tool_memory:
+            if self.tool.input_memory is None:
+                self.tool.input_memory = [self.tool_memory]
+            if self.tool.output_memory is None and self.tool.off_prompt:
+                self.tool.output_memory = {a.name: [self.tool_memory] for a in self.tool.activities()}
