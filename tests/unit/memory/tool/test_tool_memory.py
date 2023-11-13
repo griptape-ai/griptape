@@ -3,6 +3,7 @@ from griptape.artifacts import CsvRowArtifact, BlobArtifact, ErrorArtifact, Info
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.memory import ToolMemory
 from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.structures import Agent
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
@@ -44,11 +45,20 @@ class TestToolMemory:
         artifact = TextArtifact("foo")
         subtask = ActionSubtask()
 
-        assert (
-            memory.process_output(MockTool().test, subtask, artifact)
-            .to_text()
-            .startswith('Output of "MockTool.test" was stored in memory')
+        subtask.structure = Agent()
+
+        output = memory.process_output(MockTool().test, subtask, artifact)
+
+        entries = subtask.structure.meta_memory.entries
+
+        assert len(entries) == 1
+        assert entries[0].action == "{}"
+        assert entries[0].answer.startswith(
+            'Output of "MockTool.test" was stored in memory with memory_name "MyMemory"'
         )
+        assert entries[0].thought is None
+
+        assert output.to_text().startswith('Output of "MockTool.test" was stored in memory')
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
     def test_process_output_with_many_artifacts(self, memory):

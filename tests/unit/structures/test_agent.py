@@ -22,7 +22,7 @@ class TestAgent:
         assert isinstance(agent.task, PromptTask)
         assert agent.rulesets[0].name == "TestRuleset"
         assert agent.rulesets[0].rules[0].value == "test"
-        assert isinstance(agent.memory, ConversationMemory)
+        assert isinstance(agent.conversation_memory, ConversationMemory)
         assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
 
     def test_rulesets(self):
@@ -86,16 +86,16 @@ class TestAgent:
         assert agent.tools[0].output_memory is None
 
     def test_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
-        assert agent.memory is not None
-        assert len(agent.memory.runs) == 0
+        assert agent.conversation_memory is not None
+        assert len(agent.conversation_memory.runs) == 0
 
         agent.run()
         agent.run()
         agent.run()
 
-        assert len(agent.memory.runs) == 3
+        assert len(agent.conversation_memory.runs) == 3
 
     def test_tasks_initialization(self):
         with pytest.raises(ValueError):
@@ -151,7 +151,7 @@ class TestAgent:
             assert True
 
     def test_prompt_stack_without_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=None)
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None)
 
         task1 = PromptTask("test")
 
@@ -168,7 +168,7 @@ class TestAgent:
         assert len(task1.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         task1 = PromptTask("test")
 

@@ -11,7 +11,7 @@ class TestSummaryConversationMemory:
     def test_unsummarized_subtasks(self):
         memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
 
-        pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
 
         pipeline.add_tasks(PromptTask("test"))
 
@@ -25,7 +25,7 @@ class TestSummaryConversationMemory:
     def test_after_run(self):
         memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
 
-        pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
 
         pipeline.add_tasks(PromptTask("test"))
 

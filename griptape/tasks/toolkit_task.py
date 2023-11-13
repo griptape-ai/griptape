@@ -56,7 +56,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     @property
     def prompt_stack(self) -> PromptStack:
         stack = PromptStack()
-        memory = self.structure.memory
+        memory = self.structure.conversation_memory
 
         stack.add_system_input(self.generate_system_template(self))
 
@@ -84,8 +84,6 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        memories = [r for r in self.tool_output_memory if len(r.activities()) > 0]
-
         action_schema = utils.minify_json(json.dumps(ActionSubtask.ACTION_SCHEMA.json_schema("ActionSchema")))
 
         return J2("tasks/toolkit_task/system.j2").render(
@@ -93,7 +91,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             action_schema=action_schema,
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions=[J2("tasks/partials/_action.j2").render(tool=tool) for tool in self.tools],
-            memory_names=str.join(", ", [memory.name for memory in memories]),
+            meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
 

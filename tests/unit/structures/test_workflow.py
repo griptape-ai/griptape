@@ -106,18 +106,18 @@ class TestWorkflow:
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
 
-        workflow = Workflow(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        workflow = Workflow(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         workflow + [first_task, second_task, third_task]
 
-        assert workflow.memory is not None
-        assert len(workflow.memory.runs) == 0
+        assert workflow.conversation_memory is not None
+        assert len(workflow.conversation_memory.runs) == 0
 
         workflow.run()
         workflow.run()
         workflow.run()
 
-        assert len(workflow.memory.runs) == 3
+        assert len(workflow.conversation_memory.runs) == 3
 
     def test_tasks_initialization(self):
         first_task = PromptTask(id="test1")

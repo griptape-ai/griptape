@@ -10,6 +10,7 @@ from griptape.artifacts import ErrorArtifact
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
     from griptape.structures import Structure
+    from griptape.memory.meta import BaseMetaMemory
 
 
 @define
@@ -23,6 +24,7 @@ class BaseTask(ABC):
     state: State = field(default=State.PENDING, kw_only=True)
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
+    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
@@ -39,6 +41,16 @@ class BaseTask(ABC):
     @property
     def children(self) -> list[BaseTask]:
         return [self.structure.find_task(child_id) for child_id in self.child_ids]
+
+    @property
+    def meta_memories(self) -> list[BaseMetaMemory]:
+        if self.structure and self.structure.meta_memory:
+            if self.max_meta_memory_entries:
+                return self.structure.meta_memory.entries[: self.max_meta_memory_entries]
+            else:
+                return self.structure.meta_memory.entries
+        else:
+            return []
 
     def __str__(self) -> str:
         return str(self.output.value)

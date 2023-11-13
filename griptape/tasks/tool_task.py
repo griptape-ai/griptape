@@ -1,13 +1,16 @@
+from __future__ import annotations
 import json
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from attr import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact
-from griptape.memory import ToolMemory
 from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
 from griptape.mixins import ActionSubtaskOriginMixin
+
+if TYPE_CHECKING:
+    from griptape.memory import ToolMemory
 
 
 @define
@@ -21,6 +24,7 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         return J2("tasks/tool_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=action_schema,
+            meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             action=J2("tasks/partials/_action.j2").render(tool=self.tool),
         )
 
