@@ -10,7 +10,7 @@ from griptape.utils import J2
 from griptape.mixins import ActionSubtaskOriginMixin
 
 if TYPE_CHECKING:
-    from griptape.memory import ToolMemory
+    from griptape.memory import TaskMemory
     from griptape.structures import Structure
 
 
@@ -18,16 +18,16 @@ if TYPE_CHECKING:
 class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
-    tool_memory: Optional[ToolMemory] = field(default=None, kw_only=True)
+    task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
-        self.set_default_tools_memory(self.tool_memory)
+        self.set_default_tools_memory(self.task_memory)
 
     def preprocess(self, structure: Structure) -> ToolTask:
         super().preprocess(structure)
 
-        if self.tool_memory is None:
-            self.set_default_tools_memory(structure.tool_memory)
+        if self.task_memory is None:
+            self.set_default_tools_memory(structure.task_memory)
 
         return self
 
@@ -63,7 +63,7 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         else:
             return None
 
-    def find_memory(self, memory_name: str) -> Optional[ToolMemory]:
+    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
         return None
 
     def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
@@ -75,11 +75,11 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
 
         return self.subtask
 
-    def set_default_tools_memory(self, memory: ToolMemory) -> None:
-        self.tool_memory = memory
+    def set_default_tools_memory(self, memory: TaskMemory) -> None:
+        self.task_memory = memory
 
-        if self.tool_memory:
+        if self.task_memory:
             if self.tool.input_memory is None:
-                self.tool.input_memory = [self.tool_memory]
+                self.tool.input_memory = [self.task_memory]
             if self.tool.output_memory is None and self.tool.off_prompt:
-                self.tool.output_memory = {a.name: [self.tool_memory] for a in self.tool.activities()}
+                self.tool.output_memory = {a.name: [self.task_memory] for a in self.tool.activities()}

@@ -13,7 +13,7 @@ from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
-from griptape.memory import ToolMemory
+from griptape.memory import TaskMemory
 from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
@@ -49,8 +49,8 @@ class Structure(ABC):
     conversation_memory: Optional[ConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()), kw_only=True
     )
-    tool_memory: Optional[ToolMemory] = field(
-        default=Factory(lambda self: self.default_tool_memory, takes_self=True), kw_only=True
+    task_memory: Optional[TaskMemory] = field(
+        default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
     )
     meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     _execution_args: tuple = ()
@@ -115,8 +115,8 @@ class Structure(ABC):
         return [s for s in self.tasks if s.is_finished()]
 
     @property
-    def default_tool_memory(self) -> ToolMemory:
-        return ToolMemory(
+    def default_task_memory(self) -> TaskMemory:
+        return TaskMemory(
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     query_engine=VectorQueryEngine(

@@ -25,8 +25,8 @@ class TestBaseTask:
 
         assert len(task.meta_memories) == 0
 
-        task.structure.tool_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
-        task.structure.tool_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
-        task.structure.tool_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        task.structure.task_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        task.structure.task_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        task.structure.task_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
 
         assert len(task.meta_memories) == 2

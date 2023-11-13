@@ -33,9 +33,9 @@ class TestToolTask:
         assert task.run().to_text().startswith('Output of "MockTool.test" was stored in memory')
 
     def test_meta_memory(self):
-        memory = defaults.text_tool_memory("TestMemory")
+        memory = defaults.text_task_memory("TestMemory")
         subtask = ActionSubtask()
-        agent = Agent(tool_memory=memory)
+        agent = Agent(task_memory=memory)
 
         subtask.structure = agent
 

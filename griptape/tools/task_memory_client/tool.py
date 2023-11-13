@@ -7,7 +7,7 @@ from griptape.utils.decorators import activity
 
 
 @define
-class ToolMemoryClient(BaseTool):
+class TaskMemoryClient(BaseTool):
     off_prompt: bool = field(kw_only=True)
 
     @activity(

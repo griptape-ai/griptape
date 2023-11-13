@@ -64,17 +64,17 @@ class TestPipeline:
             pipeline = Pipeline()
             pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_tool_memory(self):
+    def test_with_default_task_memory(self):
         pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(pipeline.tasks[0], ToolkitTask)
-        assert pipeline.tasks[0].tool_memory == pipeline.tool_memory
+        assert pipeline.tasks[0].task_memory == pipeline.task_memory
         assert pipeline.tasks[0].tools[0].input_memory is not None
-        assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
+        assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.task_memory
         assert pipeline.tasks[0].tools[0].output_memory is not None
-        assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
+        assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.task_memory
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
@@ -82,13 +82,13 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        storage = list(pipeline.tool_memory.artifact_storages.values())[0]
+        storage = list(pipeline.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
         memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
-    def test_with_default_tool_memory_and_empty_tool_output_memory(self):
+    def test_with_default_task_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
@@ -96,8 +96,8 @@ class TestPipeline:
         assert isinstance(pipeline.tasks[0], ToolkitTask)
         assert pipeline.tasks[0].tools[0].output_memory == {}
 
-    def test_without_default_tool_memory(self):
-        pipeline = Pipeline(tool_memory=None)
+    def test_without_default_task_memory(self):
+        pipeline = Pipeline(task_memory=None)
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
