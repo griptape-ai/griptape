@@ -4,12 +4,23 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 from griptape.structures.agent import Agent
 from griptape.memory.structure import ConversationMemory, Run
+from griptape.processors.base_processors import BasePromptStackProcessor
 
+class MockProcessor(BasePromptStackProcessor):
+    def before_run(self, prompt_stack):
+        for input_item in prompt_stack.inputs:
+            input_item.content = f"Mocked: {input_item.content}"
+        return prompt_stack
+
+    def after_run(self, prompt_stack):
+        for input_item in prompt_stack.inputs:
+            input_item.content = f"Unmocked: {input_item.content}"
+        return prompt_stack
 
 class TestPromptStack:
     @pytest.fixture
     def prompt_stack(self):
-        return PromptStack()
+        return PromptStack(prompt_stack_processors=[MockProcessor()])
 
     def test_init(self):
         assert PromptStack()
@@ -57,7 +68,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack()
+        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
         prompt_stack.add_user_input("foo")
         prompt_stack.add_assistant_input("bar")
         prompt_stack.add_conversation_memory(memory)
@@ -82,7 +93,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack()
+        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
         prompt_stack.add_system_input("fizz")
         prompt_stack.add_user_input("foo")
         prompt_stack.add_assistant_input("bar")
@@ -107,7 +118,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack()
+        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
         prompt_stack.add_system_input("fizz")
         prompt_stack.add_user_input("foo")
         prompt_stack.add_assistant_input("bar")
@@ -135,7 +146,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack()
+        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
         # And then another 6 tokens from fizz for a total of 161 tokens.
         prompt_stack.add_system_input("fizz")
         prompt_stack.add_user_input("foo")
