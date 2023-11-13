@@ -5,8 +5,7 @@ from griptape.memory.meta import BaseMetaEntry
 
 @define
 class ActionSubtaskMetaEntry(BaseMetaEntry):
-    """
-    Used to store ActionSubtask data to preserve ToolMemory pointers and context in the form of thought and action.
+    """Used to store ActionSubtask data to preserve ToolMemory pointers and context in the form of thought and action.
 
     Attributes:
         thought: CoT thought string from the LLM.
