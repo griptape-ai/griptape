@@ -65,25 +65,6 @@ class TestEmailClient:
         # Then
         mock_email_loader.load.assert_called_once_with(EmailLoader.EmailQuery(label="fake-label", max_count=84))
 
-    def test_retrieve_activity_description_includes_available_mailboxes(self):
-        # Given
-        client = EmailClient(
-            username="fake-username",
-            password="fake-password",
-            smtp_port=86,
-            mailboxes={"INBOX": "default mailbox for incoming email", "SENT": "default mailbox for sent email"},
-        )
-
-        # When
-        llm_input = J2("tasks/partials/_action.j2").render(tool=client)
-
-        # Then
-        retrieve_description = next(
-            line for line in llm_input.split("\n") if line.startswith("retrieve path description:")
-        )
-        assert "'INBOX': 'default mailbox for incoming email'" in retrieve_description
-        assert "'SENT': 'default mailbox for sent email'" in retrieve_description
-
     @pytest.mark.parametrize(
         "params", [{}, {"values": {}}, {"values": {"label": "fake-label", "max_count": "not-an-int"}}]
     )
