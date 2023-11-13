@@ -50,7 +50,7 @@ class Structure(ABC):
         default=Factory(lambda: ConversationMemory()), kw_only=True
     )
     tool_memory: Optional[ToolMemory] = field(
-        default=Factory(lambda self: self.default_tool_memory(), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_tool_memory, takes_self=True), kw_only=True
     )
     meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     _execution_args: tuple = ()
@@ -114,6 +114,23 @@ class Structure(ABC):
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
 
+    @property
+    def default_tool_memory(self) -> ToolMemory:
+        return ToolMemory(
+            artifact_storages={
+                TextArtifact: TextArtifactStorage(
+                    query_engine=VectorQueryEngine(
+                        prompt_driver=self.prompt_driver,
+                        vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.embedding_driver),
+                    ),
+                    summary_engine=PromptSummaryEngine(prompt_driver=self.prompt_driver),
+                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.prompt_driver),
+                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
+                ),
+                BlobArtifact: BlobArtifactStorage(),
+            }
+        )
+
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)
 
@@ -170,22 +187,6 @@ class Structure(ABC):
         self.after_run()
 
         return result
-
-    def default_tool_memory(self) -> ToolMemory:
-        return ToolMemory(
-            artifact_storages={
-                TextArtifact: TextArtifactStorage(
-                    query_engine=VectorQueryEngine(
-                        prompt_driver=self.prompt_driver,
-                        vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.embedding_driver),
-                    ),
-                    summary_engine=PromptSummaryEngine(prompt_driver=self.prompt_driver),
-                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.prompt_driver),
-                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
-                ),
-                BlobArtifact: BlobArtifactStorage(),
-            }
-        )
 
     @abstractmethod
     def try_run(self, *args) -> Structure:
