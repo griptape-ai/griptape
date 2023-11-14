@@ -1,4 +1,7 @@
 import pytest
+from dataclasses import dataclass, field
+from typing import List, Any
+from unittest.mock import Mock
 from griptape.utils import PromptStack
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
@@ -7,25 +10,24 @@ from griptape.memory.structure import ConversationMemory, Run
 from griptape.processors.base_processors import BasePromptStackProcessor
 
 
-class MockProcessor(BasePromptStackProcessor):
-    def before_run(self, prompt_stack):
-        for input_item in prompt_stack.inputs:
-            input_item.content = f"Mocked: {input_item.content}"
-        return prompt_stack
+class MockPromptStackProcessor(BasePromptStackProcessor):
+    def before_run(self, prompt: str) -> None:
+        pass
 
-    def after_run(self, prompt_stack):
-        for input_item in prompt_stack.inputs:
-            input_item.content = f"Unmocked: {input_item.content}"
-        return prompt_stack
+    def after_run(self, result: Any) -> Any:
+        return result
 
 
 class TestPromptStack:
     @pytest.fixture
     def prompt_stack(self):
-        return PromptStack(prompt_stack_processors=[MockProcessor()])
+        processor = MockPromptStackProcessor()
+        processor.before_run = Mock()
+        processor.after_run = Mock()
+        return PromptStack(prompt_stack_processors=[processor])
 
     def test_init(self):
-        assert PromptStack()
+        assert PromptStack(prompt_stack_processors=[MockPromptStackProcessor()])
 
     def test_add_input(self, prompt_stack):
         prompt_stack.add_input("foo", "role")
@@ -57,6 +59,14 @@ class TestPromptStack:
         assert prompt_stack.inputs[0].role == "assistant"
         assert prompt_stack.inputs[0].content == "foo"
 
+    def test_before_run(self, prompt_stack):
+        prompt_stack.before_run("test prompt")
+        assert prompt_stack.prompt_stack_processors[0].before_run.called
+
+    def test_after_run(self, prompt_stack):
+        prompt_stack.after_run("test result")
+        assert prompt_stack.prompt_stack_processors[0].after_run.called
+
     def test_add_conversation_memory_autopruing_disabled(self):
         agent = Agent(prompt_driver=MockPromptDriver())
         memory = ConversationMemory(
@@ -70,7 +80,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
+        prompt_stack = PromptStack()
         prompt_stack.add_user_input("foo")
         prompt_stack.add_assistant_input("bar")
         prompt_stack.add_conversation_memory(memory)
@@ -95,7 +105,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
+        prompt_stack = PromptStack()
         prompt_stack.add_system_input("fizz")
         prompt_stack.add_user_input("foo")
         prompt_stack.add_assistant_input("bar")
@@ -120,7 +130,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
+        prompt_stack = PromptStack()
         prompt_stack.add_system_input("fizz")
         prompt_stack.add_user_input("foo")
         prompt_stack.add_assistant_input("bar")
@@ -148,7 +158,7 @@ class TestPromptStack:
             ],
         )
         memory.structure = agent
-        prompt_stack = PromptStack(prompt_stack_processors=[MockProcessor()])
+        prompt_stack = PromptStack()
         # And then another 6 tokens from fizz for a total of 161 tokens.
         prompt_stack.add_system_input("fizz")
         prompt_stack.add_user_input("foo")

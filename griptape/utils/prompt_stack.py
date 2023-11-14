@@ -1,13 +1,13 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from dataclasses import dataclass
-from attr import define, field
+from typing import Optional, TYPE_CHECKING, Any, List
+from dataclasses import dataclass, field
+from griptape.processors.base_processors import BasePromptStackProcessor
 
 if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
 
 
-@define
+@dataclass
 class PromptStack:
     """Manages a stack of prompts for a conversation."""
 
@@ -15,6 +15,10 @@ class PromptStack:
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
+
+    prompt_stack_processors: List[BasePromptStackProcessor] = field(
+        default_factory=list
+    )
 
     @dataclass
     class Input:
@@ -35,7 +39,16 @@ class PromptStack:
         def is_assistant(self) -> bool:
             return self.role == PromptStack.ASSISTANT_ROLE
 
-    inputs: list[Input] = field(factory=list, kw_only=True)
+    inputs: list[Input] = field(default_factory=list)
+
+    def before_run(self, prompt: str) -> None:
+        for processor in self.prompt_stack_processors:
+            processor.before_run(prompt)
+
+    def after_run(self, result: Any) -> Any:
+        for processor in self.prompt_stack_processors:
+            result = processor.after_run(result)
+        return result
 
     def add_input(self, content: str, role: str) -> Input:
         self.inputs.append(self.Input(content=content, role=role))
