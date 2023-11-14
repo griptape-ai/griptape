@@ -5,12 +5,11 @@ from attr import define, field
 
 if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
-    from griptape.processors.base_processors import BasePromptStackProcessor
 
 
 @define
 class PromptStack:
-    """A class representing a stack of prompts for a conversation."""
+    """Manages a stack of prompts for a conversation."""
 
     GENERIC_ROLE = "generic"
     USER_ROLE = "user"
@@ -19,7 +18,7 @@ class PromptStack:
 
     @dataclass
     class Input:
-        """A class representing an input item in the prompt stack."""
+        """Represents an input item in the prompt stack."""
 
         content: str
         role: str
@@ -37,39 +36,22 @@ class PromptStack:
             return self.role == PromptStack.ASSISTANT_ROLE
 
     inputs: list[Input] = field(factory=list, kw_only=True)
-    prompt_stack_processors: list[BasePromptStackProcessor] = field(
-        factory=list, kw_only=True
-    )
-
-    def before_run(self) -> None:
-        """Run before_run method in all prompt stack processors."""
-        for processor in self.prompt_stack_processors:
-            processor.before_run(self)
-
-    def after_run(self) -> None:
-        """Run after_run method in all prompt stack processors."""
-        for processor in self.prompt_stack_processors:
-            processor.after_run(self)
 
     def add_input(self, content: str, role: str) -> Input:
-        """Add an input item to the prompt stack."""
         self.inputs.append(self.Input(content=content, role=role))
+
         return self.inputs[-1]
 
     def add_generic_input(self, content: str) -> Input:
-        """Add a generic input item to the prompt stack."""
         return self.add_input(content, self.GENERIC_ROLE)
 
     def add_system_input(self, content: str) -> Input:
-        """Add a system input item to the prompt stack."""
         return self.add_input(content, self.SYSTEM_ROLE)
 
     def add_user_input(self, content: str) -> Input:
-        """Add a user input item to the prompt stack."""
         return self.add_input(content, self.USER_ROLE)
 
     def add_assistant_input(self, content: str) -> Input:
-        """Add an assistant input item to the prompt stack."""
         return self.add_input(content, self.ASSISTANT_ROLE)
 
     def add_conversation_memory(
