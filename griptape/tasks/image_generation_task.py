@@ -15,7 +15,7 @@ class ImageGenerationTask(BaseTextInputTask):
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 
     @negative_rulesets.validator
-    def validate_rulesets(self, _, negative_rulesets: list[Ruleset]) -> None:
+    def validate_negative_rulesets(self, _, negative_rulesets: list[Ruleset]) -> None:
         if not negative_rulesets:
             return
 
