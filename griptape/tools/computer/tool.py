@@ -9,6 +9,7 @@ from attr import define, field, Factory
 from schema import Schema, Literal
 import stringcase
 import docker
+from docker.errors import NotFound
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
@@ -16,7 +17,6 @@ from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
     from docker import DockerClient
-    from docker.errors import NotFound
 
 
 @define
