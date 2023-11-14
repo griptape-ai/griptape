@@ -10,11 +10,14 @@ class ImageGenerationEngine:
     def generate_image(
         self,
         prompts: list[str],
-        negative_prompts: list[str] = list,
-        rulesets: list[Ruleset] = list,
-        negative_rulesets: list[Ruleset] = list,
+        negative_prompts: list[str] = None,
+        rulesets: list[Ruleset] = None,
+        negative_rulesets: list[Ruleset] = None,
         **kwargs
     ):
+        if not negative_prompts:
+            negative_prompts = []
+
         for ruleset in rulesets:
             prompts += [rule.value for rule in ruleset.rules]
 
