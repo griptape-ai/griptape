@@ -1,6 +1,6 @@
 import base64
 import openai
-from typing import Optional
+from typing import Optional, Literal, Union, get_args
 from attr import field, Factory, define
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
@@ -19,12 +19,11 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
         organization: OpenAI organization ID.
         style: Optional and only supported for dall-e-3, can be either 'vivid' or 'natural'.
         quality: Optional and only supported for dall-e-3. Accepts 'standard', 'hd'.
-        image_width: The width of the generated image.
-        image_height: The height of the generated image.
-
-    Image dimensions must be one of the following, depending on the requested model:
-    dall-e-2: [256x256, 512x512, 1024x1024]
-    dall-e-3: [1024x1024, 1024x1792, 1792x1024]
+        image_size: Size of the generated image. Must be one of the following, depending on the requested model:
+            dall-e-2: [256x256, 512x512, 1024x1024]
+            dall-e-3: [1024x1024, 1024x1792, 1792x1024]
+        response_format: The response format. Currently only supports 'b64_json' which will return
+            a base64 encoded image in a JSON object.
     """
 
     api_type: str = field(default=openai.api_type, kw_only=True)
@@ -39,9 +38,11 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
         )
     )
     style: Optional[str] = field(default=None, kw_only=True)
-    quality: Optional[str] = field(default=None, kw_only=True)
-    image_width: int = field(default=512, kw_only=True)
-    image_height: int = field(default=512, kw_only=True)
+    quality: Union[Literal["standard"], Literal["hd"]] = field(default=Literal["standard"], kw_only=True)
+    image_size: Union[
+        Literal["256x256"], Literal["512x512"], Literal["1024x1024"], Literal["1024x1792"], Literal["1792x1024"]
+    ] = field(default=Literal["512x512"], kw_only=True)
+    response_format: Literal["b64_json"] = field(default=Literal["b64_json"], kw_only=True)
 
     def generate_image(self, prompts: list[str], **kwargs) -> ImageArtifact:
         prompt = ", ".join(prompts)
@@ -49,20 +50,25 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
         response = self.client.images.generate(
             model=self.model,
             prompt=prompt,
-            size=f"{self.image_width}x{self.image_height}",
-            response_format="b64_json",
+            size=self.image_size,
+            response_format=self.response_format,
             n=1,
             style=self.style,
             quality=self.quality,
         )
 
         image_data = base64.b64decode(response.data[0].b64_json)
+        image_dimensions = self._image_size_to_ints(get_args(self.image_size)[0])
 
         return ImageArtifact(
             value=image_data,
             mime_type="image/png",
-            width=self.image_width,
-            height=self.image_height,
+            width=image_dimensions[0],
+            height=image_dimensions[1],
             model=self.model,
             prompt=prompt,
         )
+
+    @staticmethod
+    def _image_size_to_ints(image_size: str) -> [int]:
+        return [int(x) for x in image_size.split("x")]
