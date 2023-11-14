@@ -5,8 +5,8 @@ from griptape.drivers import OpenSearchVectorStoreDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    import boto3
-    from opensearchpy import OpenSearch, RequestsHttpConnection
+    from boto3 import Session
+    from opensearchpy import OpenSearch
 
 
 @define
@@ -19,7 +19,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
         client: An optional OpenSearch client to use. Defaults to a new client using the host, port, http_auth, use_ssl, and verify_certs attributes.
     """
 
-    session: boto3.Session = field(kw_only=True)
+    session: Session = field(kw_only=True)
 
     http_auth: Optional[str | Tuple[str, str]] = field(
         default=Factory(
@@ -40,7 +40,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,
                 verify_certs=self.verify_certs,
-                connection_class=RequestsHttpConnection,
+                connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
         )
