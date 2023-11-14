@@ -1,14 +1,14 @@
 import uuid
-from typing import Optional
+from typing import Optional, Any
 from attr import define, field, Factory
 from dataclasses import dataclass
 from griptape.drivers import BaseVectorStoreDriver
+from griptape.utils import import_optional_dependency
 from sqlalchemy.engine import Engine
 from sqlalchemy import create_engine, Column, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session
-from pgvector.sqlalchemy import Vector
 
 
 @define
@@ -26,16 +26,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     create_engine_params: dict = field(factory=dict, kw_only=True)
     engine: Optional[Engine] = field(default=None, kw_only=True)
     table_name: str = field(kw_only=True)
-    _model: any = field(
-        default=Factory(
-            lambda self: self.default_vector_model(), takes_self=True
-        )
-    )
+    _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
     @connection_string.validator
-    def validate_connection_string(
-        self, _, connection_string: Optional[str]
-    ) -> None:
+    def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
             return
@@ -45,9 +39,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("An engine or connection string is required")
 
         if not connection_string.startswith("postgresql://"):
-            raise ValueError(
-                "The connection string must describe a Postgres database connection"
-            )
+            raise ValueError("The connection string must describe a Postgres database connection")
 
     @engine.validator
     def validate_engine(self, _, engine: Optional[Engine]) -> None:
@@ -64,15 +56,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
-            self.engine = create_engine(
-                self.connection_string, **self.create_engine_params
-            )
+            self.engine = create_engine(self.connection_string, **self.create_engine_params)
 
     def setup(
-        self,
-        create_schema: bool = True,
-        install_uuid_extension: bool = True,
-        install_vector_extension: bool = True,
+        self, create_schema: bool = True, install_uuid_extension: bool = True, install_vector_extension: bool = True
     ) -> None:
         """Provides a mechanism to initialize the database schema and extensions."""
         if install_uuid_extension:
@@ -90,36 +77,27 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         """Inserts or updates a vector in the collection."""
         with Session(self.engine) as session:
-            obj = self._model(
-                id=vector_id, vector=vector, namespace=namespace, meta=meta
-            )
+            obj = self._model(id=vector_id, vector=vector, namespace=namespace, meta=meta)
 
             obj = session.merge(obj)
             session.commit()
 
             return str(obj.id)
 
-    def load_entry(
-        self, vector_id: str, namespace: Optional[str] = None
-    ) -> BaseVectorStoreDriver.Entry:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
         with Session(self.engine) as session:
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
-                id=result.id,
-                vector=result.vector,
-                namespace=result.namespace,
-                meta=result.meta,
+                id=result.id, vector=result.vector, namespace=result.namespace, meta=result.meta
             )
 
-    def load_entries(
-        self, namespace: Optional[str] = None
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from the collection, optionally filtering to only
         those that match the provided namespace.
         """
@@ -132,10 +110,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return [
                 BaseVectorStoreDriver.Entry(
-                    id=str(result.id),
-                    vector=result.vector,
-                    namespace=result.namespace,
-                    meta=result.meta,
+                    id=str(result.id), vector=result.vector, namespace=result.namespace, meta=result.meta
                 )
                 for result in results
             ]
@@ -147,7 +122,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         distance_metric: str = "cosine_distance",
-        **kwargs
+        **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a search on the collection to find vectors similar to the provided input vector,
         optionally filtering to only those that match the provided namespace.
@@ -167,9 +142,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
-            query = session.query(
-                self._model, op(vector).label("score")
-            ).order_by(op(vector))
+            query = session.query(self._model, op(vector).label("score")).order_by(op(vector))
 
             if namespace:
                 query = query.filter_by(namespace=namespace)
@@ -187,20 +160,15 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 for result in results
             ]
 
-    def default_vector_model(self) -> any:
+    def default_vector_model(self) -> Any:
+        Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
         Base = declarative_base()
 
         @dataclass
         class VectorModel(Base):
             __tablename__ = self.table_name
 
-            id = Column(
-                UUID(as_uuid=True),
-                primary_key=True,
-                default=uuid.uuid4,
-                unique=True,
-                nullable=False,
-            )
+            id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
             vector = Column(Vector())
             namespace = Column(String)
             meta = Column(JSON)

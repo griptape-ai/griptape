@@ -6,7 +6,7 @@ from tests.utils.aws import mock_aws_credentials
 from griptape.memory.structure import ConversationMemory
 from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
-from griptape.drivers import DynamoDbConversationMemoryDriver
+from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
 
 
 class TestDynamoDbConversationMemoryDriver:
@@ -25,18 +25,8 @@ class TestDynamoDbConversationMemoryDriver:
         dynamodb = boto3.Session(region_name=self.AWS_REGION).client("dynamodb")
         dynamodb.create_table(
             TableName=self.DYNAMODB_TABLE_NAME,
-            KeySchema=[
-                {
-                    "AttributeName": self.DYNAMODB_PARTITION_KEY,
-                    "KeyType": "HASH",
-                }
-            ],
-            AttributeDefinitions=[
-                {
-                    "AttributeName": self.DYNAMODB_PARTITION_KEY,
-                    "AttributeType": "S",
-                }
-            ],
+            KeySchema=[{"AttributeName": self.DYNAMODB_PARTITION_KEY, "KeyType": "HASH"}],
+            AttributeDefinitions=[{"AttributeName": self.DYNAMODB_PARTITION_KEY, "AttributeType": "S"}],
             BillingMode="PAY_PER_REQUEST",
         )
 
@@ -50,7 +40,7 @@ class TestDynamoDbConversationMemoryDriver:
         dynamodb = session.resource("dynamodb")
         table = dynamodb.Table(self.DYNAMODB_TABLE_NAME)
         prompt_driver = MockPromptDriver()
-        memory_driver = DynamoDbConversationMemoryDriver(
+        memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=session,
             table_name=self.DYNAMODB_TABLE_NAME,
             partition_key=self.DYNAMODB_PARTITION_KEY,
@@ -58,25 +48,21 @@ class TestDynamoDbConversationMemoryDriver:
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
+        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
-        response = table.get_item(
-            TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"}
-        )
+        response = table.get_item(TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"})
         assert "Item" not in response
 
         pipeline.run()
 
-        response = table.get_item(
-            TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"}
-        )
+        response = table.get_item(TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"})
         assert "Item" in response
 
     def test_load(self):
         prompt_driver = MockPromptDriver()
-        memory_driver = DynamoDbConversationMemoryDriver(
+        memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=boto3.Session(region_name=self.AWS_REGION),
             table_name=self.DYNAMODB_TABLE_NAME,
             partition_key=self.DYNAMODB_PARTITION_KEY,
@@ -84,7 +70,7 @@ class TestDynamoDbConversationMemoryDriver:
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
+        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 

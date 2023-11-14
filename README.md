@@ -31,32 +31,81 @@ Please check out [Griptape Trade School](https://learn.griptape.ai/) for free on
 First, install **griptape**:
 
 ```
-pip install griptape -U
+pip install griptape[all] -U
 ```
 
-Second, configure an OpenAI client by [getting an API key](https://beta.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts.
+Second, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses two tools with shared short-term memory.
+With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses three tools and moves the data around in short-term memory.
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper
+from griptape.tools import WebScraper, FileManager, TaskMemoryClient
 
 agent = Agent(
-    tools=[WebScraper()]
+    input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
+    tools=[
+        WebScraper(),
+        FileManager(),
+        TaskMemoryClient(off_prompt=True)
+    ]
 )
-
-agent.run(
-    "based on https://www.griptape.ai/, tell me what Griptape is"
-)
+agent.run("https://griptape.ai", "griptape.txt")
 ```
 
 And here is the output:
+```
+[11/02/23 15:28:24] INFO     ToolkitTask 72b89a905be84245a0563b206795ac73       
+                             Input: Load https://griptape.ai, summarize it, and 
+                             store it in a file called griptape.txt.            
+[11/02/23 15:28:37] INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
+                             Thought: First, I need to use the WebScraper action to
+                             load the content of the webpage.                   
+                                                                                
+                             Action: {"name": "WebScraper", "path":            
+                             "get_content", "input": {"values": {"url":         
+                             "https://griptape.ai"}}}                           
+                    INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
+                             Response: Output of "WebScraper.get_content" was   
+                             stored in memory with memory_name "TaskMemory" and 
+                             artifact_namespace                                 
+                             "c497d83c1d134db694b9994596016320"                 
+[11/02/23 15:28:50] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
+                             Thought: Now that the webpage content is stored in 
+                             memory, I need to use the TaskMemoryClient action  
+                             to summarize the content.                          
+                             Action: {"name": "TaskMemoryClient", "path":   
+                             "summarize", "input": {"values": {"memory_name":   
+                             "TaskMemory", "artifact_namespace":                
+                             "c497d83c1d134db694b9994596016320"}}}              
+[11/02/23 15:29:06] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
+                             Response: Output of "TaskMemoryClient.summarize"
+                             was stored in memory with memory_name "TaskMemory" 
+                             and artifact_namespace                             
+                             "77584322d33d40e992da9767d02a9018"                 
+[11/02/23 15:29:25] INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
+                             Thought: Now that the summary is stored in memory, 
+                             I need to use the FileManager action to save the      
+                             summary to a file named griptape.txt.              
+                             Action: {"name": "FileManager", "path":           
+                             "save_memory_artifacts_to_disk", "input":          
+                             {"values": {"dir_name": ".", "file_name":          
+                             "griptape.txt", "memory_name": "TaskMemory",       
+                             "artifact_namespace":                              
+                             "77584322d33d40e992da9767d02a9018"}}}              
+                    INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
+                             Response: saved successfully                       
+[11/02/23 15:29:30] INFO     ToolkitTask 72b89a905be84245a0563b206795ac73       
+                             Output: The summary of the webpage                 
+                             https://griptape.ai has been successfully stored in
+                             a file named griptape.txt.
+```
 
-> Q: based on https://www.griptape.ai/, tell me what Griptape is  
-> A: Griptape is an opinionated Python framework that enables developers to fully harness the potential of LLMs while enforcing strict trust boundaries, schema validation, and activity-level permissions. It offers developers the ability to build AI systems that operate across two dimensions: predictability and creativity. Griptape can be used to create conversational and autonomous agents.
+During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Tool Memory**, queried it to answer the original question, and finally saved the answer to a file.
 
-During the run, the Griptape agent loaded a webpage with a **tool**, stored its full content in the **short-term memory**, and finally queried it to answer the original question. The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content never goes back to the main prompt.
+The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
+
+All tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `TaskMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other tools.
 
 [Check out our docs](https://docs.griptape.ai/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
@@ -66,7 +115,39 @@ Griptape is in constant development and its APIs and documentation are subject t
 
 ## Contributing
 
-Contributions in the form of bug reports, feature ideas, or pull requests are super welcome! Take a look at the current issues and if you'd like to help please submit a pull request with some tests.
+Thank you for considering contributing to Griptape! Before you start, please read the following guidelines.
+
+### Submitting Issues
+
+If you have identified a bug, want to propose a new feature, or have a question, please submit an issue through our public [issue tracker](https://github.com/griptape-ai/griptape/issues). Before submitting a new issue, please check the existing issues to ensure it hasn't been reported or discussed before.
+
+### Submitting Pull Requests
+
+We welcome and encourage pull requests. To streamline the process, please follow these guidelines:
+
+1. **Existing Issues:** Please submit pull requests only for existing issues. If you want to work on new functionality or fix a bug that hasn't been addressed yet, please first submit an issue. This allows the Griptape team to internally process the request and provide a public response.
+
+2. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
+
+3. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
+
+4. **Documentation:** Every pull request must include a corresponding pull request in the [docs repository](https://github.com/griptape-ai/griptape-docs) or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
+
+5. **Code Style:** Griptape uses [Black](https://github.com/ambv/black) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
+
+### Tools
+
+Install dev dependencies with Poetry:
+
+```shell
+poetry install --with dev
+```
+
+Configure pre-commit to ensure that your code is formatted correctly and passes all checks:
+
+```shell
+poetry run pre-commit install
+```
 
 ## License
 

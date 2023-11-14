@@ -6,9 +6,7 @@ from tests.utils.postgres import can_connect_to_postgres
 from sqlalchemy import create_engine
 
 
-@pytest.mark.skipif(
-    not can_connect_to_postgres(), reason="Postgres is not present"
-)
+@pytest.mark.skipif(not can_connect_to_postgres(), reason="Postgres is not present")
 class TestPgVectorVectorStoreDriver:
     connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
     table_name = "griptape_vectors"
@@ -22,39 +20,27 @@ class TestPgVectorVectorStoreDriver:
     @pytest.fixture
     def vector_store_driver(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
-            connection_string=self.connection_string,
-            embedding_driver=embedding_driver,
-            table_name=self.table_name,
+            connection_string=self.connection_string, embedding_driver=embedding_driver, table_name=self.table_name
         )
 
         driver.setup()
 
         return driver
 
-    def test_initialize_requires_engine_or_connection_string(
-        self, embedding_driver
-    ):
+    def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
-            driver = PgVectorVectorStoreDriver(
-                embedding_driver=embedding_driver, table_name=self.table_name
-            )
+            driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, table_name=self.table_name)
             driver.setup()
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine = create_engine(self.connection_string)
-        driver = PgVectorVectorStoreDriver(
-            embedding_driver=embedding_driver,
-            engine=engine,
-            table_name=self.table_name,
-        )
+        driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, engine=engine, table_name=self.table_name)
 
         driver.setup()
 
     def test_initialize_accepts_connection_string(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=embedding_driver,
-            connection_string=self.connection_string,
-            table_name=self.table_name,
+            embedding_driver=embedding_driver, connection_string=self.connection_string, table_name=self.table_name
         )
 
         driver.setup()
@@ -67,23 +53,17 @@ class TestPgVectorVectorStoreDriver:
     def test_can_insert_vector_with_id(self, vector_store_driver):
         vector_id = str(uuid.uuid4())
 
-        result = vector_store_driver.upsert_vector(
-            self.vec1, vector_id=vector_id
-        )
+        result = vector_store_driver.upsert_vector(self.vec1, vector_id=vector_id)
 
         assert result == vector_id
 
     def test_can_update_vector_by_id(self, vector_store_driver):
         vector_id = str(uuid.uuid4())
 
-        result = vector_store_driver.upsert_vector(
-            self.vec1, vector_id=vector_id
-        )
+        result = vector_store_driver.upsert_vector(self.vec1, vector_id=vector_id)
         assert result == vector_id
 
-        result = vector_store_driver.upsert_vector(
-            self.vec2, vector_id=vector_id
-        )
+        result = vector_store_driver.upsert_vector(self.vec2, vector_id=vector_id)
         assert result == vector_id
 
         result = vector_store_driver.load_entry(vector_id)
@@ -96,14 +76,10 @@ class TestPgVectorVectorStoreDriver:
         result = vector_store_driver.load_entry(result)
         assert result.vector == pytest.approx(self.vec1)
 
-    def test_can_insert_and_load_entry_with_namespace(
-        self, vector_store_driver
-    ):
+    def test_can_insert_and_load_entry_with_namespace(self, vector_store_driver):
         namespace = str(uuid.uuid4())
 
-        result = vector_store_driver.upsert_vector(
-            self.vec1, namespace=namespace
-        )
+        result = vector_store_driver.upsert_vector(self.vec1, namespace=namespace)
         assert result is not None
 
         result = vector_store_driver.load_entry(result, namespace=namespace)
@@ -131,12 +107,8 @@ class TestPgVectorVectorStoreDriver:
     def test_can_load_by_namespace(self, vector_store_driver):
         namespace = str(uuid.uuid4())
 
-        vec1_id = vector_store_driver.upsert_vector(
-            self.vec1, namespace=namespace
-        )
-        vec2_id = vector_store_driver.upsert_vector(
-            self.vec2, namespace=namespace
-        )
+        vec1_id = vector_store_driver.upsert_vector(self.vec1, namespace=namespace)
+        vec2_id = vector_store_driver.upsert_vector(self.vec2, namespace=namespace)
 
         results = vector_store_driver.load_entries(namespace=namespace)
 
@@ -153,9 +125,7 @@ class TestPgVectorVectorStoreDriver:
         namespace = str(uuid.uuid4())
         embedding = vector_store_driver.embedding_driver.embed_string(value)
 
-        vector_id = vector_store_driver.upsert_vector(
-            embedding, namespace=namespace
-        )
+        vector_id = vector_store_driver.upsert_vector(embedding, namespace=namespace)
         results = vector_store_driver.query(value, namespace=namespace)
 
         assert len(results) == 1
@@ -167,9 +137,7 @@ class TestPgVectorVectorStoreDriver:
         embedding = vector_store_driver.embedding_driver.embed_string(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(
-            value, namespace=namespace, distance_metric="cosine_distance"
-        )
+        results = vector_store_driver.query(value, namespace=namespace, distance_metric="cosine_distance")
 
         assert len(results) == 1
 
@@ -179,9 +147,7 @@ class TestPgVectorVectorStoreDriver:
         embedding = vector_store_driver.embedding_driver.embed_string(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(
-            value, namespace=namespace, distance_metric="l2_distance"
-        )
+        results = vector_store_driver.query(value, namespace=namespace, distance_metric="l2_distance")
 
         assert len(results) == 1
 
@@ -191,9 +157,7 @@ class TestPgVectorVectorStoreDriver:
         embedding = vector_store_driver.embedding_driver.embed_string(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(
-            value, namespace=namespace, distance_metric="inner_product"
-        )
+        results = vector_store_driver.query(value, namespace=namespace, distance_metric="inner_product")
 
         assert len(results) == 1
 
@@ -203,16 +167,12 @@ class TestPgVectorVectorStoreDriver:
         embedding = vector_store_driver.embedding_driver.embed_string(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
-        results = vector_store_driver.query(
-            value, namespace=namespace, include_vectors=True
-        )
+        results = vector_store_driver.query(value, namespace=namespace, include_vectors=True)
 
         assert len(results) == 1
         assert results[0].vector == pytest.approx(embedding)
 
-    def test_can_use_custom_table_name(
-        self, embedding_driver, vector_store_driver
-    ):
+    def test_can_use_custom_table_name(self, embedding_driver, vector_store_driver):
         """This test ensures at least one row exists in the default table before specifying
         a custom table name. After inserting another row, we should be able to query only one
         vector from the table, and it should be the vector added to the table with the new name.
@@ -221,9 +181,7 @@ class TestPgVectorVectorStoreDriver:
 
         new_table_name = str(uuid.uuid4())
         new_vector_store_driver = PgVectorVectorStoreDriver(
-            embedding_driver=embedding_driver,
-            connection_string=self.connection_string,
-            table_name=new_table_name,
+            embedding_driver=embedding_driver, connection_string=self.connection_string, table_name=new_table_name
         )
 
         new_vector_store_driver.setup()

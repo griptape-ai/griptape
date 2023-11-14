@@ -1,17 +1,22 @@
+from __future__ import annotations
 import logging
 import os
 import shutil
 import tempfile
 from pathlib import Path
-import stringcase
-from typing import Optional
-import docker
+from typing import Optional, TYPE_CHECKING
 from attr import define, field, Factory
-from docker.errors import NotFound
+from schema import Schema, Literal
+import stringcase
+import docker
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
+
+
+if TYPE_CHECKING:
+    from docker import DockerClient
+    from docker.errors import NotFound
 
 
 @define
@@ -20,29 +25,18 @@ class Computer(BaseTool):
     container_workdir: str = field(default="/griptape", kw_only=True)
     env_vars: dict = field(factory=dict, kw_only=True)
     dockerfile_path: str = field(
-        default=Factory(
-            lambda self: f"{os.path.join(self.tool_dir(), 'resources/Dockerfile')}",
-            takes_self=True,
-        ),
+        default=Factory(lambda self: f"{os.path.join(self.tool_dir(), 'resources/Dockerfile')}", takes_self=True),
         kw_only=True,
     )
     requirements_txt_path: str = field(
-        default=Factory(
-            lambda self: f"{os.path.join(self.tool_dir(), 'resources/requirements.txt')}",
-            takes_self=True,
-        ),
+        default=Factory(lambda self: f"{os.path.join(self.tool_dir(), 'resources/requirements.txt')}", takes_self=True),
         kw_only=True,
     )
-    docker_client: docker.DockerClient = field(
-        default=Factory(
-            lambda self: self.default_docker_client(), takes_self=True
-        ),
-        kw_only=True,
+    docker_client: DockerClient = field(
+        default=Factory(lambda self: self.default_docker_client(), takes_self=True), kw_only=True
     )
 
-    __tempdir: Optional[tempfile.TemporaryDirectory] = field(
-        default=None, kw_only=True
-    )
+    __tempdir: Optional[tempfile.TemporaryDirectory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -54,17 +48,11 @@ class Computer(BaseTool):
             self.local_workdir = self.__tempdir.name
 
     @docker_client.validator
-    def validate_docker_client(
-        self, _, docker_client: docker.DockerClient
-    ) -> None:
+    def validate_docker_client(self, _, docker_client: DockerClient) -> None:
         if not docker_client:
-            raise ValueError(
-                "Docker client can't be initialized: make sure the Docker daemon is running"
-            )
+            raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")
 
-    def install_dependencies(
-        self, env: Optional[dict[str, str]] = None
-    ) -> None:
+    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
         super().install_dependencies(env)
 
         self.remove_existing_container(self.container_name(self))
@@ -80,8 +68,7 @@ class Computer(BaseTool):
                 {
                     Literal("code", description="Python code to execute"): str,
                     Literal(
-                        "filename",
-                        description="name of the file to put the Python code in before executing it",
+                        "filename", description="name of the file to put the Python code in before executing it"
                     ): str,
                 }
             ),
@@ -96,13 +83,7 @@ class Computer(BaseTool):
     @activity(
         config={
             "description": "Can be used to execute shell commands in Linux",
-            "schema": Schema(
-                {
-                    Literal(
-                        "command", description="shell command to execute"
-                    ): str
-                }
-            ),
+            "schema": Schema({Literal("command", description="shell command to execute"): str}),
         }
     )
     def execute_command(self, params: dict) -> BaseArtifact:
@@ -112,12 +93,7 @@ class Computer(BaseTool):
 
     def execute_command_in_container(self, command: str) -> BaseArtifact:
         try:
-            binds = {
-                self.local_workdir: {
-                    "bind": self.container_workdir,
-                    "mode": "rw",
-                }
-            }
+            binds = {self.local_workdir: {"bind": self.container_workdir, "mode": "rw"}}
 
             container = self.docker_client.containers.run(
                 self.image_name(self),
@@ -145,9 +121,7 @@ class Computer(BaseTool):
         except Exception as e:
             return ErrorArtifact(f"error executing command: {e}")
 
-    def execute_code_in_container(
-        self, filename: str, code: str
-    ) -> BaseArtifact:
+    def execute_code_in_container(self, filename: str, code: str) -> BaseArtifact:
         container_file_path = os.path.join(self.container_workdir, filename)
 
         if self.local_workdir:
@@ -163,16 +137,14 @@ class Computer(BaseTool):
             with open(local_file_path, "w") as f:
                 f.write(code)
 
-            return self.execute_command_in_container(
-                f"python {container_file_path}"
-            )
+            return self.execute_command_in_container(f"python {container_file_path}")
         except Exception as e:
             return ErrorArtifact(f"error executing code: {e}")
         finally:
             if tempdir:
                 tempdir.cleanup()
 
-    def default_docker_client(self) -> Optional[docker.DockerClient]:
+    def default_docker_client(self) -> Optional[DockerClient]:
         try:
             return docker.from_env()
         except Exception as e:
@@ -200,9 +172,7 @@ class Computer(BaseTool):
             shutil.copy(self.dockerfile_path, temp_dir)
             shutil.copy(self.requirements_txt_path, temp_dir)
 
-            image = self.docker_client.images.build(
-                path=temp_dir, tag=self.image_name(tool), rm=True, forcerm=True
-            )
+            image = self.docker_client.images.build(path=temp_dir, tag=self.image_name(tool), rm=True, forcerm=True)
 
             response = [line for line in image]
 

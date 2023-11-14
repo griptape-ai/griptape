@@ -3,13 +3,7 @@ import logging
 from typing import List, Dict, Any
 from schema import Schema, Literal, Optional, Or
 from attr import define, field
-from griptape.artifacts import (
-    ErrorArtifact,
-    InfoArtifact,
-    ListArtifact,
-    BlobArtifact,
-    TextArtifact,
-)
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 from io import BytesIO
@@ -56,10 +50,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                self.LIST_FILES_SCOPES,
-                self.SERVICE_NAME,
-                self.SERVICE_VERSION,
-                self.owner_email,
+                self.LIST_FILES_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
             )
 
             if folder_path == self.DEFAULT_FOLDER_PATH:
@@ -69,17 +60,13 @@ class GoogleDriveClient(BaseGoogleClient):
                 if folder_id:
                     query = f"'{folder_id}' in parents and trashed=false"
                 else:
-                    return ErrorArtifact(
-                        f"Could not find folder: {folder_path}"
-                    )
+                    return ErrorArtifact(f"Could not find folder: {folder_path}")
 
             items = self._list_files(service, query)
             return ListArtifact([TextArtifact(i) for i in items])
 
         except MalformedError:
-            return ErrorArtifact(
-                "error listing files due to malformed credentials"
-            )
+            return ErrorArtifact("error listing files due to malformed credentials")
         except Exception as e:
             return ErrorArtifact(f"error listing files from Google Drive: {e}")
 
@@ -101,9 +88,7 @@ class GoogleDriveClient(BaseGoogleClient):
             ),
         }
     )
-    def save_memory_artifacts_to_drive(
-        self, params: dict
-    ) -> ErrorArtifact | InfoArtifact:
+    def save_memory_artifacts_to_drive(self, params: dict) -> ErrorArtifact | InfoArtifact:
         values = params["values"]
         memory = self.find_input_memory(values["memory_name"])
         file_name = values["file_name"]
@@ -114,41 +99,28 @@ class GoogleDriveClient(BaseGoogleClient):
 
             if artifacts:
                 service = self._build_client(
-                    self.DRIVE_FILE_SCOPES,
-                    self.SERVICE_NAME,
-                    self.SERVICE_VERSION,
-                    self.owner_email,
+                    self.DRIVE_FILE_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
                 )
 
                 if folder_path == self.DEFAULT_FOLDER_PATH:
                     folder_id = self.DEFAULT_FOLDER_PATH
                 else:
-                    folder_id = self._convert_path_to_file_id(
-                        service, folder_path
-                    )
+                    folder_id = self._convert_path_to_file_id(service, folder_path)
 
                 if folder_id:
                     try:
                         if len(artifacts) == 1:
-                            self._save_to_drive(
-                                file_name, artifacts[0].value, folder_id
-                            )
+                            self._save_to_drive(file_name, artifacts[0].value, folder_id)
                         else:
                             for a in artifacts:
-                                self._save_to_drive(
-                                    f"{a.name}-{file_name}", a.value, folder_id
-                                )
+                                self._save_to_drive(f"{a.name}-{file_name}", a.value, folder_id)
 
                         return InfoArtifact(f"saved successfully")
 
                     except Exception as e:
-                        return ErrorArtifact(
-                            f"error saving file to Google Drive: {e}"
-                        )
+                        return ErrorArtifact(f"error saving file to Google Drive: {e}")
                 else:
-                    return ErrorArtifact(
-                        f"Could not find folder: {folder_path}"
-                    )
+                    return ErrorArtifact(f"Could not find folder: {folder_path}")
             else:
                 return ErrorArtifact("no artifacts found")
         else:
@@ -169,9 +141,7 @@ class GoogleDriveClient(BaseGoogleClient):
             ),
         }
     )
-    def save_content_to_drive(
-        self, params: dict
-    ) -> ErrorArtifact | InfoArtifact:
+    def save_content_to_drive(self, params: dict) -> ErrorArtifact | InfoArtifact:
         content = params["values"]["content"]
         filename = params["values"]["path"]
 
@@ -205,10 +175,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                self.LIST_FILES_SCOPES,
-                self.SERVICE_NAME,
-                self.SERVICE_VERSION,
-                self.owner_email,
+                self.LIST_FILES_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
             )
 
             for path in values["paths"]:
@@ -219,9 +186,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
                     if mime_type in self.GOOGLE_EXPORT_MIME_MAPPING:
                         export_mime = self.GOOGLE_EXPORT_MIME_MAPPING[mime_type]
-                        request = service.files().export_media(
-                            fileId=file_id, mimeType=export_mime
-                        )
+                        request = service.files().export_media(fileId=file_id, mimeType=export_mime)
                     else:
                         request = service.files().get_media(fileId=file_id)
 
@@ -233,9 +198,7 @@ class GoogleDriveClient(BaseGoogleClient):
         except HttpError as e:
             return ErrorArtifact(f"error downloading file in Google Drive: {e}")
         except MalformedError:
-            return ErrorArtifact(
-                "error downloading file due to malformed credentials"
-            )
+            return ErrorArtifact("error downloading file due to malformed credentials")
         except Exception as e:
             return ErrorArtifact(f"error downloading file to Google Drive: {e}")
 
@@ -275,10 +238,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                self.LIST_FILES_SCOPES,
-                self.SERVICE_NAME,
-                self.SERVICE_VERSION,
-                self.owner_email,
+                self.LIST_FILES_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
             )
 
             folder_id = None
@@ -305,13 +265,9 @@ class GoogleDriveClient(BaseGoogleClient):
                 return ErrorArtifact(f"Folder path {folder_path} not found")
 
         except HttpError as e:
-            return ErrorArtifact(
-                f"error searching for file in Google Drive: {e}"
-            )
+            return ErrorArtifact(f"error searching for file in Google Drive: {e}")
         except MalformedError:
-            return ErrorArtifact(
-                "error searching for file due to malformed credentials"
-            )
+            return ErrorArtifact("error searching for file due to malformed credentials")
         except Exception as e:
             return ErrorArtifact(f"error searching file to Google Drive: {e}")
 
@@ -320,13 +276,8 @@ class GoogleDriveClient(BaseGoogleClient):
             "description": "Can be used to share a file with a specified user.",
             "schema": Schema(
                 {
-                    Literal(
-                        "file_path", description="The path of the file to share"
-                    ): str,
-                    Literal(
-                        "email_address",
-                        description="The email address of the user to share with",
-                    ): str,
+                    Literal("file_path", description="The path of the file to share"): str,
+                    Literal("email_address", description="The email address of the user to share with"): str,
                     Optional(
                         "role",
                         default="reader",
@@ -347,10 +298,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                scopes=self.DRIVE_AUTH_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email,
+                scopes=self.DRIVE_AUTH_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
             )
 
             if file_path.lower() == self.DEFAULT_FOLDER_PATH:
@@ -359,42 +307,25 @@ class GoogleDriveClient(BaseGoogleClient):
                 file_id = self._convert_path_to_file_id(service, file_path)
 
             if file_id:
-                batch_update_permission_request_body = {
-                    "role": role,
-                    "type": "user",
-                    "emailAddress": email_address,
-                }
+                batch_update_permission_request_body = {"role": role, "type": "user", "emailAddress": email_address}
                 request = service.permissions().create(
-                    fileId=file_id,
-                    body=batch_update_permission_request_body,
-                    fields="id",
+                    fileId=file_id, body=batch_update_permission_request_body, fields="id"
                 )
                 request.execute()
-                return InfoArtifact(
-                    f"File at {file_path} shared with {email_address} as a {role}"
-                )
+                return InfoArtifact(f"File at {file_path} shared with {email_address} as a {role}")
             else:
                 return ErrorArtifact(f"error finding file at path: {file_path}")
         except HttpError as e:
             return ErrorArtifact(f"error sharing file due to http error: {e}")
         except MalformedError as e:
-            return ErrorArtifact(
-                f"error sharing file due to malformed credentials: {e}"
-            )
+            return ErrorArtifact(f"error sharing file due to malformed credentials: {e}")
         except Exception as e:
             return ErrorArtifact(f"error sharing file: {e}")
 
-    def _save_to_drive(
-        self, filename: str, value: any, parent_folder_id=None
-    ) -> InfoArtifact | ErrorArtifact:
+    def _save_to_drive(self, filename: str, value: any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaIoBaseUpload
 
-        service = self._build_client(
-            self.DRIVE_FILE_SCOPES,
-            self.SERVICE_NAME,
-            self.SERVICE_VERSION,
-            self.owner_email,
-        )
+        service = self._build_client(self.DRIVE_FILE_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email)
 
         if isinstance(value, str):
             value = value.encode()
@@ -411,15 +342,9 @@ class GoogleDriveClient(BaseGoogleClient):
         if parent_folder_id:
             file_metadata["parents"] = [parent_folder_id]
 
-        media = MediaIoBaseUpload(
-            BytesIO(value), mimetype="application/octet-stream", resumable=True
-        )
+        media = MediaIoBaseUpload(BytesIO(value), mimetype="application/octet-stream", resumable=True)
 
-        file = (
-            service.files()
-            .create(body=file_metadata, media_body=media, fields="id")
-            .execute()
-        )
+        file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
         return InfoArtifact(file)
 
     def _list_files(self, service: Any, query: str) -> List[Dict]:
@@ -427,11 +352,7 @@ class GoogleDriveClient(BaseGoogleClient):
         next_page_token = None
 
         while True:
-            results = (
-                service.files()
-                .list(q=query, pageToken=next_page_token)
-                .execute()
-            )
+            results = service.files().list(q=query, pageToken=next_page_token).execute()
 
             files = results.get("files", [])
             items.extend(files)
