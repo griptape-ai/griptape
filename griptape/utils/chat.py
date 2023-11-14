@@ -30,4 +30,4 @@ class Chat:
             else:
                 self.output_fn(self.processing_text)
 
-            self.output_fn(f"{self.response_prefix}{self.structure.run(question).output.to_text()}")
+            self.output_fn(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")

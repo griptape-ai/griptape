@@ -48,7 +48,7 @@ class TestDynamoDbConversationMemoryDriver:
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
+        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
@@ -70,7 +70,7 @@ class TestDynamoDbConversationMemoryDriver:
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
+        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Type, Any, Callable
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
+from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -10,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolMemory(ActivityMixin):
+class TaskMemory(ActivityMixin):
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     artifact_storages: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
@@ -61,6 +62,11 @@ class ToolMemory(ActivityMixin):
                     artifact_namespace=namespace,
                 )
 
+                if subtask.structure and subtask.structure.meta_memory:
+                    subtask.structure.meta_memory.add_entry(
+                        ActionSubtaskMetaEntry(thought=subtask.thought, action=subtask.action_to_json(), answer=output)
+                    )
+
                 return InfoArtifact(output)
         else:
             return InfoArtifact("tool output is empty")
@@ -101,7 +107,7 @@ class ToolMemory(ActivityMixin):
         else:
             return ListArtifact()
 
-    def find_input_memory(self, memory_name: str) -> Optional[ToolMemory]:
+    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if memory_name == self.name:
             return self
         else:

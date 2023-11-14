@@ -8,7 +8,7 @@ class TestConversation:
     def test_init(self):
         import logging
 
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         chat = Chat(
             agent,

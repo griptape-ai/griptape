@@ -5,6 +5,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.structures import Workflow
+from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -60,16 +61,16 @@ class TestWorkflow:
             workflow = Workflow()
             workflow.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_tool_memory(self):
+    def test_with_default_task_memory(self):
         workflow = Workflow()
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is not None
-        assert workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
+        assert workflow.tasks[0].tools[0].input_memory[0] == workflow.task_memory
         assert workflow.tasks[0].tools[0].output_memory is not None
-        assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
+        assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.task_memory
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
@@ -77,13 +78,13 @@ class TestWorkflow:
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
-        storage = list(workflow.tool_memory.artifact_storages.values())[0]
+        storage = list(workflow.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
         memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
-    def test_with_default_tool_memory_and_empty_tool_output_memory(self):
+    def test_with_default_task_memory_and_empty_tool_output_memory(self):
         workflow = Workflow()
 
         workflow.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
@@ -91,14 +92,32 @@ class TestWorkflow:
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].output_memory == {}
 
-    def test_without_default_tool_memory(self):
-        workflow = Workflow(tool_memory=None)
+    def test_without_default_task_memory(self):
+        workflow = Workflow(task_memory=None)
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is None
         assert workflow.tasks[0].tools[0].output_memory is None
+
+    def test_with_memory(self):
+        first_task = PromptTask("test1")
+        second_task = PromptTask("test2")
+        third_task = PromptTask("test3")
+
+        workflow = Workflow(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+
+        workflow + [first_task, second_task, third_task]
+
+        assert workflow.conversation_memory is not None
+        assert len(workflow.conversation_memory.runs) == 0
+
+        workflow.run()
+        workflow.run()
+        workflow.run()
+
+        assert len(workflow.conversation_memory.runs) == 3
 
     def test_tasks_initialization(self):
         first_task = PromptTask(id="test1")
@@ -192,8 +211,7 @@ class TestWorkflow:
         # task2 and task3 converge into task4
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_tasks(task1, [task2, task3], task4)
 
         workflow.run()
 
@@ -224,10 +242,9 @@ class TestWorkflow:
 
         workflow.add_task(taska)
         workflow.add_task(taske)
-        workflow.insert_task(taska, taske, taskd, preserve_relationship=True)
-        workflow.insert_task(taska, taskd, taskb, preserve_relationship=True)
-        workflow.insert_task(taska, taskd, taskc, preserve_relationship=True)
-        workflow.insert_task(taska, taske, taskc, preserve_relationship=True)
+        workflow.insert_tasks(taska, taskd, taske, preserve_relationship=True)
+        workflow.insert_tasks(taska, [taskc], [taskd, taske], preserve_relationship=True)
+        workflow.insert_tasks(taska, taskb, taskd, preserve_relationship=True)
 
         workflow.run()
 
@@ -261,7 +278,7 @@ class TestWorkflow:
         workflow + task1
         workflow + task2
         workflow + task3
-        workflow.insert_task(task1, task2, task4)
+        workflow.insert_tasks(task1, task4, task2)
 
         workflow.run()
 
@@ -281,6 +298,45 @@ class TestWorkflow:
         assert task4.parent_ids == ["task1"]
         assert task4.child_ids == ["task2"]
 
+    def test_run_topology_4(self):
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+        collect_movie_info = PromptTask(id="collect_movie_info")
+        summarize_to_slack = PromptTask(id="summarize_to_slack")
+        movie_info_1 = PromptTask(id="movie_info_1")
+        movie_info_2 = PromptTask(id="movie_info_2")
+        movie_info_3 = PromptTask(id="movie_info_3")
+        compare_movies = PromptTask(id="compare_movies")
+        prepare_email_task = PromptTask(id="prepare_email_task")
+        send_email_task = PromptTask(id="send_email_task")
+        save_to_disk = PromptTask(id="save_to_disk")
+        publish_website = PromptTask(id="publish_website")
+        movie_info_3 = PromptTask(id="movie_info_3")
+
+        workflow.add_tasks(collect_movie_info, summarize_to_slack)
+        workflow.insert_tasks(collect_movie_info, [movie_info_1, movie_info_2, movie_info_3], summarize_to_slack)
+        workflow.insert_tasks([movie_info_1, movie_info_2, movie_info_3], compare_movies, summarize_to_slack)
+        workflow.insert_tasks(compare_movies, [send_email_task, save_to_disk, publish_website], summarize_to_slack)
+
+        assert set(collect_movie_info.child_ids) == {"movie_info_1", "movie_info_2", "movie_info_3"}
+
+        assert set(movie_info_1.parent_ids) == {"collect_movie_info"}
+        assert set(movie_info_2.parent_ids) == {"collect_movie_info"}
+        assert set(movie_info_3.parent_ids) == {"collect_movie_info"}
+        assert set(movie_info_1.child_ids) == {"compare_movies"}
+        assert set(movie_info_2.child_ids) == {"compare_movies"}
+        assert set(movie_info_3.child_ids) == {"compare_movies"}
+
+        assert set(compare_movies.parent_ids) == {"movie_info_1", "movie_info_2", "movie_info_3"}
+        assert set(compare_movies.child_ids) == {"send_email_task", "save_to_disk", "publish_website"}
+
+        assert set(send_email_task.parent_ids) == {"compare_movies"}
+        assert set(save_to_disk.parent_ids) == {"compare_movies"}
+        assert set(publish_website.parent_ids) == {"compare_movies"}
+
+        assert set(send_email_task.child_ids) == {"summarize_to_slack"}
+        assert set(save_to_disk.child_ids) == {"summarize_to_slack"}
+        assert set(publish_website.child_ids) == {"summarize_to_slack"}
+
     def test_input_task(self):
         task1 = PromptTask("prompt1")
         task2 = PromptTask("prompt2")
@@ -290,8 +346,7 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_tasks(task1, [task2, task3], task4)
 
         assert task1 == workflow.input_task
 
@@ -304,8 +359,7 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_tasks(task1, [task2, task3], task4)
 
         assert task4 == workflow.output_task
 
@@ -318,8 +372,7 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_tasks(task1, [task2, task3], task4)
 
         graph = workflow.to_graph()
 
@@ -336,8 +389,7 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_task(task1, task4, task2)
-        workflow.insert_task(task1, task4, task3)
+        workflow.insert_tasks(task1, [task2, task3], task4)
 
         ordered_tasks = workflow.order_tasks()
 

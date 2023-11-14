@@ -1,28 +1,29 @@
 import pytest
 from griptape.artifacts import CsvRowArtifact, BlobArtifact, ErrorArtifact, InfoArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.memory import ToolMemory
+from griptape.memory import TaskMemory
 from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.structures import Agent
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
 
-class TestToolMemory:
+class TestTaskMemory:
     @pytest.fixture(autouse=True)
     def mock_griptape(self, mocker):
         mocker.patch("griptape.engines.CsvExtractionEngine.extract", return_value=[CsvRowArtifact({"foo": "bar"})])
 
     @pytest.fixture
     def memory(self):
-        return defaults.text_tool_memory("MyMemory")
+        return defaults.text_task_memory("MyMemory")
 
     def test_init(self, memory):
         assert memory.name == "MyMemory"
 
     def test_validate_artifact_storages(self):
         with pytest.raises(ValueError):
-            ToolMemory(artifact_storages={TextArtifact: BlobArtifactStorage(), BlobArtifact: BlobArtifactStorage()})
+            TaskMemory(artifact_storages={TextArtifact: BlobArtifactStorage(), BlobArtifact: BlobArtifactStorage()})
 
     def test_get_memory_driver_for(self, memory):
         assert isinstance(memory.get_storage_for(TextArtifact("foo")), TextArtifactStorage)
@@ -44,11 +45,20 @@ class TestToolMemory:
         artifact = TextArtifact("foo")
         subtask = ActionSubtask()
 
-        assert (
-            memory.process_output(MockTool().test, subtask, artifact)
-            .to_text()
-            .startswith('Output of "MockTool.test" was stored in memory')
+        subtask.structure = Agent()
+
+        output = memory.process_output(MockTool().test, subtask, artifact)
+
+        entries = subtask.structure.meta_memory.entries
+
+        assert len(entries) == 1
+        assert entries[0].action == "{}"
+        assert entries[0].answer.startswith(
+            'Output of "MockTool.test" was stored in memory with memory_name "MyMemory"'
         )
+        assert entries[0].thought is None
+
+        assert output.to_text().startswith('Output of "MockTool.test" was stored in memory')
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
     def test_process_output_with_many_artifacts(self, memory):

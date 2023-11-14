@@ -22,7 +22,7 @@ class TestPipeline:
         assert pipeline.output_task is None
         assert pipeline.rulesets[0].name == "TestRuleset"
         assert pipeline.rulesets[0].rules[0].value == "test"
-        assert pipeline.memory is None
+        assert pipeline.conversation_memory is not None
 
     def test_rulesets(self):
         pipeline = Pipeline(rulesets=[Ruleset("Foo", [Rule("foo test")])])
@@ -64,17 +64,17 @@ class TestPipeline:
             pipeline = Pipeline()
             pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_tool_memory(self):
+    def test_with_default_task_memory(self):
         pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(pipeline.tasks[0], ToolkitTask)
-        assert pipeline.tasks[0].tool_memory == pipeline.tool_memory
+        assert pipeline.tasks[0].task_memory == pipeline.task_memory
         assert pipeline.tasks[0].tools[0].input_memory is not None
-        assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.tool_memory
+        assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.task_memory
         assert pipeline.tasks[0].tools[0].output_memory is not None
-        assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.tool_memory
+        assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.task_memory
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
@@ -82,13 +82,13 @@ class TestPipeline:
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
-        storage = list(pipeline.tool_memory.artifact_storages.values())[0]
+        storage = list(pipeline.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
         memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
-    def test_with_default_tool_memory_and_empty_tool_output_memory(self):
+    def test_with_default_task_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
@@ -96,8 +96,8 @@ class TestPipeline:
         assert isinstance(pipeline.tasks[0], ToolkitTask)
         assert pipeline.tasks[0].tools[0].output_memory == {}
 
-    def test_without_default_tool_memory(self):
-        pipeline = Pipeline(tool_memory=None)
+    def test_without_default_task_memory(self):
+        pipeline = Pipeline(task_memory=None)
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
@@ -110,18 +110,18 @@ class TestPipeline:
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         pipeline + [first_task, second_task, third_task]
 
-        assert pipeline.memory is not None
-        assert len(pipeline.memory.runs) == 0
+        assert pipeline.conversation_memory is not None
+        assert len(pipeline.conversation_memory.runs) == 0
 
         pipeline.run()
         pipeline.run()
         pipeline.run()
 
-        assert len(pipeline.memory.runs) == 3
+        assert len(pipeline.conversation_memory.runs) == 3
 
     def test_tasks_initialization(self):
         first_task = PromptTask(id="test1")
@@ -242,7 +242,7 @@ class TestPipeline:
         assert [child.id for child in third_task.children] == []
 
     def test_prompt_stack_without_memory(self):
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=None, prompt_driver=MockPromptDriver())
 
         task1 = PromptTask("test")
         task2 = PromptTask("test")
@@ -263,7 +263,7 @@ class TestPipeline:
         assert len(task2.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
 
         task1 = PromptTask("test")
         task2 = PromptTask("test")

@@ -22,7 +22,7 @@ class TestLocalConversationMemoryDriver:
         prompt_driver = MockPromptDriver()
         memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
         memory = ConversationMemory(driver=memory_driver, autoload=False)
-        pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
+        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
@@ -41,7 +41,7 @@ class TestLocalConversationMemoryDriver:
         prompt_driver = MockPromptDriver()
         memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
         memory = ConversationMemory(driver=memory_driver, autoload=False, max_runs=5)
-        pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
+        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
@@ -60,7 +60,7 @@ class TestLocalConversationMemoryDriver:
         prompt_driver = MockPromptDriver()
         memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, memory=memory)
+        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 

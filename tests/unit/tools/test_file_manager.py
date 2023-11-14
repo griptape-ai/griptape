@@ -16,7 +16,7 @@ class TestFileManager:
 
     def test_load_files_from_disk(self):
         result = FileManager(
-            input_memory=[defaults.text_tool_memory("Memory1")], workdir=os.path.abspath(os.path.dirname(__file__))
+            input_memory=[defaults.text_task_memory("Memory1")], workdir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result, ListArtifact)
@@ -40,7 +40,7 @@ class TestFileManager:
 
     def test_save_memory_artifacts_to_disk_for_one_artifact(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = defaults.text_tool_memory("Memory1")
+            memory = defaults.text_task_memory("Memory1")
             artifact = TextArtifact("foobar")
 
             memory.store_artifact("foobar", artifact)
@@ -63,7 +63,7 @@ class TestFileManager:
         file_name = "foobar.txt"
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = defaults.text_tool_memory("Memory1")
+            memory = defaults.text_task_memory("Memory1")
             artifacts = [TextArtifact("foobar"), TextArtifact("baz")]
 
             for a in artifacts:
