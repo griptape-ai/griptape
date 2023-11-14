@@ -13,9 +13,7 @@ class TestProxycurlClient:
         params = {"values": {"profile_id": profile_id}}
         result = client.get_profile(params)
 
-        assert isinstance(
-            result, list
-        ), "Expected list of TextArtifact instances"
+        assert isinstance(result, list), "Expected list of TextArtifact instances"
 
     @patch("griptape.tools.ProxycurlClient.get_job")
     def test_get_job(self, mock_get_job):
@@ -26,9 +24,7 @@ class TestProxycurlClient:
         params = {"values": {"job_id": job_id}}
         result = client.get_job(params)
 
-        assert isinstance(
-            result, list
-        ), "Expected list of TextArtifact instances"
+        assert isinstance(result, list), "Expected list of TextArtifact instances"
 
     @patch("griptape.tools.ProxycurlClient.get_company")
     def test_get_company(self, mock_get_company):
@@ -39,9 +35,7 @@ class TestProxycurlClient:
         params = {"values": {"company_id": company_id}}
         result = client.get_company(params)
 
-        assert isinstance(
-            result, list
-        ), "Expected list of TextArtifact instances"
+        assert isinstance(result, list), "Expected list of TextArtifact instances"
 
     @patch("griptape.tools.ProxycurlClient.get_school")
     def test_get_school(self, mock_get_school):
@@ -52,9 +46,7 @@ class TestProxycurlClient:
         params = {"values": {"school_id": school_id}}
         result = client.get_school(params)
 
-        assert isinstance(
-            result, list
-        ), "Expected list of TextArtifact instances"
+        assert isinstance(result, list), "Expected list of TextArtifact instances"
 
     @patch("griptape.tools.ProxycurlClient.get_profile")
     def test_get_profile_with_invalid_api_key(self, mock_get_profile):
@@ -66,6 +58,4 @@ class TestProxycurlClient:
         params = {"values": {"profile_id": profile_id}}
         result = client.get_profile(params)
 
-        assert isinstance(
-            result, ErrorArtifact
-        ), "Expected ErrorArtifact instance"
+        assert isinstance(result, ErrorArtifact), "Expected ErrorArtifact instance"

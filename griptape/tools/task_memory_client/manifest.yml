@@ -1,0 +1,5 @@
+version: "v1"
+name: Task Memory Client
+description: Tool for summarizing and querying TaskMemory.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

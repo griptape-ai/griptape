@@ -26,8 +26,7 @@ class ProxycurlClient(BaseTool):
             "schema": Schema(
                 {
                     Literal(
-                        "profile_id",
-                        description="LinkedIn profile ID (i.e., https://www.linkedin.com/in/<profile_id>)",
+                        "profile_id", description="LinkedIn profile ID (i.e., https://www.linkedin.com/in/<profile_id>)"
                     ): str
                 }
             ),
@@ -44,8 +43,7 @@ class ProxycurlClient(BaseTool):
             "schema": Schema(
                 {
                     Literal(
-                        "job_id",
-                        description="LinkedIn job ID (i.e., https://www.linkedin.com/jobs/view/<job_id>)",
+                        "job_id", description="LinkedIn job ID (i.e., https://www.linkedin.com/jobs/view/<job_id>)"
                     ): str
                 }
             ),
@@ -92,29 +90,17 @@ class ProxycurlClient(BaseTool):
 
         return self._call_api("school", "school", school_id)
 
-    def _call_api(
-        self, endpoint_name: str, path: str, item_id: str
-    ) -> ListArtifact | ErrorArtifact:
+    def _call_api(self, endpoint_name: str, path: str, item_id: str) -> ListArtifact | ErrorArtifact:
         headers = {"Authorization": f"Bearer {self.proxycurl_api_key}"}
-        linkedin_url = "/".join(
-            arg.strip("/")
-            for arg in ["https://www.linkedin.com", path, item_id]
-        )
+        linkedin_url = "/".join(arg.strip("/") for arg in ["https://www.linkedin.com", path, item_id])
         params = {"url": linkedin_url}
-        response = requests.get(
-            self.ENDPOINTS[endpoint_name],
-            params=params,
-            headers=headers,
-            timeout=self.timeout,
-        )
+        response = requests.get(self.ENDPOINTS[endpoint_name], params=params, headers=headers, timeout=self.timeout)
 
         if response.status_code == 200:
             try:
                 data = response.json()
                 filtered_data = [
-                    TextArtifact(f"{key}: {value}")
-                    for key, value in data.items()
-                    if value is not None and value
+                    TextArtifact(f"{key}: {value}") for key, value in data.items() if value is not None and value
                 ]
 
                 return ListArtifact(filtered_data)
@@ -122,8 +108,6 @@ class ProxycurlClient(BaseTool):
             except ValueError:
                 return ErrorArtifact("Failed to decode JSON from response")
         else:
-            logging.error(
-                f"Error retrieving information from LinkedIn. HTTP Status Code: {response.status_code}"
-            )
+            logging.error(f"Error retrieving information from LinkedIn. HTTP Status Code: {response.status_code}")
 
             return ErrorArtifact("Error retrieving information from LinkedIn")
