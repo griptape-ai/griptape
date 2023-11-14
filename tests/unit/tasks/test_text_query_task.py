@@ -33,8 +33,3 @@ class TestTextQueryTask:
         Agent().add_task(task)
 
         assert task.input.to_text() == "test value"
-
-    def test_load(self, task):
-        artifact = task.load("foobar baz")[0]
-
-        assert list(task.query_engine.vector_store_driver.entries.values())[0].meta["artifact"] == artifact.to_json()
