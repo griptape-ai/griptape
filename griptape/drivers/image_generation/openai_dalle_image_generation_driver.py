@@ -1,3 +1,4 @@
+from __future__ import annotations
 import base64
 import openai
 from typing import Optional, Literal, Union, get_args
@@ -38,11 +39,11 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
         )
     )
     style: Optional[str] = field(default=None, kw_only=True)
-    quality: Union[Literal["standard"], Literal["hd"]] = field(default=Literal["standard"], kw_only=True)
-    image_size: Union[
-        Literal["256x256"], Literal["512x512"], Literal["1024x1024"], Literal["1024x1792"], Literal["1792x1024"]
-    ] = field(default=Literal["512x512"], kw_only=True)
-    response_format: Literal["b64_json"] = field(default=Literal["b64_json"], kw_only=True)
+    quality: Literal["standard"] | Literal["hd"] = field(default="standard", kw_only=True)
+    image_size: Literal["256x256"] | Literal["512x512"] | Literal["1024x1024"] | Literal["1024x1792"] | Literal[
+        "1792x1024"
+    ] = field(default="512x512", kw_only=True)
+    response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True)
 
     def generate_image(self, prompts: list[str], **kwargs) -> ImageArtifact:
         prompt = ", ".join(prompts)
@@ -58,7 +59,7 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
         )
 
         image_data = base64.b64decode(response.data[0].b64_json)
-        image_dimensions = self._image_size_to_ints(get_args(self.image_size)[0])
+        image_dimensions = self._image_size_to_ints(self.image_size)
 
         return ImageArtifact(
             value=image_data,
