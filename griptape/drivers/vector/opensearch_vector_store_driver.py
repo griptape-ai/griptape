@@ -7,7 +7,7 @@ from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field, Factory
 
 if TYPE_CHECKING:
-    from opensearchpy import OpenSearch, RequestsHttpConnection
+    from opensearchpy import OpenSearch
 
 
 @define
@@ -37,7 +37,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,
                 verify_certs=self.verify_certs,
-                connection_class=RequestsHttpConnection,
+                connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
         )
