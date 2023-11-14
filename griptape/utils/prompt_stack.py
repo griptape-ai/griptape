@@ -20,7 +20,7 @@ class PromptStack:
     class Input:
         """Represents an input item in the prompt stack."""
 
-        content: str
+        content: str | list[dict]
         role: str
 
         def is_generic(self) -> bool:
