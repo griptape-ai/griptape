@@ -40,9 +40,9 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     )
     style: Optional[str] = field(default=None, kw_only=True)
     quality: Literal["standard"] | Literal["hd"] = field(default="standard", kw_only=True)
-    image_size: Literal["256x256"] | Literal["512x512"] | Literal["1024x1024"] | Literal["1024x1792"] | Literal[
-        "1792x1024"
-    ] = field(default="512x512", kw_only=True)
+    image_size: (
+        Literal["256x256"] | Literal["512x512"] | Literal["1024x1024"] | Literal["1024x1792"] | Literal["1792x1024"]
+    ) = field(default="512x512", kw_only=True)
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True)
 
     def generate_image(self, prompts: list[str], **kwargs) -> ImageArtifact:
@@ -71,5 +71,5 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
         )
 
     @staticmethod
-    def _image_size_to_ints(image_size: str) -> [int]:
+    def _image_size_to_ints(image_size: str) -> list[int]:
         return [int(x) for x in image_size.split("x")]
