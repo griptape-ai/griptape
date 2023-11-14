@@ -31,7 +31,9 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     image_width: int = field(default=512, kw_only=True)
     image_height: int = field(default=512, kw_only=True)
 
-    def generate_image(self, prompts: list[str], negative_prompts: list[str] = None, **kwargs) -> ImageArtifact:
+    def generate_image(
+        self, prompts: list[str], negative_prompts: Optional[list[str]] = None, **kwargs
+    ) -> ImageArtifact:
         if negative_prompts is None:
             negative_prompts = []
 

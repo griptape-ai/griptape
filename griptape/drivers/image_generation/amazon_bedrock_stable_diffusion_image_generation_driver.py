@@ -22,7 +22,7 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
         image_width: Width of output images. Defaults to 512 and must be a multiple of 64.
         image_height: Height of output images. Defaults to 512 and must be a multiple of 64.
         cfg_scale: Stable Diffusion cfg_scale parameter.
-        seed: Stable Diffusion seed parameter.
+        seed: Stable Diffusion seed parameter. Defaults to 0, corresponding to a random seed.
         steps: Stable Diffusion steps parameter.
         style_preset: Optional Stable Diffusion style preset name.
         clip_guidance_preset: Optional Stable Diffusion clip guidance preset name.
@@ -45,7 +45,9 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     clip_guidance_preset: Optional[str] = field(default=None, kw_only=True)
     sampler: Optional[str] = field(default=None, kw_only=True)
 
-    def generate_image(self, prompts: list[str], negative_prompts: list[str] = None, **kwargs) -> ImageArtifact:
+    def generate_image(
+        self, prompts: list[str], negative_prompts: Optional[list[str]] = None, **kwargs
+    ) -> ImageArtifact:
         if negative_prompts is None:
             negative_prompts = []
 
