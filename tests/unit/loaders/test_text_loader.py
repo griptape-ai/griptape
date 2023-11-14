@@ -10,9 +10,9 @@ MAX_TOKENS = 50
 
 
 class TestTextLoader:
-    @pytest.fixture
-    def loader(self):
-        return TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
+    @pytest.fixture(params=["ascii", "utf-8", None])
+    def loader(self, request):
+        return TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver(), encoding=request.param)
 
     def test_load_with_str(self, loader):
         text = gen_paragraph(MAX_TOKENS * 2, loader.tokenizer, " ")
