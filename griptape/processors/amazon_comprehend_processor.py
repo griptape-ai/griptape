@@ -1,20 +1,26 @@
+from typing import Callable, Optional, List, Dict
+from attr import define, field, Factory
 from .base_processors import BasePromptStackProcessor
 import boto3
 
 
+@define
 class AmazonComprehendPiiProcessor(BasePromptStackProcessor):
-    def __init__(self, comprehend_client=None, custom_filter_func=None):
-        self.comprehend_client = comprehend_client
-        if not self.comprehend_client:
-            self.comprehend_client = boto3.client("comprehend")
-        self.custom_filter_func = custom_filter_func
+    comprehend_client: boto3.client = field(
+        default=Factory(lambda: boto3.client("comprehend")), kw_only=True
+    )
+    custom_filter_func: Optional[Callable[[str], str]] = field(
+        default=None, kw_only=True
+    )
 
-    def before_run(self, prompt_stack):
+    def before_run(
+        self, prompt_stack: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         for input_item in prompt_stack:
             input_item["content"] = self.filter_pii(input_item["content"])
         return prompt_stack
 
-    def filter_pii(self, text):
+    def filter_pii(self, text: str) -> str:
         if self.custom_filter_func:
             return self.custom_filter_func(text)
 
