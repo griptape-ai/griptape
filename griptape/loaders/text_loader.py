@@ -57,6 +57,7 @@ class TextLoader(BaseLoader):
                 chunk.generate_embedding(self.embedding_driver)
 
         for chunk in chunks:
+            chunk.encoding = self.encoding
             artifacts.append(chunk)
 
         return artifacts
