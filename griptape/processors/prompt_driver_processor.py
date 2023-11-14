@@ -1,11 +1,11 @@
+import attr
 from .base_processors import BasePromptStackProcessor
 
-
+@attr.s
 class PromptDriverPiiProcessor(BasePromptStackProcessor):
-    def __init__(self, prompt_driver, mask_pii_func, unmask_pii_func):
-        self.prompt_driver = prompt_driver
-        self.mask_pii_func = mask_pii_func
-        self.unmask_pii_func = unmask_pii_func
+    prompt_driver = attr.ib()
+    mask_pii_func = attr.ib()
+    unmask_pii_func = attr.ib()
 
     def before_run(self, prompt_stack):
         for input_item in prompt_stack["inputs"]:
