@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 @define
 class TextArtifact(BaseArtifact):
     value: str = field(converter=str)
+    encoding: str = field(default="utf-8", kw_only=True)
+    encoding_error_handler: str = field(default="strict", kw_only=True)
     __embedding: list[float] = field(factory=list, kw_only=True)
 
     @property
@@ -34,6 +36,9 @@ class TextArtifact(BaseArtifact):
 
     def to_text(self) -> str:
         return self.value
+
+    def to_bytes(self) -> bytes:
+        return self.value.encode(encoding=self.encoding, errors=self.encoding_error_handler)
 
     def to_dict(self) -> dict:
         from griptape.schemas import TextArtifactSchema

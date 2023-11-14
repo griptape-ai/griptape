@@ -28,6 +28,7 @@ class TextLoader(BaseLoader):
         kw_only=True,
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
+    encoding: str = field(default="utf-8", kw_only=True)
 
     def load(self, text: str | Path) -> list[TextArtifact]:
         return self.text_to_artifacts(text)
@@ -41,7 +42,7 @@ class TextLoader(BaseLoader):
         artifacts = []
 
         if isinstance(text, Path):
-            with open(text, "r") as file:
+            with open(text, "r", encoding=self.encoding) as file:
                 body = file.read()
         else:
             body = text
@@ -56,6 +57,7 @@ class TextLoader(BaseLoader):
                 chunk.generate_embedding(self.embedding_driver)
 
         for chunk in chunks:
+            chunk.encoding = self.encoding
             artifacts.append(chunk)
 
         return artifacts
