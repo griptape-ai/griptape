@@ -1,7 +1,6 @@
-import os
+import base64
 import openai
 from typing import Optional
-import requests
 from attr import field, Factory, define
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
@@ -12,61 +11,58 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for OpenAI DALLE image generation API.
 
     Attributes:
+        model: OpenAI DALLE model, for example 'dall-e-2' or 'dall-e-3'.
         api_type: OpenAI API type, for example 'open_ai' or 'azure'.
         api_version: API version.
-        api_base: API URL.
+        base_url: API URL.
         api_key: OpenAI API key.
         organization: OpenAI organization ID.
-        requests_session: Optionally provide custom `requests.Session`.
-        image_size: Image size. Defaults to '512x512'.
+        style: Optional and only supported for dall-e-3, can be either 'vivid' or 'natural'.
+        quality: Optional and only supported for dall-e-3. Accepts 'standard', 'hd'.
+        image_width: The width of the generated image.
+        image_height: The height of the generated image.
+
+    Image dimensions must be one of the following, depending on the requested model:
+    dall-e-2: [256x256, 512x512, 1024x1024]
+    dall-e-3: [1024x1024, 1024x1792, 1792x1024]
     """
 
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
-    api_base: str = field(default=openai.api_base, kw_only=True)
-    api_key: Optional[str] = field(default=Factory(lambda: os.environ.get("OPENAI_API_KEY")), kw_only=True)
+    base_url: str = field(default=None, kw_only=True)
+    api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True)
-    requests_session: requests.Session = field(default=Factory(lambda: requests.Session()), kw_only=True)
-
-    # Dalle2 accepts these three image sizes.
-    IMAGE_SIZE_256: str = "256x256"
-    IMAGE_SIZE_512: str = "512x512"
-    IMAGE_SIZE_1024: str = "1024x1024"
-
-    image_size: str = field(default=IMAGE_SIZE_512, kw_only=True)
-
-    image_size_ints = {IMAGE_SIZE_256: 256, IMAGE_SIZE_512: 512, IMAGE_SIZE_1024: 1024}
-
-    @image_size.validator
-    def _validate_image_size(self, _, image_size: str):
-        if image_size not in self.image_size_ints:
-            raise ValueError(f"image_size must be one of {self.image_size_ints.keys()}")
+    client: openai.OpenAI = field(
+        default=Factory(
+            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
+            takes_self=True,
+        )
+    )
+    style: Optional[str] = field(default=None, kw_only=True)
+    quality: Optional[str] = field(default=None, kw_only=True)
+    image_width: int = field(default=512, kw_only=True)
+    image_height: int = field(default=512, kw_only=True)
 
     def generate_image(self, prompts: list[str], **kwargs) -> ImageArtifact:
         prompt = ", ".join(prompts)
-        image_url = self._make_request(prompt=prompt)
-        image_data = self._download_image(url=image_url)
 
-        dim = self.image_size_ints[self.image_size]
-        return ImageArtifact(
-            value=image_data, mime_type="image/png", width=dim, height=dim, model="openai/dalle2", prompt=prompt
-        )
-
-    def _make_request(self, prompt: str) -> str:
-        response = openai.Image.create(
-            organization=self.organization,
-            api_version=self.api_version,
-            api_base=self.api_base,
-            api_type=self.api_type,
-            api_key=self.api_key,
+        response = self.client.images.generate(
+            model=self.model,
             prompt=prompt,
-            size=self.image_size,
+            size=f"{self.image_width}x{self.image_height}",
+            response_format="b64_json",
             n=1,
+            style=self.style,
+            quality=self.quality,
         )
 
-        return response["data"][0]["url"]
+        image_data = base64.b64decode(response.data[0].b64_json)
 
-    def _download_image(self, url: str) -> bytes:
-        response = self.requests_session.get(url=url)
-
-        return response.content
+        return ImageArtifact(
+            value=image_data,
+            mime_type="image/png",
+            width=self.image_width,
+            height=self.image_height,
+            model=self.model,
+            prompt=prompt,
+        )

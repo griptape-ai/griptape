@@ -12,11 +12,11 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the Leonardo image generation API.
 
     Attributes:
+        model: The ID of the model to use when generating images.
         api_key: The API key to use when making requests to the Leonardo API.
         requests_session: The requests session to use when making requests to the Leonardo API.
         api_base: The base URL of the Leonardo API.
         max_attempts: The maximum number of times to poll the Leonardo API for a completed image.
-        model_id: The ID of the model to use when generating images. If None, the default model will be used.
         image_width: The width of the generated image in the range [32, 1024] and divisible by 8.
         image_height: The height of the generated image in the range [32, 1024] and divisible by 8.
 
@@ -28,7 +28,6 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     requests_session: requests.Session = field(default=Factory(lambda: requests.Session()), kw_only=True)
     api_base: str = "https://cloud.leonardo.ai/api/rest/v1"
     max_attempts: int = field(default=10, kw_only=True)
-    model_id: Optional[str] = field(default=None, kw_only=True)
     image_width: int = field(default=512, kw_only=True)
     image_height: int = field(default=512, kw_only=True)
 
@@ -45,21 +44,21 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
             mime_type="image/png",
             width=self.image_width,
             height=self.image_height,
-            model=f"leonardo/{self.model_id or 'default'}",
+            model=self.model,
             prompt=prompt,
         )
 
     def _create_generation(self, prompt: str, negative_prompt: str):
         response = self.requests_session.post(
             url=f"{self.api_base}/generations",
-            headers={"authorization": f"Bearer {self.api_key}"},
+            headers={"Authorization": f"Bearer {self.api_key}"},
             json={
                 "prompt": prompt,
                 "negative_prompt": negative_prompt,
                 "width": self.image_width,
                 "height": self.image_height,
                 "num_images": 1,
-                "modelId": self.model_id,
+                "modelId": self.model,
             },
         ).json()
 

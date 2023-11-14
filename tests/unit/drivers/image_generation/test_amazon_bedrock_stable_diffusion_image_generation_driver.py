@@ -21,7 +21,9 @@ class TestAmazonBedrockStableDiffusionImageGenerationDriver:
 
     @pytest.fixture
     def driver(self, session):
-        return AmazonBedrockStableDiffusionImageGenerationDriver(session=session)
+        return AmazonBedrockStableDiffusionImageGenerationDriver(
+            session=session, model="stability.stable-diffusion-xl-v1"
+        )
 
     def test_init(self, driver):
         assert driver
@@ -46,5 +48,5 @@ class TestAmazonBedrockStableDiffusionImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "stability.stable-diffusion-xl"
+        assert image_artifact.model == "stability.stable-diffusion-xl-v1"
         assert image_artifact.prompt == "test prompt"

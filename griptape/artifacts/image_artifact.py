@@ -7,8 +7,8 @@ from griptape.artifacts import BlobArtifact
 @define(frozen=True)
 class ImageArtifact(BlobArtifact):
     mime_type: str = field(kw_only=True)
-    width: Optional[int] = field(default=None, kw_only=True)
-    height: Optional[int] = field(default=None, kw_only=True)
+    width: int = field(kw_only=True)
+    height: int = field(kw_only=True)
     model: Optional[str] = field(default=None, kw_only=True)
     prompt: Optional[str] = field(default=None, kw_only=True)
 

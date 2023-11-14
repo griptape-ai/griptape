@@ -16,9 +16,9 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     """Driver for Stable Diffusion provided by Amazon Bedrock.
 
     Attributes:
+        model: Bedrock model ID.
         session: boto3 session.
         bedrock_client: Bedrock runtime client.
-        model_id: Bedrock model ID.
         image_width: Width of output images. Defaults to 512 and must be a multiple of 64.
         image_height: Height of output images. Defaults to 512 and must be a multiple of 64.
         cfg_scale: Stable Diffusion cfg_scale parameter.
@@ -36,7 +36,6 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client(service_name="bedrock-runtime"), takes_self=True)
     )
-    model_id: str = field(default="stability.stable-diffusion-xl", kw_only=True)
     image_width: int = field(default=512, kw_only=True)
     image_height: int = field(default=512, kw_only=True)
     cfg_scale: int = field(default=7, kw_only=True)
@@ -50,9 +49,11 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
         if negative_prompts is None:
             negative_prompts = []
 
+        text_prompts = [{"text": prompt, "weight": 1.0} for prompt in prompts]
+        text_prompts += [{"text": negative_prompt, "weight": -1.0} for negative_prompt in negative_prompts]
+
         request = {
-            "text_prompts": [{"text": prompt, "weight": 1.0} for prompt in prompts]
-            + [{"text": negative_prompt, "weight": -1.0} for negative_prompt in negative_prompts],
+            "text_prompts": text_prompts,
             "cfg_scale": self.cfg_scale,
             "seed": self.seed,
             "steps": self.steps,
@@ -60,10 +61,11 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
             "clip_guidance_preset": self.clip_guidance_preset,
             "sampler": self.sampler,
             "width": self.image_width,
+            "height": self.image_height,
         }
 
         response = self.bedrock_client.invoke_model(
-            body=json.dumps(request), modelId=self.model_id, accept="application/json", contentType="application/json"
+            body=json.dumps(request), modelId=self.model, accept="application/json", contentType="application/json"
         )
 
         response_body = json.loads(response.get("body").read())
@@ -74,10 +76,10 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
         image_bytes = base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))
 
         return ImageArtifact(
+            prompt=", ".join(prompts),
             value=image_bytes,
             mime_type="image/png",
             width=self.image_width,
-            height=self.image_width,
-            model=self.model_id,
-            prompt=", ".join(prompts),
+            height=self.image_height,
+            model=self.model,
         )

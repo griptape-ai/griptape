@@ -9,30 +9,13 @@ from griptape.drivers import OpenAiDalleImageGenerationDriver
 class TestOpenAiDalleImageGenerationDriver:
     @pytest.fixture
     def driver(self):
-        return OpenAiDalleImageGenerationDriver()
+        return OpenAiDalleImageGenerationDriver(model="dall-e-2", client=Mock())
 
     def test_init(self, driver):
         assert driver
 
-    def test_make_request(self, driver):
-        test_url = "image url"
-
-        openai.Image.create = Mock(return_value={"data": [{"url": test_url}]})
-
-        image_url = driver._make_request(prompt="test prompt")
-
-        assert image_url == test_url
-
-    def test_download_image(self, driver):
-        driver.requests_session.get = Mock(return_value=Mock(content=b"image data"))
-
-        image_data = driver._download_image(url="test url")
-
-        assert image_data == b"image data"
-
     def test_generate_image(self, driver):
-        driver._make_request = Mock(return_value="test url")
-        driver._download_image = Mock(return_value=b"image data")
+        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])
 
         image_artifact = driver.generate_image(prompts=["test prompt"])
 
@@ -40,5 +23,5 @@ class TestOpenAiDalleImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "openai/dalle2"
+        assert image_artifact.model == "dall-e-2"
         assert image_artifact.prompt == "test prompt"
