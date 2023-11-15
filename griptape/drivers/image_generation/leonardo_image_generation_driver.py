@@ -72,7 +72,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     def _get_image_url(self, generation_id: str):
         for attempt in range(self.max_attempts):
             response = self.requests_session.get(
-                url=f"{self.api_base}/generations/{generation_id}", headers={"authorization": f"Bearer {self.api_key}"}
+                url=f"{self.api_base}/generations/{generation_id}", headers={"Authorization": f"Bearer {self.api_key}"}
             ).json()
 
             if response["generations_by_pk"]["status"] == "PENDING":
@@ -84,6 +84,6 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
             raise Exception("image generation failed to complete")
 
     def _download_image(self, url: str):
-        response = self.requests_session.get(url=url, headers={"authorization": f"Bearer {self.api_key}"})
+        response = self.requests_session.get(url=url, headers={"Authorization": f"Bearer {self.api_key}"})
 
         return response.content
