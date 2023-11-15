@@ -42,11 +42,19 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     quality: Literal["standard"] | Literal["hd"] = field(default="standard", kw_only=True)
     image_size: (
         Literal["256x256"] | Literal["512x512"] | Literal["1024x1024"] | Literal["1024x1792"] | Literal["1792x1024"]
-    ) = field(default="512x512", kw_only=True)
+    ) = field(default="1024x1024", kw_only=True)
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True)
 
     def generate_image(self, prompts: list[str], **kwargs) -> ImageArtifact:
         prompt = ", ".join(prompts)
+
+        additional_params = {}
+
+        if self.style is not None:
+            additional_params["style"] = self.style
+
+        if self.quality is not None:
+            additional_params["quality"] = self.quality
 
         response = self.client.images.generate(
             model=self.model,
@@ -54,8 +62,7 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
             size=self.image_size,
             response_format=self.response_format,
             n=1,
-            style=self.style,
-            quality=self.quality,
+            **additional_params,
         )
 
         image_data = base64.b64decode(response.data[0].b64_json)
