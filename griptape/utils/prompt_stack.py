@@ -16,13 +16,12 @@ class PromptStack:
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    prompt_stack_processors: List[BasePromptStackProcessor] = field(
-        default_factory=list
-    )
+    prompt_stack_processors: List[BasePromptStackProcessor] = field(default_factory=list)
 
     @dataclass
     class Input:
         """Represents an input item in the prompt stack."""
+
         content: str | list[dict]
         role: str
 
