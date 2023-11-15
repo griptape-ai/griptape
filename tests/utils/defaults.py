@@ -2,7 +2,7 @@ from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.memory import TaskMemory
-from griptape.memory.tool.storage import TextArtifactStorage, BlobArtifactStorage
+from griptape.memory.task.storage import TextArtifactStorage, BlobArtifactStorage
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 

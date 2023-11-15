@@ -14,7 +14,7 @@ from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import TaskMemory
-from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer

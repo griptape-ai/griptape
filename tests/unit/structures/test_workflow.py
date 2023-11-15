@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.memory.tool.storage import TextArtifactStorage
+from griptape.memory.task.storage import TextArtifactStorage
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask

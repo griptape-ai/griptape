@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.memory.tool.storage import TextArtifactStorage
+from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask

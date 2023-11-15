@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
-from griptape.memory.tool.storage import BaseArtifactStorage
+from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
     from griptape.engines import BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine, VectorQueryEngine
