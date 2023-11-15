@@ -77,6 +77,5 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
             prompt=prompt,
         )
 
-    @staticmethod
-    def _image_size_to_ints(image_size: str) -> list[int]:
+    def _image_size_to_ints(self, image_size: str) -> list[int]:
         return [int(x) for x in image_size.split("x")]

@@ -23,8 +23,7 @@ class TestLeonardoImageGenerationDriver:
 
         assert generation_id == test_generation_id
 
-    @staticmethod
-    def _test_create_generation(driver, test_generation_id):
+    def _test_create_generation(self, driver, test_generation_id):
         # Mock post request to create image generation
         driver.requests_session.post().json.return_value = {"sdGenerationJob": {"generationId": test_generation_id}}
 
@@ -37,8 +36,7 @@ class TestLeonardoImageGenerationDriver:
 
         assert image_url == test_image_url
 
-    @staticmethod
-    def _test_get_image_url(driver, test_image_url):
+    def _test_get_image_url(self, driver, test_image_url):
         # Mock get request to get image url
         driver.requests_session.get().json.return_value = {
             "generations_by_pk": {"status": "COMPLETE", "generated_images": [{"url": test_image_url}]}
@@ -53,8 +51,7 @@ class TestLeonardoImageGenerationDriver:
 
         assert image_data == test_image_data
 
-    @staticmethod
-    def _test_download_image(driver, test_image_data):
+    def _test_download_image(self, driver, test_image_data):
         # Mock get request to download image
         driver.requests_session.get().content = test_image_data
 
