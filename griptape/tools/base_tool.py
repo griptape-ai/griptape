@@ -3,6 +3,7 @@ import logging
 import subprocess
 import sys
 from typing import TYPE_CHECKING, Callable
+from schema import Schema, Literal, Or
 import inspect
 import os
 from abc import ABC
@@ -82,6 +83,23 @@ class BaseTool(ActivityMixin, ABC):
     @property
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
+
+    # This method has to remain a method and can't be decorated with @property because
+    # of the max depth recursion issue in `self.activities`.
+    def schema(self) -> dict:
+        action_schemas = [
+            Schema(
+                {
+                    Literal("name"): self.name,
+                    Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
+                    Literal("input"): {"values": activity.config["schema"]} if self.activity_schema(activity) else {},
+                }
+            )
+            for activity in self.activities()
+        ]
+        full_schema = Schema(Or(*action_schemas), description=f"{self.name} action schema.")
+
+        return full_schema.json_schema(f"{self.name} Action Schema")
 
     def execute(self, activity: Callable, subtask: ActionSubtask) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask.action_input)
