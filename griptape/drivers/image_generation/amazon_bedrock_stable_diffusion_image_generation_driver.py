@@ -45,7 +45,7 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     clip_guidance_preset: Optional[str] = field(default=None, kw_only=True)
     sampler: Optional[str] = field(default=None, kw_only=True)
 
-    def generate_image(
+    def try_generate_image(
         self, prompts: list[str], negative_prompts: Optional[list[str]] = None, **kwargs
     ) -> ImageArtifact:
         if negative_prompts is None:
