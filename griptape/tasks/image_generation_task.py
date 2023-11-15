@@ -1,6 +1,10 @@
 from __future__ import annotations
+
+import os
+import time
+from os import path
 from attr import define, field
-from griptape.artifacts import ImageArtifact, ErrorArtifact
+from griptape.artifacts import ImageArtifact
 from griptape.engines import ImageGenerationEngine
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTextInputTask
@@ -11,6 +15,7 @@ class ImageGenerationTask(BaseTextInputTask):
     NEGATIVE_RULESET_NAME = "Negative Ruleset"
 
     image_generation_engine: ImageGenerationEngine = field(kw_only=True)
+    output_dir: str = field(kw_only=True)
     negative_rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 
@@ -41,13 +46,21 @@ class ImageGenerationTask(BaseTextInputTask):
 
         return task_rulesets
 
-    def run(self) -> ImageArtifact | ErrorArtifact:
-        try:
-            image_artifact = self.image_generation_engine.generate_image(
-                prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
-            )
+    def run(self) -> ImageArtifact:
+        image_artifact = self.image_generation_engine.generate_image(
+            prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
+        )
 
-            return image_artifact
+        self._save_to_file(image_artifact)
 
-        except Exception as e:
-            return ErrorArtifact(str(e))
+        return image_artifact
+
+    def _save_to_file(self, image_artifact: ImageArtifact) -> None:
+        # Save image to file. This is a temporary workaround until we update Task and Meta
+        # Memory to persist artifacts from tasks.
+        fmt_time = time.strftime("%y%m%d_%H%M%S", time.localtime())
+        outfile = path.join(self.output_dir, f"image_artifact_{fmt_time}.png")
+
+        with open(outfile, "wb") as f:
+            self.structure.logger.info(f"Saving [{image_artifact.to_text()}] to {os.path.abspath(outfile)}")
+            f.write(image_artifact.value)
