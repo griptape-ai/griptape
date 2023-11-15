@@ -28,4 +28,4 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_generation_driver.generate_image(prompts, negative_prompts, **kwargs)
+        return self.image_generation_driver.generate_image(prompts, negative_prompts=negative_prompts, **kwargs)
