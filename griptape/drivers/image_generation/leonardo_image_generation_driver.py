@@ -24,7 +24,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     https://docs.leonardo.ai/reference/creategeneration
     """
 
-    api_key: str = field(default=Factory(lambda: os.environ.get("LEONARDO_API_KEY")), kw_only=True)
+    api_key: str = field(kw_only=True)
     requests_session: requests.Session = field(default=Factory(lambda: requests.Session()), kw_only=True)
     api_base: str = "https://cloud.leonardo.ai/api/rest/v1"
     max_attempts: int = field(default=10, kw_only=True)
