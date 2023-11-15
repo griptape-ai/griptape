@@ -15,7 +15,8 @@ class TestToolTask:
     def agent(self):
         output_dict = {"name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
         return Agent(
-            prompt_driver=MockPromptDriver(mock_output=json.dumps(output_dict)), embedding_driver=MockEmbeddingDriver()
+            prompt_driver=MockPromptDriver(mock_output=json.dumps(output_dict)),
+            task_memory_embedding_driver=MockEmbeddingDriver(),
         )
 
     def test_run_without_memory(self, agent):

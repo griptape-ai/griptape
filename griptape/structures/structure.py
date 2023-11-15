@@ -39,7 +39,12 @@ class Structure(ABC):
         ),
         kw_only=True,
     )
-    embedding_driver: BaseEmbeddingDriver = field(default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True)
+    task_memory_prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda self: self.prompt_driver, takes_self=True), kw_only=True
+    )
+    task_memory_embedding_driver: BaseEmbeddingDriver = field(
+        default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True
+    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
@@ -120,12 +125,12 @@ class Structure(ABC):
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     query_engine=VectorQueryEngine(
-                        prompt_driver=self.prompt_driver,
-                        vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.embedding_driver),
+                        prompt_driver=self.task_memory_prompt_driver,
+                        vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.task_memory_embedding_driver),
                     ),
-                    summary_engine=PromptSummaryEngine(prompt_driver=self.prompt_driver),
-                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.prompt_driver),
-                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
+                    summary_engine=PromptSummaryEngine(prompt_driver=self.task_memory_prompt_driver),
+                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.task_memory_prompt_driver),
+                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.task_memory_prompt_driver),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
             }

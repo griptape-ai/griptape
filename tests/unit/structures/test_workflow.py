@@ -72,17 +72,27 @@ class TestWorkflow:
         assert workflow.tasks[0].tools[0].output_memory is not None
         assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.task_memory
 
-    def test_embedding_driver(self):
+    def test_task_memory_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
-        workflow = Workflow(embedding_driver=embedding_driver)
-
+        workflow = Workflow(task_memory_embedding_driver=embedding_driver)
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
-        storage = list(workflow.task_memory.artifact_storages.values())[0]
-        assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
+        artifact_storage = list(workflow.task_memory.artifact_storages.values())[0]
+        assert isinstance(artifact_storage, TextArtifactStorage)
+        memory_embedding_driver = artifact_storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
+
+    def test_task_memory_prompt_driver(self):
+        prompt_driver = MockPromptDriver()
+        workflow = Workflow(task_memory_prompt_driver=prompt_driver)
+        workflow.add_task(ToolkitTask(tools=[MockTool()]))
+
+        artifact_storage = list(workflow.task_memory.artifact_storages.values())[0]
+        assert isinstance(artifact_storage, TextArtifactStorage)
+        memory_prompt_driver = artifact_storage.query_engine.prompt_driver
+
+        assert memory_prompt_driver == prompt_driver
 
     def test_with_default_task_memory_and_empty_tool_output_memory(self):
         workflow = Workflow()

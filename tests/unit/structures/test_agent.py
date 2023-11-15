@@ -69,15 +69,25 @@ class TestAgent:
         assert agent.tools[0].input_memory[0] == agent.task_memory
         assert agent.tools[0].output_memory == {}
 
-    def test_embedding_driver(self):
+    def test_task_memory_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
-        agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
+        agent = Agent(tools=[MockTool()], task_memory_embedding_driver=embedding_driver)
 
         artifact_storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(artifact_storage, TextArtifactStorage)
         memory_embedding_driver = artifact_storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
+
+    def test_task_memory_prompt_driver(self):
+        prompt_driver = MockPromptDriver()
+        agent = Agent(tools=[MockTool()], task_memory_prompt_driver=prompt_driver)
+
+        artifact_storage = list(agent.task_memory.artifact_storages.values())[0]
+        assert isinstance(artifact_storage, TextArtifactStorage)
+        memory_prompt_driver = artifact_storage.query_engine.prompt_driver
+
+        assert memory_prompt_driver == prompt_driver
 
     def test_without_default_task_memory(self):
         agent = Agent(task_memory=None, tools=[MockTool()])
@@ -224,7 +234,7 @@ class TestAgent:
     def test_task_memory_defaults(self):
         prompt_driver = MockPromptDriver()
         embedding_driver = MockEmbeddingDriver()
-        agent = Agent(prompt_driver=prompt_driver, embedding_driver=embedding_driver)
+        agent = Agent(prompt_driver=prompt_driver, task_memory_embedding_driver=embedding_driver)
 
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
