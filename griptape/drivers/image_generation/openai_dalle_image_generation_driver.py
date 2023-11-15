@@ -45,7 +45,7 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     ) = field(default="1024x1024", kw_only=True)
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True)
 
-    def try_generate_image(self, prompts: list[str], **kwargs) -> ImageArtifact:
+    def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         prompt = ", ".join(prompts)
 
         additional_params = {}
