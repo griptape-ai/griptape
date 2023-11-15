@@ -1,7 +1,7 @@
 import pytest
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import TaskMemory
-from griptape.memory.tool.storage import TextArtifactStorage
+from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask

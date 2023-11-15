@@ -1,6 +1,6 @@
 from attr import define, field
 from griptape.artifacts import BaseArtifact, ListArtifact, BlobArtifact, InfoArtifact
-from griptape.memory.tool.storage import BaseArtifactStorage
+from griptape.memory.task.storage import BaseArtifactStorage
 
 
 @define

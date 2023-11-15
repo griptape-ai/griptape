@@ -2,7 +2,7 @@ import pytest
 from griptape.artifacts import CsvRowArtifact, BlobArtifact, ErrorArtifact, InfoArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.memory import TaskMemory
-from griptape.memory.tool.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.structures import Agent
 from griptape.tasks import ActionSubtask
 from tests.mocks.mock_tool.tool import MockTool

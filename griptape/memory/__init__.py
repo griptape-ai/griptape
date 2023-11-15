@@ -1,4 +1,4 @@
-from .tool.task_memory import TaskMemory
+from .task.task_memory import TaskMemory
 
 
 __all__ = ["TaskMemory"]

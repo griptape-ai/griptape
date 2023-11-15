@@ -6,7 +6,7 @@ from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
-    from griptape.memory.tool.storage import BaseArtifactStorage
+    from griptape.memory.task.storage import BaseArtifactStorage
     from griptape.tasks import ActionSubtask
 
 
