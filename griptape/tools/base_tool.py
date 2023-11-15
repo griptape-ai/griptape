@@ -87,19 +87,16 @@ class BaseTool(ActivityMixin, ABC):
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `self.activities`.
     def schema(self) -> dict:
-        action_schemas = []
-        for activity in self.activities():
-            activity_schema = self.activity_schema(activity)
-            tool_activity_schema = Schema(
+        action_schemas = [
+            Schema(
                 {
                     Literal("name"): self.name,
                     Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
-                    Literal("input"): {"values": activity.config["schema"]} if activity_schema else {},
+                    Literal("input"): {"values": activity.config["schema"]} if self.activity_schema(activity) else {},
                 }
             )
-
-            action_schemas.append(tool_activity_schema)
-
+            for activity in self.activities()
+        ]
         full_schema = Schema(Or(*action_schemas), description=f"{self.name} action schema.")
 
         return full_schema.json_schema(f"{self.name} Action Schema")
