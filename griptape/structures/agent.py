@@ -17,6 +17,7 @@ class Agent(Structure):
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
         if len(self.tasks) == 0:
             if self.tools:
                 task = ToolkitTask(
@@ -27,14 +28,11 @@ class Agent(Structure):
 
             self.add_task(task)
 
-        super().__attrs_post_init__()
-
     @property
     def task(self) -> BaseTask:
         return self.tasks[0]
 
     def add_task(self, task: BaseTask) -> BaseTask:
-        print("adding")
         self.tasks.clear()
 
         task.preprocess(self)

@@ -14,4 +14,6 @@ class TextSummaryTask(BaseTextInputTask):
     summary_engine: BaseSummaryEngine = field(kw_only=True, default=Factory(lambda: PromptSummaryEngine()))
 
     def run(self) -> TextArtifact:
-        return TextArtifact(self.summary_engine.summarize_text(self.input.to_text(), rulesets=self.all_rulesets))
+        self.output = TextArtifact(self.summary_engine.summarize_text(self.input.to_text(), rulesets=self.all_rulesets))
+
+        return self.output

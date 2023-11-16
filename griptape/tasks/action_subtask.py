@@ -39,7 +39,7 @@ class ActionSubtask(PromptTask):
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_path: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[dict] = field(default=None, kw_only=True)
-    off_prompt: bool = field(default=True, kw_only=True)
+    off_prompt: bool = field(init=False, kw_only=True)
 
     _tool: Optional[BaseTool] = None
     _memory: Optional[TaskMemory] = None
@@ -72,18 +72,20 @@ class ActionSubtask(PromptTask):
     def run(self) -> BaseArtifact:
         try:
             if self.action_name == "error":
-                return ErrorArtifact(str(self.action_input))
+                self.output = ErrorArtifact(str(self.action_input))
             else:
                 if self._tool and self.action_path:
                     response = self._tool.execute(getattr(self._tool, self.action_path), self)
                 else:
                     response = ErrorArtifact("tool not found")
 
-                return response
+                self.output = response
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
-            return ErrorArtifact(str(e))
+            self.output = ErrorArtifact(str(e))
+        finally:
+            return self.output
 
     def after_run(self, output: BaseArtifact) -> BaseArtifact:
         processed_output = super().after_run(output)
@@ -161,6 +163,10 @@ class ActionSubtask(PromptTask):
 
                 if self._tool:
                     self.__validate_action_input(self.action_input, self._tool)
+                    self.off_prompt = self._tool.off_prompt
+                    self.preprocess(self.origin_task.structure)
+                    self._tool.attach_to(self)
+
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
@@ -178,6 +184,7 @@ class ActionSubtask(PromptTask):
                 self.action_input = {"error": f"Action input parsing error: {e}"}
         elif self.answer is None and len(answer_matches) > 0:
             self.answer = answer_matches[-1]
+            self.output = self.answer
 
     def __validate_action_input(self, action_input: dict, mixin: ActivityMixin) -> None:
         try:

@@ -3,7 +3,7 @@ import json
 from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape import utils
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.utils import PromptStack
 from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import ActionSubtask
@@ -35,18 +35,6 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         if len(tool_names) > len(set(tool_names)):
             raise ValueError("tools names have to be unique in task")
-
-    @property
-    def tool_output_memory(self) -> list[TaskMemory]:
-        unique_memory_dict = {}
-
-        for memories in [tool.output_memory for tool in self.tools if tool.output_memory]:
-            for memory_list in memories.values():
-                for memory in memory_list:
-                    if memory.name not in unique_memory_dict:
-                        unique_memory_dict[memory.name] = memory
-
-        return list(unique_memory_dict.values())
 
     @property
     def prompt_stack(self) -> PromptStack:
@@ -87,40 +75,35 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
         )
 
-    def set_default_task_memory(self, memory: TaskMemory) -> None:
-        super().set_default_task_memory(memory)
-
-        for tool in self.tools:
-            if self.task_memory:
-                if tool.input_memory is None:
-                    tool.input_memory = [self.task_memory]
-
-    def run(self) -> TextArtifact:
+    def run(self) -> BaseArtifact:
         from griptape.tasks import ActionSubtask
 
         self.subtasks.clear()
 
-        subtask = self.add_subtask(ActionSubtask(self.active_driver().run(prompt_stack=self.prompt_stack).to_text()))
+        prompt_output = self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
+        subtask = self.add_subtask(ActionSubtask(prompt_output))
 
         while True:
             if subtask.answer is None:
                 if len(self.subtasks) >= self.max_subtasks:
-                    subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+                    self.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+                    return self.output
                 elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
                     subtask.answer = subtask.input_template
                 else:
                     subtask.before_run()
                     output = subtask.run()
-                    self.output = subtask.after_run(output)
+                    subtask.output = subtask.after_run(output)
 
-                    subtask = self.add_subtask(
-                        ActionSubtask(self.active_driver().run(prompt_stack=self.prompt_stack).to_text())
-                    )
+                    prompt_output = self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
+                    subtask = self.add_subtask(ActionSubtask(prompt_output))
             else:
                 break
 
-        return TextArtifact(subtask.answer)
+        self.output = TextArtifact(subtask.answer)
+
+        return self.output
 
     def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
         return next((subtask for subtask in self.subtasks if subtask.id == subtask_id), None)

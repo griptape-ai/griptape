@@ -36,6 +36,8 @@ class BaseTask(ABC):
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     off_prompt: bool = field(default=False, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
+    output_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
@@ -70,10 +72,25 @@ class BaseTask(ABC):
     def __str__(self) -> str:
         return str(self.output.value)
 
+    @input_memory.validator
+    def validate_input_memory(self, _, input_memory: list[TaskMemory]) -> None:
+        if input_memory:
+            input_memory_names = [m.name for m in input_memory]
+
+            if len(input_memory_names) > len(set(input_memory_names)):
+                raise ValueError("memory names have to be unique in input memory")
+
+    @output_memory.validator
+    def validate_output_memory(self, _, output_memory: list[TaskMemory]) -> None:
+        if output_memory:
+            output_memory_names = [m.name for m in output_memory]
+
+            if len(output_memory_names) > len(set(output_memory_names)):
+                raise ValueError("memory names have to be unique in output memory")
+
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure
 
-        print("PREPROCESS", self.__class__.__name__, self.task_memory is None, structure.task_memory is None)
         if self.task_memory is None and structure.task_memory:
             self.set_default_task_memory(structure.task_memory)
 
@@ -96,15 +113,15 @@ class BaseTask(ABC):
         if self.structure:
             self.structure.publish_event(FinishTaskEvent.from_task(self))
 
-        print("AFTER RUN", self.__class__.__name__, self.off_prompt, self.task_memory is None)
         if output:
-            if self.task_memory:
-                processed_output = self.structure.task_memory.process_output(self, output)
+            if self.output_memory:
+                for memory in self.output_memory:
+                    output = memory.process_output(self, output)
 
-                if isinstance(processed_output, BaseArtifact):
-                    return processed_output
+                if isinstance(output, BaseArtifact):
+                    return output
                 else:
-                    return TextArtifact(str(processed_output))
+                    return TextArtifact(str(output))
             else:
                 return output
         else:
@@ -137,8 +154,20 @@ class BaseTask(ABC):
 
         return self
 
-    def set_default_task_memory(self, memory: TaskMemory) -> None:
+    def set_default_task_memory(self, memory: Optional[TaskMemory]) -> None:
         self.task_memory = memory
+
+        if self.task_memory:
+            if self.input_memory is None:
+                self.input_memory = [self.task_memory]
+            if self.output_memory is None and self.off_prompt:
+                self.output_memory = [self.task_memory]
+
+    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
+        if self.input_memory:
+            return next((m for m in self.input_memory if m.name == memory_name), None)
+        else:
+            return None
 
     @abstractmethod
     def run(self) -> BaseArtifact:

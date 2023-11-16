@@ -10,7 +10,7 @@ from abc import ABC
 from typing import Optional
 import yaml
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -24,7 +24,6 @@ class BaseTool(ActivityMixin, ABC):
 
     Attributes:
         name: Tool name.
-        input_memory: TaskMemory available in tool activities. Gets automatically set if None.
         install_dependencies_on_init: Determines whether dependencies from the tool requirements.txt file are installed in init.
         dependencies_install_directory: Custom dependency install directory.
         verbose: Determines whether tool operations (such as dependency installation) should be verbose.
@@ -35,11 +34,11 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
     off_prompt: bool = field(default=True, kw_only=True)
+    origin_task: Optional[ActionSubtask] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:
@@ -97,6 +96,9 @@ class BaseTool(ActivityMixin, ABC):
     def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
         return value
 
+    def attach_to(self, origin_task: ActionSubtask):
+        self.origin_task = origin_task
+
     def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -149,7 +151,7 @@ class BaseTool(ActivityMixin, ABC):
         )
 
     def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
-        if self.input_memory:
-            return next((m for m in self.input_memory if m.name == memory_name), None)
+        if self.origin_task:
+            return self.origin_task.find_input_memory(memory_name)
         else:
             return None

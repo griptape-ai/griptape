@@ -13,4 +13,8 @@ class TextQueryTask(BaseTextInputTask):
     namespace: Optional[str] = field(default=None, kw_only=True)
 
     def run(self) -> TextArtifact:
-        return self.query_engine.query(self.input.to_text(), namespace=self.namespace, rulesets=self.all_rulesets)
+        self.output = self.query_engine.query(
+            self.input.to_text(), namespace=self.namespace, rulesets=self.all_rulesets
+        )
+
+        return self.output

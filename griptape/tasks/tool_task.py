@@ -36,9 +36,11 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         subtask.after_run(output)
 
         if subtask.output:
-            return subtask.output
+            self.output = subtask.output
         else:
-            return InfoArtifact("No tool output")
+            self.output = InfoArtifact("No tool output")
+
+        return self.output
 
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         if self.tool.name == tool_name:
