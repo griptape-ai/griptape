@@ -41,3 +41,25 @@ class TestWebLoader:
         assert "foobar" in [a.value for artifact_list in artifacts.values() for a in artifact_list][0].lower()
 
         assert list(artifacts.values())[0][0].embedding == [0, 1]
+
+    def test_empty_page_string_response(self, loader, mocker):
+        fake_response = {"status": 200, "data": "foobar"}
+
+        mocker.patch("trafilatura.fetch_url", return_value=fake_response)
+        mocker.patch("trafilatura.extract", return_value="")
+
+        with pytest.raises(Exception) as e:
+            loader.load("https://example.com/")
+
+            assert "can't extract page" in str(e)
+
+    def test_empty_page_none_response(self, loader, mocker):
+        fake_response = {"status": 200, "data": "foobar"}
+
+        mocker.patch("trafilatura.fetch_url", return_value=fake_response)
+        mocker.patch("trafilatura.extract", return_value=None)
+
+        with pytest.raises(Exception) as e:
+            loader.load("https://example.com/")
+
+            assert "can't extract page" in str(e)
