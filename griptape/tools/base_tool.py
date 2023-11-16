@@ -25,7 +25,6 @@ class BaseTool(ActivityMixin, ABC):
     Attributes:
         name: Tool name.
         input_memory: TaskMemory available in tool activities. Gets automatically set if None.
-        output_memory: TaskMemory that activities write to be default. Gets automatically set if None.
         install_dependencies_on_init: Determines whether dependencies from the tool requirements.txt file are installed in init.
         dependencies_install_directory: Custom dependency install directory.
         verbose: Determines whether tool operations (such as dependency installation) should be verbose.
@@ -37,7 +36,6 @@ class BaseTool(ActivityMixin, ABC):
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
@@ -46,18 +44,6 @@ class BaseTool(ActivityMixin, ABC):
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:
             self.install_dependencies(os.environ.copy())
-
-    @output_memory.validator
-    def validate_output_memory(self, _, output_memory: Optional[dict[str, list[TaskMemory]]]) -> None:
-        if output_memory:
-            for activity_name, memory_list in output_memory.items():
-                if not self.find_activity(activity_name):
-                    raise ValueError(f"activity {activity_name} doesn't exist")
-
-                output_memory_names = [memory.name for memory in memory_list]
-
-                if len(output_memory_names) > len(set(output_memory_names)):
-                    raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
 
     @property
     def class_name(self):
@@ -124,19 +110,7 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
-        if value:
-            if self.output_memory:
-                for memory in activity.__self__.output_memory.get(activity.name, []):
-                    value = memory.process_output(activity, subtask, value)
-
-                if isinstance(value, BaseArtifact):
-                    return value
-                else:
-                    return TextArtifact(str(value))
-            else:
-                return value
-        else:
-            return InfoArtifact("Tool returned an empty value")
+        return value
 
     def validate(self) -> bool:
         from griptape.utils import ManifestValidator

@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Any
 
 from attr import define, field
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.rules import Ruleset, Rule
 from griptape.tasks import BaseTask
 from griptape.utils import J2
@@ -78,7 +78,9 @@ class BaseTextInputTask(BaseTask, ABC):
 
         self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {self.input.to_text()}")
 
-    def after_run(self) -> None:
-        super().after_run()
+    def after_run(self, output: BaseArtifact) -> BaseArtifact:
+        processed_output = super().after_run(output)
 
-        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {processed_output.to_text()}")
+
+        return processed_output

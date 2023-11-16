@@ -35,9 +35,11 @@ class ActionSubtask(PromptTask):
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
+    answer: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
     action_path: Optional[str] = field(default=None, kw_only=True)
     action_input: Optional[dict] = field(default=None, kw_only=True)
+    off_prompt: bool = field(default=True, kw_only=True)
 
     _tool: Optional[BaseTool] = None
     _memory: Optional[TaskMemory] = None
@@ -70,26 +72,25 @@ class ActionSubtask(PromptTask):
     def run(self) -> BaseArtifact:
         try:
             if self.action_name == "error":
-                self.output = ErrorArtifact(str(self.action_input))
+                return ErrorArtifact(str(self.action_input))
             else:
-                if self._tool:
+                if self._tool and self.action_path:
                     response = self._tool.execute(getattr(self._tool, self.action_path), self)
                 else:
                     response = ErrorArtifact("tool not found")
 
-                self.output = response
+                return response
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorArtifact(str(e))
-        finally:
-            return self.output
+            return ErrorArtifact(str(e))
 
-    def after_run(self) -> None:
-        response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
+    def after_run(self, output: BaseArtifact) -> BaseArtifact:
+        processed_output = super().after_run(output)
 
         self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
-        self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
+
+        return processed_output
 
     def action_to_json(self) -> str:
         json_dict = {}
@@ -175,8 +176,8 @@ class ActionSubtask(PromptTask):
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action input parsing error: {e}"}
-        elif self.output is None and len(answer_matches) > 0:
-            self.output = TextArtifact(answer_matches[-1])
+        elif self.answer is None and len(answer_matches) > 0:
+            self.answer = answer_matches[-1]
 
     def __validate_action_input(self, action_input: dict, mixin: ActivityMixin) -> None:
         try:

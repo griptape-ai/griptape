@@ -34,6 +34,7 @@ class Agent(Structure):
         return self.tasks[0]
 
     def add_task(self, task: BaseTask) -> BaseTask:
+        print("adding")
         self.tasks.clear()
 
         task.preprocess(self)

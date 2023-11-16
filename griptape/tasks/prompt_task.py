@@ -4,7 +4,7 @@ from attr import define, field, Factory
 from griptape.utils import PromptStack
 from griptape.utils import J2
 from griptape.tasks import BaseTextInputTask
-from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -16,8 +16,6 @@ class PromptTask(BaseTextInputTask):
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
     )
-
-    output: Optional[TextArtifact | ErrorArtifact | InfoArtifact] = field(default=None, init=False)
 
     @property
     def prompt_stack(self) -> PromptStack:
@@ -43,9 +41,7 @@ class PromptTask(BaseTextInputTask):
         )
 
     def run(self) -> TextArtifact:
-        self.output = self.active_driver().run(self.prompt_stack)
-
-        return self.output
+        return self.active_driver().run(self.prompt_stack)
 
     def active_driver(self) -> BasePromptDriver:
         if self.prompt_driver is None:
