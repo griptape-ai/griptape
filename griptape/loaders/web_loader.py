@@ -35,6 +35,8 @@ class WebLoader(TextLoader):
         if page is None:
             raise Exception("can't access URL")
         else:
-            return json.loads(
-                trafilatura.extract(page, include_links=include_links, output_format="json", config=config)
-            )
+            extracted_page = trafilatura.extract(page, include_links=include_links, output_format="json", config=config)
+            if extracted_page:
+                return json.loads(extracted_page)
+            else:
+                raise Exception("can't extract page")
