@@ -38,6 +38,8 @@ class BaseTask(ABC):
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
     output_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
+    input_artifact_namespace: Optional[str] = field(default=None, kw_only=True)
+    output_artifact_namespace: Optional[str] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
@@ -118,10 +120,7 @@ class BaseTask(ABC):
                 for memory in self.output_memory:
                     output = memory.process_output(self, output)
 
-                if isinstance(output, BaseArtifact):
-                    return output
-                else:
-                    return TextArtifact(str(output))
+                return output
             else:
                 return output
         else:

@@ -1,6 +1,17 @@
-from griptape.structures import Agent
-from griptape.tools import TaskMemoryClient, WebScraper
+from griptape.structures import Pipeline
+from griptape.tools import WebScraper
+from griptape.tasks import ToolTask, ImageGenerationTask, TextSummaryTask
 
-agent = Agent(tools=[WebScraper(), TaskMemoryClient(off_prompt=False)])
+pipeline = Pipeline(
+    tasks=[
+        ToolTask(
+            "Scrape https://griptape.ai", off_prompt=True, output_artifact_namespace="WebResults", tool=WebScraper()
+        ),
+        TextSummaryTask(
+            "Summarize the results", input_artifact_namespace="WebResults", output_artifact_namespace="WebSummary"
+        ),
+        ImageGenerationTask("Generate an image of the summary", input_artifact_namespace="WebSummary"),
+    ]
+)
 
-agent.run("Based on the website https://griptape.ai, tell me what griptape is.")
+pipeline.run()

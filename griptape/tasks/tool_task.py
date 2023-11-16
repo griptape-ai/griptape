@@ -59,12 +59,3 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         self.subtask.attach_to(self)
 
         return self.subtask
-
-    def set_default_task_memory(self, memory: TaskMemory) -> None:
-        super().set_default_task_memory(memory)
-
-        if self.task_memory:
-            if self.tool.input_memory is None:
-                self.tool.input_memory = [self.task_memory]
-            if self.tool.output_memory is None and self.tool.off_prompt:
-                self.tool.output_memory = {a.name: [self.task_memory] for a in self.tool.activities()}

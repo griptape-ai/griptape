@@ -7,7 +7,7 @@ from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.memory.task.storage import BaseArtifactStorage
-    from griptape.tasks import ActionSubtask
+    from griptape.tasks import BaseTask
 
 
 @define
@@ -42,7 +42,7 @@ class TaskMemory(ActivityMixin):
         from griptape.tasks import ActionSubtask
         from griptape.utils import J2
 
-        namespace = output_artifact.name
+        namespace = task.output_artifact_namespace or output_artifact.name
 
         if output_artifact:
             result = self.store_artifact(namespace, output_artifact)
@@ -51,19 +51,22 @@ class TaskMemory(ActivityMixin):
                 return result
             else:
                 namespace = output_artifact.name
-                task_output_name = task.name
-                if isinstance(task, ActionSubtask):
-                    task_output_name = f"{task.action_name}.{task.action_path}"
+                task_output_name = (
+                    f"{task.action_name}.{task.action_path}" if isinstance(task, ActionSubtask) else task.name
+                )
                 output = J2("memory/task.j2").render(
                     memory_name=self.name, task_output_name=task_output_name, artifact_namespace=namespace
                 )
 
-                if isinstance(task, ActionSubtask):
-                    self.namespace_metadata[namespace] = task.action_to_json()
-                    if task.structure and task.structure.meta_memory:
-                        task.structure.meta_memory.add_entry(
-                            ActionSubtaskMetaEntry(thought=task.thought, action=task.action_to_json(), answer=output)
-                        )
+                if task.structure and task.structure.meta_memory:
+                    if isinstance(task, ActionSubtask):
+                        self.namespace_metadata[namespace] = task.action_to_json()
+                        if task.thought and task.answer:
+                            task.structure.meta_memory.add_entry(
+                                ActionSubtaskMetaEntry(
+                                    thought=task.thought, action=task.action_to_json(), answer=task.answer
+                                )
+                            )
 
                 return InfoArtifact(output)
         else:
