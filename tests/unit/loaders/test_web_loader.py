@@ -48,10 +48,8 @@ class TestWebLoader:
         mocker.patch("trafilatura.fetch_url", return_value=fake_response)
         mocker.patch("trafilatura.extract", return_value="")
 
-        with pytest.raises(Exception) as e:
+        with pytest.raises(Exception, match="can't extract page"):
             loader.load("https://example.com/")
-
-            assert "can't extract page" in str(e)
 
     def test_empty_page_none_response(self, loader, mocker):
         fake_response = {"status": 200, "data": "foobar"}
@@ -59,7 +57,5 @@ class TestWebLoader:
         mocker.patch("trafilatura.fetch_url", return_value=fake_response)
         mocker.patch("trafilatura.extract", return_value=None)
 
-        with pytest.raises(Exception) as e:
+        with pytest.raises(Exception, match="can't extract page"):
             loader.load("https://example.com/")
-
-            assert "can't extract page" in str(e)
