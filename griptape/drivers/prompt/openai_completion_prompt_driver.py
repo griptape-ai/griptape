@@ -1,10 +1,11 @@
-from typing import Optional, Iterator
+from typing import Optional, Iterator, Tuple, Type
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer
-from typing import Tuple, Type
+from griptape.processors.base_processors import BasePromptStackProcessor
+from griptape.processors.amazon_comprehend_processor import AmazonComprehendPiiProcessor
 import openai
 
 
@@ -49,21 +50,27 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    pii_processor: BasePromptStackProcessor = field(default=AmazonComprehendPiiProcessor(), kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        result = self.client.completions.create(**self._base_params(prompt_stack))
+        processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
+        result = self.client.completions.create(**self._base_params(processed_prompt_stack))
+        processed_result = self.pii_processor.after_run(result)
 
-        if len(result.choices) == 1:
-            return TextArtifact(value=result.choices[0].text.strip())
+        if len(processed_result.choices) == 1:
+            return TextArtifact(value=processed_result.choices[0].text.strip())
         else:
             raise Exception("completion with more than one choice is not supported yet")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = self.client.completions.create(**self._base_params(prompt_stack), stream=True)
+        processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
+        result = self.client.completions.create(**self._base_params(processed_prompt_stack), stream=True)
 
         for chunk in result:
-            if len(chunk.choices) == 1:
-                choice = chunk.choices[0]
+            processed_chunk = self.pii_processor.after_run(chunk)
+
+            if len(processed_chunk.choices) == 1:
+                choice = processed_chunk.choices[0]
                 delta_content = choice.text
                 yield TextArtifact(value=delta_content)
 
