@@ -19,9 +19,8 @@ pipeline = Pipeline(
             off_prompt=True,
         ),
         ToolTask(
-            "Save this artifact namespace {{ namespace }} from memory {{ memory}} into a file called griptape.png in the images directory",
+            "Save the image artifact to a file called griptape.png in the images directory",
             off_prompt=False,
-            context={"namespace": "SummaryImage", "memory": "TaskMemory"},
             tool=FileManager(),
         ),
     ],

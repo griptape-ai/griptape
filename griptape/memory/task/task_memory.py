@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Type, Any
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact, ImageArtifact
-from griptape.memory.meta import ActionSubtaskMetaEntry
+from griptape.memory.meta import ActionSubtaskMetaEntry, TaskMemoryMetaEntry
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -66,6 +66,15 @@ class TaskMemory(ActivityMixin):
                                     thought=task.thought, action=task.action_to_json(), answer=task.answer
                                 )
                             )
+
+                    task.structure.meta_memory.add_entry(
+                        TaskMemoryMetaEntry(
+                            output=output,
+                            # task_memory_name=self.name,
+                            # task_output_name=task_output_name,
+                            # output_artifact_namespace=task.output_artifact_namespace,
+                        )
+                    )
 
                 return InfoArtifact(output)
         else:
