@@ -46,9 +46,6 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         else:
             return None
 
-    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
-        return None
-
     def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
         return self.subtask if self.subtask.id == subtask_id else None
 

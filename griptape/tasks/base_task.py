@@ -168,6 +168,12 @@ class BaseTask(ABC):
         else:
             return None
 
+    def find_outpt_memory(self, memory_name: str) -> Optional[TaskMemory]:
+        if self.output_memory:
+            return next((m for m in self.output_memory if m.name == memory_name), None)
+        else:
+            return None
+
     @abstractmethod
     def run(self) -> BaseArtifact:
         ...

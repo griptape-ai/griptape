@@ -115,6 +115,3 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         return next((t for t in self.tools if t.name == tool_name), None)
-
-    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
-        return next((m for m in self.tool_output_memory if m.name == memory_name), None)
