@@ -26,6 +26,9 @@ class ListArtifact(BaseArtifact):
     def __bool__(self) -> bool:
         return len(self) > 0
 
+    def __getitem__(self, index: int) -> BaseArtifact:
+        return self.value[index]
+
     def to_text(self) -> str:
         return self.item_separator.join([v.to_text() for v in self.value])
 

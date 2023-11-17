@@ -6,7 +6,7 @@ from logging import Logger
 from typing import Optional, TYPE_CHECKING, Any
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape.artifacts import TextArtifact, BlobArtifact
+from griptape.artifacts import TextArtifact, BlobArtifact, ImageArtifact
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -14,7 +14,7 @@ from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory import TaskMemory
-from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage, ImageArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
@@ -128,6 +128,7 @@ class Structure(ABC):
                     json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
+                ImageArtifact: ImageArtifactStorage(),
             }
         )
 

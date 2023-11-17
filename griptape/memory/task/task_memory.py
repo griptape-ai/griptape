@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Type, Any
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact, ImageArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 
@@ -50,7 +50,6 @@ class TaskMemory(ActivityMixin):
             if result:
                 return result
             else:
-                namespace = output_artifact.name
                 task_output_name = (
                     f"{task.action_name}.{task.action_path}" if isinstance(task, ActionSubtask) else task.name
                 )
@@ -107,12 +106,6 @@ class TaskMemory(ActivityMixin):
             return storage.load_artifacts(namespace)
         else:
             return ListArtifact()
-
-    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
-        if memory_name == self.name:
-            return self
-        else:
-            return None
 
     def summarize_namespace(self, namespace: str) -> TextArtifact | InfoArtifact:
         storage = self.namespace_storage.get(namespace)

@@ -10,6 +10,4 @@ class ExtractionTask(BaseTextInputTask):
     args: dict = field(kw_only=True)
 
     def run(self) -> ListArtifact:
-        self.output = self.extraction_engine.extract(self.input.to_text(), rulesets=self.all_rulesets, **self.args)
-
-        return self.output
+        return self.extraction_engine.extract(self.input.to_text(), rulesets=self.all_rulesets, **self.args)

@@ -16,10 +16,6 @@ class TextSummaryTask(BaseTextInputTask):
 
     def run(self) -> TextArtifact | InfoArtifact:
         if self.input_artifact_namespace:
-            self.output = self.task_memory.summarize_namespace(self.input_artifact_namespace)
+            return self.task_memory.summarize_namespace(self.input_artifact_namespace)
         else:
-            self.output = TextArtifact(
-                self.summary_engine.summarize_text(self.input.to_text(), rulesets=self.all_rulesets)
-            )
-
-        return self.output
+            return TextArtifact(self.summary_engine.summarize_text(self.input.to_text(), rulesets=self.all_rulesets))

@@ -5,7 +5,7 @@ from os import path
 from typing import Optional
 
 from attr import define, field
-from griptape.artifacts import ImageArtifact
+from griptape.artifacts import ImageArtifact, InfoArtifact
 from griptape.engines import ImageGenerationEngine
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTextInputTask
@@ -72,9 +72,18 @@ class ImageGenerationTask(BaseTextInputTask):
 
         return task_rulesets
 
-    def run(self) -> ImageArtifact:
+    def run(self) -> ImageArtifact | InfoArtifact:
+        if self.input_artifact_namespace:
+            memory_artifacts = self.task_memory.load_artifacts(self.input_artifact_namespace)
+            if memory_artifacts:
+                text = memory_artifacts[0].to_text()
+            else:
+                text = self.input.to_text()
+        else:
+            text = self.input.to_text()
+
         image_artifact = self.image_generation_engine.generate_image(
-            prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
+            prompts=[text], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
         )
 
         if self.output_dir or self.output_file:

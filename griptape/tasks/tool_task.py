@@ -29,18 +29,16 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     def run(self) -> BaseArtifact:
         prompt_output = self.active_driver().run(prompt_stack=self.prompt_stack).to_text()
 
-        subtask = self.add_subtask(ActionSubtask(f"Action: {prompt_output}"))
+        subtask = self.add_subtask(
+            ActionSubtask(f"Action: {prompt_output}", output_artifact_namespace=self.output_artifact_namespace)
+        )
 
-        subtask.before_run()
-        output = subtask.run()
-        subtask.after_run(output)
+        subtask.execute()
 
         if subtask.output:
-            self.output = subtask.output
+            return subtask.output
         else:
-            self.output = InfoArtifact("No tool output")
-
-        return self.output
+            return InfoArtifact("No tool output")
 
     def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         if self.tool.name == tool_name:
