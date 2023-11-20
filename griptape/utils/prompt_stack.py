@@ -1,13 +1,12 @@
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING, Any, List
-from dataclasses import dataclass, field
-from griptape.processors import BasePromptStackProcessor
+from attr import define, field
 
 if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
 
 
-@dataclass
+@define
 class PromptStack:
     """Manages a stack of prompts for a conversation."""
 
@@ -16,9 +15,9 @@ class PromptStack:
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    prompt_stack_processors: List["BasePromptStackProcessor"] = field(default_factory=list)
+    prompt_stack_processors: List["BasePromptStackProcessor"] = field(factory=list)
 
-    @dataclass
+    @define
     class Input:
         """Represents an input item in the prompt stack."""
 
@@ -37,15 +36,20 @@ class PromptStack:
         def is_assistant(self) -> bool:
             return self.role == PromptStack.ASSISTANT_ROLE
 
-    inputs: list[Input] = field(default_factory=list)
+    inputs: list[Input] = field(factory=list)
+
 
     def before_run(self, prompt: str) -> None:
+        from griptape.processors import BasePromptStackProcessor  # Move import here
         for processor in self.prompt_stack_processors:
-            processor.before_run(prompt)
+            if isinstance(processor, BasePromptStackProcessor):
+                processor.before_run(prompt)
 
     def after_run(self, result: Any) -> Any:
+        from griptape.processors import BasePromptStackProcessor  # Move import here
         for processor in self.prompt_stack_processors:
-            result = processor.after_run(result)
+            if isinstance(processor, BasePromptStackProcessor):
+                result = processor.after_run(result)
         return result
 
     def add_input(self, content: str, role: str) -> Input:
