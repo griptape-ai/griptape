@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import random
+import string
 import time
 from os import path
 from attr import define, field
@@ -58,8 +60,9 @@ class ImageGenerationTask(BaseTextInputTask):
     def _save_to_file(self, image_artifact: ImageArtifact) -> None:
         # Save image to file. This is a temporary workaround until we update Task and Meta
         # Memory to persist artifacts from tasks.
-        fmt_time = time.strftime("%y%m%d_%H%M%S", time.localtime())
-        outfile = path.join(self.output_dir, f"image_artifact_{fmt_time}.png")
+        entropy = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        fmt_time = time.strftime("%y%m%d%H%M%S", time.localtime())
+        outfile = path.join(self.output_dir, f"image_artifact_{fmt_time}_{entropy}.png")
 
         with open(outfile, "wb") as f:
             self.structure.logger.info(f"Saving [{image_artifact.to_text()}] to {os.path.abspath(outfile)}")
