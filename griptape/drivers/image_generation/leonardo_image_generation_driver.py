@@ -19,6 +19,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         max_attempts: The maximum number of times to poll the Leonardo API for a completed image.
         image_width: The width of the generated image in the range [32, 1024] and divisible by 8.
         image_height: The height of the generated image in the range [32, 1024] and divisible by 8.
+        seed: Optionally provide a consistent seed to generation requests, increasing consistency in output.
 
     Details on Leonardo image generation parameters can be found here:
     https://docs.leonardo.ai/reference/creategeneration
@@ -30,6 +31,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     max_attempts: int = field(default=10, kw_only=True)
     image_width: int = field(default=512, kw_only=True)
     image_height: int = field(default=512, kw_only=True)
+    seed: Optional[int] = field(default=None, kw_only=True)
 
     def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         if negative_prompts is None:
