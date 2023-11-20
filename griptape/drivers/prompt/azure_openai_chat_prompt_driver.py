@@ -2,6 +2,7 @@ from attr import define, field, Factory
 from typing import Optional
 from griptape.utils import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
+from griptape.processors import AmazonComprehendPiiProcessor
 import openai
 
 
@@ -15,6 +16,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
         azure_ad_token_provider: An optional Azure Active Directory token provider.
         api_version: An Azure OpenAi API version.
         client: An `openai.AzureOpenAI` client.
+        pii_processor: Custom `AmazonComprehendPiiProcessor`.
     """
 
     azure_deployment: str = field(kw_only=True)
@@ -22,6 +24,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     azure_ad_token: Optional[str] = field(kw_only=True, default=None)
     azure_ad_token_provider: Optional[str] = field(kw_only=True, default=None)
     api_version: str = field(default="2023-05-15", kw_only=True)
+    pii_processor: AmazonComprehendPiiProcessor = field(default=AmazonComprehendPiiProcessor(), kw_only=True)
     client: openai.AzureOpenAI = field(
         default=Factory(
             lambda self: openai.AzureOpenAI(
@@ -38,7 +41,8 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        params = super()._base_params(prompt_stack)
+        processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
+        params = super()._base_params(processed_prompt_stack)
         # TODO: Add `seed` parameter once Azure supports it.
         del params["seed"]
 

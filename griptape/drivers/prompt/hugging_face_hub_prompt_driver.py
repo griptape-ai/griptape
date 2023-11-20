@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Iterator, TYPE_CHECKING
 from os import environ
 from griptape.utils import PromptStack, import_optional_dependency
+from griptape.processors import BasePromptStackProcessor
+from griptape.processors import AmazonComprehendPiiProcessor
 
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 
@@ -24,6 +26,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         model: Hugging Face Hub model name.
         client: Custom `InferenceApi`.
         tokenizer: Custom `HuggingFaceTokenizer`.
+        pii_processor: Custom `BasePromptStackProcessor`.
 
     """
 
@@ -54,6 +57,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    pii_processor: BasePromptStackProcessor = field(default=AmazonComprehendPiiProcessor(), kw_only=True)
     stream: bool = field(default=False, kw_only=True)
 
     @stream.validator
@@ -62,13 +66,15 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             raise ValueError("streaming is not supported")
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        prompt = self.prompt_stack_to_string(prompt_stack)
+        processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
+        prompt = self.prompt_stack_to_string(processed_prompt_stack)
 
         if self.client.task in self.SUPPORTED_TASKS:
             response = self.client(inputs=prompt, params=self.DEFAULT_PARAMS | self.params)
+            processed_response = self.pii_processor.after_run(response)
 
-            if len(response) == 1:
-                return TextArtifact(value=response[0]["generated_text"].strip())
+            if len(processed_response) == 1:
+                return TextArtifact(value=processed_response[0]["generated_text"].strip())
             else:
                 raise Exception("completion with more than one choice is not supported yet")
         else:

@@ -9,6 +9,8 @@ from griptape.tokenizers import OpenAiTokenizer
 from typing import Tuple, Type
 import dateparser
 from datetime import datetime, timedelta
+from griptape.processors import BasePromptStackProcessor
+from griptape.processors import AmazonComprehendPiiProcessor
 
 
 @define
@@ -69,19 +71,25 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
     _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
 
+    pii_processor: BasePromptStackProcessor = field(default=AmazonComprehendPiiProcessor(), kw_only=True)
+
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        result = self.client.chat.completions.with_raw_response.create(**self._base_params(prompt_stack))
+        processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
+        result = self.client.chat.completions.with_raw_response.create(**self._base_params(processed_prompt_stack))
 
         self._extract_ratelimit_metadata(result)
 
         parsed_result = result.parse()
         if len(parsed_result.choices) == 1:
-            return TextArtifact(value=parsed_result.choices[0].message.content.strip())
+            result_artifact = TextArtifact(value=parsed_result.choices[0].message.content.strip())
+            processed_result_artifact = self.pii_processor.after_run(result_artifact)
+            return processed_result_artifact
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
+        processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
+        result = self.client.chat.completions.create(**self._base_params(processed_prompt_stack), stream=True)
 
         for chunk in result:
             if len(chunk.choices) == 1:
@@ -91,8 +99,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
             if delta.content is not None:
                 delta_content = delta.content
-
-                yield TextArtifact(value=delta_content)
+                delta_artifact = TextArtifact(value=delta_content)
+                processed_delta_artifact = self.pii_processor.after_run(delta_artifact)
+                yield processed_delta_artifact
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         return self.tokenizer.count_tokens(self._prompt_stack_to_messages(prompt_stack))

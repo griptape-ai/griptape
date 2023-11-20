@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING, Any, List
 from dataclasses import dataclass, field
-from griptape.processors.base_processors import BasePromptStackProcessor
+from griptape.processors import BasePromptStackProcessor
 
 if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
@@ -16,7 +16,7 @@ class PromptStack:
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    prompt_stack_processors: List[BasePromptStackProcessor] = field(default_factory=list)
+    prompt_stack_processors: List["BasePromptStackProcessor"] = field(default_factory=list)
 
     @dataclass
     class Input:

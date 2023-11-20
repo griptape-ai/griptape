@@ -2,6 +2,7 @@ from typing import Iterator
 from os import environ
 
 from griptape.utils import PromptStack
+from griptape.processors import AmazonComprehendPiiProcessor, BasePromptStackProcessor
 
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 
@@ -19,7 +20,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         params: Custom model run parameters.
         model: Hugging Face Hub model name.
         tokenizer: Custom `HuggingFaceTokenizer`.
-
+        pii_processor: Custom `BasePromptStackProcessor`.
     """
 
     SUPPORTED_TASKS = ["text2text-generation", "text-generation"]
@@ -27,6 +28,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
     model: str = field(kw_only=True)
     params: dict = field(factory=dict, kw_only=True)
+    pii_processor: BasePromptStackProcessor = field(default=AmazonComprehendPiiProcessor(), kw_only=True)
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
@@ -38,7 +40,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        prompt = self.prompt_stack_to_string(prompt_stack)
+        processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
+        prompt = self.prompt_stack_to_string(processed_prompt_stack)
         pipeline = import_optional_dependency("transformers").pipeline
 
         generator = pipeline(
@@ -53,7 +56,9 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
             response = generator(prompt, **(self.DEFAULT_PARAMS | extra_params | self.params))
 
             if len(response) == 1:
-                return TextArtifact(value=response[0]["generated_text"].strip())
+                result = TextArtifact(value=response[0]["generated_text"].strip())
+                processed_result = self.pii_processor.after_run(result)
+                return processed_result
             else:
                 raise Exception("completion with more than one choice is not supported yet")
         else:

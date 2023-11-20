@@ -12,5 +12,5 @@ class BasePromptStackProcessor(ABC):
         ...
 
     @abstractmethod
-    def after_run(self, result: Any) -> Any:
+    def after_run(self, result: str) -> str:
         ...

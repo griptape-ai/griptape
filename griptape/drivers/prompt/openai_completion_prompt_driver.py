@@ -4,8 +4,8 @@ from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.processors.base_processors import BasePromptStackProcessor
-from griptape.processors.amazon_comprehend_processor import AmazonComprehendPiiProcessor
+from griptape.processors import BasePromptStackProcessor
+from griptape.processors import AmazonComprehendPiiProcessor
 import openai
 
 
@@ -55,10 +55,12 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         processed_prompt_stack = self.pii_processor.before_run(prompt_stack)
         result = self.client.completions.create(**self._base_params(processed_prompt_stack))
-        processed_result = self.pii_processor.after_run(result)
 
-        if len(processed_result.choices) == 1:
-            return TextArtifact(value=processed_result.choices[0].text.strip())
+        if len(result.choices) == 1:
+            result_text = result.choices[0].text.strip()
+            result_artifact = TextArtifact(value=result_text)
+            processed_result_artifact = self.pii_processor.after_run(result_artifact)
+            return processed_result_artifact
         else:
             raise Exception("completion with more than one choice is not supported yet")
 
@@ -67,13 +69,11 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
         result = self.client.completions.create(**self._base_params(processed_prompt_stack), stream=True)
 
         for chunk in result:
-            processed_chunk = self.pii_processor.after_run(chunk)
-
-            if len(processed_chunk.choices) == 1:
-                choice = processed_chunk.choices[0]
-                delta_content = choice.text
-                yield TextArtifact(value=delta_content)
-
+            if len(chunk.choices) == 1:
+                chunk_text = chunk.choices[0].text
+                chunk_artifact = TextArtifact(value=chunk_text)
+                processed_chunk_artifact = self.pii_processor.after_run(chunk_artifact)
+                yield processed_chunk_artifact
             else:
                 raise Exception("completion with more than one choice is not supported yet")
 
