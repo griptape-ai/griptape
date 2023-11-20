@@ -22,10 +22,10 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
         image_width: Width of output images. Defaults to 512 and must be a multiple of 64.
         image_height: Height of output images. Defaults to 512 and must be a multiple of 64.
         cfg_scale: Stable Diffusion cfg_scale parameter.
-        steps: Stable Diffusion steps parameter.
         style_preset: Optional Stable Diffusion style preset name.
         clip_guidance_preset: Optional Stable Diffusion clip guidance preset name.
         sampler: Optional Stable Diffusion sampler name.
+        steps: Optionally specify the number of inference steps to run for each image generation request, [10, 50].
         seed: Optionally provide a consistent seed to generation requests, increasing consistency in output.
 
     Details on Stable Diffusion image generation parameters can be found here:
@@ -39,10 +39,10 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
     image_width: int = field(default=512, kw_only=True)
     image_height: int = field(default=512, kw_only=True)
     cfg_scale: int = field(default=7, kw_only=True)
-    steps: int = field(default=60, kw_only=True)
     style_preset: Optional[str] = field(default=None, kw_only=True)
     clip_guidance_preset: Optional[str] = field(default=None, kw_only=True)
     sampler: Optional[str] = field(default=None, kw_only=True)
+    steps: Optional[int] = field(default=None, kw_only=True)
     seed: Optional[int] = field(default=None, kw_only=True)
 
     def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
@@ -55,13 +55,15 @@ class AmazonBedrockStableDiffusionImageGenerationDriver(BaseImageGenerationDrive
         request = {
             "text_prompts": text_prompts,
             "cfg_scale": self.cfg_scale,
-            "steps": self.steps,
             "style_preset": self.style_preset,
             "clip_guidance_preset": self.clip_guidance_preset,
             "sampler": self.sampler,
             "width": self.image_width,
             "height": self.image_height,
         }
+
+        if self.steps is not None:
+            request["steps"] = self.steps
 
         if self.seed is not None:
             request["seed"] = self.seed
