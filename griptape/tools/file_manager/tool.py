@@ -24,7 +24,7 @@ class FileManager(BaseTool):
         save_file_encoding: The encoding to use when saving files to disk.
     """
 
-    workdir: str = field(default=os.getcwd(), kw_only=True)
+    workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
     default_loader: BaseLoader = field(default=Factory(lambda: FileLoader()))
     loaders: dict[str, BaseLoader] = field(
         default=Factory(

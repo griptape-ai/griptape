@@ -1,4 +1,5 @@
 import os.path
+import os
 import tempfile
 from pathlib import Path
 import pytest
@@ -118,3 +119,12 @@ class TestFileManager:
             assert isinstance(result, ListArtifact)
             assert len(result.value) == 1
             assert isinstance(result.value[0], TextArtifact)
+
+    def test_chrdir_getcwd(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            file_manager_1 = FileManager()
+            assert file_manager_1.workdir.endswith(temp_dir)
+            os.chdir("/tmp")
+            file_manager_2 = FileManager()
+            assert file_manager_2.workdir.endswith("/tmp")
