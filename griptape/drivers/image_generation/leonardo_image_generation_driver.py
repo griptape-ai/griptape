@@ -19,6 +19,8 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         max_attempts: The maximum number of times to poll the Leonardo API for a completed image.
         image_width: The width of the generated image in the range [32, 1024] and divisible by 8.
         image_height: The height of the generated image in the range [32, 1024] and divisible by 8.
+        steps: Optionally specify the number of inference steps to run for each image generation request, [30, 60].
+        seed: Optionally provide a consistent seed to generation requests, increasing consistency in output.
 
     Details on Leonardo image generation parameters can be found here:
     https://docs.leonardo.ai/reference/creategeneration
@@ -30,6 +32,8 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     max_attempts: int = field(default=10, kw_only=True)
     image_width: int = field(default=512, kw_only=True)
     image_height: int = field(default=512, kw_only=True)
+    steps: Optional[int] = field(default=None, kw_only=True)
+    seed: Optional[int] = field(default=None, kw_only=True)
 
     def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         if negative_prompts is None:
@@ -52,17 +56,23 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         )
 
     def _create_generation(self, prompt: str, negative_prompt: str):
+        request = {
+            "prompt": prompt,
+            "negative_prompt": negative_prompt,
+            "width": self.image_width,
+            "height": self.image_height,
+            "num_images": 1,
+            "modelId": self.model,
+        }
+
+        if self.steps is not None:
+            request["num_inference_steps"] = self.steps
+
+        if self.seed is not None:
+            request["seed"] = self.seed
+
         response = self.requests_session.post(
-            url=f"{self.api_base}/generations",
-            headers={"Authorization": f"Bearer {self.api_key}"},
-            json={
-                "prompt": prompt,
-                "negative_prompt": negative_prompt,
-                "width": self.image_width,
-                "height": self.image_height,
-                "num_images": 1,
-                "modelId": self.model,
-            },
+            url=f"{self.api_base}/generations", headers={"Authorization": f"Bearer {self.api_key}"}, json=request
         ).json()
 
         return response["sdGenerationJob"]["generationId"]
