@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import os
-import random
-import string
-import time
 from os import path
+from typing import Optional
+
 from attr import define, field
 from griptape.artifacts import ImageArtifact
 from griptape.engines import ImageGenerationEngine
@@ -14,10 +13,17 @@ from griptape.tasks import BaseTextInputTask
 
 @define
 class ImageGenerationTask(BaseTextInputTask):
+    """ImageGenerationTask is a task that can be used to generate an image.
+
+    Attributes:
+        image_generation_engine: The engine used to generate the image.
+        output_dir: If provided, the generated image will be written to disk in output_dir.
+    """
+
     NEGATIVE_RULESET_NAME = "Negative Ruleset"
 
     image_generation_engine: ImageGenerationEngine = field(kw_only=True)
-    output_dir: str = field(kw_only=True)
+    output_dir: Optional[str] = field(default=None, kw_only=True)
     negative_rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 
@@ -53,16 +59,15 @@ class ImageGenerationTask(BaseTextInputTask):
             prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
         )
 
-        self._save_to_file(image_artifact)
+        if self.output_dir is not None:
+            self._write_to_file(image_artifact)
 
         return image_artifact
 
-    def _save_to_file(self, image_artifact: ImageArtifact) -> None:
+    def _write_to_file(self, image_artifact: ImageArtifact) -> None:
         # Save image to file. This is a temporary workaround until we update Task and Meta
         # Memory to persist artifacts from tasks.
-        entropy = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
-        fmt_time = time.strftime("%y%m%d%H%M%S", time.localtime())
-        outfile = path.join(self.output_dir, f"image_artifact_{fmt_time}_{entropy}.png")
+        outfile = path.join(self.output_dir, image_artifact.name)
 
         with open(outfile, "wb") as f:
             self.structure.logger.info(f"Saving [{image_artifact.to_text()}] to {os.path.abspath(outfile)}")
