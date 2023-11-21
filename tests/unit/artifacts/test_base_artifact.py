@@ -1,5 +1,13 @@
 import pytest
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
+from griptape.artifacts import (
+    BaseArtifact,
+    TextArtifact,
+    ErrorArtifact,
+    InfoArtifact,
+    ListArtifact,
+    BlobArtifact,
+    ImageArtifact,
+)
 
 
 class TestBaseArtifact:
@@ -37,6 +45,22 @@ class TestBaseArtifact:
 
         assert isinstance(artifact, BlobArtifact)
         assert artifact.to_text() == "foobar"
+
+    def test_image_artifact_from_dict(self):
+        dict_value = {
+            "type": "ImageArtifact",
+            "base64": b"aW1hZ2UgZGF0YQ==",
+            "mime_type": "image/png",
+            "width": 256,
+            "height": 256,
+            "model": "test-model",
+            "prompt": "some prompt",
+        }
+        artifact = BaseArtifact.from_dict(dict_value)
+
+        assert isinstance(artifact, ImageArtifact)
+        assert artifact.to_text() == "Image, dimensions: 256x256, type: image/png, size: 10 bytes"
+        assert artifact.value == b"image data"
 
     def test_unsupported_from_dict(self):
         dict_value = {"type": "foo", "value": "foobar"}

@@ -1,9 +1,11 @@
+import base64
+
 import pytest
 from griptape.artifacts import ImageArtifact, BaseArtifact
 from griptape.schemas import ImageArtifactSchema
 
 
-class TestBlobArtifact:
+class TestImageArtifact:
     @pytest.fixture
     def image_artifact(self):
         return ImageArtifact(
@@ -26,6 +28,8 @@ class TestBlobArtifact:
         assert image_dict["height"] == 512
         assert image_dict["model"] == "openai/dalle2"
         assert image_dict["prompt"] == "a cute cat"
+        assert image_dict["base64"] == "c29tZSBiaW5hcnkgcG5nIGltYWdlIGRhdGE="
+        assert "value" not in image_dict
 
     def test_deserialization(self, image_artifact):
         artifact_dict = ImageArtifactSchema().dump(image_artifact)
@@ -37,3 +41,4 @@ class TestBlobArtifact:
         assert deserialized_artifact.height == 512
         assert deserialized_artifact.model == "openai/dalle2"
         assert deserialized_artifact.prompt == "a cute cat"
+        assert deserialized_artifact.base64 == "c29tZSBiaW5hcnkgcG5nIGltYWdlIGRhdGE="
