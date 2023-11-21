@@ -3,15 +3,14 @@ from attr import define, field, Factory
 from griptape.utils import PromptStack
 from griptape.artifacts import TextArtifact
 from .base_processors import BasePromptStackProcessor
+from griptape.utils import import_optional_dependency
 import boto3
 from botocore.client import BaseClient
 
-
 @define
 class AmazonComprehendPiiProcessor(BasePromptStackProcessor):
-    comprehend_client: BaseClient = field(
-        default=Factory(lambda: boto3.client("comprehend", region_name="us-west-2")), kw_only=True
-    )
+    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
+    comprehend_client: BaseClient = field(default=Factory(lambda: boto3.client('comprehend', region_name='us-west-2')))
     custom_filter_func: Optional[Callable[[str], str]] = field(default=None, kw_only=True)
     pii_replacements: Dict[str, str] = field(default=Factory(dict), kw_only=True)
 
