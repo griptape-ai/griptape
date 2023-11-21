@@ -19,10 +19,7 @@ class Chat:
     streaming_output_fn: Callable[[str], None] = field(default=lambda x: print(x, end=""), kw_only=True)
     output_fn: Callable[[str], None] = field(default=Factory(lambda: print), kw_only=True)
 
-    def start(self, initial_turn: str = None) -> None:
-        if initial_turn:
-            self.output_fn(initial_turn)
-
+    def start(self) -> None:
         if self.intro_text:
             self.output_fn(self.intro_text)
         while True:
@@ -35,11 +32,10 @@ class Chat:
                 self.output_fn(self.processing_text)
 
             if self.structure.stream:
-                first_chunk: bool = True
-                for chunk in Stream(self.structure).run(question):
-                    if first_chunk:
-                        self.streaming_output_fn(f"{self.response_prefix}")
-                        first_chunk = False
+                stream = Stream(self.structure).run(question)
+                first_chunk = next(stream)
+                self.streaming_output_fn(self.response_prefix + first_chunk.value)
+                for chunk in stream:
                     self.streaming_output_fn(chunk.value)
                 self.streaming_output_fn("\n")
             else:

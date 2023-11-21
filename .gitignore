@@ -50,8 +50,3 @@ dist/**
 *.xlf
 *.nls.*.json
 *.i18n.json
-
-
-/models
-/data
-version.txt
