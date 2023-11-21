@@ -16,12 +16,8 @@ class Chat:
     intro_text: Optional[str] = field(default=None, kw_only=True)
     prompt_prefix: str = field(default="Q: ", kw_only=True)
     response_prefix: str = field(default="A: ", kw_only=True)
-    streaming_output_fn: Callable[[str], None] = field(
-        default=lambda x: print(x, end=""), kw_only=True
-    )
-    output_fn: Callable[[str], None] = field(
-        default=Factory(lambda: print), kw_only=True
-    )
+    streaming_output_fn: Callable[[str], None] = field(default=lambda x: print(x, end=""), kw_only=True)
+    output_fn: Callable[[str], None] = field(default=Factory(lambda: print), kw_only=True)
 
     def start(self, initial_turn: str = None) -> None:
         if initial_turn:
@@ -47,6 +43,4 @@ class Chat:
                     self.streaming_output_fn(chunk.value)
                 self.streaming_output_fn("\n")
             else:
-                self.output_fn(
-                    f"{self.response_prefix}{self.structure.run(question).output.to_text()}"
-                )
+                self.output_fn(f"{self.response_prefix}{self.structure.run(question).output.to_text()}")

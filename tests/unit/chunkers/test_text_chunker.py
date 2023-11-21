@@ -12,16 +12,12 @@ class TestTextChunker:
         return TextChunker(max_tokens=MAX_TOKENS)
 
     def test_chunk_with_string(self, chunker):
-        chunks = chunker.chunk(
-            gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " ")
-        )
+        chunks = chunker.chunk(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " "))
 
         assert len(chunks) == 3
 
     def test_chunk_with_text_artifact(self, chunker):
-        chunks = chunker.chunk(
-            TextArtifact(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " "))
-        )
+        chunks = chunker.chunk(TextArtifact(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " ")))
 
         assert len(chunks) == 3
 
@@ -68,10 +64,7 @@ class TestTextChunker:
         assert chunks[3].value.endswith(". foo-11.")
 
     def test_contiguous_chunks(self, chunker):
-        text = [
-            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ""),
-            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ""),
-        ]
+        text = [gen_paragraph(MAX_TOKENS, chunker.tokenizer, ""), gen_paragraph(MAX_TOKENS, chunker.tokenizer, "")]
         chunks = chunker.chunk("".join(text))
 
         assert len(chunks) == 2

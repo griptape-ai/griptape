@@ -11,13 +11,7 @@ class TestMarqoVectorStorageDriver:
         # Create a fake responses
         fake_add_document_response = {
             "errors": False,
-            "items": [
-                {
-                    "_id": "5aed93eb-3878-4f12-bc92-0fda01c7d23d",
-                    "result": "created",
-                    "status": 201,
-                }
-            ],
+            "items": [{"_id": "5aed93eb-3878-4f12-bc92-0fda01c7d23d", "result": "created", "status": 201}],
             "processingTimeMs": 6,
             "index_name": "my-first-index",
         }
@@ -31,10 +25,7 @@ class TestMarqoVectorStorageDriver:
                     "_id": "5aed93eb-3878-4f12-bc92-0fda01c7d23d",
                     "_source": {
                         "values": [0.1, 0.2, 0.3],
-                        "metadata": {
-                            "Title": "Test title",
-                            "Description": "Test description",
-                        },
+                        "metadata": {"Title": "Test title", "Description": "Test description"},
                     },
                     "_score": 0.6047464,
                 }
@@ -51,39 +42,21 @@ class TestMarqoVectorStorageDriver:
             # '_id': 'article_152',
             "_id": "5aed93eb-3878-4f12-bc92-0fda01c7d23d",
             "_tensor_facets": [
-                {
-                    "Title": "Test Title",
-                    "_embedding": [
-                        -0.10393160581588745,
-                        0.0465407557785511,
-                        -0.01760256476700306,
-                    ],
-                },
+                {"Title": "Test Title", "_embedding": [-0.10393160581588745, 0.0465407557785511, -0.01760256476700306]},
                 {
                     "Blurb": "Test description",
-                    "_embedding": [
-                        -0.045681700110435486,
-                        0.056278493255376816,
-                        0.022254955023527145,
-                    ],
+                    "_embedding": [-0.045681700110435486, 0.056278493255376816, 0.022254955023527145],
                 },
             ],
         }
 
-        fake_create_index_response = {
-            "acknowledged": True,
-            "shards_acknowledged": True,
-            "index": "my-first-index",
-        }
+        fake_create_index_response = {"acknowledged": True, "shards_acknowledged": True, "index": "my-first-index"}
 
         # Define a namedtuple type for the mock indexes
         MockIndex = namedtuple("MockIndex", ["index_name"])
 
         # Create a list of mock indexes
-        mock_indexes = [
-            MockIndex(index_name="my-first-index"),
-            MockIndex(index_name="test-index"),
-        ]
+        mock_indexes = [MockIndex(index_name="my-first-index"), MockIndex(index_name="test-index")]
         mock_get_indexes_response = {"results": mock_indexes}
 
         # Mock the marqo.Client
@@ -124,17 +97,13 @@ class TestMarqoVectorStorageDriver:
         assert result["index"] == "my-first-index"
 
     def test_upsert_text(self, driver, mock_marqo):
-        result = driver.upsert_text(
-            "test text", vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d"
-        )
+        result = driver.upsert_text("test text", vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d")
         mock_marqo.index().add_documents.assert_called()
         assert result == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
 
     def test_upsert_text_artifact(self, driver, mock_marqo):
         # Arrange
-        text = TextArtifact(
-            id="a44b04ff052e4109b3c6fda0f3f3e997", value="racoons"
-        )
+        text = TextArtifact(id="a44b04ff052e4109b3c6fda0f3f3e997", value="racoons")
         mock_marqo.index().add_documents.return_value = {
             "errors": False,
             "items": [{"_id": text.id, "result": "created", "status": 201}],
@@ -173,10 +142,7 @@ class TestMarqoVectorStorageDriver:
 
         # Assert
         mock_marqo.index().search.assert_called_once_with(
-            "Test query",
-            limit=5,
-            attributes_to_retrieve=["*"],
-            filter_string=None,
+            "Test query", limit=5, attributes_to_retrieve=["*"], filter_string=None
         )
         mock_marqo.index().get_document.assert_called_once_with(
             "5aed93eb-3878-4f12-bc92-0fda01c7d23d", expose_facets=True
@@ -185,19 +151,14 @@ class TestMarqoVectorStorageDriver:
         assert results[0].score == 0.6047464
         assert results[0].meta["Title"] == "Test Title"
         assert results[0].meta["Description"] == "Test description"
-        assert results[0].vector == [
-            -0.10393160581588745,
-            0.0465407557785511,
-            -0.01760256476700306,
-        ]  # The vector
+        assert results[0].vector == [-0.10393160581588745, 0.0465407557785511, -0.01760256476700306]  # The vector
         # values should match the "_embedding" values of title in mock response
 
     def test_laod_entry(self, driver, mock_marqo):
         # Mock 'get_document' method to return a dictionary
         entry = driver.load_entry("5aed93eb-3878-4f12-bc92-0fda01c7d23d")
         mock_marqo.index().get_document.assert_called_once_with(
-            document_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d",
-            expose_facets=True,
+            document_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d", expose_facets=True
         )
         assert entry.id == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
         assert entry.meta["Title"] == "Test Title"
@@ -232,21 +193,16 @@ class TestMarqoVectorStorageDriver:
         }
 
         mock_marqo.index().search.return_value = fake_search_response
-        mock_marqo.index().get_documents.return_value = (
-            fake_get_documents_response
-        )
+        mock_marqo.index().get_documents.return_value = fake_get_documents_response
 
         # Act
         entries = driver.load_entries()
 
         # Assert
         assert len(entries) == 1
-        mock_marqo.index().search.assert_called_once_with(
-            "", limit=10000, filter_string=None
-        )
+        mock_marqo.index().search.assert_called_once_with("", limit=10000, filter_string=None)
         mock_marqo.index().get_documents.assert_called_once_with(
-            document_ids=["5aed93eb-3878-4f12-bc92-0fda01c7d23d"],
-            expose_facets=True,
+            document_ids=["5aed93eb-3878-4f12-bc92-0fda01c7d23d"], expose_facets=True
         )
         assert entries[0].id == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
         assert entries[0].vector == [0.1, 0.2, 0.3]

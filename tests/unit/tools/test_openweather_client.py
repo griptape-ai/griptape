@@ -30,10 +30,7 @@ def mock_requests_get(*args, **kwargs):
 def test_get_coordinates_by_location(mock_get, client):
     params = {"values": {"location": "New York, NY"}}
     result = client.get_coordinates_by_location(params)
-    assert (
-        result.to_text()
-        == "Coordinates for New York, NY: Latitude: 40.7128, Longitude: -74.0061"
-    )
+    assert result.to_text() == "Coordinates for New York, NY: Latitude: 40.7128, Longitude: -74.0061"
 
 
 @patch("requests.get", side_effect=mock_requests_get)
@@ -62,10 +59,7 @@ def test_invalid_api_key(mock_get, client):
     params = {"values": {"location": "New York, NY"}}
     result = client.get_coordinates_by_location(params)
     assert isinstance(result, ErrorArtifact)
-    assert (
-        "Error fetching coordinates for location: New York, NY"
-        in result.to_text()
-    )
+    assert "Error fetching coordinates for location: New York, NY" in result.to_text()
 
 
 @patch("requests.get", return_value=MockResponse(None, 404))
@@ -73,7 +67,4 @@ def test_invalid_location(mock_get, client):
     params = {"values": {"location": "InvalidCity, XX"}}
     result = client.get_coordinates_by_location(params)
     assert isinstance(result, ErrorArtifact)
-    assert (
-        "Error fetching coordinates for location: InvalidCity, XX"
-        in result.to_text()
-    )
+    assert "Error fetching coordinates for location: InvalidCity, XX" in result.to_text()

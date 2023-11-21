@@ -6,6 +6,7 @@ from griptape.artifacts import (
     InfoArtifact,
     ListArtifact,
     BlobArtifact,
+    ImageArtifact,
 )
 
 
@@ -32,26 +33,34 @@ class TestBaseArtifact:
         assert artifact.to_text() == "foobar"
 
     def test_list_artifact_from_dict(self):
-        dict_value = {
-            "type": "ListArtifact",
-            "value": [{"type": "TextArtifact", "value": "foobar"}],
-        }
+        dict_value = {"type": "ListArtifact", "value": [{"type": "TextArtifact", "value": "foobar"}]}
         artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, ListArtifact)
         assert artifact.to_text() == "foobar"
 
     def test_blob_artifact_from_dict(self):
-        dict_value = {
-            "type": "BlobArtifact",
-            "value": b"Zm9vYmFy",
-            "dir_name": "foo",
-            "name": "bar",
-        }
+        dict_value = {"type": "BlobArtifact", "value": b"Zm9vYmFy", "dir_name": "foo", "name": "bar"}
         artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, BlobArtifact)
         assert artifact.to_text() == "foobar"
+
+    def test_image_artifact_from_dict(self):
+        dict_value = {
+            "type": "ImageArtifact",
+            "base64": b"aW1hZ2UgZGF0YQ==",
+            "mime_type": "image/png",
+            "width": 256,
+            "height": 256,
+            "model": "test-model",
+            "prompt": "some prompt",
+        }
+        artifact = BaseArtifact.from_dict(dict_value)
+
+        assert isinstance(artifact, ImageArtifact)
+        assert artifact.to_text() == "Image, dimensions: 256x256, type: image/png, size: 10 bytes"
+        assert artifact.value == b"image data"
 
     def test_unsupported_from_dict(self):
         dict_value = {"type": "foo", "value": "foobar"}

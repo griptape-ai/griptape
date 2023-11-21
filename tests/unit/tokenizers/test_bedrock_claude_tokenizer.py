@@ -5,9 +5,7 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 class TestBedrockClaudeTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return BedrockClaudeTokenizer(
-            model=BedrockClaudeTokenizer.DEFAULT_MODEL
-        )
+        return BedrockClaudeTokenizer(model=BedrockClaudeTokenizer.DEFAULT_MODEL)
 
     def test_token_count(self, tokenizer):
         assert tokenizer.count_tokens("foo bar huzzah") == 5
