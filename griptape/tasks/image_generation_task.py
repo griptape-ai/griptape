@@ -90,7 +90,7 @@ class ImageGenerationTask(BaseTextInputTask):
         else:
             outfile = path.join(self.output_dir, image_artifact.name)
 
-        os.makedirs(self.output_dir, exist_ok=True)
+        os.makedirs(path.dirname(outfile), exist_ok=True)
         with open(outfile, "wb") as f:
             self.structure.logger.info(f"Saving [{image_artifact.to_text()}] to {os.path.abspath(outfile)}")
             f.write(image_artifact.value)
