@@ -1,8 +1,10 @@
+import base64
 from typing import Optional
-from attr import field
+from attr import field, define
 from griptape.drivers import BaseImageGenerationModelDriver
 
 
+@define
 class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelDriver):
     cfg_scale: int = field(default=7, kw_only=True)
     style_preset: Optional[str] = field(default=None, kw_only=True)
@@ -41,3 +43,10 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
             request["seed"] = seed
 
         return request
+
+    def get_generated_image(self, response: dict) -> bytes:
+        image_response = response["artifacts"][0]
+        if image_response.get("finishReason") != "SUCCESS":
+            raise ValueError(f"Image generation failed: {image_response.get('finishReason')}")
+
+        return base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))

@@ -15,3 +15,7 @@ class BaseImageGenerationModelDriver(ABC):
         seed: Optional[int] = None,
     ) -> dict:
         ...
+
+    @abstractmethod
+    def get_generated_image(self, response: dict) -> bytes:
+        ...

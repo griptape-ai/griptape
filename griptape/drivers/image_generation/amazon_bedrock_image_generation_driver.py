@@ -31,11 +31,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
         response_body = json.loads(response.get("body").read())
-        image_response = response_body["artifacts"][0]
-        if image_response.get("finishReason") != "SUCCESS":
-            raise ValueError(f"Image generation failed: {image_response.get('finishReason')}")
 
-        image_bytes = base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))
+        try:
+            image_bytes = self.image_generation_model_driver.get_generated_image(response_body)
+        except Exception as e:
+            raise ValueError(f"Image generation failed: {e}")
 
         return ImageArtifact(
             prompt=", ".join(prompts),
