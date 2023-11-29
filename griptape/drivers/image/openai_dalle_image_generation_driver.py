@@ -1,14 +1,18 @@
 from __future__ import annotations
+
 import base64
+from typing import Optional, Literal, TYPE_CHECKING
+
 import openai
-from typing import Optional, Literal, Union, get_args
 from attr import field, Factory, define
+
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageGenerationDriver
+
+from .base_text_to_image_generation_driver import BaseTextToImageGenerationDriver
 
 
 @define
-class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
+class OpenAiDalleImageGenerationDriver(BaseTextToImageGenerationDriver):
     """Driver for OpenAI DALLE image generation API.
 
     Attributes:

@@ -1,17 +1,21 @@
 from typing import Optional
 
 from attr import field, define
-from griptape.drivers import BaseImageGenerationDriver
-from griptape.rules import Rule, Ruleset
+
+from griptape.artifacts import ImageArtifact
+from griptape.drivers import BaseImageToImageGenerationDriver
+from griptape.rules import Ruleset
 
 
 @define
-class ImageGenerationEngine:
-    image_generation_driver: BaseImageGenerationDriver = field(kw_only=True)
+class ImageToImageGenerationEngine:
+    image_to_image_generation_driver: BaseImageToImageGenerationDriver = field(kw_only=True)
 
-    def generate_image(
+    def modify_image(
         self,
+        input_image: ImageArtifact,
         prompts: list[str],
+        mask_image: Optional[ImageArtifact] = None,
         negative_prompts: Optional[list[str]] = None,
         rulesets: Optional[list[Ruleset]] = None,
         negative_rulesets: Optional[list[Ruleset]] = None,
@@ -27,4 +31,6 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_generation_driver.generate_image(prompts, negative_prompts=negative_prompts)
+        return self.image_to_image_generation_driver.image_to_image_generation(
+            input_image, prompts, mask_image=mask_image, negative_prompts=negative_prompts
+        )

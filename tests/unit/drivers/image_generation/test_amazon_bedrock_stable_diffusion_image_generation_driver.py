@@ -53,7 +53,7 @@ class TestAmazonBedrockImageGenerationDriver:
             )
         }
 
-        image_artifact = driver.generate_image(prompts=["test prompt"], negative_prompts=["test negative prompt"])
+        image_artifact = driver.try_generate_image(prompts=["test prompt"], negative_prompts=["test negative prompt"])
 
         assert image_artifact.value == b"image data"
         assert image_artifact.mime_type == "image/png"

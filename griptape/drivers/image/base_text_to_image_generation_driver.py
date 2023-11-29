@@ -1,16 +1,17 @@
-from abc import abstractmethod, ABC
-from typing import Optional
+from __future__ import annotations
 
-from attr import define, field
+from abc import abstractmethod
+from typing import Optional, TYPE_CHECKING
+
+from attr import define
 
 from griptape.artifacts import ImageArtifact
-from griptape.mixins import ExponentialBackoffMixin
+
+from .base_image_generation_driver import BaseImageGenerationDriver
 
 
 @define
-class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
-    model: str = field(kw_only=True)
-
+class BaseTextToImageGenerationDriver(BaseImageGenerationDriver):
     def generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:

@@ -1,14 +1,16 @@
-import os
 import time
+from typing import Optional, TYPE_CHECKING
+
 import requests
-from typing import Optional
 from attr import field, define, Factory
+
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageGenerationDriver
+
+from .base_text_to_image_generation_driver import BaseTextToImageGenerationDriver
 
 
 @define
-class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
+class LeonardoImageGenerationDriver(BaseTextToImageGenerationDriver):
     """Driver for the Leonardo image generation API.
 
     Attributes:
