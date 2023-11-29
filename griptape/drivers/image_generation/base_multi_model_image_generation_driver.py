@@ -1,4 +1,5 @@
-from abc import abstractmethod
+from __future__ import annotations
+from abc import abstractmethod, ABC
 from typing import Optional, TYPE_CHECKING
 from attr import field, define
 from griptape.artifacts import ImageArtifact
@@ -9,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver):
+class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver, ABC):
     image_generation_model_driver: BaseImageGenerationModelDriver = field(kw_only=True)
 
     @abstractmethod

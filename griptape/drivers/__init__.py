@@ -43,6 +43,7 @@ from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePrompt
 from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPromptModelDriver
 
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
+from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
 from .image_generation.openai_dalle_image_generation_driver import OpenAiDalleImageGenerationDriver
 from .image_generation.leonardo_image_generation_driver import LeonardoImageGenerationDriver
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
@@ -95,6 +96,7 @@ __all__ = [
     "BedrockClaudePromptModelDriver",
     "BedrockJurassicPromptModelDriver",
     "BaseImageGenerationDriver",
+    "BaseMultiModelImageGenerationDriver",
     "OpenAiDalleImageGenerationDriver",
     "LeonardoImageGenerationDriver",
     "AmazonBedrockImageGenerationDriver",
