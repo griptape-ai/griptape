@@ -14,6 +14,16 @@ if TYPE_CHECKING:
 
 @define
 class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver, ABC):
+    """Image Generation Driver for platforms like Amazon Bedrock that host many LLM models.
+
+    Instances of this Image Generation Driver require a Image Generation Model Driver which is used to structure the
+    image generation request in the format required by the model and to process the output.
+
+    Attributes:
+        model: Name of the model to use.
+        image_generation_model_driver: Image Generation Model Driver to use.
+    """
+
     image_generation_model_driver: BaseImageGenerationModelDriver = field(kw_only=True)
 
     @abstractmethod

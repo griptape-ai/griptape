@@ -15,6 +15,21 @@ if TYPE_CHECKING:
 
 @define
 class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
+    """Driver for image generation models provided by Amazon Bedrock.
+
+    Attributes:
+        model: Bedrock model ID.
+        session: boto3 session.
+        bedrock_client: Bedrock runtime client.
+        image_width: Width of output images. Defaults to 512 and must be a multiple of 64.
+        image_height: Height of output images. Defaults to 512 and must be a multiple of 64.
+        seed: Optionally provide a consistent seed to generation requests, increasing consistency in output.
+        image_generation_model_driver: Image Generation Model Driver to use.
+
+    Details on Stable Diffusion image generation parameters can be found here:
+    https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage
+    """
+
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client(service_name="bedrock-runtime"), takes_self=True)
