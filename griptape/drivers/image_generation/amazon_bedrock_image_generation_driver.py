@@ -1,8 +1,10 @@
 from __future__ import annotations
-import base64
+
 import json
 from typing import Optional, TYPE_CHECKING, Any
+
 from attr import define, field, Factory
+
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseMultiModelImageGenerationDriver
 from griptape.utils import import_optional_dependency

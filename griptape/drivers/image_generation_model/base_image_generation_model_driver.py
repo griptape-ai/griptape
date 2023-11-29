@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
 from typing import Optional
+
 from attr import define
 
 

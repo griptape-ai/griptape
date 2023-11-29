@@ -1,6 +1,8 @@
 import base64
 from typing import Optional
+
 from attr import field, define
+
 from griptape.drivers import BaseImageGenerationModelDriver
 
 
