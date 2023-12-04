@@ -2,14 +2,14 @@ from typing import Callable, Dict, List, Any
 from .base_processors import BasePromptStackProcessor
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
-from attr import define, field
+from attr import define, field, Factory
 
 @define
 class PromptDriverPiiProcessor(BasePromptStackProcessor):
-    prompt_driver = field()
-    mask_pii_func = field()
-    unmask_pii_func = field()
-    pii_replacements: Dict[str, str] = field(factory=dict)
+    prompt_driver: Any = field(default=None)
+    mask_pii_func: Callable = field(default=None)
+    unmask_pii_func: Callable = field(default=None)
+    pii_replacements: Dict[str, str] = field(default=Factory(dict))
 
     def before_run(self, prompt_stack: PromptStack) -> PromptStack:
         for input_item in prompt_stack.inputs:
