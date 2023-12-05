@@ -1,12 +1,9 @@
-from attr import field
 from attrs import define
-from griptape.events.base_event import BaseEvent
+from griptape.events.base_prompt_event import BasePromptEvent
 
 
 @define
-class FinishPromptEvent(BaseEvent):
-    token_count: int = field(kw_only=True)
-
+class FinishPromptEvent(BasePromptEvent):
     def to_dict(self) -> dict:
         from griptape.schemas import FinishPromptEventSchema
 
