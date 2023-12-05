@@ -47,6 +47,7 @@ from .image_generation.base_multi_model_image_generation_driver import BaseMulti
 from .image_generation.openai_dalle_image_generation_driver import OpenAiDalleImageGenerationDriver
 from .image_generation.leonardo_image_generation_driver import LeonardoImageGenerationDriver
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
+from .image_generation.azure_openai_dalle_image_generation import AzureOpenAiDalleImageGenerationDriver
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
 from .image_generation_model.amazon_bedrock_titan_image_generation_model_driver import (
@@ -103,4 +104,5 @@ __all__ = [
     "BaseImageGenerationModelDriver",
     "AmazonBedrockTitanImageGenerationModelDriver",
     "AmazonBedrockStableDiffusionImageGenerationModelDriver",
+    "AzureOpenAiDalleImageGenerationDriver",
 ]
