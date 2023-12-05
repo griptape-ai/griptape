@@ -73,14 +73,7 @@ class ImageGenerationTask(BaseTextInputTask):
         return task_rulesets
 
     def run(self) -> ImageArtifact | InfoArtifact:
-        if self.input_artifact_namespace:
-            memory_artifacts = self.task_memory.load_artifacts(self.input_artifact_namespace)
-            if memory_artifacts:
-                text = memory_artifacts[0].to_text()
-            else:
-                text = self.input.to_text()
-        else:
-            text = self.input.to_text()
+        text = self.input.to_text()
 
         image_artifact = self.image_generation_engine.generate_image(
             prompts=[text], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets

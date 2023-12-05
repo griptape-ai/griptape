@@ -28,7 +28,8 @@ class TaskMemory(ActivityMixin):
             seen_types.append(type(storage))
 
     def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
-        find_storage = lambda a: next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
+        def find_storage(a):
+            return next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
 
         if isinstance(artifact, ListArtifact):
             if artifact.has_items():

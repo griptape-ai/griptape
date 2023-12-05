@@ -2,10 +2,10 @@ from __future__ import annotations
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Callable
 from attr import define, field, Factory
 from griptape.events import StartTaskEvent, FinishTaskEvent
-from griptape.artifacts import ErrorArtifact, TextArtifact, InfoArtifact, BaseArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, BaseArtifact
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -38,8 +38,12 @@ class BaseTask(ABC):
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
     output_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    input_artifact_namespace: Optional[str] = field(default=None, kw_only=True)
-    output_artifact_namespace: Optional[str] = field(default=None, kw_only=True)
+    output_processor_fn: Callable = field(
+        default=Factory(lambda self: self.default_output_processor_fn, takes_self=True), kw_only=True
+    )
+    output_artifact_namespace: Optional[str] = field(
+        default=Factory(lambda self: self.id, takes_self=True), kw_only=True
+    )
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
@@ -116,13 +120,7 @@ class BaseTask(ABC):
             self.structure.publish_event(FinishTaskEvent.from_task(self))
 
         if output:
-            if self.output_memory:
-                for memory in self.output_memory:
-                    output = memory.process_output(self, output)
-
-                return output
-            else:
-                return output
+            return self.output_processor_fn(output)
         else:
             return InfoArtifact("Tool returned an empty output")
 
@@ -168,11 +166,20 @@ class BaseTask(ABC):
         else:
             return None
 
-    def find_outpt_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_output_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if self.output_memory:
             return next((m for m in self.output_memory if m.name == memory_name), None)
         else:
             return None
+
+    def default_output_processor_fn(self, output: BaseArtifact) -> BaseArtifact:
+        if self.output_memory:
+            for memory in self.output_memory:
+                output = memory.process_output(self, output)
+
+            return output
+        else:
+            return output
 
     @abstractmethod
     def run(self) -> BaseArtifact:
