@@ -53,3 +53,7 @@ class TestImageGenerationTask:
 
         assert task.all_negative_rulesets[0].name == task.NEGATIVE_RULESET_NAME
         assert task.all_negative_rulesets[0].rules[0] == rule
+
+    def test_validate_output_dir(self, engine):
+        with pytest.raises(ValueError):
+            ImageGenerationTask(image_generation_engine=engine, output_dir="some/dir", output_file="some/file")
