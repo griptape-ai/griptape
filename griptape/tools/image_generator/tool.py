@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from os import path
 from typing import Optional
 
@@ -18,11 +19,28 @@ class ImageGenerator(BaseTool):
     Attributes:
         image_generation_engine: The engine used to generate the image.
         output_dir: If provided, the generated image will be written to disk in output_dir.
-
+        output_file: If provided, the generated image will be written to disk as output_file.
     """
 
     image_generation_engine: ImageGenerationEngine = field(kw_only=True)
     output_dir: Optional[str] = field(default=None, kw_only=True)
+    output_file: Optional[str] = field(default=None, kw_only=True)
+
+    @output_dir.validator
+    def validate_output_dir(self, _, output_dir: str) -> None:
+        if not output_dir:
+            return
+
+        if self.output_file:
+            raise ValueError("Can't have both output_dir and output_file specified.")
+
+    @output_file.validator
+    def validate_output_file(self, _, output_file: str) -> None:
+        if not output_file:
+            return
+
+        if self.output_dir:
+            raise ValueError("Can't have both output_dir and output_file specified.")
 
     @activity(
         config={
@@ -50,7 +68,7 @@ class ImageGenerator(BaseTool):
                 prompts=prompts, negative_prompts=negative_prompts
             )
 
-            if self.output_dir is not None:
+            if self.output_dir or self.output_file:
                 self._write_to_file(image_artifact)
 
             return image_artifact
@@ -59,6 +77,11 @@ class ImageGenerator(BaseTool):
             return ErrorArtifact(value=str(e))
 
     def _write_to_file(self, image_artifact: ImageArtifact) -> None:
-        outfile = path.join(self.output_dir, image_artifact.name)
+        if self.output_file:
+            outfile = self.output_file
+        else:
+            outfile = path.join(self.output_dir, image_artifact.name)
+
+        os.makedirs(path.dirname(outfile), exist_ok=True)
         with open(outfile, "wb") as f:
             f.write(image_artifact.value)
