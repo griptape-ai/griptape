@@ -5,7 +5,7 @@ from queue import Queue
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.events import CompletionChunkEvent, EventListener
 from attrs import field, define, Factory
-from griptape.events import BaseEvent, FinishStructureRunEvent
+from griptape.events import BaseEvent, FinishStructureRunEvent, FinishPromptEvent
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -42,6 +42,8 @@ class Stream:
             event = self._event_queue.get()
             if isinstance(event, FinishStructureRunEvent):
                 break
+            elif isinstance(event, FinishPromptEvent):
+                yield TextArtifact(value="\n")
             elif isinstance(event, CompletionChunkEvent):
                 yield TextArtifact(value=event.token)
         t.join()
@@ -51,7 +53,7 @@ class Stream:
             self._event_queue.put(event)
 
         stream_event_listener = EventListener(
-            event_handler, event_types=[CompletionChunkEvent, FinishStructureRunEvent]
+            event_handler, event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
         )
         self.structure.add_event_listener(stream_event_listener)
 
