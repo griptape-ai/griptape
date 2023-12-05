@@ -58,4 +58,4 @@ class TestImageGenerationTask:
 
     def test_validate_output_dir(self, engine):
         with pytest.raises(ValueError):
-            ImageGenerationTask(image_generation_engine=engine, output_dir="some/dir", output_file="some/file")
+            TextToImageGenerationTask(image_generation_engine=engine, output_dir="some/dir", output_file="some/file")
