@@ -1,12 +1,12 @@
 import pytest
 
-from griptape.drivers import AmazonBedrockTitanImageGenerationModelDriver
+from griptape.drivers import AmazonBedrockTitanImageModelDriver
 
 
 class TestAmazonBedrockTitanImageGenerationModelDriver:
     @pytest.fixture
     def model_driver(self):
-        return AmazonBedrockTitanImageGenerationModelDriver()
+        return AmazonBedrockTitanImageModelDriver()
 
     def test_init(self, model_driver):
         assert model_driver

@@ -7,7 +7,7 @@ from attrs import define, field
 from schema import Schema, Literal
 
 from griptape.artifacts import ErrorArtifact, ImageArtifact
-from griptape.engines import TextToImageGenerationEngine
+from griptape.engines import ImageGenerationEngine
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -22,7 +22,7 @@ class ImageGenerator(BaseTool):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    image_generation_engine: TextToImageGenerationEngine = field(kw_only=True)
+    image_generation_engine: ImageGenerationEngine = field(kw_only=True)
     output_dir: str | None = field(default=None, kw_only=True)
     output_file: str | None = field(default=None, kw_only=True)
 
@@ -64,7 +64,7 @@ class ImageGenerator(BaseTool):
         negative_prompts = params["values"]["negative_prompts"]
 
         try:
-            image_artifact = self.image_generation_engine.generate_image(
+            image_artifact = self.image_generation_engine.text_to_image(
                 prompts=prompts, negative_prompts=negative_prompts
             )
 

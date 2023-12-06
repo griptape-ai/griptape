@@ -31,10 +31,10 @@ class TestAzureOpenAiDalleImageGenerationDriver:
                 model="dall-e-3", client=Mock(), azure_endpoint="https://dalle.example.com", image_size="512x512"
             )
 
-    def test_generate_image(self, driver):
+    def test_try_text_to_image(self, driver):
         driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])
 
-        image_artifact = driver.generate_image(prompts=["test prompt"])
+        image_artifact = driver.try_text_to_image(prompts=["test prompt"])
 
         assert image_artifact.value == b"image data"
         assert image_artifact.mime_type == "image/png"

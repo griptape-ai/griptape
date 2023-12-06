@@ -5,11 +5,12 @@ from typing import Optional
 
 from attr import field, define
 
-from griptape.drivers.image_model.base_text_to_image_generation_model_driver import BaseTextToImageGenerationModelDriver
+from griptape.artifacts import ImageArtifact
+from griptape.drivers.image_model.base_image_model_driver import BaseImageModelDriver
 
 
 @define
-class AmazonBedrockTitanImageGenerationModelDriver(BaseTextToImageGenerationModelDriver):
+class AmazonBedrockTitanImageModelDriver(BaseImageModelDriver):
     task_type: str = field(default="TEXT_IMAGE", kw_only=True)
     quality: str = field(default="standard", kw_only=True)
     cfg_scale: int = field(default=7, kw_only=True)
@@ -43,6 +44,35 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseTextToImageGenerationMode
             request["imageGenerationConfig"]["seed"] = seed
 
         return request
+
+    def image_variation_request_parameters(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+    ) -> dict:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
+
+    def inpainting_request_parameters(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+    ) -> dict:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
+
+    def outpainting_request_parameters(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+    ) -> dict:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 
     def get_generated_image(self, response: dict) -> bytes:
         b64_image_data = response["images"][0]

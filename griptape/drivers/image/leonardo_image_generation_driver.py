@@ -6,11 +6,11 @@ from attr import field, define, Factory
 
 from griptape.artifacts import ImageArtifact
 
-from .base_text_to_image_generation_driver import BaseTextToImageGenerationDriver
+from griptape.drivers import BaseImageDriver
 
 
 @define
-class LeonardoImageGenerationDriver(BaseTextToImageGenerationDriver):
+class LeonardoImageGenerationDriver(BaseImageDriver):
     """Driver for the Leonardo image generation API.
 
     Attributes:
@@ -37,7 +37,7 @@ class LeonardoImageGenerationDriver(BaseTextToImageGenerationDriver):
     steps: Optional[int] = field(default=None, kw_only=True)
     seed: Optional[int] = field(default=None, kw_only=True)
 
-    def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         if negative_prompts is None:
             negative_prompts = []
 
@@ -56,6 +56,29 @@ class LeonardoImageGenerationDriver(BaseTextToImageGenerationDriver):
             model=self.model,
             prompt=prompt,
         )
+
+    def try_image_variation(
+        self, image: ImageArtifact, prompts: list[str], negative_prompts: Optional[list[str]] = None
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
+
+    def try_outpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
+
+    def try_inpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
     def _create_generation(self, prompt: str, negative_prompt: str):
         request = {

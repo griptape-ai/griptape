@@ -1,18 +1,16 @@
 from __future__ import annotations
 
 import base64
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 
 from attr import field, define
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseTextToImageGenerationDriver, BaseImageToImageGenerationDriver
+from griptape.drivers.image_model.base_image_model_driver import BaseImageModelDriver
 
 
 @define
-class AmazonBedrockStableDiffusionImageGenerationModelDriver(
-    BaseTextToImageGenerationDriver, BaseImageToImageGenerationDriver
-):
+class AmazonBedrockStableDiffusionImageModelDriver(BaseImageModelDriver):
     """Image generation model driver for Stable Diffusion models on Amazon Bedrock.
 
     Attributes:
@@ -22,9 +20,10 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(
         clip_guidance_preset: If provided, requests a specific clip guidance preset to be used in the diffusion process.
         sampler: If provided, requests a specific sampler to be used in the diffusion process.
         steps: If provided, specifies the number of diffusion steps to use in the image generation.
-        start_schedule: If provided, specifies the start_schedule parameter used in image-to-image generation.
+        start_schedule: If provided, specifies the start_schedule parameter used to determine the influence of the input
+            image in image-to-image generation.
 
-    For more information on all supported paramaters, see the Stable Diffusion documentation:
+    For more information on all supported parameters, see the Stable Diffusion documentation:
         https://platform.stability.ai/docs/api-reference#tag/v1generation
     """
 
@@ -44,35 +43,46 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
     ) -> dict:
-        if negative_prompts is None:
-            negative_prompts = []
+        return self._request_parameters(
+            prompts, width=image_width, height=image_height, negative_prompts=negative_prompts, seed=seed
+        )
 
-        text_prompts = [{"text": prompt, "weight": 1.0} for prompt in prompts]
-        text_prompts += [{"text": negative_prompt, "weight": -1.0} for negative_prompt in negative_prompts]
-
-        request = {
-            "text_prompts": text_prompts,
-            "cfg_scale": self.cfg_scale,
-            "style_preset": self.style_preset,
-            "clip_guidance_preset": self.clip_guidance_preset,
-            "sampler": self.sampler,
-            "width": image_width,
-            "height": image_height,
-        }
-
-        if self.steps is not None:
-            request["steps"] = self.steps
-
-        if seed is not None:
-            request["seed"] = seed
-
-        return request
-
-    def image_to_image_request_parameters(
+    def image_variation_request_parameters(
         self,
         prompts: list[str],
         image: ImageArtifact,
-        mask_image: Optional[ImageArtifact] = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+    ) -> dict:
+        return self._request_parameters(prompts, image=image, negative_prompts=negative_prompts, seed=seed)
+
+    def inpainting_request_parameters(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+    ) -> dict:
+        return self._request_parameters(prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=seed)
+
+    def outpainting_request_parameters(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+    ) -> dict:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
+
+    def _request_parameters(
+        self,
+        prompts: list[str],
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        image: Optional[ImageArtifact] = None,
+        mask: Optional[ImageArtifact] = None,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
     ) -> dict:
@@ -88,10 +98,15 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(
             "style_preset": self.style_preset,
             "clip_guidance_preset": self.clip_guidance_preset,
             "sampler": self.sampler,
-            "width": image.width,
-            "height": image.height,
-            "init_image": image.base64,
         }
+
+        if image:
+            request["init_image"] = image.base64
+            request["width"] = image.width
+            request["height"] = image.height
+        else:
+            request["width"] = width
+            request["height"] = height
 
         if self.steps is not None:
             request["steps"] = self.steps
@@ -99,9 +114,9 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(
         if seed is not None:
             request["seed"] = seed
 
-        if mask_image is not None:
+        if mask is not None:
             request["mask_source"] = self.mask_source
-            request["mask_image"] = mask_image.base64
+            request["mask_image"] = mask.base64
 
         if self.start_schedule is not None:
             request["start_schedule"] = self.start_schedule

@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import AmazonBedrockImageGenerationDriver
+from griptape.drivers import AmazonBedrockImageDriver
 
 
 class TestAmazonBedrockImageGenerationDriver:
@@ -28,8 +28,8 @@ class TestAmazonBedrockImageGenerationDriver:
 
     @pytest.fixture
     def driver(self, session, model_driver):
-        return AmazonBedrockImageGenerationDriver(
-            session=session, model="stability.stable-diffusion-xl-v1", image_generation_model_driver=model_driver
+        return AmazonBedrockImageDriver(
+            session=session, model="stability.stable-diffusion-xl-v1", image_model_driver=model_driver
         )
 
     def test_init(self, driver):
@@ -37,9 +37,9 @@ class TestAmazonBedrockImageGenerationDriver:
 
     def test_init_requires_image_generation_model_driver(self, session):
         with pytest.raises(TypeError):
-            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")
+            AmazonBedrockImageDriver(session=session, model="stability.stable-diffusion-xl-v1")
 
-    def test_generate_image(self, driver):
+    def test_try_text_to_image(self, driver):
         driver.bedrock_client.invoke_model.return_value = {
             "body": io.BytesIO(
                 b"""{
@@ -53,7 +53,7 @@ class TestAmazonBedrockImageGenerationDriver:
             )
         }
 
-        image_artifact = driver.try_generate_image(prompts=["test prompt"], negative_prompts=["test negative prompt"])
+        image_artifact = driver.try_text_to_image(prompts=["test prompt"], negative_prompts=["test negative prompt"])
 
         assert image_artifact.value == b"image data"
         assert image_artifact.mime_type == "image/png"

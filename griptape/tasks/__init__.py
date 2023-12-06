@@ -7,8 +7,8 @@ from .text_summary_task import TextSummaryTask
 from .tool_task import ToolTask
 from .text_query_task import TextQueryTask
 from .extraction_task import ExtractionTask
-from .text_to_image_generation_task import TextToImageGenerationTask
-from .image_to_image_generation_task import ImageToImageGenerationTask
+from .text_to_image_task import TextToImageTask
+from .image_inpainting_task import ImageInpaintingTask
 
 __all__ = [
     "BaseTask",
@@ -20,6 +20,6 @@ __all__ = [
     "ToolTask",
     "TextQueryTask",
     "ExtractionTask",
-    "TextToImageGenerationTask",
-    "ImageToImageGenerationTask",
+    "TextToImageTask",
+    "ImageInpaintingTask",
 ]
