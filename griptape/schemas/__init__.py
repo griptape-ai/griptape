@@ -2,6 +2,8 @@ from .base_schema import BaseSchema
 
 from .polymorphic_schema import PolymorphicSchema
 
+from .bytes_field import Bytes
+
 from .artifacts.artifact_schema import BaseArtifactSchema
 from .artifacts.info_artifact_schema import InfoArtifactSchema
 from .artifacts.text_artifact_schema import TextArtifactSchema
@@ -37,6 +39,7 @@ from .utils.prompt_stack_input_schema import PromptStackInputSchema
 __all__ = [
     "BaseSchema",
     "PolymorphicSchema",
+    "Bytes",
     "BaseArtifactSchema",
     "InfoArtifactSchema",
     "TextArtifactSchema",
