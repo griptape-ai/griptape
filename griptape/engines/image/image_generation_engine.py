@@ -2,6 +2,7 @@ from typing import Optional
 
 from attr import field, define
 
+from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseTextToImageGenerationDriver
 from griptape.rules import Ruleset
 
@@ -16,7 +17,7 @@ class TextToImageGenerationEngine:
         negative_prompts: Optional[list[str]] = None,
         rulesets: Optional[list[Ruleset]] = None,
         negative_rulesets: Optional[list[Ruleset]] = None,
-    ):
+    ) -> ImageArtifact:
         if not negative_prompts:
             negative_prompts = []
 
