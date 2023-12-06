@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 
 from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact
@@ -16,7 +16,9 @@ class BaseTextInputTask(BaseTask, ABC):
     ADDITIONAL_RULESET_NAME = "Additional Ruleset"
 
     input_artifact_namespace: Optional[str] = field(default=None, kw_only=True)
-    input_template: str | TextArtifact = field(default=DEFAULT_INPUT_TEMPLATE)
+    input_template: str | TextArtifact | Callable[[BaseTask], Optional[TextArtifact]] = field(
+        default=DEFAULT_INPUT_TEMPLATE
+    )
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
@@ -25,6 +27,12 @@ class BaseTextInputTask(BaseTask, ABC):
     def input(self) -> TextArtifact:
         if isinstance(self.input_template, TextArtifact):
             return self.input_template
+        elif isinstance(self.input_template, Callable):
+            result = self.input_template(self)
+            if result is None:
+                raise ValueError("Input template function returned None.")
+            else:
+                return result
         else:
             return TextArtifact(J2().render_from_string(self.input_template, **self.full_context))
 
