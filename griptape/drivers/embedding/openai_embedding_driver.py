@@ -11,7 +11,6 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     """
     Attributes:
         model: OpenAI embedding model name. Defaults to `text-embedding-ada-002`.
-        dimensions: Vector dimensions. Defaults to `1536`.
         base_url: API URL. Defaults to OpenAI's v1 API URL.
         api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
         organization: OpenAI organization. Defaults to 'OPENAI_ORGANIZATION' environment variable.
@@ -25,10 +24,8 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     """
 
     DEFAULT_MODEL = "text-embedding-ada-002"
-    DEFAULT_DIMENSIONS = 1536
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
-    dimensions: int = field(default=DEFAULT_DIMENSIONS, kw_only=True)
     base_url: str = field(default=None, kw_only=True)
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=None, kw_only=True)

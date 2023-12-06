@@ -12,10 +12,8 @@ from griptape.chunkers import BaseChunker, TextChunker
 class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     """
     Attributes:
-        dimensions: Vector dimensions.
     """
 
-    dimensions: int = field(kw_only=True)
     tokenizer: BaseTokenizer = field(kw_only=True)
     chunker: BaseChunker = field(init=False)
 
