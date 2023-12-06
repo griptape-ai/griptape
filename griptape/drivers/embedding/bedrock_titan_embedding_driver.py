@@ -28,8 +28,7 @@ class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     dimensions: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     tokenizer: BedrockTitanTokenizer = field(
-        default=Factory(lambda self: BedrockTitanTokenizer(model=self.model, session=self.session), takes_self=True),
-        kw_only=True,
+        default=Factory(lambda self: BedrockTitanTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True
