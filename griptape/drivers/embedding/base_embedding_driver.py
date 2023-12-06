@@ -12,6 +12,8 @@ from griptape.chunkers import BaseChunker, TextChunker
 class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     """
     Attributes:
+        tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.
+        chunker: An instance of `BaseChunker` to use when chunking long strings.
     """
 
     tokenizer: BaseTokenizer = field(kw_only=True)
