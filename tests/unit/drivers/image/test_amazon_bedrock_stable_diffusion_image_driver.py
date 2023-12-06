@@ -6,7 +6,7 @@ import pytest
 from griptape.drivers import AmazonBedrockImageDriver
 
 
-class TestAmazonBedrockImageGenerationDriver:
+class TestAmazonBedrockImageDriver:
     @pytest.fixture
     def bedrock_client(self):
         return Mock()

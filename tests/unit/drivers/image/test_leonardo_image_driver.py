@@ -1,17 +1,15 @@
 import uuid
 from unittest.mock import Mock
 import pytest
-from griptape.drivers import LeonardoImageGenerationDriver
+from griptape.drivers import LeonardoImageDriver
 
 
-class TestLeonardoImageGenerationDriver:
+class TestLeonardoImageDriver:
     @pytest.fixture
     def driver(self):
         requests_session = Mock()
 
-        return LeonardoImageGenerationDriver(
-            api_key="test_api_key", requests_session=requests_session, model="test_model_id"
-        )
+        return LeonardoImageDriver(api_key="test_api_key", requests_session=requests_session, model="test_model_id")
 
     def test_init(self, driver):
         assert driver

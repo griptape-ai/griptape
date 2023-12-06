@@ -10,7 +10,7 @@ from griptape.drivers import BaseImageDriver
 
 
 @define
-class LeonardoImageGenerationDriver(BaseImageDriver):
+class LeonardoImageDriver(BaseImageDriver):
     """Driver for the Leonardo image generation API.
 
     Attributes:

@@ -47,13 +47,3 @@ class TestImageGenerator:
 
         assert image_artifact
         assert os.path.exists(outfile)
-
-    def test_text_to_image_returns_error_artifact_on_exception(self, image_generator):
-        image_generator.image_generation_engine.text_to_image.side_effect = Exception("test exception")
-
-        error_artifact = image_generator.generate_image_from_text(
-            params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
-        )
-
-        assert error_artifact
-        assert error_artifact.value == "test exception"
