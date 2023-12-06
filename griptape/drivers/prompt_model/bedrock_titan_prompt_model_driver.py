@@ -34,7 +34,7 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockTitanTokenizer(model=self.prompt_driver.model, session=self.prompt_driver.session)
+            self._tokenizer = BedrockTitanTokenizer(model=self.prompt_driver.model)
             return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
