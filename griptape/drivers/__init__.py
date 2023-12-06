@@ -101,4 +101,6 @@ __all__ = [
     "LeonardoImageDriver",
     "AmazonBedrockImageDriver",
     "AzureOpenAiDalleImageDriver",
+    "AmazonBedrockStableDiffusionImageModelDriver",
+    "AmazonBedrockTitanImageModelDriver",
 ]
