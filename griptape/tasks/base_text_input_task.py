@@ -1,8 +1,8 @@
 from __future__ import annotations
 from abc import ABC
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import Any, Optional
 
-from attr import define, field, Factory
+from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.rules import Ruleset, Rule
 from griptape.tasks import BaseTask
@@ -15,33 +15,18 @@ class BaseTextInputTask(BaseTask, ABC):
     DEFAULT_RULESET_NAME = "Default Ruleset"
     ADDITIONAL_RULESET_NAME = "Additional Ruleset"
 
-    input_generator_fn: Callable[[], str | BaseTask] = field(
-        default=Factory(lambda self: self.default_input_generator_fn, takes_self=True), kw_only=True
-    )
     input_artifact_namespace: Optional[str] = field(default=None, kw_only=True)
-    input_template: str = field(default=DEFAULT_INPUT_TEMPLATE)
+    input_template: str | TextArtifact = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
 
     @property
     def input(self) -> TextArtifact:
-        result = self.input_generator_fn()
-        if isinstance(result, BaseTask):
-            memory_artifacts = self.task_memory.load_artifacts(result.id)
-
-            if len(memory_artifacts) == 1:
-                memory_artifact = memory_artifacts[0]
-                if isinstance(memory_artifact, TextArtifact):
-                    return memory_artifact
-                else:
-                    raise ValueError("Only TextArtifact is supported for Task Memory inputs.")
-            elif len(memory_artifacts) == 0:
-                raise ValueError("No Task Memory inputs found.")
-            else:
-                raise ValueError("Multiple Task Memory inputs is not supported.")
+        if isinstance(self.input_template, TextArtifact):
+            return self.input_template
         else:
-            return TextArtifact(J2().render_from_string(result, **self.full_context))
+            return TextArtifact(J2().render_from_string(self.input_template, **self.full_context))
 
     @property
     def full_context(self) -> dict[str, Any]:
@@ -104,6 +89,3 @@ class BaseTextInputTask(BaseTask, ABC):
         self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {processed_output.to_text()}")
 
         return processed_output
-
-    def default_input_generator_fn(self) -> str:
-        return self.input_template
