@@ -27,7 +27,7 @@ class TestImageGenerator:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.generate_image(
+        image_artifact = image_generator.generate_image_from_text(
             params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
         )
 
@@ -41,7 +41,7 @@ class TestImageGenerator:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.generate_image(
+        image_artifact = image_generator.generate_image_from_text(
             params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
         )
 
@@ -51,7 +51,7 @@ class TestImageGenerator:
     def test_text_to_image_returns_error_artifact_on_exception(self, image_generator):
         image_generator.image_generation_engine.text_to_image.side_effect = Exception("test exception")
 
-        error_artifact = image_generator.generate_image(
+        error_artifact = image_generator.generate_image_from_text(
             params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
         )
 
