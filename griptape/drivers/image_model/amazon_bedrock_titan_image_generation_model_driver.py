@@ -5,7 +5,7 @@ from typing import Optional
 
 from attr import field, define
 
-from griptape.drivers import BaseTextToImageGenerationModelDriver
+from griptape.drivers.image_model.base_text_to_image_generation_model_driver import BaseTextToImageGenerationModelDriver
 
 
 @define

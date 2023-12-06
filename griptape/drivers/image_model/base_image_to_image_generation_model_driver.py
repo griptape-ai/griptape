@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from abc import abstractmethod
-from typing import Optional, TYPE_CHECKING
+from abc import abstractmethod, ABC
+from typing import Optional
 
 from attr import define
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageGenerationModelDriver
 
 
 @define
-class BaseImageToImageGenerationModelDriver(BaseImageGenerationModelDriver):
+class BaseImageToImageGenerationModelDriver(ABC):
     @abstractmethod
     def image_to_image_request_parameters(
         self,
@@ -20,4 +19,8 @@ class BaseImageToImageGenerationModelDriver(BaseImageGenerationModelDriver):
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
     ) -> dict:
+        ...
+
+    @abstractmethod
+    def get_generated_image(self, response: dict) -> bytes:
         ...

@@ -6,11 +6,28 @@ from typing import Optional, TYPE_CHECKING
 from attr import field, define
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers.image_model.base_combined_generation_model_driver import BaseCombinedGenerationModelDriver
+from griptape.drivers import BaseTextToImageGenerationDriver, BaseImageToImageGenerationDriver
 
 
 @define
-class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseCombinedGenerationModelDriver):
+class AmazonBedrockStableDiffusionImageGenerationModelDriver(
+    BaseTextToImageGenerationDriver, BaseImageToImageGenerationDriver
+):
+    """Image generation model driver for Stable Diffusion models on Amazon Bedrock.
+
+    Attributes:
+        cfg_scale: Specifies how strictly image generation follows the provided prompt. Defaults to 7.
+        mask_source: Specifies mask image configuration for image-to-image generations. Defaults to "MASK_IMAGE_BLACK".
+        style_preset: If provided, specifies a specific image generation style preset.
+        clip_guidance_preset: If provided, requests a specific clip guidance preset to be used in the diffusion process.
+        sampler: If provided, requests a specific sampler to be used in the diffusion process.
+        steps: If provided, specifies the number of diffusion steps to use in the image generation.
+        start_schedule: If provided, specifies the start_schedule parameter used in image-to-image generation.
+
+    For more information on all supported paramaters, see the Stable Diffusion documentation:
+        https://platform.stability.ai/docs/api-reference#tag/v1generation
+    """
+
     cfg_scale: int = field(default=7, kw_only=True)
     mask_source: str = field(default="MASK_IMAGE_BLACK", kw_only=True)
     style_preset: Optional[str] = field(default=None, kw_only=True)

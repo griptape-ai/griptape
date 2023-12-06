@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from abc import abstractmethod
-from typing import Optional, TYPE_CHECKING
+from abc import abstractmethod, ABC
+from typing import Optional
 
 from attr import define
 
-from griptape.drivers import BaseImageGenerationModelDriver
-
 
 @define
-class BaseTextToImageGenerationModelDriver(BaseImageGenerationModelDriver):
+class BaseTextToImageGenerationModelDriver(ABC):
     @abstractmethod
     def text_to_image_request_parameters(
         self,
