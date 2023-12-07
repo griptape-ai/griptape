@@ -122,10 +122,10 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         self,
         query: str,
         count: Optional[int] = None,
-        field_name: str = "vector",
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         include_metadata=True,
+        field_name: str = "vector",
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string.
