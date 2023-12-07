@@ -1,6 +1,8 @@
 from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Optional
+from marshmallow import class_registry
+from marshmallow.exceptions import RegistryError
 from attr import define, field, Factory
 from griptape.memory.structure import Run
 from griptape.utils import PromptStack
@@ -65,9 +67,15 @@ class ConversationMemory:
 
     @classmethod
     def from_dict(cls, memory_dict: dict) -> ConversationMemory:
-        from griptape.schemas import ConversationMemorySchema
+        from griptape.schemas import ConversationMemorySchema, SummaryConversationMemorySchema
 
-        return ConversationMemorySchema().load(memory_dict)
+        class_registry.register("ConversationMemory", ConversationMemorySchema)
+        class_registry.register("SummaryConversationMemory", SummaryConversationMemorySchema)
+
+        try:
+            return class_registry.get_class(memory_dict["type"])().load(memory_dict)
+        except RegistryError:
+            raise ValueError("Unsupported memory type")
 
     @classmethod
     def from_json(cls, memory_json: str) -> ConversationMemory:
