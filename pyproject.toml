@@ -35,6 +35,7 @@ cryptography = "^41.0.4"
 dateparser = "^1.1.8"
 mail-parser = "^3.15.0"
 requests = "^2"
+lxml = "^4.9.3" # TODO: remove when https://github.com/adbar/trafilatura/issues/449 is fully resolved
 
 
 cohere = { version = ">=4", optional = true }
@@ -52,7 +53,6 @@ opensearch-py = { version = "^2.3.1", optional = true }
 requests-aws4auth = { version = "1.2.3", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
-lxml = "^4.9.3"
 
 
 [tool.poetry.extras]
