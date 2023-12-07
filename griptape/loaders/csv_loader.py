@@ -26,7 +26,7 @@ class CsvLoader(BaseLoader):
     def _load_file(self, filename: str) -> list[CsvRowArtifact]:
         artifacts = []
 
-        with open(filename, "r", encoding="utf-8") as csv_file:
+        with open(filename, encoding="utf-8") as csv_file:
             reader = csv.DictReader(csv_file, delimiter=self.delimiter)
             chunks = [CsvRowArtifact(row) for row in reader]
 

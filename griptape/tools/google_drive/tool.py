@@ -347,7 +347,7 @@ class GoogleDriveClient(BaseGoogleClient):
         file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
         return InfoArtifact(file)
 
-    def _list_files(self, service: Any, query: str) -> List[Dict]:
+    def _list_files(self, service: Any, query: str) -> list[dict]:
         items = []
         next_page_token = None
 

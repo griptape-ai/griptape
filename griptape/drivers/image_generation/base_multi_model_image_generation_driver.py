@@ -27,5 +27,5 @@ class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver, ABC):
     image_generation_model_driver: BaseImageGenerationModelDriver = field(kw_only=True)
 
     @abstractmethod
-    def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_generate_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         ...

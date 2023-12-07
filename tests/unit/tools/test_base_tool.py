@@ -31,7 +31,7 @@ class TestBaseTool:
         assert tool.requirements_path == os.path.join(tool.abs_dir_path, tool.REQUIREMENTS_FILE)
 
     def test_manifest(self, tool):
-        with open(tool.manifest_path, "r") as yaml_file:
+        with open(tool.manifest_path) as yaml_file:
             assert tool.manifest == yaml.safe_load(yaml_file)
 
     def test_abs_file_path(self, tool):

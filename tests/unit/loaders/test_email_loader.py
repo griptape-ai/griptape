@@ -74,7 +74,7 @@ class TestEmailLoader:
 
     def test_load_returns_error_artifact_when_select_returns_non_ok(self, loader, mock_select):
         # Given
-        mock_select.return_value = (None, ["NOT-OK".encode()])
+        mock_select.return_value = (None, [b"NOT-OK"])
 
         # When
         artifact = loader.load(EmailLoader.EmailQuery(label="INBOX"))
@@ -125,7 +125,7 @@ def to_select_response(status: str, message_count: int):
     return (status, (str(message_count),))
 
 
-def to_fetch_message(body: str, content_type: Optional[str]):
+def to_fetch_message(body: str, content_type: str | None):
     return to_fetch_response(to_message(body, content_type))
 
 
@@ -133,7 +133,7 @@ def to_fetch_response(message: message):
     return (None, ((None, message.as_bytes()),))
 
 
-def to_message(body: str, content_type: Optional[str]) -> message:
+def to_message(body: str, content_type: str | None) -> message:
     message = email.message_from_string(body)
     if content_type:
         message.set_type(content_type)
@@ -142,14 +142,10 @@ def to_message(body: str, content_type: Optional[str]) -> message:
 
 def to_value_set(artifact_or_dict: ListArtifact | dict[str, ListArtifact]) -> set[str]:
     if isinstance(artifact_or_dict, ListArtifact):
-        return set([value.value for value in artifact_or_dict.value])
+        return {value.value for value in artifact_or_dict.value}
     elif isinstance(artifact_or_dict, dict):
-        return set(
-            [
-                text_artifact.value
-                for list_artifact in artifact_or_dict.values()
-                for text_artifact in list_artifact.value
-            ]
-        )
+        return {
+            text_artifact.value for list_artifact in artifact_or_dict.values() for text_artifact in list_artifact.value
+        }
     else:
         raise Exception

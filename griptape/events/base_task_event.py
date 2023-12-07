@@ -16,7 +16,7 @@ class BaseTaskEvent(BaseEvent, ABC):
     task_child_ids: list[str] = field(kw_only=True)
 
     task_input: BaseArtifact = field(kw_only=True)
-    task_output: Optional[BaseArtifact] = field(kw_only=True)
+    task_output: BaseArtifact | None = field(kw_only=True)
 
     @classmethod
     def from_task(cls, task: BaseTask) -> BaseTaskEvent:

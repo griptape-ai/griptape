@@ -28,12 +28,12 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     """
 
     temperature: float = field(default=0.1, kw_only=True)
-    max_tokens: Optional[int] = field(default=None, kw_only=True)
-    structure: Optional[Structure] = field(default=None, kw_only=True)
+    max_tokens: int | None = field(default=None, kw_only=True)
+    structure: Structure | None = field(default=None, kw_only=True)
     prompt_stack_to_string: Callable[[PromptStack], str] = field(
         default=Factory(lambda self: self.default_prompt_stack_to_string_converter, takes_self=True), kw_only=True
     )
-    ignored_exception_types: Tuple[Type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
+    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
     model: str
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True)
