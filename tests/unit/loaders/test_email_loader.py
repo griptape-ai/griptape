@@ -67,7 +67,7 @@ class TestEmailLoader:
         list_artifact = loader.load(EmailLoader.EmailQuery(label="INBOX", key="key", search_criteria="search-criteria"))
 
         # Then
-        mock_search.called_once_with(None, "key", '"search-criteria"')
+        mock_search.assert_called_once_with(None, "key", '"search-criteria"')
         assert mock_fetch.call_count == match_count
         assert isinstance(list_artifact, ListArtifact)
         assert to_value_set(list_artifact) == {f"message-{i}" for i in range(match_count)}
