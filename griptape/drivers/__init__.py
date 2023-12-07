@@ -4,8 +4,8 @@ from .prompt.openai_completion_prompt_driver import OpenAiCompletionPromptDriver
 from .prompt.azure_openai_chat_prompt_driver import AzureOpenAiChatPromptDriver
 from .prompt.azure_openai_completion_prompt_driver import AzureOpenAiCompletionPromptDriver
 from .prompt.cohere_prompt_driver import CoherePromptDriver
-from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
-from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
+from .prompt.huggingface_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
+from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
@@ -19,7 +19,7 @@ from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
 from .embedding.bedrock_titan_embedding_driver import BedrockTitanEmbeddingDriver
-from .embedding.hugging_face_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
+from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
