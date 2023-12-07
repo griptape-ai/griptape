@@ -2,13 +2,13 @@ from typing import Literal
 
 import pytest
 from unittest.mock import Mock
-from griptape.drivers import AzureOpenAiDalleImageDriver
+from griptape.drivers import AzureOpenAiDalleImageGenerationDriver
 
 
-class TestAzureOpenAiDalleImageDriver:
+class TestAzureOpenAiDalleImageGenerationDriver:
     @pytest.fixture
     def driver(self):
-        return AzureOpenAiDalleImageDriver(
+        return AzureOpenAiDalleImageGenerationDriver(
             model="dall-e-3",
             client=Mock(),
             azure_endpoint="https://dalle.example.com",
@@ -21,13 +21,13 @@ class TestAzureOpenAiDalleImageDriver:
 
     def test_init_requires_endpoint(self):
         with pytest.raises(TypeError):
-            AzureOpenAiDalleImageDriver(
+            AzureOpenAiDalleImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_deployment="dalle-deployment", image_size="512x512"
             )
 
     def test_init_requires_deployment(self):
         with pytest.raises(TypeError):
-            AzureOpenAiDalleImageDriver(
+            AzureOpenAiDalleImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_endpoint="https://dalle.example.com", image_size="512x512"
             )
 

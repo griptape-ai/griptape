@@ -3,13 +3,13 @@ from typing import Optional
 from attr import field, define
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageDriver
+from griptape.drivers import BaseImageGenerationDriver
 from griptape.rules import Ruleset
 
 
 @define
 class ImageGenerationEngine:
-    image_driver: BaseImageDriver = field(kw_only=True)
+    image_driver: BaseImageGenerationDriver = field(kw_only=True)
 
     def text_to_image(
         self,

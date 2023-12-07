@@ -5,11 +5,11 @@ from abc import abstractmethod
 from attr import field, define
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageDriver, BaseImageModelDriver
+from griptape.drivers import BaseImageGenerationDriver, BaseImageGenerationModelDriver
 
 
 @define
-class BaseMultiModelTextToImageGenerationDriver(BaseImageDriver):
+class BaseMultiModelTextToImageGenerationDriver(BaseImageGenerationDriver):
     """Image Generation Driver for platforms like Amazon Bedrock that host many LLM models.
 
     Instances of this Image Generation Driver require a Image Generation Model Driver which is used to structure the
@@ -20,7 +20,7 @@ class BaseMultiModelTextToImageGenerationDriver(BaseImageDriver):
         text_to_image_generation_model_driver: Image Generation Model Driver to use.
     """
 
-    text_to_image_generation_model_driver: BaseImageModelDriver = field(kw_only=True)
+    text_to_image_generation_model_driver: BaseImageGenerationModelDriver = field(kw_only=True)
 
     @abstractmethod
     def try_generate_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:

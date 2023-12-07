@@ -8,7 +8,7 @@ from griptape.mixins import ExponentialBackoffMixin
 
 
 @define
-class BaseImageDriver(ExponentialBackoffMixin, ABC):
+class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True)
 
     @abstractmethod

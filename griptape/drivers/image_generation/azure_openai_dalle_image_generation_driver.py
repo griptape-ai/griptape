@@ -2,11 +2,11 @@ from __future__ import annotations
 import openai
 from typing import Optional
 from attr import field, Factory, define
-from griptape.drivers import OpenAiDalleImageDriver
+from griptape.drivers import OpenAiDalleImageGenerationDriver
 
 
 @define
-class AzureOpenAiDalleImageDriver(OpenAiDalleImageDriver):
+class AzureOpenAiDalleImageGenerationDriver(OpenAiDalleImageGenerationDriver):
     """Driver for Azure-hosted OpenAI DALLE image generation API.
 
     Attributes:

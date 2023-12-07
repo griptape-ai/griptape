@@ -7,12 +7,11 @@ import openai
 from attr import field, Factory, define
 
 from griptape.artifacts import ImageArtifact
-
-from griptape.drivers import BaseImageDriver
+from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
-class OpenAiDalleImageDriver(BaseImageDriver):
+class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for OpenAI DALLE image generation API.
 
     Attributes:

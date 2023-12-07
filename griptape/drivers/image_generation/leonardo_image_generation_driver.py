@@ -5,12 +5,11 @@ import requests
 from attr import field, define, Factory
 
 from griptape.artifacts import ImageArtifact
-
-from griptape.drivers import BaseImageDriver
+from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
-class LeonardoImageDriver(BaseImageDriver):
+class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the Leonardo image generation API.
 
     Attributes:

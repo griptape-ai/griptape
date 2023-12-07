@@ -2,13 +2,13 @@ from typing import Literal
 
 import pytest
 from unittest.mock import Mock
-from griptape.drivers import OpenAiDalleImageDriver
+from griptape.drivers import OpenAiDalleImageGenerationDriver
 
 
-class TestOpenAiDalleImageDriver:
+class TestOpenAiDalleImageGenerationDriver:
     @pytest.fixture
     def driver(self):
-        return OpenAiDalleImageDriver(model="dall-e-2", client=Mock(), quality="hd", image_size="512x512")
+        return OpenAiDalleImageGenerationDriver(model="dall-e-2", client=Mock(), quality="hd", image_size="512x512")
 
     def test_init(self, driver):
         assert driver

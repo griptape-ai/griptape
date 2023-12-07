@@ -7,7 +7,7 @@ from griptape.artifacts import ImageArtifact
 
 
 @define
-class BaseImageModelDriver(ABC):
+class BaseImageGenerationModelDriver(ABC):
     @abstractmethod
     def get_generated_image(self, response: dict) -> bytes:
         ...

@@ -6,7 +6,7 @@ from typing import Optional, TYPE_CHECKING, Any
 from attr import define, field, Factory
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers.image.base_multi_model_image_driver import BaseMultiModelImageDriver
+from griptape.drivers import BaseMultiModelImageGenerationDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @define
-class AmazonBedrockImageDriver(BaseMultiModelImageDriver):
+class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
     """Driver for image generation models provided by Amazon Bedrock.
 
     Attributes:
@@ -38,7 +38,7 @@ class AmazonBedrockImageDriver(BaseMultiModelImageDriver):
     seed: int | None = field(default=None, kw_only=True)
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
-        request = self.image_model_driver.text_to_image_request_parameters(
+        request = self.image_generation_model_driver.text_to_image_request_parameters(
             prompts, self.image_width, self.image_height, negative_prompts=negative_prompts, seed=self.seed
         )
 
@@ -56,7 +56,7 @@ class AmazonBedrockImageDriver(BaseMultiModelImageDriver):
     def try_image_variation(
         self, image: ImageArtifact, prompts: list[str], negative_prompts: Optional[list[str]] = None
     ) -> ImageArtifact:
-        request = self.image_model_driver.image_variation_request_parameters(
+        request = self.image_generation_model_driver.image_variation_request_parameters(
             prompts, image=image, negative_prompts=negative_prompts, seed=self.seed
         )
 
@@ -78,7 +78,7 @@ class AmazonBedrockImageDriver(BaseMultiModelImageDriver):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        request = self.image_model_driver.inpainting_request_parameters(
+        request = self.image_generation_model_driver.inpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
         )
 
@@ -100,7 +100,7 @@ class AmazonBedrockImageDriver(BaseMultiModelImageDriver):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        request = self.image_model_driver.outpainting_request_parameters(
+        request = self.image_generation_model_driver.outpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
         )
 
@@ -123,7 +123,7 @@ class AmazonBedrockImageDriver(BaseMultiModelImageDriver):
         response_body = json.loads(response.get("body").read())
 
         try:
-            image_bytes = self.image_model_driver.get_generated_image(response_body)
+            image_bytes = self.image_generation_model_driver.get_generated_image(response_body)
         except Exception as e:
             raise ValueError(f"Inpainting generation failed: {e}")
 

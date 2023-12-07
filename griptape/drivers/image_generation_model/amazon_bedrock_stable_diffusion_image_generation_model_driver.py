@@ -6,11 +6,11 @@ from typing import Optional
 from attr import field, define
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers.image_model.base_image_model_driver import BaseImageModelDriver
+from griptape.drivers import BaseImageGenerationModelDriver
 
 
 @define
-class AmazonBedrockStableDiffusionImageModelDriver(BaseImageModelDriver):
+class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelDriver):
     """Image generation model driver for Stable Diffusion models on Amazon Bedrock.
 
     Attributes:

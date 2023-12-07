@@ -3,10 +3,10 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import AmazonBedrockImageDriver
+from griptape.drivers import AmazonBedrockImageGenerationDriver
 
 
-class TestAmazonBedrockImageDriver:
+class TestAmazonBedrockImageGenerationDriver:
     @pytest.fixture
     def bedrock_client(self):
         return Mock()
@@ -28,8 +28,8 @@ class TestAmazonBedrockImageDriver:
 
     @pytest.fixture
     def driver(self, session, model_driver):
-        return AmazonBedrockImageDriver(
-            session=session, model="stability.stable-diffusion-xl-v1", image_model_driver=model_driver
+        return AmazonBedrockImageGenerationDriver(
+            session=session, model="stability.stable-diffusion-xl-v1", image_generation_model_driver=model_driver
         )
 
     def test_init(self, driver):
@@ -37,7 +37,7 @@ class TestAmazonBedrockImageDriver:
 
     def test_init_requires_image_generation_model_driver(self, session):
         with pytest.raises(TypeError):
-            AmazonBedrockImageDriver(session=session, model="stability.stable-diffusion-xl-v1")
+            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")
 
     def test_try_text_to_image(self, driver):
         driver.bedrock_client.invoke_model.return_value = {

@@ -43,15 +43,20 @@ from .prompt_model.bedrock_titan_prompt_model_driver import BedrockTitanPromptMo
 from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePromptModelDriver
 from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPromptModelDriver
 
-from .image_model.base_image_model_driver import BaseImageModelDriver
-from .image_model.amazon_bedrock_stable_diffusion_image_model_driver import AmazonBedrockStableDiffusionImageModelDriver
-from .image_model.amazon_bedrock_titan_image_model_driver import AmazonBedrockTitanImageModelDriver
+from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
+from .image_generation_model.amazon_bedrock_stable_diffusion_image_generation_model_driver import (
+    AmazonBedrockStableDiffusionImageGenerationModelDriver,
+)
+from .image_generation_model.amazon_bedrock_titan_image_generation_model_driver import (
+    AmazonBedrockTitanImageGenerationModelDriver,
+)
 
-from .image.base_image_driver import BaseImageDriver
-from .image.openai_dalle_image_driver import OpenAiDalleImageDriver
-from .image.leonardo_image_driver import LeonardoImageDriver
-from .image.amazon_bedrock_image_driver import AmazonBedrockImageDriver
-from .image.azure_openai_dalle_image_driver import AzureOpenAiDalleImageDriver
+from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
+from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
+from .image_generation.openai_dalle_image_generation_driver import OpenAiDalleImageGenerationDriver
+from .image_generation.leonardo_image_generation_driver import LeonardoImageGenerationDriver
+from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
+from .image_generation.azure_openai_dalle_image_generation_driver import AzureOpenAiDalleImageGenerationDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -93,14 +98,13 @@ __all__ = [
     "BedrockTitanPromptModelDriver",
     "BedrockClaudePromptModelDriver",
     "BedrockJurassicPromptModelDriver",
-    "BaseImageModelDriver",
-    "AmazonBedrockStableDiffusionImageModelDriver",
-    "AmazonBedrockTitanImageModelDriver",
-    "BaseImageDriver",
-    "OpenAiDalleImageDriver",
-    "LeonardoImageDriver",
-    "AmazonBedrockImageDriver",
-    "AzureOpenAiDalleImageDriver",
-    "AmazonBedrockStableDiffusionImageModelDriver",
-    "AmazonBedrockTitanImageModelDriver",
+    "BaseImageGenerationModelDriver",
+    "AmazonBedrockStableDiffusionImageGenerationModelDriver",
+    "AmazonBedrockTitanImageGenerationModelDriver",
+    "BaseImageGenerationDriver",
+    "BaseMultiModelImageGenerationDriver",
+    "OpenAiDalleImageGenerationDriver",
+    "LeonardoImageGenerationDriver",
+    "AmazonBedrockImageGenerationDriver",
+    "AzureOpenAiDalleImageGenerationDriver",
 ]

@@ -6,11 +6,11 @@ from typing import Optional
 from attr import field, define
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers.image_model.base_image_model_driver import BaseImageModelDriver
+from griptape.drivers import BaseImageGenerationModelDriver
 
 
 @define
-class AmazonBedrockTitanImageModelDriver(BaseImageModelDriver):
+class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
     task_type: str = field(default="TEXT_IMAGE", kw_only=True)
     quality: str = field(default="standard", kw_only=True)
     cfg_scale: int = field(default=7, kw_only=True)
