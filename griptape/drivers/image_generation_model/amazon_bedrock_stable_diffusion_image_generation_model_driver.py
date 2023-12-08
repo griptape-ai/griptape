@@ -108,17 +108,17 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
             request["width"] = width
             request["height"] = height
 
-        if self.steps is not None:
+        if self.steps:
             request["steps"] = self.steps
 
-        if seed is not None:
+        if seed:
             request["seed"] = seed
 
-        if mask is not None:
+        if mask:
             request["mask_source"] = self.mask_source
             request["mask_image"] = mask.base64
 
-        if self.start_schedule is not None:
+        if self.start_schedule:
             request["start_schedule"] = self.start_schedule
 
         return request

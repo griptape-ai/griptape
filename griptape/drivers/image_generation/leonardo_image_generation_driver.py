@@ -89,10 +89,10 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
             "modelId": self.model,
         }
 
-        if self.steps is not None:
+        if self.steps:
             request["num_inference_steps"] = self.steps
 
-        if self.seed is not None:
+        if self.seed:
             request["seed"] = self.seed
 
         response = self.requests_session.post(

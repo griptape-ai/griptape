@@ -53,10 +53,10 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
 
         additional_params = {}
 
-        if self.style is not None:
+        if self.style:
             additional_params["style"] = self.style
 
-        if self.quality is not None:
+        if self.quality:
             additional_params["quality"] = self.quality
 
         response = self.client.images.generate(
