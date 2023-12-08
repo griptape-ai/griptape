@@ -21,11 +21,11 @@ class ImageGenerationEngine:
         if not negative_prompts:
             negative_prompts = []
 
-        if rulesets is not None:
+        if rulesets:
             for ruleset in rulesets:
                 prompts += [rule.value for rule in ruleset.rules]
 
-        if negative_rulesets is not None:
+        if negative_rulesets:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
@@ -42,11 +42,11 @@ class ImageGenerationEngine:
         if not negative_prompts:
             negative_prompts = []
 
-        if rulesets is not None:
+        if rulesets:
             for ruleset in rulesets:
                 prompts += [rule.value for rule in ruleset.rules]
 
-        if negative_rulesets is not None:
+        if negative_rulesets:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
@@ -64,11 +64,11 @@ class ImageGenerationEngine:
         if not negative_prompts:
             negative_prompts = []
 
-        if rulesets is not None:
+        if rulesets:
             for ruleset in rulesets:
                 prompts += [rule.value for rule in ruleset.rules]
 
-        if negative_rulesets is not None:
+        if negative_rulesets:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
@@ -88,11 +88,11 @@ class ImageGenerationEngine:
         if not negative_prompts:
             negative_prompts = []
 
-        if rulesets is not None:
+        if rulesets:
             for ruleset in rulesets:
                 prompts += [rule.value for rule in ruleset.rules]
 
-        if negative_rulesets is not None:
+        if negative_rulesets:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
