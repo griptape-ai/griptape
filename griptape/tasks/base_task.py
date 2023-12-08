@@ -24,10 +24,10 @@ class BaseTask(ABC):
     state: State = field(default=State.PENDING, kw_only=True)
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
-    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    max_meta_memory_entries: int | None = field(default=20, kw_only=True)
 
-    output: Optional[BaseArtifact] = field(default=None, init=False)
-    structure: Optional[Structure] = field(default=None, init=False)
+    output: BaseArtifact | None = field(default=None, init=False)
+    structure: Structure | None = field(default=None, init=False)
 
     @property
     @abstractmethod
@@ -77,7 +77,7 @@ class BaseTask(ABC):
         if self.structure:
             self.structure.publish_event(FinishTaskEvent.from_task(self))
 
-    def execute(self) -> Optional[BaseArtifact]:
+    def execute(self) -> BaseArtifact | None:
         try:
             self.state = BaseTask.State.EXECUTING
 

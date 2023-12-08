@@ -27,14 +27,14 @@ class TestLocalConversationMemoryDriver:
         pipeline.add_task(PromptTask("test"))
 
         try:
-            with open(self.MEMORY_FILE_PATH, "r"):
+            with open(self.MEMORY_FILE_PATH):
                 assert False
         except FileNotFoundError:
             assert True
 
         pipeline.run()
 
-        with open(self.MEMORY_FILE_PATH, "r"):
+        with open(self.MEMORY_FILE_PATH):
             assert True
 
     def test_load(self):

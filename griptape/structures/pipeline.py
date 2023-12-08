@@ -71,7 +71,7 @@ class Pipeline(Structure):
 
         return context
 
-    def __run_from_task(self, task: Optional[BaseTask]) -> None:
+    def __run_from_task(self, task: BaseTask | None) -> None:
         if task is None:
             return
         else:

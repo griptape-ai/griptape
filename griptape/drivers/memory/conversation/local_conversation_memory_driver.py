@@ -16,7 +16,7 @@ class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
     def load(self) -> Optional[ConversationMemory]:
         if not os.path.exists(self.file_path):
             return None
-        with open(self.file_path, "r") as file:
+        with open(self.file_path) as file:
             memory = ConversationMemory.from_json(file.read())
 
             memory.driver = self

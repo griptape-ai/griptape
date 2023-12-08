@@ -22,7 +22,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
-    task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+    task_memory: TaskMemory | None = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True), kw_only=True
@@ -139,7 +139,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return self.output
 
-    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+    def find_subtask(self, subtask_id: str) -> ActionSubtask | None:
         return next((subtask for subtask in self.subtasks if subtask.id == subtask_id), None)
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
@@ -152,8 +152,8 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return subtask
 
-    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
+    def find_tool(self, tool_name: str) -> BaseTool | None:
         return next((t for t in self.tools if t.name == tool_name), None)
 
-    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_memory(self, memory_name: str) -> TaskMemory | None:
         return next((m for m in self.tool_output_memory if m.name == memory_name), None)
