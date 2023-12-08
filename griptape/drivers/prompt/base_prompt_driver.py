@@ -51,11 +51,19 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
-            self.structure.publish_event(StartPromptEvent(token_count=self.token_count(prompt_stack)))
+            self.structure.publish_event(
+                StartPromptEvent(
+                    token_count=self.token_count(prompt_stack),
+                    prompt_stack=prompt_stack,
+                    prompt=self.prompt_stack_to_string(prompt_stack),
+                )
+            )
 
     def after_run(self, result: TextArtifact) -> None:
         if self.structure:
-            self.structure.publish_event(FinishPromptEvent(token_count=result.token_count(self.tokenizer)))
+            self.structure.publish_event(
+                FinishPromptEvent(token_count=result.token_count(self.tokenizer), result=result.value)
+            )
 
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():

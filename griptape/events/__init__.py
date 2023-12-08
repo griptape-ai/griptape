@@ -5,6 +5,7 @@ from .start_task_event import StartTaskEvent
 from .finish_task_event import FinishTaskEvent
 from .start_action_subtask_event import StartActionSubtaskEvent
 from .finish_action_subtask_event import FinishActionSubtaskEvent
+from .base_prompt_event import BasePromptEvent
 from .start_prompt_event import StartPromptEvent
 from .finish_prompt_event import FinishPromptEvent
 from .start_structure_run_event import StartStructureRunEvent
@@ -21,6 +22,7 @@ __all__ = [
     "FinishTaskEvent",
     "StartActionSubtaskEvent",
     "FinishActionSubtaskEvent",
+    "BasePromptEvent",
     "StartPromptEvent",
     "FinishPromptEvent",
     "StartStructureRunEvent",
