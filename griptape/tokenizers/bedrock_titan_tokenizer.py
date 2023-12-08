@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attr import define, field, Factory
 from .simple_tokenizer import SimpleTokenizer
 
 
@@ -11,4 +11,5 @@ class BedrockTitanTokenizer(SimpleTokenizer):
 
     characters_per_token: int = field(default=DEFAULT_CHARACTERS_PER_TOKEN, kw_only=True)
     max_tokens: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
+    stop_sequences: list[str] = field(default=Factory(lambda: ["User:"]), kw_only=True)
     model: str = field(kw_only=True)
