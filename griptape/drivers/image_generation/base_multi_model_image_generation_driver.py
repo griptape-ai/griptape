@@ -7,7 +7,7 @@ from griptape.drivers import BaseImageGenerationDriver, BaseImageGenerationModel
 
 @define
 class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver):
-    """Image Modification Driver for platforms like Amazon Bedrock that host many LLM models.
+    """Image Generation Driver for platforms like Amazon Bedrock that host many LLM models.
 
     Instances of this Image Generation Driver require a Image Generation Model Driver which is used to structure the
     image generation request in the format required by the model and to process the output.

@@ -12,6 +12,9 @@ from griptape.drivers import BaseImageGenerationDriver
 class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the Leonardo image generation API.
 
+    Details on Leonardo image generation parameters can be found here:
+    https://docs.leonardo.ai/reference/creategeneration
+
     Attributes:
         model: The ID of the model to use when generating images.
         api_key: The API key to use when making requests to the Leonardo API.
@@ -22,9 +25,6 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         image_height: The height of the generated image in the range [32, 1024] and divisible by 8.
         steps: Optionally specify the number of inference steps to run for each image generation request, [30, 60].
         seed: Optionally provide a consistent seed to generation requests, increasing consistency in output.
-
-    Details on Leonardo image generation parameters can be found here:
-    https://docs.leonardo.ai/reference/creategeneration
     """
 
     api_key: str = field(kw_only=True)

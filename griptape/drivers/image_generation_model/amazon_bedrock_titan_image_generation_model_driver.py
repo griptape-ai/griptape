@@ -11,6 +11,14 @@ from griptape.drivers import BaseImageGenerationModelDriver
 
 @define
 class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
+    """Image Generation Model Driver for Amazon Bedrock Titan Image Generator.
+
+    Attributes:
+        task_type: The type of image generation task to perform, defaults to TEXT_IMAGE (text-to-image).
+        quality: The quality of the generated image, defaults to standard.
+        cfg_scale: Specifies how strictly image generation follows the provided prompt. Defaults to 7, (1.0 to 10.0].
+    """
+
     task_type: str = field(default="TEXT_IMAGE", kw_only=True)
     quality: str = field(default="standard", kw_only=True)
     cfg_scale: int = field(default=7, kw_only=True)

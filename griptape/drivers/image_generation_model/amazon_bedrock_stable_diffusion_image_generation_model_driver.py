@@ -13,6 +13,9 @@ from griptape.drivers import BaseImageGenerationModelDriver
 class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelDriver):
     """Image generation model driver for Stable Diffusion models on Amazon Bedrock.
 
+    For more information on all supported parameters, see the Stable Diffusion documentation:
+        https://platform.stability.ai/docs/api-reference#tag/v1generation
+
     Attributes:
         cfg_scale: Specifies how strictly image generation follows the provided prompt. Defaults to 7.
         mask_source: Specifies mask image configuration for image-to-image generations. Defaults to "MASK_IMAGE_BLACK".
@@ -22,9 +25,6 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
         steps: If provided, specifies the number of diffusion steps to use in the image generation.
         start_schedule: If provided, specifies the start_schedule parameter used to determine the influence of the input
             image in image-to-image generation.
-
-    For more information on all supported parameters, see the Stable Diffusion documentation:
-        https://platform.stability.ai/docs/api-reference#tag/v1generation
     """
 
     cfg_scale: int = field(default=7, kw_only=True)
