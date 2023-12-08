@@ -72,7 +72,9 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_driver.try_inpainting(prompts, image=image, mask=mask, negative_prompts=negative_prompts)
+        return self.image_driver.try_image_inpainting(
+            prompts, image=image, mask=mask, negative_prompts=negative_prompts
+        )
 
     def image_outpainting(
         self,
@@ -94,4 +96,6 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_driver.try_outpainting(prompts, image=image, mask=mask, negative_prompts=negative_prompts)
+        return self.image_driver.try_image_outpainting(
+            prompts, image=image, mask=mask, negative_prompts=negative_prompts
+        )

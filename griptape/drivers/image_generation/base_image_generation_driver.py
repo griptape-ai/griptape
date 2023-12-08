@@ -22,7 +22,7 @@ class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
         ...
 
     @abstractmethod
-    def try_inpainting(
+    def try_image_inpainting(
         self,
         prompts: list[str],
         image: ImageArtifact,
@@ -32,7 +32,7 @@ class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
         ...
 
     @abstractmethod
-    def try_outpainting(
+    def try_image_outpainting(
         self,
         prompts: list[str],
         image: ImageArtifact,

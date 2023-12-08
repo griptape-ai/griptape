@@ -56,7 +56,7 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
     ) -> dict:
         return self._request_parameters(prompts, image=image, negative_prompts=negative_prompts, seed=seed)
 
-    def inpainting_request_parameters(
+    def image_inpainting_request_parameters(
         self,
         prompts: list[str],
         image: ImageArtifact,
@@ -66,7 +66,7 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
     ) -> dict:
         return self._request_parameters(prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=seed)
 
-    def outpainting_request_parameters(
+    def image_outpainting_request_parameters(
         self,
         prompts: list[str],
         image: ImageArtifact,

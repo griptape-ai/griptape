@@ -60,7 +60,7 @@ class ImageGenerator(BaseTool):
             ),
         }
     )
-    def generate_image_from_text(self, params: dict) -> ImageArtifact | ErrorArtifact:
+    def text_to_image(self, params: dict) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
 
@@ -92,7 +92,7 @@ class ImageGenerator(BaseTool):
             ),
         }
     )
-    def generate_image_variation(self, params: dict) -> ImageArtifact:
+    def image_variation(self, params: dict) -> ImageArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         image_file = params["values"]["image_file"]

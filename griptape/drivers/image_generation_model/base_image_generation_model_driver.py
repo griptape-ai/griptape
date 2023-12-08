@@ -34,7 +34,7 @@ class BaseImageGenerationModelDriver(ABC):
         ...
 
     @abstractmethod
-    def inpainting_request_parameters(
+    def image_inpainting_request_parameters(
         self,
         prompts: list[str],
         image: ImageArtifact,
@@ -45,7 +45,7 @@ class BaseImageGenerationModelDriver(ABC):
         ...
 
     @abstractmethod
-    def outpainting_request_parameters(
+    def image_outpainting_request_parameters(
         self,
         prompts: list[str],
         image: ImageArtifact,

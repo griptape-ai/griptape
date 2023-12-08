@@ -62,7 +62,7 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
     ) -> dict:
         raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
 
-    def inpainting_request_parameters(
+    def image_inpainting_request_parameters(
         self,
         prompts: list[str],
         image: ImageArtifact,
@@ -72,7 +72,7 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
     ) -> dict:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
-    def outpainting_request_parameters(
+    def image_outpainting_request_parameters(
         self,
         prompts: list[str],
         image: ImageArtifact,

@@ -85,7 +85,7 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
 
-    def try_inpainting(
+    def try_image_inpainting(
         self,
         prompts: list[str],
         image: ImageArtifact,
@@ -94,7 +94,7 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
-    def try_outpainting(
+    def try_image_outpainting(
         self,
         prompts: list[str],
         image: ImageArtifact,
