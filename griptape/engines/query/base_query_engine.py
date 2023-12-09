@@ -2,19 +2,16 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from attr import define
 from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.rules import Ruleset
 
 
 @define
 class BaseQueryEngine(ABC):
     @abstractmethod
-    def query(
-        self, query: str, namespace: Optional[str] = None, rulesets: Optional[list[Ruleset]] = None, **kwargs
-    ) -> TextArtifact:
+    def query(self, query: str, namespace: Optional[str] = None, **kwargs) -> TextArtifact:
         ...
 
     @abstractmethod
-    def load_artifacts(self, namespace: str) -> ListArtifact:
+    def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
         ...
 
     @abstractmethod

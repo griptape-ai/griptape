@@ -73,7 +73,7 @@ class VectorQueryEngine(BaseQueryEngine):
     def upsert_text_artifacts(self, artifacts: list[TextArtifact], namespace: str) -> None:
         self.vector_store_driver.upsert_text_artifacts({namespace: artifacts})
 
-    def load_artifacts(self, namespace: str) -> ListArtifact:
+    def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
         result = self.vector_store_driver.load_entries(namespace)
         artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta.get("artifact")]
 

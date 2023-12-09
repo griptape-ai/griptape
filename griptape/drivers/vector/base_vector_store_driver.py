@@ -5,7 +5,7 @@ from typing import Optional
 from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact
-from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
+from griptape.drivers import BaseEmbeddingDriver
 
 
 @define

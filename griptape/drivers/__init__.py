@@ -58,6 +58,9 @@ from .image_generation_model.amazon_bedrock_stable_diffusion_image_generation_mo
     AmazonBedrockStableDiffusionImageGenerationModelDriver,
 )
 
+from .graph.base_graph_driver import BaseGraphDriver
+from .graph.neo4j_graph_driver import Neo4jGraphDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -107,4 +110,6 @@ __all__ = [
     "AmazonBedrockTitanImageGenerationModelDriver",
     "AmazonBedrockStableDiffusionImageGenerationModelDriver",
     "AzureOpenAiDalleImageGenerationDriver",
+    "BaseGraphDriver",
+    "Neo4jGraphDriver"
 ]

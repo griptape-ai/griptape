@@ -5,7 +5,7 @@ from .manifest_validator import ManifestValidator
 from .python_runner import PythonRunner
 from .command_runner import CommandRunner
 from .chat import Chat
-from .futures import execute_futures_dict
+from .futures import execute_futures_dict, execute_futures_list
 from .token_counter import TokenCounter
 from .prompt_stack import PromptStack
 from .dict_utils import remove_null_values_in_dict_recursively
@@ -30,6 +30,7 @@ __all__ = [
     "str_to_hash",
     "import_optional_dependency",
     "execute_futures_dict",
+    "execute_futures_list",
     "TokenCounter",
     "PromptStack",
     "remove_null_values_in_dict_recursively",
