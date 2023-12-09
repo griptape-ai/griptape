@@ -12,5 +12,5 @@ class BaseConversationMemoryDriver(ABC):
         ...
 
     @abstractmethod
-    def load(self, *args, **kwargs) -> Optional[ConversationMemory]:
+    def load(self, *args, **kwargs) -> ConversationMemory | None:
         ...

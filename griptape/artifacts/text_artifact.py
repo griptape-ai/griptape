@@ -16,7 +16,7 @@ class TextArtifact(BaseArtifact):
     __embedding: list[float] = field(factory=list, kw_only=True)
 
     @property
-    def embedding(self) -> Optional[list[float]]:
+    def embedding(self) -> list[float] | None:
         return None if len(self.__embedding) == 0 else self.__embedding
 
     def __add__(self, other: TextArtifact) -> TextArtifact:

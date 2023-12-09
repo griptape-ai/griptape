@@ -28,12 +28,12 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
     """
 
     temperature: float = field(default=0.1, kw_only=True)
-    max_tokens: Optional[int] = field(default=None, kw_only=True)
-    structure: Optional[Structure] = field(default=None, kw_only=True)
+    max_tokens: int | None = field(default=None, kw_only=True)
+    structure: Structure | None = field(default=None, kw_only=True)
     prompt_stack_to_string: Callable[[PromptStack], str] = field(
         default=Factory(lambda self: self.default_prompt_stack_to_string_converter, takes_self=True), kw_only=True
     )
-    ignored_exception_types: Tuple[Type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
+    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
     model: str
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True)
@@ -51,11 +51,19 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
-            self.structure.publish_event(StartPromptEvent(token_count=self.token_count(prompt_stack)))
+            self.structure.publish_event(
+                StartPromptEvent(
+                    token_count=self.token_count(prompt_stack),
+                    prompt_stack=prompt_stack,
+                    prompt=self.prompt_stack_to_string(prompt_stack),
+                )
+            )
 
     def after_run(self, result: TextArtifact) -> None:
         if self.structure:
-            self.structure.publish_event(FinishPromptEvent(token_count=result.token_count(self.tokenizer)))
+            self.structure.publish_event(
+                FinishPromptEvent(token_count=result.token_count(self.tokenizer), result=result.value)
+            )
 
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():

@@ -23,8 +23,8 @@ class ImageGenerator(BaseTool):
     """
 
     image_generation_engine: ImageGenerationEngine = field(kw_only=True)
-    output_dir: Optional[str] = field(default=None, kw_only=True)
-    output_file: Optional[str] = field(default=None, kw_only=True)
+    output_dir: str | None = field(default=None, kw_only=True)
+    output_file: str | None = field(default=None, kw_only=True)
 
     @output_dir.validator
     def validate_output_dir(self, _, output_dir: str) -> None:
