@@ -15,7 +15,6 @@ class BaseTextInputTask(BaseTask, ABC):
     DEFAULT_RULESET_NAME = "Default Ruleset"
     ADDITIONAL_RULESET_NAME = "Additional Ruleset"
 
-    input_artifact_namespace: str | None = field(default=None, kw_only=True)
     input_template: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
