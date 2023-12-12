@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 
 from attr import define, field
 from griptape.artifacts import TextArtifact
