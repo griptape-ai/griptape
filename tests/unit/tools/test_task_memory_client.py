@@ -1,13 +1,18 @@
 import pytest
 from griptape.artifacts import TextArtifact
+from griptape.tasks.action_subtask import ActionSubtask
 from griptape.tools import TaskMemoryClient
 from tests.utils import defaults
 
 
-class TestTasklMemoryClient:
+class TestTaskMemoryClient:
     @pytest.fixture
     def tool(self):
-        return TaskMemoryClient(off_prompt=True, input_memory=[defaults.text_task_memory("TestMemory")])
+        subtask = ActionSubtask(input_memory=[defaults.text_task_memory("TestMemory")])
+        tool = TaskMemoryClient(off_prompt=True)
+        tool.attach_to(subtask)
+
+        return tool
 
     def test_summarize(self, tool):
         tool.input_memory[0].store_artifact("foo", TextArtifact("test"))

@@ -38,9 +38,6 @@ class BaseTask(ABC):
     task_memory: TaskMemory | None = field(default=None, kw_only=True)
     input_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
     output_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
-    output_processor_fn: Callable = field(
-        default=Factory(lambda self: self.default_output_processor_fn, takes_self=True), kw_only=True
-    )
     output_artifact_namespace: str | None = field(default=Factory(lambda self: self.id, takes_self=True), kw_only=True)
 
     output: BaseArtifact | None = field(default=None, init=False)
@@ -118,7 +115,13 @@ class BaseTask(ABC):
             self.structure.publish_event(FinishTaskEvent.from_task(self))
 
         if output:
-            return self.output_processor_fn(output)
+            if self.output_memory:
+                for memory in self.output_memory:
+                    output = memory.process_output(self, output)
+
+                return output
+            else:
+                return output
         else:
             return InfoArtifact("Tool returned an empty output")
 
@@ -169,15 +172,6 @@ class BaseTask(ABC):
             return next((m for m in self.output_memory if m.name == memory_name), None)
         else:
             return None
-
-    def default_output_processor_fn(self, output: BaseArtifact) -> BaseArtifact:
-        if self.output_memory:
-            for memory in self.output_memory:
-                output = memory.process_output(self, output)
-
-            return output
-        else:
-            return output
 
     @abstractmethod
     def run(self) -> BaseArtifact:

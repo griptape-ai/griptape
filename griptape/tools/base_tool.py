@@ -69,6 +69,20 @@ class BaseTool(ActivityMixin, ABC):
     def abs_dir_path(self):
         return os.path.dirname(self.abs_file_path)
 
+    @property
+    def input_memory(self) -> list[TaskMemory] | None:
+        if self.origin_task:
+            return self.origin_task.input_memory
+        else:
+            return None
+
+    @property
+    def output_memory(self) -> list[TaskMemory] | None:
+        if self.origin_task:
+            return self.origin_task.output_memory
+        else:
+            return None
+
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `self.activities`.
     def schema(self) -> dict:

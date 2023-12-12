@@ -73,10 +73,8 @@ class ImageGenerationTask(BaseTextInputTask):
         return task_rulesets
 
     def run(self) -> ImageArtifact | InfoArtifact:
-        text = self.input.to_text()
-
         image_artifact = self.image_generation_engine.generate_image(
-            prompts=[text], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
+            prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
         )
 
         if self.output_dir or self.output_file:
