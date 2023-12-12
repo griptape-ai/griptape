@@ -1,12 +1,19 @@
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
+from griptape.artifacts import TextArtifact
 from griptape.rules import Ruleset, Rule
 from tests.mocks.mock_text_input_task import MockTextInputTask
 
 
 class TestBaseTextInputTask:
-    def test_input(self):
+    def test_string_input(self):
         assert MockTextInputTask("foobar").input.value == "foobar"
+
+    def test_artifact_input(self):
+        assert MockTextInputTask(TextArtifact("foobar")).input.value == "foobar"
+
+    def test_callable_input(self):
+        assert MockTextInputTask(lambda _: TextArtifact("foobar")).input.value == "foobar"
 
     def test_full_context(self):
         parent = MockTextInputTask("parent")
