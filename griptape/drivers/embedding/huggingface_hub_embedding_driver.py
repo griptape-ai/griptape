@@ -18,7 +18,7 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
     """
 
     api_token: str = field(kw_only=True)
-    model: Optional[str] = field(default=None, kw_only=True)
+    model: str | None = field(default=None, kw_only=True)
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(

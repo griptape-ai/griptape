@@ -22,7 +22,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
 
     api_key: str = field(kw_only=True)
     url: str = field(kw_only=True)
-    mq: Optional[marqo.Client] = field(
+    mq: marqo.Client | None = field(
         default=Factory(
             lambda self: import_optional_dependency("marqo").Client(self.url, api_key=self.api_key), takes_self=True
         ),
@@ -33,9 +33,9 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_text(
         self,
         string: str,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         """Upsert a text document into the Marqo index.
@@ -62,7 +62,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         return response["items"][0]["_id"]
 
     def upsert_text_artifact(
-        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+        self, artifact: TextArtifact, namespace: str | None = None, meta: dict | None = None, **kwargs
     ) -> str:
         """Upsert a text artifact into the Marqo index.
 
@@ -87,7 +87,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
         return response["items"][0]["_id"]
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Load a document entry from the Marqo index.
 
         Args:
@@ -108,7 +108,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load all document entries from the Marqo index.
 
         Args:
@@ -145,8 +145,8 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         include_metadata: bool = True,
         **kwargs,
@@ -187,7 +187,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             for r in results["hits"]
         ]
 
-    def create_index(self, name: str, **kwargs) -> Dict[str, Any]:
+    def create_index(self, name: str, **kwargs) -> dict[str, Any]:
         """Create a new index in the Marqo client.
 
         Args:
@@ -196,7 +196,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
 
         return self.mq.create_index(name, settings_dict=kwargs)
 
-    def delete_index(self, name: str) -> Dict[str, Any]:
+    def delete_index(self, name: str) -> dict[str, Any]:
         """Delete an index in the Marqo client.
 
         Args:
@@ -205,7 +205,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
 
         return self.mq.delete_index(name)
 
-    def get_indexes(self) -> List[str]:
+    def get_indexes(self) -> list[str]:
         """Get a list of all indexes in the Marqo client.
 
         Returns:
@@ -218,9 +218,9 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         """Upsert a vector into the Marqo index.

@@ -35,10 +35,10 @@ class BaseTool(ActivityMixin, ABC):
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
-    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
+    dependencies_install_directory: str | None = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
     off_prompt: bool = field(default=True, kw_only=True)
-    origin_task: Optional[ActionSubtask] = field(default=None, kw_only=True)
+    origin_task: ActionSubtask | None = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:
@@ -58,7 +58,7 @@ class BaseTool(ActivityMixin, ABC):
 
     @property
     def manifest(self) -> dict:
-        with open(self.manifest_path, "r") as yaml_file:
+        with open(self.manifest_path) as yaml_file:
             return yaml.safe_load(yaml_file)
 
     @property
@@ -93,13 +93,13 @@ class BaseTool(ActivityMixin, ABC):
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
+    def before_run(self, activity: Callable, value: dict | None) -> dict | None:
         return value
 
     def attach_to(self, origin_task: ActionSubtask):
         self.origin_task = origin_task
 
-    def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
+    def run(self, activity: Callable, subtask: ActionSubtask, value: dict | None) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
@@ -132,7 +132,7 @@ class BaseTool(ActivityMixin, ABC):
 
         return os.path.dirname(os.path.abspath(class_file))
 
-    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
+    def install_dependencies(self, env: dict[str, str] | None = None) -> None:
         env = env if env else {}
 
         command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
@@ -150,7 +150,7 @@ class BaseTool(ActivityMixin, ABC):
             stderr=None if self.verbose else subprocess.DEVNULL,
         )
 
-    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
         if self.origin_task:
             return self.origin_task.find_input_memory(memory_name)
         else:

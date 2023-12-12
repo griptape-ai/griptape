@@ -36,9 +36,9 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
     )
     image_width: int = field(default=512, kw_only=True)
     image_height: int = field(default=512, kw_only=True)
-    seed: Optional[int] = field(default=None, kw_only=True)
+    seed: int | None = field(default=None, kw_only=True)
 
-    def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_generate_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         request = self.image_generation_model_driver.text_to_image_request_parameters(
             prompts, self.image_width, self.image_height, negative_prompts=negative_prompts, seed=self.seed
         )

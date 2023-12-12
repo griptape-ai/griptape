@@ -1,9 +1,9 @@
-from marshmallow import fields, post_load
-from griptape.schemas import BaseEventSchema
+from marshmallow import post_load, fields
+from griptape.schemas import BasePromptEventSchema
 
 
-class FinishPromptEventSchema(BaseEventSchema):
-    token_count = fields.Int()
+class FinishPromptEventSchema(BasePromptEventSchema):
+    result = fields.Str()
 
     @post_load
     def make_obj(self, data, **kwargs):

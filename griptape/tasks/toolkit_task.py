@@ -100,7 +100,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return TextArtifact(subtask.answer)
 
-    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+    def find_subtask(self, subtask_id: str) -> ActionSubtask | None:
         return next((subtask for subtask in self.subtasks if subtask.id == subtask_id), None)
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
@@ -113,5 +113,5 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return subtask
 
-    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
+    def find_tool(self, tool_name: str) -> BaseTool | None:
         return next((t for t in self.tools if t.name == tool_name), None)

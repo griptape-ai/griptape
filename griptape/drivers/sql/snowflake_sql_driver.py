@@ -39,7 +39,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         if not engine.url.render_as_string().startswith("snowflake://"):
             raise ValueError("Provide a Snowflake connection")
 
-    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
+    def execute_query(self, query: str) -> list[BaseSqlDriver.RowResult] | None:
         rows = self.execute_query_raw(query)
 
         if rows:
@@ -47,7 +47,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
+    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:
@@ -58,7 +58,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             else:
                 return None
 
-    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
+    def get_table_schema(self, table: str, schema: str | None = None) -> str | None:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:

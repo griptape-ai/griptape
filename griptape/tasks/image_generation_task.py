@@ -24,8 +24,8 @@ class ImageGenerationTask(BaseTextInputTask):
     NEGATIVE_RULESET_NAME = "Negative Ruleset"
 
     image_generation_engine: ImageGenerationEngine = field(kw_only=True)
-    output_dir: Optional[str] = field(default=None, kw_only=True)
-    output_file: Optional[str] = field(default=None, kw_only=True)
+    output_dir: str | None = field(default=None, kw_only=True)
+    output_file: str | None = field(default=None, kw_only=True)
     negative_rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 

@@ -33,20 +33,18 @@ class BaseTask(ABC):
     state: State = field(default=State.PENDING, kw_only=True)
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
-    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    max_meta_memory_entries: int | None = field(default=20, kw_only=True)
     off_prompt: bool = field(default=False, kw_only=True)
-    task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
+    task_memory: TaskMemory | None = field(default=None, kw_only=True)
+    input_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
+    output_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
     output_processor_fn: Callable = field(
         default=Factory(lambda self: self.default_output_processor_fn, takes_self=True), kw_only=True
     )
-    output_artifact_namespace: Optional[str] = field(
-        default=Factory(lambda self: self.id, takes_self=True), kw_only=True
-    )
+    output_artifact_namespace: str | None = field(default=Factory(lambda self: self.id, takes_self=True), kw_only=True)
 
-    output: Optional[BaseArtifact] = field(default=None, init=False)
-    structure: Optional[Structure] = field(default=None, init=False)
+    output: BaseArtifact | None = field(default=None, init=False)
+    structure: Structure | None = field(default=None, init=False)
 
     @property
     def class_name(self):
@@ -124,7 +122,7 @@ class BaseTask(ABC):
         else:
             return InfoArtifact("Tool returned an empty output")
 
-    def execute(self) -> Optional[BaseArtifact]:
+    def execute(self) -> BaseArtifact | None:
         try:
             self.state = BaseTask.State.EXECUTING
 
@@ -151,7 +149,7 @@ class BaseTask(ABC):
 
         return self
 
-    def set_default_task_memory(self, memory: Optional[TaskMemory]) -> None:
+    def set_default_task_memory(self, memory: TaskMemory | None) -> None:
         self.task_memory = memory
 
         if self.task_memory:
@@ -160,13 +158,13 @@ class BaseTask(ABC):
             if self.output_memory is None and self.off_prompt:
                 self.output_memory = [self.task_memory]
 
-    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
         if self.input_memory:
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:
             return None
 
-    def find_output_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_output_memory(self, memory_name: str) -> TaskMemory | None:
         if self.output_memory:
             return next((m for m in self.output_memory if m.name == memory_name), None)
         else:

@@ -68,6 +68,11 @@ class TestSummaryConversationMemory:
 
         assert isinstance(memory.from_dict(memory_dict), SummaryConversationMemory)
         assert memory.from_dict(memory_dict).runs[0].input == "foo"
+        assert memory.from_dict(memory_dict).runs[0].output == "bar"
+        assert memory.from_dict(memory_dict).offset == memory.offset
+        assert memory.from_dict(memory_dict).summary == memory.summary
+        assert memory.from_dict(memory_dict).summary_index == memory.summary_index
+        assert memory.from_dict(memory_dict).max_runs == memory.max_runs
 
     def test_from_json(self):
         memory = SummaryConversationMemory()

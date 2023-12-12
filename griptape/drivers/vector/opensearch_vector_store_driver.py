@@ -25,7 +25,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
     host: str = field(kw_only=True)
     port: int = field(default=443, kw_only=True)
-    http_auth: Optional[str | Tuple[str, str]] = field(default=None, kw_only=True)
+    http_auth: str | tuple[str, str] | None = field(default=None, kw_only=True)
     use_ssl: bool = field(default=True, kw_only=True)
     verify_certs: bool = field(default=True, kw_only=True)
     index_name: str = field(kw_only=True)
@@ -46,9 +46,9 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in OpenSearch.
@@ -64,7 +64,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
         return response["_id"]
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Retrieves a specific vector entry from OpenSearch based on its identifier and optional namespace.
 
         Returns:
@@ -93,7 +93,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             logging.error(f"Error while loading entry: {e}")
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from OpenSearch that match the optional namespace.
 
         Returns:
@@ -122,10 +122,10 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         self,
         query: str,
         count: Optional[int] = None,
-        field_name: str = "vector",
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         include_metadata=True,
+        field_name: str = "vector",
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string.
@@ -160,7 +160,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             for hit in response["hits"]["hits"]
         ]
 
-    def create_index(self, vector_dimension: Optional[int] = None, settings_override: Optional[dict] = None) -> None:
+    def create_index(self, vector_dimension: int | None = None, settings_override: dict | None = None) -> None:
         """Creates a new vector index in OpenSearch.
 
         The index is structured to support k-NN (k-nearest neighbors) queries.

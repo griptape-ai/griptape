@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 @define
 class TaskMemory(ActivityMixin):
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    artifact_storages: dict[Type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
+    artifact_storages: dict[type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @artifact_storages.validator
-    def validate_artifact_storages(self, _, artifact_storage: dict[Type, BaseArtifactStorage]) -> None:
+    def validate_artifact_storages(self, _, artifact_storage: dict[type, BaseArtifactStorage]) -> None:
         seen_types = []
 
         for storage in artifact_storage.values():
@@ -27,9 +27,8 @@ class TaskMemory(ActivityMixin):
 
             seen_types.append(type(storage))
 
-    def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
-        def find_storage(a):
-            return next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
+    def get_storage_for(self, artifact: BaseArtifact) -> BaseArtifactStorage | None:
+        find_storage = lambda a: next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
 
         if isinstance(artifact, ListArtifact):
             if artifact.has_items():
@@ -81,7 +80,7 @@ class TaskMemory(ActivityMixin):
         else:
             return InfoArtifact("task output is empty")
 
-    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> Optional[BaseArtifact]:
+    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> BaseArtifact | None:
         namespace_storage = self.namespace_storage.get(namespace)
         storage = self.get_storage_for(artifact)
 

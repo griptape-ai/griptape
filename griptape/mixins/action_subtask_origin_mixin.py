@@ -11,11 +11,11 @@ if TYPE_CHECKING:
 @define(slots=False)
 class ActionSubtaskOriginMixin:
     @abstractmethod
-    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
+    def find_tool(self, tool_name: str) -> BaseTool | None:
         ...
 
     @abstractmethod
-    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+    def find_subtask(self, subtask_id: str) -> ActionSubtask | None:
         ...
 
     @abstractmethod
