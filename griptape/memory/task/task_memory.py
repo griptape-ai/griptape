@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Type, Any, Callable
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
-from griptape.defaults import TaskMemoryDefaultsProvider
+from griptape.defaults import BaseTaskMemoryDefaultsProvider, OpenAiTaskMemoryDefaultsProvider
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define
 class TaskMemory(ActivityMixin):
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    defaults_provider: TaskMemoryDefaultsProvider = field(default=TaskMemoryDefaultsProvider(), kw_only=True)
+    defaults_provider: BaseTaskMemoryDefaultsProvider = field(default=OpenAiTaskMemoryDefaultsProvider(), kw_only=True)
     artifact_storages: dict[type, BaseArtifactStorage] = field(
         default=Factory(lambda self: self.defaults_provider.artifact_storage, takes_self=True), kw_only=True
     )

@@ -1,6 +1,7 @@
 from .base_defaults_provider import BaseDefaultsProvider
 
-from .structure_defaults_provider import StructureDefaultsProvider
+from .openai_structure_defaults_provider import OpenAiStructureDefaultsProvider
+from .base_structure_defaults_provider import BaseStructureDefaultsProvider
 from .base_task_memory_defaults_provider import BaseTaskMemoryDefaultsProvider
 from .openai_task_memory_defaults_provider import OpenAiTaskMemoryDefaultsProvider
 from .bedrock_task_memory_defaults_provider import BedrockTaskMemoryDefaultsProvider
@@ -8,8 +9,9 @@ from .bedrock_task_memory_defaults_provider import BedrockTaskMemoryDefaultsProv
 
 __all__ = [
     "BaseDefaultsProvider",
+    "BaseStructureDefaultsProvider",
     "BaseTaskMemoryDefaultsProvider",
-    "StructureDefaultsProvider",
+    "OpenAiStructureDefaultsProvider",
     "OpenAiTaskMemoryDefaultsProvider",
     "BedrockTaskMemoryDefaultsProvider",
 ]

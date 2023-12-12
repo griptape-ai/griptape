@@ -6,7 +6,7 @@ from logging import Logger
 from typing import Optional, TYPE_CHECKING, Any
 from attr import define, field, Factory
 from rich.logging import RichHandler
-from griptape.defaults import StructureDefaultsProvider
+from griptape.defaults import BaseStructureDefaultsProvider, OpenAiStructureDefaultsProvider
 from griptape.drivers import BasePromptDriver
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
@@ -28,15 +28,19 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     stream: bool = field(default=False, kw_only=True)
-    defaults_provider: StructureDefaultsProvider = field(default=StructureDefaultsProvider(), kw_only=True)
+    defaults_provider: BaseStructureDefaultsProvider = field(
+        default=Factory(lambda: OpenAiStructureDefaultsProvider()), kw_only=True
+    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
-    conversation_memory: ConversationMemory | None = field(default=Factory(lambda: ConversationMemory()), kw_only=True)
-    meta_memory: MetaMemory | None = field(default=Factory(lambda: MetaMemory()), kw_only=True)
+    conversation_memory: Optional[BaseConversationMemory] = field(
+        default=Factory(lambda: ConversationMemory()), kw_only=True
+    )
+    meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
@@ -75,10 +79,6 @@ class Structure(ABC):
     @property
     def prompt_driver(self) -> BasePromptDriver:
         return self.defaults_provider.prompt_driver
-
-    @property
-    def embedding_driver(self) -> BaseEmbeddingDriver:
-        return self.defaults_provider.embedding_driver
 
     @property
     def execution_args(self) -> tuple:
