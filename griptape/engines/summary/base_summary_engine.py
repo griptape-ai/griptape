@@ -3,13 +3,23 @@ from typing import Optional
 from attr import define
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.rules import Ruleset
+from griptape.utils import PromptStack
 
 
 @define
 class BaseSummaryEngine(ABC):
-    def summarize_text(self, text: str, rulesets: Optional[list[Ruleset]] = None) -> str:
-        return self.summarize_artifacts(ListArtifact([TextArtifact(text)]), rulesets=rulesets).value
+    def summarize_text(
+        self, text: str, rulesets: Optional[list[Ruleset]] = None, prompt_stack: Optional[PromptStack] = None
+    ) -> str:
+        return self.summarize_artifacts(
+            ListArtifact([TextArtifact(text)]), rulesets=rulesets, prompt_stack=prompt_stack
+        ).value
 
     @abstractmethod
-    def summarize_artifacts(self, artifacts: ListArtifact, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
+    def summarize_artifacts(
+        self,
+        artifacts: ListArtifact,
+        rulesets: Optional[list[Ruleset]] = None,
+        prompt_stack: Optional[PromptStack] = None,
+    ) -> TextArtifact:
         ...

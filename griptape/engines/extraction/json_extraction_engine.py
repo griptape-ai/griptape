@@ -14,7 +14,11 @@ class JsonExtractionEngine(BaseExtractionEngine):
     template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/json_extraction.j2")), kw_only=True)
 
     def extract(
-        self, text: str | ListArtifact, template_schema: dict, rulesets: Optional[Ruleset] = None
+        self,
+        text: str | ListArtifact,
+        template_schema: dict,
+        rulesets: Ruleset | None = None,
+        prompt_stack: PromptStack | None = None,
     ) -> ListArtifact | ErrorArtifact:
         try:
             json_schema = json.dumps(template_schema)
@@ -25,6 +29,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
                     json_schema,
                     [],
                     rulesets=rulesets,
+                    prompt_stack=prompt_stack,
                 ),
                 item_separator="\n",
             )
@@ -39,7 +44,8 @@ class JsonExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         json_template_schema: str,
         extractions: list[TextArtifact],
-        rulesets: Optional[Ruleset] = None,
+        rulesets: Ruleset | None = None,
+        prompt_stack: PromptStack | None = None,
     ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
@@ -49,6 +55,10 @@ class JsonExtractionEngine(BaseExtractionEngine):
         )
 
         if self.prompt_driver.tokenizer.count_tokens_left(full_text) >= self.min_response_tokens:
+            if prompt_stack:
+                prompt_stack.add_user_input(full_text)
+            else:
+                prompt_stack = PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(
@@ -65,6 +75,11 @@ class JsonExtractionEngine(BaseExtractionEngine):
                 text=chunks[0].value,
                 rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
+
+            if prompt_stack:
+                prompt_stack.add_user_input(partial_text)
+            else:
+                prompt_stack = PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)])
 
             extractions.extend(
                 self.json_to_text_artifacts(

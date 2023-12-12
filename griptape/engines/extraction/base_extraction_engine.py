@@ -7,6 +7,7 @@ from griptape.chunkers import BaseChunker, TextChunker
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.rules import Ruleset
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.utils import PromptStack
 
 
 @define
@@ -44,5 +45,11 @@ class BaseExtractionEngine(ABC):
         )
 
     @abstractmethod
-    def extract(self, text: str | ListArtifact, rulesets: Optional[list[Ruleset]] = None, **kwargs) -> ListArtifact:
+    def extract(
+        self,
+        text: str | ListArtifact,
+        rulesets: list[Ruleset] | None = None,
+        prompt_stack: PromptStack | None = None,
+        **kwargs,
+    ) -> ListArtifact:
         ...

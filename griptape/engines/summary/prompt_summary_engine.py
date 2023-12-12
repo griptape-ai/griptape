@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 from attr import define, Factory, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
@@ -45,11 +46,17 @@ class PromptSummaryEngine(BaseSummaryEngine):
             - self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier
         )
 
-    def summarize_artifacts(self, artifacts: ListArtifact, rulesets: Optional[Ruleset] = None) -> TextArtifact:
-        return self.summarize_artifacts_rec(artifacts.value, None, rulesets=rulesets)
+    def summarize_artifacts(
+        self, artifacts: ListArtifact, rulesets: Ruleset | None = None, prompt_stack: PromptStack | None = None
+    ) -> TextArtifact:
+        return self.summarize_artifacts_rec(artifacts.value, None, rulesets=rulesets, prompt_stack=prompt_stack)
 
     def summarize_artifacts_rec(
-        self, artifacts: list[BaseArtifact], summary: Optional[str], rulesets: Optional[Ruleset] = None
+        self,
+        artifacts: list[BaseArtifact],
+        summary: str | None,
+        rulesets: Ruleset | None = None,
+        prompt_stack: PromptStack | None = None,
     ) -> TextArtifact:
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 
@@ -58,20 +65,24 @@ class PromptSummaryEngine(BaseSummaryEngine):
         )
 
         if self.prompt_driver.tokenizer.count_tokens_left(full_text) >= self.min_response_tokens:
-            return self.prompt_driver.run(
-                PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
-            )
+            message_input = PromptStack.Input(full_text, role=PromptStack.USER_ROLE)
+            if prompt_stack is None:
+                prompt_stack = PromptStack(inputs=[message_input])
+            else:
+                prompt_stack.inputs.append(message_input)
+            return self.prompt_driver.run(prompt_stack=prompt_stack)
         else:
             chunks = self.chunker.chunk(artifacts_text)
 
             partial_text = self.template_generator.render(
                 summary=summary, text=chunks[0].value, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets)
             )
+            message_input = PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)
+            if prompt_stack is None:
+                prompt_stack = PromptStack(inputs=[message_input])
+            else:
+                prompt_stack.inputs.append(message_input)
 
             return self.summarize_artifacts_rec(
-                chunks[1:],
-                self.prompt_driver.run(
-                    PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)])
-                ).value,
-                rulesets=rulesets,
+                chunks[1:], self.prompt_driver.run(prompt_stack=prompt_stack).value, rulesets=rulesets
             )
