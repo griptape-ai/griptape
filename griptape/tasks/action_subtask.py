@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import re
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
@@ -22,15 +22,25 @@ if TYPE_CHECKING:
 @define
 class ActionSubtask(PromptTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
-    ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
+    ACTIONS_PATTERN = r"(?s)Actions:[^{]*({.*})"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
-    ACTION_SCHEMA = Schema(
-        description="Actions have name, path, and input object.",
-        schema={
-            Literal("name", description="Action name"): str,
-            Literal("path", description="Action path"): str,
-            schema.Optional(Literal("input", description="Optional action path input values object")): {"values": dict},
-        },
+    ACTIONS_SCHEMA = Schema(
+        description="List of actions to be executed in parallel.",
+        schema=[
+            {
+                Literal(
+                    "output_label",
+                    description="Action label that can later be used to identify action output"
+                ): str,
+                Literal("name", description="Action name"): str,
+                Literal("path", description="Action path"): str,
+                schema.Optional(
+                    Literal("input", description="Optional action path input values object")
+                ): {
+                    "values": dict
+                },
+            }
+        ]
     )
 
     parent_task_id: str | None = field(default=None, kw_only=True)
@@ -48,7 +58,9 @@ class ActionSubtask(PromptTask):
 
     @property
     def origin_task(self) -> ActionSubtaskOriginMixin | None:
-        return self.structure.find_task(self.parent_task_id)
+        task = self.structure.find_task(self.parent_task_id)
+
+        return task if isinstance(task, ActionSubtaskOriginMixin) else None
 
     @property
     def parents(self) -> list[ActionSubtask]:
@@ -125,18 +137,18 @@ class ActionSubtask(PromptTask):
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
-        action_matches = re.findall(self.ACTION_PATTERN, value, re.DOTALL)
+        actions_matches = re.findall(self.ACTIONS_PATTERN, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
         if self.thought is None and len(thought_matches) > 0:
             self.thought = thought_matches[-1]
 
-        if len(action_matches) > 0:
+        if len(actions_matches) > 0:
             try:
-                data = action_matches[-1]
-                action_object: dict = json.loads(data, strict=False)
+                data = actions_matches[-1]
+                actions_list: list = json.loads(data, strict=False)
 
-                validate(instance=action_object, schema=self.ACTION_SCHEMA.schema)
+                validate(instance=actions_list, schema=self.ACTIONS_SCHEMA.schema)
 
                 # Load action name; throw exception if the key is not present
                 if self.action_name is None:

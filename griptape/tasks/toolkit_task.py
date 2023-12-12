@@ -87,6 +87,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
+            actions_schema=ActionSubtask.ACTIONS_SCHEMA.json_schema("Actions Schema"),
             action_schemas=[utils.minify_json(json.dumps(tool.schema())) for tool in self.tools],
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
