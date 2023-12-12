@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
@@ -66,11 +66,9 @@ class VectorQueryEngine(BaseQueryEngine):
                 )
 
                 break
-        message_input = PromptStack.Input(message, role=PromptStack.USER_ROLE)
         if prompt_stack is None:
-            prompt_stack = PromptStack(inputs=[message_input])
-        else:
-            prompt_stack.inputs.append(message_input)
+            prompt_stack = PromptStack()
+        prompt_stack.add_user_input(message)
 
         return self.prompt_driver.run(prompt_stack=prompt_stack)
 
