@@ -3,14 +3,16 @@ from typing import Optional
 from griptape.artifacts import TextArtifact
 from griptape.engines import BaseQueryEngine
 from griptape.loaders import TextLoader
-from griptape.tasks import BaseTextInputTask
+from griptape.tasks import PromptTask
 
 
 @define
-class TextQueryTask(BaseTextInputTask):
+class TextQueryTask(PromptTask):
     query_engine: BaseQueryEngine = field(kw_only=True)
     loader: TextLoader = field(default=Factory(lambda: TextLoader()), kw_only=True)
     namespace: Optional[str] = field(default=None, kw_only=True)
 
     def run(self) -> TextArtifact:
-        return self.query_engine.query(self.input.to_text(), namespace=self.namespace, rulesets=self.all_rulesets)
+        return self.query_engine.query(
+            self.input.to_text(), namespace=self.namespace, rulesets=self.all_rulesets, prompt_stack=self.prompt_stack
+        )
