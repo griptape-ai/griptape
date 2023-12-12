@@ -67,7 +67,7 @@ class TaskMemory(ActivityMixin):
                         ActionSubtaskMetaEntry(thought=subtask.thought, action=subtask.action_to_json(), answer=output)
                     )
 
-                return InfoArtifact(output)
+                return InfoArtifact(output, name=namespace)
         else:
             return InfoArtifact("tool output is empty")
 
