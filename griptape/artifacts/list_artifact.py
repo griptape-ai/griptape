@@ -23,6 +23,9 @@ class ListArtifact(BaseArtifact):
         else:
             return None
 
+    def __getitem__(self, key: int) -> BaseArtifact:
+        return self.value[key]
+
     def __bool__(self) -> bool:
         return len(self) > 0
 
