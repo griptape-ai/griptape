@@ -9,21 +9,15 @@ MAX_TOKENS = 50
 class TestTextChunker:
     @pytest.fixture
     def chunker(self):
-        return TextChunker(
-            max_tokens=MAX_TOKENS
-        )
+        return TextChunker(max_tokens=MAX_TOKENS)
 
     def test_chunk_with_string(self, chunker):
-        chunks = chunker.chunk(
-            gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " ")
-        )
+        chunks = chunker.chunk(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " "))
 
         assert len(chunks) == 3
 
     def test_chunk_with_text_artifact(self, chunker):
-        chunks = chunker.chunk(
-            TextArtifact(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " "))
-        )
+        chunks = chunker.chunk(TextArtifact(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " ")))
 
         assert len(chunks) == 3
 
@@ -31,14 +25,14 @@ class TestTextChunker:
         text = [
             gen_paragraph(MAX_TOKENS, chunker.tokenizer, "? "),
             "\n\n",
-            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". ")
+            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". "),
         ]
         chunks = chunker.chunk("".join(text))
 
         assert len(chunks) == 2
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0?")
         assert chunks[1].value.startswith("foo-0.")
@@ -50,14 +44,14 @@ class TestTextChunker:
         text = [
             gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, "! "),
             "\n\n",
-            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". ")
+            gen_paragraph(MAX_TOKENS, chunker.tokenizer, ". "),
         ]
         chunks = chunker.chunk("".join(text))
 
         assert len(chunks) == 4
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0!")
         assert chunks[1].value.startswith("foo-10!")
@@ -69,6 +63,15 @@ class TestTextChunker:
         assert chunks[2].value.endswith("! foo-24!")
         assert chunks[3].value.endswith(". foo-11.")
 
+    def test_contiguous_chunks(self, chunker):
+        text = [gen_paragraph(MAX_TOKENS, chunker.tokenizer, ""), gen_paragraph(MAX_TOKENS, chunker.tokenizer, "")]
+        chunks = chunker.chunk("".join(text))
+
+        assert len(chunks) == 2
+
+        for chunk in chunks:
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
+
     def test_separators(self, chunker):
         text = [
             gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, "! "),
@@ -77,14 +80,14 @@ class TestTextChunker:
             "\n",
             gen_paragraph(MAX_TOKENS + 1, chunker.tokenizer, "? "),
             "\n\n",
-            gen_paragraph(MAX_TOKENS + 1, chunker.tokenizer, " ")
+            gen_paragraph(MAX_TOKENS + 1, chunker.tokenizer, " "),
         ]
         chunks = chunker.chunk("".join(text))
 
         assert len(chunks) == 8
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0!")
         assert chunks[1].value.startswith("foo-10!")

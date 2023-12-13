@@ -13,9 +13,7 @@ class TestDataFrameLoader:
 
     def test_load_with_path(self, loader):
         # test loading a file delimited by comma
-        path = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "../../resources/test-1.csv"
-        )
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test-1.csv")
 
         artifacts = loader.load(pd.read_csv(path))
 
@@ -24,21 +22,17 @@ class TestDataFrameLoader:
         assert first_artifact["Foo"] == "foo1"
         assert first_artifact["Bar"] == "bar1"
 
-        assert (artifacts[0].embedding == [0, 1])
+        assert artifacts[0].embedding == [0, 1]
 
     def test_load_collection_with_path(self, loader):
-        path1 = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "../../resources/test-1.csv"
-        )
-        path2 = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "../../resources/test-2.csv"
-        )
+        path1 = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test-1.csv")
+        path2 = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test-2.csv")
         df1 = pd.read_csv(path1)
         df2 = pd.read_csv(path2)
         collection = loader.load_collection([df1, df2])
 
-        key1 = utils.dataframe_to_hash(df1)
-        key2 = utils.dataframe_to_hash(df2)
+        key1 = loader._dataframe_to_hash(df1)
+        key2 = loader._dataframe_to_hash(df2)
 
         assert list(collection.keys()) == [key1, key2]
 
@@ -54,4 +48,4 @@ class TestDataFrameLoader:
         assert first_artifact["Bar"] == "bar1"
         assert first_artifact["Foo"] == "foo1"
 
-        assert (artifacts[0].embedding == [0, 1])
+        assert artifacts[0].embedding == [0, 1]

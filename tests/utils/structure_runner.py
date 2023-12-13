@@ -43,39 +43,34 @@ PROMPT_DRIVERS = {
     "AZURE_CHAT_35_16k": AzureOpenAiChatPromptDriver(
         api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
         model="gpt-35-turbo-16k",
-        deployment_id=os.environ["AZURE_OPENAI_35_16k_DEPLOYMENT_ID"],
-        api_base=os.environ["AZURE_OPENAI_API_BASE_1"],
+        azure_deployment=os.environ["AZURE_OPENAI_35_16k_DEPLOYMENT_ID"],
+        azure_endpoint=os.environ["AZURE_OPENAI_API_BASE_1"],
     ),
     "AZURE_COMPLETION_DAVINCI": AzureOpenAiCompletionPromptDriver(
         api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
         model="text-davinci-003",
-        deployment_id=os.environ["AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID"],
-        api_base=os.environ["AZURE_OPENAI_API_BASE_1"],
+        azure_deployment=os.environ["AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID"],
+        azure_endpoint=os.environ["AZURE_OPENAI_API_BASE_1"],
     ),
     "AZURE_CHAT_4": AzureOpenAiChatPromptDriver(
         api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
         model="gpt-4",
-        deployment_id=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
-        api_base=os.environ["AZURE_OPENAI_API_BASE_2"],
+        azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
+        azure_endpoint=os.environ["AZURE_OPENAI_API_BASE_2"],
     ),
     "AZURE_CHAT_4_32k": AzureOpenAiChatPromptDriver(
         api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
         model="gpt-4-32k",
-        deployment_id=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
-        api_base=os.environ["AZURE_OPENAI_API_BASE_2"],
+        azure_deployment=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
+        azure_endpoint=os.environ["AZURE_OPENAI_API_BASE_2"],
     ),
     "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(model="claude-2", api_key=os.environ["ANTHROPIC_API_KEY"]),
-    "COHERE_COMMAND": CoherePromptDriver(
-        model="command",
-        api_key=os.environ["COHERE_API_KEY"],
-    ),
+    "COHERE_COMMAND": CoherePromptDriver(model="command", api_key=os.environ["COHERE_API_KEY"]),
     "BEDROCK_TITAN": AmazonBedrockPromptDriver(
-        model="amazon.titan-tg1-large",
-        prompt_model_driver=BedrockTitanPromptModelDriver(),
+        model="amazon.titan-tg1-large", prompt_model_driver=BedrockTitanPromptModelDriver()
     ),
     "BEDROCK_CLAUDE_2": AmazonBedrockPromptDriver(
-        model="anthropic.claude-v2",
-        prompt_model_driver=BedrockClaudePromptModelDriver(),
+        model="anthropic.claude-v2", prompt_model_driver=BedrockClaudePromptModelDriver()
     ),
     "BEDROCK_J2": AmazonBedrockPromptDriver(
         model="ai21.j2-ultra", prompt_model_driver=BedrockJurassicPromptModelDriver()
@@ -85,8 +80,7 @@ PROMPT_DRIVERS = {
         prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
     ),
     "SAGEMAKER_FALCON_7b": AmazonSageMakerPromptDriver(
-        model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-        prompt_model_driver=SageMakerFalconPromptModelDriver(),
+        model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"], prompt_model_driver=SageMakerFalconPromptModelDriver()
     ),
 }
 
@@ -113,7 +107,7 @@ def prompt_driver_id_fn(prompt_driver) -> str:
 
 def run_structure(structure, prompt) -> dict:
     result = structure.run(prompt)
-    output_text = result.output.to_text()
+    output_text = result.output_task.output.to_text()
     json_matches = re.findall(r"[^{]*({.*})", output_text, re.DOTALL)
     if json_matches:
         return loads(json_matches[0], strict=False)

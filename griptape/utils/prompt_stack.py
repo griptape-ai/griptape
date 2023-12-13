@@ -6,6 +6,7 @@ from attr import define, field
 if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
 
+
 @define
 class PromptStack:
     GENERIC_ROLE = "generic"
@@ -15,7 +16,7 @@ class PromptStack:
 
     @dataclass
     class Input:
-        content: str
+        content: str | list[dict]
         role: str
 
         def is_generic(self) -> bool:
@@ -33,12 +34,7 @@ class PromptStack:
     inputs: list[Input] = field(factory=list, kw_only=True)
 
     def add_input(self, content: str, role: str) -> Input:
-        self.inputs.append(
-            self.Input(
-                content=content,
-                role=role
-            )
-        )
+        self.inputs.append(self.Input(content=content, role=role))
 
         return self.inputs[-1]
 
@@ -54,7 +50,7 @@ class PromptStack:
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, self.ASSISTANT_ROLE)
 
-    def add_conversation_memory(self, memory: ConversationMemory, index: Optional[int]=None) -> list[Input]:
+    def add_conversation_memory(self, memory: ConversationMemory, index: int | None = None) -> list[Input]:
         """Add the Conversation Memory runs to the Prompt Stack.
 
         If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack
@@ -72,7 +68,7 @@ class PromptStack:
             prompt_driver = memory.structure.prompt_driver
             temp_stack = PromptStack()
 
-            # Try to determine how many Conversation Memory runs we can 
+            # Try to determine how many Conversation Memory runs we can
             # fit into the Prompt Stack without exceeding the token limit.
             while should_prune and num_runs_to_fit_in_prompt > 0:
                 temp_stack.inputs = self.inputs.copy()
@@ -85,7 +81,7 @@ class PromptStack:
 
                 # Convert the prompt stack into tokens left.
                 prompt_string = prompt_driver.prompt_stack_to_string(temp_stack)
-                tokens_left = prompt_driver.tokenizer.tokens_left(prompt_string)
+                tokens_left = prompt_driver.tokenizer.count_tokens_left(prompt_string)
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.
                     should_prune = False

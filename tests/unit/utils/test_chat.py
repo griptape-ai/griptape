@@ -7,7 +7,8 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestConversation:
     def test_init(self):
         import logging
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         chat = Chat(
             agent,
@@ -17,7 +18,7 @@ class TestConversation:
             intro_text="hello...",
             prompt_prefix="Question: ",
             response_prefix="Answer: ",
-            output_fn=logging.info
+            output_fn=logging.info,
         )
         assert chat.structure == agent
         assert chat.exiting_text == "foo..."

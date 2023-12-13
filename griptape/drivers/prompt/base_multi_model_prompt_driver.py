@@ -22,7 +22,7 @@ class BaseMultiModelPromptDriver(BasePromptDriver, ABC):
         prompt_model_driver: Prompt Model Driver to use.
     """
 
-    tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
+    tokenizer: BaseTokenizer | None = field(default=None, kw_only=True)
     prompt_model_driver: BasePromptModelDriver = field(kw_only=True)
     stream: bool = field(default=False, kw_only=True)
 
@@ -36,4 +36,3 @@ class BaseMultiModelPromptDriver(BasePromptDriver, ABC):
 
         if not self.tokenizer:
             self.tokenizer = self.prompt_model_driver.tokenizer
-

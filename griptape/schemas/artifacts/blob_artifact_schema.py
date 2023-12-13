@@ -1,6 +1,5 @@
 from marshmallow import post_load, fields
-from griptape.schemas import BaseArtifactSchema
-from griptape.utils.marshmallow.fields import Bytes
+from griptape.schemas import BaseArtifactSchema, Bytes
 
 
 class BlobArtifactSchema(BaseArtifactSchema):

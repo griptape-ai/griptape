@@ -10,13 +10,8 @@ class InvalidMockTool(BaseTool):
         "test": {
             # no description should make this tool invalid
             # "description": "test description",
-            "schema": Schema({
-                Literal(
-                    "input",
-                    description="Test input"
-                ): str
-            }),
-            "foo": "bar"
+            "schema": Schema({Literal("input", description="Test input"): str}),
+            "foo": "bar",
         }
     }
 

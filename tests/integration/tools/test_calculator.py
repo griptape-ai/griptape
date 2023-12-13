@@ -15,10 +15,7 @@ class TestCalculator:
         from griptape.tools import Calculator
 
         return Agent(
-            tools=[Calculator()],
-            memory=None,
-            prompt_driver=request.param,
-            rulesets=[OUTPUT_RULESET],
+            tools=[Calculator()], conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
         )
 
     def test_calculate(self, agent):

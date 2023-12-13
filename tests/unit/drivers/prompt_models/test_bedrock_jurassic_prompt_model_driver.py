@@ -49,9 +49,9 @@ class TestBedrockJurassicPromptModelDriver:
                 session=boto3.Session(region_name="us-east-1"),
                 prompt_model_driver=BedrockJurassicPromptModelDriver(),
                 temperature=0.12345,
-                stream=True
+                stream=True,
             ).prompt_model_driver
-    
+
     def test_init(self, driver):
         assert driver.prompt_driver is not None
 
@@ -62,7 +62,7 @@ class TestBedrockJurassicPromptModelDriver:
         assert model_input["prompt"].startswith("Instructions: foo\nUser: bar\nBot:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8189
+        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8186
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver):
@@ -70,6 +70,3 @@ class TestBedrockJurassicPromptModelDriver:
             driver.process_output(json.dumps({"completions": [{"data": {"text": "foobar"}}]}).encode()).value
             == "foobar"
         )
-
-    def test_session_initialization(self, driver, mock_session):
-        assert driver.tokenizer.session == mock_session

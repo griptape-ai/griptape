@@ -2,7 +2,9 @@ from __future__ import annotations
 import logging
 from attr import field, define
 from schema import Schema, Optional, Literal
+
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
 
@@ -10,8 +12,6 @@ from griptape.tools import BaseGoogleClient
 @define
 class GoogleDocsClient(BaseGoogleClient):
     DOCS_SCOPES = ["https://www.googleapis.com/auth/documents"]
-
-    DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
     DEFAULT_FOLDER_PATH = "root"
 
@@ -25,12 +25,9 @@ class GoogleDocsClient(BaseGoogleClient):
                     Literal(
                         "file_path",
                         description="Destination file path of Google Doc in the POSIX format. "
-                                    "For example, 'foo/bar/baz.txt'"
+                        "For example, 'foo/bar/baz.txt'",
                     ): str,
-                    Literal(
-                        "text",
-                        description="Text to be appended to the Google Doc."
-                    ): str
+                    Literal("text", description="Text to be appended to the Google Doc."): str,
                 }
             ),
         }
@@ -42,16 +39,10 @@ class GoogleDocsClient(BaseGoogleClient):
 
         try:
             docs_service = self._build_client(
-                scopes=self.DOCS_SCOPES,
-                service_name="docs",
-                version="v1",
-                owner_email=self.owner_email
+                scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email
+                scopes=self.DRIVE_FILE_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
             )
 
             document_id = self._convert_path_to_file_id(drive_service, file_path)
@@ -82,12 +73,9 @@ class GoogleDocsClient(BaseGoogleClient):
                     Literal(
                         "file_path",
                         description="Destination file path of Google Doc in the POSIX format. "
-                                    "For example, 'foo/bar/baz.txt'"
+                        "For example, 'foo/bar/baz.txt'",
                     ): str,
-                    Literal(
-                        "text",
-                        description="Text to be prepended to the Google Doc."
-                    ): str
+                    Literal("text", description="Text to be prepended to the Google Doc."): str,
                 }
             ),
         }
@@ -99,16 +87,10 @@ class GoogleDocsClient(BaseGoogleClient):
 
         try:
             docs_service = self._build_client(
-                scopes=self.DOCS_SCOPES,
-                service_name="docs",
-                version="v1",
-                owner_email=self.owner_email
+                scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email
+                scopes=self.DRIVE_FILE_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
             )
 
             document_id = self._convert_path_to_file_id(drive_service, file_path)
@@ -137,17 +119,13 @@ class GoogleDocsClient(BaseGoogleClient):
                 {
                     Literal(
                         "file_path",
-                        description="Name of the file to be created, which will be used to save content in."
+                        description="Name of the file to be created, which will be used to save content in.",
                     ): str,
-                    Optional(
-                        "content",
-                        default=None,
-                        description="Optional content to be saved in Google Doc."
-                    ): str,
+                    Optional("content", default=None, description="Optional content to be saved in Google Doc."): str,
                     Optional(
                         "folder_path",
                         default=DEFAULT_FOLDER_PATH,
-                        description="Path of the folder where the Google doc will be created."
+                        description="Path of the folder where the Google doc will be created.",
                     ): str,
                 }
             ),
@@ -161,21 +139,13 @@ class GoogleDocsClient(BaseGoogleClient):
 
         try:
             docs_service = self._build_client(
-                scopes=self.DOCS_SCOPES,
-                service_name="docs",
-                version="v1",
-                owner_email=self.owner_email
+                scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email
+                scopes=self.DRIVE_FILE_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
             )
 
-            body = {
-                "title": file_path,
-            }
+            body = {"title": file_path}
 
             doc = docs_service.documents().create(body=body).execute()
             doc_id = doc["documentId"]
@@ -201,7 +171,7 @@ class GoogleDocsClient(BaseGoogleClient):
     @activity(
         config={
             "description": "Can be used to load content from memory and save it to a new Google Doc "
-                           "in the specified folder.",
+            "in the specified folder.",
             "schema": Schema(
                 {
                     "memory_name": str,
@@ -219,10 +189,10 @@ class GoogleDocsClient(BaseGoogleClient):
     def save_memory_artifacts_to_google_docs(self, params: dict) -> ErrorArtifact | InfoArtifact:
         values = params["values"]
         memory = self.find_input_memory(values["memory_name"])
-    
+
         if memory:
             artifacts = memory.load_artifacts(values["artifact_namespace"])
-    
+
             if artifacts:
                 try:
                     file_path = values["file_name"]
@@ -235,74 +205,20 @@ class GoogleDocsClient(BaseGoogleClient):
                     }
 
                     return self.save_content_to_google_doc(save_params)
-    
+
                 except Exception as e:
                     return ErrorArtifact(f"Error: {e}")
-    
+
             else:
                 return ErrorArtifact("no artifacts found")
         else:
             return ErrorArtifact("memory not found")
 
-    @activity(
-        config={
-            "description": "Can be used to download multiple Google Docs based on their paths.",
-            "schema": Schema(
-                {
-                    Literal(
-                        "file_paths",
-                        description="Destination file paths of Google Docs in the POSIX format. "
-                        "For example, 'foo/bar/baz.txt, foo/bar/baz2.txt'",
-                    ): list[str]
-                }
-            ),
-        }
-    )
-    def download_google_docs(self, params: dict) -> ListArtifact | ErrorArtifact:
-        values = params["values"]
-        file_paths = values.get("file_paths")
-        downloaded_files = []
-    
-        try:
-            service = self._build_client(
-                scopes=self.DRIVE_SCOPES,
-                service_name="drive",
-                version="v3",
-                owner_email=self.owner_email
-                )
-    
-            for file_path in file_paths:
-                file_id = self._convert_path_to_file_id(service, file_path)
-                if file_id:
-
-                    request = service.files().export_media(fileId=file_id, mimeType="text/plain")
-
-                    downloaded_files.append(TextArtifact(request.execute()))
-                else:
-                    logging.error(f"Could not find file: {file_path}")
-    
-            return ListArtifact(downloaded_files)
-    
-        except Exception as e:
-            logging.error(e)
-            return ErrorArtifact(f"Error downloading Google Docs: {e}")
-
     def _save_to_doc(self, params: dict) -> str:
         service = self._build_client(
-            scopes=self.DOCS_SCOPES,
-            service_name="docs",
-            version="v1",
-            owner_email=self.owner_email)
-    
-        requests = [
-            {
-                "insertText": {
-                    "location": {
-                        "index": 1,
-                    },
-                    "text": params["content"],
-                }
-            }
-        ]
+            scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
+        )
+
+        requests = [{"insertText": {"location": {"index": 1}, "text": params["content"]}}]
         service.documents().batchUpdate(documentId=params["document_id"], body={"requests": requests}).execute()
         return params["document_id"]

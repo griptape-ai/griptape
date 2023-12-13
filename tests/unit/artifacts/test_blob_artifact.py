@@ -12,27 +12,20 @@ class TestBlobArtifact:
         assert BlobArtifact(b"foobar", name="foobar.txt").to_text() == "foobar"
 
     def test_to_text_encoding(self):
-        assert BlobArtifact(
-            "ß".encode("ascii", errors='backslashreplace'),
-            name="foobar.txt",
-            encoding="ascii"
-        ).to_text() == "\\xdf"
+        assert (
+            BlobArtifact("ß".encode("ascii", errors="backslashreplace"), name="foobar.txt", encoding="ascii").to_text()
+            == "\\xdf"
+        )
 
     def test_to_text_encoding_error(self):
         with pytest.raises(ValueError):
-            assert BlobArtifact(
-                "ß".encode("utf-8", errors='backslashreplace'),
-                name="foobar.txt",
-                encoding="ascii"
-            ).to_text()
+            assert BlobArtifact("ß".encode(), name="foobar.txt", encoding="ascii").to_text()
 
     def test_to_text_encoding_error_handler(self):
-        assert BlobArtifact(
-            "ß".encode("utf-8", errors='backslashreplace'),
-            name="foobar.txt",
-            encoding="ascii",
-            encoding_error_handler="replace"
-        ).to_text() == "��"
+        assert (
+            BlobArtifact("ß".encode(), name="foobar.txt", encoding="ascii", encoding_error_handler="replace").to_text()
+            == "��"
+        )
 
     def test_to_dict(self):
         assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").to_dict()["name"] == "foobar.txt"

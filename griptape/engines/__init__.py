@@ -8,6 +8,8 @@ from .extraction.base_extraction_engine import BaseExtractionEngine
 from .extraction.csv_extraction_engine import CsvExtractionEngine
 from .extraction.json_extraction_engine import JsonExtractionEngine
 
+from .image_generation.image_generation_engine import ImageGenerationEngine
+
 
 __all__ = [
     "BaseQueryEngine",
@@ -16,5 +18,6 @@ __all__ = [
     "PromptSummaryEngine",
     "BaseExtractionEngine",
     "CsvExtractionEngine",
-    "JsonExtractionEngine"
+    "JsonExtractionEngine",
+    "ImageGenerationEngine",
 ]

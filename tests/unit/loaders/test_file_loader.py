@@ -42,7 +42,7 @@ class TestFileLoader:
         assert artifacts[text_key].name == "test.txt"
         assert artifacts[text_key].dir_name.endswith("../../resources")
         assert artifacts[text_key].full_path in str(text_path)
-        
+
         pdf_key = utils.str_to_hash(str(pdf_path))
         assert list(artifacts.keys())[1] == pdf_key
         assert artifacts[pdf_key].name == "bitcoin.pdf"

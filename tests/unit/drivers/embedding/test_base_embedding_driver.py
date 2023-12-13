@@ -19,11 +19,16 @@ class TestBaseEmbeddingDriver:
 
         assert embedding == [0, 1]
 
-    @patch.object(MockEmbeddingDriver, 'try_embed_string')
-    def test_embed_string_throws_when_retries_exhausted(self, try_embed_string, driver):
-        try_embed_string.side_effect = Exception('nope')
+    def test_embed_long_string(self, driver):
+        embedding = driver.embed_string("foobar" * 5000)
+
+        assert embedding == [0, 1]
+
+    @patch.object(MockEmbeddingDriver, "try_embed_chunk")
+    def test_embed_string_throws_when_retries_exhausted(self, try_embed_chunk, driver):
+        try_embed_chunk.side_effect = Exception("nope")
 
         with pytest.raises(Exception) as e:
             driver.embed_string("foobar")
 
-        assert e.value.args[0] == 'nope'
+        assert e.value.args[0] == "nope"

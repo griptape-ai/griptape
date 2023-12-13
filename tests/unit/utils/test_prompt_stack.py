@@ -108,7 +108,7 @@ class TestPromptStack:
         assert len(prompt_stack.inputs) == 13
 
         # One memory is pruned.
-        # MockTokenizer's max_tokens set to one below the sum of memory + system prompt tokens 
+        # MockTokenizer's max_tokens set to one below the sum of memory + system prompt tokens
         # so that a single memory is pruned.
         agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_tokens=160)))
         memory = ConversationMemory(

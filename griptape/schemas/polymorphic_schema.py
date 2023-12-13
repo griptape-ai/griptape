@@ -75,10 +75,7 @@ class PolymorphicSchema(BaseSchema):
         obj_type = self.get_obj_type(obj)
 
         if not obj_type:
-            return (
-                None,
-                {"_schema": "Unknown object class: %s" % obj.__class__.__name__},
-            )
+            return (None, {"_schema": "Unknown object class: %s" % obj.__class__.__name__})
 
         type_schema = self.get_schema(obj_type, obj, None)
 
@@ -105,9 +102,7 @@ class PolymorphicSchema(BaseSchema):
             partial = self.partial
         if not many:
             try:
-                result = result_data = self._load(
-                    data, partial=partial, unknown=unknown, **kwargs
-                )
+                result = result_data = self._load(data, partial=partial, unknown=unknown, **kwargs)
                 #  result_data.append(result)
             except ValidationError as error:
                 result_errors = error.normalized_messages()
@@ -139,9 +134,7 @@ class PolymorphicSchema(BaseSchema):
         data_type = self.get_data_type(data)
 
         if data_type is None:
-            raise ValidationError(
-                {self.type_field: ["Missing data for required field."]}
-            )
+            raise ValidationError({self.type_field: ["Missing data for required field."]})
 
         schema_namespace = data.get("schema_namespace")
 
@@ -151,9 +144,7 @@ class PolymorphicSchema(BaseSchema):
             # data_type could be unhashable
             raise ValidationError({self.type_field: ["Invalid value: %s" % data_type]})
         if not type_schema:
-            raise ValidationError(
-                {self.type_field: ["Unsupported value: %s" % data_type]}
-            )
+            raise ValidationError({self.type_field: ["Unsupported value: %s" % data_type]})
 
         schema = type_schema if isinstance(type_schema, Schema) else type_schema()
 

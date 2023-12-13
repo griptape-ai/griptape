@@ -22,7 +22,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         Tokenizer. However, the Prompt Driver is not initialized until after
         the Prompt Model Driver is initialized. To resolve this, we make the `tokenizer`
         field a @property that is only initialized when it is first accessed.
-        This ensures that by the time we need to initialize the Tokenizer, the 
+        This ensures that by the time we need to initialize the Tokenizer, the
         Prompt Driver has already been initialized.
 
         See this thread more more information: https://github.com/griptape-ai/griptape/issues/244

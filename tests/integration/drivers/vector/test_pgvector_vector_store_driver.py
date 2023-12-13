@@ -20,9 +20,7 @@ class TestPgVectorVectorStoreDriver:
     @pytest.fixture
     def vector_store_driver(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
-            connection_string=self.connection_string,
-            embedding_driver=embedding_driver,
-            table_name=self.table_name,
+            connection_string=self.connection_string, embedding_driver=embedding_driver, table_name=self.table_name
         )
 
         driver.setup()
@@ -31,27 +29,18 @@ class TestPgVectorVectorStoreDriver:
 
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
-            driver = PgVectorVectorStoreDriver(
-                embedding_driver=embedding_driver,
-                table_name=self.table_name,
-            )
+            driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, table_name=self.table_name)
             driver.setup()
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine = create_engine(self.connection_string)
-        driver = PgVectorVectorStoreDriver(
-            embedding_driver=embedding_driver,
-            engine=engine,
-            table_name=self.table_name,
-        )
+        driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, engine=engine, table_name=self.table_name)
 
         driver.setup()
 
     def test_initialize_accepts_connection_string(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=embedding_driver,
-            connection_string=self.connection_string,
-            table_name=self.table_name,
+            embedding_driver=embedding_driver, connection_string=self.connection_string, table_name=self.table_name
         )
 
         driver.setup()
@@ -192,9 +181,7 @@ class TestPgVectorVectorStoreDriver:
 
         new_table_name = str(uuid.uuid4())
         new_vector_store_driver = PgVectorVectorStoreDriver(
-            embedding_driver=embedding_driver,
-            connection_string=self.connection_string,
-            table_name=new_table_name,
+            embedding_driver=embedding_driver, connection_string=self.connection_string, table_name=new_table_name
         )
 
         new_vector_store_driver.setup()

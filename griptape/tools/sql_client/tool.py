@@ -11,10 +11,10 @@ from schema import Schema
 @define
 class SqlClient(BaseTool):
     sql_loader: SqlLoader = field(kw_only=True)
-    schema_name: Optional[str] = field(default=None, kw_only=True)
+    schema_name: str | None = field(default=None, kw_only=True)
     table_name: str = field(kw_only=True)
-    table_description: Optional[str] = field(default=None, kw_only=True)
-    engine_name: Optional[str] = field(default=None, kw_only=True)
+    table_description: str | None = field(default=None, kw_only=True)
+    engine_name: str | None = field(default=None, kw_only=True)
 
     @property
     def full_table_name(self) -> str:
@@ -24,9 +24,9 @@ class SqlClient(BaseTool):
     def table_schema(self) -> str:
         return self.sql_loader.sql_driver.get_table_schema(self.full_table_name, schema=self.schema_name)
 
-    @activity(config={
-        "description":
-            "Can be used to execute{% if _self.engine_name %} {{ _self.engine_name }}{% endif %} SQL SELECT queries "
+    @activity(
+        config={
+            "description": "Can be used to execute{% if _self.engine_name %} {{ _self.engine_name }}{% endif %} SQL SELECT queries "
             "in table {{ _self.full_table_name }}. "
             "Make sure the `SELECT` statement contains enough columns to get an answer without knowing "
             "the original question. "
@@ -35,10 +35,9 @@ class SqlClient(BaseTool):
             "You can use JOINs if more tables are available in other tools.\n"
             "{{ _self.table_name }} schema: {{ _self.table_schema }}\n"
             "{% if _self.table_description %}{{ _self.table_name }} description: {{ _self.table_description }}{% endif %}",
-        "schema": Schema({
-            "sql_query": str
-        })
-    })
+            "schema": Schema({"sql_query": str}),
+        }
+    )
     def execute_query(self, params: dict) -> ListArtifact | InfoArtifact:
         query = params["values"]["sql_query"]
         rows = self.sql_loader.load(query)

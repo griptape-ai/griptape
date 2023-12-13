@@ -38,7 +38,8 @@ class BaseArtifact(ABC):
             ErrorArtifactSchema,
             BlobArtifactSchema,
             CsvRowArtifactSchema,
-            ListArtifactSchema
+            ListArtifactSchema,
+            ImageArtifactSchema,
         )
 
         class_registry.register("TextArtifact", TextArtifactSchema)
@@ -47,6 +48,7 @@ class BaseArtifact(ABC):
         class_registry.register("BlobArtifact", BlobArtifactSchema)
         class_registry.register("CsvRowArtifact", CsvRowArtifactSchema)
         class_registry.register("ListArtifact", ListArtifactSchema)
+        class_registry.register("ImageArtifact", ImageArtifactSchema)
 
         try:
             return class_registry.get_class(artifact_dict["type"])().load(artifact_dict)

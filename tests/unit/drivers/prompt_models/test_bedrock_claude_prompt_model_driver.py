@@ -6,6 +6,7 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 from griptape.utils import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockClaudePromptModelDriver
 
+
 class TestBedrockClaudePromptModelDriver:
     @pytest.fixture(autouse=True)
     def mock_session(self, mocker):
@@ -42,16 +43,11 @@ class TestBedrockClaudePromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input['prompt'].startswith("\n\nHuman: foo\n\nHuman: bar\n\nAssistant:")
+        assert model_input["prompt"].startswith("\n\nHuman: foo\n\nHuman: bar\n\nAssistant:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
         assert driver.prompt_stack_to_model_params(stack)["max_tokens_to_sample"] == 8178
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver, stack):
-        assert (
-            driver.process_output(
-                json.dumps({"completion": "foobar"}).encode()
-            ).value
-            == "foobar"
-        )
+        assert driver.process_output(json.dumps({"completion": "foobar"}).encode()).value == "foobar"

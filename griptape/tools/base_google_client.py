@@ -6,6 +6,10 @@ from typing import Optional, Any
 
 @define
 class BaseGoogleClient(BaseTool, ABC):
+    DRIVE_FILE_SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+
+    DRIVE_AUTH_SCOPES = ["https://www.googleapis.com/auth/drive"]
+
     service_account_credentials: dict = field(kw_only=True)
 
     def _build_client(self, scopes: list[str], service_name: str, version: str, owner_email: str) -> Any:
@@ -16,11 +20,7 @@ class BaseGoogleClient(BaseTool, ABC):
             self.service_account_credentials, scopes=scopes
         )
 
-        return build(
-            serviceName=service_name,
-            version=version,
-            credentials=credentials.with_subject(owner_email)
-        )
+        return build(serviceName=service_name, version=version, credentials=credentials.with_subject(owner_email))
 
     def _convert_path_to_file_id(self, service: Any, path: str) -> Optional[str]:
         parts = path.split("/")

@@ -3,19 +3,13 @@ import schema
 from schema import Schema
 
 
-CONFIG_SCHEMA = Schema({
-    "description": str,
-    schema.Optional("uses_default_memory", default=True): bool,
-    schema.Optional("schema"): Schema
-})
+CONFIG_SCHEMA = Schema({"description": str, schema.Optional("schema"): Schema})
 
 
 def activity(config: dict):
     validated_config = CONFIG_SCHEMA.validate(config)
 
-    validated_config.update(
-        {k: v for k, v in config.items() if k not in validated_config}
-    )
+    validated_config.update({k: v for k, v in config.items() if k not in validated_config})
 
     if not validated_config.get("schema"):
         validated_config["schema"] = None
@@ -30,4 +24,5 @@ def activity(config: dict):
         wrapper.is_activity = True
 
         return wrapper
+
     return decorator

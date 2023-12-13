@@ -1,6 +1,11 @@
 import pytest
 import os
-from tests.utils.structure_runner import run_structure, OUTPUT_RULESET, TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, prompt_driver_id_fn
+from tests.utils.structure_runner import (
+    run_structure,
+    OUTPUT_RULESET,
+    TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
+    prompt_driver_id_fn,
+)
 
 
 class TestGoogleDriveClient:
@@ -8,9 +13,11 @@ class TestGoogleDriveClient:
     def agent(self, request):
         from griptape.structures import Agent
         from griptape.tools import GoogleDriveClient
+
         return Agent(
-            tools=[GoogleDriveClient(
-                service_account_credentials={
+            tools=[
+                GoogleDriveClient(
+                    service_account_credentials={
                         "type": os.environ["GOOGLE_ACCOUNT_TYPE"],
                         "project_id": os.environ["GOOGLE_PROJECT_ID"],
                         "private_key_id": os.environ["GOOGLE_PRIVATE_KEY_ID"],
@@ -22,16 +29,16 @@ class TestGoogleDriveClient:
                         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
                         "client_x509_cert_url": os.environ["GOOGLE_CERT_URL"],
                     },
-                owner_email=os.environ["GOOGLE_OWNER_EMAIL"]
+                    owner_email=os.environ["GOOGLE_OWNER_EMAIL"],
                 )
             ],
             prompt_driver=request.param,
-            memory=None,
+            conversation_memory=None,
             rulesets=[OUTPUT_RULESET],
         )
 
     def test_list_files(self, agent):
-        result = run_structure(agent, 'List all files on Google Drive.')
+        result = run_structure(agent, "List all files on Google Drive.")
 
         assert result["task_result"] == "success"
         assert result["task_output"] is not None

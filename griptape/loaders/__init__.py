@@ -6,6 +6,7 @@ from .sql_loader import SqlLoader
 from .csv_loader import CsvLoader
 from .dataframe_loader import DataFrameLoader
 from .file_loader import FileLoader
+from .email_loader import EmailLoader
 
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "SqlLoader",
     "CsvLoader",
     "DataFrameLoader",
-    "FileLoader"
+    "FileLoader",
+    "EmailLoader",
 ]

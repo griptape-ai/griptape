@@ -22,6 +22,7 @@ class TestStream:
 
             with pytest.raises(StopIteration):
                 next(chat_stream_run)
+                next(chat_stream_run)
         else:
             with pytest.raises(ValueError):
                 Stream(agent)

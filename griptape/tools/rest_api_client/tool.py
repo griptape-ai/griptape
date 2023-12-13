@@ -21,28 +21,14 @@ class RestApiClient(BaseTool):
         request_path_params_schema: A JSON schema string describing the available path parameters. The schema must describe an array of string values.
         response_body_schema: A JSON schema string describing the response body.
     """
+
     base_url: str = field(kw_only=True)
-    path: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
+    path: Optional[str] = field(default=None, kw_only=True)
     description: str = field(kw_only=True)
-    request_path_params_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
-    request_query_params_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
-    request_body_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
-    response_body_schema: Optional[str] = field(
-        default=None,
-        kw_only=True,
-    )
+    request_path_params_schema: Optional[str] = field(default=None, kw_only=True)
+    request_query_params_schema: Optional[str] = field(default=None, kw_only=True)
+    request_body_schema: Optional[str] = field(default=None, kw_only=True)
+    response_body_schema: Optional[str] = field(default=None, kw_only=True)
 
     @property
     def full_url(self) -> str:
@@ -58,11 +44,7 @@ class RestApiClient(BaseTool):
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
-            "schema": Schema(
-                {
-                    Literal("body", description="The request body."): dict,
-                }
-            ),
+            "schema": Schema({Literal("body", description="The request body."): dict}),
         }
     )
     def put(self, params: dict) -> BaseArtifact:
@@ -94,9 +76,7 @@ class RestApiClient(BaseTool):
             ),
             "schema": Schema(
                 {
-                    Literal(
-                        "path_params", description="The request path parameters."
-                    ): list,
+                    Literal("path_params", description="The request path parameters."): list,
                     Literal("body", description="The request body."): dict,
                 }
             ),
@@ -128,11 +108,7 @@ class RestApiClient(BaseTool):
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
-            "schema": Schema(
-                {
-                    Literal("body", description="The request body."): dict,
-                }
-            ),
+            "schema": Schema({Literal("body", description="The request body."): dict}),
         }
     )
     def post(self, params: dict) -> BaseArtifact:
@@ -164,18 +140,8 @@ class RestApiClient(BaseTool):
             "schema": schema.Optional(
                 Schema(
                     {
-                        schema.Optional(
-                            Literal(
-                                "query_params",
-                                description="The request query parameters.",
-                            )
-                        ): dict,
-                        schema.Optional(
-                            Literal(
-                                "path_params",
-                                description="The request path parameters.",
-                            )
-                        ): list,
+                        schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
+                        schema.Optional(Literal("path_params", description="The request path parameters.")): list,
                     }
                 )
             ),
@@ -213,17 +179,8 @@ class RestApiClient(BaseTool):
             ),
             "schema": Schema(
                 {
-                    schema.Optional(
-                        Literal(
-                            "query_params",
-                            description="The request query parameters.",
-                        )
-                    ): dict,
-                    schema.Optional(
-                        Literal(
-                            "path_params", description="The request path parameters."
-                        )
-                    ): list,
+                    schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
+                    schema.Optional(Literal("path_params", description="The request path parameters.")): list,
                 }
             ),
         }
@@ -254,7 +211,4 @@ class RestApiClient(BaseTool):
         if path_params:
             url += f'/{str.join("/", map(str, path_params))}'
 
-        return urljoin(
-            base_url.strip("/"),
-            url
-        )
+        return urljoin(base_url.strip("/"), url)

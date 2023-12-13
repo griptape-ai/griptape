@@ -9,26 +9,20 @@ from attr import define, field
 @define
 class LocalVectorStoreDriver(BaseVectorStoreDriver):
     entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict, kw_only=True)
-    relatedness_fn: Callable = field(
-        default=lambda x, y: dot(x, y) / (norm(x) * norm(y)),
-        kw_only=True
-    )
+    relatedness_fn: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)), kw_only=True)
 
     def upsert_vector(
-            self,
-            vector: list[float],
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs
+        self,
+        vector: list[float],
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs,
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
 
         self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
-            id=vector_id,
-            vector=vector,
-            meta=meta,
-            namespace=namespace
+            id=vector_id, vector=vector, meta=meta, namespace=namespace
         )
 
         return vector_id
@@ -40,12 +34,12 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
     def query(
-            self,
-            query: str,
-            count: Optional[int] = None,
-            namespace: Optional[str] = None,
-            include_vectors: bool = False,
-            **kwargs
+        self,
+        query: str,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         query_embedding = self.embedding_driver.embed_string(query)
 
@@ -60,25 +54,16 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
 
         result = [
-            BaseVectorStoreDriver.QueryResult(
-                id=er[0].id,
-                vector=er[0].vector,
-                score=er[1],
-                meta=er[0].meta
-            ) for er in entries_and_relatednesses
+            BaseVectorStoreDriver.QueryResult(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)
+            for er in entries_and_relatednesses
         ][:count]
 
         if include_vectors:
             return result
         else:
             return [
-                BaseVectorStoreDriver.QueryResult(
-                    id=r.id,
-                    vector=[],
-                    score=r.score,
-                    meta=r.meta,
-                    namespace=r.namespace,
-                ) for r in result
+                BaseVectorStoreDriver.QueryResult(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
+                for r in result
             ]
 
     def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):

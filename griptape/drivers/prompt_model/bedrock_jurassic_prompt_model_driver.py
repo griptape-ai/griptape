@@ -23,7 +23,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
         Tokenizer. However, the Prompt Driver is not initialized until after
         the Prompt Model Driver is initialized. To resolve this, we make the `tokenizer`
         field a @property that is only initialized when it is first accessed.
-        This ensures that by the time we need to initialize the Tokenizer, the 
+        This ensures that by the time we need to initialize the Tokenizer, the
         Prompt Driver has already been initialized.
 
         See this thread more more information: https://github.com/griptape-ai/griptape/issues/244
@@ -34,7 +34,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockJurassicTokenizer(model=self.prompt_driver.model, session=self.prompt_driver.session)
+            self._tokenizer = BedrockJurassicTokenizer(model=self.prompt_driver.model)
             return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
@@ -53,7 +53,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
 
         prompt = "\n".join(prompt_lines)
 
-        return { "prompt": prompt }
+        return {"prompt": prompt}
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_model_input(prompt_stack)["prompt"]

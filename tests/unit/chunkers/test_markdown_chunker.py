@@ -7,30 +7,26 @@ MAX_TOKENS = 50
 
 class TestTextChunker:
     @pytest.fixture
-    def chunker(self):        
-        return MarkdownChunker(
-            max_tokens=MAX_TOKENS
-        )
-    
+    def chunker(self):
+        return MarkdownChunker(max_tokens=MAX_TOKENS)
+
     def test_chunk(self, chunker):
         text = [
             "## Header 1\n",
             gen_paragraph(MAX_TOKENS // 2, chunker.tokenizer, ". "),
-            "\n"
-            "## Header 2\n",
+            "\n" "## Header 2\n",
             gen_paragraph(MAX_TOKENS // 2, chunker.tokenizer, ". "),
             "\n\n",
             gen_paragraph(MAX_TOKENS // 2, chunker.tokenizer, ". "),
-            "\n"
-            "## Header 3\n",
-            gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, ". ")
+            "\n" "## Header 3\n",
+            gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, ". "),
         ]
         chunks = chunker.chunk("".join(text))
 
         assert len(chunks) == 6
 
         for chunk in chunks:
-            assert chunker.tokenizer.token_count(chunk.value) <= MAX_TOKENS
+            assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("## Header 1\nfoo-0")
         assert chunks[1].value.startswith("## Header 2\nfoo-0")

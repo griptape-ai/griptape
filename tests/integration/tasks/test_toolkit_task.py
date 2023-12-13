@@ -19,12 +19,11 @@ class TestToolkitTask:
         return Agent(
             tools=[
                 WebSearch(
-                    google_api_key=os.environ["GOOGLE_API_KEY"],
-                    google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                    google_api_key=os.environ["GOOGLE_API_KEY"], google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"]
                 ),
                 WebScraper(),
             ],
-            memory=None,
+            conversation_memory=None,
             prompt_driver=request.param,
             rulesets=[OUTPUT_RULESET],
         )

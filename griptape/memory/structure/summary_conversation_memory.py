@@ -20,17 +20,13 @@ class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True
+        kw_only=True,
     )
-    summary: Optional[str] = field(default=None, kw_only=True)
+    summary: str | None = field(default=None, kw_only=True)
     summary_index: int = field(default=0, kw_only=True)
-    summary_template_generator: J2 = field(
-        default=Factory(lambda: J2("memory/conversation/summary.j2")),
-        kw_only=True
-    )
+    summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
     summarize_conversation_template_generator: J2 = field(
-        default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")),
-        kw_only=True
+        default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")), kw_only=True
     )
 
     @classmethod
@@ -41,7 +37,7 @@ class SummaryConversationMemory(ConversationMemory):
     def from_json(cls, memory_json: str) -> SummaryConversationMemory:
         return SummaryConversationMemory.from_dict(json.loads(memory_json))
 
-    def to_prompt_stack(self, last_n: Optional[int]=None) -> PromptStack:
+    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
             stack.add_user_input(self.summary_template_generator.render(summary=self.summary))
@@ -55,8 +51,8 @@ class SummaryConversationMemory(ConversationMemory):
     def to_dict(self) -> dict:
         return dict(SummaryConversationMemorySchema().dump(self))
 
-    def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
-        summary_index_runs = self.runs[self.summary_index:]
+    def unsummarized_runs(self, last_n: int | None = None) -> list[Run]:
+        summary_index_runs = self.runs[self.summary_index :]
 
         if last_n:
             last_n_runs = self.runs[-last_n:]
@@ -72,7 +68,7 @@ class SummaryConversationMemory(ConversationMemory):
         super().try_add_run(run)
 
         unsummarized_runs = self.unsummarized_runs()
-        runs_to_summarize = unsummarized_runs[:max(0, len(unsummarized_runs) - self.offset)]
+        runs_to_summarize = unsummarized_runs[: max(0, len(unsummarized_runs) - self.offset)]
 
         if len(runs_to_summarize) > 0:
             self.summary = self.summarize_runs(self.summary, runs_to_summarize)
@@ -81,16 +77,9 @@ class SummaryConversationMemory(ConversationMemory):
     def summarize_runs(self, previous_summary: str, runs: list[Run]) -> str:
         try:
             if len(runs) > 0:
-                summary = self.summarize_conversation_template_generator.render(
-                    summary=previous_summary,
-                    runs=runs
-                )
+                summary = self.summarize_conversation_template_generator.render(summary=previous_summary, runs=runs)
                 return self.prompt_driver.run(
-                    prompt_stack=PromptStack(
-                        inputs=[
-                            PromptStack.Input(summary, role=PromptStack.USER_ROLE)
-                        ]
-                    )
+                    prompt_stack=PromptStack(inputs=[PromptStack.Input(summary, role=PromptStack.USER_ROLE)])
                 ).to_text()
             else:
                 return previous_summary

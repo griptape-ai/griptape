@@ -27,4 +27,3 @@ class TestJsonExtractionEngine:
 
     def test_json_to_text_artifacts(self, engine):
         assert [a.value for a in engine.json_to_text_artifacts('["foo", "bar"]')] == ["foo", "bar"]
-        

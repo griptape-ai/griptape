@@ -15,7 +15,9 @@ class OpenAiTokenizer(BaseTokenizer):
     DEFAULT_MAX_TOKENS = 2049
     TOKEN_OFFSET = 8
 
+    # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
     MODEL_PREFIXES_TO_MAX_TOKENS = {
+        "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
         "gpt-3.5-turbo-16k": 16384,
@@ -26,13 +28,10 @@ class OpenAiTokenizer(BaseTokenizer):
         "text-davinci-002": 4097,
         "code-davinci-002": 8001,
         "text-embedding-ada-002": 8191,
-        "text-embedding-ada-001": 2046
+        "text-embedding-ada-001": 2046,
     }
 
-    EMBEDDING_MODELS = [
-        "text-embedding-ada-002",
-        "text-embedding-ada-001"
-    ]
+    EMBEDDING_MODELS = ["text-embedding-ada-002", "text-embedding-ada-001"]
 
     model: str = field(kw_only=True)
 
@@ -50,16 +49,7 @@ class OpenAiTokenizer(BaseTokenizer):
 
         return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
 
-    def encode(self, text: str) -> list[int]:
-        return self.encoding.encode(text, allowed_special=set(self.stop_sequences))
-
-    def decode(self, tokens: list[int]) -> str:
-        return self.encoding.decode(tokens)
-
-    def tokens_left(self, text: str | list) -> int:
-        return super().tokens_left(text)
-
-    def token_count(self, text: str | list, model: Optional[str] = None) -> int:
+    def count_tokens(self, text: str | list, model: str | None = None) -> int:
         """
         Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
@@ -91,10 +81,10 @@ class OpenAiTokenizer(BaseTokenizer):
                 tokens_per_name = -1
             elif "gpt-3.5-turbo" in model or "gpt-35-turbo" in model:
                 logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
-                return self.token_count(text, model="gpt-3.5-turbo-0613")
+                return self.count_tokens(text, model="gpt-3.5-turbo-0613")
             elif "gpt-4" in model:
                 logging.info("gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
-                return self.token_count(text, model="gpt-4-0613")
+                return self.count_tokens(text, model="gpt-4-0613")
             else:
                 raise NotImplementedError(
                     f"""token_count() is not implemented for model {model}. 
@@ -116,4 +106,4 @@ class OpenAiTokenizer(BaseTokenizer):
 
             return num_tokens
         else:
-            return super().token_count(text)
+            return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))

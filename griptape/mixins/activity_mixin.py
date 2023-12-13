@@ -71,23 +71,13 @@ class ActivityMixin:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         else:
-            return Template(activity.config["description"]).render({
-                "_self": self
-            })
-
-    def activity_uses_default_memory(self, activity: Callable) -> bool:
-        if activity is None or not getattr(activity, "is_activity", False):
-            raise Exception("This method is not an activity.")
-        else:
-            return activity.config["uses_default_memory"]
+            return Template(activity.config["description"]).render({"_self": self})
 
     def activity_schema(self, activity: Callable) -> Optional[dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         elif activity.config["schema"]:
-            full_schema = {
-                "values": activity.config["schema"].schema if activity.config["schema"] else {}
-            }
+            full_schema = {"values": activity.config["schema"].schema if activity.config["schema"] else {}}
 
             return Schema(full_schema).json_schema("InputSchema")
         else:
@@ -99,6 +89,4 @@ class ActivityMixin:
         activity = getattr(tool, activity_name, None)
 
         if not activity or not getattr(activity, "is_activity", False):
-            raise ValueError(
-                f"activity {activity_name} is not a valid activity for {tool}"
-            )
+            raise ValueError(f"activity {activity_name} is not a valid activity for {tool}")

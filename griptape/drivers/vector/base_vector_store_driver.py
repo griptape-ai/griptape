@@ -28,29 +28,21 @@ class BaseVectorStoreDriver(ABC):
         namespace: Optional[str] = None
 
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True)
-    futures_executor: futures.Executor = field(
-        default=Factory(lambda: futures.ThreadPoolExecutor()),
-        kw_only=True
-    )
+    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def upsert_text_artifacts(
-            self,
-            artifacts: dict[str, list[TextArtifact]],
-            meta: Optional[dict] = None,
-            **kwargs
+        self, artifacts: dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
     ) -> None:
-        utils.execute_futures_dict({
-            namespace:
-                self.futures_executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
-            for namespace, artifact_list in artifacts.items() for a in artifact_list
-        })
+        utils.execute_futures_dict(
+            {
+                namespace: self.futures_executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
+                for namespace, artifact_list in artifacts.items()
+                for a in artifact_list
+            }
+        )
 
     def upsert_text_artifact(
-            self,
-            artifact: TextArtifact,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs
+        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
     ) -> str:
         if not meta:
             meta = {}
@@ -62,21 +54,15 @@ class BaseVectorStoreDriver(ABC):
         else:
             vector = artifact.generate_embedding(self.embedding_driver)
 
-        return self.upsert_vector(
-            vector,
-            vector_id=artifact.id,
-            namespace=namespace,
-            meta=meta,
-            **kwargs
-        )
+        return self.upsert_vector(vector, vector_id=artifact.id, namespace=namespace, meta=meta, **kwargs)
 
     def upsert_text(
-            self,
-            string: str,
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs
+        self,
+        string: str,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs
     ) -> str:
         return self.upsert_vector(
             self.embedding_driver.embed_string(string),
@@ -88,12 +74,12 @@ class BaseVectorStoreDriver(ABC):
 
     @abstractmethod
     def upsert_vector(
-            self,
-            vector: list[float],
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs
+        self,
+        vector: list[float],
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs
     ) -> str:
         ...
 
@@ -107,11 +93,11 @@ class BaseVectorStoreDriver(ABC):
 
     @abstractmethod
     def query(
-            self,
-            query: str,
-            count: Optional[int] = None,
-            namespace: Optional[str] = None,
-            include_vectors: bool = False,
-            **kwargs
+        self,
+        query: str,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs
     ) -> list[QueryResult]:
         ...

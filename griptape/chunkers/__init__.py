@@ -5,10 +5,4 @@ from .pdf_chunker import PdfChunker
 from .markdown_chunker import MarkdownChunker
 
 
-__all__ = [
-    "ChunkSeparator",
-    "BaseChunker",
-    "TextChunker",
-    "PdfChunker",
-    "MarkdownChunker"
-]
+__all__ = ["ChunkSeparator", "BaseChunker", "TextChunker", "PdfChunker", "MarkdownChunker"]

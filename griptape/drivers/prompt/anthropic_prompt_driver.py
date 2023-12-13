@@ -1,8 +1,7 @@
 from typing import Iterator
-import anthropic
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
-from griptape.utils import PromptStack
+from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
 
@@ -15,25 +14,24 @@ class AnthropicPromptDriver(BasePromptDriver):
         model: Anthropic model name.
         tokenizer: Custom `AnthropicTokenizer`.
     """
+
     api_key: str = field(kw_only=True)
     model: str = field(kw_only=True)
     tokenizer: AnthropicTokenizer = field(
-        default=Factory(
-            lambda self: AnthropicTokenizer(model=self.model), takes_self=True
-        ),
-        kw_only=True,
+        default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        response = anthropic.Anthropic(api_key=self.api_key).completions.create(
-            **self._base_params(prompt_stack)
-        )
+        anthropic = import_optional_dependency("anthropic")
+
+        response = anthropic.Anthropic(api_key=self.api_key).completions.create(**self._base_params(prompt_stack))
         return TextArtifact(value=response.completion)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        anthropic = import_optional_dependency("anthropic")
+
         response = anthropic.Anthropic(api_key=self.api_key).completions.create(
-            **self._base_params(prompt_stack),
-            stream=True
+            **self._base_params(prompt_stack), stream=True
         )
 
         for chunk in response:
@@ -54,11 +52,11 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)
-        
+
         return {
             "prompt": self.prompt_stack_to_string(prompt_stack),
             "model": self.model,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
-            "max_tokens_to_sample": self.max_output_tokens(prompt)
+            "max_tokens_to_sample": self.max_output_tokens(prompt),
         }

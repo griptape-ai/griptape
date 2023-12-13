@@ -15,10 +15,7 @@ class TestFileManager:
         from griptape.tools import FileManager
 
         return Agent(
-            tools=[FileManager()],
-            memory=None,
-            prompt_driver=request.param,
-            rulesets=[OUTPUT_RULESET],
+            tools=[FileManager()], conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
         )
 
     def test_save_content_to_disk(self, agent):

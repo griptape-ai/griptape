@@ -4,9 +4,6 @@ from griptape.schemas import BaseSchema
 
 
 class BaseArtifactSchema(BaseSchema):
-    class Meta:
-        ordered = True
-
     id = fields.Str()
     name = fields.Str()
     meta = fields.Dict(keys=fields.Str())
