@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
 from attr import define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.events import StartImageGenerationEvent, FinishImageGenerationEvent
 from griptape.mixins import ExponentialBackoffMixin
-from griptape.structures import Structure
+
+if TYPE_CHECKING:
+    from griptape.structures import Structure
 
 
 @define
