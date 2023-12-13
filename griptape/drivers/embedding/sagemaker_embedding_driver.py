@@ -6,14 +6,14 @@ from typing import Any
 import boto3
 from attr import Factory, define, field
 
-from griptape.drivers import BaseEmbeddingDriver
+from griptape.drivers import BaseMultiModelEmbeddingDriver
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEmbeddingModelDriver
 
 
 @define
-class AmazonSageMakerEmbeddingDriver(BaseEmbeddingDriver):
+class AmazonSageMakerEmbeddingDriver(BaseMultiModelEmbeddingDriver):
     session: boto3.Session = field(default=Factory(lambda: boto3.Session()), kw_only=True)
     sagemaker_client: Any = field(
         default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True), kw_only=True
