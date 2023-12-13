@@ -1,0 +1,15 @@
+from attr import define, field
+from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.tasks import BaseTask
+
+
+@define
+class MockTask(BaseTask):
+    mock_input: str = field(default="foobar")
+
+    @property
+    def input(self) -> BaseArtifact:
+        return TextArtifact(self.mock_input)
+
+    def run(self) -> BaseArtifact:
+        return self.input

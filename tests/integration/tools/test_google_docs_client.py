@@ -9,11 +9,7 @@ from tests.utils.structure_runner import (
 
 
 class TestGoogleDocsClient:
-    @pytest.fixture(
-        autouse=True,
-        params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=prompt_driver_id_fn,
-    )
+    @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
     def agent(self, request):
         from griptape.structures import Agent
         from griptape.tools import GoogleDocsClient
@@ -36,47 +32,34 @@ class TestGoogleDocsClient:
                     owner_email=os.environ["GOOGLE_OWNER_EMAIL"],
                 )
             ],
-            memory=None,
+            conversation_memory=None,
             prompt_driver=request.param,
             rulesets=[OUTPUT_RULESET],
         )
 
     def test_create_google_doc(self, agent):
-        result = run_structure(
-            agent, 'Create a Google Doc called "Test Document".'
-        )
+        result = run_structure(agent, 'Create a Google Doc called "Test Document".')
 
         assert result["task_result"] == "success"
         assert result["task_output"] is not None
 
     def test_append_text(self, agent):
-        result = run_structure(
-            agent,
-            'Append text "Appended Text." to the Google Doc "Test Document".',
-        )
+        result = run_structure(agent, 'Append text "Appended Text." to the Google Doc "Test Document".')
 
         assert result["task_result"] == "success"
 
     def test_prepend_text(self, agent):
-        result = run_structure(
-            agent,
-            'Prepend text "Prepended Text." to the Google Doc "Test Document".',
-        )
+        result = run_structure(agent, 'Prepend text "Prepended Text." to the Google Doc "Test Document".')
 
         assert result["task_result"] == "success"
 
     def test_download_google_doc(self, agent):
-        result = run_structure(
-            agent, 'Download the Google Doc "Test Document".'
-        )
+        result = run_structure(agent, 'Download the Google Doc "Test Document".')
 
         assert result["task_result"] == "success"
         assert result["task_output"] is not None
 
     def test_save_content_to_google_doc(self, agent):
-        result = run_structure(
-            agent,
-            'Save content "Hello, Google Doc!" to the Google Doc "Test Document".',
-        )
+        result = run_structure(agent, 'Save content "Hello, Google Doc!" to the Google Doc "Test Document".')
 
         assert result["task_result"] == "success"

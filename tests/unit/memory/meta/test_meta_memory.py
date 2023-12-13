@@ -1,0 +1,15 @@
+import pytest
+from griptape.memory.meta import MetaMemory, ActionSubtaskMetaEntry
+
+
+class TestMetaMemory:
+    @pytest.fixture
+    def memory(self):
+        return MetaMemory()
+
+    def test_add_entry(self, memory):
+        assert len(memory.entries) == 0
+
+        memory.add_entry(ActionSubtaskMetaEntry(thought="foo", action="bar", answer="baz"))
+
+        assert len(memory.entries) == 1

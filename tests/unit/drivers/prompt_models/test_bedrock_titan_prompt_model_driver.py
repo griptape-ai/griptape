@@ -4,10 +4,7 @@ import boto3
 import pytest
 from griptape.tokenizers.bedrock_titan_tokenizer import BedrockTitanTokenizer
 from griptape.utils import PromptStack
-from griptape.drivers import (
-    AmazonBedrockPromptDriver,
-    BedrockTitanPromptModelDriver,
-)
+from griptape.drivers import AmazonBedrockPromptDriver, BedrockTitanPromptModelDriver
 
 
 class TestBedrockTitanPromptModelDriver:
@@ -52,31 +49,11 @@ class TestBedrockTitanPromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input["inputText"].startswith(
-            "Instructions: foo\n\nUser: bar\n\nBot:"
-        )
+        assert model_input["inputText"].startswith("Instructions: foo\n\nUser: bar\n\nBot:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert (
-            driver.prompt_stack_to_model_params(stack)["textGenerationConfig"][
-                "maxTokenCount"
-            ]
-            == 4083
-        )
-        assert (
-            driver.prompt_stack_to_model_params(stack)["textGenerationConfig"][
-                "temperature"
-            ]
-            == 0.12345
-        )
+        assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["maxTokenCount"] == 4090
+        assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["temperature"] == 0.12345
 
     def test_process_output(self, driver):
-        assert (
-            driver.process_output(
-                json.dumps({"results": [{"outputText": "foobar"}]})
-            ).value
-            == "foobar"
-        )
-
-    def test_session_initialization(self, driver, mock_session):
-        assert driver.tokenizer.session == mock_session
+        assert driver.process_output(json.dumps({"results": [{"outputText": "foobar"}]})).value == "foobar"

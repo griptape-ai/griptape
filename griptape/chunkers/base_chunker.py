@@ -12,32 +12,19 @@ class BaseChunker(ABC):
     DEFAULT_SEPARATORS = [ChunkSeparator(" ")]
 
     separators: list[ChunkSeparator] = field(
-        default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True),
-        kw_only=True,
+        default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True), kw_only=True
     )
     tokenizer: BaseTokenizer = field(
-        default=Factory(
-            lambda: OpenAiTokenizer(
-                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
-            )
-        ),
-        kw_only=True,
+        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
     )
-    max_tokens: int = field(
-        default=Factory(
-            lambda self: self.tokenizer.max_tokens, takes_self=True
-        ),
-        kw_only=True,
-    )
+    max_tokens: int = field(default=Factory(lambda self: self.tokenizer.max_tokens, takes_self=True), kw_only=True)
 
     def chunk(self, text: TextArtifact | str) -> list[TextArtifact]:
         text = text.value if isinstance(text, TextArtifact) else text
 
         return [TextArtifact(c) for c in self._chunk_recursively(text)]
 
-    def _chunk_recursively(
-        self, chunk: str, current_separator: Optional[ChunkSeparator] = None
-    ) -> list[str]:
+    def _chunk_recursively(self, chunk: str, current_separator: ChunkSeparator | None = None) -> list[str]:
         token_count = self.tokenizer.count_tokens(chunk)
 
         if token_count <= self.max_tokens:
@@ -50,9 +37,7 @@ class BaseChunker(ABC):
 
             # If a separator is provided, only use separators after it.
             if current_separator:
-                separators = self.separators[
-                    self.separators.index(current_separator) :
-                ]
+                separators = self.separators[self.separators.index(current_separator) :]
             else:
                 separators = self.separators
 
@@ -81,32 +66,16 @@ class BaseChunker(ABC):
                     # Create the two subchunks based on the best separator.
                     if separator.is_prefix:
                         # If the separator is a prefix, append it before this subchunk.
-                        first_subchunk = separator.value + separator.value.join(
-                            subchunks[: balance_index + 1]
-                        )
-                        second_subchunk = (
-                            separator.value
-                            + separator.value.join(
-                                subchunks[balance_index + 1 :]
-                            )
-                        )
+                        first_subchunk = separator.value + separator.value.join(subchunks[: balance_index + 1])
+                        second_subchunk = separator.value + separator.value.join(subchunks[balance_index + 1 :])
                     else:
                         # If the separator is not a prefix, append it after this subchunk.
-                        first_subchunk = (
-                            separator.value.join(subchunks[: balance_index + 1])
-                            + separator.value
-                        )
-                        second_subchunk = separator.value.join(
-                            subchunks[balance_index + 1 :]
-                        )
+                        first_subchunk = separator.value.join(subchunks[: balance_index + 1]) + separator.value
+                        second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
 
                     # Continue recursively chunking the subchunks.
-                    first_subchunk_rec = self._chunk_recursively(
-                        first_subchunk.strip(), separator
-                    )
-                    second_subchunk_rec = self._chunk_recursively(
-                        second_subchunk.strip(), separator
-                    )
+                    first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
+                    second_subchunk_rec = self._chunk_recursively(second_subchunk.strip(), separator)
 
                     # Return the concatenated results of the subchunks if both are non-empty.
                     if first_subchunk_rec and second_subchunk_rec:
@@ -120,6 +89,4 @@ class BaseChunker(ABC):
                         return []
             # If none of the separators result in a balanced split, split the chunk in half.
             midpoint = len(chunk) // 2
-            return self._chunk_recursively(
-                chunk[:midpoint]
-            ) + self._chunk_recursively(chunk[midpoint:])
+            return self._chunk_recursively(chunk[:midpoint]) + self._chunk_recursively(chunk[midpoint:])

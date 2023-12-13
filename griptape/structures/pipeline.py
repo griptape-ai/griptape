@@ -11,61 +11,59 @@ if TYPE_CHECKING:
 
 @define
 class Pipeline(Structure):
-    def first_task(self) -> Optional[BaseTask]:
-        return self.tasks[0] if self.tasks else None
-
-    def last_task(self) -> Optional[BaseTask]:
-        return self.tasks[-1] if self.tasks else None
-
-    def finished_tasks(self) -> list[BaseTask]:
-        return [s for s in self.tasks if s.is_finished()]
-
-    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
-        return (
-            [self.add_task(o) for o in other]
-            if isinstance(other, list)
-            else self + [other]
-        )
-
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
 
-        if self.last_task():
-            self.last_task().add_child(task)
-        else:
-            task.structure = self
+        if self.output_task:
+            self.output_task.child_ids.append(task.id)
+            task.parent_ids.append(self.output_task.id)
 
-            self.tasks.append(task)
+        self.tasks.append(task)
 
         return task
 
-    def try_run(self, *args) -> BaseTask:
+    def insert_task(self, parent_task: BaseTask, task: BaseTask) -> BaseTask:
+        task.preprocess(self)
+
+        if parent_task.children:
+            child_task = parent_task.children[0]
+
+            task.child_ids.append(child_task.id)
+            child_task.parent_ids.append(task.id)
+
+            child_task.parent_ids.remove(parent_task.id)
+            parent_task.child_ids.remove(child_task.id)
+
+        task.parent_ids.append(parent_task.id)
+        parent_task.child_ids.append(task.id)
+
+        parent_index = self.tasks.index(parent_task)
+        self.tasks.insert(parent_index + 1, task)
+
+        return task
+
+    def try_run(self, *args) -> Pipeline:
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
 
-        self.__run_from_task(self.first_task())
+        self.__run_from_task(self.input_task)
 
-        if self.memory:
-            run = Run(
-                input=self.first_task().input.to_text(),
-                output=self.last_task().output.to_text(),
-            )
+        if self.conversation_memory:
+            run = Run(input=self.input_task.input.to_text(), output=self.output_task.output.to_text())
 
-            self.memory.add_run(run)
+            self.conversation_memory.add_run(run)
 
         self._execution_args = ()
 
-        return self.last_task()
+        return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
 
         context.update(
             {
-                "parent_output": task.parents[0].output.to_text()
-                if task.parents and task.parents[0].output
-                else None,
+                "parent_output": task.parents[0].output.to_text() if task.parents and task.parents[0].output else None,
                 "parent": task.parents[0] if task.parents else None,
                 "child": task.children[0] if task.children else None,
             }
@@ -73,7 +71,7 @@ class Pipeline(Structure):
 
         return context
 
-    def __run_from_task(self, task: Optional[BaseTask]) -> None:
+    def __run_from_task(self, task: BaseTask | None) -> None:
         if task is None:
             return
         else:
