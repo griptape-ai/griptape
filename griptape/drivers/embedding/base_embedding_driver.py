@@ -16,6 +16,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
         chunker: An instance of `BaseChunker` to use when chunking long strings.
     """
 
+    model: str = field(kw_only=True)
     tokenizer: BaseTokenizer = field(kw_only=True)
     chunker: BaseChunker = field(init=False)
 

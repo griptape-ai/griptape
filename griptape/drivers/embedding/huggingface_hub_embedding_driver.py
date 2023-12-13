@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from griptape.utils import import_optional_dependency
 from attr import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
@@ -18,7 +18,6 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
     """
 
     api_token: str = field(kw_only=True)
-    model: str | None = field(default=None, kw_only=True)
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(

@@ -19,8 +19,12 @@ from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
 from .embedding.bedrock_titan_embedding_driver import BedrockTitanEmbeddingDriver
-from .embedding.sagemaker_embedding_driver import AmazonSagemakerEmbeddingDriver
+from .embedding.sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
+
+from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
+from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
+from .embedding_model.sagemaker_tensorflow_hub_embedding_model_driver import SageMakerTensorFlowHubEmbeddingModelDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -79,8 +83,11 @@ __all__ = [
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
     "BedrockTitanEmbeddingDriver",
-    "AmazonSagemakerEmbeddingDriver",
+    "AmazonSageMakerEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
+    "BaseEmbeddingModelDriver",
+    "SageMakerHuggingFaceEmbeddingModelDriver",
+    "SageMakerTensorFlowHubEmbeddingModelDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",

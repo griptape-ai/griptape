@@ -1,13 +1,13 @@
 import pytest
 from unittest import mock
-from griptape.drivers import AmazonSagemakerEmbeddingDriver
+from griptape.drivers import AmazonSageMakerEmbeddingDriver, SageMakerHuggingFaceEmbeddingModelDriver
 from griptape.tokenizers.openai_tokenizer import OpenAiTokenizer
 
 
 class TestAmazonSagemakerEmbeddingDriver:
     @pytest.fixture(autouse=True)
     def mock_session(self, mocker):
-        fake_embeddings = '{"embedding": [[0, 1, 0]]}'.encode("utf-8")
+        fake_embeddings = b'{"embedding": [[0, 1, 0]]}'
         mock_session_class = mocker.patch("boto3.Session")
         mock_session_object = mock.Mock()
         mock_client = mock.Mock()
@@ -19,19 +19,15 @@ class TestAmazonSagemakerEmbeddingDriver:
         mock_session_class.return_value = mock_session_object
 
     def test_init(self):
-        assert AmazonSagemakerEmbeddingDriver(
-            endpoint="test-endpoint",
-            dimensions=4096,
-            tokenizer=OpenAiTokenizer(
-                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
-            ),
+        assert AmazonSageMakerEmbeddingDriver(
+            model="test-endpoint",
+            tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
+            embedding_model_driver=SageMakerHuggingFaceEmbeddingModelDriver(),
         )
 
     def test_try_embed_chunk(self):
-        assert AmazonSagemakerEmbeddingDriver(
-            endpoint="test-endpoint",
-            dimensions=4096,
-            tokenizer=OpenAiTokenizer(
-                model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL
-            ),
+        assert AmazonSageMakerEmbeddingDriver(
+            model="test-endpoint",
+            tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
+            embedding_model_driver=SageMakerHuggingFaceEmbeddingModelDriver(),
         ).try_embed_chunk("foobar") == [0, 1, 0]
