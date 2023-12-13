@@ -29,7 +29,7 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_driver.try_text_to_image(prompts, negative_prompts=negative_prompts)
+        return self.image_driver.run_text_to_image(prompts, negative_prompts=negative_prompts)
 
     def image_variation(
         self,
@@ -50,7 +50,7 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_driver.try_image_variation(prompts=prompts, image=image, negative_prompts=negative_prompts)
+        return self.image_driver.run_image_variation(prompts=prompts, image=image, negative_prompts=negative_prompts)
 
     def image_inpainting(
         self,
@@ -72,7 +72,7 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_driver.try_image_inpainting(
+        return self.image_driver.run_image_inpainting(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts
         )
 
@@ -96,6 +96,6 @@ class ImageGenerationEngine:
             for negative_ruleset in negative_rulesets:
                 negative_prompts += [rule.value for rule in negative_ruleset.rules]
 
-        return self.image_driver.try_image_outpainting(
+        return self.image_driver.run_image_outpainting(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts
         )

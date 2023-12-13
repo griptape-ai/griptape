@@ -12,6 +12,8 @@ from .start_structure_run_event import StartStructureRunEvent
 from .finish_structure_run_event import FinishStructureRunEvent
 from .completion_chunk_event import CompletionChunkEvent
 from .event_listener import EventListener
+from .start_image_generation_event import StartImageGenerationEvent
+from .finish_image_generation_event import FinishImageGenerationEvent
 
 
 __all__ = [
@@ -29,4 +31,6 @@ __all__ = [
     "FinishStructureRunEvent",
     "CompletionChunkEvent",
     "EventListener",
+    "StartImageGenerationEvent",
+    "FinishImageGenerationEvent",
 ]

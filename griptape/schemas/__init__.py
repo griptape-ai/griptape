@@ -32,6 +32,8 @@ from .events.finish_prompt_event_schema import FinishPromptEventSchema
 from .events.start_structure_run_event_schema import StartStructureRunEventSchema
 from .events.finish_structure_run_event_schema import FinishStructureRunEventSchema
 from .events.completion_chunk_event_schema import CompletionChunkEventSchema
+from .events.start_image_generation_event_schema import StartImageGenerationEventSchema
+from .events.finish_image_generation_event_schema import FinishImageGenerationEventSchema
 
 from .utils.prompt_stack_schema import PromptStackSchema
 from .utils.prompt_stack_input_schema import PromptStackInputSchema
@@ -67,4 +69,6 @@ __all__ = [
     "CompletionChunkEventSchema",
     "PromptStackSchema",
     "PromptStackInputSchema",
+    "StartImageGenerationEventSchema",
+    "FinishImageGenerationEventSchema",
 ]
