@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 from io import BytesIO
 from pathlib import Path
-from attr import define
+from attr import define, field
 from griptape import utils
 from griptape.artifacts import ImageArtifact, ErrorArtifact
 from griptape.loaders import BaseLoader
@@ -11,6 +11,16 @@ from PIL import Image
 
 @define
 class ImageLoader(BaseLoader):
+    """Loader for images.
+
+    Attributes:
+        format: Attempt to ensure image artifacts are in this format when loaded. For example, when set to 'PNG',
+            loading image.jpg will return an ImageArtifact contianing the image bytes in PNG format.
+            Defaults to PNG.
+    """
+
+    format: str = field(default="PNG", kw_only=True)
+
     def load(self, path: str | Path) -> ImageArtifact | ErrorArtifact:
         return self.file_to_artifact(path)
 
@@ -28,13 +38,15 @@ class ImageLoader(BaseLoader):
 
             # Ensure image is in png format.
             byte_stream = BytesIO()
-            image.save(byte_stream, format="png")
+
+            if image.format != self.format:
+                image.save(byte_stream, format=self.format)
 
             return ImageArtifact(
                 byte_stream.getvalue(),
                 name=file_name,
                 dir_name=dir_name,
-                mime_type="image/png",
+                mime_type=f"image/{self.format.lower()}",
                 width=image.width,
                 height=image.height,
             )
