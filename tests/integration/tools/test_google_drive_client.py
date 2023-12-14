@@ -1,19 +1,19 @@
 import pytest
 import os
-from tests.utils.structure_runner import StructureRunner
+from tests.utils.structure_tester import StructureTester
 
 
 class TestGoogleDriveClient:
     @pytest.fixture(
         autouse=True,
-        params=StructureRunner.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=StructureRunner.prompt_driver_id_fn,
+        params=StructureTester.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=StructureTester.prompt_driver_id_fn,
     )
-    def structure_runner(self, request):
+    def structure_tester(self, request):
         from griptape.structures import Agent
         from griptape.tools import GoogleDriveClient
 
-        return StructureRunner(
+        return StructureTester(
             Agent(
                 tools=[
                     GoogleDriveClient(
@@ -37,17 +37,17 @@ class TestGoogleDriveClient:
             )
         )
 
-    def test_list_files(self, structure_runner):
-        structure_runner.run_structure("List all files on Google Drive.")
+    def test_list_files(self, structure_tester):
+        structure_tester.run("List all files on Google Drive.")
 
-    def test_download_file(self, structure_runner):
-        structure_runner.run_structure('Download the file called "sample1.txt" from Google Drive.')
+    def test_download_file(self, structure_tester):
+        structure_tester.run('Download the file called "sample1.txt" from Google Drive.')
 
-    def test_save_content(self, structure_runner):
-        structure_runner.run_structure('Save content "Hello, Google Drive!" on Google Drive as "hello.txt".')
+    def test_save_content(self, structure_tester):
+        structure_tester.run('Save content "Hello, Google Drive!" on Google Drive as "hello.txt".')
 
-    def test_search_files_by_name(self, structure_runner):
-        structure_runner.run_structure('Search files with name "hello.txt" on Google Drive.')
+    def test_search_files_by_name(self, structure_tester):
+        structure_tester.run('Search files with name "hello.txt" on Google Drive.')
 
-    def test_search_files_by_content(self, structure_runner):
-        structure_runner.run_structure('Search files with content "Hello, Google Drive!" on Google Drive.')
+    def test_search_files_by_content(self, structure_tester):
+        structure_tester.run('Search files with content "Hello, Google Drive!" on Google Drive.')

@@ -22,7 +22,7 @@ from griptape.drivers import (
 
 
 @define
-class StructureRunner:
+class StructureTester:
     PROMPT_DRIVERS = {
         "OPENAI_CHAT_35": OpenAiChatPromptDriver(model="gpt-3.5-turbo", api_key=os.environ["OPENAI_API_KEY"]),
         "OPENAI_CHAT_4": OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]),
@@ -150,7 +150,7 @@ class StructureRunner:
 
         return correct
 
-    def run_structure(self, prompt) -> str:
+    def run(self, prompt) -> str:
         result = self.structure.run(prompt)
         output_text = result.output_task.output.to_text()
         task_names = [task.__class__.__name__ for task in self.structure.tasks]

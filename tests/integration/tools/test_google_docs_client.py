@@ -1,19 +1,19 @@
 import pytest
 import os
-from tests.utils.structure_runner import StructureRunner
+from tests.utils.structure_tester import StructureTester
 
 
 class TestGoogleDocsClient:
     @pytest.fixture(
         autouse=True,
-        params=StructureRunner.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=StructureRunner.prompt_driver_id_fn,
+        params=StructureTester.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=StructureTester.prompt_driver_id_fn,
     )
-    def structure_runner(self, request):
+    def structure_tester(self, request):
         from griptape.structures import Agent
         from griptape.tools import GoogleDocsClient
 
-        return StructureRunner(
+        return StructureTester(
             Agent(
                 tools=[
                     GoogleDocsClient(
@@ -37,17 +37,17 @@ class TestGoogleDocsClient:
             )
         )
 
-    def test_create_google_doc(self, structure_runner):
-        structure_runner.run_structure('Create a Google Doc called "Test Document".')
+    def test_create_google_doc(self, structure_tester):
+        structure_tester.run('Create a Google Doc called "Test Document".')
 
-    def test_append_text(self, structure_runner):
-        structure_runner.run_structure('Append text "Appended Text." to the Google Doc "Test Document".')
+    def test_append_text(self, structure_tester):
+        structure_tester.run('Append text "Appended Text." to the Google Doc "Test Document".')
 
-    def test_prepend_text(self, structure_runner):
-        structure_runner.run_structure('Prepend text "Prepended Text." to the Google Doc "Test Document".')
+    def test_prepend_text(self, structure_tester):
+        structure_tester.run('Prepend text "Prepended Text." to the Google Doc "Test Document".')
 
-    def test_download_google_doc(self, structure_runner):
-        structure_runner.run_structure('Download the Google Doc "Test Document".')
+    def test_download_google_doc(self, structure_tester):
+        structure_tester.run('Download the Google Doc "Test Document".')
 
-    def test_save_content_to_google_doc(self, structure_runner):
-        structure_runner.run_structure('Save content "Hello, Google Doc!" to the Google Doc "Test Document".')
+    def test_save_content_to_google_doc(self, structure_tester):
+        structure_tester.run('Save content "Hello, Google Doc!" to the Google Doc "Test Document".')

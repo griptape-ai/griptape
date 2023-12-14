@@ -1,14 +1,14 @@
-from tests.utils.structure_runner import StructureRunner
+from tests.utils.structure_tester import StructureTester
 import pytest
 
 
 class TestToolkitTask:
     @pytest.fixture(
         autouse=True,
-        params=StructureRunner.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=StructureRunner.prompt_driver_id_fn,
+        params=StructureTester.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=StructureTester.prompt_driver_id_fn,
     )
-    def structure_runner(self, request):
+    def structure_tester(self, request):
         import os
         from griptape.structures import Agent
         from griptape.tools import WebScraper, WebSearch, TaskMemoryClient
@@ -27,5 +27,5 @@ class TestToolkitTask:
             prompt_driver=request.param,
         )
 
-    def test_multi_step_cot(self, structure_runner):
-        structure_runner.run_structure("Give me a summary of the top 2 search results about parrot facts.")
+    def test_multi_step_cot(self, structure_tester):
+        structure_tester.run("Give me a summary of the top 2 search results about parrot facts.")

@@ -1,25 +1,25 @@
 from griptape.engines.summary.prompt_summary_engine import PromptSummaryEngine
 from griptape.tasks import TextSummaryTask
-from tests.utils.structure_runner import StructureRunner
+from tests.utils.structure_tester import StructureTester
 import pytest
 
 
 class TestSummaryTask:
     @pytest.fixture(
         autouse=True,
-        params=StructureRunner.SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=StructureRunner.prompt_driver_id_fn,
+        params=StructureTester.SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=StructureTester.prompt_driver_id_fn,
     )
-    def structure_runner(self, request):
+    def structure_tester(self, request):
         from griptape.structures import Agent
 
         agent = Agent(conversation_memory=None, prompt_driver=request.param)
         agent.add_task(TextSummaryTask(summary_engine=PromptSummaryEngine(prompt_driver=request.param)))
 
-        return StructureRunner(agent)
+        return StructureTester(agent)
 
-    def test_summary_task(self, structure_runner):
-        structure_runner.run_structure(
+    def test_summary_task(self, structure_tester):
+        structure_tester.run(
             """
                 Meeting transcriot: 
                 Miguel: Hi Brant, I want to discuss the workstream  for our new product launch 
