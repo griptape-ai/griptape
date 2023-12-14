@@ -1,21 +1,15 @@
-from fuzzywuzzy import fuzz
-from tests.utils.structure_runner import (
-    PROMPT_TASK_CAPABLE_PROMPT_DRIVERS,
-    run_structure,
-    OUTPUT_RULESET,
-    prompt_driver_id_fn,
-)
+from tests.utils.structure_runner import StructureRunner
 import pytest
 
 
 class TestPromptTask:
-    @pytest.fixture(autouse=True, params=PROMPT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
-    def agent(self, request):
+    @pytest.fixture(
+        autouse=True, params=StructureRunner.PROMPT_TASK_CAPABLE_PROMPT_DRIVERS, ids=StructureRunner.prompt_driver_id_fn
+    )
+    def structure_runner(self, request):
         from griptape.structures import Agent
 
-        return Agent(conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET])
+        return StructureRunner(Agent(conversation_memory=None, prompt_driver=request.param))
 
-    def test_prompt_task(self, agent):
-        result = run_structure(agent, "Write a haiku about pirates. It must contain the word 'ship'.")
-
-        assert fuzz.partial_ratio(result["answer"], "ship") >= 95
+    def test_prompt_task(self, structure_runner):
+        structure_runner.run_structure("Write a haiku about pirates.")

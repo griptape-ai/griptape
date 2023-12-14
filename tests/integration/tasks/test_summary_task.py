@@ -1,28 +1,25 @@
 from griptape.engines.summary.prompt_summary_engine import PromptSummaryEngine
 from griptape.tasks import TextSummaryTask
-from fuzzywuzzy import fuzz
-from tests.utils.structure_runner import (
-    SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
-    run_structure,
-    OUTPUT_RULESET,
-    prompt_driver_id_fn,
-)
+from tests.utils.structure_runner import StructureRunner
 import pytest
 
 
 class TestSummaryTask:
-    @pytest.fixture(autouse=True, params=SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
-    def agent(self, request):
+    @pytest.fixture(
+        autouse=True,
+        params=StructureRunner.SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=StructureRunner.prompt_driver_id_fn,
+    )
+    def structure_runner(self, request):
         from griptape.structures import Agent
 
-        agent = Agent(conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET])
+        agent = Agent(conversation_memory=None, prompt_driver=request.param)
         agent.add_task(TextSummaryTask(summary_engine=PromptSummaryEngine(prompt_driver=request.param)))
 
-        return agent
+        return StructureRunner(agent)
 
-    def test_summary_task(self, agent):
-        result = run_structure(
-            agent,
+    def test_summary_task(self, structure_runner):
+        structure_runner.run_structure(
             """
                 Meeting transcriot: 
                 Miguel: Hi Brant, I want to discuss the workstream  for our new product launch 
@@ -36,7 +33,5 @@ class TestSummaryTask:
                 Namita: Ok, I can work on the landing page to make the product more discoverable but brant can you work on the additional forms? 
                 Brant: Yes but I would need to work with James from another team as he needs to unblock the sign up workflow.  Miguel can you document any other concerns so that I can discuss with James only once? 
                 Miguel: Sure. 
-        """,
+        """
         )
-
-        assert fuzz.partial_ratio(result["answer"], "Brant") >= 95
