@@ -26,6 +26,9 @@ class StructureTester:
     PROMPT_DRIVERS = {
         "OPENAI_CHAT_35": OpenAiChatPromptDriver(model="gpt-3.5-turbo", api_key=os.environ["OPENAI_API_KEY"]),
         "OPENAI_CHAT_4": OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]),
+        "OPENAI_CHAT_4_1106_PREVIEW": OpenAiChatPromptDriver(
+            model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]
+        ),
         "OPENAI_COMPLETION_DAVINCI": OpenAiCompletionPromptDriver(
             api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"
         ),
@@ -77,6 +80,7 @@ class StructureTester:
         PROMPT_DRIVERS["OPENAI_CHAT_4"],
         PROMPT_DRIVERS["AZURE_CHAT_4"],
         PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
+        PROMPT_DRIVERS["AZURE_CHAT_4_1106_PREVIEW"],
         PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
     ]
 
