@@ -30,9 +30,9 @@ class ImageInpaintingTask(BaseTextInputTask):
 
     image_generation_engine: ImageGenerationEngine = field(kw_only=True)
     image_file: str = field(kw_only=True)
-    mask_file: Optional[str] = field(default=None, kw_only=True)
-    output_dir: Optional[str] = field(default=None, kw_only=True)
-    output_file: Optional[str] = field(default=None, kw_only=True)
+    mask_file: str | None = field(default=None, kw_only=True)
+    output_dir: str | None = field(default=None, kw_only=True)
+    output_file: str | None = field(default=None, kw_only=True)
     negative_rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 
@@ -110,6 +110,9 @@ class ImageInpaintingTask(BaseTextInputTask):
             outfile = self.output_file
         else:
             outfile = path.join(self.output_dir, image_artifact.name)
+
+        if path.dirname(outfile):
+            os.makedirs(path.dirname(outfile), exist_ok=True)
 
         with open(outfile, "wb") as f:
             self.structure.logger.info(f"Saving [{image_artifact.to_text()}] to {os.path.abspath(outfile)}")
