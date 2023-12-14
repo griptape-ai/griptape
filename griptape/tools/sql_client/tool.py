@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from attr import define, field
-from griptape.artifacts import InfoArtifact, ListArtifact
+from griptape.artifacts import InfoArtifact, ListArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.loaders import SqlLoader
@@ -38,9 +38,12 @@ class SqlClient(BaseTool):
             "schema": Schema({"sql_query": str}),
         }
     )
-    def execute_query(self, params: dict) -> ListArtifact | InfoArtifact:
-        query = params["values"]["sql_query"]
-        rows = self.sql_loader.load(query)
+    def execute_query(self, params: dict) -> ListArtifact | InfoArtifact | ErrorArtifact:
+        try:
+            query = params["values"]["sql_query"]
+            rows = self.sql_loader.load(query)
+        except Exception as e:
+            return ErrorArtifact(f"error executing query: {e}")
 
         if len(rows) > 0:
             return ListArtifact(rows)
