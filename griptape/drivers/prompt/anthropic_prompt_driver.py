@@ -48,14 +48,14 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         for i in prompt_stack.inputs:
             if i.is_assistant():
-                prompt_lines.append(f"\n\nAssistant:{i.content}")
+                prompt_lines.append(f"\n\nAssistant: {i.content}")
             elif i.is_user():
-                prompt_lines.append(f"\n\nHuman:{i.content}")
+                prompt_lines.append(f"\n\nHuman: {i.content}")
             elif i.is_system():
                 if self.model == "claude-2.1":
                     prompt_lines.append(f"{i.content}")
                 else:
-                    prompt_lines.append(f"\n\nHuman:{i.content}")
+                    prompt_lines.append(f"\n\nHuman: {i.content}")
                     prompt_lines.append("\n\nAssistant:")
 
         prompt_lines.append("\n\nAssistant:")
