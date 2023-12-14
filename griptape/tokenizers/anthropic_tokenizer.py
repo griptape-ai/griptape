@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class AnthropicTokenizer(BaseTokenizer):
+    DEFAULT_MODEL = "claude-2.1"
     MODEL_PREFIXES_TO_MAX_TOKENS = {"claude-2.1": 200000, "claude": 100000}
 
     model: str = field(kw_only=True)

@@ -57,6 +57,8 @@ class AnthropicPromptDriver(BasePromptDriver):
                 else:
                     prompt_lines.append(f"\n\nHuman: {i.content}")
                     prompt_lines.append("\n\nAssistant:")
+            else:
+                prompt_lines.append(f"\n\nHuman: {i.content}")
 
         prompt_lines.append("\n\nAssistant:")
 
