@@ -17,6 +17,7 @@ class TestGoogleDocsClient:
             Agent(
                 tools=[
                     GoogleDocsClient(
+                        off_prompt=False,
                         service_account_credentials={
                             "type": os.environ["GOOGLE_ACCOUNT_TYPE"],
                             "project_id": os.environ["GOOGLE_PROJECT_ID"],

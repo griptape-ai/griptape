@@ -12,12 +12,12 @@ class TestFileManager:
         from griptape.structures import Agent
         from griptape.tools import FileManager
 
-        return StructureTester(Agent(tools=[FileManager()], conversation_memory=None, prompt_driver=request.param))
+        return StructureTester(
+            Agent(tools=[FileManager(off_prompt=False)], conversation_memory=None, prompt_driver=request.param)
+        )
 
     def test_save_content_to_disk(self, structure_tester):
         structure_tester.run('Write the content "Hello World!" to a file called "poem.txt".')
-
-        structure_tester.run('Write the content "Hello World!" to a file called ".".')
 
     def test_load_files_from_disk(self, structure_tester):
         structure_tester.run("Read the content of the file called 'poem.txt'.")

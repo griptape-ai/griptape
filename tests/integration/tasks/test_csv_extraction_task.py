@@ -24,7 +24,7 @@ class TestCsvExtractionTask:
 
         return StructureTester(agent)
 
-    def test_json_extraction_task(self, structure_tester):
+    def test_csv_extraction_task(self, structure_tester):
         structure_tester.run(
             """
             Here is some CSV data:

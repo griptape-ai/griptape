@@ -101,13 +101,15 @@ class StructureTester:
     JSON_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
     CSV_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
 
+    RULE_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
+
     structure: Structure = field()
 
     @classmethod
     def prompt_driver_id_fn(cls, prompt_driver) -> str:
         return f"{prompt_driver.__class__.__name__}-{prompt_driver.model}"
 
-    def verify_llm_output(self, actual, expected, task_names, context: str | None = None) -> dict:
+    def verify_structure_output(self, structure) -> dict:
         output_schema = Schema(
             {
                 Literal("correct", description="Whether the output was correct or not."): bool,
@@ -116,6 +118,10 @@ class StructureTester:
                 ): str,
             }
         )
+        task_names = [task.__class__.__name__ for task in structure.tasks]
+        prompt = structure.input_task.input.to_text()
+        actual = structure.output_task.output.to_text()
+        rules = [rule.value for ruleset in structure.input_task.all_rulesets for rule in ruleset.rules]
 
         agent = Agent(
             rulesets=[
@@ -131,7 +137,7 @@ class StructureTester:
                     name="Context",
                     rules=[
                         Rule(
-                            "Your objective is to determine whether an LLM generates an acceptable output for a given prompt and tasks."
+                            "Your objective is to determine whether an LLM generated an acceptable output for a given tasks, prompt, and rules."
                         ),
                         Rule("The output does not need to be perfect, but it should be acceptable"),
                         Rule("Do not make any assumptions about how the output should be formatted."),
@@ -150,15 +156,15 @@ class StructureTester:
             ),
             tasks=[
                 PromptTask(
-                    "Tasks: {{ task_names }}"
-                    '\nPrompt: "{{ prompt }}'
-                    '\nOutput: "{{ output }}'
-                    '\n{% if context %}You must also consider this context: "{{ context }}" {% endif %}',
+                    "\nTasks: {{ task_names }}"
+                    '\nRules: "{{ rules }}"'
+                    '\nPrompt: "{{ prompt }}"'
+                    '\nOutput: "{{ output }}"',
                     context={
-                        "prompt": expected,
+                        "prompt": prompt,
                         "output": actual,
                         "task_names": ", ".join(task_names),
-                        "context": context,
+                        "rules": ", ".join(rules),
                     },
                 )
             ],
@@ -172,11 +178,9 @@ class StructureTester:
 
         return result
 
-    def run(self, prompt, assert_correctness: bool = True, context: str | None = None) -> dict:
-        result = self.structure.run(prompt)
-        output_text = result.output_task.output.to_text()
-        task_names = [task.__class__.__name__ for task in self.structure.tasks]
-        verified_result = self.verify_llm_output(output_text, prompt, task_names, context=context)
+    def run(self, prompt, assert_correctness: bool = True) -> dict:
+        self.structure.run(prompt)
+        verified_result = self.verify_structure_output(self.structure)
 
         if assert_correctness:
             assert verified_result["correct"]
