@@ -1,16 +1,16 @@
-from griptape.engines.summary.prompt_summary_engine import PromptSummaryEngine
-from griptape.tasks import TextSummaryTask
 from tests.utils.structure_tester import StructureTester
 import pytest
 
 
-class TestSummaryTask:
+class TestTextSummaryTask:
     @pytest.fixture(
         autouse=True,
-        params=StructureTester.SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
+        params=StructureTester.TEXT_SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
         ids=StructureTester.prompt_driver_id_fn,
     )
     def structure_tester(self, request):
+        from griptape.engines.summary.prompt_summary_engine import PromptSummaryEngine
+        from griptape.tasks import TextSummaryTask
         from griptape.structures import Agent
 
         agent = Agent(conversation_memory=None, prompt_driver=request.param)

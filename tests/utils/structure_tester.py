@@ -1,9 +1,13 @@
+from __future__ import annotations
 import os
 from attr import field, define
 from schema import Schema, Literal
 import logging
 import json
 
+from griptape.structures import Agent
+from griptape.rules import Rule, Ruleset
+from griptape.tasks import PromptTask
 from griptape.structures import Structure
 from griptape.drivers import (
     AmazonBedrockPromptDriver,
@@ -25,6 +29,12 @@ from griptape.drivers import (
 class StructureTester:
     PROMPT_DRIVERS = {
         "OPENAI_CHAT_35": OpenAiChatPromptDriver(model="gpt-3.5-turbo", api_key=os.environ["OPENAI_API_KEY"]),
+        "OPENAI_CHAT_35_TURBO_1106": OpenAiChatPromptDriver(
+            model="gpt-3.5-turbo-1106", api_key=os.environ["OPENAI_API_KEY"]
+        ),
+        "OPENAI_CHAT_35_TURBO_INSTRUCT": OpenAiCompletionPromptDriver(
+            model="gpt-3.5-turbo-instruct", api_key=os.environ["OPENAI_API_KEY"]
+        ),
         "OPENAI_CHAT_4": OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]),
         "OPENAI_CHAT_4_1106_PREVIEW": OpenAiChatPromptDriver(
             model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]
@@ -77,18 +87,19 @@ class StructureTester:
     }
 
     TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = [
+        PROMPT_DRIVERS["OPENAI_CHAT_35_TURBO_1106"],
         PROMPT_DRIVERS["OPENAI_CHAT_4"],
+        PROMPT_DRIVERS["OPENAI_CHAT_4_1106_PREVIEW"],
         PROMPT_DRIVERS["AZURE_CHAT_4"],
         PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
-        PROMPT_DRIVERS["AZURE_CHAT_4_1106_PREVIEW"],
         PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
     ]
-
     TOOL_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-
     PROMPT_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-
-    SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
+    TEXT_SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
+    TEXT_QUERY_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
+    JSON_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
+    CSV_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
 
     structure: Structure = field()
 
@@ -96,11 +107,7 @@ class StructureTester:
     def prompt_driver_id_fn(cls, prompt_driver) -> str:
         return f"{prompt_driver.__class__.__name__}-{prompt_driver.model}"
 
-    def llm_assert(self, actual, expected, task_names) -> bool:
-        from griptape.structures import Agent
-        from griptape.rules import Rule, Ruleset
-        from griptape.tasks import PromptTask
-
+    def verify_llm_output(self, actual, expected, task_names, context: str | None = None) -> dict:
         output_schema = Schema(
             {
                 Literal("correct", description="Whether the output was correct or not."): bool,
@@ -127,6 +134,10 @@ class StructureTester:
                             "Your objective is to determine whether an LLM generates an acceptable output for a given prompt and tasks."
                         ),
                         Rule("The output does not need to be perfect, but it should be acceptable"),
+                        Rule("Do not make any assumptions about how the output should be formatted."),
+                        Rule(
+                            "Do not worry about the accuracy of the output, only that it is an appropriate response to the prompt."
+                        ),
                     ],
                 ),
             ],
@@ -139,25 +150,35 @@ class StructureTester:
             ),
             tasks=[
                 PromptTask(
-                    "Tasks: {{ task_names }}\nPrompt: {{ prompt }}.\nOutput: {{ output }}.",
-                    context={"prompt": expected, "output": actual, "task_names": ", ".join(task_names)},
+                    "Tasks: {{ task_names }}"
+                    '\nPrompt: "{{ prompt }}'
+                    '\nOutput: "{{ output }}'
+                    '\n{% if context %}You must also consider this context: "{{ context }}" {% endif %}',
+                    context={
+                        "prompt": expected,
+                        "output": actual,
+                        "task_names": ", ".join(task_names),
+                        "context": context,
+                    },
                 )
             ],
             logger_level=logging.DEBUG,
         )
         agent.logger.debug("Determining correctness of output.")
         result = json.loads(agent.run().output_task.output.to_text())
-        correct = result["correct"] is True
         explanation = result["explanation"]
 
         agent.logger.debug(explanation)
 
-        return correct
+        return result
 
-    def run(self, prompt) -> str:
+    def run(self, prompt, assert_correctness: bool = True, context: str | None = None) -> dict:
         result = self.structure.run(prompt)
         output_text = result.output_task.output.to_text()
         task_names = [task.__class__.__name__ for task in self.structure.tasks]
-        assert self.llm_assert(output_text, prompt, task_names)
+        verified_result = self.verify_llm_output(output_text, prompt, task_names, context=context)
 
-        return output_text
+        if assert_correctness:
+            assert verified_result["correct"]
+
+        return verified_result
