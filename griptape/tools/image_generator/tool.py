@@ -82,6 +82,8 @@ class ImageGenerator(BaseTool):
         else:
             outfile = path.join(self.output_dir, image_artifact.name)
 
-        os.makedirs(path.dirname(outfile), exist_ok=True)
+        if path.dirname(outfile):
+            os.makedirs(path.dirname(outfile), exist_ok=True)
+
         with open(outfile, "wb") as f:
             f.write(image_artifact.value)
