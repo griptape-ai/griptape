@@ -43,10 +43,6 @@ class ActionSubtask(PromptTask):
     _memory: TaskMemory | None = None
 
     @property
-    def input(self) -> TextArtifact:
-        return TextArtifact(self.input_template)
-
-    @property
     def origin_task(self) -> ActionSubtaskOriginMixin | None:
         return self.structure.find_task(self.parent_task_id)
 

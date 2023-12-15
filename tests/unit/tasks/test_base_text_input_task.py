@@ -9,11 +9,23 @@ class TestBaseTextInputTask:
     def test_string_input(self):
         assert MockTextInputTask("foobar").input.value == "foobar"
 
+        task = MockTextInputTask()
+        task.input = "foobar"
+        assert task.input.value == "foobar"
+
     def test_artifact_input(self):
         assert MockTextInputTask(TextArtifact("foobar")).input.value == "foobar"
 
+        task = MockTextInputTask()
+        task.input = TextArtifact("foobar")
+        assert task.input.value == "foobar"
+
     def test_callable_input(self):
         assert MockTextInputTask(lambda _: TextArtifact("foobar")).input.value == "foobar"
+
+        task = MockTextInputTask()
+        task.input = lambda _: TextArtifact("foobar")
+        assert task.input.value == "foobar"
 
     def test_full_context(self):
         parent = MockTextInputTask("parent")

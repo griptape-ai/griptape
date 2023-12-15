@@ -123,7 +123,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
                 elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
-                    subtask.output = TextArtifact(subtask.input_template)
+                    subtask.output = self.input
                 else:
                     subtask.before_run()
                     subtask.run()
