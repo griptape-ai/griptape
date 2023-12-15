@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
+class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     """
     Attributes:
         model: Embedding model name. Defaults to DEFAULT_MODEL.
