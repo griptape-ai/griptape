@@ -20,6 +20,7 @@ from .google_docs.tool import GoogleDocsClient
 from .google_drive.tool import GoogleDriveClient
 from .openweather_client.tool import OpenWeatherClient
 from .image_generator.tool import ImageGenerator
+from .graph_db_client.tool import GraphDbClient
 
 __all__ = [
     "BaseTool",
@@ -44,4 +45,5 @@ __all__ = [
     "Computer",
     "OpenWeatherClient",
     "ImageGenerator",
+    "GraphDbClient"
 ]

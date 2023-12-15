@@ -1,0 +1,5 @@
+version: "v1"
+name: Graph DB Client
+description: Tool for storing and accessing data in graph DBs
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

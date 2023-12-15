@@ -64,6 +64,7 @@ class Neo4jGraphDriver(BaseGraphDriver):
         with self.neo4j_driver.session(database=namespace) as session:
             try:
                 data = session.run(query, params)
+
                 return [r.data() for r in data]
             except self.neo4j_import.exceptions.CypherSyntaxError as e:
                 raise ValueError(f"Invalid Cypher syntax: {e}")
@@ -80,8 +81,9 @@ class Neo4jGraphDriver(BaseGraphDriver):
         }
 
     def query(self, query: str, namespace: Optional[str] = None) -> TextArtifact:
-        with self.neo4j_driver.session(database=namespace) as session:
-            return TextArtifact(session.execute_read(lambda tx: tx.run(query).data()))
+        output = self._raw_query(query, namespace=namespace)
+
+        return TextArtifact(str(output))
 
     def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
         query = "MATCH (n) RETURN n"

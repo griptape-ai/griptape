@@ -42,8 +42,6 @@ class GraphQueryEngine(BaseQueryEngine):
             PromptStack(inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)])
         ).value
 
-        print(cypher_query)
-
         return self.graph_driver.query(cypher_query, namespace)
 
     def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
