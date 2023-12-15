@@ -132,12 +132,15 @@ skip_magic_trailing_comma = true
 line-length=120
 
 [tool.pyright]
+venvPath = "."
+venv = ".venv"
 include = ["griptape"]
 exclude = [
     "**/__pycache__",
 ]
 pythonVersion = "3.9"
 reportOptionalMemberAccess = "none"
+reportIncompatibleVariableOverride = "none" # see thread: https://github.com/microsoft/pyright/issues/5933 
 
 [tool.pytest_env]
 OPENAI_API_KEY = {value = "api-key", skip_if_set = true}
