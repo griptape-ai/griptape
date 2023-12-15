@@ -9,6 +9,7 @@ from griptape.utils import J2, PromptStack
 if TYPE_CHECKING:
     from griptape.artifacts import TextArtifact, ListArtifact
     from griptape.drivers import BaseGraphDriver, BasePromptDriver
+    from griptape.rules import Ruleset
 
 
 @define
@@ -28,7 +29,7 @@ class GraphQueryEngine(BaseQueryEngine):
             query: str,
             namespace: Optional[str] = None,
             metadata: Optional[str] = None,
-            rulesets: Optional[str] = None
+            rulesets: Optional[list[Ruleset]] = None
     ) -> TextArtifact:
         message = self.template_generator.render(
             metadata=metadata,

@@ -10,6 +10,7 @@ from griptape.tokenizers import OpenAiTokenizer
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver
+    from griptape.rules import Ruleset
 
 
 @define
@@ -28,7 +29,7 @@ class VectorQueryEngine(BaseQueryEngine):
         metadata: Optional[str] = None,
         top_n: Optional[int] = None,
         namespace: Optional[str] = None,
-        rulesets: Optional[str] = None
+        rulesets: Optional[list[Ruleset]] = None
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace)
