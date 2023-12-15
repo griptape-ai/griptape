@@ -33,6 +33,7 @@ class ActionSubtask(PromptTask):
         },
     )
 
+    _input: str | None = field(default=None)
     parent_task_id: str | None = field(default=None, kw_only=True)
     thought: str | None = field(default=None, kw_only=True)
     action_name: str | None = field(default=None, kw_only=True)
@@ -41,6 +42,10 @@ class ActionSubtask(PromptTask):
 
     _tool: BaseTool | None = None
     _memory: TaskMemory | None = None
+
+    @property
+    def input(self) -> TextArtifact:
+        return TextArtifact(self._input)
 
     @property
     def origin_task(self) -> ActionSubtaskOriginMixin | None:
