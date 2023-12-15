@@ -38,7 +38,7 @@ class Stream:
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
 
     def run(self, *args) -> Iterator[TextArtifact]:
-        t = Thread(target=self._run, args=args)
+        t = Thread(target=self._run_structure, args=args)
         t.start()
 
         while True:
@@ -51,7 +51,7 @@ class Stream:
                 yield TextArtifact(value=event.token)
         t.join()
 
-    def _run(self, *args):
+    def _run_structure(self, *args):
         def event_handler(event: BaseEvent):
             self._event_queue.put(event)
 
