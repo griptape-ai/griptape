@@ -59,6 +59,4 @@ class Agent(Structure):
 
             self.conversation_memory.add_run(run)
 
-        self._execution_args = ()
-
         return self
