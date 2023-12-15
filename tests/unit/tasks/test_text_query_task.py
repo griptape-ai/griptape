@@ -27,7 +27,7 @@ class TestTextQueryTask:
         assert task.run().to_text() == "mock output"
 
     def test_context_propagation(self, task):
-        task.input_template = "{{ test }}"
+        task.input = "{{ test }}"
         task.context = {"test": "test value"}
 
         Agent().add_task(task)

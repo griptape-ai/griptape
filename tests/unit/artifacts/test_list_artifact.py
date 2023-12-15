@@ -10,6 +10,10 @@ class TestListArtifact:
     def test_to_dict(self):
         assert ListArtifact([TextArtifact("foobar")]).to_dict()["value"][0]["value"] == "foobar"
 
+    def test__getitem__(self):
+        assert ListArtifact([TextArtifact("foo"), TextArtifact("bar")])[0].value == "foo"
+        assert ListArtifact([TextArtifact("foo"), TextArtifact("bar")])[1].value == "bar"
+
     def test___add__(self):
         artifact = ListArtifact([TextArtifact("foo")]) + ListArtifact([TextArtifact("bar")])
 
