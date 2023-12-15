@@ -25,10 +25,10 @@ class VectorQueryEngine(BaseQueryEngine):
     def query(
         self,
         query: str,
-        metadata: str | None = None,
-        top_n: int | None = None,
-        namespace: str | None = None,
-        rulesets: str | None = None,
+        metadata: Optional[str] = None,
+        top_n: Optional[int] = None,
+        namespace: Optional[str] = None,
+        rulesets: Optional[str] = None
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace)

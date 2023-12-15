@@ -1,9 +1,15 @@
 from abc import ABC, abstractmethod
 from typing import Optional
+
+from attr import define, field
+
 from griptape.artifacts import ListArtifact, TextArtifact
 
 
+@define
 class BaseGraphDriver(ABC):
+    graph_db_hint: str = field(kw_only=True)
+
     @abstractmethod
     def load_metadata(self, namespace: Optional[str] = None) -> dict:
         ...

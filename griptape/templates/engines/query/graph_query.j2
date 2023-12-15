@@ -1,0 +1,20 @@
+You can generate search queries for {{ graph_db_hint }}. Always be truthful. Don't make up facts. Use the below graph structure to generate a query that answers the question.
+
+{% if metadata %}
+Metadata: """
+{{ metadata }}
+"""
+{% endif %}
+{% if graph_structure %}
+Graph Structure: """
+{{ graph_structure }}
+"""
+{% endif %}
+
+Question: {{ question }}
+{% if rulesets %}
+
+{{ rulesets }}
+{% endif %}
+
+Answer:
