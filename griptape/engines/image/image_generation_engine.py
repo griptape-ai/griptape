@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from attr import field, define
@@ -14,20 +16,12 @@ class ImageGenerationEngine:
     def text_to_image(
         self,
         prompts: list[str],
-        negative_prompts: Optional[list[str]] = None,
-        rulesets: Optional[list[Ruleset]] = None,
-        negative_rulesets: Optional[list[Ruleset]] = None,
+        negative_prompts: list[str] | None = None,
+        rulesets: list[Ruleset] | None = None,
+        negative_rulesets: list[Ruleset] | None = None,
     ) -> ImageArtifact:
-        if not negative_prompts:
-            negative_prompts = []
-
-        if rulesets:
-            for ruleset in rulesets:
-                prompts += [rule.value for rule in ruleset.rules]
-
-        if negative_rulesets:
-            for negative_ruleset in negative_rulesets:
-                negative_prompts += [rule.value for rule in negative_ruleset.rules]
+        prompts = self._ruleset_to_prompts(prompts, rulesets)
+        negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)
 
         return self.image_driver.run_text_to_image(prompts, negative_prompts=negative_prompts)
 
@@ -35,20 +29,12 @@ class ImageGenerationEngine:
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        rulesets: Optional[list[Ruleset]] = None,
-        negative_rulesets: Optional[list[Ruleset]] = None,
+        negative_prompts: list[str] | None = None,
+        rulesets: list[Ruleset] | None = None,
+        negative_rulesets: list[Ruleset] | None = None,
     ) -> ImageArtifact:
-        if not negative_prompts:
-            negative_prompts = []
-
-        if rulesets:
-            for ruleset in rulesets:
-                prompts += [rule.value for rule in ruleset.rules]
-
-        if negative_rulesets:
-            for negative_ruleset in negative_rulesets:
-                negative_prompts += [rule.value for rule in negative_ruleset.rules]
+        prompts = self._ruleset_to_prompts(prompts, rulesets)
+        negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)
 
         return self.image_driver.run_image_variation(prompts=prompts, image=image, negative_prompts=negative_prompts)
 
@@ -57,20 +43,12 @@ class ImageGenerationEngine:
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        rulesets: Optional[list[Ruleset]] = None,
-        negative_rulesets: Optional[list[Ruleset]] = None,
+        negative_prompts: list[str] | None = None,
+        rulesets: list[Ruleset] | None = None,
+        negative_rulesets: list[Ruleset] | None = None,
     ) -> ImageArtifact:
-        if not negative_prompts:
-            negative_prompts = []
-
-        if rulesets:
-            for ruleset in rulesets:
-                prompts += [rule.value for rule in ruleset.rules]
-
-        if negative_rulesets:
-            for negative_ruleset in negative_rulesets:
-                negative_prompts += [rule.value for rule in negative_ruleset.rules]
+        prompts = self._ruleset_to_prompts(prompts, rulesets)
+        negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)
 
         return self.image_driver.run_image_inpainting(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts
@@ -81,21 +59,23 @@ class ImageGenerationEngine:
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        rulesets: Optional[list[Ruleset]] = None,
-        negative_rulesets: Optional[list[Ruleset]] = None,
+        negative_prompts: list[str] | None = None,
+        rulesets: list[Ruleset] | None = None,
+        negative_rulesets: list[Ruleset] | None = None,
     ) -> ImageArtifact:
-        if not negative_prompts:
-            negative_prompts = []
+        prompts = self._ruleset_to_prompts(prompts, rulesets)
+        negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)
+
+        return self.image_driver.run_image_outpainting(
+            prompts, image=image, mask=mask, negative_prompts=negative_prompts
+        )
+
+    def _ruleset_to_prompts(self, prompts: list[str] | None, rulesets: list[Ruleset] | None) -> list[str]:
+        if not prompts:
+            prompts = []
 
         if rulesets:
             for ruleset in rulesets:
                 prompts += [rule.value for rule in ruleset.rules]
 
-        if negative_rulesets:
-            for negative_ruleset in negative_rulesets:
-                negative_prompts += [rule.value for rule in negative_ruleset.rules]
-
-        return self.image_driver.run_image_outpainting(
-            prompts, image=image, mask=mask, negative_prompts=negative_prompts
-        )
+        return prompts

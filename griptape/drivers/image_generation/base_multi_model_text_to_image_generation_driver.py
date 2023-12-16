@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from abc import abstractmethod
-
 from attr import field, define
 
-from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver, BaseImageGenerationModelDriver
 
 
@@ -21,7 +18,3 @@ class BaseMultiModelTextToImageGenerationDriver(BaseImageGenerationDriver):
     """
 
     text_to_image_generation_model_driver: BaseImageGenerationModelDriver = field(kw_only=True)
-
-    @abstractmethod
-    def try_generate_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
-        ...
