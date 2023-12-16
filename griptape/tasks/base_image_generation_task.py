@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from abc import ABC
 
 from attr import field, define
 
@@ -8,11 +9,11 @@ from griptape.artifacts import ImageArtifact
 from griptape.engines import ImageGenerationEngine
 from griptape.loaders.image_loader import ImageLoader
 from griptape.rules import Ruleset, Rule
-from griptape.tasks import BaseTextInputTask
+from griptape.tasks.base_ruleset_task import BaseRulesetTask
 
 
 @define
-class BaseImageGenerationTask(BaseTextInputTask):
+class BaseImageGenerationTask(BaseRulesetTask, ABC):
     """Provides a base class for image generation-related tasks.
 
     Attributes:

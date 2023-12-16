@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Callable
+
 from attr import define, field
 
-from griptape.artifacts import ImageArtifact
-from griptape.tasks import BaseImageGenerationTask
+from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.tasks import BaseImageGenerationTask, BaseTask
 
 
 @define
@@ -23,18 +25,32 @@ class ImageInpaintingTask(BaseImageGenerationTask):
 
     image_file: str = field(kw_only=True)
     mask_file: str | None = field(default=None, kw_only=True)
+    _input: tuple[TextArtifact, ImageArtifact, ImageArtifact] | Callable[
+        [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
+    ] = field(default=None, kw_only=True)
+
+    @property
+    def input(self) -> (TextArtifact, ImageArtifact, ImageArtifact):
+        if isinstance(self._input, (TextArtifact, ImageArtifact)):
+            return self._input
+        elif isinstance(self._input, Callable):
+            return self._input(self)
+        else:
+            raise ValueError("Input must be a tuple of (text, image, mask) or a callable that returns such a tuple.")
+
+    @input.setter
+    def input(self, value: (TextArtifact, ImageArtifact, ImageArtifact)) -> None:
+        self._input = value
 
     def run(self) -> ImageArtifact:
-        input_image_artifact = self._read_from_file(self.image_file)
-
-        mask_image_artifact = None
-        if self.mask_file is not None:
-            mask_image_artifact = self._read_from_file(self.mask_file)
+        prompt_artifact = self.input[0]
+        image_artifact = self.input[1]
+        mask_artifact = self.input[2]
 
         output_image_artifact = self.image_generation_engine.image_inpainting(
-            prompts=[self.input.to_text()],
-            image=input_image_artifact,
-            mask=mask_image_artifact,
+            prompts=[prompt_artifact.to_text()],
+            image=image_artifact,
+            mask=mask_artifact,
             rulesets=self.all_rulesets,
             negative_rulesets=self.negative_rulesets,
         )

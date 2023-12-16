@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from attr import define
+from typing import Callable
 
-from griptape.artifacts import ImageArtifact
-from griptape.tasks import BaseImageGenerationTask
+from attr import define, field
+
+from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.tasks import BaseImageGenerationTask, BaseTask
 
 
 @define
@@ -17,6 +19,21 @@ class TextToImageTask(BaseImageGenerationTask):
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
     """
+
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=None, kw_only=True)
+
+    @property
+    def input(self) -> (TextArtifact, ImageArtifact, ImageArtifact):
+        if isinstance(self._input, TextArtifact):
+            return self._input
+        elif isinstance(self._input, Callable):
+            return self._input(self)
+        else:
+            return TextArtifact(self._input)
+
+    @input.setter
+    def input(self, value: (TextArtifact, ImageArtifact, ImageArtifact)) -> None:
+        self._input = value
 
     def run(self) -> ImageArtifact:
         image_artifact = self.image_generation_engine.text_to_image(
