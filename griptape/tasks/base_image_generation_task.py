@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from attr import field
+from attr import field, define
 
 from griptape.artifacts import ImageArtifact
 from griptape.engines import ImageGenerationEngine
@@ -11,6 +11,7 @@ from griptape.rules import Ruleset, Rule
 from griptape.tasks import BaseTextInputTask
 
 
+@define
 class BaseImageGenerationTask(BaseTextInputTask):
     """Provides a base class for image generation-related tasks.
 
