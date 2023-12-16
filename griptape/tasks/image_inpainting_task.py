@@ -55,7 +55,7 @@ class ImageInpaintingTask(BaseImageGenerationTask):
             negative_rulesets=self.negative_rulesets,
         )
 
-        if self.output_dir is not None or self.output_file is not None:
+        if self.output_dir or self.output_file:
             self._write_to_file(output_image_artifact)
 
         return output_image_artifact
