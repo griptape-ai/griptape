@@ -37,10 +37,10 @@ class TestBedrockLlamaPromptModelDriver:
     def stack(self):
         stack = PromptStack()
 
-        stack.add_system_input("foo")
-        stack.add_user_input("bar")
-        stack.add_assistant_input("baz")
-        stack.add_user_input("qux")
+        stack.add_system_input("{{ system_prompt }}")
+        stack.add_user_input("{{ usr_msg_1 }}")
+        stack.add_assistant_input("{{ model_msg_1 }}")
+        stack.add_user_input("{{ usr_msg_2 }}")
 
         return stack
 
@@ -51,10 +51,13 @@ class TestBedrockLlamaPromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, str)
-        assert model_input == "<s>[INST] <<SYS>>\nfoo\n<</SYS>>\n\nbar [/INST]baz </s><s>[INST] qux [/INST]"
+        assert (
+            model_input
+            == "<s>[INST] <<SYS>>\n{{ system_prompt }}\n<</SYS>>\n\n{{ usr_msg_1 }} [/INST] {{ model_msg_1 }} </s><s>[INST] {{ usr_msg_2 }} [/INST]"
+        )
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_gen_length"] == 4091
+        assert driver.prompt_stack_to_model_params(stack)["max_gen_len"] == 2026
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver):

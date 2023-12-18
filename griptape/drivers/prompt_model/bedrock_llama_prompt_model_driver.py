@@ -1,5 +1,7 @@
 from __future__ import annotations
 import json
+import itertools as it
+from typing import Tuple
 from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
@@ -37,20 +39,41 @@ class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
             return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str:
-        prompt_lines = []
-        first_user_input = True
+        """
+        Converts a `PromptStack` to a string that can be used as the input to the model.
 
-        for i in prompt_stack.inputs:
-            if i.is_user():
-                if first_user_input:
-                    prompt_lines.append(f"{i.content} [/INST]")
-                    first_user_input = False
+        Prompt structure adapted from https://huggingface.co/blog/llama2#how-to-prompt-llama-2
+
+        Args:
+            prompt_stack: The `PromptStack` to convert.
+        """
+        prompt_lines = []
+
+        inputs = iter(prompt_stack.inputs)
+        batched_inputs: list[tuple[PromptStack.Input | None, PromptStack.Input | None]] = list(
+            it.zip_longest(inputs, inputs, fillvalue=None)
+        )
+        for input in batched_inputs:
+            first, second = input
+
+            if first.is_system():
+                prompt_lines.append(f"<s>[INST] <<SYS>>\n{first.content}\n<</SYS>>\n\n")
+                if second and second.is_user():
+                    prompt_lines.append(f"{second.content} [/INST]")
                 else:
-                    prompt_lines.append(f"<s>[INST] {i.content} [/INST]")
-            elif i.is_assistant():
-                prompt_lines.append(f"{i.content} </s>")
-            elif i.is_system():
-                prompt_lines.append(f"<s>[INST] <<SYS>>\n{i.content}\n<</SYS>>\n\n")
+                    raise Exception("System input must be followed by user input.")
+            elif first.is_assistant():
+                prompt_lines.append(f" {first.content} </s>")
+                if second and second.is_user():
+                    prompt_lines.append(f"<s>[INST] {second.content} [/INST]")
+                else:
+                    raise Exception("Assistant input must be followed by user input.")
+            elif first.is_user():
+                prompt_lines.append(f"<s>[INST] {first.content} [/INST]")
+                if second and second.is_assistant():
+                    prompt_lines.append(f" {second.content} </s>")
+                else:
+                    raise Exception("User input must be followed by assistant input.")
 
         return "".join(prompt_lines)
 
