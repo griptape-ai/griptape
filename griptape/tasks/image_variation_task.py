@@ -18,17 +18,19 @@ class ImageVariationTask(BaseImageGenerationTask):
         negative_rules: List of negatively-weighted rules applied to the text prompt, if supported by the driver.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
-        image_file: The path to the input image file.
     """
 
-    image_file: str = field(kw_only=True)
     _input: tuple[TextArtifact, ImageArtifact] | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact]] = field(
         default=None, kw_only=True
     )
 
     @property
     def input(self) -> (TextArtifact, ImageArtifact):
-        if isinstance(self._input, (TextArtifact, ImageArtifact)):
+        if (
+            isinstance(self._input, tuple)
+            and isinstance(self._input[0], TextArtifact)
+            and isinstance(self._input[1], ImageArtifact)
+        ):
             return self._input
         elif isinstance(self._input, Callable):
             return self._input(self)

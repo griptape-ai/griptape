@@ -18,20 +18,20 @@ class ImageInpaintingTask(BaseImageGenerationTask):
         negative_rules: List of negatively-weighted rules applied to the text prompt, if supported by the driver.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
-        image_file: The path to the input image file.
-        mask_file: If provided, load this image as a mask for input modifications. Must match the dimensions of
-            the input image.
     """
 
-    image_file: str = field(kw_only=True)
-    mask_file: str | None = field(default=None, kw_only=True)
     _input: tuple[TextArtifact, ImageArtifact, ImageArtifact] | Callable[
         [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
     ] = field(default=None, kw_only=True)
 
     @property
     def input(self) -> (TextArtifact, ImageArtifact, ImageArtifact):
-        if isinstance(self._input, (TextArtifact, ImageArtifact)):
+        if (
+            isinstance(self._input, tuple)
+            and isinstance(self._input[0], TextArtifact)
+            and isinstance(self._input[1], ImageArtifact)
+            and isinstance(self._input[2], ImageArtifact)
+        ):
             return self._input
         elif isinstance(self._input, Callable):
             return self._input(self)
