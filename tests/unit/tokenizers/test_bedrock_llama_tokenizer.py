@@ -21,7 +21,7 @@ class TestBedrockLlamaTokenizer:
     def test_titan_tokens_left(self):
         assert (
             BedrockLlamaTokenizer(model=BedrockLlamaTokenizer.DEFAULT_MODEL).count_tokens_left(
-                "Instructions: foo\nUser: bar\nAssistant:"
+                "<s>[INST] <<SYS>>\n{{ system_prompt }}\n<</SYS>>\n\n{{ usr_msg_1 }} [/INST] {{ model_msg_1 }} </s><s>[INST] {{ usr_msg_2 }} [/INST]"
             )
-            == 4089
+            == 2026
         )
