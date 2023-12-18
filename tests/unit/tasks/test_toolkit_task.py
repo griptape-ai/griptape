@@ -73,6 +73,7 @@ class TestToolkitSubtask:
         assert subtask.action_name == "test"
         assert subtask.action_path == "test action"
         assert subtask.action_input == "test input"
+        assert subtask.answer == "test output"
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
@@ -88,7 +89,7 @@ class TestToolkitSubtask:
         assert subtask.action_name is None
         assert subtask.action_path is None
         assert subtask.action_input is None
-        assert subtask.output.to_text() == "test output"
+        assert subtask.answer == "test output"
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
@@ -131,38 +132,6 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_memory(self, query_engine):
-        m1 = defaults.text_task_memory("Memory1")
-        m2 = defaults.text_task_memory("Memory2")
-
-        tool = MockTool(name="Tool1", output_memory={"test": [m1, m2]})
-        task = ToolkitTask("test", tools=[tool])
-
-        Agent().add_task(task)
-
-        assert task.find_memory("Memory1") == m1
-        assert task.find_memory("Memory2") == m2
-
-    def test_memory(self, query_engine):
-        tool1 = MockTool(
-            name="Tool1",
-            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},
-        )
-
-        tool2 = MockTool(
-            name="Tool2",
-            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory3")]},
-        )
-
-        task = ToolkitTask(tools=[tool1, tool2])
-
-        Agent().add_task(task)
-
-        assert len(task.tool_output_memory) == 3
-        assert task.tool_output_memory[0].name == "Memory1"
-        assert task.tool_output_memory[1].name == "Memory2"
-        assert task.tool_output_memory[2].name == "Memory3"
-
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
         subtask = ActionSubtask()
@@ -170,7 +139,7 @@ class TestToolkitSubtask:
 
         subtask.structure = agent
 
-        memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        memory.process_output(subtask, TextArtifact("foo"))
 
         task = ToolkitTask(tools=[MockTool()])
 

@@ -54,20 +54,27 @@ class TestAgent:
             agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_default_task_memory(self):
-        agent = Agent(tools=[MockTool()])
+        agent = Agent(off_prompt=True)
 
         assert isinstance(agent.task_memory, TaskMemory)
-        assert agent.tools[0].input_memory is not None
-        assert agent.tools[0].input_memory[0] == agent.task_memory
-        assert agent.tools[0].output_memory is not None
-        assert agent.tools[0].output_memory["test"][0] == agent.task_memory
+        assert agent.tasks[0].input_memory is not None
+        assert agent.tasks[0].input_memory[0] == agent.task_memory
+        assert agent.tasks[0].output_memory is not None
+        assert agent.tasks[0].output_memory[0] == agent.task_memory
+
+        agent = Agent(off_prompt=False)
+
+        assert isinstance(agent.task_memory, TaskMemory)
+        assert agent.tasks[0].input_memory is not None
+        assert agent.tasks[0].input_memory[0] == agent.task_memory
+        assert agent.tasks[0].output_memory is None
 
     def test_with_default_task_memory_and_empty_tool_output_memory(self):
-        agent = Agent(tools=[MockTool(output_memory={})])
+        agent = Agent(tasks=[PromptTask(output_memory=[])])
 
         assert isinstance(agent.task_memory, TaskMemory)
-        assert agent.tools[0].input_memory[0] == agent.task_memory
-        assert agent.tools[0].output_memory == {}
+        assert agent.tasks[0].input_memory[0] == agent.task_memory
+        assert agent.tasks[0].output_memory == []
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()

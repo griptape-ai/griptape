@@ -13,17 +13,6 @@ class TestBaseTool:
     def tool(self):
         return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"})
 
-    def test_off_prompt(self, tool):
-        assert (
-            ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()]).tools[0].output_memory
-        )
-
-        assert (
-            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=False)])
-            .tools[0]
-            .output_memory
-        )
-
     def test_manifest_path(self, tool):
         assert tool.manifest_path == os.path.join(tool.abs_dir_path, tool.MANIFEST_FILE)
 
@@ -58,33 +47,6 @@ class TestBaseTool:
             assert False
         except SchemaMissingKeyError as e:
             assert True
-
-    def test_memory(self):
-        tool = MockTool(
-            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]}
-        )
-
-        assert len(tool.output_memory["test"]) == 2
-
-    def test_memory_validation(self):
-        with pytest.raises(ValueError):
-            MockTool(
-                output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory1")]}
-            )
-
-        with pytest.raises(ValueError):
-            MockTool(output_memory={"output_memory": [defaults.text_task_memory("Memory1")]})
-
-        assert MockTool(
-            output_memory={
-                "test": [defaults.text_task_memory("Memory1")],
-                "test_str_output": [defaults.text_task_memory("Memory1")],
-            }
-        )
-
-    def test_find_input_memory(self):
-        assert MockTool().find_input_memory("foo") is None
-        assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
         assert tool.execute(tool.test_list_output, ActionSubtask("foo")).to_text() == "foo\n\nbar"

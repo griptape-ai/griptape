@@ -1,11 +1,12 @@
 import pytest
-from griptape.artifacts import CsvRowArtifact, BlobArtifact, ErrorArtifact, InfoArtifact
+from griptape.artifacts import CsvRowArtifact, BlobArtifact, ErrorArtifact, InfoArtifact, ImageArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.memory import TaskMemory
+from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.structures import Agent
-from griptape.tasks import ActionSubtask
-from tests.mocks.mock_tool.tool import MockTool
+from griptape.tasks import ActionSubtask, ToolkitTask
+from tests.mocks.mock_task import MockTask
 from tests.utils import defaults
 
 
@@ -44,44 +45,53 @@ class TestTaskMemory:
 
     def test_process_output(self, memory):
         artifact = TextArtifact("foo")
-        subtask = ActionSubtask()
+        subtask = ActionSubtask(
+            "Thought: need to test\n"
+            'Action: {"name": "test", "path": "test action", "input": "test input"}\n'
+            "<|Response|>: test observation\n"
+            "Answer: test output"
+        )
 
-        subtask.structure = Agent()
+        mock_task = ToolkitTask()
+        Agent(tasks=[mock_task])
+        subtask.attach_to(mock_task)
 
-        output = memory.process_output(MockTool().test, subtask, artifact)
+        output = memory.process_output(subtask, artifact)
 
         entries = subtask.structure.meta_memory.entries
 
         assert len(entries) == 1
-        assert entries[0].action == "{}"
+        assert isinstance(entries[0], ActionSubtaskMetaEntry)
+        assert entries[0].thought == "need to test"
+        assert entries[0].action == '{"name": "test", "path": "test action", "input": "test input"}'
         assert entries[0].answer.startswith(
-            'Output of "MockTool.test" was stored in memory with memory_name "MyMemory"'
+            'The output of "test.test action" was stored in memory with memory_name "MyMemory"'
         )
-        assert entries[0].thought is None
 
-        assert output.to_text().startswith('Output of "MockTool.test" was stored in memory')
+        assert output.to_text().startswith('The output of "test.test action" was stored in memory')
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
 
     def test_process_output_with_many_artifacts(self, memory):
         assert (
-            memory.process_output(MockTool().test, ActionSubtask(), ListArtifact([TextArtifact("foo")]))
+            memory.process_output(
+                ActionSubtask(action_name="MockTool", action_path="test"), ListArtifact([TextArtifact("foo")])
+            )
             .to_text()
-            .startswith('Output of "MockTool.test" was stored in memory')
+            .startswith('The output of "MockTool.test" was stored in memory')
         )
 
     def test_load_artifacts_for_text_artifact(self, memory):
-        memory.process_output(MockTool().test, ActionSubtask(), TextArtifact("foo", name="test"))
+        memory.process_output(ActionSubtask(), TextArtifact("foo", name="test"))
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_blob_artifact(self, memory):
-        memory.process_output(MockTool().test, ActionSubtask(), BlobArtifact(b"foo", name="test"))
+        memory.process_output(ActionSubtask(), BlobArtifact(b"foo", name="test"))
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_text_list_artifact(self, memory):
         memory.process_output(
-            MockTool().test,
             ActionSubtask(),
             ListArtifact([TextArtifact("foo", name="test1"), TextArtifact("foo", name="test2")], name="test"),
         )
@@ -90,9 +100,22 @@ class TestTaskMemory:
 
     def test_load_artifacts_for_blob_list_artifact(self, memory):
         memory.process_output(
-            MockTool().test,
             ActionSubtask(),
             ListArtifact([BlobArtifact(b"foo", name="test1"), BlobArtifact(b"foo", name="test2")], name="test"),
+        )
+
+        assert len(memory.load_artifacts("test")) == 2
+
+    def test_load_artifacts_for_image_list_artifact(self, memory):
+        memory.process_output(
+            ActionSubtask(),
+            ListArtifact(
+                [
+                    ImageArtifact(b"foo", mime_type="", width=256, height=256, name="test1"),
+                    ImageArtifact(b"foo", mime_type="", width=256, height=256, name="test2"),
+                ],
+                name="test",
+            ),
         )
 
         assert len(memory.load_artifacts("test")) == 2

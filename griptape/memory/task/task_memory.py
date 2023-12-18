@@ -60,22 +60,9 @@ class TaskMemory(ActivityMixin):
                 if task.structure and task.structure.meta_memory:
                     if isinstance(task, ActionSubtask):
                         self.namespace_metadata[namespace] = task.action_to_json()
-                        if task.thought and task.answer:
-                            task.structure.meta_memory.add_entry(
-                                ActionSubtaskMetaEntry(
-                                    thought=task.thought, action=task.action_to_json(), answer=task.answer
-                                )
-                            )
-
-                    task.structure.meta_memory.add_entry(
-                        TaskMemoryMetaEntry(
-                            output=output,
-                            # task_memory_name=self.name,
-                            # task_output_name=task_output_name,
-                            # output_artifact_namespace=task.output_artifact_namespace,
+                        task.structure.meta_memory.add_entry(
+                            ActionSubtaskMetaEntry(thought=task.thought, action=task.action_to_json(), answer=output)
                         )
-                    )
-
                 return InfoArtifact(output, name=namespace)
         else:
             return InfoArtifact("task output is empty")
@@ -115,6 +102,12 @@ class TaskMemory(ActivityMixin):
             return storage.load_artifacts(namespace)
         else:
             return ListArtifact()
+
+    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
+        if memory_name == self.name:
+            return self
+        else:
+            return None
 
     def summarize_namespace(self, namespace: str) -> TextArtifact | InfoArtifact:
         storage = self.namespace_storage.get(namespace)

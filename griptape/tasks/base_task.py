@@ -38,7 +38,7 @@ class BaseTask(ABC):
     task_memory: TaskMemory | None = field(default=None, kw_only=True)
     input_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
     output_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
-    output_artifact_namespace: str | None = field(default=Factory(lambda self: self.id, takes_self=True), kw_only=True)
+    output_artifact_namespace: str | None = field(default=None, kw_only=True)
 
     output: BaseArtifact | None = field(default=None, init=False)
     structure: Structure | None = field(default=None, init=False)
@@ -72,6 +72,10 @@ class BaseTask(ABC):
 
     def __str__(self) -> str:
         return str(self.output.value)
+
+    def __attrs_post_init__(self) -> None:
+        if self.task_memory:
+            self.set_default_task_memory(self.task_memory)
 
     @input_memory.validator
     def validate_input_memory(self, _, input_memory: list[TaskMemory]) -> None:

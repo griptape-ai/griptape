@@ -6,6 +6,7 @@ import pytest
 from griptape.artifacts import ErrorArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.loaders import FileLoader
+from griptape.tasks import ActionSubtask
 from griptape.tools import FileManager
 from tests.utils import defaults
 
@@ -16,9 +17,11 @@ class TestFileManager:
             FileManager(workdir="foo")
 
     def test_load_files_from_disk(self):
-        result = FileManager(
-            input_memory=[defaults.text_task_memory("Memory1")], workdir=os.path.abspath(os.path.dirname(__file__))
-        ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
+        subtask = ActionSubtask(input_memory=[defaults.text_task_memory("Memory1")])
+        tool = FileManager(workdir=os.path.abspath(os.path.dirname(__file__)))
+        tool.attach_to(subtask)
+
+        result = tool.load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result, ListArtifact)
         assert len(result.value) == 4
@@ -46,7 +49,10 @@ class TestFileManager:
 
             memory.store_artifact("foobar", artifact)
 
-            result = FileManager(workdir=temp_dir, input_memory=[memory]).save_memory_artifacts_to_disk(
+            subtask = ActionSubtask(input_memory=[memory])
+            tool = FileManager(workdir=temp_dir)
+            tool.attach_to(subtask)
+            result = tool.save_memory_artifacts_to_disk(
                 {
                     "values": {
                         "dir_name": "test",
@@ -70,7 +76,10 @@ class TestFileManager:
             for a in artifacts:
                 memory.store_artifact("foobar", a)
 
-            result = FileManager(workdir=temp_dir, input_memory=[memory]).save_memory_artifacts_to_disk(
+            subtask = ActionSubtask(input_memory=[memory])
+            tool = FileManager(workdir=temp_dir)
+            tool.attach_to(subtask)
+            result = tool.save_memory_artifacts_to_disk(
                 {
                     "values": {
                         "dir_name": "test",

@@ -15,16 +15,24 @@ class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: int | None = field(default=20, kw_only=True)
+    off_prompt: bool = field(default=False, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
         if len(self.tasks) == 0:
             if self.tools:
                 task = ToolkitTask(
-                    self.input_template, tools=self.tools, max_meta_memory_entries=self.max_meta_memory_entries
+                    self.input_template,
+                    tools=self.tools,
+                    max_meta_memory_entries=self.max_meta_memory_entries,
+                    off_prompt=self.off_prompt,
                 )
             else:
-                task = PromptTask(self.input_template, max_meta_memory_entries=self.max_meta_memory_entries)
+                task = PromptTask(
+                    self.input_template,
+                    max_meta_memory_entries=self.max_meta_memory_entries,
+                    off_prompt=self.off_prompt,
+                )
 
             self.add_task(task)
 

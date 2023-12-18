@@ -2,6 +2,7 @@ from unittest.mock import Mock
 import pytest
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, ActionSubtask
+from griptape.artifacts import TextArtifact
 from griptape.events import (
     StartTaskEvent,
     FinishTaskEvent,
@@ -36,7 +37,7 @@ class TestEventListener:
         pipeline.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
-        pipeline.tasks[0].subtasks[0].after_run()
+        pipeline.tasks[0].subtasks[0].after_run(TextArtifact("foobar"))
         pipeline.run()
 
         assert event_handler_1.call_count == 9
@@ -67,7 +68,7 @@ class TestEventListener:
 
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
-        pipeline.tasks[0].subtasks[0].after_run()
+        pipeline.tasks[0].subtasks[0].after_run(TextArtifact("foobar"))
         pipeline.run()
 
         start_task_event_handler.assert_called_once()

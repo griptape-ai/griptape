@@ -40,7 +40,7 @@ class ActionSubtask(PromptTask):
     action_name: str | None = field(default=None, kw_only=True)
     action_path: str | None = field(default=None, kw_only=True)
     action_input: dict | None = field(default=None, kw_only=True)
-    off_prompt: bool = field(init=False, kw_only=True)
+    off_prompt: bool | None = field(default=None, kw_only=True)
 
     _tool: BaseTool | None = None
     _memory: TaskMemory | None = None
@@ -181,10 +181,8 @@ class ActionSubtask(PromptTask):
 
                 self.action_name = "error"
                 self.action_input = {"error": f"Action input parsing error: {e}"}
-        elif self.answer is None and len(answer_matches) > 0:
+        if self.answer is None and len(answer_matches) > 0:
             self.answer = answer_matches[-1]
-
-            return self.answer
 
     def __validate_action_input(self, action_input: dict, mixin: ActivityMixin) -> None:
         try:

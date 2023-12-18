@@ -67,14 +67,14 @@ class TestPipeline:
     def test_with_default_task_memory(self):
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(ToolkitTask(off_prompt=True, tools=[MockTool()]))
 
         assert isinstance(pipeline.tasks[0], ToolkitTask)
         assert pipeline.tasks[0].task_memory == pipeline.task_memory
-        assert pipeline.tasks[0].tools[0].input_memory is not None
-        assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.task_memory
-        assert pipeline.tasks[0].tools[0].output_memory is not None
-        assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.task_memory
+        assert pipeline.tasks[0].input_memory is not None
+        assert pipeline.tasks[0].input_memory[0] == pipeline.task_memory
+        assert pipeline.tasks[0].output_memory is not None
+        assert pipeline.tasks[0].output_memory[0] == pipeline.task_memory
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
@@ -91,10 +91,10 @@ class TestPipeline:
     def test_with_default_task_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
+        pipeline.add_task(ToolkitTask(output_memory=[], tools=[MockTool()]))
 
         assert isinstance(pipeline.tasks[0], ToolkitTask)
-        assert pipeline.tasks[0].tools[0].output_memory == {}
+        assert pipeline.tasks[0].output_memory == []
 
     def test_without_default_task_memory(self):
         pipeline = Pipeline(task_memory=None)

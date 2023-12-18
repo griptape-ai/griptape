@@ -30,7 +30,7 @@ class TestToolTask:
 
         agent.add_task(task)
 
-        assert task.run().to_text().startswith('Output of "MockTool.test" was stored in memory')
+        assert task.run().to_text().startswith('The output of "MockTool.test" was stored in memory')
 
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
@@ -39,7 +39,7 @@ class TestToolTask:
 
         subtask.structure = agent
 
-        memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        memory.process_output(subtask, TextArtifact("foo"))
 
         task = ToolTask(tool=MockTool())
 
