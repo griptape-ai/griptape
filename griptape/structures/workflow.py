@@ -114,8 +114,6 @@ class Workflow(Structure):
 
             self.conversation_memory.add_run(run)
 
-        self._execution_args = ()
-
         return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:

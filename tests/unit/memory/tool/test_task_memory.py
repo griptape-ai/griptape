@@ -36,6 +36,7 @@ class TestTaskMemory:
         assert memory.store_artifact("btest", BlobArtifact(b"foo4")) is None
         assert isinstance(memory.store_artifact("btest", TextArtifact("foo5")), ErrorArtifact)
         assert isinstance(memory.store_artifact("test", InfoArtifact("foo1")), InfoArtifact)
+        assert memory.store_artifact("test", InfoArtifact("foo1", name="foobar")).name == "foobar"
         assert memory.store_artifact("test", ListArtifact([TextArtifact("foo1")])) is None
 
     def test_find_input_memory(self, memory):

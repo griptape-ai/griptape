@@ -76,7 +76,7 @@ class TaskMemory(ActivityMixin):
                         )
                     )
 
-                return InfoArtifact(output)
+                return InfoArtifact(output, name=namespace)
         else:
             return InfoArtifact("task output is empty")
 
