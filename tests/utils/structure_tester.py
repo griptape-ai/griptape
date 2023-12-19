@@ -80,10 +80,13 @@ class StructureTester:
         ),
         "SAGEMAKER_LLAMA_7B": AmazonSageMakerPromptDriver(
             model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
+            max_attempts=1,
             prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
         ),
         "SAGEMAKER_FALCON_7b": AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"], prompt_model_driver=SageMakerFalconPromptModelDriver()
+            model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
+            max_attempts=1,
+            prompt_model_driver=SageMakerFalconPromptModelDriver(),
         ),
     }
 
@@ -181,9 +184,10 @@ class StructureTester:
 
     def run(self, prompt, assert_correctness: bool = True) -> dict:
         result = self.structure.run(prompt)
-        if isinstance(result, ErrorArtifact):
-            return {"correct": False, "explanation": f"ErrorArtifact: {result.to_text()}"}
-        verified_result = self.verify_structure_output(self.structure)
+        if isinstance(result.output_task.output, ErrorArtifact):
+            verified_result = {"correct": False, "explanation": f"ErrorArtifact: {result.output_task.output.to_text()}"}
+        else:
+            verified_result = self.verify_structure_output(self.structure)
 
         if assert_correctness:
             assert verified_result["correct"]
