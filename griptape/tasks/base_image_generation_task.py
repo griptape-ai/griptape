@@ -9,11 +9,11 @@ from griptape.artifacts import ImageArtifact
 from griptape.engines import ImageGenerationEngine
 from griptape.loaders.image_loader import ImageLoader
 from griptape.rules import Ruleset, Rule
-from griptape.tasks.base_ruleset_task import BaseRulesetTask
+from griptape.tasks import BaseTextInputTask
 
 
 @define
-class BaseImageGenerationTask(BaseRulesetTask, ABC):
+class BaseImageGenerationTask(BaseTextInputTask, ABC):
     """Provides a base class for image generation-related tasks.
 
     Attributes:

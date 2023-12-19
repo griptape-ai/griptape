@@ -6,6 +6,7 @@ from attr import define, field
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
+from griptape.utils import J2
 
 
 @define
@@ -33,6 +34,17 @@ class ImageOutpaintingTask(BaseImageGenerationTask):
             and isinstance(self._input[2], ImageArtifact)
         ):
             return self._input
+        if (
+            isinstance(self._input, tuple)
+            and isinstance(self._input[0], str)
+            and isinstance(self._input[1], ImageArtifact)
+            and isinstance(self._input[2], ImageArtifact)
+        ):
+            return (
+                TextArtifact(J2().render_from_string(self._input[0], **self.full_context)),
+                self._input[1],
+                self._input[2],
+            )
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:

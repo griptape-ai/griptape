@@ -6,6 +6,7 @@ from attr import define, field
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
+from griptape.utils import J2
 
 
 @define
@@ -20,19 +21,17 @@ class TextToImageTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=None, kw_only=True)
-
     @property
-    def input(self) -> (TextArtifact, ImageArtifact, ImageArtifact):
+    def input(self) -> TextArtifact:
         if isinstance(self._input, TextArtifact):
             return self._input
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
-            return TextArtifact(self._input)
+            return TextArtifact(J2().render_from_string(self._input, **self.full_context))
 
     @input.setter
-    def input(self, value: (TextArtifact, ImageArtifact, ImageArtifact)) -> None:
+    def input(self, value: TextArtifact) -> None:
         self._input = value
 
     def run(self) -> ImageArtifact:
