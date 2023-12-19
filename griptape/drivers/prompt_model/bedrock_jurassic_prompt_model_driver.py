@@ -44,12 +44,12 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
             if i.is_user():
                 prompt_lines.append(f"User: {i.content}")
             elif i.is_assistant():
-                prompt_lines.append(f"Bot: {i.content}")
+                prompt_lines.append(f"Assistant: {i.content}")
             elif i.is_system():
-                prompt_lines.append(f"Instructions: {i.content}")
+                prompt_lines.append(f"System: {i.content}")
             else:
                 prompt_lines.append(i.content)
-        prompt_lines.append("Bot:")
+        prompt_lines.append("Assistant:")
 
         prompt = "\n".join(prompt_lines)
 
