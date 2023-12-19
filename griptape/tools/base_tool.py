@@ -102,7 +102,7 @@ class BaseTool(ActivityMixin, ABC):
 
     def execute(self, activity: Callable, subtask: ActionSubtask) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask.action_input)
-        output = self.run(activity, subtask, preprocessed_input)
+        output = self.run(activity, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, output)
 
         return postprocessed_output
@@ -113,7 +113,7 @@ class BaseTool(ActivityMixin, ABC):
     def attach_to(self, origin_task: ActionSubtask):
         self.origin_task = origin_task
 
-    def run(self, activity: Callable, subtask: ActionSubtask, value: dict | None) -> BaseArtifact:
+    def run(self, activity: Callable, value: dict | None) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):

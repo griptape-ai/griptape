@@ -86,12 +86,9 @@ class ActionSubtask(PromptTask):
 
             return ErrorArtifact(str(e))
 
-    def after_run(self, output: BaseArtifact) -> BaseArtifact:
-        processed_output = super().after_run(output)
-
+    def after_run(self) -> None:
         self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
-
-        return processed_output
+        self.structure.logger.info(f"Subtask {self.id}\n{self.output.to_text()}")
 
     def action_to_json(self) -> str:
         json_dict = {}

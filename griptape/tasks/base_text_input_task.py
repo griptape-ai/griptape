@@ -88,9 +88,7 @@ class BaseTextInputTask(BaseTask, ABC):
 
         self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {self.input.to_text()}")
 
-    def after_run(self, output: BaseArtifact) -> BaseArtifact:
-        processed_output = super().after_run(output)
+    def after_run(self) -> None:
+        super().after_run()
 
-        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {processed_output.to_text()}")
-
-        return processed_output
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.input.to_text()}")

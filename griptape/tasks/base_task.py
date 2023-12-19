@@ -114,10 +114,11 @@ class BaseTask(ABC):
         if self.structure:
             self.structure.publish_event(StartTaskEvent.from_task(self))
 
-    def after_run(self, output: BaseArtifact) -> BaseArtifact:
+    def after_run(self) -> None:
         if self.structure:
             self.structure.publish_event(FinishTaskEvent.from_task(self))
 
+    def process_output(self, output: BaseArtifact) -> BaseArtifact:
         if output:
             if self.output_memory:
                 for memory in self.output_memory:
@@ -136,8 +137,9 @@ class BaseTask(ABC):
             self.before_run()
 
             output = self.run()
+            self.output = self.process_output(output)
 
-            self.output = self.after_run(output)
+            self.after_run()
         except Exception as e:
             self.structure.logger.error(f"{self.__class__.__name__} {self.id}\n{e}", exc_info=True)
 
