@@ -11,7 +11,11 @@ from griptape.utils import J2
 
 @define
 class ImageInpaintingTask(BaseImageGenerationTask):
-    """A task that modifies a select region within an image using a mask.
+    """A task that modifies a select region within an image using a mask. Accepts a text prompt, image, and mask as
+    input in one of the following formats:
+    - tuple of (template string, ImageArtifact, ImageArtifact)
+    - tuple of (TextArtifact, ImageArtifact, ImageArtifact)
+    - Callable that returns a tuple of (TextArtifact, ImageArtifact, ImageArtifact)
 
     Attributes:
         image_generation_engine: The engine used to generate the image.
@@ -21,7 +25,7 @@ class ImageInpaintingTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    _input: tuple[TextArtifact, ImageArtifact, ImageArtifact] | Callable[
+    _input: tuple[str, ImageArtifact, ImageArtifact] | tuple[TextArtifact, ImageArtifact, ImageArtifact] | Callable[
         [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
     ] = field(default=None, kw_only=True)
 

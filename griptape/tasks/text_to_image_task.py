@@ -11,7 +11,11 @@ from griptape.utils import J2
 
 @define
 class TextToImageTask(BaseImageGenerationTask):
-    """ImageGenerationTask is a task that can be used to generate an image.
+    """ImageGenerationTask is a task that can be used to generate an image. Accepts a text prompt as input in one of
+    the following formats:
+    - template string
+    - TextArtifact
+    - Callable that returns a TextArtifact
 
     Attributes:
         image_generation_engine: The engine used to generate the image.

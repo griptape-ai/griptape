@@ -11,7 +11,11 @@ from griptape.utils import J2
 
 @define
 class ImageVariationTask(BaseImageGenerationTask):
-    """A task that generates a variation of an image using a prompt.
+    """A task that generates a variation of an image using a prompt. Accepts a text prompt and image as
+    input in one of the following formats:
+    - tuple of (template string, ImageArtifact)
+    - tuple of (TextArtifact, ImageArtifact)
+    - Callable that returns a tuple of (TextArtifact, ImageArtifact)
 
     Attributes:
         image_generation_engine: The engine used to generate the image.
@@ -21,9 +25,9 @@ class ImageVariationTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    _input: tuple[TextArtifact, ImageArtifact] | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact]] = field(
-        default=None, kw_only=True
-    )
+    _input: tuple[str, ImageArtifact] | [TextArtifact, ImageArtifact] | Callable[
+        [BaseTask], tuple[TextArtifact, ImageArtifact]
+    ] = field(default=None, kw_only=True)
 
     @property
     def input(self) -> (TextArtifact, ImageArtifact):
