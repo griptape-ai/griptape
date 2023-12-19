@@ -27,9 +27,7 @@ class TestCsvExtractionTask:
     def test_csv_extraction_task(self, structure_tester):
         structure_tester.run(
             """
-            Here is some CSV data:
-        Name, Age, Address
-        John, 25, 123 Main St
-        Jane, 30, 456 Elm St
+            John (Age 25) lives at 123 Main St
+            Jane (Age 30) lives at 456 Elm St
         """
         )

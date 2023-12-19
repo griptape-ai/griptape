@@ -25,10 +25,7 @@ class TestJsonExtractionTask:
     def test_json_extraction_task(self, structure_tester):
         structure_tester.run(
             """
-            Here is some JSON data:
-        [
-          {"Name": "John", "Age": "25", "Address": "123 Main St"},
-          {"Name": "Jane", "Age": "30", "Address": "456 Elm St"}
-        ]
+            John (Age 25) lives at 123 Main St
+            Jane (Age 30) lives at 456 Elm St
         """
         )

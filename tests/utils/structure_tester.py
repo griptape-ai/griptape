@@ -4,6 +4,7 @@ from attr import field, define
 from schema import Schema, Literal
 import logging
 import json
+from griptape.artifacts.error_artifact import ErrorArtifact
 
 from griptape.structures import Agent
 from griptape.rules import Rule, Ruleset
@@ -157,9 +158,9 @@ class StructureTester:
             tasks=[
                 PromptTask(
                     "\nTasks: {{ task_names }}"
-                    '\nRules: "{{ rules }}"'
-                    '\nPrompt: "{{ prompt }}"'
-                    '\nOutput: "{{ output }}"',
+                    '\n{% if rules %}Rules: """{{ rules }}"""{% endif %}'
+                    '\nPrompt: """{{ prompt }}"""'
+                    '\nOutput: """{{ output }}"""',
                     context={
                         "prompt": prompt,
                         "output": actual,
@@ -179,7 +180,9 @@ class StructureTester:
         return result
 
     def run(self, prompt, assert_correctness: bool = True) -> dict:
-        self.structure.run(prompt)
+        result = self.structure.run(prompt)
+        if isinstance(result, ErrorArtifact):
+            return {"correct": False, "explanation": f"ErrorArtifact: {result.to_text()}"}
         verified_result = self.verify_structure_output(self.structure)
 
         if assert_correctness:

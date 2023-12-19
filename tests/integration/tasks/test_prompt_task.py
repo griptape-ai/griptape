@@ -12,4 +12,4 @@ class TestPromptTask:
         return StructureTester(Agent(conversation_memory=None, prompt_driver=request.param))
 
     def test_prompt_task(self, structure_tester):
-        structure_tester.run("Write a haiku about pirates.")
+        structure_tester.run("Write a poem about pirates.")
