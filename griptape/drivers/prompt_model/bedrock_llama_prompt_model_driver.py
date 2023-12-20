@@ -1,7 +1,6 @@
 from __future__ import annotations
 import json
 import itertools as it
-from typing import Tuple
 from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
@@ -51,7 +50,7 @@ class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
 
         inputs = iter(prompt_stack.inputs)
         batched_inputs: list[tuple[PromptStack.Input | None, PromptStack.Input | None]] = list(
-            it.zip_longest(inputs, inputs, fillvalue=None)
+            it.zip_longest(inputs, inputs)
         )
         for input in batched_inputs:
             first, second = input
@@ -88,11 +87,13 @@ class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
             "top_p": self.top_p,
         }
 
-    def process_output(self, response_body: str | bytes) -> TextArtifact:
+    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
         # When streaming, the response body comes back as bytes.
-        if isinstance(response_body, bytes):
-            response_body = response_body.decode()
+        if isinstance(output, bytes):
+            output = output.decode()
+        elif isinstance(output, list):
+            raise Exception("Invalid output format.")
 
-        body = json.loads(response_body)
+        body = json.loads(output)
 
         return TextArtifact(body["generation"])
