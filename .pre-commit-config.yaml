@@ -8,6 +8,6 @@ repos:
     hooks:
     - id: pyupgrade
 -   repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.341
+    rev: v1.1.342
     hooks:
     - id: pyright
