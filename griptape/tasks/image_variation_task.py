@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Tuple
 
 from attr import define, field
 
@@ -25,31 +25,26 @@ class ImageVariationTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    _input: tuple[str, ImageArtifact] | [TextArtifact, ImageArtifact] | Callable[
-        [BaseTask], tuple[TextArtifact, ImageArtifact]
-    ] = field(default=None, kw_only=True)
+    _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact]] = field(
+        default=None, kw_only=True
+    )
 
     @property
-    def input(self) -> (TextArtifact, ImageArtifact):
-        if (
-            isinstance(self._input, tuple)
-            and isinstance(self._input[0], TextArtifact)
-            and isinstance(self._input[1], ImageArtifact)
-        ):
-            return self._input
-        if (
-            isinstance(self._input, tuple)
-            and isinstance(self._input[0], str)
-            and isinstance(self._input[1], ImageArtifact)
-        ):
-            return TextArtifact(J2().render_from_string(self._input[0], **self.full_context)), self._input[1]
+    def input(self) -> tuple[TextArtifact, ImageArtifact]:
+        if isinstance(self._input, tuple):
+            if isinstance(self._input[0], TextArtifact):
+                input_text = self._input[0]
+            else:
+                input_text = TextArtifact(J2().render_from_string(self._input[0], **self.full_context))
+
+            return input_text, self._input[1]
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
             raise ValueError("Input must be a tuple of (text, image) or a callable that returns such a tuple.")
 
     @input.setter
-    def input(self, value: (TextArtifact, ImageArtifact)) -> None:
+    def input(self, value: tuple[TextArtifact, ImageArtifact]) -> None:
         self._input = value
 
     def run(self) -> ImageArtifact:

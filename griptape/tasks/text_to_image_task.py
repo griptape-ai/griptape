@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Callable
 
-from attr import define, field
+from attr import define
 
 from griptape.artifacts import ImageArtifact, TextArtifact
-from griptape.tasks import BaseImageGenerationTask, BaseTask
+from griptape.tasks import BaseImageGenerationTask
 from griptape.utils import J2
 
 
