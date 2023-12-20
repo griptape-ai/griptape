@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 import json
 from attr import define, field
@@ -12,7 +13,7 @@ from griptape.drivers import AmazonBedrockPromptDriver
 class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.9, kw_only=True)
     _tokenizer: BedrockJurassicTokenizer = field(default=None, kw_only=True)
-    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
+    prompt_driver: AmazonBedrockPromptDriver | None = field(default=None, kw_only=True)
     supports_streaming: bool = field(default=False, kw_only=True)
 
     @property
@@ -67,7 +68,9 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
             "frequencyPenalty": {"scale": 0},
         }
 
-    def process_output(self, response_body: str) -> TextArtifact:
-        body = json.loads(response_body)
-
+    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
+        if isinstance(output, bytes):
+            body = json.loads(output.decode())
+        else:
+            raise Exception("Output must be bytes.")
         return TextArtifact(body["completions"][0]["data"]["text"])
