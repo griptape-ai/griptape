@@ -6,7 +6,7 @@ from griptape.artifacts import TextArtifact
 
 class TestTextToImageTask:
     def test_string_input(self):
-        task = TextToImageTask(input="string input", image_generation_engine=Mock())
+        task = TextToImageTask("string input", image_generation_engine=Mock())
 
         assert task.input.value == "string input"
 
@@ -16,6 +16,6 @@ class TestTextToImageTask:
         def callable(task: BaseTask) -> TextArtifact:
             return input_artifact
 
-        task = TextToImageTask(input=callable, image_generation_engine=Mock())
+        task = TextToImageTask(callable, image_generation_engine=Mock())
 
         assert task.input == input_artifact

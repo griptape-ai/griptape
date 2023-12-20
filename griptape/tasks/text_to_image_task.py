@@ -32,7 +32,7 @@ class TextToImageTask(BaseImageGenerationTask):
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
-            return TextArtifact(J2().render_from_string(self._input, **self.full_context))
+            return TextArtifact(J2().render_from_string(self._input, **self.full_context))  # type: ignore
 
     @input.setter
     def input(self, value: TextArtifact) -> None:

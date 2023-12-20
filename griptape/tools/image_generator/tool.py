@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from os import path
+from typing import Any, Dict
 
 from attrs import define, field
 from schema import Schema, Literal
@@ -10,7 +11,7 @@ from griptape.artifacts import ErrorArtifact, ImageArtifact
 from griptape.engines import ImageGenerationEngine
 from griptape.loaders.image_loader import ImageLoader
 from griptape.tools import BaseTool
-from griptape.utils.decorators import activity
+from griptape.utils.decorators import activity  # type: ignore
 
 
 @define
@@ -27,7 +28,7 @@ class ImageGenerator(BaseTool):
     output_dir: str | None = field(default=None, kw_only=True)
     output_file: str | None = field(default=None, kw_only=True)
 
-    @output_dir.validator
+    @output_dir.validator  # type: ignore
     def validate_output_dir(self, _, output_dir: str) -> None:
         if not output_dir:
             return
@@ -35,7 +36,7 @@ class ImageGenerator(BaseTool):
         if self.output_file:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    @output_file.validator
+    @output_file.validator  # type: ignore
     def validate_output_file(self, _, output_file: str) -> None:
         if not output_file:
             return
@@ -60,7 +61,7 @@ class ImageGenerator(BaseTool):
             ),
         }
     )
-    def text_to_image(self, params: dict) -> ImageArtifact | ErrorArtifact:
+    def text_to_image(self, params: dict[str, dict[str, list[str]]]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
 
@@ -92,12 +93,14 @@ class ImageGenerator(BaseTool):
             ),
         }
     )
-    def image_variation(self, params: dict) -> ImageArtifact:
+    def image_variation(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         image_file = params["values"]["image_file"]
 
         input_artifact = ImageLoader().load(image_file)
+        if isinstance(input_artifact, ErrorArtifact):
+            return input_artifact
 
         output_artifact = self.image_generation_engine.image_variation(
             prompts=prompts, negative_prompts=negative_prompts, image=input_artifact
@@ -127,7 +130,7 @@ class ImageGenerator(BaseTool):
             ),
         }
     )
-    def image_inpainting(self, params: dict) -> ImageArtifact:
+    def image_inpainting(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         image_file = params["values"]["image_file"]
@@ -164,7 +167,7 @@ class ImageGenerator(BaseTool):
             ),
         }
     )
-    def image_outpainting(self, params: dict) -> ImageArtifact:
+    def image_outpainting(self, params: dict[str, Any]) -> ImageArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         image_file = params["values"]["image_file"]
@@ -183,10 +186,10 @@ class ImageGenerator(BaseTool):
         if self.output_file:
             outfile = self.output_file
         else:
-            outfile = path.join(self.output_dir, image_artifact.name)
+            outfile = path.join(self.output_dir, image_artifact.name)  # type: ignore
 
-        if path.dirname(outfile):
-            os.makedirs(path.dirname(outfile), exist_ok=True)
+        if path.dirname(outfile):  # type: ignore
+            os.makedirs(path.dirname(outfile), exist_ok=True)  # type: ignore
 
-        with open(outfile, "wb") as f:
+        with open(outfile, "wb") as f:  # type: ignore
             f.write(image_artifact.value)

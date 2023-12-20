@@ -27,7 +27,7 @@ class ImageOutpaintingTask(BaseImageGenerationTask):
 
     _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
         [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
-    ] = field(default=None, kw_only=True)
+    ] = field(default=None)
 
     @property
     def input(self) -> tuple[TextArtifact, ImageArtifact, ImageArtifact]:
@@ -35,7 +35,7 @@ class ImageOutpaintingTask(BaseImageGenerationTask):
             if isinstance(self._input[0], TextArtifact):
                 input_text = self._input[0]
             else:
-                input_text = TextArtifact(J2().render_from_string(self._input[0], **self.full_context))
+                input_text = TextArtifact(J2().render_from_string(self._input[0], **self.full_context))  # type: ignore
 
             return input_text, self._input[1], self._input[2]
         elif isinstance(self._input, Callable):

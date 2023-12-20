@@ -27,7 +27,7 @@ class ImageInpaintingTask(BaseImageGenerationTask):
 
     _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
         [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
-    ] = field(default=None, kw_only=True)
+    ] = field(default=None)
 
     @property
     def input(self) -> tuple[TextArtifact, ImageArtifact, ImageArtifact]:

@@ -20,7 +20,7 @@ class BaseTextInputTask(BaseTask, ABC):
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
 
-    @rulesets.validator
+    @rulesets.validator  # type: ignore
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
@@ -28,7 +28,7 @@ class BaseTextInputTask(BaseTask, ABC):
         if self.rules:
             raise ValueError("Can't have both rulesets and rules specified.")
 
-    @rules.validator
+    @rules.validator  # type: ignore
     def validate_rules(self, _, rules: list[Rule]) -> None:
         if not rules:
             return
@@ -66,7 +66,7 @@ class BaseTextInputTask(BaseTask, ABC):
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
-            return TextArtifact(J2().render_from_string(self._input, **self.full_context))
+            return TextArtifact(J2().render_from_string(self._input, **self.full_context))  # type: ignore
 
     @input.setter
     def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:

@@ -32,7 +32,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
     output_dir: str | None = field(default=None, kw_only=True)
     output_file: str | None = field(default=None, kw_only=True)
 
-    @negative_rulesets.validator
+    @negative_rulesets.validator  # type: ignore
     def validate_negative_rulesets(self, _, negative_rulesets: list[Ruleset]) -> None:
         if not negative_rulesets:
             return
@@ -40,7 +40,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
         if self.negative_rules:
             raise ValueError("Can't have both negative_rulesets and negative_rules specified.")
 
-    @negative_rules.validator
+    @negative_rules.validator  # type: ignore
     def validate_negative_rules(self, _, negative_rules: list[Rule]) -> None:
         if not negative_rules:
             return
@@ -48,7 +48,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
         if self.negative_rulesets:
             raise ValueError("Can't have both negative_rules and negative_rulesets specified.")
 
-    @output_dir.validator
+    @output_dir.validator  # type: ignore
     def validate_output_dir(self, _, output_dir: str) -> None:
         if not output_dir:
             return
@@ -56,7 +56,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
         if self.output_file:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    @output_file.validator
+    @output_file.validator  # type: ignore
     def validate_output_file(self, _, output_file: str) -> None:
         if not output_file:
             return
@@ -85,11 +85,11 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
         if self.output_file is not None:
             outfile = self.output_file
         else:
-            outfile = os.path.join(self.output_dir, image_artifact.name)
+            outfile = os.path.join(self.output_dir, image_artifact.name)  # type: ignore
 
-        if os.path.dirname(outfile):
-            os.makedirs(os.path.dirname(outfile), exist_ok=True)
+        if os.path.dirname(outfile):  # type: ignore
+            os.makedirs(os.path.dirname(outfile), exist_ok=True)  # type: ignore
 
-        with open(outfile, "wb") as f:
-            self.structure.logger.info(f"Saving [{image_artifact.to_text()}] to {os.path.abspath(outfile)}")
+        with open(outfile, "wb") as f:  # type: ignore
+            self.structure.logger.info(f"Saving [{image_artifact.to_text()}] to {os.path.abspath(outfile)}")  # type: ignore
             f.write(image_artifact.value)

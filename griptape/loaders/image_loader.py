@@ -21,38 +21,31 @@ class ImageLoader(BaseLoader):
 
     format: str = field(default="PNG", kw_only=True)
 
-    def load(self, path: str | Path) -> ImageArtifact | ErrorArtifact:
+    def load(self, path: str | Path) -> ImageArtifact:  # pyright: ignore
         return self.file_to_artifact(path)
 
-    def load_collection(self, paths: list[str | Path]) -> dict[str, ImageArtifact | ErrorArtifact]:
+    def load_collection(self, paths: list[str | Path]) -> dict[str, ImageArtifact]:  # pyright: ignore
         return utils.execute_futures_dict(
             {utils.str_to_hash(str(path)): self.futures_executor.submit(self.file_to_artifact, path) for path in paths}
         )
 
-    def file_to_artifact(self, path: str | Path) -> ImageArtifact | ErrorArtifact:
+    def file_to_artifact(self, path: str | Path) -> ImageArtifact:
         file_name = os.path.basename(path)
         dir_name = os.path.dirname(path)
 
-        try:
-            image = Image.open(path)
+        image = Image.open(path)
 
-            # Ensure image is in png format.
-            byte_stream = BytesIO()
+        # Ensure image is in png format.
+        byte_stream = BytesIO()
 
-            if image.format != self.format:
-                image.save(byte_stream, format=self.format)
+        if image.format != self.format:
+            image.save(byte_stream, format=self.format)
 
-            return ImageArtifact(
-                byte_stream.getvalue(),
-                name=file_name,
-                dir_name=dir_name,
-                mime_type=f"image/{self.format.lower()}",
-                width=image.width,
-                height=image.height,
-            )
-
-        except FileNotFoundError:
-            return ErrorArtifact(f"file {file_name} not found")
-
-        except Exception as e:
-            return ErrorArtifact(f"error loading file: {e}")
+        return ImageArtifact(
+            byte_stream.getvalue(),
+            name=file_name,
+            dir_name=dir_name,
+            mime_type=f"image/{self.format.lower()}",
+            width=image.width,
+            height=image.height,
+        )
