@@ -4,7 +4,7 @@ from io import BytesIO
 from pathlib import Path
 from attr import define, field
 from griptape import utils
-from griptape.artifacts import ImageArtifact, ErrorArtifact
+from griptape.artifacts import ImageArtifact
 from griptape.loaders import BaseLoader
 from PIL import Image
 
