@@ -1,8 +1,8 @@
-import os
 import time
 import requests
 from typing import Optional
 from attr import field, define, Factory
+
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
 

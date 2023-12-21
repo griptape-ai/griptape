@@ -16,6 +16,9 @@ class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
             with attempt:
                 return self.try_generate_image(prompts=prompts, negative_prompts=negative_prompts)
 
+        else:
+            raise RuntimeError("Image generation failed.")
+
     @abstractmethod
     def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         ...

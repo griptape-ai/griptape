@@ -1,5 +1,5 @@
 import base64
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from attr import field, define
 
@@ -19,30 +19,32 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
         image_height: int,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         prompt = ", ".join(prompts)
 
-        request = {
-            "taskType": self.task_type,
-            "textToImageParams": {"text": prompt},
-            "imageGenerationConfig": {
-                "numberOfImages": 1,
-                "quality": self.quality,
-                "width": image_width,
-                "height": image_height,
-                "cfgScale": self.cfg_scale,
-            },
-        }
+        request = dict[str, Any]()
+        request["taskType"] = (self.task_type,)
 
+        text_to_image_params = dict[str, Any]()
+        text_to_image_params["text"] = prompt
         if negative_prompts:
-            request["textToImageParams"]["negativeText"] = ", ".join(negative_prompts)
+            text_to_image_params["negativeText"] = ", ".join(negative_prompts)
 
+        image_generation_config = dict[str, Any]()
+        image_generation_config["numberOfImages"] = 1
+        image_generation_config["quality"] = self.quality
+        image_generation_config["width"] = image_width
+        image_generation_config["height"] = image_height
+        image_generation_config["cfgScale"] = self.cfg_scale
         if seed:
-            request["imageGenerationConfig"]["seed"] = seed
+            image_generation_config["seed"] = seed
+
+        request["textToImageParams"] = text_to_image_params
+        request["imageGenerationConfig"] = image_generation_config
 
         return request
 
-    def get_generated_image(self, response: dict) -> bytes:
+    def get_generated_image(self, response: Dict[str, Any]) -> bytes:
         b64_image_data = response["images"][0]
 
         return base64.decodebytes(bytes(b64_image_data, "utf-8"))

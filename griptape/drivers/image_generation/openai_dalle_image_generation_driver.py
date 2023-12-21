@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 import base64
 import openai
-from typing import Optional, Literal, Union, get_args
+from typing import Any, Dict, Literal
 from attr import field, Factory, define
+
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
 
@@ -48,13 +50,12 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     def try_generate_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         prompt = ", ".join(prompts)
 
-        additional_params = {}
+        additional_params = dict[str, Any]()
 
         if self.style is not None:
             additional_params["style"] = self.style
 
-        if self.quality is not None:
-            additional_params["quality"] = self.quality
+        additional_params["quality"] = self.quality
 
         response = self.client.images.generate(
             model=self.model,
@@ -65,7 +66,12 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
             **additional_params,
         )
 
-        image_data = base64.b64decode(response.data[0].b64_json)
+        b64_data = response.data[0].b64_json
+        if b64_data:
+            image_data = base64.b64decode(b64_data)
+        else:
+            raise ValueError(f"Image generation failed: {response}")
+
         image_dimensions = self._image_size_to_ints(self.image_size)
 
         return ImageArtifact(
