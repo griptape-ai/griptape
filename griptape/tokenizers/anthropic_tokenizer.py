@@ -22,5 +22,8 @@ class AnthropicTokenizer(BaseTokenizer):
 
         return tokens
 
-    def count_tokens(self, text: str) -> int:
-        return self.client.count_tokens(text)
+    def count_tokens(self, text: str | list) -> int:
+        if isinstance(text, str):
+            return self.client.count_tokens(text)
+        else:
+            raise ValueError("Text must be a string.")
