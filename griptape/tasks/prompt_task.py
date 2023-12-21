@@ -42,7 +42,7 @@ class PromptTask(BaseTextInputTask):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets)
         )
 
-    def run(self) -> TextArtifact:
+    def run(self) -> TextArtifact | InfoArtifact | ErrorArtifact:
         self.output = self.active_driver().run(self.prompt_stack)
 
         return self.output
