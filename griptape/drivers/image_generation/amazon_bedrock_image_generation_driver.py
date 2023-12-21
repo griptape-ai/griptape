@@ -69,11 +69,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_inpainting(
-        self,
-        prompts: list[str],
-        image: ImageArtifact,
-        mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
+        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_inpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
@@ -91,11 +87,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_outpainting(
-        self,
-        prompts: list[str],
-        image: ImageArtifact,
-        mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
+        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_outpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
