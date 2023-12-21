@@ -36,6 +36,7 @@ dateparser = "^1.1.8"
 mail-parser = "^3.15.0"
 requests = "^2"
 lxml = "^4.9.3" # TODO: remove when https://github.com/adbar/trafilatura/issues/449 is fully resolved
+pillow = "^10.1.0"
 
 
 cohere = { version = ">=4", optional = true }

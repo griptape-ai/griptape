@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 import base64
+from typing import Optional, Literal
+
 import openai
-from typing import Optional, Literal, Union, get_args
 from attr import field, Factory, define
+
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
 
@@ -45,15 +48,15 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     ) = field(default="1024x1024", kw_only=True)
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True)
 
-    def try_generate_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         prompt = ", ".join(prompts)
 
         additional_params = {}
 
-        if self.style is not None:
+        if self.style:
             additional_params["style"] = self.style
 
-        if self.quality is not None:
+        if self.quality:
             additional_params["quality"] = self.quality
 
         response = self.client.images.generate(
@@ -76,6 +79,29 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
             model=self.model,
             prompt=prompt,
         )
+
+    def try_image_variation(
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
+
+    def try_image_inpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
+
+    def try_image_outpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 
     def _image_size_to_ints(self, image_size: str) -> list[int]:
         return [int(x) for x in image_size.split("x")]
