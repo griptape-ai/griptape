@@ -35,7 +35,7 @@ class ImageVariationTask(BaseImageGenerationTask):
             if isinstance(self._input[0], TextArtifact):
                 input_text = self._input[0]
             else:
-                input_text = TextArtifact(J2().render_from_string(self._input[0], **self.full_context))  
+                input_text = TextArtifact(J2().render_from_string(self._input[0], **self.full_context))
 
             return input_text, self._input[1]
         elif isinstance(self._input, Callable):

@@ -27,7 +27,7 @@ class BaseTextInputTask(BaseTask, ABC):
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
-            return TextArtifact(J2().render_from_string(self._input, **self.full_context))  
+            return TextArtifact(J2().render_from_string(self._input, **self.full_context))
 
     @input.setter
     def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
@@ -44,7 +44,7 @@ class BaseTextInputTask(BaseTask, ABC):
         else:
             return {}
 
-    @rulesets.validator  
+    @rulesets.validator
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
@@ -52,7 +52,7 @@ class BaseTextInputTask(BaseTask, ABC):
         if self.rules:
             raise ValueError("Can't have both rulesets and rules specified.")
 
-    @rules.validator  
+    @rules.validator
     def validate_rules(self, _, rules: list[Rule]) -> None:
         if not rules:
             return

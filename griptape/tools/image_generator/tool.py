@@ -11,7 +11,7 @@ from griptape.artifacts import ErrorArtifact, ImageArtifact
 from griptape.engines import ImageGenerationEngine
 from griptape.loaders.image_loader import ImageLoader
 from griptape.tools import BaseTool
-from griptape.utils.decorators import activity  
+from griptape.utils.decorators import activity
 
 
 @define
@@ -28,7 +28,7 @@ class ImageGenerator(BaseTool):
     output_dir: str | None = field(default=None, kw_only=True)
     output_file: str | None = field(default=None, kw_only=True)
 
-    @output_dir.validator  
+    @output_dir.validator
     def validate_output_dir(self, _, output_dir: str) -> None:
         if not output_dir:
             return
@@ -36,7 +36,7 @@ class ImageGenerator(BaseTool):
         if self.output_file:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    @output_file.validator  
+    @output_file.validator
     def validate_output_file(self, _, output_file: str) -> None:
         if not output_file:
             return
@@ -186,10 +186,10 @@ class ImageGenerator(BaseTool):
         if self.output_file:
             outfile = self.output_file
         else:
-            outfile = path.join(self.output_dir, image_artifact.name)  
+            outfile = path.join(self.output_dir, image_artifact.name)
 
-        if path.dirname(outfile):  
-            os.makedirs(path.dirname(outfile), exist_ok=True)  
+        if path.dirname(outfile):
+            os.makedirs(path.dirname(outfile), exist_ok=True)
 
-        with open(outfile, "wb") as f:  
+        with open(outfile, "wb") as f:
             f.write(image_artifact.value)
