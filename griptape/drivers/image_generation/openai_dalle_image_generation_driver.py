@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import base64
 import openai
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 from attr import field, Factory, define
 
 from griptape.artifacts import ImageArtifact
