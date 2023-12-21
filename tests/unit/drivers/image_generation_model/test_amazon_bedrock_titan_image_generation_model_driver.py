@@ -8,10 +8,10 @@ class TestAmazonBedrockTitanImageGenerationModelDriver:
     def model_driver(self):
         return AmazonBedrockTitanImageGenerationModelDriver()
 
-    def test_init(self, model_driver):
+    def test_init(self, model_driver: AmazonBedrockTitanImageGenerationModelDriver):
         assert model_driver
 
-    def test_text_to_image_request_parameters(self, model_driver):
+    def test_text_to_image_request_parameters(self, model_driver: AmazonBedrockTitanImageGenerationModelDriver):
         parameters = model_driver.text_to_image_request_parameters(
             ["prompt1", "prompt2"], 1024, 1024, negative_prompts=["nprompt1", "nprompt2"], seed=1234
         )

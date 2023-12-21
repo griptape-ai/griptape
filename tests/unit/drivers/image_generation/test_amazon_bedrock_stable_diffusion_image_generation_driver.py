@@ -1,9 +1,10 @@
 import io
+from typing import Any
 from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import AmazonBedrockImageGenerationDriver
+from griptape.drivers import AmazonBedrockImageGenerationDriver, BaseImageGenerationModelDriver
 
 
 class TestAmazonBedrockImageGenerationDriver:
@@ -12,7 +13,7 @@ class TestAmazonBedrockImageGenerationDriver:
         return Mock()
 
     @pytest.fixture
-    def session(self, bedrock_client):
+    def session(self, bedrock_client: Any):
         session = Mock()
         session.client.return_value = bedrock_client
 
@@ -27,19 +28,19 @@ class TestAmazonBedrockImageGenerationDriver:
         return model_driver
 
     @pytest.fixture
-    def driver(self, session, model_driver):
+    def driver(self, session: Any, model_driver: BaseImageGenerationModelDriver):
         return AmazonBedrockImageGenerationDriver(
             session=session, model="stability.stable-diffusion-xl-v1", image_generation_model_driver=model_driver
         )
 
-    def test_init(self, driver):
+    def test_init(self, driver: AmazonBedrockImageGenerationDriver):
         assert driver
 
-    def test_init_requires_image_generation_model_driver(self, session):
+    def test_init_requires_image_generation_model_driver(self, session: Any):
         with pytest.raises(TypeError):
-            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")
+            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")  # type: ignore
 
-    def test_generate_image(self, driver):
+    def test_generate_image(self, driver: AmazonBedrockImageGenerationDriver):
         driver.bedrock_client.invoke_model.return_value = {
             "body": io.BytesIO(
                 b"""{

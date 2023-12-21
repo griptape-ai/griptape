@@ -23,7 +23,7 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
         prompt = ", ".join(prompts)
 
         request = dict[str, Any]()
-        request["taskType"] = (self.task_type,)
+        request["taskType"] = self.task_type
 
         text_to_image_params = dict[str, Any]()
         text_to_image_params["text"] = prompt

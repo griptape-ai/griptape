@@ -1,5 +1,3 @@
-from typing import Literal
-
 import pytest
 from unittest.mock import Mock
 from griptape.drivers import OpenAiDalleImageGenerationDriver
@@ -7,14 +5,14 @@ from griptape.drivers import OpenAiDalleImageGenerationDriver
 
 class TestOpenAiDalleImageGenerationDriver:
     @pytest.fixture
-    def driver(self):
+    def driver(self) -> OpenAiDalleImageGenerationDriver:
         return OpenAiDalleImageGenerationDriver(model="dall-e-2", client=Mock(), quality="hd", image_size="512x512")
 
-    def test_init(self, driver):
+    def test_init(self, driver: OpenAiDalleImageGenerationDriver) -> None:
         assert driver
 
-    def test_generate_image(self, driver):
-        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])
+    def test_generate_image(self, driver: OpenAiDalleImageGenerationDriver) -> None:
+        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])  # type: ignore
 
         image_artifact = driver.generate_image(prompts=["test prompt"])
 

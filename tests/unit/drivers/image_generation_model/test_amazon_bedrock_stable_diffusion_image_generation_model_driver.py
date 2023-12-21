@@ -8,10 +8,12 @@ class TestAmazonBedrockStableDiffusionImageGenerationModelDriver:
     def model_driver(self):
         return AmazonBedrockStableDiffusionImageGenerationModelDriver()
 
-    def test_init(self, model_driver):
+    def test_init(self, model_driver: AmazonBedrockStableDiffusionImageGenerationModelDriver):
         assert model_driver
 
-    def test_text_to_image_request_parameters(self, model_driver):
+    def test_text_to_image_request_parameters(
+        self, model_driver: AmazonBedrockStableDiffusionImageGenerationModelDriver
+    ):
         parameters = model_driver.text_to_image_request_parameters(
             ["prompt1", "prompt2"], 1024, 1024, negative_prompts=["nprompt1", "nprompt2"], seed=1234
         )
