@@ -17,9 +17,6 @@ if TYPE_CHECKING:
 class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
     """Driver for image generation models provided by Amazon Bedrock.
 
-    Details on Stable Diffusion image generation parameters can be found here:
-    https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage
-
     Attributes:
         model: Bedrock model ID.
         session: boto3 session.
@@ -54,7 +51,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, image: ImageArtifact, prompts: list[str], negative_prompts: Optional[list[str]] = None
+        self, image: ImageArtifact, prompts: list[str], negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_variation_request_parameters(
             prompts, image=image, negative_prompts=negative_prompts, seed=self.seed
@@ -76,7 +73,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_inpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
@@ -98,7 +95,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_outpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed

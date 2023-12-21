@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import AmazonBedrockImageGenerationDriver, BaseImageGenerationModelDriver
+from griptape.drivers import AmazonBedrockImageGenerationDriver
 
 
 class TestAmazonBedrockImageGenerationDriver:
@@ -12,7 +12,7 @@ class TestAmazonBedrockImageGenerationDriver:
         return Mock()
 
     @pytest.fixture
-    def session(self, bedrock_client):  # type: ignore
+    def session(self, bedrock_client):
         session = Mock()
         session.client.return_value = bedrock_client
 
@@ -27,19 +27,19 @@ class TestAmazonBedrockImageGenerationDriver:
         return model_driver
 
     @pytest.fixture
-    def driver(self, session, model_driver: BaseImageGenerationModelDriver):  # type: ignore
+    def driver(self, session, model_driver):
         return AmazonBedrockImageGenerationDriver(
-            session=session, model="stability.stable-diffusion-xl-v1", image_generation_model_driver=model_driver  # type: ignore
+            session=session, model="stability.stable-diffusion-xl-v1", image_generation_model_driver=model_driver
         )
 
-    def test_init(self, driver: AmazonBedrockImageGenerationDriver):
+    def test_init(self, driver):
         assert driver
 
-    def test_init_requires_image_generation_model_driver(self, session):  # type: ignore
+    def test_init_requires_image_generation_model_driver(self, session):
         with pytest.raises(TypeError):
-            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")  # type: ignore
+            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")
 
-    def test_try_text_to_image(self, driver: AmazonBedrockImageGenerationDriver):
+    def test_try_text_to_image(self, driver):
         driver.bedrock_client.invoke_model.return_value = {
             "body": io.BytesIO(
                 b"""{
@@ -51,7 +51,7 @@ class TestAmazonBedrockImageGenerationDriver:
                         ]
                     }"""
             )
-        }  # type: ignore
+        }
 
         image_artifact = driver.try_text_to_image(prompts=["test prompt"], negative_prompts=["test negative prompt"])
 

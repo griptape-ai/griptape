@@ -14,23 +14,23 @@ class TestAzureOpenAiDalleImageGenerationDriver:
             image_size="512x512",
         )
 
-    def test_init(self, driver: AzureOpenAiDalleImageGenerationDriver):
+    def test_init(self, driver):
         assert driver
 
     def test_init_requires_endpoint(self):
         with pytest.raises(TypeError):
             AzureOpenAiDalleImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_deployment="dalle-deployment", image_size="512x512"
-            )  # type: ignore
+            )
 
     def test_init_requires_deployment(self):
         with pytest.raises(TypeError):
             AzureOpenAiDalleImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_endpoint="https://dalle.example.com", image_size="512x512"
-            )  # type: ignore
+            )
 
-    def test_try_text_to_image(self, driver: AzureOpenAiDalleImageGenerationDriver):
-        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])  # type: ignore
+    def test_try_text_to_image(self, driver):
+        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])
 
         image_artifact = driver.try_text_to_image(prompts=["test prompt"])
 

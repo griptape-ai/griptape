@@ -1,5 +1,3 @@
-from typing import Literal
-
 import pytest
 from unittest.mock import Mock
 from griptape.drivers import OpenAiDalleImageGenerationDriver

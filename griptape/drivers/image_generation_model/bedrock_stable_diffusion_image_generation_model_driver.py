@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import base64
-from typing import Optional
 
 from attr import field, define
 
@@ -10,7 +9,7 @@ from griptape.drivers import BaseImageGenerationModelDriver
 
 
 @define
-class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelDriver):
+class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelDriver):
     """Image generation model driver for Stable Diffusion models on Amazon Bedrock.
 
     For more information on all supported parameters, see the Stable Diffusion documentation:
@@ -29,19 +28,19 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
 
     cfg_scale: int = field(default=7, kw_only=True)
     mask_source: str = field(default="MASK_IMAGE_BLACK", kw_only=True)
-    style_preset: Optional[str] = field(default=None, kw_only=True)
-    clip_guidance_preset: Optional[str] = field(default=None, kw_only=True)
-    sampler: Optional[str] = field(default=None, kw_only=True)
-    steps: Optional[int] = field(default=None, kw_only=True)
-    start_schedule: Optional[float] = field(default=None, kw_only=True)
+    style_preset: str | None = field(default=None, kw_only=True)
+    clip_guidance_preset: str | None = field(default=None, kw_only=True)
+    sampler: str | None = field(default=None, kw_only=True)
+    steps: int | None = field(default=None, kw_only=True)
+    start_schedule: float | None = field(default=None, kw_only=True)
 
     def text_to_image_request_parameters(
         self,
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         return self._request_parameters(
             prompts, width=image_width, height=image_height, negative_prompts=negative_prompts, seed=seed
@@ -51,8 +50,8 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         return self._request_parameters(prompts, image=image, negative_prompts=negative_prompts, seed=seed)
 
@@ -61,8 +60,8 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         return self._request_parameters(prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=seed)
 
@@ -71,20 +70,20 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 
     def _request_parameters(
         self,
         prompts: list[str],
-        width: Optional[int] = None,
-        height: Optional[int] = None,
-        image: Optional[ImageArtifact] = None,
-        mask: Optional[ImageArtifact] = None,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        width: int | None = None,
+        height: int | None = None,
+        image: ImageArtifact | None = None,
+        mask: ImageArtifact | None = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         if negative_prompts is None:
             negative_prompts = []

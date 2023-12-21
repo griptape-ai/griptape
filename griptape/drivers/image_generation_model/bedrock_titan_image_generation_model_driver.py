@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import base64
-from typing import Optional
 
 from attr import field, define
 
@@ -10,7 +9,7 @@ from griptape.drivers import BaseImageGenerationModelDriver
 
 
 @define
-class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
+class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
     """Image Generation Model Driver for Amazon Bedrock Titan Image Generator.
 
     Attributes:
@@ -28,8 +27,8 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -57,8 +56,8 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
 
@@ -67,8 +66,8 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
@@ -77,8 +76,8 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 

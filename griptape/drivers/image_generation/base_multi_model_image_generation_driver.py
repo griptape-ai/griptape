@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC
 
 from attr import field, define
 
@@ -6,7 +7,7 @@ from griptape.drivers import BaseImageGenerationDriver, BaseImageGenerationModel
 
 
 @define
-class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver):
+class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver, ABC):
     """Image Generation Driver for platforms like Amazon Bedrock that host many LLM models.
 
     Instances of this Image Generation Driver require a Image Generation Model Driver which is used to structure the

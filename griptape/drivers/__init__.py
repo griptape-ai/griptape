@@ -46,10 +46,10 @@ from .prompt_model.bedrock_llama_prompt_model_driver import BedrockLlamaPromptMo
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
 from .image_generation_model.amazon_bedrock_stable_diffusion_image_generation_model_driver import (
-    AmazonBedrockStableDiffusionImageGenerationModelDriver,
+    BedrockStableDiffusionImageGenerationModelDriver,
 )
 from .image_generation_model.amazon_bedrock_titan_image_generation_model_driver import (
-    AmazonBedrockTitanImageGenerationModelDriver,
+    BedrockTitanImageGenerationModelDriver,
 )
 
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
@@ -101,8 +101,8 @@ __all__ = [
     "BedrockJurassicPromptModelDriver",
     "BedrockLlamaPromptModelDriver",
     "BaseImageGenerationModelDriver",
-    "AmazonBedrockStableDiffusionImageGenerationModelDriver",
-    "AmazonBedrockTitanImageGenerationModelDriver",
+    "BedrockStableDiffusionImageGenerationModelDriver",
+    "BedrockTitanImageGenerationModelDriver",
     "BaseImageGenerationDriver",
     "BaseMultiModelImageGenerationDriver",
     "OpenAiDalleImageGenerationDriver",
