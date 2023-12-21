@@ -9,7 +9,7 @@ from griptape.drivers import BaseMultiModelImageGenerationDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    import boto3  # type: ignore
+    import boto3
 
 
 @define
