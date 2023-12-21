@@ -20,6 +20,30 @@ class BaseTextInputTask(BaseTask, ABC):
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
 
+    @property
+    def input(self) -> TextArtifact:
+        if isinstance(self._input, TextArtifact):
+            return self._input
+        elif isinstance(self._input, Callable):
+            return self._input(self)
+        else:
+            return TextArtifact(J2().render_from_string(self._input, **self.full_context))  # type: ignore
+
+    @input.setter
+    def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
+        self._input = value
+
+    @property
+    def full_context(self) -> dict[str, Any]:
+        if self.structure:
+            structure_context = self.structure.context(self)
+
+            structure_context.update(self.context)
+
+            return structure_context
+        else:
+            return {}
+
     @rulesets.validator  # type: ignore
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
@@ -58,30 +82,6 @@ class BaseTextInputTask(BaseTask, ABC):
             task_rulesets = [Ruleset(name=task_ruleset_name, rules=self.rules)]
 
         return structure_rulesets + task_rulesets
-
-    @property
-    def input(self) -> TextArtifact:
-        if isinstance(self._input, TextArtifact):
-            return self._input
-        elif isinstance(self._input, Callable):
-            return self._input(self)
-        else:
-            return TextArtifact(J2().render_from_string(self._input, **self.full_context))  # type: ignore
-
-    @input.setter
-    def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
-        self._input = value
-
-    @property
-    def full_context(self) -> dict[str, Any]:
-        if self.structure:
-            structure_context = self.structure.context(self)
-
-            structure_context.update(self.context)
-
-            return structure_context
-        else:
-            return {}
 
     def before_run(self) -> None:
         super().before_run()

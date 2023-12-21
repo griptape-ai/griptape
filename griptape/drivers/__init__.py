@@ -45,12 +45,10 @@ from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPr
 from .prompt_model.bedrock_llama_prompt_model_driver import BedrockLlamaPromptModelDriver
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
-from .image_generation_model.amazon_bedrock_stable_diffusion_image_generation_model_driver import (
+from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
     BedrockStableDiffusionImageGenerationModelDriver,
 )
-from .image_generation_model.amazon_bedrock_titan_image_generation_model_driver import (
-    BedrockTitanImageGenerationModelDriver,
-)
+from .image_generation_model.bedrock_titan_image_generation_model_driver import BedrockTitanImageGenerationModelDriver
 
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
 from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
