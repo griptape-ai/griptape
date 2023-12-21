@@ -50,12 +50,10 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
     def try_generate_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         prompt = ", ".join(prompts)
 
-        additional_params = dict[str, Any]()
+        additional_params: dict[str, Any] = {"quality": self.quality}
 
         if self.style is not None:
             additional_params["style"] = self.style
-
-        additional_params["quality"] = self.quality
 
         response = self.client.images.generate(
             model=self.model,
