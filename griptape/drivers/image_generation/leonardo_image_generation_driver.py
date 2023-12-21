@@ -79,7 +79,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
-    def _create_generation(self, prompt: str, negative_prompt: str):
+    def _create_generation(self, prompt: str, negative_prompt: str) -> str:
         request = {
             "prompt": prompt,
             "negative_prompt": negative_prompt,
@@ -101,7 +101,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
 
         return response["sdGenerationJob"]["generationId"]
 
-    def _get_image_url(self, generation_id: str):
+    def _get_image_url(self, generation_id: str) -> str:
         for attempt in range(self.max_attempts):
             response = self.requests_session.get(
                 url=f"{self.api_base}/generations/{generation_id}", headers={"Authorization": f"Bearer {self.api_key}"}
@@ -115,7 +115,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         else:
             raise Exception("image generation failed to complete")
 
-    def _download_image(self, url: str):
+    def _download_image(self, url: str) -> bytes:
         response = self.requests_session.get(url=url, headers={"Authorization": f"Bearer {self.api_key}"})
 
         return response.content

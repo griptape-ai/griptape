@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 from attr import define
 
@@ -20,7 +20,7 @@ class BaseImageGenerationModelDriver(ABC):
         image_height: int,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         ...
 
     @abstractmethod
@@ -30,7 +30,7 @@ class BaseImageGenerationModelDriver(ABC):
         image: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ):
+    ) -> dict[str, Any]:
         ...
 
     @abstractmethod
@@ -41,7 +41,7 @@ class BaseImageGenerationModelDriver(ABC):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ):
+    ) -> dict[str, Any]:
         ...
 
     @abstractmethod
@@ -52,5 +52,5 @@ class BaseImageGenerationModelDriver(ABC):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ):
+    ) -> dict[str, Any]:
         ...
