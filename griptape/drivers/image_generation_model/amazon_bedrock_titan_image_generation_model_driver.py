@@ -1,5 +1,5 @@
 import base64
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from attr import field, define
 
@@ -19,23 +19,22 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
         image_height: int,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         prompt = ", ".join(prompts)
 
-        request = dict[str, Any]()
-        request["taskType"] = self.task_type
+        request: dict[str, Any] = {"taskType": self.task_type}
 
-        text_to_image_params = dict[str, Any]()
-        text_to_image_params["text"] = prompt
+        text_to_image_params: dict[str, Any] = {"text": prompt}
         if negative_prompts:
             text_to_image_params["negativeText"] = ", ".join(negative_prompts)
 
-        image_generation_config = dict[str, Any]()
-        image_generation_config["numberOfImages"] = 1
-        image_generation_config["quality"] = self.quality
-        image_generation_config["width"] = image_width
-        image_generation_config["height"] = image_height
-        image_generation_config["cfgScale"] = self.cfg_scale
+        image_generation_config: dict[str, Any] = {
+            "numberOfImages": 1,
+            "quality": self.quality,
+            "width": image_width,
+            "height": image_height,
+            "cfgScale": self.cfg_scale,
+        }
         if seed:
             image_generation_config["seed"] = seed
 
@@ -44,7 +43,7 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
 
         return request
 
-    def get_generated_image(self, response: Dict[str, Any]) -> bytes:
+    def get_generated_image(self, response: dict[str, Any]) -> bytes:
         b64_image_data = response["images"][0]
 
         return base64.decodebytes(bytes(b64_image_data, "utf-8"))

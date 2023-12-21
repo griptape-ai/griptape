@@ -38,7 +38,9 @@ class TestAmazonBedrockImageGenerationDriver:
 
     def test_init_requires_image_generation_model_driver(self, session: Any):
         with pytest.raises(TypeError):
-            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")  # type: ignore
+            AmazonBedrockImageGenerationDriver(
+                session=session, model="stability.stable-diffusion-xl-v1"
+            )  # pyright: ignore
 
     def test_generate_image(self, driver: AmazonBedrockImageGenerationDriver):
         driver.bedrock_client.invoke_model.return_value = {

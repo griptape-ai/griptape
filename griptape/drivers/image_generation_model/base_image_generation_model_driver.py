@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from attr import define
 
@@ -14,9 +14,9 @@ class BaseImageGenerationModelDriver(ABC):
         image_height: int,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         ...
 
     @abstractmethod
-    def get_generated_image(self, response: Dict[str, Any]) -> bytes:
+    def get_generated_image(self, response: dict[str, Any]) -> bytes:
         ...

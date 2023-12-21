@@ -1,5 +1,5 @@
 import base64
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from attr import field, define
 
@@ -21,7 +21,7 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
         image_height: int,
         negative_prompts: Optional[list[str]] = None,
         seed: Optional[int] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if negative_prompts is None:
             negative_prompts = []
 
@@ -46,7 +46,7 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
 
         return request
 
-    def get_generated_image(self, response: Dict[str, Any]) -> bytes:
+    def get_generated_image(self, response: dict[str, Any]) -> bytes:
         image_response = response["artifacts"][0]
         if image_response.get("finishReason") != "SUCCESS":
             raise ValueError(f"Image generation failed: {image_response.get('finishReason')}")

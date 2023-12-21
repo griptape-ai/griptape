@@ -12,7 +12,7 @@ class TestOpenAiDalleImageGenerationDriver:
         assert driver
 
     def test_generate_image(self, driver: OpenAiDalleImageGenerationDriver) -> None:
-        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])  # type: ignore
+        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])  # pyright: ignore
 
         image_artifact = driver.generate_image(prompts=["test prompt"])
 

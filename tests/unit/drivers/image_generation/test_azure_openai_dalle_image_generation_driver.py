@@ -21,16 +21,16 @@ class TestAzureOpenAiDalleImageGenerationDriver:
         with pytest.raises(TypeError):
             AzureOpenAiDalleImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_deployment="dalle-deployment", image_size="512x512"
-            )  # type: ignore
+            )  # pyright: ignore
 
     def test_init_requires_deployment(self):
         with pytest.raises(TypeError):
             AzureOpenAiDalleImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_endpoint="https://dalle.example.com", image_size="512x512"
-            )  # type: ignore
+            )  # pyright: ignore
 
     def test_generate_image(self, driver: AzureOpenAiDalleImageGenerationDriver):
-        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])  # type: ignore
+        driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])  # pyright: ignore
 
         image_artifact = driver.generate_image(prompts=["test prompt"])
 
