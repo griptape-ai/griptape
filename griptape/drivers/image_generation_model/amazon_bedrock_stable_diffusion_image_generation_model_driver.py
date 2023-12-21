@@ -28,7 +28,7 @@ class AmazonBedrockStableDiffusionImageGenerationModelDriver(BaseImageGeneration
         text_prompts = [{"text": prompt, "weight": 1.0} for prompt in prompts]
         text_prompts += [{"text": negative_prompt, "weight": -1.0} for negative_prompt in negative_prompts]
 
-        request = {
+        request: dict[str, Any] = {
             "text_prompts": text_prompts,
             "cfg_scale": self.cfg_scale,
             "style_preset": self.style_preset,

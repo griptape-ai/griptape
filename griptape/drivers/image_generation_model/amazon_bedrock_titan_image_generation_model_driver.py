@@ -22,24 +22,23 @@ class AmazonBedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDrive
     ) -> dict[str, Any]:
         prompt = ", ".join(prompts)
 
-        request: dict[str, Any] = {"taskType": self.task_type}
-
-        text_to_image_params: dict[str, Any] = {"text": prompt}
-        if negative_prompts:
-            text_to_image_params["negativeText"] = ", ".join(negative_prompts)
-
-        image_generation_config: dict[str, Any] = {
-            "numberOfImages": 1,
-            "quality": self.quality,
-            "width": image_width,
-            "height": image_height,
-            "cfgScale": self.cfg_scale,
+        request: dict[str, Any] = {
+            "taskType": self.task_type,
+            "textToImageParams": {"text": prompt},
+            "imageGenerationConfig": {
+                "numberOfImages": 1,
+                "quality": self.quality,
+                "width": image_width,
+                "height": image_height,
+                "cfgScale": self.cfg_scale,
+            },
         }
-        if seed:
-            image_generation_config["seed"] = seed
 
-        request["textToImageParams"] = text_to_image_params
-        request["imageGenerationConfig"] = image_generation_config
+        if negative_prompts:
+            request["textToImageParams"]["negativeText"] = ", ".join(negative_prompts)
+
+        if seed:
+            request["imageGenerationConfig"]["seed"] = seed
 
         return request
 
