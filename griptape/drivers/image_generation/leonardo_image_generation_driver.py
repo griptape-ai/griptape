@@ -1,5 +1,5 @@
 import time
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 
 import requests
 from attr import field, define, Factory
