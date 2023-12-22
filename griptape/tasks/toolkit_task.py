@@ -95,7 +95,9 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:
-        return J2("tasks/toolkit_task/assistant_subtask.j2").render(subtask=subtask)
+        return J2("tasks/toolkit_task/assistant_subtask.j2").render(
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
+        )
 
     def default_user_subtask_template_generator(self, subtask: ActionSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
