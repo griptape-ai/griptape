@@ -68,6 +68,9 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
             **additional_params,
         )
 
+        if not response.data[0] or not response.data[0].b64_json:
+            raise Exception("Failed to generate image")
+
         image_data = base64.b64decode(response.data[0].b64_json)
         image_dimensions = self._image_size_to_ints(self.image_size)
 
@@ -81,25 +84,17 @@ class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
 
     def try_image_inpainting(
-        self,
-        prompts: list[str],
-        image: ImageArtifact,
-        mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
     def try_image_outpainting(
-        self,
-        prompts: list[str],
-        image: ImageArtifact,
-        mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 

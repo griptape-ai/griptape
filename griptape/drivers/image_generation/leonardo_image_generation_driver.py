@@ -57,7 +57,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, image: ImageArtifact, prompts: list[str], negative_prompts: Optional[list[str]] = None
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
 
