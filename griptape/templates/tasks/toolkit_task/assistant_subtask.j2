@@ -2,3 +2,6 @@
 Thought: {{ subtask.thought }}
 {% endif %}
 Action: {{ subtask.action_to_json() }}
+{% if subtask.output %}
+{{ stop_sequence }}: {{ subtask.output.to_text() }}
+{% endif %}

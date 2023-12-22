@@ -67,7 +67,8 @@ class StructureTester:
             azure_deployment=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
             azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
         ),
-        "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(model="claude-2", api_key=os.environ["ANTHROPIC_API_KEY"]),
+        "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(model="claude-2.0", api_key=os.environ["ANTHROPIC_API_KEY"]),
+        "ANTHROPIC_CLAUDE_2.1": AnthropicPromptDriver(model="claude-2.1", api_key=os.environ["ANTHROPIC_API_KEY"]),
         "COHERE_COMMAND": CoherePromptDriver(model="command", api_key=os.environ["COHERE_API_KEY"]),
         "BEDROCK_TITAN": AmazonBedrockPromptDriver(
             model="amazon.titan-tg1-large", prompt_model_driver=BedrockTitanPromptModelDriver()
@@ -97,6 +98,7 @@ class StructureTester:
         PROMPT_DRIVERS["AZURE_CHAT_4"],
         PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
         PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
+        PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2.1"],
     ]
     TOOL_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
     PROMPT_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
