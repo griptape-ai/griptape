@@ -16,13 +16,11 @@ from griptape.drivers import (
     BedrockClaudePromptModelDriver,
     BedrockJurassicPromptModelDriver,
     BedrockTitanPromptModelDriver,
+    BedrockLlamaPromptModelDriver,
     CoherePromptDriver,
     OpenAiChatPromptDriver,
     OpenAiCompletionPromptDriver,
     AzureOpenAiChatPromptDriver,
-    AmazonSageMakerPromptDriver,
-    SageMakerLlamaPromptModelDriver,
-    SageMakerFalconPromptModelDriver,
 )
 
 
@@ -79,20 +77,23 @@ class StructureTester:
         "BEDROCK_J2": AmazonBedrockPromptDriver(
             model="ai21.j2-ultra", prompt_model_driver=BedrockJurassicPromptModelDriver()
         ),
-        "SAGEMAKER_LLAMA_7B": AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-            max_attempts=1,
-            prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
+        "BEDROCK_LLAMA2_13B": AmazonBedrockPromptDriver(
+            model="meta.llama2-13b-chat-v1", prompt_model_driver=BedrockLlamaPromptModelDriver(), max_attempts=1
         ),
-        "SAGEMAKER_FALCON_7b": AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-            max_attempts=1,
-            prompt_model_driver=SageMakerFalconPromptModelDriver(),
+        "BEDROCK_LLAMA2_70B": AmazonBedrockPromptDriver(
+            model="meta.llama2-70b-chat-v1", prompt_model_driver=BedrockLlamaPromptModelDriver(), max_attempts=1
         ),
+        # "SAGEMAKER_LLAMA_7B": AmazonSageMakerPromptDriver(
+        #     model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
+        #     prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
+        # ),
+        # "SAGEMAKER_FALCON_7b": AmazonSageMakerPromptDriver(
+        #     model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
+        #     prompt_model_driver=SageMakerFalconPromptModelDriver(),
+        # ),
     }
 
     TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = [
-        PROMPT_DRIVERS["OPENAI_CHAT_35_TURBO_1106"],
         PROMPT_DRIVERS["OPENAI_CHAT_4"],
         PROMPT_DRIVERS["OPENAI_CHAT_4_1106_PREVIEW"],
         PROMPT_DRIVERS["AZURE_CHAT_4"],
