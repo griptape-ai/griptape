@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from attr import define, field
-from griptape.artifacts import InfoArtifact, ListArtifact
+from griptape.artifacts import InfoArtifact, ListArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.loaders import SqlLoader
@@ -11,24 +11,18 @@ from schema import Schema
 @define
 class SqlClient(BaseTool):
     sql_loader: SqlLoader = field(kw_only=True)
-    schema_name: Optional[str] = field(default=None, kw_only=True)
+    schema_name: str | None = field(default=None, kw_only=True)
     table_name: str = field(kw_only=True)
-    table_description: Optional[str] = field(default=None, kw_only=True)
-    engine_name: Optional[str] = field(default=None, kw_only=True)
+    table_description: str | None = field(default=None, kw_only=True)
+    engine_name: str | None = field(default=None, kw_only=True)
 
     @property
     def full_table_name(self) -> str:
-        return (
-            f"{self.schema_name}.{self.table_name}"
-            if self.schema_name
-            else self.table_name
-        )
+        return f"{self.schema_name}.{self.table_name}" if self.schema_name else self.table_name
 
     @property
     def table_schema(self) -> str:
-        return self.sql_loader.sql_driver.get_table_schema(
-            self.full_table_name, schema=self.schema_name
-        )
+        return self.sql_loader.sql_driver.get_table_schema(self.full_table_name, schema=self.schema_name)
 
     @activity(
         config={
@@ -44,9 +38,12 @@ class SqlClient(BaseTool):
             "schema": Schema({"sql_query": str}),
         }
     )
-    def execute_query(self, params: dict) -> ListArtifact | InfoArtifact:
-        query = params["values"]["sql_query"]
-        rows = self.sql_loader.load(query)
+    def execute_query(self, params: dict) -> ListArtifact | InfoArtifact | ErrorArtifact:
+        try:
+            query = params["values"]["sql_query"]
+            rows = self.sql_loader.load(query)
+        except Exception as e:
+            return ErrorArtifact(f"error executing query: {e}")
 
         if len(rows) > 0:
             return ListArtifact(rows)

@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from attr import define, field, Factory
+from attr import define, field
 from griptape.tools import BaseTool
-from griptape.memory.structure import Run, ConversationMemory
+from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
 
@@ -13,17 +13,17 @@ if TYPE_CHECKING:
 @define
 class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
-    memory: Optional[ConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()), kw_only=True
-    )
     tools: list[BaseTool] = field(factory=list, kw_only=True)
+    max_meta_memory_entries: int | None = field(default=20, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if len(self.tasks) == 0:
             if self.tools:
-                task = ToolkitTask(self.input_template, tools=self.tools)
+                task = ToolkitTask(
+                    self.input_template, tools=self.tools, max_meta_memory_entries=self.max_meta_memory_entries
+                )
             else:
-                task = PromptTask(self.input_template)
+                task = PromptTask(self.input_template, max_meta_memory_entries=self.max_meta_memory_entries)
 
             self.add_task(task)
 
@@ -43,25 +43,20 @@ class Agent(Structure):
         return task
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
-        raise NotImplementedError(
-            "Method is not implemented: agents can only have one task."
-        )
+        if len(tasks) > 1:
+            raise ValueError("Agents can only have one task.")
+        return super().add_tasks(*tasks)
 
-    def try_run(self, *args) -> BaseTask:
+    def try_run(self, *args) -> Agent:
         self._execution_args = args
 
         self.task.reset()
 
         self.task.execute()
 
-        if self.memory:
-            run = Run(
-                input=self.task.input.to_text(),
-                output=self.task.output.to_text(),
-            )
+        if self.conversation_memory:
+            run = Run(input=self.task.input.to_text(), output=self.task.output.to_text())
 
-            self.memory.add_run(run)
+            self.conversation_memory.add_run(run)
 
-        self._execution_args = ()
-
-        return self.task
+        return self

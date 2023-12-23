@@ -1,0 +1,13 @@
+repos:
+-   repo: https://github.com/ambv/black
+    rev: 23.7.0
+    hooks:
+    - id: black
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+    - id: pyupgrade
+-   repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.342
+    hooks:
+    - id: pyright

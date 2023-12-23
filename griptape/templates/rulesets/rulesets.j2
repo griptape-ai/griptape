@@ -1,0 +1,13 @@
+{% if rulesets and rulesets|length > 0 %}
+When responding, always use rules from the following rulesets.
+
+{% for ruleset in rulesets %}
+Ruleset name: {{ ruleset.name }}
+"{{ ruleset.name }}" rules:
+{% for rule in ruleset.rules %}
+Rule #{{loop.index}}
+{{ rule.value }}
+{% endfor %}
+
+{% endfor %}
+{% endif %}

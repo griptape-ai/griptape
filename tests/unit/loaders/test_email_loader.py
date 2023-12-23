@@ -37,11 +37,7 @@ class TestEmailLoader:
 
     @pytest.fixture
     def loader(self):
-        return EmailLoader(
-            imap_url="an.email.server.hostname",
-            username="username",
-            password="password",
-        )
+        return EmailLoader(imap_url="an.email.server.hostname", username="username", password="password")
 
     def test_load_accepts_explicit_plain_text(self, loader):
         # When
@@ -62,36 +58,23 @@ class TestEmailLoader:
         assert to_value_set(list_artifact) == set()
 
     @pytest.mark.parametrize("match_count", range(3))
-    def test_load_with_search(
-        self, loader, mock_search, mock_fetch, match_count
-    ):
+    def test_load_with_search(self, loader, mock_search, mock_fetch, match_count):
         # Given
         mock_search.return_value = to_search_response(match_count)
-        mock_fetch.side_effect = [
-            to_fetch_message(f"message-{i}", "text/plain")
-            for i in range(match_count)
-        ]
+        mock_fetch.side_effect = [to_fetch_message(f"message-{i}", "text/plain") for i in range(match_count)]
 
         # When
-        list_artifact = loader.load(
-            EmailLoader.EmailQuery(
-                label="INBOX", key="key", search_criteria="search-criteria"
-            )
-        )
+        list_artifact = loader.load(EmailLoader.EmailQuery(label="INBOX", key="key", search_criteria="search-criteria"))
 
         # Then
-        mock_search.called_once_with(None, "key", '"search-criteria"')
+        mock_search.assert_called_once_with(None, "key", '"search-criteria"')
         assert mock_fetch.call_count == match_count
         assert isinstance(list_artifact, ListArtifact)
-        assert to_value_set(list_artifact) == {
-            f"message-{i}" for i in range(match_count)
-        }
+        assert to_value_set(list_artifact) == {f"message-{i}" for i in range(match_count)}
 
-    def test_load_returns_error_artifact_when_select_returns_non_ok(
-        self, loader, mock_select
-    ):
+    def test_load_returns_error_artifact_when_select_returns_non_ok(self, loader, mock_select):
         # Given
-        mock_select.return_value = (None, ["NOT-OK".encode()])
+        mock_select.return_value = (None, [b"NOT-OK"])
 
         # When
         artifact = loader.load(EmailLoader.EmailQuery(label="INBOX"))
@@ -99,9 +82,7 @@ class TestEmailLoader:
         # Then
         assert isinstance(artifact, ErrorArtifact)
 
-    def test_load_returns_error_artifact_when_login_throws(
-        self, loader, mock_login
-    ):
+    def test_load_returns_error_artifact_when_login_throws(self, loader, mock_login):
         # Given
         mock_login.side_effect = Exception("login-failed")
 
@@ -113,29 +94,21 @@ class TestEmailLoader:
 
     def test_load_collection(self, loader, mock_fetch):
         # Given
-        mock_fetch.side_effect = [
-            to_fetch_message(f"message-{i}", "text/plain") for i in range(3)
-        ]
+        mock_fetch.side_effect = [to_fetch_message(f"message-{i}", "text/plain") for i in range(3)]
 
         # When
-        list_artifact_by_hash = loader.load_collection(
-            [EmailLoader.EmailQuery(label=f"INBOX-{i}") for i in range(3)]
-        )
+        list_artifact_by_hash = loader.load_collection([EmailLoader.EmailQuery(label=f"INBOX-{i}") for i in range(3)])
 
         # Then
         assert mock_fetch.call_count == 3
-        assert to_value_set(list_artifact_by_hash) == {
-            f"message-{i}" for i in range(3)
-        }
+        assert to_value_set(list_artifact_by_hash) == {f"message-{i}" for i in range(3)}
 
     def test_load_collection_skips_duplicate_queries(self, loader, mock_fetch):
         # Given
         mock_fetch.return_value = to_fetch_message("message", "text/plain")
 
         # When
-        list_artifact_by_hash = loader.load_collection(
-            [EmailLoader.EmailQuery(label="INBOX")] * 3
-        )
+        list_artifact_by_hash = loader.load_collection([EmailLoader.EmailQuery(label="INBOX")] * 3)
 
         # Then
         mock_fetch.assert_called_once()
@@ -152,7 +125,7 @@ def to_select_response(status: str, message_count: int):
     return (status, (str(message_count),))
 
 
-def to_fetch_message(body: str, content_type: Optional[str]):
+def to_fetch_message(body: str, content_type: str | None):
     return to_fetch_response(to_message(body, content_type))
 
 
@@ -160,25 +133,19 @@ def to_fetch_response(message: message):
     return (None, ((None, message.as_bytes()),))
 
 
-def to_message(body: str, content_type: Optional[str]) -> message:
+def to_message(body: str, content_type: str | None) -> message:
     message = email.message_from_string(body)
     if content_type:
         message.set_type(content_type)
     return message
 
 
-def to_value_set(
-    artifact_or_dict: ListArtifact | dict[str, ListArtifact]
-) -> set[str]:
+def to_value_set(artifact_or_dict: ListArtifact | dict[str, ListArtifact]) -> set[str]:
     if isinstance(artifact_or_dict, ListArtifact):
-        return set([value.value for value in artifact_or_dict.value])
+        return {value.value for value in artifact_or_dict.value}
     elif isinstance(artifact_or_dict, dict):
-        return set(
-            [
-                text_artifact.value
-                for list_artifact in artifact_or_dict.values()
-                for text_artifact in list_artifact.value
-            ]
-        )
+        return {
+            text_artifact.value for list_artifact in artifact_or_dict.values() for text_artifact in list_artifact.value
+        }
     else:
         raise Exception

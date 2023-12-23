@@ -23,9 +23,9 @@ class EmailLoader(BaseLoader):
         """
 
         label: str = field(kw_only=True)
-        key: Optional[str] = field(default=None, kw_only=True)
-        search_criteria: Optional[str] = field(default=None, kw_only=True)
-        max_count: Optional[int] = field(default=None, kw_only=True)
+        key: str | None = field(default=None, kw_only=True)
+        search_criteria: str | None = field(default=None, kw_only=True)
+        max_count: int | None = field(default=None, kw_only=True)
 
     imap_url: str = field(kw_only=True)
     username: str = field(kw_only=True)
@@ -34,21 +34,15 @@ class EmailLoader(BaseLoader):
     def load(self, query: EmailQuery) -> ListArtifact:
         return self._retrieve_email(query)
 
-    def load_collection(
-        self, queries: list[EmailQuery]
-    ) -> dict[str, ListArtifact | ErrorArtifact]:
+    def load_collection(self, queries: list[EmailQuery]) -> dict[str, ListArtifact | ErrorArtifact]:
         return utils.execute_futures_dict(
             {
-                utils.str_to_hash(str(query)): self.futures_executor.submit(
-                    self._retrieve_email, query
-                )
+                utils.str_to_hash(str(query)): self.futures_executor.submit(self._retrieve_email, query)
                 for query in set(queries)
             }
         )
 
-    def _retrieve_email(
-        self, query: EmailQuery
-    ) -> ListArtifact | ErrorArtifact:
+    def _retrieve_email(self, query: EmailQuery) -> ListArtifact | ErrorArtifact:
         label, key, search_criteria, max_count = astuple(query)
 
         list_artifact = ListArtifact()
@@ -61,9 +55,7 @@ class EmailLoader(BaseLoader):
                     raise Exception(mailbox[1][0].decode())
 
                 if key and search_criteria:
-                    _typ, [message_numbers] = client.search(
-                        None, key, f'"{search_criteria}"'
-                    )
+                    _typ, [message_numbers] = client.search(None, key, f'"{search_criteria}"')
                     messages_count = self._count_messages(message_numbers)
                 else:
                     messages_count = int(mailbox[1][0])
@@ -75,9 +67,7 @@ class EmailLoader(BaseLoader):
                     # Note: mailparser only populates the text_plain field
                     # if the message content type is explicitly set to 'text/plain'.
                     if message.text_plain:
-                        list_artifact.value.append(
-                            TextArtifact("\n".join(message.text_plain))
-                        )
+                        list_artifact.value.append(TextArtifact("\n".join(message.text_plain)))
 
                 client.close()
 

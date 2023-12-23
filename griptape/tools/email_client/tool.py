@@ -35,37 +35,21 @@ class EmailClient(BaseTool):
         email_loader: Used to retrieve email.
     """
 
-    username: Optional[str] = field(default=None, kw_only=True)
-    password: Optional[str] = field(default=None, kw_only=True)
-    email_max_retrieve_count: Optional[int] = field(default=None, kw_only=True)
-    smtp_host: Optional[str] = field(default=None, kw_only=True)
-    smtp_port: Optional[int] = field(default=None, kw_only=True)
+    username: str | None = field(default=None, kw_only=True)
+    password: str | None = field(default=None, kw_only=True)
+    email_max_retrieve_count: int | None = field(default=None, kw_only=True)
+    smtp_host: str | None = field(default=None, kw_only=True)
+    smtp_port: int | None = field(default=None, kw_only=True)
     smtp_use_ssl: bool = field(default=True, kw_only=True)
-    smtp_user: Optional[str] = field(
-        default=Factory(lambda self: self.username, takes_self=True),
-        kw_only=True,
-    )
-    smtp_password: Optional[str] = field(
-        default=Factory(lambda self: self.password, takes_self=True),
-        kw_only=True,
-    )
-    imap_url: Optional[str] = field(default=None, kw_only=True)
-    imap_user: Optional[str] = field(
-        default=Factory(lambda self: self.username, takes_self=True),
-        kw_only=True,
-    )
-    imap_password: Optional[str] = field(
-        default=Factory(lambda self: self.password, takes_self=True),
-        kw_only=True,
-    )
-    mailboxes: Optional[dict[str, str]] = field(default=None, kw_only=True)
+    smtp_user: str | None = field(default=Factory(lambda self: self.username, takes_self=True), kw_only=True)
+    smtp_password: str | None = field(default=Factory(lambda self: self.password, takes_self=True), kw_only=True)
+    imap_url: str | None = field(default=None, kw_only=True)
+    imap_user: str | None = field(default=Factory(lambda self: self.username, takes_self=True), kw_only=True)
+    imap_password: str | None = field(default=Factory(lambda self: self.password, takes_self=True), kw_only=True)
+    mailboxes: dict[str, str] | None = field(default=None, kw_only=True)
     email_loader: EmailLoader = field(
         default=Factory(
-            lambda self: EmailLoader(
-                imap_url=self.imap_url,
-                username=self.imap_user,
-                password=self.imap_password,
-            ),
+            lambda self: EmailLoader(imap_url=self.imap_url, username=self.imap_user, password=self.imap_password),
             takes_self=True,
         ),
         kw_only=True,
@@ -77,38 +61,21 @@ class EmailClient(BaseTool):
             "{% if _self.mailboxes %} Available mailboxes: {{ _self.mailboxes }}{% endif %}",
             "schema": Schema(
                 {
-                    Literal(
-                        "label",
-                        description="Label to retrieve emails from such as 'INBOX' or 'SENT'",
+                    Literal("label", description="Label to retrieve emails from such as 'INBOX' or 'SENT'"): str,
+                    schema.Optional(
+                        Literal("key", description="Optional key for filtering such as 'FROM' or 'SUBJECT'")
                     ): str,
                     schema.Optional(
-                        Literal(
-                            "key",
-                            description="Optional key for filtering such as 'FROM' or 'SUBJECT'",
-                        )
+                        Literal("search_criteria", description="Optional search criteria to filter emails by key")
                     ): str,
-                    schema.Optional(
-                        Literal(
-                            "search_criteria",
-                            description="Optional search criteria to filter emails by key",
-                        )
-                    ): str,
-                    schema.Optional(
-                        Literal(
-                            "max_count", description="Optional max email count"
-                        )
-                    ): int,
+                    schema.Optional(Literal("max_count", description="Optional max email count")): int,
                 }
             ),
         }
     )
     def retrieve(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
-        max_count = (
-            int(values["max_count"])
-            if values.get("max_count")
-            else self.email_max_retrieve_count
-        )
+        max_count = int(values["max_count"]) if values.get("max_count") else self.email_max_retrieve_count
 
         return self.email_loader.load(
             EmailLoader.EmailQuery(

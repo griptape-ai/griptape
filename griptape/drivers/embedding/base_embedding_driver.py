@@ -12,10 +12,10 @@ from griptape.chunkers import BaseChunker, TextChunker
 class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     """
     Attributes:
-        dimensions: Vector dimensions.
+        tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.
+        chunker: An instance of `BaseChunker` to use when chunking long strings.
     """
 
-    dimensions: int = field(kw_only=True)
     tokenizer: BaseTokenizer = field(kw_only=True)
     chunker: BaseChunker = field(init=False)
 
@@ -28,10 +28,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     def embed_string(self, string: str) -> list[float]:
         for attempt in self.retrying():
             with attempt:
-                if (
-                    self.tokenizer.count_tokens(string)
-                    > self.tokenizer.max_tokens
-                ):
+                if self.tokenizer.count_tokens(string) > self.tokenizer.max_tokens:
                     return self._embed_long_string(string)
                 else:
                     return self.try_embed_chunk(string)
@@ -57,9 +54,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
             length_chunks.append(len(chunk))
 
         # generate weighted averages
-        embedding_chunks = np.average(
-            embedding_chunks, axis=0, weights=length_chunks
-        )
+        embedding_chunks = np.average(embedding_chunks, axis=0, weights=length_chunks)
 
         # normalize length to 1
         embedding_chunks = embedding_chunks / np.linalg.norm(embedding_chunks)

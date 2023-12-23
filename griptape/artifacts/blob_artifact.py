@@ -8,7 +8,7 @@ from griptape.artifacts import BaseArtifact
 @define(frozen=True)
 class BlobArtifact(BaseArtifact):
     value: bytes = field(converter=BaseArtifact.value_to_bytes)
-    dir_name: Optional[str] = field(default=None, kw_only=True)
+    dir_name: str | None = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
     encoding_error_handler: str = field(default="strict", kw_only=True)
 
@@ -17,16 +17,10 @@ class BlobArtifact(BaseArtifact):
 
     @property
     def full_path(self) -> str:
-        return (
-            os.path.join(self.dir_name, self.name)
-            if self.dir_name
-            else self.name
-        )
+        return os.path.join(self.dir_name, self.name) if self.dir_name else self.name
 
     def to_text(self) -> str:
-        return self.value.decode(
-            encoding=self.encoding, errors=self.encoding_error_handler
-        )
+        return self.value.decode(encoding=self.encoding, errors=self.encoding_error_handler)
 
     def to_dict(self) -> dict:
         from griptape.schemas import BlobArtifactSchema

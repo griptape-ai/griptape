@@ -14,9 +14,7 @@ class ListArtifact(BaseArtifact):
             first_type = type(value[0])
 
             if not all(isinstance(v, first_type) for v in value):
-                raise ValueError(
-                    f"list elements in 'value' are not the same type"
-                )
+                raise ValueError(f"list elements in 'value' are not the same type")
 
     @property
     def child_type(self) -> Optional[type]:
@@ -24,6 +22,9 @@ class ListArtifact(BaseArtifact):
             return type(self.value[0])
         else:
             return None
+
+    def __getitem__(self, key: int) -> BaseArtifact:
+        return self.value[key]
 
     def __bool__(self) -> bool:
         return len(self) > 0

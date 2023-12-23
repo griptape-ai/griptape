@@ -1,11 +1,6 @@
 from __future__ import annotations
 from attr import define, field
-from griptape.artifacts import (
-    BaseArtifact,
-    TextArtifact,
-    ErrorArtifact,
-    ListArtifact,
-)
+from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, ListArtifact
 from griptape.loaders import TextLoader
 from schema import Schema, Literal
 from griptape.tools import BaseTool
@@ -20,9 +15,7 @@ class WebScraper(BaseTool):
     @activity(
         config={
             "description": "Can be used to browse a web page and load its content",
-            "schema": Schema(
-                {Literal("url", description="Valid HTTP URL"): str}
-            ),
+            "schema": Schema({Literal("url", description="Valid HTTP URL"): str}),
         }
     )
     def get_content(self, params: dict) -> ListArtifact | ErrorArtifact:
@@ -32,16 +25,12 @@ class WebScraper(BaseTool):
         if isinstance(page, ErrorArtifact):
             return page
         else:
-            return ListArtifact(
-                TextLoader().text_to_artifacts(page.get("text"))
-            )
+            return ListArtifact(TextLoader().text_to_artifacts(page.get("text")))
 
     @activity(
         config={
             "description": "Can be used to load a web page author",
-            "schema": Schema(
-                {Literal("url", description="Valid HTTP URL"): str}
-            ),
+            "schema": Schema({Literal("url", description="Valid HTTP URL"): str}),
         }
     )
     def get_author(self, params: dict) -> BaseArtifact:
