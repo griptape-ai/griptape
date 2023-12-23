@@ -57,22 +57,25 @@ class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
 
             if first.is_system():
                 prompt_lines.append(f"<s>[INST] <<SYS>>\n{first.content}\n<</SYS>>\n\n")
-                if second and second.is_user():
-                    prompt_lines.append(f"{second.content} [/INST]")
-                else:
-                    raise Exception("System input must be followed by user input.")
+                if second:
+                    if second.is_user():
+                        prompt_lines.append(f"{second.content} [/INST]")
+                    else:
+                        raise Exception("System input must be followed by user input.")
             elif first.is_assistant():
                 prompt_lines.append(f" {first.content} </s>")
-                if second and second.is_user():
-                    prompt_lines.append(f"<s>[INST] {second.content} [/INST]")
-                else:
-                    raise Exception("Assistant input must be followed by user input.")
+                if second:
+                    if second.is_user():
+                        prompt_lines.append(f"<s>[INST] {second.content} [/INST]")
+                    else:
+                        raise Exception("Assistant input must be followed by user input.")
             elif first.is_user():
                 prompt_lines.append(f"<s>[INST] {first.content} [/INST]")
-                if second and second.is_assistant():
-                    prompt_lines.append(f" {second.content} </s>")
-                else:
-                    raise Exception("User input must be followed by assistant input.")
+                if second:
+                    if second.is_assistant():
+                        prompt_lines.append(f" {second.content} </s>")
+                    else:
+                        raise Exception("User input must be followed by assistant input.")
 
         return "".join(prompt_lines)
 
