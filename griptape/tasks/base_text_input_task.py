@@ -11,9 +11,9 @@ from griptape.utils import J2
 
 @define
 class BaseTextInputTask(BaseTask, ABC):
-    DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
     DEFAULT_RULESET_NAME = "Default Ruleset"
     ADDITIONAL_RULESET_NAME = "Additional Ruleset"
+    DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
