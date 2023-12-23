@@ -1,3 +1,4 @@
+from __future__ import annotations
 import ai21
 from attr import define, field
 from griptape.tokenizers import BaseTokenizer
@@ -10,15 +11,15 @@ class Ai21Tokenizer(BaseTokenizer):
 
     model: str = field(kw_only=True)
     api_key: str = field(kw_only=True)
+    max_tokens: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
 
     def __attrs_post_init__(self):
         ai21.api_key = self.api_key
 
-    @property
-    def max_tokens(self) -> int:
-        return self.DEFAULT_MAX_TOKENS
+    def count_tokens(self, text: str | list[str]) -> int:
+        if isinstance(text, str):
+            response = ai21.Tokenization.execute(text=text)
 
-    def count_tokens(self, text: str) -> int:
-        response = ai21.Tokenization.execute(text=text)
-
-        return len(response["tokens"])
+            return len(response["tokens"])
+        else:
+            raise ValueError("Text must be a string.")
