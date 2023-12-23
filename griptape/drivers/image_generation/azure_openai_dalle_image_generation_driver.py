@@ -1,6 +1,5 @@
 from __future__ import annotations
 import openai
-from typing import Optional
 from attr import field, Factory, define
 from griptape.drivers import OpenAiDalleImageGenerationDriver
 

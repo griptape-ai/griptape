@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Optional, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any
 
 from attr import define, field, Factory
 
@@ -51,7 +51,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, image: ImageArtifact, prompts: list[str], negative_prompts: list[str] | None = None
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_variation_request_parameters(
             prompts, image=image, negative_prompts=negative_prompts, seed=self.seed
