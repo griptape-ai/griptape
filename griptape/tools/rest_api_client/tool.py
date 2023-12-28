@@ -1,5 +1,5 @@
 from textwrap import dedent
-from typing import Optional
+from typing import Optional, Dict
 from urllib.parse import urljoin
 import schema
 from schema import Schema, Literal
@@ -20,6 +20,7 @@ class RestApiClient(BaseTool):
         request_query_params_schema: A JSON schema string describing the available query parameters.
         request_path_params_schema: A JSON schema string describing the available path parameters. The schema must describe an array of string values.
         response_body_schema: A JSON schema string describing the response body.
+        headers (Optional[Dict[str, str]]): Headers to include in the requests.
     """
 
     base_url: str = field(kw_only=True)
@@ -29,6 +30,7 @@ class RestApiClient(BaseTool):
     request_query_params_schema: Optional[str] = field(default=None, kw_only=True)
     request_body_schema: Optional[str] = field(default=None, kw_only=True)
     response_body_schema: Optional[str] = field(default=None, kw_only=True)
+    headers: Optional[Dict[str, str]] = field(default=None, kw_only=True)
 
     @property
     def full_url(self) -> str:
@@ -44,20 +46,27 @@ class RestApiClient(BaseTool):
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
-            "schema": Schema({Literal("body", description="The request body."): dict}),
+            "schema": Schema(
+                {
+                    Literal("body", description="The request body."): dict,
+                    schema.Optional(Literal("headers", description="The request headers.")): dict,
+                }
+            ),
         }
     )
     def put(self, params: dict) -> BaseArtifact:
         from requests import put, exceptions
 
-        values = params["values"]
         base_url = self.base_url
-        path = self.path
-        body = values["body"]
+        values = params.get("values", {})
+        path = values.get("path", self.path)
+        body = values.get("body", {})
+        headers = values.get("headers", self.headers)
+
         url = self._build_url(base_url, path=path)
 
         try:
-            response = put(url, json=body, timeout=30)
+            response = put(url, json=body, timeout=30, headers=headers)
 
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
@@ -78,6 +87,7 @@ class RestApiClient(BaseTool):
                 {
                     Literal("path_params", description="The request path parameters."): list,
                     Literal("body", description="The request body."): dict,
+                    schema.Optional(Literal("headers", description="The request headers.")): dict,
                 }
             ),
         }
@@ -85,15 +95,17 @@ class RestApiClient(BaseTool):
     def patch(self, params: dict) -> BaseArtifact:
         from requests import patch, exceptions
 
-        values = params["values"]
         base_url = self.base_url
-        path = self.path
-        body = values["body"]
-        path_params = values["path_params"]
+        values = params.get("values", {})
+        path = values.get("path", self.path)
+        body = values.get("body", {})
+        path_params = values.get("path_params", [])
+        headers = values.get("headers", self.headers)
+
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = patch(url, json=body, timeout=30)
+            response = patch(url, json=body, timeout=30, headers=headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -108,20 +120,27 @@ class RestApiClient(BaseTool):
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """
             ),
-            "schema": Schema({Literal("body", description="The request body."): dict}),
+            "schema": Schema(
+                {
+                    Literal("body", description="The request body."): dict,
+                    schema.Optional(Literal("headers", description="The request headers.")): dict,
+                }
+            ),
         }
     )
     def post(self, params: dict) -> BaseArtifact:
         from requests import post, exceptions
 
-        values = params["values"]
         base_url = self.base_url
-        path = self.path
+        values = params.get("values", {})
+        path = values.get("path", self.path)
+        body = values.get("body", {})
+        headers = values.get("headers", self.headers)
+
         url = self._build_url(base_url, path=path)
-        body = values["body"]
 
         try:
-            response = post(url, json=body, timeout=30)
+            response = post(url, json=body, timeout=30, headers=headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -142,6 +161,7 @@ class RestApiClient(BaseTool):
                     {
                         schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
                         schema.Optional(Literal("path_params", description="The request path parameters.")): list,
+                        schema.Optional(Literal("headers", description="The request headers.")): dict,
                     }
                 )
             ),
@@ -150,19 +170,21 @@ class RestApiClient(BaseTool):
     def get(self, params: dict) -> BaseArtifact:
         from requests import get, exceptions
 
-        values = params["values"]
         base_url = self.base_url
-        path = self.path
-
         query_params = {}
         path_params = []
+        values = params.get("values", {})
+        path = values.get("path", self.path)
+        headers = values.get("headers", self.headers)
+
         if values:
             query_params = values.get("query_params", {})
             path_params = values.get("path_params", [])
+
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = get(url, params=query_params, timeout=30)
+            response = get(url, params=query_params, timeout=30, headers=headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -181,23 +203,26 @@ class RestApiClient(BaseTool):
                 {
                     schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
                     schema.Optional(Literal("path_params", description="The request path parameters.")): list,
+                    schema.Optional(Literal("headers", description="The request headers.")): dict,
                 }
             ),
         }
     )
-    def delete(self, params: dict = None) -> BaseArtifact:
+    def delete(self, params: Optional[Dict] = None) -> BaseArtifact:
         from requests import delete, exceptions
 
-        values = params["values"]
         base_url = self.base_url
-        path = self.path
-
+        params = params or {}
+        values = params.get("values", {})
         query_params = values.get("query_params", {})
         path_params = values.get("path_params", [])
+        path = values.get("path", self.path)
+        headers = values.get("headers", self.headers)
+
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = delete(url, params=query_params, timeout=30)
+            response = delete(url, params=query_params, timeout=30, headers=headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
