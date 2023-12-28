@@ -1,6 +1,7 @@
 import pytest
 import mongomock
-from pymongo import MongoClient
+from unittest.mock import patch
+from pymongo.errors import OperationFailure
 from griptape.artifacts import TextArtifact
 from griptape.drivers import MongoDbAtlasVectorStoreDriver, BaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -64,3 +65,15 @@ class TestMongoDbAtlasVectorStoreDriver:
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = list(driver.load_entries())
         assert results is not None and len(results) > 0
+
+    def test_delete(self, driver):
+        # First assert: check if the collection is empty but exists
+        assert driver.get_collection().count_documents({}) == 0
+
+        # Perform the delete operation
+        driver.delete()
+
+        # Mock count_documents to raise OperationFailure after deletion
+        with patch.object(driver.get_collection(), 'count_documents', side_effect=OperationFailure("Mock error")):
+            with pytest.raises(OperationFailure):
+                driver.get_collection().count_documents({})
