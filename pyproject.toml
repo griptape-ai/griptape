@@ -37,7 +37,10 @@ mail-parser = "^3.15.0"
 requests = "^2"
 lxml = "^4.9.3" # TODO: remove when https://github.com/adbar/trafilatura/issues/449 is fully resolved
 pillow = "^10.1.0"
-
+pytest = "^7.4.3"
+mongomock = "^4.1.2"
+pyright = "^1.1.343"
+google = "^3.0.0"
 
 cohere = { version = ">=4", optional = true }
 anthropic = { version = "^0.7.8", optional = true }
@@ -54,8 +57,6 @@ opensearch-py = { version = "^2.3.1", optional = true }
 requests-aws4auth = { version = "1.2.3", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
-pytest = "^7.4.3"
-mongomock = "^4.1.2"
 
 
 [tool.poetry.extras]
