@@ -78,13 +78,19 @@ class TestMongoDbAtlasVectorStoreDriver:
         assert results is not None and len(results) == 0
 
     def test_delete_collection(self, driver):
-        # First assert: check if the collection is empty but exists
-        assert driver.get_collection().count_documents({}) == 0
+        client = driver.client[driver.database_name]
 
-        # Perform the delete operation
+        # as mongomock follows MongoDB's convention of lazy collection creation
+        # we need to insert a document to ensure the collection exists
+        vector_id_str = "123"
+        vector = [0.5, 0.5, 0.5]
+        driver.upsert_vector(vector, vector_id=vector_id_str)
+        results = list(driver.load_entries())
+        assert results is not None and len(results) > 0
+        assert driver.get_collection().count_documents({}) == 1
+
+        assert len(client.list_collection_names()) == 1
         driver.delete_collection()
+        assert len(client.list_collection_names()) == 0
 
-        # Mock count_documents to raise OperationFailure after deletion
-        with patch.object(driver.get_collection(), "count_documents", side_effect=OperationFailure("Mock error")):
-            with pytest.raises(OperationFailure):
-                driver.get_collection().count_documents({})
+
