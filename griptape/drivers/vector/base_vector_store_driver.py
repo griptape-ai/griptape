@@ -73,7 +73,7 @@ class BaseVectorStoreDriver(ABC):
         )
 
     def delete(self):
-        ...
+        raise NotImplementedError("This Method is not implemented yet")
 
     @abstractmethod
     def upsert_vector(
