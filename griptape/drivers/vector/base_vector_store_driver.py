@@ -72,8 +72,9 @@ class BaseVectorStoreDriver(ABC):
             **kwargs
         )
 
-    def delete(self):
-        raise NotImplementedError("This Method is not implemented yet")
+    @abstractmethod
+    def delete(self, vector_id: str):
+        ...
 
     @abstractmethod
     def upsert_vector(

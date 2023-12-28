@@ -238,4 +238,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The ID of the vector that was added.
         """
 
-        raise Exception("not implemented")
+        raise NotImplementedError(f"{self.__class__.__name__} does not support upserting a vector.")
+
+    def delete(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

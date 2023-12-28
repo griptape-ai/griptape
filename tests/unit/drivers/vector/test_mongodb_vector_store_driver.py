@@ -67,11 +67,22 @@ class TestMongoDbAtlasVectorStoreDriver:
         assert results is not None and len(results) > 0
 
     def test_delete(self, driver):
+        vector_id_str = "123"
+        vector = [0.5, 0.5, 0.5]
+        driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
+        results = list(driver.load_entries())
+        assert results is not None and len(results) > 0
+
+        driver.delete(vector_id_str)
+        results = list(driver.load_entries())
+        assert results is not None and len(results) == 0
+
+    def test_delete_collection(self, driver):
         # First assert: check if the collection is empty but exists
         assert driver.get_collection().count_documents({}) == 0
 
         # Perform the delete operation
-        driver.delete()
+        driver.delete_collection()
 
         # Mock count_documents to raise OperationFailure after deletion
         with patch.object(driver.get_collection(), "count_documents", side_effect=OperationFailure("Mock error")):

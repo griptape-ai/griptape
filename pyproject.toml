@@ -37,10 +37,7 @@ mail-parser = "^3.15.0"
 requests = "^2"
 lxml = "^4.9.3" # TODO: remove when https://github.com/adbar/trafilatura/issues/449 is fully resolved
 pillow = "^10.1.0"
-pytest = "^7.4.3"
-mongomock = "^4.1.2"
-pyright = "^1.1.343"
-google = "^3.0.0"
+
 
 cohere = { version = ">=4", optional = true }
 anthropic = { version = "^0.7.8", optional = true }
@@ -109,6 +106,9 @@ optional = true
 pytest = "~=7.1"
 pytest-mock = "*"
 mongomock = "*"
+pyright = "^1.1.343"
+google = "^3.0.0"
+
 
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
