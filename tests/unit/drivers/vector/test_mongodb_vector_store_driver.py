@@ -79,7 +79,6 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     def test_delete_collection(self, driver):
         client = driver.client[driver.database_name]
-
         # as mongomock follows MongoDB's convention of lazy collection creation
         # we need to insert a document to ensure the collection exists
         vector_id_str = "123"
@@ -88,9 +87,6 @@ class TestMongoDbAtlasVectorStoreDriver:
         results = list(driver.load_entries())
         assert results is not None and len(results) > 0
         assert driver.get_collection().count_documents({}) == 1
-
         assert len(client.list_collection_names()) == 1
         driver.delete_collection()
         assert len(client.list_collection_names()) == 0
-
-
