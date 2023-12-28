@@ -33,12 +33,12 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         return self.client[self.database_name][self.collection_name]
 
     def upsert_vector(
-            self,
-            vector: list[float],
-            vector_id: str | None = None,
-            namespace: str | None = None,
-            meta: dict | None = None,
-            **kwargs,
+        self,
+        vector: list[float],
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        **kwargs,
     ) -> str:
         """Inserts or updates a vector in the collection.
 
@@ -86,14 +86,14 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
 
     def query(
-            self,
-            query: str,
-            count: int | None = None,
-            namespace: str | None = None,
-            include_vectors: bool = False,
-            offset: int | None = 0,
-            index: str | None = None,
-            **kwargs,
+        self,
+        query: str,
+        count: int | None = None,
+        namespace: str | None = None,
+        include_vectors: bool = False,
+        offset: int | None = 0,
+        index: str | None = None,
+        **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Queries the MongoDB collection for documents that match the provided query string.
 

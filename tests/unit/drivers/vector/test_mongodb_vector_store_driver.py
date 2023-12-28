@@ -74,6 +74,6 @@ class TestMongoDbAtlasVectorStoreDriver:
         driver.delete()
 
         # Mock count_documents to raise OperationFailure after deletion
-        with patch.object(driver.get_collection(), 'count_documents', side_effect=OperationFailure("Mock error")):
+        with patch.object(driver.get_collection(), "count_documents", side_effect=OperationFailure("Mock error")):
             with pytest.raises(OperationFailure):
                 driver.get_collection().count_documents({})
