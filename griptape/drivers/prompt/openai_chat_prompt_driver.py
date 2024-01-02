@@ -5,7 +5,7 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import OpenAiTokenizer
+from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
 from typing import Tuple, Type
 import dateparser
 from datetime import datetime, timedelta
@@ -43,7 +43,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         )
     )
     model: str = field(kw_only=True)
-    tokenizer: OpenAiTokenizer = field(
+    tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     user: str = field(default="", kw_only=True)
@@ -95,7 +95,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 yield TextArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
-        return self.tokenizer.count_tokens(self._prompt_stack_to_messages(prompt_stack))
+        if isinstance(self.tokenizer, OpenAiTokenizer):
+            return self.tokenizer.count_tokens(self._prompt_stack_to_messages(prompt_stack))
+        else:
+            return self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack))
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
         return [{"role": self.__to_openai_role(i), "content": i.content} for i in prompt_stack.inputs]
@@ -119,7 +122,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         # A max_tokens parameter is not required, but if it is specified by the caller, bound it to
         # the maximum value as determined by the tokenizer and pass it to the API.
         if self.max_tokens:
-            params["max_tokens"] = self.max_output_tokens(messages)
+            if isinstance(self.tokenizer, OpenAiTokenizer):
+                params["max_tokens"] = self.max_output_tokens(messages)
+            else:
+                params["max_tokens"] = self.max_output_tokens(self.prompt_stack_to_string(prompt_stack))
 
         params["messages"] = messages
 
