@@ -47,7 +47,7 @@ class Computer(BaseTool):
             self.__tempdir = tempfile.TemporaryDirectory()
             self.local_workdir = self.__tempdir.name
 
-    @docker_client.validator
+    @docker_client.validator  # pyright: ignore
     def validate_docker_client(self, _, docker_client: DockerClient) -> None:
         if not docker_client:
             raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")

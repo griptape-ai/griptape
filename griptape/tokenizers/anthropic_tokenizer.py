@@ -15,7 +15,9 @@ class AnthropicTokenizer(BaseTokenizer):
 
     model: str = field(kw_only=True)
     max_tokens: int = field(kw_only=True, default=Factory(lambda self: self.default_max_tokens(), takes_self=True))
-    client: Anthropic = field(default=import_optional_dependency("anthropic").Anthropic(), kw_only=True)
+    client: Anthropic = field(
+        default=Factory(lambda: import_optional_dependency("anthropic").Anthropic()), kw_only=True
+    )
 
     def default_max_tokens(self) -> int:
         tokens = next(v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model.startswith(k))
