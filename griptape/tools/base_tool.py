@@ -47,7 +47,7 @@ class BaseTool(ActivityMixin, ABC):
         if self.install_dependencies_on_init:
             self.install_dependencies(os.environ.copy())
 
-    @output_memory.validator
+    @output_memory.validator  # pyright: ignore
     def validate_output_memory(self, _, output_memory: dict[str, list[TaskMemory]] | None) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
