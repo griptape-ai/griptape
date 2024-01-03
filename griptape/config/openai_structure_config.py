@@ -3,7 +3,6 @@ from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver, LocalVect
 from griptape.config import (
     StructureConfig,
     StructureTaskMemoryConfig,
-    PromptDriverConfig,
     StructureTaskMemoryQueryEngineConfig,
     StructureTaskMemoryExtractionEngineConfig,
     StructureTaskMemorySummaryEngineConfig,

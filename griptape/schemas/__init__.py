@@ -17,6 +17,9 @@ from .memory.structure.run_schema import RunSchema
 from .memory.structure.conversation_memory_schema import ConversationMemorySchema
 from .memory.structure.summary_conversation_memory_schema import SummaryConversationMemorySchema
 
+from .drivers.prompt_driver_schema import PromptDriverSchema
+from .drivers.openai_chat_prompt_driver_schema import OpenAiChatPromptDriverSchema
+
 from .memory.meta.action_subtask_meta_entry_schema import ActionSubtaskMetaEntrySchema
 
 from .events.base_event_schema import BaseEventSchema
@@ -38,6 +41,21 @@ from .events.finish_image_generation_event_schema import FinishImageGenerationEv
 from .utils.prompt_stack_schema import PromptStackSchema
 from .utils.prompt_stack_input_schema import PromptStackInputSchema
 
+from .config.base_config_schema import BaseConfigSchema
+from .config.structure_task_memory_summary_engine_config_schema import StructureTaskMemorySummaryEngineConfigSchema
+from .config.structure_task_memory_query_engine_config_schema import StructureTaskMemoryQueryEngineConfigSchema
+from .config.structure_task_memory_extraction_engine_csv_config_schema import (
+    StructureTaskMemoryExtractionEngineCsvConfigSchema,
+)
+from .config.structure_task_memory_extraction_engine_json_config_schema import (
+    StructureTaskMemoryExtractionEngineJsonConfigSchema,
+)
+from .config.structure_task_memory_extraction_engine_config_schema import (
+    StructureTaskMemoryExtractionEngineConfigSchema,
+)
+from .config.structure_task_memory_config_schema import StructureTaskMemoryConfigSchema
+from .config.base_structure_config_schema import BaseStructureConfigSchema
+
 __all__ = [
     "BaseSchema",
     "PolymorphicSchema",
@@ -53,6 +71,8 @@ __all__ = [
     "RunSchema",
     "ConversationMemorySchema",
     "SummaryConversationMemorySchema",
+    "PromptDriverSchema",
+    "OpenAiChatPromptDriverSchema",
     "ActionSubtaskMetaEntrySchema",
     "BaseEventSchema",
     "BaseTaskEventSchema",
@@ -71,4 +91,12 @@ __all__ = [
     "PromptStackInputSchema",
     "StartImageGenerationEventSchema",
     "FinishImageGenerationEventSchema",
+    "BaseConfigSchema",
+    "BaseStructureConfigSchema",
+    "StructureTaskMemoryConfigSchema",
+    "StructureTaskMemoryQueryEngineConfigSchema",
+    "StructureTaskMemoryExtractionEngineConfigSchema",
+    "StructureTaskMemorySummaryEngineConfigSchema",
+    "StructureTaskMemoryExtractionEngineCsvConfigSchema",
+    "StructureTaskMemoryExtractionEngineJsonConfigSchema",
 ]
