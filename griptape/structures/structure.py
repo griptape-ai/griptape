@@ -21,6 +21,7 @@ from griptape.tokenizers import OpenAiTokenizer
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.events import EventListener
+from griptape.config import OpenAiStructureConfig, StructureConfig
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -32,6 +33,7 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     stream: bool = field(default=False, kw_only=True)
+    config: StructureConfig = field(default=Factory(lambda: OpenAiStructureConfig()), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda self: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL, stream=self.stream),
