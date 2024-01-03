@@ -29,5 +29,5 @@ class BaseTokenizer(ABC):
         ...
 
     @abstractmethod
-    def count_tokens(self, text: str | list[dict]) -> int:
+    def count_tokens(self, text) -> int:
         ...
