@@ -32,7 +32,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
     output_dir: str | None = field(default=None, kw_only=True)
     output_file: str | None = field(default=None, kw_only=True)
 
-    @negative_rulesets.validator
+    @negative_rulesets.validator  # pyright: ignore
     def validate_negative_rulesets(self, _, negative_rulesets: list[Ruleset]) -> None:
         if not negative_rulesets:
             return
@@ -40,7 +40,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
         if self.negative_rules:
             raise ValueError("Can't have both negative_rulesets and negative_rules specified.")
 
-    @negative_rules.validator
+    @negative_rules.validator  # pyright: ignore
     def validate_negative_rules(self, _, negative_rules: list[Rule]) -> None:
         if not negative_rules:
             return
@@ -48,7 +48,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
         if self.negative_rulesets:
             raise ValueError("Can't have both negative_rules and negative_rulesets specified.")
 
-    @output_dir.validator
+    @output_dir.validator  # pyright: ignore
     def validate_output_dir(self, _, output_dir: str) -> None:
         if not output_dir:
             return
@@ -56,7 +56,7 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
         if self.output_file:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    @output_file.validator
+    @output_file.validator  # pyright: ignore
     def validate_output_file(self, _, output_file: str) -> None:
         if not output_file:
             return

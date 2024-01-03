@@ -42,7 +42,7 @@ class FileManager(BaseTool):
     )
     save_file_encoding: str | None = field(default=None, kw_only=True)
 
-    @workdir.validator
+    @workdir.validator  # pyright: ignore
     def validate_workdir(self, _, workdir: str) -> None:
         if not Path(workdir).is_absolute():
             raise ValueError("workdir has to be absolute absolute")
