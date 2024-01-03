@@ -73,7 +73,7 @@ class TestMongoDbAtlasVectorStoreDriver:
         results = list(driver.load_entries())
         assert results is not None and len(results) > 0
 
-        driver.delete(vector_id_str)
+        driver.delete_vector(vector_id_str)
         results = list(driver.load_entries())
         assert results is not None and len(results) == 0
 

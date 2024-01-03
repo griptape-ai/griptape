@@ -194,5 +194,5 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         except Exception as e:
             logging.error(f"Error while handling index: {e}")
 
-    def delete(self, vector_id: str):
+    def delete_vector(self, vector_id: str):
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
