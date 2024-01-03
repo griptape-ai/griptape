@@ -1,10 +1,8 @@
 from attrs import define, field
 
-from griptape.config import (
-    StructureTaskMemoryQueryEngineConfig,
-    StructureTaskMemoryExtractionEngineConfig,
-    StructureTaskMemorySummaryEngineConfig,
-)
+from .structure_task_memory_query_engine_config import StructureTaskMemoryQueryEngineConfig
+from .structure_task_memory_extraction_engine_config import StructureTaskMemoryExtractionEngineConfig
+from .structure_task_memory_summary_engine_config import StructureTaskMemorySummaryEngineConfig
 
 
 @define(kw_only=True)

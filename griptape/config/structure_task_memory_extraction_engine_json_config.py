@@ -1,8 +1,8 @@
 from attrs import define, field
 
-from griptape.config import PromptDriverConfig
+from griptape.drivers import BasePromptDriver
 
 
 @define(kw_only=True)
 class StructureTaskMemoryExtractionEngineJsonConfig:
-    prompt_driver: PromptDriverConfig = field()
+    prompt_driver: BasePromptDriver = field()
