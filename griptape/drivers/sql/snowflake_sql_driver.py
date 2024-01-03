@@ -24,7 +24,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         kw_only=True,
     )
 
-    @connection_func.validator
+    @connection_func.validator  # pyright: ignore
     def validate_connection_func(self, _, connection_func: Callable[[], SnowflakeConnection]) -> None:
         snowflake_connection = connection_func()
         snowflake = import_optional_dependency("snowflake")
@@ -34,7 +34,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         if not snowflake_connection.schema or not snowflake_connection.database:
             raise ValueError("Provide a schema and database for the Snowflake connection")
 
-    @engine.validator
+    @engine.validator  # pyright: ignore
     def validate_engine_url(self, _, engine: Engine) -> None:
         if not engine.url.render_as_string().startswith("snowflake://"):
             raise ValueError("Provide a Snowflake connection")

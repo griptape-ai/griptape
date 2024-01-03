@@ -20,7 +20,7 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
     custom_attributes: str = field(default="accept_eula=true", kw_only=True)
     stream: bool = field(default=False, kw_only=True)
 
-    @stream.validator
+    @stream.validator  # pyright: ignore
     def validate_stream(self, _, stream):
         if stream:
             raise ValueError("streaming is not supported")
