@@ -107,7 +107,6 @@ pytest = "~=7.1"
 pytest-mock = "*"
 mongomock = "*"
 
-
 twine = ">=4"
 moto = {extras = ["dynamodb"], version = "^4.1.8"}
 pytest-xdist = "^3.3.1"

@@ -73,7 +73,7 @@ class BaseVectorStoreDriver(ABC):
         )
 
     @abstractmethod
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> None:
         ...
 
     @abstractmethod
