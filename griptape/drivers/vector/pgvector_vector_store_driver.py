@@ -28,7 +28,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     table_name: str = field(kw_only=True)
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
-    @connection_string.validator
+    @connection_string.validator  # pyright: ignore
     def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
@@ -41,7 +41,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         if not connection_string.startswith("postgresql://"):
             raise ValueError("The connection string must describe a Postgres database connection")
 
-    @engine.validator
+    @engine.validator  # pyright: ignore
     def validate_engine(self, _, engine: Optional[Engine]) -> None:
         # If a connection string is provided, an engine does not need to be provided.
         if self.connection_string is not None:
