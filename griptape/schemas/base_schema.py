@@ -1,3 +1,5 @@
+from __future__ import annotations
+import builtins
 import attrs
 from marshmallow import Schema, fields
 
@@ -10,22 +12,23 @@ class BaseSchema(Schema):
     def from_attrscls(cls, attrscls):
         """Generate a Schema from an attrs class."""
         return cls.from_dict(
-            {a.name: cls.make_field_for_type(a.type) for a in attrs.fields(attrscls)}, name=f"{attrscls.__name__}Schema"
+            {a.name: cls.make_field_for_type(a.type) for a in attrs.fields(attrscls) if a.metadata.get("save")},
+            name=f"{attrscls.__name__}Schema",
         )
 
     @classmethod
-    def make_field_for_type(cls, type_):
+    def make_field_for_type(cls, type_str):
         """Generate a marshmallow Field instance from a Python type."""
-        if attrs.has(type_):
-            return fields.Nested(cls.from_attrscls(type_))
-        # Get marshmallow field class for Python type
-        origin_cls = getattr(type_, "__origin__", None) or type_
-        FieldClass = cls.DATACLASS_TYPE_MAPPING[origin_cls]
+        if attrs.has(type_str):
+            return fields.Nested(cls.from_attrscls(type_str))
+        type_info = cls.str_to_type(type_str)
+        type_ = type_info["type"]
+        field_class = Schema.TYPE_MAPPING[type_]
 
-        field_kwargs = {}
+        field_kwargs = {"allow_none": type_info["optional"]}
 
         # Handle list types
-        if issubclass(FieldClass, fields.List):
+        if issubclass(field_class, fields.List):
             # Construct inner class
             args = getattr(type_, "__args__", [])
             if args:
@@ -35,4 +38,20 @@ class BaseSchema(Schema):
                 inner_field = fields.Field()
             field_kwargs["cls_or_instance"] = inner_field
 
-        return FieldClass(**field_kwargs)
+        return field_class(**field_kwargs)
+
+    @classmethod
+    def str_to_type(cls, type_str: str) -> dict:
+        # Split the string by the pipe symbol and strip whitespace
+        types = [t.strip() for t in type_str.split("|")]
+
+        type_info = {"type": None, "optional": False}
+        for t in types:
+            if t == "None":  # Special case for None
+                type_info["optional"] = True
+            elif hasattr(builtins, t):
+                type_info["type"] = getattr(builtins, t)
+            else:
+                raise ValueError(f"Unknown type: {t}")
+
+        return type_info

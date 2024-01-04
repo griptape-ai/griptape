@@ -1663,6 +1663,30 @@ lint = ["flake8 (==6.0.0)", "flake8-bugbear (==23.7.10)", "mypy (==1.4.1)", "pre
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
+name = "marshmallow-dataclass"
+version = "8.6.0"
+description = "Python library to convert dataclasses into marshmallow schemas."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "marshmallow_dataclass-8.6.0-py3-none-any.whl", hash = "sha256:7885e9b5f5287b64573b174d69334fd20de1628001a4fa2adc8e75be5196755e"},
+    {file = "marshmallow_dataclass-8.6.0.tar.gz", hash = "sha256:a21f4d050a1d24249fd43aa56c7e4aea4b6454e049dc2c5f1496f479e30bf5d7"},
+]
+
+[package.dependencies]
+marshmallow = ">=3.13.0,<4.0"
+typing-extensions = {version = ">=4.2.0", markers = "python_version < \"3.11\" and python_version >= \"3.7\""}
+typing-inspect = ">=0.8.0,<1.0"
+
+[package.extras]
+dev = ["marshmallow (>=3.18.0,<4.0)", "marshmallow-enum", "pre-commit (>=2.17,<3.0)", "pytest (>=5.4)", "pytest-mypy-plugins (>=1.2.0)", "sphinx", "typeguard (>=2.4.1,<4.0.0)"]
+docs = ["sphinx"]
+enum = ["marshmallow (>=3.18.0,<4.0)", "marshmallow-enum"]
+lint = ["pre-commit (>=2.17,<3.0)"]
+tests = ["pytest (>=5.4)", "pytest-mypy-plugins (>=1.2.0)"]
+union = ["typeguard (>=2.4.1,<4.0.0)"]
+
+[[package]]
 name = "marshmallow-enum"
 version = "1.5.1"
 description = "Enum field for Marshmallow"
@@ -4066,6 +4090,21 @@ files = [
 ]
 
 [[package]]
+name = "typing-inspect"
+version = "0.9.0"
+description = "Runtime inspection utilities for typing module."
+optional = false
+python-versions = "*"
+files = [
+    {file = "typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f"},
+    {file = "typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78"},
+]
+
+[package.dependencies]
+mypy-extensions = ">=0.3.0"
+typing-extensions = ">=3.7.4"
+
+[[package]]
 name = "tzdata"
 version = "2023.3"
 description = "Provider of IANA time zone data"
@@ -4329,4 +4368,4 @@ drivers-vector-redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "9de5989bab35cb76db421ec5c4a7cd6790eeb631e5a2d6777b0f75152452454c"
+content-hash = "639c0acafd36991a6bd799a9a8963df71e4c31c9c7a75fb2a52a3d430e096d12"
