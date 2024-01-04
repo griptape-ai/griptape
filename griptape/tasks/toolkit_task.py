@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING, Optional, Callable
+from typing import TYPE_CHECKING, Callable
 from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
@@ -12,7 +12,6 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
-    from griptape.memory import TaskMemory
 
 
 @define
@@ -29,7 +28,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True), kw_only=True
     )
 
-    @tools.validator
+    @tools.validator  # pyright: ignore
     def validate_tools(self, _, tools: list[BaseTool]) -> None:
         tool_names = [t.name for t in tools]
 
@@ -68,7 +67,9 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:
-        return J2("tasks/toolkit_task/assistant_subtask.j2").render(subtask=subtask)
+        return J2("tasks/toolkit_task/assistant_subtask.j2").render(
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
+        )
 
     def default_user_subtask_template_generator(self, subtask: ActionSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(

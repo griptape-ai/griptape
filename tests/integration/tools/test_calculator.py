@@ -1,24 +1,20 @@
-from tests.utils.structure_runner import (
-    run_structure,
-    OUTPUT_RULESET,
-    TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
-    prompt_driver_id_fn,
-)
-from fuzzywuzzy import fuzz
+from tests.utils.structure_tester import StructureTester
 import pytest
 
 
 class TestCalculator:
-    @pytest.fixture(autouse=True, params=TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS, ids=prompt_driver_id_fn)
-    def agent(self, request):
+    @pytest.fixture(
+        autouse=True,
+        params=StructureTester.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=StructureTester.prompt_driver_id_fn,
+    )
+    def structure_tester(self, request):
         from griptape.structures import Agent
         from griptape.tools import Calculator
 
-        return Agent(
-            tools=[Calculator()], conversation_memory=None, prompt_driver=request.param, rulesets=[OUTPUT_RULESET]
+        return StructureTester(
+            Agent(tools=[Calculator(off_prompt=False)], conversation_memory=None, prompt_driver=request.param)
         )
 
-    def test_calculate(self, agent):
-        result = run_structure(agent, "What is 7 times 3 divided by 5 plus 10.")
-
-        assert fuzz.partial_ratio(str(result["answer"]), "14.2") > 80
+    def test_calculate(self, structure_tester):
+        structure_tester.run("What is 7 times 3 divided by 5 plus 10.")

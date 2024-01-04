@@ -1,9 +1,13 @@
-from typing import Iterator
+from __future__ import annotations
+from typing import Iterator, TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
+
+if TYPE_CHECKING:
+    from anthropic import Anthropic
 
 
 @define
@@ -12,27 +16,29 @@ class AnthropicPromptDriver(BasePromptDriver):
     Attributes:
         api_key: Anthropic API key.
         model: Anthropic model name.
+        client: Custom `Anthropic` client.
         tokenizer: Custom `AnthropicTokenizer`.
     """
 
     api_key: str = field(kw_only=True)
     model: str = field(kw_only=True)
+    client: Anthropic = field(
+        default=Factory(
+            lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key), takes_self=True
+        ),
+        kw_only=True,
+    )
     tokenizer: AnthropicTokenizer = field(
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        anthropic = import_optional_dependency("anthropic")
+        response = self.client.completions.create(**self._base_params(prompt_stack))
 
-        response = anthropic.Anthropic(api_key=self.api_key).completions.create(**self._base_params(prompt_stack))
         return TextArtifact(value=response.completion)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        anthropic = import_optional_dependency("anthropic")
-
-        response = anthropic.Anthropic(api_key=self.api_key).completions.create(
-            **self._base_params(prompt_stack), stream=True
-        )
+        response = self.client.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in response:
             yield TextArtifact(value=chunk.completion)
@@ -42,13 +48,21 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         for i in prompt_stack.inputs:
             if i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
+                prompt_lines.append(f"\n\nAssistant: {i.content}")
+            elif i.is_user():
+                prompt_lines.append(f"\n\nHuman: {i.content}")
+            elif i.is_system():
+                if self.model == "claude-2.1":
+                    prompt_lines.append(f"{i.content}")
+                else:
+                    prompt_lines.append(f"\n\nHuman: {i.content}")
+                    prompt_lines.append("\n\nAssistant:")
             else:
-                prompt_lines.append(f"Human: {i.content}")
+                prompt_lines.append(f"\n\nHuman: {i.content}")
 
-        prompt_lines.append("Assistant:")
+        prompt_lines.append("\n\nAssistant:")
 
-        return "\n\n" + "\n\n".join(prompt_lines)
+        return "".join(prompt_lines)
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_string(prompt_stack)

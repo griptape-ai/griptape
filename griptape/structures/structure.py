@@ -54,7 +54,7 @@ class Structure(ABC):
     _execution_args: tuple = ()
     _logger: Logger | None = None
 
-    @rulesets.validator
+    @rulesets.validator  # pyright: ignore
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
@@ -62,7 +62,7 @@ class Structure(ABC):
         if self.rules:
             raise ValueError("can't have both rulesets and rules specified")
 
-    @rules.validator
+    @rules.validator  # pyright: ignore
     def validate_rules(self, _, rules: list[Rule]) -> None:
         if not rules:
             return

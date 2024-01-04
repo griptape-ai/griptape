@@ -11,9 +11,9 @@ from griptape.utils import J2
 
 @define
 class BaseTextInputTask(BaseTask, ABC):
-    DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
     DEFAULT_RULESET_NAME = "Default Ruleset"
     ADDITIONAL_RULESET_NAME = "Additional Ruleset"
+    DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
@@ -44,7 +44,7 @@ class BaseTextInputTask(BaseTask, ABC):
         else:
             return {}
 
-    @rulesets.validator
+    @rulesets.validator  # pyright: ignore
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
@@ -52,7 +52,7 @@ class BaseTextInputTask(BaseTask, ABC):
         if self.rules:
             raise ValueError("Can't have both rulesets and rules specified.")
 
-    @rules.validator
+    @rules.validator  # pyright: ignore
     def validate_rules(self, _, rules: list[Rule]) -> None:
         if not rules:
             return
