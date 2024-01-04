@@ -10,13 +10,18 @@ from cattrs.gen import make_dict_unstructure_fn, override
 from attr import Factory, define, field
 from marshmallow import class_registry
 from marshmallow.exceptions import RegistryError
+from marshmallow import Schema as BaseSchema, fields, missing
+
 
 T = TypeVar("T", bound="SerializableMixin")
 
 
 @define(slots=False)
 class SerializableMixin:
-    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    DATACLASS_TYPE_MAPPING = {**BaseSchema.TYPE_MAPPING, list: fields.List}
+    type: str = field(
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True, metadata={"save": True}
+    )
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:
@@ -53,6 +58,11 @@ class SerializableMixin:
 
     def _clean_fields(self, converter):
         def wrapper(cls):
-            return make_dict_unstructure_fn(cls, converter, **{a.name: override(omit=True) for a in attrs.fields(cls)})
+            import attrs
+            from griptape.structures import Structure  # TODO: Why
+
+            attrs.resolve_types(cls, localns=locals())
+            serializable_fields = {a.name: override(omit=not a.metadata.get("save")) for a in attrs.fields(cls)}
+            return make_dict_unstructure_fn(cls, converter, **serializable_fields)
 
         return wrapper

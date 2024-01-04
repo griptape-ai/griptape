@@ -22,9 +22,7 @@ from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtracti
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.events import EventListener
 from griptape.config import OpenAiStructureConfig, BaseStructureConfig
-
-if TYPE_CHECKING:
-    from griptape.tasks import BaseTask
+from griptape.tasks import BaseTask
 
 
 @define

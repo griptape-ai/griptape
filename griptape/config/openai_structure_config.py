@@ -14,7 +14,9 @@ from griptape.config import (
 @define(kw_only=True)
 class OpenAiStructureConfig(BaseStructureConfig):
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-4", stream=False)), kw_only=True
+        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-4", stream=False)),
+        kw_only=True,
+        metadata={"save": True},
     )
     # task_memory: StructureTaskMemoryConfig = field(
     #     default=Factory(

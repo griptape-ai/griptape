@@ -1,21 +1,24 @@
 from griptape.config import OpenAiStructureConfig
+from griptape.config.base_structure_config import BaseStructureConfig
 
 
 class TestOpenAiStructureConfig:
     def test_to_dict(self):
         config = OpenAiStructureConfig()
 
-        result = config.to_json()
-        print(result)
+        result = config.to_dict()
 
         assert result == {
-            "args": {
-                "engine": "davinci",
-                "max_tokens": 64,
-                "temperature": 0.7,
-                "top_p": 1.0,
-                "frequency_penalty": 0.0,
-                "presence_penalty": 0.0,
-                "stop": ["\n"],
-            }
+            "type": "OpenAiStructureConfig",
+            "prompt_driver": {
+                "type": "OpenAiChatPromptDriver",
+                "temperature": 0.1,
+                "max_tokens": None,
+                "model": "gpt-4",
+                "stream": False,
+            },
         }
+
+        config = BaseStructureConfig.from_dict(result)
+
+        assert config == OpenAiStructureConfig()

@@ -287,14 +287,12 @@ crt = ["awscrt (==0.19.17)"]
 
 [[package]]
 name = "cattrs"
-version = "23.2.3"
+version = "23.2.4.dev22"
 description = "Composable complex class support for attrs and dataclasses."
 optional = false
 python-versions = ">=3.8"
-files = [
-    {file = "cattrs-23.2.3-py3-none-any.whl", hash = "sha256:0341994d94971052e9ee70662542699a3162ea1e0c62f7ce1b4a57f563685108"},
-    {file = "cattrs-23.2.3.tar.gz", hash = "sha256:a934090d95abaa9e911dac357e3a8699e0b4b14f8529bcc7d2b1ad9d51672b9f"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 attrs = ">=23.1.0"
@@ -309,6 +307,12 @@ orjson = ["orjson (>=3.9.2)"]
 pyyaml = ["pyyaml (>=6.0)"]
 tomlkit = ["tomlkit (>=0.11.8)"]
 ujson = ["ujson (>=5.7.0)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/python-attrs/cattrs.git"
+reference = "main"
+resolved_reference = "167289417f1f35ee4a271f36905fe68e9afd630d"
 
 [[package]]
 name = "certifi"
@@ -4325,4 +4329,4 @@ drivers-vector-redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b5c64cb6e7feceaa4e4a1b9434b3c12498959a9049a3e4ce79cced6d38b5d636"
+content-hash = "9de5989bab35cb76db421ec5c4a7cd6790eeb631e5a2d6777b0f75152452454c"
