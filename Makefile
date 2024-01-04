@@ -1,5 +1,7 @@
 .PHONY: version
-version: ## Bump version and push to release branch. ex: make version v=0.1.0
+version: ## Bump version and push to release branch.
+	ifndef v
+		$(error v is required, ex. make version v=0.1.0)
 	@poetry version $(v)
 	@git add pyproject.toml
 	@git commit -m "Version bump v$$(poetry version -s)"
