@@ -55,6 +55,7 @@ from .config.structure_task_memory_extraction_engine_config_schema import (
 )
 from .config.structure_task_memory_config_schema import StructureTaskMemoryConfigSchema
 from .config.base_structure_config_schema import BaseStructureConfigSchema
+from .config.openai_structure_config_schema import OpenAiStructureConfigSchema
 
 __all__ = [
     "BaseSchema",
@@ -93,6 +94,7 @@ __all__ = [
     "FinishImageGenerationEventSchema",
     "BaseConfigSchema",
     "BaseStructureConfigSchema",
+    "OpenAiStructureConfigSchema",
     "StructureTaskMemoryConfigSchema",
     "StructureTaskMemoryQueryEngineConfigSchema",
     "StructureTaskMemoryExtractionEngineConfigSchema",

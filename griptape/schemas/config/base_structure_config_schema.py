@@ -7,6 +7,7 @@ class BaseStructureConfigSchema(BaseSchema):
     class Meta:
         ordered = True
 
+    type = fields.Str()
     prompt_driver = fields.Nested(PolymorphicSchema())
     task_memory = fields.Nested(StructureTaskMemoryConfigSchema())
 

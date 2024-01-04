@@ -13,7 +13,7 @@ class PromptDriverSchema(BaseSchema):
     max_retries = fields.Int()
     retry_delay = fields.Float()
     model = fields.Str()
-    tokenizer = fields.Nested(PolymorphicSchema())
+    # tokenizer = fields.Nested(PolymorphicSchema())
 
     @abstractmethod
     def make_obj(self, data, **kwargs):
