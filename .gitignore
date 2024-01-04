@@ -2,6 +2,7 @@
 .idea
 .DS_Store
 .huskyrc.json
+.tool-versions
 out
 log.log
 **/node_modules
