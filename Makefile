@@ -17,6 +17,8 @@ publish: ## Publish version to Git and PyPI.
 .DEFAULT_GOAL := help
 .PHONY: help
 help: ## Print Makefile help text.
+	@# Matches targets with a comment in the format <target>: ## <comment>
+	@# then formats help output using these values.
 	@grep -E '^[a-zA-Z_\/-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 	| awk 'BEGIN {FS = ":.*?## "}; \
-		{printf "\033[36m%-20s\033[0m%s\n", $$1, $$2}'
+		{printf "\033[36m%-12s\033[0m%s\n", $$1, $$2}'
