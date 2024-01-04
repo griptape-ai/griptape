@@ -1,7 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import Optional
-from attr import define, field
+from attr import define, field, Factory
 import tiktoken
 from griptape.tokenizers import BaseTokenizer
 
@@ -34,6 +33,7 @@ class OpenAiTokenizer(BaseTokenizer):
     EMBEDDING_MODELS = ["text-embedding-ada-002", "text-embedding-ada-001"]
 
     model: str = field(kw_only=True)
+    max_tokens: int = field(kw_only=True, default=Factory(lambda self: self.default_max_tokens(), takes_self=True))
 
     @property
     def encoding(self) -> tiktoken.Encoding:
@@ -42,14 +42,13 @@ class OpenAiTokenizer(BaseTokenizer):
         except KeyError:
             return tiktoken.get_encoding(self.DEFAULT_ENCODING)
 
-    @property
-    def max_tokens(self) -> int:
+    def default_max_tokens(self) -> int:
         tokens = next(v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model.startswith(k))
         offset = 0 if self.model in self.EMBEDDING_MODELS else self.TOKEN_OFFSET
 
         return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
 
-    def count_tokens(self, text: str | list, model: str | None = None) -> int:
+    def count_tokens(self, text: str | list[dict], model: str | None = None) -> int:
         """
         Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
