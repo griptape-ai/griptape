@@ -5,7 +5,8 @@ class TestOpenAiStructureConfig:
     def test_to_dict(self):
         config = OpenAiStructureConfig()
 
-        result = config.to_dict()
+        result = config.to_json()
+        print(result)
 
         assert result == {
             "args": {

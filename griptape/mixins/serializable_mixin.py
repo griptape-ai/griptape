@@ -4,6 +4,9 @@ import json
 from importlib import import_module
 from typing import TypeVar
 
+import attrs
+import cattrs
+from cattrs.gen import make_dict_unstructure_fn, override
 from attr import Factory, define, field
 from marshmallow import class_registry
 from marshmallow.exceptions import RegistryError
@@ -37,9 +40,9 @@ class SerializableMixin:
         return json.dumps(self.to_dict())
 
     def to_dict(self) -> dict:
-        schema_class = SerializableMixin._import_schema_class(self.type)
-
-        return dict(schema_class().dump(self))
+        converter = cattrs.Converter()
+        converter.register_unstructure_hook_factory(attrs.has, self._clean_fields(converter))
+        return converter.unstructure(self)
 
     @classmethod
     def _import_schema_class(cls, class_name):
@@ -47,3 +50,9 @@ class SerializableMixin:
         schema_class = import_module(schema_class_name, "griptape.schemas").__getattribute__(schema_class_name)
 
         return schema_class
+
+    def _clean_fields(self, converter):
+        def wrapper(cls):
+            return make_dict_unstructure_fn(cls, converter, **{a.name: override(omit=True) for a in attrs.fields(cls)})
+
+        return wrapper
