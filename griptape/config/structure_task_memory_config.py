@@ -9,6 +9,6 @@ from .structure_task_memory_summary_engine_config import StructureTaskMemorySumm
 
 @define(kw_only=True)
 class StructureTaskMemoryConfig(SerializableMixin):
-    query_engine: StructureTaskMemoryQueryEngineConfig = field()
-    extraction_engine: StructureTaskMemoryExtractionEngineConfig = field()
-    summary_engine: StructureTaskMemorySummaryEngineConfig = field()
+    query_engine: StructureTaskMemoryQueryEngineConfig = field(metadata={"save": True})
+    extraction_engine: StructureTaskMemoryExtractionEngineConfig = field(metadata={"save": True})
+    summary_engine: StructureTaskMemorySummaryEngineConfig = field(metadata={"save": True})

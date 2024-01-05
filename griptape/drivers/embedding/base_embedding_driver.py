@@ -6,16 +6,18 @@ from griptape.artifacts import TextArtifact
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
 from griptape.chunkers import BaseChunker, TextChunker
+from griptape.mixins import SerializableMixin
 
 
 @define
-class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
+class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """
     Attributes:
         tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.
         chunker: An instance of `BaseChunker` to use when chunking long strings.
     """
 
+    model: str = field(kw_only=True, metadata={"save": True})
     tokenizer: BaseTokenizer = field(kw_only=True)
     chunker: BaseChunker = field(init=False)
 

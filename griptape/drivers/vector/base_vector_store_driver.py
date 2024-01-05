@@ -4,12 +4,13 @@ from dataclasses import dataclass
 from typing import Optional
 from attr import define, field, Factory
 from griptape import utils
+from griptape.mixins import SerializableMixin
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
 
 
 @define
-class BaseVectorStoreDriver(ABC):
+class BaseVectorStoreDriver(SerializableMixin, ABC):
     DEFAULT_QUERY_COUNT = 5
 
     @dataclass
@@ -27,7 +28,7 @@ class BaseVectorStoreDriver(ABC):
         meta: Optional[dict] = None
         namespace: Optional[str] = None
 
-    embedding_driver: BaseEmbeddingDriver = field(kw_only=True)
+    embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"save": True})
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def upsert_text_artifacts(

@@ -8,5 +8,5 @@ from .structure_task_memory_extraction_engine_json_config import StructureTaskMe
 
 @define(kw_only=True)
 class StructureTaskMemoryExtractionEngineConfig(SerializableMixin):
-    csv: StructureTaskMemoryExtractionEngineCsvConfig = field()
-    json: StructureTaskMemoryExtractionEngineJsonConfig = field()
+    csv: StructureTaskMemoryExtractionEngineCsvConfig = field(metadata={"save": True})
+    json: StructureTaskMemoryExtractionEngineJsonConfig = field(metadata={"save": True})

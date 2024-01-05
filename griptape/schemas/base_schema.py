@@ -11,7 +11,24 @@ class BaseSchema(Schema):
     @classmethod
     def from_attrscls(cls, attrscls):
         """Generate a Schema from an attrs class."""
-        return cls.from_dict(
+        from marshmallow import post_load
+        from importlib import import_module
+
+        class SubSchema(cls):
+            @post_load
+            def make_obj(self, data, **kwargs):
+                package_name = ".".join(attrscls.__module__.split(".")[:2])
+
+                if "type" in data:
+                    class_name = data["type"]
+
+                    class_ = import_module(package_name).__getattribute__(class_name)
+
+                    return class_(**data)
+                else:
+                    raise ValueError("Missing type field in schema.")
+
+        return SubSchema.from_dict(
             {a.name: cls.make_field_for_type(a.type) for a in attrs.fields(attrscls) if a.metadata.get("save")},
             name=f"{attrscls.__name__}Schema",
         )
@@ -26,17 +43,6 @@ class BaseSchema(Schema):
         field_class = Schema.TYPE_MAPPING[type_]
 
         field_kwargs = {"allow_none": type_info["optional"]}
-
-        # Handle list types
-        if issubclass(field_class, fields.List):
-            # Construct inner class
-            args = getattr(type_, "__args__", [])
-            if args:
-                inner_type = args[0]
-                inner_field = cls.make_field_for_type(inner_type)
-            else:
-                inner_field = fields.Field()
-            field_kwargs["cls_or_instance"] = inner_field
 
         return field_class(**field_kwargs)
 

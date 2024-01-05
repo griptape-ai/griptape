@@ -42,7 +42,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             takes_self=True,
         )
     )
-    model: str = field(kw_only=True)
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )

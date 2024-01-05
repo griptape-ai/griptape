@@ -12,7 +12,7 @@ from marshmallow.exceptions import RegistryError
 @define
 class BaseStructureConfig(SerializableMixin, ABC):
     prompt_driver: BasePromptDriver = field(kw_only=True, metadata={"save": True})
-    # task_memory: StructureTaskMemoryConfig = field(kw_only=True)
+    task_memory: StructureTaskMemoryConfig = field(kw_only=True)
 
     @classmethod
     def from_dict(cls: type[BaseStructureConfig], data: dict) -> BaseStructureConfig:

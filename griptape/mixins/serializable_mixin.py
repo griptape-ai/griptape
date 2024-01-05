@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import json
-from importlib import import_module
 from typing import TypeVar
 
 from attr import Factory, define, field
-from marshmallow import class_registry
-from marshmallow.exceptions import RegistryError
 
 from griptape.schemas.base_schema import BaseSchema
 
@@ -21,15 +18,9 @@ class SerializableMixin:
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:
-        class_name = data["type"]
+        schema = BaseSchema.from_attrscls(cls)
 
-        schema_class = SerializableMixin._import_schema_class(class_name)
-        class_registry.register(class_name, schema_class)
-
-        try:
-            return class_registry.get_class(class_name)().load(data)  # pyright: ignore
-        except RegistryError:
-            raise ValueError("Unsupported type.")
+        return schema().load(data)
 
     @classmethod
     def from_json(cls: type[T], data: str) -> T:
@@ -45,10 +36,3 @@ class SerializableMixin:
         schema = BaseSchema.from_attrscls(self.__class__)
 
         return dict(schema().dump(self))
-
-    @classmethod
-    def _import_schema_class(cls, class_name):
-        schema_class_name = f"{class_name}Schema"
-        schema_class = import_module(schema_class_name, "griptape.schemas").__getattribute__(schema_class_name)
-
-        return schema_class
