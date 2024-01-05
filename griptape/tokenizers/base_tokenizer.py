@@ -1,6 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import overload
 from attr import define, field, Factory
 from griptape import utils
 
@@ -18,7 +17,6 @@ class BaseTokenizer(ABC):
         else:
             return 0
 
-    @overload
     @abstractmethod
     def count_tokens(self, text: str | list[dict]) -> int:
         ...
