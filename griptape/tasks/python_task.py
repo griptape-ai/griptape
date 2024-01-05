@@ -1,5 +1,5 @@
 from attr import define, field
-from griptape.artifacts import TextArtifact, BaseArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.tasks import BaseTextInputTask, BaseTask
 from typing import Callable
 
