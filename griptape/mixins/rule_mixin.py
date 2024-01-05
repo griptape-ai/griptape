@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING
 
 from attr import define, field
 
 from griptape.rules import Ruleset, Rule
+
+if TYPE_CHECKING:
+    from griptape.structures import Structure
 
 
 @define(slots=False)
@@ -14,7 +17,7 @@ class RuleMixin:
 
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
-    structure: Any = field(default=None, kw_only=True)
+    structure: Structure = field(default=None, kw_only=True)
 
     @rulesets.validator  # pyright: ignore
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
