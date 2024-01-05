@@ -81,7 +81,6 @@ class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         prompt = self.prompt_stack_to_model_input(prompt_stack)
-        print(prompt)
 
         return {
             "prompt": prompt,
