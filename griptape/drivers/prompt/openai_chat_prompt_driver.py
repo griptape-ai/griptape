@@ -119,13 +119,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         messages = self._prompt_stack_to_messages(prompt_stack)
 
-        # A max_tokens parameter is not required, but if it is specified by the caller, bound it to
-        # the maximum value as determined by the tokenizer and pass it to the API.
         if self.max_tokens:
-            if isinstance(self.tokenizer, OpenAiTokenizer):
-                params["max_tokens"] = self.max_output_tokens(messages)
-            else:
-                params["max_tokens"] = self.max_output_tokens(self.prompt_stack_to_string(prompt_stack))
+            params["max_tokens"] = self.max_tokens
 
         params["messages"] = messages
 

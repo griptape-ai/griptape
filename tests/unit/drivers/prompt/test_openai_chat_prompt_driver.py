@@ -181,7 +181,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=messages,
-            max_tokens=tokens_left,
+            max_tokens=9999999,
             seed=driver.seed,
         )
         assert max_tokens_request > tokens_left
