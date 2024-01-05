@@ -8,6 +8,7 @@ from .tool_task import ToolTask
 from .text_query_task import TextQueryTask
 from .extraction_task import ExtractionTask
 from .image_generation_task import ImageGenerationTask
+from .python_task import PythonTask
 
 __all__ = [
     "BaseTask",
@@ -20,4 +21,5 @@ __all__ = [
     "TextQueryTask",
     "ExtractionTask",
     "ImageGenerationTask",
+    "PythonTask"
 ]
