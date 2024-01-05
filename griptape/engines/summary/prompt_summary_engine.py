@@ -27,7 +27,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         kw_only=True,
     )
 
-    @max_token_multiplier.validator
+    @max_token_multiplier.validator  # pyright: ignore
     def validate_allowlist(self, _, max_token_multiplier: int) -> None:
         if max_token_multiplier > 1:
             raise ValueError("has to be less than or equal to 1")

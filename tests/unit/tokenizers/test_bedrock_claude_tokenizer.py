@@ -4,11 +4,19 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 
 class TestBedrockClaudeTokenizer:
     @pytest.fixture
-    def tokenizer(self):
-        return BedrockClaudeTokenizer(model=BedrockClaudeTokenizer.DEFAULT_MODEL)
+    def tokenizer(self, request):
+        return BedrockClaudeTokenizer(model=request.param)
 
-    def test_token_count(self, tokenizer):
-        assert tokenizer.count_tokens("foo bar huzzah") == 5
+    @pytest.mark.parametrize(
+        "tokenizer,expected", [("anthropic.claude-v2:1", 5), ("anthropic.claude-v2", 5)], indirect=["tokenizer"]
+    )
+    def test_token_count(self, tokenizer, expected):
+        assert tokenizer.count_tokens("foo bar huzzah") == expected
 
-    def test_tokens_left(self, tokenizer):
-        assert tokenizer.count_tokens_left("foo bar huzzah") == 8187
+    @pytest.mark.parametrize(
+        "tokenizer,expected",
+        [("anthropic.claude-v2:1", 199995), ("anthropic.claude-v2", 99995)],
+        indirect=["tokenizer"],
+    )
+    def test_tokens_left(self, tokenizer, expected):
+        assert tokenizer.count_tokens_left("foo bar huzzah") == expected

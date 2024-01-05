@@ -1,8 +1,9 @@
-import os
 import time
-import requests
 from typing import Optional
+
+import requests
 from attr import field, define, Factory
+
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
 
@@ -10,6 +11,9 @@ from griptape.drivers import BaseImageGenerationDriver
 @define
 class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the Leonardo image generation API.
+
+    Details on Leonardo image generation parameters can be found here:
+    https://docs.leonardo.ai/reference/creategeneration
 
     Attributes:
         model: The ID of the model to use when generating images.
@@ -21,9 +25,6 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         image_height: The height of the generated image in the range [32, 1024] and divisible by 8.
         steps: Optionally specify the number of inference steps to run for each image generation request, [30, 60].
         seed: Optionally provide a consistent seed to generation requests, increasing consistency in output.
-
-    Details on Leonardo image generation parameters can be found here:
-    https://docs.leonardo.ai/reference/creategeneration
     """
 
     api_key: str = field(kw_only=True)
@@ -35,7 +36,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     steps: Optional[int] = field(default=None, kw_only=True)
     seed: Optional[int] = field(default=None, kw_only=True)
 
-    def try_generate_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         if negative_prompts is None:
             negative_prompts = []
 
@@ -55,7 +56,30 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
             prompt=prompt,
         )
 
-    def _create_generation(self, prompt: str, negative_prompt: str):
+    def try_image_variation(
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
+
+    def try_image_outpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
+
+    def try_image_inpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
+
+    def _create_generation(self, prompt: str, negative_prompt: str) -> str:
         request = {
             "prompt": prompt,
             "negative_prompt": negative_prompt,
@@ -65,7 +89,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
             "modelId": self.model,
         }
 
-        if self.steps is not None:
+        if self.steps:
             request["num_inference_steps"] = self.steps
 
         if self.seed is not None:
@@ -77,7 +101,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
 
         return response["sdGenerationJob"]["generationId"]
 
-    def _get_image_url(self, generation_id: str):
+    def _get_image_url(self, generation_id: str) -> str:
         for attempt in range(self.max_attempts):
             response = self.requests_session.get(
                 url=f"{self.api_base}/generations/{generation_id}", headers={"Authorization": f"Bearer {self.api_key}"}
@@ -91,7 +115,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         else:
             raise Exception("image generation failed to complete")
 
-    def _download_image(self, url: str):
+    def _download_image(self, url: str) -> bytes:
         response = self.requests_session.get(url=url, headers={"Authorization": f"Bearer {self.api_key}"})
 
         return response.content
