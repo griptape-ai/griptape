@@ -4,6 +4,7 @@ from typing import Callable, Tuple
 
 from attr import define, field
 
+from griptape.engines import InpaintingImageGenerationEngine
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
@@ -25,6 +26,7 @@ class ImageInpaintingTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
+    image_generation_engine: InpaintingImageGenerationEngine = field(kw_only=True)
     _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
         [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
     ] = field(default=None)
@@ -52,7 +54,7 @@ class ImageInpaintingTask(BaseImageGenerationTask):
         image_artifact = self.input[1]
         mask_artifact = self.input[2]
 
-        output_image_artifact = self.image_generation_engine.image_inpainting(
+        output_image_artifact = self.image_generation_engine.run(
             prompts=[prompt_artifact.to_text()],
             image=image_artifact,
             mask=mask_artifact,

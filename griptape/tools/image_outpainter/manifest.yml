@@ -1,0 +1,5 @@
+version: "v1"
+name: Image Outpainter
+description: Tool for generating image through outpainting.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

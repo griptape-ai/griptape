@@ -4,6 +4,7 @@ from typing import Callable
 
 from attr import define, field
 
+from griptape.engines import VariationImageGenerationEngine
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
@@ -25,6 +26,7 @@ class ImageVariationTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
+    image_generation_engine: VariationImageGenerationEngine = field(kw_only=True)
     _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact]] = field(
         default=None
     )
@@ -51,7 +53,7 @@ class ImageVariationTask(BaseImageGenerationTask):
         prompt_artifact = self.input[0]
         image_artifact = self.input[1]
 
-        output_image_artifact = self.image_generation_engine.image_variation(
+        output_image_artifact = self.image_generation_engine.run(
             prompts=[prompt_artifact.to_text()],
             image=image_artifact,
             rulesets=self.all_rulesets,

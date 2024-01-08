@@ -19,7 +19,10 @@ from .google_cal.tool import GoogleCalendarClient
 from .google_docs.tool import GoogleDocsClient
 from .google_drive.tool import GoogleDriveClient
 from .openweather_client.tool import OpenWeatherClient
-from .image_generator.tool import ImageGenerator
+from .prompt_image_generator.tool import PromptImageGenerator
+from .image_variation_generator.tool import ImageVariationGenerator
+from .image_inpainter.tool import ImageInpainter
+from .image_outpainter.tool import ImageOutpainter
 
 __all__ = [
     "BaseTool",
@@ -43,5 +46,8 @@ __all__ = [
     "TaskMemoryClient",
     "Computer",
     "OpenWeatherClient",
-    "ImageGenerator",
+    "PromptImageGenerator",
+    "ImageVariationGenerator",
+    "ImageInpainter",
+    "ImageOutpainter",
 ]
