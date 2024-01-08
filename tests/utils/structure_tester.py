@@ -23,6 +23,7 @@ from griptape.drivers import (
     AmazonSageMakerPromptDriver,
     SageMakerLlamaPromptModelDriver,
     SageMakerFalconPromptModelDriver,
+    Ai21PromptDriver,
 )
 
 
@@ -76,19 +77,16 @@ class StructureTester:
         "BEDROCK_CLAUDE_2": AmazonBedrockPromptDriver(
             model="anthropic.claude-v2", prompt_model_driver=BedrockClaudePromptModelDriver()
         ),
-        "BEDROCK_J2": AmazonBedrockPromptDriver(
+        "BEDROCK_J2_ULTRA": AmazonBedrockPromptDriver(
             model="ai21.j2-ultra", prompt_model_driver=BedrockJurassicPromptModelDriver()
         ),
         "SAGEMAKER_LLAMA_7B": AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-            max_attempts=1,
-            prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
+            model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"], prompt_model_driver=SageMakerLlamaPromptModelDriver()
         ),
         "SAGEMAKER_FALCON_7b": AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-            max_attempts=1,
-            prompt_model_driver=SageMakerFalconPromptModelDriver(),
+            model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"], prompt_model_driver=SageMakerFalconPromptModelDriver()
         ),
+        "AI21_J2_ULTRA": Ai21PromptDriver(model="j2-ultra", api_key=os.environ["AI21_API_KEY"]),
     }
 
     TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = [
