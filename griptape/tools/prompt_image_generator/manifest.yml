@@ -1,5 +1,5 @@
 version: "v1"
 name: Prompt Image Generator
-description: Tool for generating images from text.
+description: Tool for generating images from text prompts.
 contact_email: hello@griptape.ai
 legal_info_url: https://www.griptape.ai/legal
