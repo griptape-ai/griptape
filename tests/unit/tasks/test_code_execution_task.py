@@ -1,20 +1,20 @@
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.structures import Pipeline
-from griptape.tasks import CodeExecutionTask, BaseTask
+from griptape.tasks import CodeExecutionTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-def hello_world(task: BaseTask) -> BaseArtifact:
+def hello_world(task: CodeExecutionTask) -> BaseArtifact:
     greeting = "Hello World!"
     return TextArtifact(greeting)
 
 
-def non_outputting(task: BaseTask) -> BaseArtifact:
+def non_outputting(task: CodeExecutionTask) -> BaseArtifact:
     # If your task function doesn't have an output, return task.input
     return task.input
 
 
-def deliberate_exception(task: BaseTask) -> BaseArtifact:
+def deliberate_exception(task: CodeExecutionTask) -> BaseArtifact:
     raise ValueError("Intentional Error")
 
 
