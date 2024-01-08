@@ -80,6 +80,7 @@ drivers-vector-amazon-opensearch = ["opensearch-py", "boto3", "requests-aws4auth
 drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
 
 drivers-embedding-amazon-bedrock = ["boto3"]
+drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 
 all = [

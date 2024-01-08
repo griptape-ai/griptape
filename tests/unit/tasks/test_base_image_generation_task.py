@@ -1,6 +1,8 @@
 from unittest.mock import Mock
 
 import pytest
+
+from griptape.artifacts import TextArtifact
 from griptape.engines.image.image_generation_engine import ImageGenerationEngine
 
 from griptape.rules import Rule, Ruleset
@@ -15,7 +17,7 @@ class TestBaseImageGenerationTask:
     def test_validate_negative_rulesets(self, engine: ImageGenerationEngine):
         with pytest.raises(ValueError):
             MockImageGenerationTask(
-                "some input",
+                TextArtifact("some input"),
                 image_generation_engine=engine,
                 negative_rulesets=[Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])],
                 negative_rules=[Rule(value="Negative Rule")],
@@ -23,7 +25,7 @@ class TestBaseImageGenerationTask:
             )
 
         assert MockImageGenerationTask(
-            "some input",
+            TextArtifact("some input"),
             image_generation_engine=engine,
             negative_rulesets=[Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])],
             output_dir="some/dir",
@@ -32,7 +34,7 @@ class TestBaseImageGenerationTask:
     def test_validate_negative_rules(self, engine: ImageGenerationEngine):
         with pytest.raises(ValueError):
             MockImageGenerationTask(
-                "some input",
+                TextArtifact("some input"),
                 image_generation_engine=engine,
                 negative_rulesets=[Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])],
                 negative_rules=[Rule(value="Negative Rule")],
@@ -40,7 +42,7 @@ class TestBaseImageGenerationTask:
             )
 
         assert MockImageGenerationTask(
-            "some input",
+            TextArtifact("some input"),
             image_generation_engine=engine,
             negative_rules=[Rule(value="Negative Rule")],
             output_dir="some/dir",
@@ -50,7 +52,10 @@ class TestBaseImageGenerationTask:
         ruleset = Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])
 
         task = MockImageGenerationTask(
-            "some input", image_generation_engine=engine, negative_rulesets=[ruleset], output_dir="some/dir"
+            TextArtifact("some input"),
+            image_generation_engine=engine,
+            negative_rulesets=[ruleset],
+            output_dir="some/dir",
         )
 
         assert task.all_negative_rulesets[0] == ruleset
@@ -59,7 +64,7 @@ class TestBaseImageGenerationTask:
         rule = Rule(value="Negative Rule")
 
         task = MockImageGenerationTask(
-            "some input", image_generation_engine=engine, negative_rules=[rule], output_dir="some/dir"
+            TextArtifact("some input"), image_generation_engine=engine, negative_rules=[rule], output_dir="some/dir"
         )
 
         assert task.all_negative_rulesets[0].name == task.NEGATIVE_RULESET_NAME
@@ -68,5 +73,8 @@ class TestBaseImageGenerationTask:
     def test_validate_output_dir(self, engine: ImageGenerationEngine):
         with pytest.raises(ValueError):
             MockImageGenerationTask(
-                "some input", image_generation_engine=engine, output_dir="some/dir", output_file="some/file"
+                TextArtifact("some input"),
+                image_generation_engine=engine,
+                output_dir="some/dir",
+                output_file="some/file",
             )

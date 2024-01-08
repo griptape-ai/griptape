@@ -8,12 +8,13 @@ from attr import field, define
 from griptape.artifacts import ImageArtifact
 from griptape.engines import ImageGenerationEngine
 from griptape.loaders.image_loader import ImageLoader
+from griptape.mixins import RuleMixin
 from griptape.rules import Ruleset, Rule
-from griptape.tasks import BaseTextInputTask
+from griptape.tasks import BaseTask
 
 
 @define
-class BaseImageGenerationTask(BaseTextInputTask, ABC):
+class BaseImageGenerationTask(RuleMixin, BaseTask, ABC):
     """Provides a base class for image generation-related tasks.
 
     Attributes:
@@ -82,10 +83,12 @@ class BaseImageGenerationTask(BaseTextInputTask, ABC):
     def _write_to_file(self, image_artifact: ImageArtifact) -> None:
         # Save image to file. This is a temporary workaround until we update Task and Meta
         # Memory to persist artifacts from tasks.
-        if self.output_file is not None:
+        if self.output_file:
             outfile = self.output_file
-        else:
+        elif self.output_dir:
             outfile = os.path.join(self.output_dir, image_artifact.name)
+        else:
+            raise ValueError("No output_file or output_dir specified.")
 
         if os.path.dirname(outfile):
             os.makedirs(os.path.dirname(outfile), exist_ok=True)
