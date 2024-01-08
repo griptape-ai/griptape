@@ -6,8 +6,8 @@ from typing import Callable
 
 
 @define
-class PythonTask(BaseTextInputTask):
-    run_fn: Callable[[PythonTask], BaseArtifact] = field(kw_only=True)
+class CallableTask(BaseTextInputTask):
+    run_fn: Callable[[CallableTask], BaseArtifact] = field(kw_only=True)
 
     def run(self) -> BaseArtifact:
         try:
