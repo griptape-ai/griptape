@@ -1,11 +1,12 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from pymongo import MongoClient, Collection
+    from pymongo import MongoClient
+    from pymongo.collection import Collection
 
 
 @define
@@ -19,10 +20,16 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         client: An optional MongoDb client to use. Defaults to a new client using the connection string.
     """
 
+    MAX_NUM_CANDIDATES = 10000
+
     connection_string: str = field(kw_only=True)
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
-    client: MongoClient | None = field(
+    index_name: str = field(default="vector_index", kw_only=True)
+    num_candidates_multiplier: int = field(
+        default=10, kw_only=True
+    )  # https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/#fields
+    client: MongoClient = field(
         default=Factory(
             lambda self: import_optional_dependency("pymongo").MongoClient(self.connection_string), takes_self=True
         )
@@ -62,12 +69,17 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             The loaded Entry if found; otherwise, None is returned.
         """
         collection = self.get_collection()
-        doc = collection.find_one({"_id": vector_id})
+        if namespace:
+            doc = collection.find_one({"_id": vector_id, "namespace": namespace})
+        else:
+            doc = collection.find_one({"_id": vector_id})
+
         if doc is None:
-            return None
-        return BaseVectorStoreDriver.Entry(
-            id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
-        )
+            return doc
+        else:
+            return BaseVectorStoreDriver.Entry(
+                id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
+            )
 
     def load_entries(self, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Loads all document entries from the MongoDB collection.
@@ -80,10 +92,12 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         else:
             cursor = collection.find({"namespace": namespace})
 
-        for doc in cursor:
-            yield BaseVectorStoreDriver.Entry(
+        return [
+            BaseVectorStoreDriver.Entry(
                 id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
             )
+            for doc in cursor
+        ]
 
     def query(
         self,
@@ -91,8 +105,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         count: int | None = None,
         namespace: str | None = None,
         include_vectors: bool = False,
-        offset: int | None = 0,
-        index: str | None = None,
+        offset: int | None = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Queries the MongoDB collection for documents that match the provided query string.
@@ -104,34 +117,34 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         # Using the embedding driver to convert the query string into a vector
         vector = self.embedding_driver.embed_string(query)
 
-        knn_k = count if count else 10
+        count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
+        offset = offset if offset else 0
+
         pipeline = [
-            {"$search": {"knnBeta": {"vector": vector, "path": "vector", "k": knn_k + offset}}},
             {
-                "$project": {
-                    "_id": 1,
-                    "vector": 1,
-                    "namespace": 1,
-                    "meta": 1,
-                    "score": {"$meta": "searchScore"},  # Include the score in the projection
+                "$vectorSearch": {
+                    "index": self.index_name,
+                    "path": "vector",
+                    "queryVector": vector,
+                    "numCandidates": min(count * self.num_candidates_multiplier, self.MAX_NUM_CANDIDATES),
+                    "limit": count,
                 }
             },
-            {"$skip": offset},
-            {"$limit": knn_k},
+            {"$project": {"_id": 1, "vector": 1, "namespace": 1, "meta": 1, "score": {"$meta": "vectorSearchScore"}}},
         ]
 
-        if index:
-            pipeline[0]["$search"]["index"] = index
+        if namespace:
+            pipeline[0]["$vectorSearch"]["filter"] = {"namespace": namespace}
 
         results = [
             BaseVectorStoreDriver.QueryResult(
                 id=str(doc["_id"]),
-                vector=doc["vector"] if include_vectors else None,
-                score=doc["score"],  # Include the score in the result
+                vector=doc["vector"] if include_vectors else [],
+                score=doc["score"],
                 meta=doc["meta"],
                 namespace=namespace,
             )
-            for doc in list(collection.aggregate(pipeline))
+            for doc in collection.aggregate(pipeline)
         ]
 
         return results
