@@ -17,9 +17,6 @@ from .memory.structure.run_schema import RunSchema
 from .memory.structure.conversation_memory_schema import ConversationMemorySchema
 from .memory.structure.summary_conversation_memory_schema import SummaryConversationMemorySchema
 
-from .drivers.prompt_driver_schema import PromptDriverSchema
-from .drivers.openai_chat_prompt_driver_schema import OpenAiChatPromptDriverSchema
-
 from .memory.meta.action_subtask_meta_entry_schema import ActionSubtaskMetaEntrySchema
 
 from .events.base_event_schema import BaseEventSchema
@@ -56,8 +53,6 @@ __all__ = [
     "RunSchema",
     "ConversationMemorySchema",
     "SummaryConversationMemorySchema",
-    "PromptDriverSchema",
-    "OpenAiChatPromptDriverSchema",
     "ActionSubtaskMetaEntrySchema",
     "BaseEventSchema",
     "BaseTaskEventSchema",
