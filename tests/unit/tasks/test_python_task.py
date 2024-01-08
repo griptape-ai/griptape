@@ -11,8 +11,7 @@ def hello_world(task: BaseTask) -> BaseArtifact:
 
 def non_outputting(task: BaseTask) -> BaseArtifact:
     # If your task function doesn't have an output, return task.input
-    temp = task.input
-    return temp
+    return task.input
 
 
 def deliberate_exception(task: BaseTask) -> BaseArtifact:
