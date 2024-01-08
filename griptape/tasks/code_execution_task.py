@@ -6,11 +6,11 @@ from typing import Callable
 
 
 @define
-class CallableTask(BaseTextInputTask):
-    run_fn: Callable[[CallableTask], BaseArtifact] = field(kw_only=True)
+class CodeExecutionTask(BaseTextInputTask):
+    run_fn: Callable[[CodeExecutionTask], BaseArtifact] = field(kw_only=True)
 
     def run(self) -> BaseArtifact:
         try:
             return self.run_fn(self)
         except Exception as e:
-            return ErrorArtifact(f"error during Python Task execution: {e}")
+            return ErrorArtifact(f"error during Code Execution Task: {e}")

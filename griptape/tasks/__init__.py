@@ -12,7 +12,7 @@ from .text_to_image_task import TextToImageTask
 from .image_inpainting_task import ImageInpaintingTask
 from .image_outpainting_task import ImageOutpaintingTask
 from .image_variation_task import ImageVariationTask
-from .callable_task import CallableTask
+from .code_execution_task import CodeExecutionTask
 
 __all__ = [
     "BaseTask",
@@ -29,5 +29,5 @@ __all__ = [
     "ImageOutpaintingTask",
     "ImageVariationTask",
     "BaseImageGenerationTask",
-    "CallableTask",
+    "CodeExecutionTask",
 ]

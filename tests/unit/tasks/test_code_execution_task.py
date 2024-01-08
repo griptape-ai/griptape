@@ -1,6 +1,6 @@
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 from griptape.structures import Pipeline
-from griptape.tasks import CallableTask, BaseTask
+from griptape.tasks import CodeExecutionTask, BaseTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
@@ -20,7 +20,7 @@ def deliberate_exception(task: BaseTask) -> BaseArtifact:
 
 class TestPromptSubtask:
     def test_hello_world_fn(self):
-        task = CallableTask(run_fn=hello_world)
+        task = CodeExecutionTask(run_fn=hello_world)
 
         assert task.run().value == "Hello World!"
 
@@ -28,15 +28,15 @@ class TestPromptSubtask:
     # Overriding the input because we are implementing the task not the Pipeline
     def test_noop_fn(self):
         pipeline = Pipeline(prompt_driver=MockPromptDriver())
-        task = CallableTask("No Op", run_fn=non_outputting)
+        task = CodeExecutionTask("No Op", run_fn=non_outputting)
         pipeline.add_task(task)
         temp = task.run()
         assert temp.value == "No Op"
 
     def test_error_fn(self):
-        task = CallableTask(run_fn=deliberate_exception)
+        task = CodeExecutionTask(run_fn=deliberate_exception)
 
         result = task.run()
 
         assert isinstance(result, ErrorArtifact)
-        assert result.value == "error during Python Task execution: Intentional Error"
+        assert result.value == "error during Code Execution Task: Intentional Error"
