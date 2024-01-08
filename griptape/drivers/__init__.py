@@ -19,8 +19,14 @@ from .memory.conversation.amazon_dynamodb_conversation_memory_driver import Amaz
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
+from .embedding.base_multi_model_embedding_driver import BaseMultiModelEmbeddingDriver
+from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
 from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
+
+from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
+from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
+from .embedding_model.sagemaker_tensorflow_hub_embedding_model_driver import SageMakerTensorFlowHubEmbeddingModelDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -78,8 +84,13 @@ __all__ = [
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
+    "BaseMultiModelEmbeddingDriver",
+    "AmazonSageMakerEmbeddingDriver",
     "AmazonBedrockTitanEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
+    "BaseEmbeddingModelDriver",
+    "SageMakerHuggingFaceEmbeddingModelDriver",
+    "SageMakerTensorFlowHubEmbeddingModelDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",

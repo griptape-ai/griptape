@@ -28,7 +28,7 @@ class ImageGenerator(BaseTool):
     output_dir: str | None = field(default=None, kw_only=True)
     output_file: str | None = field(default=None, kw_only=True)
 
-    @output_dir.validator
+    @output_dir.validator  # pyright: ignore
     def validate_output_dir(self, _, output_dir: str) -> None:
         if not output_dir:
             return
@@ -36,7 +36,7 @@ class ImageGenerator(BaseTool):
         if self.output_file:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    @output_file.validator
+    @output_file.validator  # pyright: ignore
     def validate_output_file(self, _, output_file: str) -> None:
         if not output_file:
             return

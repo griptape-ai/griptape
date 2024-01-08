@@ -7,18 +7,22 @@ import pytest
 
 class TestAnthropicPromptDriver:
     @pytest.fixture
-    def mock_completion_create(self, mocker):
-        mock_completion_create = mocker.patch("anthropic.Anthropic").return_value.completions.create
-        mock_completion_create.return_value.completion = "model-output"
-        return mock_completion_create
+    def mock_client(self, mocker):
+        mock_client = mocker.patch("anthropic.Anthropic")
+        mock_client.return_value.completions.create.return_value.completion = "model-output"
+        mock_client.return_value.count_tokens.return_value = 5
+
+        return mock_client
 
     @pytest.fixture
-    def mock_completion_stream_create(self, mocker):
-        mock_completion_create = mocker.patch("anthropic.Anthropic").return_value.completions.create
+    def mock_stream_client(self, mocker):
+        mock_stream_client = mocker.patch("anthropic.Anthropic")
         mock_chunk = Mock()
         mock_chunk.completion = "model-output"
-        mock_completion_create.return_value = iter([mock_chunk])
-        return mock_completion_create
+        mock_stream_client.return_value.completions.create.return_value = iter([mock_chunk])
+        mock_stream_client.return_value.count_tokens.return_value = 5
+
+        return mock_stream_client
 
     @pytest.mark.parametrize("model", [("claude-2.1"), ("claude-2.0")])
     def test_init(self, model):
@@ -50,7 +54,7 @@ class TestAnthropicPromptDriver:
             ),
         ],
     )
-    def test_try_run(self, mock_completion_create, model, expected_prompt):
+    def test_try_run(self, mock_client, model, expected_prompt):
         # Given
         prompt_stack = PromptStack()
         prompt_stack.add_generic_input("generic-input")
@@ -63,7 +67,7 @@ class TestAnthropicPromptDriver:
         text_artifact = driver.try_run(prompt_stack)
 
         # Then
-        mock_completion_create.assert_called_once_with(
+        mock_client.return_value.completions.create.assert_called_once_with(
             prompt="".join(expected_prompt),
             stop_sequences=ANY,
             model=driver.model,
@@ -98,7 +102,7 @@ class TestAnthropicPromptDriver:
             ),
         ],
     )
-    def test_try_stream_run(self, mock_completion_stream_create, model, expected_prompt):
+    def test_try_stream_run(self, mock_stream_client, model, expected_prompt):
         # Given
         prompt_stack = PromptStack()
         prompt_stack.add_generic_input("generic-input")
@@ -111,7 +115,7 @@ class TestAnthropicPromptDriver:
         text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-        mock_completion_stream_create.assert_called_once_with(
+        mock_stream_client.return_value.completions.create.assert_called_once_with(
             prompt="".join(expected_prompt),
             stop_sequences=ANY,
             model=driver.model,
