@@ -18,7 +18,12 @@ class TestJsonExtractionTask:
         user_schema = Schema({"users": [{"name": str, "age": int, "location": str}]}).json_schema("UserSchema")
 
         agent = Agent(prompt_driver=request.param)
-        agent.add_task(ExtractionTask(extraction_engine=JsonExtractionEngine(), args={"template_schema": user_schema}))
+        agent.add_task(
+            ExtractionTask(
+                extraction_engine=JsonExtractionEngine(prompt_driver=request.param),
+                args={"template_schema": user_schema},
+            )
+        )
 
         return StructureTester(agent)
 

@@ -19,7 +19,7 @@ class TestTextQueryTask:
 
         artifact = TextArtifact("John Doe works as as software engineer at Griptape.")
 
-        vector_query_engine = VectorQueryEngine(vector_store_driver=vector_store_driver)
+        vector_query_engine = VectorQueryEngine(prompt_driver=request.param, vector_store_driver=vector_store_driver)
         vector_query_engine.upsert_text_artifact(artifact=artifact)
 
         agent = Agent(prompt_driver=request.param)
