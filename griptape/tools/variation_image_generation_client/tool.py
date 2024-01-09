@@ -47,16 +47,40 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
             ),
         }
     )
-    def image_variation(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
+    def image_variation_from_file(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         image_file = params["values"]["image_file"]
 
-        input_artifact = self.image_loader.load(image_file)
-        if isinstance(input_artifact, ErrorArtifact):
-            return input_artifact
+        image_artifact = self.image_loader.load(image_file)
+        if isinstance(image_artifact, ErrorArtifact):
+            return image_artifact
 
-        output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts, image=input_artifact)
+        return self._generate_variation(prompts, negative_prompts, image_artifact)
+
+    def image_variation_from_memory(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
+        prompts = params["values"]["prompts"]
+        negative_prompts = params["values"]["negative_prompts"]
+        image_artifact_namespace = params["values"]["image_artifact_namespace"]
+        memory = self.find_input_memory(params["values"]["memory_name"])
+
+        if not memory:
+            return ErrorArtifact("memory not found")
+
+        image_artifacts = memory.load_artifacts(namespace=image_artifact_namespace)
+        if len(image_artifacts) == 0:
+            return ErrorArtifact("no image artifacts found in memory")
+        elif len(image_artifacts) > 1:
+            return ErrorArtifact("multiple image artifacts found in memory")
+        image_artifact = image_artifacts[0]
+
+        if not isinstance(image_artifact, ImageArtifact):
+            return ErrorArtifact("memory image artifact is not an ImageArtifact")
+
+        return self._generate_variation(prompts, negative_prompts, image_artifact)
+
+    def _generate_variation(self, prompts: list[str], negative_prompts: list[str], image_artifact: ImageArtifact):
+        output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts, image=image_artifact)
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)
