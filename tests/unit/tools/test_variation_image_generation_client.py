@@ -6,10 +6,10 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.tools import ImageVariationGenerator
+from griptape.tools import VariationImageGenerationClient
 
 
-class TestImageVariationGenerator:
+class TestVariationImageGenerationClient:
     @pytest.fixture
     def image_generation_engine(self) -> Mock:
         return Mock()
@@ -22,12 +22,12 @@ class TestImageVariationGenerator:
         return loader
 
     @pytest.fixture
-    def image_generator(self, image_generation_engine, image_loader) -> ImageVariationGenerator:
-        return ImageVariationGenerator(engine=image_generation_engine, image_loader=image_loader)
+    def image_generator(self, image_generation_engine, image_loader) -> VariationImageGenerationClient:
+        return VariationImageGenerationClient(engine=image_generation_engine, image_loader=image_loader)
 
     def test_validate_output_configs(self, image_generation_engine, image_loader) -> None:
         with pytest.raises(ValueError):
-            ImageVariationGenerator(
+            VariationImageGenerationClient(
                 engine=image_generation_engine, output_dir="test", output_file="test", image_loader=image_loader
             )
 
@@ -50,7 +50,7 @@ class TestImageVariationGenerator:
 
     def test_image_variation_with_outfile(self, image_generation_engine, image_loader) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
-        image_generator = ImageVariationGenerator(
+        image_generator = VariationImageGenerationClient(
             engine=image_generation_engine, output_file=outfile, image_loader=image_loader
         )
 

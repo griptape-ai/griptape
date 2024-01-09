@@ -14,8 +14,8 @@ from griptape.mixins import ImageArtifactFileOutputMixin
 
 
 @define
-class ImageVariationGenerator(ImageArtifactFileOutputMixin, BaseTool):
-    """ImageVariationGenerator is a tool that can be used to generate prompted variations of an image.
+class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
+    """A tool that can be used to generate prompted variations of an image.
 
     Attributes:
         engine: The variation image generation engine used to generate the image.

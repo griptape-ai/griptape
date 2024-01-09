@@ -14,8 +14,8 @@ from griptape.utils.decorators import activity
 
 
 @define
-class ImageInpainter(ImageArtifactFileOutputMixin, BaseTool):
-    """ImageInpainter is a tool that can be used to generate prompted inpaintings of an image.
+class InpaintingImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
+    """A tool that can be used to generate prompted inpaintings of an image.
 
     Attributes:
         engine: The inpainting image generation engine used to generate the image.

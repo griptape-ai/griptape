@@ -2,11 +2,11 @@ from typing import Tuple
 from unittest.mock import Mock
 
 import pytest
-from griptape.tasks import BaseTask, ImageInpaintingTask
+from griptape.tasks import BaseTask, InpaintingImageGenerationTask
 from griptape.artifacts import TextArtifact, ImageArtifact
 
 
-class TestImageInpaintingTask:
+class TestInpaintingImageGenerationTask:
     @pytest.fixture
     def text_artifact(self):
         return TextArtifact(value="some text")
@@ -17,7 +17,7 @@ class TestImageInpaintingTask:
 
     def test_artifact_inputs(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
         input_tuple = (text_artifact, image_artifact, image_artifact)
-        task = ImageInpaintingTask(input_tuple, image_generation_engine=Mock())
+        task = InpaintingImageGenerationTask(input_tuple, image_generation_engine=Mock())
 
         assert task.input == input_tuple
 
@@ -27,6 +27,6 @@ class TestImageInpaintingTask:
         def callable(task: BaseTask) -> Tuple[TextArtifact, ImageArtifact, ImageArtifact]:
             return input_tuple
 
-        task = ImageInpaintingTask(callable, image_generation_engine=Mock())
+        task = InpaintingImageGenerationTask(callable, image_generation_engine=Mock())
 
         assert task.input == input_tuple

@@ -14,8 +14,8 @@ from griptape.mixins import ImageArtifactFileOutputMixin
 
 
 @define
-class ImageOutpainter(ImageArtifactFileOutputMixin, BaseTool):
-    """ImageOutpainter is a tool that can be used to generate prompted outpaintings of an image.
+class OutpaintingImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
+    """A tool that can be used to generate prompted outpaintings of an image.
 
     Attributes:
         engine: The outpainting image generation engine used to generate the image.

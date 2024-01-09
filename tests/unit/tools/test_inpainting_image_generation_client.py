@@ -6,10 +6,10 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.tools import ImageOutpainter
+from griptape.tools import InpaintingImageGenerationClient
 
 
-class TestImageOutpainter:
+class TestInpaintingImageGenerationClient:
     @pytest.fixture
     def image_generation_engine(self) -> Mock:
         return Mock()
@@ -22,19 +22,19 @@ class TestImageOutpainter:
         return loader
 
     @pytest.fixture
-    def image_generator(self, image_generation_engine, image_loader) -> ImageOutpainter:
-        return ImageOutpainter(engine=image_generation_engine, image_loader=image_loader)
+    def image_generator(self, image_generation_engine, image_loader) -> InpaintingImageGenerationClient:
+        return InpaintingImageGenerationClient(engine=image_generation_engine, image_loader=image_loader)
 
     def test_validate_output_configs(self, image_generation_engine) -> None:
         with pytest.raises(ValueError):
-            ImageOutpainter(engine=image_generation_engine, output_dir="test", output_file="test")
+            InpaintingImageGenerationClient(engine=image_generation_engine, output_dir="test", output_file="test")
 
-    def test_image_outpainting(self, image_generator) -> None:
+    def test_image_inpainting(self, image_generator) -> None:
         image_generator.engine.run.return_value = Mock(
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.image_outpainting(
+        image_artifact = image_generator.image_inpainting(
             params={
                 "values": {
                     "prompts": ["test prompt"],
@@ -47,9 +47,9 @@ class TestImageOutpainter:
 
         assert image_artifact
 
-    def test_image_outpainting_with_outfile(self, image_generation_engine, image_loader) -> None:
+    def test_image_inpainting_with_outfile(self, image_generation_engine, image_loader) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
-        image_generator = ImageOutpainter(
+        image_generator = InpaintingImageGenerationClient(
             engine=image_generation_engine, output_file=outfile, image_loader=image_loader
         )
 
@@ -57,7 +57,7 @@ class TestImageOutpainter:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.image_outpainting(
+        image_artifact = image_generator.image_inpainting(
             params={
                 "values": {
                     "prompts": ["test prompt"],

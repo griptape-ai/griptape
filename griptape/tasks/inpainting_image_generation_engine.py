@@ -11,7 +11,7 @@ from griptape.utils import J2
 
 
 @define
-class ImageInpaintingTask(BaseImageGenerationTask):
+class InpaintingImageGenerationTask(BaseImageGenerationTask):
     """A task that modifies a select region within an image using a mask. Accepts a text prompt, image, and mask as
     input in one of the following formats:
     - tuple of (template string, ImageArtifact, ImageArtifact)

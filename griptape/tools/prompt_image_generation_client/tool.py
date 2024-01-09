@@ -11,8 +11,8 @@ from griptape.mixins import ImageArtifactFileOutputMixin
 
 
 @define
-class PromptImageGenerator(ImageArtifactFileOutputMixin, BaseTool):
-    """PromptImageGenerator is a tool that can be used to generate an image from a prompt.
+class PromptImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
+    """A tool that can be used to generate an image from a text prompt.
 
     Attributes:
         engine: The prompt image generation engine used to generate the image.

@@ -1,5 +1,0 @@
-version: "v1"
-name: Image Inpainter
-description: Tool for generating images through inpainting.
-contact_email: hello@griptape.ai
-legal_info_url: https://www.griptape.ai/legal

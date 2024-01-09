@@ -5,21 +5,21 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.tools import PromptImageGenerator
+from griptape.tools import PromptImageGenerationClient
 
 
-class TestPromptImageGenerator:
+class TestPromptImageGenerationClient:
     @pytest.fixture
     def image_generation_engine(self) -> Mock:
         return Mock()
 
     @pytest.fixture
-    def image_generator(self, image_generation_engine) -> PromptImageGenerator:
-        return PromptImageGenerator(engine=image_generation_engine)
+    def image_generator(self, image_generation_engine) -> PromptImageGenerationClient:
+        return PromptImageGenerationClient(engine=image_generation_engine)
 
     def test_validate_output_configs(self, image_generation_engine) -> None:
         with pytest.raises(ValueError):
-            PromptImageGenerator(engine=image_generation_engine, output_dir="test", output_file="test")
+            PromptImageGenerationClient(engine=image_generation_engine, output_dir="test", output_file="test")
 
     def test_text_to_image(self, image_generator) -> None:
         image_generator.engine.run.return_value = Mock(
@@ -34,7 +34,7 @@ class TestPromptImageGenerator:
 
     def test_text_to_image_with_outfile(self, image_generation_engine) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
-        image_generator = PromptImageGenerator(engine=image_generation_engine, output_file=outfile)
+        image_generator = PromptImageGenerationClient(engine=image_generation_engine, output_file=outfile)
 
         image_generator.engine.run.return_value = Mock(  # pyright: ignore
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
