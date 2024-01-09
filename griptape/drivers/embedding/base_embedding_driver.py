@@ -17,7 +17,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.
     """
 
-    model: str = field(kw_only=True)
+    model: str = field(kw_only=True, metadata={"save": True})
     tokenizer: BaseTokenizer | None = field(default=None, kw_only=True)
     chunker: BaseChunker = field(init=False)
 
