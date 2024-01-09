@@ -1,0 +1,5 @@
+version: "v1"
+name: Inpainting Image Generation Client
+description: Tool for generating images through image inpainting.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
