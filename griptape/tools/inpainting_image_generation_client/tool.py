@@ -68,7 +68,7 @@ class InpaintingImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
 
     @activity(
         config={
-            "description": "Can be used to modify an image within a specified mask area using memory artifacts.",
+            "description": "Can be used to modify an image within a specified mask area using image and mask artifacts in memory.",
             "schema": Schema(
                 {
                     Literal(

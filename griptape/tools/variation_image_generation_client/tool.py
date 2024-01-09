@@ -28,7 +28,7 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
 
     @activity(
         config={
-            "description": "Can be used to generate a variation of a given input image.",
+            "description": "Can be used to generate a variation of a given input image file.",
             "schema": Schema(
                 {
                     Literal(
@@ -58,16 +58,35 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
 
         return self._generate_variation(prompts, negative_prompts, image_artifact)
 
+    @activity(
+        config={
+            "description": "Can be used to generate a variation of a given input image artifact in memory.",
+            "schema": Schema(
+                {
+                    Literal(
+                        "prompts",
+                        description="A detailed list of features and descriptions to include in the generated image.",
+                    ): list[str],
+                    Literal(
+                        "negative_prompts",
+                        description="A detailed list of features and descriptions to avoid in the generated image.",
+                    ): list[str],
+                    "memory_name": str,
+                    "artifact_namespace": str,
+                }
+            ),
+        }
+    )
     def image_variation_from_memory(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
-        image_artifact_namespace = params["values"]["image_artifact_namespace"]
+        artifact_namespace = params["values"]["artifact_namespace"]
         memory = self.find_input_memory(params["values"]["memory_name"])
 
         if not memory:
             return ErrorArtifact("memory not found")
 
-        image_artifacts = memory.load_artifacts(namespace=image_artifact_namespace)
+        image_artifacts = memory.load_artifacts(namespace=artifact_namespace)
         if len(image_artifacts) == 0:
             return ErrorArtifact("no image artifacts found in memory")
         elif len(image_artifacts) > 1:

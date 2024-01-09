@@ -61,7 +61,7 @@ class OutpaintingImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
 
     @activity(
         config={
-            "description": "Can be used to modify an image outside a specified mask area using image and mask files.",
+            "description": "Can be used to modify an image outside a specified mask area using image and mask artifacts in memory.",
             "schema": Schema(
                 {
                     Literal(
