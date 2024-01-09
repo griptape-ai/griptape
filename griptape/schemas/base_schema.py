@@ -1,5 +1,6 @@
 from __future__ import annotations
 import builtins
+from typing import Any
 import attrs
 from marshmallow import Schema, fields
 
@@ -34,17 +35,34 @@ class BaseSchema(Schema):
         )
 
     @classmethod
-    def make_field_for_type(cls, type_str):
+    def make_field_for_type(cls, type_: Any):
         """Generate a marshmallow Field instance from a Python type."""
-        if attrs.has(type_str):
-            return fields.Nested(cls.from_attrscls(type_str))
-        type_info = cls.str_to_type(type_str)
-        type_ = type_info["type"]
-        field_class = Schema.TYPE_MAPPING[type_]
 
-        field_kwargs = {"allow_none": type_info["optional"]}
+        # Sometimes we get a string instead of a type so we need to resolve it
+        if isinstance(type_, str):
+            from griptape.drivers import BaseEmbeddingDriver
 
-        return field_class(**field_kwargs)
+            try:
+                local_scope = {"BaseEmbeddingDriver": BaseEmbeddingDriver}
+
+                if type_ in local_scope:
+                    type_ = local_scope[type_]
+            except NameError as e:
+                raise ValueError(f"Unknown type: {type_}") from e
+
+        # Check if type_obj is a valid type for attrs
+        if isinstance(type_, type) and attrs.has(type_):
+            return fields.Nested(cls.from_attrscls(type_))
+        elif isinstance(type_, str):
+            type_info = cls.str_to_type(type_)
+            type_ = type_info["type"]
+            field_class = Schema.TYPE_MAPPING[type_]
+
+            field_kwargs = {"allow_none": type_info["optional"]}
+
+            return field_class(**field_kwargs)
+        else:
+            raise ValueError(f"Unknown type: {type_}")
 
     @classmethod
     def str_to_type(cls, type_str: str) -> dict:

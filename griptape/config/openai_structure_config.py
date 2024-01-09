@@ -1,5 +1,11 @@
 from attrs import define, field, Factory
-from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver, LocalVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers import (
+    BasePromptDriver,
+    OpenAiChatPromptDriver,
+    LocalVectorStoreDriver,
+    OpenAiEmbeddingDriver,
+    BaseEmbeddingDriver,
+)
 from griptape.config import (
     BaseStructureConfig,
     StructureTaskMemoryConfig,
