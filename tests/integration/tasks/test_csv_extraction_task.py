@@ -13,14 +13,15 @@ class TestCsvExtractionTask:
         from griptape.structures import Agent
         from griptape.engines import CsvExtractionEngine
 
-        # Instantiate the CSV extraction engine
-        csv_extraction_engine = CsvExtractionEngine()
-
         columns = ["Name", "Age", "Address"]
 
         # Create an agent and add the ExtractionTask to it
         agent = Agent(prompt_driver=request.param)
-        agent.add_task(ExtractionTask(extraction_engine=csv_extraction_engine, args={"column_names": columns}))
+        agent.add_task(
+            ExtractionTask(
+                extraction_engine=CsvExtractionEngine(prompt_driver=request.param), args={"column_names": columns}
+            )
+        )
 
         return StructureTester(agent)
 
