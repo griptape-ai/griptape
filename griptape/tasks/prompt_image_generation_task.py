@@ -4,15 +4,15 @@ from typing import Callable
 
 from attr import define, field
 
+from griptape.engines import PromptImageGenerationEngine
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
 
 @define
-class TextToImageTask(BaseImageGenerationTask):
-    """TextToImageTask is a task that can be used to generate an image. Accepts a text prompt as input in one of
-    the following formats:
+class PromptImageGenerationTask(BaseImageGenerationTask):
+    """Used to generate an image from a text prompt. Accepts prompt as input in one of the following formats:
     - template string
     - TextArtifact
     - Callable that returns a TextArtifact
@@ -28,6 +28,7 @@ class TextToImageTask(BaseImageGenerationTask):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
+    image_generation_engine: PromptImageGenerationEngine = field(kw_only=True)
 
     @property
     def input(self) -> TextArtifact:
@@ -43,7 +44,7 @@ class TextToImageTask(BaseImageGenerationTask):
         self._input = value
 
     def run(self) -> ImageArtifact:
-        image_artifact = self.image_generation_engine.text_to_image(
+        image_artifact = self.image_generation_engine.run(
             prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
         )
 
