@@ -17,8 +17,8 @@ class PromptStack(SerializableMixin):
 
     @define
     class Input:
-        content: str | list[dict] = field(kw_only=True, metadata={"serialize": True})
-        role: str = field(kw_only=True, metadata={"serialize": True})
+        content: str | list[dict] = field(metadata={"serialize": True})
+        role: str = field(metadata={"serialize": True})
 
         def is_generic(self) -> bool:
             return self.role == PromptStack.GENERIC_ROLE
