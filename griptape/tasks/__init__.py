@@ -8,6 +8,7 @@ from .tool_task import ToolTask
 from .text_query_task import TextQueryTask
 from .extraction_task import ExtractionTask
 from .base_image_generation_task import BaseImageGenerationTask
+from .code_execution_task import CodeExecutionTask
 from .prompt_image_generation_task import PromptImageGenerationTask
 from .inpainting_image_generation_engine import InpaintingImageGenerationTask
 from .outpainting_image_generation_engine import OutpaintingImageGenerationTask
@@ -24,6 +25,7 @@ __all__ = [
     "TextQueryTask",
     "ExtractionTask",
     "BaseImageGenerationTask",
+    "CodeExecutionTask",
     "PromptImageGenerationTask",
     "VariationImageGenerationTask",
     "InpaintingImageGenerationTask",
