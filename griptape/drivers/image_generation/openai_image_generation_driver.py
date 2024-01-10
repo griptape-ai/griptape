@@ -11,7 +11,7 @@ from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
-class OpenAiDalleImageGenerationDriver(BaseImageGenerationDriver):
+class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for OpenAI DALLE image generation API.
 
     Attributes:
