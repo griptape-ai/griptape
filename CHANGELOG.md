@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: Rename `input_template` field to `input` in Tasks that take a text input.
 - **BREAKING**: Rename `BedrockTitanEmbeddingDriver` to `AmazonBedrockTitanEmbeddingDriver`.
+- **BREAKING**: Rename `AmazonBedrockStableDiffusionImageGenerationModelDriver` to `BedrockStableDiffusionImageGenerationModelDriver`.
+- **BREAKING**: Rename `AmazonBedrockTitanImageGenerationModelDriver` to `BedrockTitanImageGenerationModelDriver`.
 - Improve system prompt generation with Claude 2.0.
 - Improve integration test coverage.
 - `BaseTextInputTask` to accept a `str`, `TextArtifact` or callable returning a `TextArtifact`.
