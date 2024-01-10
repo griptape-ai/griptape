@@ -3,7 +3,7 @@ import os
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.loaders.image_loader import ImageLoader
+from griptape.loaders import ImageLoader
 
 
 class TestImageLoader:
