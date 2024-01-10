@@ -11,11 +11,13 @@ from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask
 from griptape.structures import Structure
 from griptape.drivers import (
+    BasePromptDriver,
     AmazonBedrockPromptDriver,
     AnthropicPromptDriver,
     BedrockClaudePromptModelDriver,
     BedrockJurassicPromptModelDriver,
     BedrockTitanPromptModelDriver,
+    BedrockLlamaPromptModelDriver,
     CoherePromptDriver,
     OpenAiChatPromptDriver,
     OpenAiCompletionPromptDriver,
@@ -26,88 +28,155 @@ from griptape.drivers import (
 )
 
 
+def get_enabled_prompt_drivers(prompt_drivers_options) -> list[BasePromptDriver]:
+    return [
+        prompt_driver_option.prompt_driver
+        for prompt_driver_option in prompt_drivers_options
+        if prompt_driver_option.enabled
+    ]
+
+
 @define
 class StructureTester:
+    @define
+    class TesterPromptDriverOption:
+        prompt_driver: BasePromptDriver = field()
+        enabled: bool = field()
+
     PROMPT_DRIVERS = {
-        "OPENAI_CHAT_35": OpenAiChatPromptDriver(model="gpt-3.5-turbo", api_key=os.environ["OPENAI_API_KEY"]),
-        "OPENAI_CHAT_35_TURBO_1106": OpenAiChatPromptDriver(
-            model="gpt-3.5-turbo-1106", api_key=os.environ["OPENAI_API_KEY"]
+        "OPENAI_CHAT_35": TesterPromptDriverOption(
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo", api_key=os.environ["OPENAI_API_KEY"]),
+            enabled=True,
         ),
-        "OPENAI_CHAT_35_TURBO_INSTRUCT": OpenAiCompletionPromptDriver(
-            model="gpt-3.5-turbo-instruct", api_key=os.environ["OPENAI_API_KEY"]
+        "OPENAI_CHAT_35_TURBO_1106": TesterPromptDriverOption(
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo-1106", api_key=os.environ["OPENAI_API_KEY"]),
+            enabled=True,
         ),
-        "OPENAI_CHAT_4": OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]),
-        "OPENAI_CHAT_4_1106_PREVIEW": OpenAiChatPromptDriver(
-            model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]
+        "OPENAI_CHAT_35_TURBO_INSTRUCT": TesterPromptDriverOption(
+            prompt_driver=OpenAiCompletionPromptDriver(
+                model="gpt-3.5-turbo-instruct", api_key=os.environ["OPENAI_API_KEY"]
+            ),
+            enabled=True,
         ),
-        "OPENAI_COMPLETION_DAVINCI": OpenAiCompletionPromptDriver(
-            api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"
+        "OPENAI_CHAT_4": TesterPromptDriverOption(
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]), enabled=True
         ),
-        "AZURE_CHAT_35_TURBO": AzureOpenAiChatPromptDriver(
-            api_key=os.environ["AZURE_OPENAI_API_KEY"],
-            model="gpt-35-turbo",
-            azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_DEPLOYMENT_ID"],
-            azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+        "OPENAI_CHAT_4_1106_PREVIEW": TesterPromptDriverOption(
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]),
+            enabled=True,
         ),
-        "AZURE_CHAT_35_TURBO_16k": AzureOpenAiChatPromptDriver(
-            api_key=os.environ["AZURE_OPENAI_API_KEY"],
-            model="gpt-35-turbo-16k",
-            azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16k_DEPLOYMENT_ID"],
-            azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+        "OPENAI_COMPLETION_DAVINCI": TesterPromptDriverOption(
+            prompt_driver=OpenAiCompletionPromptDriver(api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"),
+            enabled=True,
         ),
-        "AZURE_CHAT_4": AzureOpenAiChatPromptDriver(
-            api_key=os.environ["AZURE_OPENAI_API_KEY"],
-            model="gpt-4",
-            azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
-            azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+        "AZURE_CHAT_35_TURBO": TesterPromptDriverOption(
+            prompt_driver=AzureOpenAiChatPromptDriver(
+                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                model="gpt-35-turbo",
+                azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_DEPLOYMENT_ID"],
+                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+            ),
+            enabled=True,
         ),
-        "AZURE_CHAT_4_32k": AzureOpenAiChatPromptDriver(
-            api_key=os.environ["AZURE_OPENAI_API_KEY"],
-            model="gpt-4-32k",
-            azure_deployment=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
-            azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+        "AZURE_CHAT_35_TURBO_16k": TesterPromptDriverOption(
+            prompt_driver=AzureOpenAiChatPromptDriver(
+                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                model="gpt-35-turbo-16k",
+                azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16k_DEPLOYMENT_ID"],
+                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+            ),
+            enabled=True,
         ),
-        "ANTHROPIC_CLAUDE_2": AnthropicPromptDriver(model="claude-2.0", api_key=os.environ["ANTHROPIC_API_KEY"]),
-        "ANTHROPIC_CLAUDE_2.1": AnthropicPromptDriver(model="claude-2.1", api_key=os.environ["ANTHROPIC_API_KEY"]),
-        "COHERE_COMMAND": CoherePromptDriver(model="command", api_key=os.environ["COHERE_API_KEY"]),
-        "BEDROCK_TITAN": AmazonBedrockPromptDriver(
-            model="amazon.titan-tg1-large", prompt_model_driver=BedrockTitanPromptModelDriver()
+        "AZURE_CHAT_4": TesterPromptDriverOption(
+            prompt_driver=AzureOpenAiChatPromptDriver(
+                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                model="gpt-4",
+                azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
+                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+            ),
+            enabled=True,
         ),
-        "BEDROCK_CLAUDE_2": AmazonBedrockPromptDriver(
-            model="anthropic.claude-v2", prompt_model_driver=BedrockClaudePromptModelDriver()
+        "AZURE_CHAT_4_32k": TesterPromptDriverOption(
+            prompt_driver=AzureOpenAiChatPromptDriver(
+                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                model="gpt-4-32k",
+                azure_deployment=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
+                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+            ),
+            enabled=True,
         ),
-        "BEDROCK_J2": AmazonBedrockPromptDriver(
-            model="ai21.j2-ultra", prompt_model_driver=BedrockJurassicPromptModelDriver()
+        "ANTHROPIC_CLAUDE_2": TesterPromptDriverOption(
+            prompt_driver=AnthropicPromptDriver(model="claude-2.0", api_key=os.environ["ANTHROPIC_API_KEY"]),
+            enabled=True,
         ),
-        "SAGEMAKER_LLAMA_7B": AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-            max_attempts=1,
-            prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
+        "ANTHROPIC_CLAUDE_2.1": TesterPromptDriverOption(
+            prompt_driver=AnthropicPromptDriver(model="claude-2.1", api_key=os.environ["ANTHROPIC_API_KEY"]),
+            enabled=True,
         ),
-        "SAGEMAKER_FALCON_7b": AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-            max_attempts=1,
-            prompt_model_driver=SageMakerFalconPromptModelDriver(),
+        "COHERE_COMMAND": TesterPromptDriverOption(
+            prompt_driver=CoherePromptDriver(model="command", api_key=os.environ["COHERE_API_KEY"]), enabled=True
+        ),
+        "BEDROCK_TITAN": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="amazon.titan-tg1-large", prompt_model_driver=BedrockTitanPromptModelDriver()
+            ),
+            enabled=True,
+        ),
+        "BEDROCK_CLAUDE_2": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="anthropic.claude-v2", prompt_model_driver=BedrockClaudePromptModelDriver()
+            ),
+            enabled=True,
+        ),
+        "BEDROCK_J2": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="ai21.j2-ultra", prompt_model_driver=BedrockJurassicPromptModelDriver()
+            ),
+            enabled=True,
+        ),
+        "BEDROCK_LLAMA2_13B": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="meta.llama2-13b-chat-v1", prompt_model_driver=BedrockLlamaPromptModelDriver(), max_attempts=1
+            ),
+            enabled=True,
+        ),
+        "BEDROCK_LLAMA2_70B": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="meta.llama2-70b-chat-v1", prompt_model_driver=BedrockLlamaPromptModelDriver(), max_attempts=1
+            ),
+            enabled=True,
+        ),
+        "SAGEMAKER_LLAMA_7B": TesterPromptDriverOption(
+            prompt_driver=AmazonSageMakerPromptDriver(
+                model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
+                prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
+            ),
+            enabled=False,
+        ),
+        "SAGEMAKER_FALCON_7b": TesterPromptDriverOption(
+            prompt_driver=AmazonSageMakerPromptDriver(
+                model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
+                prompt_model_driver=SageMakerFalconPromptModelDriver(),
+            ),
+            enabled=False,
         ),
     }
-
-    TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = [
-        PROMPT_DRIVERS["OPENAI_CHAT_35_TURBO_1106"],
-        PROMPT_DRIVERS["OPENAI_CHAT_4"],
-        PROMPT_DRIVERS["OPENAI_CHAT_4_1106_PREVIEW"],
-        PROMPT_DRIVERS["AZURE_CHAT_4"],
-        PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
-        PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
-        PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2.1"],
-    ]
-    TOOL_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-    PROMPT_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-    TEXT_SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-    TEXT_QUERY_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-    JSON_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-    CSV_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
-
-    RULE_CAPABLE_PROMPT_DRIVERS = PROMPT_DRIVERS.values()
+    TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(
+        [
+            PROMPT_DRIVERS["OPENAI_CHAT_4"],
+            PROMPT_DRIVERS["OPENAI_CHAT_4_1106_PREVIEW"],
+            PROMPT_DRIVERS["AZURE_CHAT_4"],
+            PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
+            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
+            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2.1"],
+        ]
+    )
+    TOOL_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())
+    PROMPT_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())
+    TEXT_SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())
+    TEXT_QUERY_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())
+    JSON_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())
+    CSV_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())
 
     structure: Structure = field()
 
