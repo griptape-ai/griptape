@@ -22,7 +22,7 @@ class OpenAiStructureConfig(BaseStructureConfig):
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-4", stream=False)),
         kw_only=True,
-        metadata={"save": True},
+        metadata={"serialize": True},
     )
     task_memory: StructureTaskMemoryConfig = field(
         default=Factory(
@@ -47,5 +47,5 @@ class OpenAiStructureConfig(BaseStructureConfig):
             )
         ),
         kw_only=True,
-        metadata={"save": True},
+        metadata={"serialize": True},
     )

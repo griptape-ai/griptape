@@ -8,6 +8,7 @@ class TestListArtifact:
         assert ListArtifact([TextArtifact("foo"), TextArtifact("bar")], item_separator="test").to_text() == "footestbar"
 
     def test_to_dict(self):
+        print(ListArtifact([TextArtifact("foobar")]).to_dict()["value"][0])
         assert ListArtifact([TextArtifact("foobar")]).to_dict()["value"][0]["value"] == "foobar"
 
     def test__getitem__(self):

@@ -6,4 +6,4 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 
 @define(kw_only=True)
 class StructureTaskMemorySummaryEngineConfig(SerializableMixin):
-    prompt_driver: BasePromptDriver = field(metadata={"save": True})
+    prompt_driver: BasePromptDriver = field(metadata={"serialize": True})

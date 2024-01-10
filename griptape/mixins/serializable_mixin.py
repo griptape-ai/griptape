@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TypeVar
+from typing import TypeVar, Generic
 
 from attr import Factory, define, field
 
@@ -11,10 +11,20 @@ T = TypeVar("T", bound="SerializableMixin")
 
 
 @define(slots=False)
-class SerializableMixin:
+class SerializableMixin(Generic[T]):
     type: str = field(
-        default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True, metadata={"save": True}
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
+        kw_only=True,
+        metadata={"serialize": True},
     )
+
+    @classmethod
+    def before_load(cls: type[T], data: dict) -> dict:
+        return data
+
+    @classmethod
+    def before_dump(cls: type[T], data: T) -> T:
+        return data
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:

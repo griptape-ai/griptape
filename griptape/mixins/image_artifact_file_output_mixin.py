@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 from attr import define, field
 
-from griptape.artifacts import ImageArtifact
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
 
 
 @define(slots=False)

@@ -11,8 +11,8 @@ from marshmallow.exceptions import RegistryError
 
 @define
 class BaseStructureConfig(SerializableMixin, ABC):
-    prompt_driver: BasePromptDriver = field(kw_only=True, metadata={"save": True})
-    task_memory: StructureTaskMemoryConfig = field(kw_only=True, metadata={"save": True})
+    prompt_driver: BasePromptDriver = field(kw_only=True, metadata={"serialize": True})
+    task_memory: StructureTaskMemoryConfig = field(kw_only=True, metadata={"serialize": True})
 
     @classmethod
     def from_dict(cls: type[BaseStructureConfig], data: dict) -> BaseStructureConfig:

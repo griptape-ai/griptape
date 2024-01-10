@@ -28,7 +28,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         meta: dict | None = None
         namespace: str | None = None
 
-    embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"save": True})
+    embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serialize": True})
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def upsert_text_artifacts(

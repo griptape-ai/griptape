@@ -1,81 +1,77 @@
 from __future__ import annotations
-import builtins
-from typing import Any
+from types import UnionType
+from typing import Union, get_origin, get_args
 import attrs
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, pre_dump
+
+from griptape.schemas.bytes_field import Bytes
 
 
 class BaseSchema(Schema):
     schema_namespace = fields.Str(allow_none=True)
-    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, list: fields.List}
+    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, list: fields.List, dict: fields.Dict, bytes: Bytes}
 
     @classmethod
     def from_attrscls(cls, attrscls):
         """Generate a Schema from an attrs class."""
         from marshmallow import post_load
-        from importlib import import_module
 
         class SubSchema(cls):
             @post_load
             def make_obj(self, data, **kwargs):
-                package_name = ".".join(attrscls.__module__.split(".")[:2])
+                data = attrscls.before_load(data)
 
-                if "type" in data:
-                    class_name = data["type"]
+                return attrscls(**data)
 
-                    class_ = import_module(package_name).__getattribute__(class_name)
+            @pre_dump
+            def transform(self, data, **kwargs):
+                data = attrscls.before_dump(data)
 
-                    return class_(**data)
-                else:
-                    raise ValueError("Missing type field in schema.")
+                return data
 
+        attrs.resolve_types(attrscls)
         return SubSchema.from_dict(
-            {a.name: cls.make_field_for_type(a.type) for a in attrs.fields(attrscls) if a.metadata.get("save")},
+            {
+                a.name: cls.make_field_for_type(a.type, a.default)
+                for a in attrs.fields(attrscls)
+                if a.metadata.get("serialize")
+            },
             name=f"{attrscls.__name__}Schema",
         )
 
     @classmethod
-    def make_field_for_type(cls, type_: Any):
+    def make_field_for_type(cls, type_: type, default=None):
         """Generate a marshmallow Field instance from a Python type."""
+        from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
-        # Sometimes we get a string instead of a type so we need to resolve it
-        if isinstance(type_, str):
-            from griptape.drivers import BaseEmbeddingDriver
-
-            try:
-                local_scope = {"BaseEmbeddingDriver": BaseEmbeddingDriver}
-
-                if type_ in local_scope:
-                    type_ = local_scope[type_]
-            except NameError as e:
-                raise ValueError(f"Unknown type: {type_}") from e
-
-        # Check if type_obj is a valid type for attrs
-        if isinstance(type_, type) and attrs.has(type_):
+        allow_none = False
+        if cls.is_union(type_):
+            args = get_args(type_)
+            origin_cls = args[0]
+            if len(args) > 1 and args[1] is type(None):
+                allow_none = True
+        elif type_.__name__.startswith("Base"):
+            return fields.Nested(PolymorphicSchema)
+        elif attrs.has(type_):
             return fields.Nested(cls.from_attrscls(type_))
-        elif isinstance(type_, str):
-            type_info = cls.str_to_type(type_)
-            type_ = type_info["type"]
-            field_class = Schema.TYPE_MAPPING[type_]
-
-            field_kwargs = {"allow_none": type_info["optional"]}
-
-            return field_class(**field_kwargs)
         else:
-            raise ValueError(f"Unknown type: {type_}")
+            origin_cls = get_origin(type_) or type_
+        FieldClass = cls.DATACLASS_TYPE_MAPPING[origin_cls]
+        required = default is None
+        field_kwargs = {"required": required, "allow_none": allow_none, "cls_or_instance": None}
+        # Handle list types
+        if issubclass(FieldClass, fields.List):
+            # Construct inner class
+            args = get_args(type_)
+            if args:
+                inner_type = args[0]
+                inner_field = cls.make_field_for_type(inner_type)
+            else:
+                inner_field = fields.Field()
+            field_kwargs["cls_or_instance"] = inner_field
+        return FieldClass(**field_kwargs)
 
     @classmethod
-    def str_to_type(cls, type_str: str) -> dict:
-        # Split the string by the pipe symbol and strip whitespace
-        types = [t.strip() for t in type_str.split("|")]
-
-        type_info = {"type": None, "optional": False}
-        for t in types:
-            if t == "None":  # Special case for None
-                type_info["optional"] = True
-            elif hasattr(builtins, t):
-                type_info["type"] = getattr(builtins, t)
-            else:
-                raise ValueError(f"Unknown type: {t}")
-
-        return type_info
+    def is_union(cls, t: object) -> bool:
+        origin = get_origin(t)
+        return origin is Union or origin is UnionType
