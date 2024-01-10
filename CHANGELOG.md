@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for all Tokenizers in `OpenAiChatPromptDriver`, enabling OpenAI drop-in clients such as Together AI.
 - `AmazonSageMakerEmbeddingDriver` for using Amazon SageMaker to generate embeddings. Thanks @KaushikIyer16!
 - Claude 2.1 support in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver` via `BedrockClaudePromptModelDriver`.
-- `CodeExecutionTask` for running Python functions without an LLM.
+- `CodeExecutionTask` for executing code as a Task without the need for an LLM.
 - `BedrockLlamaPromptModelDriver` for using Llama models on Amazon Bedrock.
 
 
