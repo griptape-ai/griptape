@@ -7,7 +7,7 @@ from schema import Schema, Literal
 
 from griptape.artifacts import ErrorArtifact, ImageArtifact
 from griptape.engines import InpaintingImageGenerationEngine
-from griptape.loaders.image_loader import ImageLoader
+from griptape.loaders import ImageLoader
 from griptape.mixins import ImageArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity

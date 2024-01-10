@@ -35,11 +35,9 @@ class ImageLoader(BaseLoader):
 
         image = Image.open(path)
 
-        # Ensure image is in png format.
+        # Ensure image is in the specified format.
         byte_stream = BytesIO()
-
-        if image.format != self.format:
-            image.save(byte_stream, format=self.format)
+        image.save(byte_stream, format=self.format)
 
         return ImageArtifact(
             byte_stream.getvalue(),

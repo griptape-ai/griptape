@@ -7,6 +7,7 @@ from .csv_loader import CsvLoader
 from .dataframe_loader import DataFrameLoader
 from .file_loader import FileLoader
 from .email_loader import EmailLoader
+from .image_loader import ImageLoader
 
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "DataFrameLoader",
     "FileLoader",
     "EmailLoader",
+    "ImageLoader",
 ]

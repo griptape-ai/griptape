@@ -6,7 +6,7 @@ from abc import ABC
 from attr import field, define
 
 from griptape.artifacts import ImageArtifact
-from griptape.loaders.image_loader import ImageLoader
+from griptape.loaders import ImageLoader
 from griptape.mixins import RuleMixin, ImageArtifactFileOutputMixin
 from griptape.rules import Ruleset, Rule
 from griptape.tasks import BaseTask
