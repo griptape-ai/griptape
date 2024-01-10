@@ -1,11 +1,12 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from marshmallow import class_registry
 from marshmallow.exceptions import RegistryError
-from attr import define, field, Factory
+from attr import define, field
 from griptape.memory.structure import Run
 from griptape.utils import PromptStack
+from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver
@@ -13,14 +14,13 @@ if TYPE_CHECKING:
 
 
 @define
-class ConversationMemory:
-    type: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+class ConversationMemory(SerializableMixin):
     driver: BaseConversationMemoryDriver | None = field(default=None, kw_only=True)
-    runs: list[Run] = field(factory=list, kw_only=True)
+    runs: list[Run] = field(factory=list, kw_only=True, metadata={"serialize": True})
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
-    max_runs: int | None = field(default=None, kw_only=True)
+    max_runs: int | None = field(default=None, kw_only=True, metadata={"serialize": True})
 
     def __attrs_post_init__(self) -> None:
         if self.driver and self.autoload:

@@ -13,9 +13,9 @@ class ActionSubtaskMetaEntry(BaseMetaEntry):
         answer: tool-generated and memory-processed response from Griptape.
     """
 
-    thought: str = field(kw_only=True)
-    action: str = field(kw_only=True)
-    answer: str = field(kw_only=True)
+    thought: str = field(kw_only=True, metadata={"serialize": True})
+    action: str = field(kw_only=True, metadata={"serialize": True})
+    answer: str = field(kw_only=True, metadata={"serialize": True})
 
     def to_dict(self) -> dict:
         from griptape.schemas import ActionSubtaskMetaEntrySchema
