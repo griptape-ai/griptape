@@ -25,6 +25,7 @@ class TestImageLoader:
         assert artifact.height == 1024
         assert artifact.width == 1024
         assert artifact.mime_type == "image/png"
+        assert len(artifact.value) > 0
 
     def test_load_jpg(self, loader):
         path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/pig-balloon.jpg")
@@ -37,3 +38,4 @@ class TestImageLoader:
         assert artifact.height == 1024
         assert artifact.width == 1024
         assert artifact.mime_type == "image/png"
+        assert len(artifact.value) > 0
