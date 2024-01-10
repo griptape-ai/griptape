@@ -1,23 +1,24 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from dataclasses import dataclass
+from typing import TYPE_CHECKING
 from attr import define, field
+
+from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.memory.structure import ConversationMemory
 
 
 @define
-class PromptStack:
+class PromptStack(SerializableMixin):
     GENERIC_ROLE = "generic"
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    @dataclass
+    @define
     class Input:
-        content: str | list[dict]
-        role: str
+        content: str | list[dict] = field(kw_only=True, metadata={"serialize": True})
+        role: str = field(kw_only=True, metadata={"serialize": True})
 
         def is_generic(self) -> bool:
             return self.role == PromptStack.GENERIC_ROLE
@@ -31,7 +32,7 @@ class PromptStack:
         def is_assistant(self) -> bool:
             return self.role == PromptStack.ASSISTANT_ROLE
 
-    inputs: list[Input] = field(factory=list, kw_only=True)
+    inputs: list[Input] = field(factory=list, kw_only=True, metadata={"serialize": True})
 
     def add_input(self, content: str, role: str) -> Input:
         self.inputs.append(self.Input(content=content, role=role))

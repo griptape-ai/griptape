@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 @define
 class TextArtifact(BaseArtifact):
     value: str = field(converter=str, metadata={"serialize": True})
-    encoding: str = field(default="utf-8", kw_only=True, metadata={"serialize": True})
+    encoding: str = field(default="utf-8", kw_only=True)
     encoding_error_handler: str = field(default="strict", kw_only=True)
     _embedding: list[float] = field(factory=list, kw_only=True)
 
