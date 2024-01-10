@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OutpaintingImageGenerationEngine` for modifying an input image according to a text prompt outside the bounds of a mask defined by a mask image.
 - `ImageArtifact` for storing image data; used heavily by the image Engines, Tasks, and Drivers.
 - `ImageLoader` for loading images files into `ImageArtifact`s.
-- Support for all Tokenizers in `OpenAiChatPromptDriver`, enabling OpenAi drop-in clients such as TogetherAi.
+- Support for all Tokenizers in `OpenAiChatPromptDriver`, enabling OpenAI drop-in clients such as Together AI.
 - `AmazonSageMakerEmbeddingDriver` for using Amazon SageMaker to generate embeddings. Thanks @KaushikIyer16!
 - Claude 2.1 support in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver` via `BedrockClaudePromptModelDriver`.
 - `CodeExecutionTask` for running Python functions without an LLM.
