@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 from typing import TYPE_CHECKING
 from marshmallow import class_registry
 from marshmallow.exceptions import RegistryError
@@ -7,6 +6,7 @@ from attr import define, field
 from griptape.memory.structure import Run
 from griptape.utils import PromptStack
 from griptape.mixins import SerializableMixin
+from griptape.schemas import BaseSchema
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver
@@ -49,14 +49,6 @@ class ConversationMemory(SerializableMixin):
         if self.driver:
             self.driver.store(self)
 
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), indent=2)
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import ConversationMemorySchema
-
-        return dict(ConversationMemorySchema().dump(self))
-
     def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
         prompt_stack = PromptStack()
         runs = self.runs[-last_n:] if last_n else self.runs
@@ -66,17 +58,13 @@ class ConversationMemory(SerializableMixin):
         return prompt_stack
 
     @classmethod
-    def from_dict(cls, memory_dict: dict) -> ConversationMemory:
-        from griptape.schemas import ConversationMemorySchema, SummaryConversationMemorySchema
+    def from_dict(cls, data: dict) -> ConversationMemory:
+        from griptape.memory.structure import ConversationMemory, SummaryConversationMemory
 
-        class_registry.register("ConversationMemory", ConversationMemorySchema)
-        class_registry.register("SummaryConversationMemory", SummaryConversationMemorySchema)
+        class_registry.register("ConversationMemory", BaseSchema.from_attrscls(ConversationMemory))
+        class_registry.register("SummaryConversationMemory", BaseSchema.from_attrscls(SummaryConversationMemory))
 
         try:
-            return class_registry.get_class(memory_dict["type"])().load(memory_dict)
+            return class_registry.get_class(data["type"])().load(data)
         except RegistryError:
             raise ValueError("Unsupported memory type")
-
-    @classmethod
-    def from_json(cls, memory_json: str) -> ConversationMemory:
-        return ConversationMemory.from_dict(json.loads(memory_json))

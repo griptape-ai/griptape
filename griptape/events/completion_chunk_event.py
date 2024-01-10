@@ -6,8 +6,3 @@ from griptape.events.base_event import BaseEvent
 @define
 class CompletionChunkEvent(BaseEvent):
     token: str = field(kw_only=True, metadata={"serialize": True})
-
-    def to_dict(self):
-        from griptape.schemas import CompletionChunkEventSchema
-
-        return dict(CompletionChunkEventSchema().dump(self))

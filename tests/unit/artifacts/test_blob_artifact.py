@@ -1,7 +1,6 @@
 import base64
 import pytest
 from griptape.artifacts import BlobArtifact, BaseArtifact
-from griptape.schemas import BlobArtifactSchema
 
 
 class TestBlobArtifact:
@@ -38,7 +37,7 @@ class TestBlobArtifact:
 
     def test_serialization(self):
         artifact = BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo")
-        artifact_dict = BlobArtifactSchema().dump(artifact)
+        artifact_dict = artifact.to_dict()
 
         assert artifact_dict["name"] == "foobar.txt"
         assert artifact_dict["dir_name"] == "foo"
@@ -46,9 +45,10 @@ class TestBlobArtifact:
 
     def test_deserialization(self):
         artifact = BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo")
-        artifact_dict = BlobArtifactSchema().dump(artifact)
-        deserialized_artifact: BlobArtifact = BaseArtifact.from_dict(artifact_dict)
+        artifact_dict = artifact.to_dict()
+        deserialized_artifact = BaseArtifact.from_dict(artifact_dict)
 
+        assert isinstance(deserialized_artifact, BlobArtifact)
         assert deserialized_artifact.name == "foobar.txt"
         assert deserialized_artifact.dir_name == "foo"
         assert deserialized_artifact.value == b"foobar"

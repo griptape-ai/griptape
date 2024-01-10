@@ -1,10 +1,8 @@
 from __future__ import annotations
-import json
 import logging
 from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.schemas import SummaryConversationMemorySchema
 from griptape.utils import J2, PromptStack
 from griptape.memory.structure import ConversationMemory
 from griptape.tokenizers import OpenAiTokenizer
@@ -28,14 +26,6 @@ class SummaryConversationMemory(ConversationMemory):
         default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")), kw_only=True
     )
 
-    @classmethod
-    def from_dict(cls, memory_dict: dict) -> SummaryConversationMemory:
-        return SummaryConversationMemorySchema().load(memory_dict)
-
-    @classmethod
-    def from_json(cls, memory_json: str) -> SummaryConversationMemory:
-        return SummaryConversationMemory.from_dict(json.loads(memory_json))
-
     def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
@@ -46,9 +36,6 @@ class SummaryConversationMemory(ConversationMemory):
             stack.add_assistant_input(r.output)
 
         return stack
-
-    def to_dict(self) -> dict:
-        return dict(SummaryConversationMemorySchema().dump(self))
 
     def unsummarized_runs(self, last_n: int | None = None) -> list[Run]:
         summary_index_runs = self.runs[self.summary_index :]
