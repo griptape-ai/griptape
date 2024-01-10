@@ -8,7 +8,7 @@ from griptape.drivers import OpenAiImageGenerationDriver
 
 @define
 class AzureOpenAiImageGenerationDriver(OpenAiImageGenerationDriver):
-    """Driver for Azure-hosted OpenAI DALLE image generation API.
+    """Driver for Azure-hosted OpenAI image generation API.
 
     Attributes:
         azure_deployment: An Azure OpenAi deployment id.
