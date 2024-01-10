@@ -4,14 +4,15 @@ from typing import Callable, Tuple
 
 from attr import define, field
 
+from griptape.engines import InpaintingImageGenerationEngine
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
 
 @define
-class ImageOutpaintingTask(BaseImageGenerationTask):
-    """A task that modifies an image outside the bounds of a mask. Accepts a text prompt, image, and mask as
+class InpaintingImageGenerationTask(BaseImageGenerationTask):
+    """A task that modifies a select region within an image using a mask. Accepts a text prompt, image, and mask as
     input in one of the following formats:
     - tuple of (template string, ImageArtifact, ImageArtifact)
     - tuple of (TextArtifact, ImageArtifact, ImageArtifact)
@@ -25,6 +26,7 @@ class ImageOutpaintingTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
+    image_generation_engine: InpaintingImageGenerationEngine = field(kw_only=True)
     _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
         [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
     ] = field(default=None)
@@ -52,7 +54,7 @@ class ImageOutpaintingTask(BaseImageGenerationTask):
         image_artifact = self.input[1]
         mask_artifact = self.input[2]
 
-        output_image_artifact = self.image_generation_engine.image_outpainting(
+        output_image_artifact = self.image_generation_engine.run(
             prompts=[prompt_artifact.to_text()],
             image=image_artifact,
             mask=mask_artifact,
