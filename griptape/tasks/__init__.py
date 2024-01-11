@@ -10,8 +10,8 @@ from .extraction_task import ExtractionTask
 from .base_image_generation_task import BaseImageGenerationTask
 from .code_execution_task import CodeExecutionTask
 from .prompt_image_generation_task import PromptImageGenerationTask
-from .inpainting_image_generation_engine import InpaintingImageGenerationTask
-from .outpainting_image_generation_engine import OutpaintingImageGenerationTask
+from .inpainting_image_generation_task import InpaintingImageGenerationTask
+from .outpainting_image_generation_task import OutpaintingImageGenerationTask
 from .variation_image_generation_task import VariationImageGenerationTask
 
 __all__ = [
