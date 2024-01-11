@@ -1,6 +1,4 @@
-from abc import abstractmethod
-from pydoc import locate
-from typing import Optional, Any
+from typing import Any
 from marshmallow import ValidationError, Schema
 from griptape.schemas import BaseSchema
 
@@ -14,26 +12,6 @@ class PolymorphicSchema(BaseSchema):
         super().__init__(**kwargs)
 
         self.class_ = class_
-
-    def get_schema(self, class_name: str, obj: Optional[object], schema_namespace: Optional[str]):
-        if schema_namespace:
-            namespace = schema_namespace
-        elif obj is not None and hasattr(obj, "schema_namespace"):
-            if locate(f"griptape.schemas.{class_name}Schema"):
-                namespace = "griptape.schemas"
-            elif obj.schema_namespace is None:
-                namespace = obj.schema_namespace = f"{obj.__module__}_schema"
-            else:
-                namespace = obj.schema_namespace
-        else:
-            namespace = "griptape.schemas"
-
-        klass = locate(f"{namespace}.{class_name}Schema")
-
-        if klass:
-            return klass
-        else:
-            raise ValidationError(f"Missing schema for '{class_name}'")
 
     type_field = "type"
     type_field_remove = False
@@ -141,9 +119,6 @@ class PolymorphicSchema(BaseSchema):
         if data_type is None:
             raise ValidationError({self.type_field: ["Missing data for required field."]})
 
-        schema_namespace = data.get("schema_namespace")
-
-        print(data, data_type)
         type_schema = self.class_.get_schema(data_type)
         if not type_schema:
             raise ValidationError({self.type_field: ["Unsupported value: %s" % data_type]})

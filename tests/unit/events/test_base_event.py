@@ -1,4 +1,5 @@
 import time
+from marshmallow.exceptions import RegistryError
 import pytest
 from griptape.events import (
     StartPromptEvent,
@@ -185,5 +186,5 @@ class TestBaseEvent:
 
     def test_unsupported_from_dict(self):
         dict_value = {"type": "foo", "value": "foobar"}
-        with pytest.raises(ValueError):
+        with pytest.raises(RegistryError):
             BaseEvent.from_dict(dict_value)

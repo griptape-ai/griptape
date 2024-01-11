@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import json
-from typing import TypeVar, Generic, get_type_hints, Type
+from typing import TypeVar, Generic
 
-from attr import Factory, define, field, resolve_types
+from attr import Factory, define, field
 
 from marshmallow import class_registry, Schema
 from marshmallow.exceptions import RegistryError
@@ -58,8 +58,6 @@ class SerializableMixin(Generic[T]):
         return json.dumps(self.to_dict())
 
     def to_dict(self) -> dict:
-        print(resolve_types(self.__class__))
-        print(get_type_hints(self))
         schema = BaseSchema.from_attrscls(self.__class__)
 
         return dict(schema().dump(self))

@@ -8,7 +8,6 @@ from griptape.schemas.bytes_field import Bytes
 
 
 class BaseSchema(Schema):
-    schema_namespace = fields.Str(allow_none=True)
     DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
 
     @classmethod
@@ -33,7 +32,7 @@ class BaseSchema(Schema):
 
         from griptape.utils import PromptStack
         from griptape.structures import Structure
-        from griptape.drivers import BaseConversationMemoryDriver
+        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
 
         attrs.resolve_types(
             attrscls,
@@ -42,6 +41,7 @@ class BaseSchema(Schema):
                 "Input": PromptStack.Input,
                 "Structure": Structure,
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
+                "BasePromptDriver": BasePromptDriver,
             },
         )
         return SubSchema.from_dict(
