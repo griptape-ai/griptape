@@ -1,5 +1,5 @@
 from __future__ import annotations
-from types import UnionType
+import sys
 from abc import ABC
 from typing import Union, get_origin, get_args, Any
 import attrs
@@ -80,4 +80,10 @@ class BaseSchema(Schema):
     @classmethod
     def is_union(cls, t: object) -> bool:
         origin = get_origin(t)
-        return origin is Union or origin is UnionType
+
+        if sys.version_info >= (3, 10):
+            from types import UnionType
+
+            return origin is Union or origin is UnionType
+        else:
+            return origin is Union
