@@ -11,3 +11,4 @@ repos:
     rev: v1.1.342
     hooks:
     - id: pyright
+      args: [--py39-plus]
