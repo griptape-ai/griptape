@@ -18,8 +18,14 @@ from .memory.conversation.amazon_dynamodb_conversation_memory_driver import Amaz
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
-from .embedding.bedrock_titan_embedding_driver import BedrockTitanEmbeddingDriver
+from .embedding.base_multi_model_embedding_driver import BaseMultiModelEmbeddingDriver
+from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
+from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
+
+from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
+from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
+from .embedding_model.sagemaker_tensorflow_hub_embedding_model_driver import SageMakerTensorFlowHubEmbeddingModelDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -42,21 +48,20 @@ from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPr
 from .prompt_model.bedrock_titan_prompt_model_driver import BedrockTitanPromptModelDriver
 from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePromptModelDriver
 from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPromptModelDriver
+from .prompt_model.bedrock_llama_prompt_model_driver import BedrockLlamaPromptModelDriver
+
+from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
+from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
+    BedrockStableDiffusionImageGenerationModelDriver,
+)
+from .image_generation_model.bedrock_titan_image_generation_model_driver import BedrockTitanImageGenerationModelDriver
 
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
 from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
-from .image_generation.openai_dalle_image_generation_driver import OpenAiDalleImageGenerationDriver
+from .image_generation.openai_image_generation_driver import OpenAiImageGenerationDriver
 from .image_generation.leonardo_image_generation_driver import LeonardoImageGenerationDriver
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
-from .image_generation.azure_openai_dalle_image_generation import AzureOpenAiDalleImageGenerationDriver
-
-from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
-from .image_generation_model.amazon_bedrock_titan_image_generation_model_driver import (
-    AmazonBedrockTitanImageGenerationModelDriver,
-)
-from .image_generation_model.amazon_bedrock_stable_diffusion_image_generation_model_driver import (
-    AmazonBedrockStableDiffusionImageGenerationModelDriver,
-)
+from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -77,8 +82,13 @@ __all__ = [
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
-    "BedrockTitanEmbeddingDriver",
+    "BaseMultiModelEmbeddingDriver",
+    "AmazonSageMakerEmbeddingDriver",
+    "AmazonBedrockTitanEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
+    "BaseEmbeddingModelDriver",
+    "SageMakerHuggingFaceEmbeddingModelDriver",
+    "SageMakerTensorFlowHubEmbeddingModelDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
@@ -98,13 +108,14 @@ __all__ = [
     "BedrockTitanPromptModelDriver",
     "BedrockClaudePromptModelDriver",
     "BedrockJurassicPromptModelDriver",
+    "BedrockLlamaPromptModelDriver",
+    "BaseImageGenerationModelDriver",
+    "BedrockStableDiffusionImageGenerationModelDriver",
+    "BedrockTitanImageGenerationModelDriver",
     "BaseImageGenerationDriver",
     "BaseMultiModelImageGenerationDriver",
-    "OpenAiDalleImageGenerationDriver",
+    "OpenAiImageGenerationDriver",
     "LeonardoImageGenerationDriver",
     "AmazonBedrockImageGenerationDriver",
-    "BaseImageGenerationModelDriver",
-    "AmazonBedrockTitanImageGenerationModelDriver",
-    "AmazonBedrockStableDiffusionImageGenerationModelDriver",
-    "AzureOpenAiDalleImageGenerationDriver",
+    "AzureOpenAiImageGenerationDriver",
 ]

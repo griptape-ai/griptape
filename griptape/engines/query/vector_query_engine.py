@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
@@ -7,6 +7,7 @@ from griptape.drivers import OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.rules import Ruleset
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver
@@ -25,15 +26,17 @@ class VectorQueryEngine(BaseQueryEngine):
     def query(
         self,
         query: str,
+        namespace: str | None = None,
+        rulesets: list[Ruleset] | None = None,
         metadata: str | None = None,
         top_n: int | None = None,
-        namespace: str | None = None,
-        rulesets: str | None = None,
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace)
         artifacts = [
-            a for a in [BaseArtifact.from_json(r.meta["artifact"]) for r in result] if isinstance(a, TextArtifact)
+            artifact
+            for artifact in [BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta]
+            if isinstance(artifact, TextArtifact)
         ]
         text_segments = []
         message = ""
@@ -75,6 +78,6 @@ class VectorQueryEngine(BaseQueryEngine):
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         result = self.vector_store_driver.load_entries(namespace)
-        artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta.get("artifact")]
+        artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta and r.meta.get("artifact")]
 
         return ListArtifact([a for a in artifacts if isinstance(a, TextArtifact)])

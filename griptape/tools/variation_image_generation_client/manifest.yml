@@ -1,0 +1,5 @@
+version: "v1"
+name: Variation Image Generation Client
+description: Tool for generating variations of existing images.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

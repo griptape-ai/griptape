@@ -19,9 +19,9 @@ def activity(config: dict):
         def wrapper(self, *args, **kwargs):
             return func(self, *args, **kwargs)
 
-        wrapper.name = func.__name__
-        wrapper.config = validated_config
-        wrapper.is_activity = True
+        setattr(wrapper, "name", func.__name__)
+        setattr(wrapper, "config", validated_config)
+        setattr(wrapper, "is_activity", True)
 
         return wrapper
 

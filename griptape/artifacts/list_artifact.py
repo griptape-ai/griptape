@@ -8,7 +8,7 @@ class ListArtifact(BaseArtifact):
     value: list[BaseArtifact] = field(factory=list)
     item_separator: str = field(default="\n\n", kw_only=True)
 
-    @value.validator
+    @value.validator  # pyright: ignore
     def validate_value(self, _, value: list[BaseArtifact]) -> None:
         if len(value) > 0:
             first_type = type(value[0])
@@ -22,6 +22,9 @@ class ListArtifact(BaseArtifact):
             return type(self.value[0])
         else:
             return None
+
+    def __getitem__(self, key: int) -> BaseArtifact:
+        return self.value[key]
 
     def __bool__(self) -> bool:
         return len(self) > 0

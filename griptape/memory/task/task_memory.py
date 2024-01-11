@@ -17,7 +17,7 @@ class TaskMemory(ActivityMixin):
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
 
-    @artifact_storages.validator
+    @artifact_storages.validator  # pyright: ignore
     def validate_artifact_storages(self, _, artifact_storage: dict[type, BaseArtifactStorage]) -> None:
         seen_types = []
 
@@ -67,7 +67,7 @@ class TaskMemory(ActivityMixin):
                         ActionSubtaskMetaEntry(thought=subtask.thought, action=subtask.action_to_json(), answer=output)
                     )
 
-                return InfoArtifact(output)
+                return InfoArtifact(output, name=namespace)
         else:
             return InfoArtifact("tool output is empty")
 

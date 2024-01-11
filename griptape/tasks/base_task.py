@@ -1,9 +1,12 @@
 from __future__ import annotations
+
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any
+
 from attr import define, field, Factory
+
 from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
 
@@ -28,10 +31,11 @@ class BaseTask(ABC):
 
     output: BaseArtifact | None = field(default=None, init=False)
     structure: Structure | None = field(default=None, init=False)
+    context: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @property
     @abstractmethod
-    def input(self) -> BaseArtifact:
+    def input(self) -> BaseArtifact | tuple[BaseArtifact, ...]:
         ...
 
     @property
@@ -107,3 +111,14 @@ class BaseTask(ABC):
     @abstractmethod
     def run(self) -> BaseArtifact:
         ...
+
+    @property
+    def full_context(self) -> dict[str, Any]:
+        if self.structure:
+            structure_context = self.structure.context(self)
+
+            structure_context.update(self.context)
+
+            return structure_context
+        else:
+            return {}
