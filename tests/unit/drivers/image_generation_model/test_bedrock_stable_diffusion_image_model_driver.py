@@ -51,7 +51,7 @@ class TestBedrockStableDiffusionImageGenerationModelDriver:
             {"text": "nprompt1", "weight": -1.0},
             {"text": "nprompt2", "weight": -1.0},
         ]
-        assert parameters["init_image"] == image_artifact.base64
+        assert parameters["init_image"] == image_artifact.value
 
     def test_image_inpainting_request_parameters(self, model_driver, image_artifact, mask_artifact):
         parameters = model_driver.image_inpainting_request_parameters(
@@ -68,8 +68,8 @@ class TestBedrockStableDiffusionImageGenerationModelDriver:
             {"text": "nprompt1", "weight": -1.0},
             {"text": "nprompt2", "weight": -1.0},
         ]
-        assert parameters["init_image"] == image_artifact.base64
-        assert parameters["mask_image"] == mask_artifact.base64
+        assert parameters["init_image"] == image_artifact.value
+        assert parameters["mask_image"] == mask_artifact.value
         assert parameters["mask_source"] == "MASK_IMAGE_BLACK"
 
     def test_image_outpainting_request_parameters(self, model_driver, image_artifact, mask_artifact):
@@ -87,6 +87,6 @@ class TestBedrockStableDiffusionImageGenerationModelDriver:
             {"text": "nprompt1", "weight": -1.0},
             {"text": "nprompt2", "weight": -1.0},
         ]
-        assert parameters["init_image"] == image_artifact.base64
-        assert parameters["mask_image"] == mask_artifact.base64
+        assert parameters["init_image"] == image_artifact.value
+        assert parameters["mask_image"] == mask_artifact.value
         assert parameters["mask_source"] == "MASK_IMAGE_WHITE"

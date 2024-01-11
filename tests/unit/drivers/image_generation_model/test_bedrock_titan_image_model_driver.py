@@ -1,5 +1,3 @@
-import base64
-
 import pytest
 
 from griptape.artifacts import ImageArtifact
@@ -49,7 +47,7 @@ class TestBedrockTitanImageGenerationModelDriver:
         assert parameters["taskType"] == "IMAGE_VARIATION"
         assert "imageVariationParams" in parameters
         assert parameters["imageVariationParams"]["text"] == "prompt1, prompt2"
-        assert parameters["imageVariationParams"]["images"] == [image_artifact.base64]
+        assert parameters["imageVariationParams"]["images"] == [image_artifact.value]
         assert parameters["imageVariationParams"]["negativeText"] == "nprompt1, nprompt2"
         assert "imageGenerationConfig" in parameters
         assert parameters["imageGenerationConfig"]["numberOfImages"] == 1
@@ -67,8 +65,8 @@ class TestBedrockTitanImageGenerationModelDriver:
         assert parameters["taskType"] == "INPAINTING"
         assert "inPaintingParams" in parameters
         assert parameters["inPaintingParams"]["text"] == "prompt1, prompt2"
-        assert parameters["inPaintingParams"]["image"] == image_artifact.base64
-        assert parameters["inPaintingParams"]["maskImage"] == mask_artifact.base64
+        assert parameters["inPaintingParams"]["image"] == image_artifact.value
+        assert parameters["inPaintingParams"]["maskImage"] == mask_artifact.value
         assert parameters["inPaintingParams"]["negativeText"] == "nprompt1, nprompt2"
         assert "imageGenerationConfig" in parameters
         assert parameters["imageGenerationConfig"]["numberOfImages"] == 1
@@ -86,8 +84,8 @@ class TestBedrockTitanImageGenerationModelDriver:
         assert parameters["taskType"] == "OUTPAINTING"
         assert "outPaintingParams" in parameters
         assert parameters["outPaintingParams"]["text"] == "prompt1, prompt2"
-        assert parameters["outPaintingParams"]["image"] == image_artifact.base64
-        assert parameters["outPaintingParams"]["maskImage"] == mask_artifact.base64
+        assert parameters["outPaintingParams"]["image"] == image_artifact.value
+        assert parameters["outPaintingParams"]["maskImage"] == mask_artifact.value
         assert parameters["outPaintingParams"]["negativeText"] == "nprompt1, nprompt2"
         assert "imageGenerationConfig" in parameters
         assert parameters["imageGenerationConfig"]["numberOfImages"] == 1
