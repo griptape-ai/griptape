@@ -43,16 +43,16 @@ class Structure(ABC):
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
-    custom_logger: Logger | None = field(default=None, kw_only=True)
+    custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
-    conversation_memory: ConversationMemory | None = field(default=Factory(lambda: ConversationMemory()), kw_only=True)
-    task_memory: TaskMemory | None = field(
+    conversation_memory: Optional[ConversationMemory] = field(default=Factory(lambda: ConversationMemory()), kw_only=True)
+    task_memory: Optional[TaskMemory] = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
     )
-    meta_memory: MetaMemory | None = field(default=Factory(lambda: MetaMemory()), kw_only=True)
+    meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     _execution_args: tuple = ()
-    _logger: Logger | None = None
+    _logger: Optional[Logger] = None
 
     @rulesets.validator  # pyright: ignore
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
@@ -101,11 +101,11 @@ class Structure(ABC):
             return self._logger
 
     @property
-    def input_task(self) -> BaseTask | None:
+    def input_task(self) -> Optional[BaseTask]:
         return self.tasks[0] if self.tasks else None
 
     @property
-    def output_task(self) -> BaseTask | None:
+    def output_task(self) -> Optional[BaseTask]:
         return self.tasks[-1] if self.tasks else None
 
     @property

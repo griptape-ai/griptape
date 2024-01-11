@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 @define
 class Computer(BaseTool):
-    local_workdir: str | None = field(default=None, kw_only=True)
+    local_workdir: Optional[str] = field(default=None, kw_only=True)
     container_workdir: str = field(default="/griptape", kw_only=True)
     env_vars: dict = field(factory=dict, kw_only=True)
     dockerfile_path: str = field(
@@ -36,7 +36,7 @@ class Computer(BaseTool):
         default=Factory(lambda self: self.default_docker_client(), takes_self=True), kw_only=True
     )
 
-    __tempdir: tempfile.TemporaryDirectory | None = field(default=None, kw_only=True)
+    __tempdir: Optional[tempfile.TemporaryDirectory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -52,7 +52,7 @@ class Computer(BaseTool):
         if not docker_client:
             raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")
 
-    def install_dependencies(self, env: dict[str, str] | None = None) -> None:
+    def install_dependencies(self, env: dict[str, Optional[str]] = None) -> None:
         super().install_dependencies(env)
 
         self.remove_existing_container(self.container_name(self))
@@ -144,7 +144,7 @@ class Computer(BaseTool):
             if tempdir:
                 tempdir.cleanup()
 
-    def default_docker_client(self) -> DockerClient | None:
+    def default_docker_client(self) -> Optional[DockerClient]:
         try:
             return docker.from_env()
         except Exception as e:

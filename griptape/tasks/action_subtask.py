@@ -33,22 +33,22 @@ class ActionSubtask(PromptTask):
         },
     )
 
-    _input: str | None = field(default=None)
-    parent_task_id: str | None = field(default=None, kw_only=True)
-    thought: str | None = field(default=None, kw_only=True)
-    action_name: str | None = field(default=None, kw_only=True)
-    action_path: str | None = field(default=None, kw_only=True)
-    action_input: dict | None = field(default=None, kw_only=True)
+    _input: Optional[str] = field(default=None)
+    parent_task_id: Optional[str] = field(default=None, kw_only=True)
+    thought: Optional[str] = field(default=None, kw_only=True)
+    action_name: Optional[str] = field(default=None, kw_only=True)
+    action_path: Optional[str] = field(default=None, kw_only=True)
+    action_input: Optional[dict] = field(default=None, kw_only=True)
 
-    _tool: BaseTool | None = None
-    _memory: TaskMemory | None = None
+    _tool: Optional[BaseTool] = None
+    _memory: Optional[TaskMemory] = None
 
     @property
     def input(self) -> TextArtifact:
         return TextArtifact(self._input)
 
     @property
-    def origin_task(self) -> ActionSubtaskOriginMixin | None:
+    def origin_task(self) -> Optional[ActionSubtaskOriginMixin]:
         return self.structure.find_task(self.parent_task_id)
 
     @property

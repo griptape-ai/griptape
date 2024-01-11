@@ -36,10 +36,10 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    input_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
-    output_memory: dict[str, list[TaskMemory]] | None = field(default=None, kw_only=True)
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
+    output_memory: dict[str, Optional[list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
-    dependencies_install_directory: str | None = field(default=None, kw_only=True)
+    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
     off_prompt: bool = field(default=True, kw_only=True)
 
@@ -48,7 +48,7 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator  # pyright: ignore
-    def validate_output_memory(self, _, output_memory: dict[str, list[TaskMemory]] | None) -> None:
+    def validate_output_memory(self, _, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
@@ -108,10 +108,10 @@ class BaseTool(ActivityMixin, ABC):
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, value: dict | None) -> dict | None:
+    def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
         return value
 
-    def run(self, activity: Callable, subtask: ActionSubtask, value: dict | None) -> BaseArtifact:
+    def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
@@ -156,7 +156,7 @@ class BaseTool(ActivityMixin, ABC):
 
         return os.path.dirname(os.path.abspath(class_file))
 
-    def install_dependencies(self, env: dict[str, str] | None = None) -> None:
+    def install_dependencies(self, env: dict[str, Optional[str]] = None) -> None:
         env = env if env else {}
 
         command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
@@ -174,7 +174,7 @@ class BaseTool(ActivityMixin, ABC):
             stderr=None if self.verbose else subprocess.DEVNULL,
         )
 
-    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
+    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if self.input_memory:
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:
