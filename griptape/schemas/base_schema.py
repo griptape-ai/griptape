@@ -32,8 +32,18 @@ class BaseSchema(Schema):
                 return data
 
         from griptape.utils import PromptStack
+        from griptape.structures import Structure
+        from griptape.drivers import BaseConversationMemoryDriver
 
-        attrs.resolve_types(attrscls, localns={"PromptStack": PromptStack, "Input": PromptStack.Input})
+        attrs.resolve_types(
+            attrscls,
+            localns={
+                "PromptStack": PromptStack,
+                "Input": PromptStack.Input,
+                "Structure": Structure,
+                "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
+            },
+        )
         return SubSchema.from_dict(
             {
                 a.name: cls.make_field_for_type(a.type, a.default)
@@ -61,7 +71,7 @@ class BaseSchema(Schema):
             field_class = get_origin(type_) or type_
 
         if field_class.__name__.startswith("Base"):
-            return fields.Nested(PolymorphicSchema)
+            return fields.Nested(PolymorphicSchema(class_=field_class))
         elif attrs.has(field_class):
             return fields.Nested(cls.from_attrscls(type_))
         elif issubclass(field_class, list):

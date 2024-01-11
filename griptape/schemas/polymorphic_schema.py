@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from pydoc import locate
-from typing import Optional
+from typing import Optional, Any
 from marshmallow import ValidationError, Schema
 from griptape.schemas import BaseSchema
 
@@ -9,6 +9,11 @@ class PolymorphicSchema(BaseSchema):
     """
     PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema
     """
+
+    def __init__(self, class_: Any, **kwargs):
+        super().__init__(**kwargs)
+
+        self.class_ = class_
 
     def get_schema(self, class_name: str, obj: Optional[object], schema_namespace: Optional[str]):
         if schema_namespace:
@@ -31,7 +36,7 @@ class PolymorphicSchema(BaseSchema):
             raise ValidationError(f"Missing schema for '{class_name}'")
 
     type_field = "type"
-    type_field_remove = True
+    type_field_remove = False
 
     def get_obj_type(self, obj):
         """Returns name of the schema during dump() calls, given the object
@@ -77,7 +82,7 @@ class PolymorphicSchema(BaseSchema):
         if not obj_type:
             return (None, {"_schema": "Unknown object class: %s" % obj.__class__.__name__})
 
-        type_schema = self.get_schema(obj_type, obj, None)
+        type_schema = BaseSchema.from_attrscls(obj.__class__)
 
         if not type_schema:
             return None, {"_schema": "Unsupported object type: %s" % obj_type}
@@ -138,11 +143,8 @@ class PolymorphicSchema(BaseSchema):
 
         schema_namespace = data.get("schema_namespace")
 
-        try:
-            type_schema = self.get_schema(data_type, None, schema_namespace)
-        except TypeError:
-            # data_type could be unhashable
-            raise ValidationError({self.type_field: ["Invalid value: %s" % data_type]})
+        print(data, data_type)
+        type_schema = self.class_.get_schema(data_type)
         if not type_schema:
             raise ValidationError({self.type_field: ["Unsupported value: %s" % data_type]})
 

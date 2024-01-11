@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, get_type_hints, Type
 
-from attr import Factory, define, field
+from attr import Factory, define, field, resolve_types
 
+from marshmallow import class_registry, Schema
+from marshmallow.exceptions import RegistryError
 from griptape.schemas.base_schema import BaseSchema
 
 T = TypeVar("T", bound="SerializableMixin")
@@ -27,10 +29,23 @@ class SerializableMixin(Generic[T]):
         return data
 
     @classmethod
-    def from_dict(cls: type[T], data: dict) -> T:
-        schema = BaseSchema.from_attrscls(cls)
+    def get_schema(cls: type[T], obj_type: str) -> Schema:
+        schema_class = cls.try_get_schema(obj_type)
 
-        return schema().load(data)
+        if isinstance(schema_class, type):
+            return schema_class()
+        else:
+            raise RegistryError(f"Unsupported type: {obj_type}")
+
+    @classmethod
+    def try_get_schema(cls: type[T], obj_type: str) -> list[type[Schema]] | type[Schema]:
+        class_registry.register(obj_type, BaseSchema.from_attrscls(cls))
+
+        return class_registry.get_class(obj_type)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> T:
+        return cls.get_schema(data["type"]).load(data)
 
     @classmethod
     def from_json(cls: type[T], data: str) -> T:
@@ -43,6 +58,8 @@ class SerializableMixin(Generic[T]):
         return json.dumps(self.to_dict())
 
     def to_dict(self) -> dict:
+        print(resolve_types(self.__class__))
+        print(get_type_hints(self))
         schema = BaseSchema.from_attrscls(self.__class__)
 
         return dict(schema().dump(self))

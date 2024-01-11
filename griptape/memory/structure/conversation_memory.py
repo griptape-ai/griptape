@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from marshmallow import Schema
 from marshmallow import class_registry
-from marshmallow.exceptions import RegistryError
 from attr import define, field
 from griptape.memory.structure import Run
 from griptape.utils import PromptStack
@@ -58,13 +58,10 @@ class ConversationMemory(SerializableMixin):
         return prompt_stack
 
     @classmethod
-    def from_dict(cls, data: dict) -> ConversationMemory:
+    def try_get_schema(cls, obj_type: str) -> list[type[Schema]] | type[Schema]:
         from griptape.memory.structure import ConversationMemory, SummaryConversationMemory
 
         class_registry.register("ConversationMemory", BaseSchema.from_attrscls(ConversationMemory))
         class_registry.register("SummaryConversationMemory", BaseSchema.from_attrscls(SummaryConversationMemory))
 
-        try:
-            return class_registry.get_class(data["type"])().load(data)
-        except RegistryError:
-            raise ValueError("Unsupported memory type")
+        return class_registry.get_class(obj_type)

@@ -5,8 +5,7 @@ from griptape.config import StructureTaskMemoryConfig
 from griptape.drivers import BasePromptDriver
 from griptape.mixins import SerializableMixin
 from griptape.schemas.base_schema import BaseSchema
-from marshmallow import class_registry
-from marshmallow.exceptions import RegistryError
+from marshmallow import class_registry, Schema
 
 
 @define
@@ -15,12 +14,9 @@ class BaseStructureConfig(SerializableMixin, ABC):
     task_memory: StructureTaskMemoryConfig = field(kw_only=True, metadata={"serialize": True})
 
     @classmethod
-    def from_dict(cls: type[BaseStructureConfig], data: dict) -> BaseStructureConfig:
+    def try_get_schema(cls: type[BaseStructureConfig], obj_type: str) -> list[type[Schema]] | type[Schema]:
         from griptape.config import OpenAiStructureConfig
 
         class_registry.register("OpenAiStructureConfig", BaseSchema.from_attrscls(OpenAiStructureConfig))
 
-        try:
-            return class_registry.get_class(data["type"])().load(data)  # pyright: ignore
-        except RegistryError:
-            raise ValueError("Unsupported type.")
+        return class_registry.get_class(obj_type)

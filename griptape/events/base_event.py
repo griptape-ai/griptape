@@ -1,8 +1,7 @@
 from __future__ import annotations
 import time
 from abc import ABC
-from marshmallow import class_registry
-from marshmallow.exceptions import RegistryError
+from marshmallow import Schema, class_registry
 from attr import define, field, Factory
 
 from griptape.mixins import SerializableMixin
@@ -14,7 +13,7 @@ class BaseEvent(SerializableMixin, ABC):
     timestamp: float = field(default=Factory(lambda: time.time()), kw_only=True, metadata={"serialize": True})
 
     @classmethod
-    def from_dict(cls, data: dict) -> BaseEvent:
+    def try_get_schema(cls, obj_type: str) -> list[type[Schema]] | type[Schema]:
         from griptape.events import (
             StartPromptEvent,
             FinishPromptEvent,
@@ -37,7 +36,4 @@ class BaseEvent(SerializableMixin, ABC):
         class_registry.register("FinishStructureRunEvent", BaseSchema.from_attrscls(FinishStructureRunEvent))
         class_registry.register("CompletionChunkEvent", BaseSchema.from_attrscls(CompletionChunkEvent))
 
-        try:
-            return class_registry.get_class(data["type"])().load(data)
-        except RegistryError:
-            raise ValueError("Unsupported event type")
+        return class_registry.get_class(obj_type)

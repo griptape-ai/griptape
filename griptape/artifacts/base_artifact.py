@@ -5,9 +5,8 @@ import json
 import uuid
 from abc import ABC, abstractmethod
 from attr import define, field, Factory
-from marshmallow import class_registry
-from marshmallow.exceptions import RegistryError
-from griptape.schemas import BaseSchema
+from marshmallow import class_registry, Schema
+from griptape.schemas.base_schema import BaseSchema
 
 
 @define()
@@ -17,11 +16,6 @@ class BaseArtifact(SerializableMixin, ABC):
         default=Factory(lambda self: self.id, takes_self=True), kw_only=True, metadata={"serialize": True}
     )
     value: Any = field()
-    type: str = field(
-        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
-        kw_only=True,
-        metadata={"serialize": True},
-    )
 
     @classmethod
     def value_to_bytes(cls, value: Any) -> bytes:
@@ -40,7 +34,7 @@ class BaseArtifact(SerializableMixin, ABC):
         return {k: v for k, v in dict_value.items()}
 
     @classmethod
-    def from_dict(cls, data: dict) -> BaseArtifact:
+    def try_get_schema(cls, obj_type: str) -> list[type[Schema]] | type[Schema]:
         from griptape.artifacts import (
             TextArtifact,
             InfoArtifact,
@@ -59,10 +53,7 @@ class BaseArtifact(SerializableMixin, ABC):
         class_registry.register("ListArtifact", BaseSchema.from_attrscls(ListArtifact))
         class_registry.register("ImageArtifact", BaseSchema.from_attrscls(ImageArtifact))
 
-        try:
-            return class_registry.get_class(data["type"])().load(data)
-        except RegistryError:
-            raise ValueError("Unsupported artifact type")
+        return class_registry.get_class(obj_type)
 
     def to_text(self) -> str:
         return str(self.value)
