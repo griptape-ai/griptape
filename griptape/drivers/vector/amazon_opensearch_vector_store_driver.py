@@ -21,7 +21,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
 
     session: Session = field(kw_only=True)
 
-    http_auth: str | tuple[str, str] | None = field(
+    http_auth: str | tuple[str, Optional[str]] = field(
         default=Factory(
             lambda self: import_optional_dependency("requests_aws4auth").AWS4Auth(
                 self.session.get_credentials().access_key,
@@ -33,7 +33,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
         )
     )
 
-    client: OpenSearch | None = field(
+    client: Optional[OpenSearch] = field(
         default=Factory(
             lambda self: import_optional_dependency("opensearchpy").OpenSearch(
                 hosts=[{"host": self.host, "port": self.port}],

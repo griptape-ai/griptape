@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
-    max_meta_memory_entries: int | None = field(default=20, kw_only=True)
+    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if len(self.tasks) == 0:

@@ -27,7 +27,7 @@ class TextLoader(BaseLoader):
         ),
         kw_only=True,
     )
-    embedding_driver: BaseEmbeddingDriver | None = field(default=None, kw_only=True)
+    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
     def load(self, text: str | Path) -> list[TextArtifact]:

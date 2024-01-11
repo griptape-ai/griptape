@@ -13,9 +13,9 @@ class PromptImageGenerationEngine(BaseImageGenerationEngine):
     def run(
         self,
         prompts: list[str],
-        negative_prompts: list[str] | None = None,
-        rulesets: list[Ruleset] | None = None,
-        negative_rulesets: list[Ruleset] | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        rulesets: Optional[list[Ruleset]] = None,
+        negative_rulesets: Optional[list[Ruleset]] = None,
     ) -> ImageArtifact:
         prompts = self._ruleset_to_prompts(prompts, rulesets)
         negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)

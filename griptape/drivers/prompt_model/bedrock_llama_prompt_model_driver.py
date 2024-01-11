@@ -13,7 +13,7 @@ from griptape.drivers import AmazonBedrockPromptDriver
 class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.9, kw_only=True)
     _tokenizer: BedrockLlamaTokenizer = field(default=None, kw_only=True)
-    prompt_driver: AmazonBedrockPromptDriver | None = field(default=None, kw_only=True)
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 
     @property
     def tokenizer(self) -> BedrockLlamaTokenizer:
@@ -52,7 +52,7 @@ class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
         input_pairs: list[tuple] = list(it.zip_longest(inputs, inputs))
         for input_pair in input_pairs:
             first_input: PromptStack.Input = input_pair[0]
-            second_input: PromptStack.Input | None = input_pair[1]
+            second_input: Optional[PromptStack.Input] = input_pair[1]
 
             if first_input.is_system():
                 prompt_lines.append(f"<s>[INST] <<SYS>>\n{first_input.content}\n<</SYS>>\n\n")

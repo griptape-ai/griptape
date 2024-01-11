@@ -15,7 +15,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
     template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv_extraction.j2")), kw_only=True)
 
     def extract(
-        self, text: str | ListArtifact, column_names: list[str], rulesets: Ruleset | None = None
+        self, text: str | ListArtifact, column_names: list[str], rulesets: Optional[Ruleset] = None
     ) -> ListArtifact | ErrorArtifact:
         try:
             return ListArtifact(
@@ -44,7 +44,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         column_names: list[str],
         rows: list[CsvRowArtifact],
-        rulesets: Ruleset | None = None,
+        rulesets: Optional[Ruleset] = None,
     ) -> list[CsvRowArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(

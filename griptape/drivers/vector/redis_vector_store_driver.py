@@ -32,7 +32,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     host: str = field(kw_only=True)
     port: int = field(kw_only=True)
     db: int = field(kw_only=True, default=0)
-    password: str | None = field(default=None, kw_only=True)
+    password: Optional[str] = field(default=None, kw_only=True)
     index: str = field(kw_only=True)
 
     client: Redis = field(
@@ -47,9 +47,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: str | None = None,
-        namespace: str | None = None,
-        meta: dict | None = None,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in Redis.
@@ -70,7 +70,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Retrieves a specific vector entry from Redis based on its identifier and optional namespace.
 
         Returns:
@@ -83,7 +83,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return BaseVectorStoreDriver.Entry(id=vector_id, meta=meta, vector=vector, namespace=namespace)
 
-    def load_entries(self, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from Redis that match the optional namespace.
 
         Returns:
@@ -95,7 +95,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         return [self.load_entry(key.decode("utf-8"), namespace=namespace) for key in keys]
 
     def query(
-        self, query: str, count: int | None = None, namespace: str | None = None, **kwargs
+        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on Redis to find vectors similar to the provided input vector.
 
@@ -137,7 +137,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             )
         return query_results
 
-    def create_index(self, namespace: str | None = None, vector_dimension: int | None = None) -> None:
+    def create_index(self, namespace: Optional[str] = None, vector_dimension: Optional[int] = None) -> None:
         """Creates a new index in Redis with the specified properties.
 
         If an index with the given name already exists, a warning is logged and the method does not proceed.
@@ -165,10 +165,10 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             definition = IndexDefinition(prefix=[doc_prefix], index_type=IndexType.HASH)
             self.client.ft(self.index).create_index(fields=schema, definition=definition)
 
-    def _generate_key(self, vector_id: str, namespace: str | None = None) -> str:
+    def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
         """Generates a Redis key using the provided vector ID and optionally a namespace."""
         return f"{namespace}:{vector_id}" if namespace else vector_id
 
-    def _get_doc_prefix(self, namespace: str | None = None) -> str:
+    def _get_doc_prefix(self, namespace: Optional[str] = None) -> str:
         """Get the document prefix based on the provided namespace."""
         return f"{namespace}:" if namespace else ""

@@ -92,7 +92,7 @@ class OpenWeatherClient(BaseTool):
         else:
             return ErrorArtifact(f"Error fetching coordinates for location: {location}")
 
-    def _fetch_coordinates(self, location: str) -> tuple[float, float] | None:
+    def _fetch_coordinates(self, location: str) -> tuple[float, Optional[float]]:
         parts = location.split(",")
         if len(parts) == 2 and parts[1].strip() in self.US_STATE_CODES:
             location += ", US"

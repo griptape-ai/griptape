@@ -14,7 +14,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
     template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/json_extraction.j2")), kw_only=True)
 
     def extract(
-        self, text: str | ListArtifact, template_schema: dict, rulesets: Ruleset | None = None
+        self, text: str | ListArtifact, template_schema: dict, rulesets: Optional[Ruleset] = None
     ) -> ListArtifact | ErrorArtifact:
         try:
             json_schema = json.dumps(template_schema)
@@ -39,7 +39,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         json_template_schema: str,
         extractions: list[TextArtifact],
-        rulesets: Ruleset | None = None,
+        rulesets: Optional[Ruleset] = None,
     ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
