@@ -19,7 +19,7 @@ from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
 from .embedding.base_multi_model_embedding_driver import BaseMultiModelEmbeddingDriver
-from .embedding.sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
+from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
 from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
 
@@ -58,10 +58,10 @@ from .image_generation_model.bedrock_titan_image_generation_model_driver import 
 
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
 from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
-from .image_generation.openai_dalle_image_generation_driver import OpenAiDalleImageGenerationDriver
+from .image_generation.openai_image_generation_driver import OpenAiImageGenerationDriver
 from .image_generation.leonardo_image_generation_driver import LeonardoImageGenerationDriver
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
-from .image_generation.azure_openai_dalle_image_generation_driver import AzureOpenAiDalleImageGenerationDriver
+from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -114,8 +114,8 @@ __all__ = [
     "BedrockTitanImageGenerationModelDriver",
     "BaseImageGenerationDriver",
     "BaseMultiModelImageGenerationDriver",
-    "OpenAiDalleImageGenerationDriver",
+    "OpenAiImageGenerationDriver",
     "LeonardoImageGenerationDriver",
     "AmazonBedrockImageGenerationDriver",
-    "AzureOpenAiDalleImageGenerationDriver",
+    "AzureOpenAiImageGenerationDriver",
 ]
