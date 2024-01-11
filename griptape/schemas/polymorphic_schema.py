@@ -8,10 +8,10 @@ class PolymorphicSchema(BaseSchema):
     PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema
     """
 
-    def __init__(self, class_: Any, **kwargs):
+    def __init__(self, inner_class: Any, **kwargs):
         super().__init__(**kwargs)
 
-        self.class_ = class_
+        self.inner_class = inner_class
 
     type_field = "type"
     type_field_remove = False
@@ -119,7 +119,7 @@ class PolymorphicSchema(BaseSchema):
         if data_type is None:
             raise ValidationError({self.type_field: ["Missing data for required field."]})
 
-        type_schema = self.class_.get_schema(data_type)
+        type_schema = self.inner_class.get_schema(data_type)
         if not type_schema:
             raise ValidationError({self.type_field: ["Unsupported value: %s" % data_type]})
 

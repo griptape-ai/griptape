@@ -1,5 +1,6 @@
 from __future__ import annotations
 from types import UnionType
+from abc import ABC
 from typing import Union, get_origin, get_args, Any
 import attrs
 from marshmallow import Schema, fields, pre_dump
@@ -70,10 +71,11 @@ class BaseSchema(Schema):
             args = get_args(type_)
             field_class = get_origin(type_) or type_
 
-        if field_class.__name__.startswith("Base"):
-            return fields.Nested(PolymorphicSchema(class_=field_class))
-        elif attrs.has(field_class):
-            return fields.Nested(cls.from_attrscls(type_))
+        if attrs.has(field_class):
+            if issubclass(field_class, ABC):
+                return fields.Nested(PolymorphicSchema(inner_class=field_class))
+            else:
+                return fields.Nested(cls.from_attrscls(type_))
         elif issubclass(field_class, list):
             return fields.List(cls_or_instance=cls.make_field_for_type(args[0]))
         else:
