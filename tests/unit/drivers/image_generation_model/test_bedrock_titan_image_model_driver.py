@@ -13,18 +13,18 @@ class TestBedrockTitanImageGenerationModelDriver:
 
     @pytest.fixture
     def image_artifact(self):
-        return ImageArtifact(b"image", mime_type="image/png", width=1024, height=1024)
+        return ImageArtifact(b"image", mime_type="image/png", width=1024, height=512)
 
     @pytest.fixture
     def mask_artifact(self):
-        return ImageArtifact(b"mask", mime_type="image/png", width=1024, height=1024)
+        return ImageArtifact(b"mask", mime_type="image/png", width=1024, height=512)
 
     def test_init(self, model_driver):
         assert model_driver
 
     def test_text_to_image_request_parameters(self, model_driver):
         parameters = model_driver.text_to_image_request_parameters(
-            ["prompt1", "prompt2"], 1024, 1024, negative_prompts=["nprompt1", "nprompt2"], seed=1234
+            ["prompt1", "prompt2"], 1024, 512, negative_prompts=["nprompt1", "nprompt2"], seed=1234
         )
 
         assert isinstance(parameters, dict)
@@ -36,7 +36,7 @@ class TestBedrockTitanImageGenerationModelDriver:
         assert "imageGenerationConfig" in parameters
         assert parameters["imageGenerationConfig"]["numberOfImages"] == 1
         assert parameters["imageGenerationConfig"]["width"] == 1024
-        assert parameters["imageGenerationConfig"]["height"] == 1024
+        assert parameters["imageGenerationConfig"]["height"] == 512
         assert parameters["imageGenerationConfig"]["seed"] == 1234
 
     def test_image_variation_request_parameters(self, model_driver, image_artifact):
@@ -53,6 +53,8 @@ class TestBedrockTitanImageGenerationModelDriver:
         assert parameters["imageVariationParams"]["negativeText"] == "nprompt1, nprompt2"
         assert "imageGenerationConfig" in parameters
         assert parameters["imageGenerationConfig"]["numberOfImages"] == 1
+        assert parameters["imageGenerationConfig"]["width"] == 1024
+        assert parameters["imageGenerationConfig"]["height"] == 512
         assert parameters["imageGenerationConfig"]["seed"] == 1234
 
     def test_image_inpainting_request_parameters(self, model_driver, image_artifact, mask_artifact):
@@ -70,6 +72,8 @@ class TestBedrockTitanImageGenerationModelDriver:
         assert parameters["inPaintingParams"]["negativeText"] == "nprompt1, nprompt2"
         assert "imageGenerationConfig" in parameters
         assert parameters["imageGenerationConfig"]["numberOfImages"] == 1
+        assert parameters["imageGenerationConfig"]["width"] == 1024
+        assert parameters["imageGenerationConfig"]["height"] == 512
         assert parameters["imageGenerationConfig"]["seed"] == 1234
 
     def test_image_outpainting_request_parameters(self, model_driver, image_artifact, mask_artifact):
@@ -87,4 +91,6 @@ class TestBedrockTitanImageGenerationModelDriver:
         assert parameters["outPaintingParams"]["negativeText"] == "nprompt1, nprompt2"
         assert "imageGenerationConfig" in parameters
         assert parameters["imageGenerationConfig"]["numberOfImages"] == 1
+        assert parameters["imageGenerationConfig"]["width"] == 1024
+        assert parameters["imageGenerationConfig"]["height"] == 512
         assert parameters["imageGenerationConfig"]["seed"] == 1234

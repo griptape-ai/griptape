@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+from typing import Any
 
 from attr import field, define
 
@@ -50,7 +51,7 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         if seed:
             request["imageGenerationConfig"]["seed"] = seed
 
-        return request
+        return self._add_common_params(request, image_width, image_height, seed=seed)
 
     def image_variation_request_parameters(
         self,
@@ -79,7 +80,7 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         if seed:
             request["imageGenerationConfig"]["seed"] = seed
 
-        return request
+        return self._add_common_params(request, image.width, image.height, seed=seed)
 
     def image_inpainting_request_parameters(
         self,
@@ -94,22 +95,12 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         request = {
             "taskType": "INPAINTING",
             "inPaintingParams": {"text": prompt, "image": image.base64, "maskImage": mask.base64},
-            "imageGenerationConfig": {
-                "numberOfImages": 1,
-                "quality": self.quality,
-                "width": image.width,
-                "height": image.height,
-                "cfgScale": self.cfg_scale,
-            },
         }
 
         if negative_prompts:
             request["inPaintingParams"]["negativeText"] = ", ".join(negative_prompts)
 
-        if seed:
-            request["imageGenerationConfig"]["seed"] = seed
-
-        return request
+        return self._add_common_params(request, image.width, image.height, seed=seed)
 
     def image_outpainting_request_parameters(
         self,
@@ -129,24 +120,28 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
                 "maskImage": mask.base64,
                 "outPaintingMode": self.outpainting_mode,
             },
-            "imageGenerationConfig": {
-                "numberOfImages": 1,
-                "quality": self.quality,
-                "width": image.width,
-                "height": image.height,
-                "cfgScale": self.cfg_scale,
-            },
         }
 
         if negative_prompts:
             request["outPaintingParams"]["negativeText"] = ", ".join(negative_prompts)
 
-        if seed:
-            request["imageGenerationConfig"]["seed"] = seed
-
-        return request
+        return self._add_common_params(request, image.width, image.height, seed=seed)
 
     def get_generated_image(self, response: dict) -> bytes:
         b64_image_data = response["images"][0]
 
         return base64.decodebytes(bytes(b64_image_data, "utf-8"))
+
+    def _add_common_params(self, request: dict[str, Any], width: int, height: int, seed: int | None = None) -> dict:
+        request["imageGenerationConfig"] = {
+            "numberOfImages": 1,
+            "quality": self.quality,
+            "width": width,
+            "height": height,
+            "cfgScale": self.cfg_scale,
+        }
+
+        if seed:
+            request["imageGenerationConfig"]["seed"] = seed
+
+        return request
