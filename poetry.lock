@@ -290,35 +290,6 @@ urllib3 = [
 crt = ["awscrt (==0.19.17)"]
 
 [[package]]
-name = "cattrs"
-version = "23.2.4.dev22"
-description = "Composable complex class support for attrs and dataclasses."
-optional = false
-python-versions = ">=3.8"
-files = []
-develop = false
-
-[package.dependencies]
-attrs = ">=23.1.0"
-exceptiongroup = {version = ">=1.1.1", markers = "python_version < \"3.11\""}
-typing-extensions = {version = ">=4.1.0,<4.6.3 || >4.6.3", markers = "python_version < \"3.11\""}
-
-[package.extras]
-bson = ["pymongo (>=4.4.0)"]
-cbor2 = ["cbor2 (>=5.4.6)"]
-msgpack = ["msgpack (>=1.0.5)"]
-orjson = ["orjson (>=3.9.2)"]
-pyyaml = ["pyyaml (>=6.0)"]
-tomlkit = ["tomlkit (>=0.11.8)"]
-ujson = ["ujson (>=5.7.0)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/python-attrs/cattrs.git"
-reference = "main"
-resolved_reference = "167289417f1f35ee4a271f36905fe68e9afd630d"
-
-[[package]]
 name = "certifi"
 version = "2023.11.17"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -1655,30 +1626,6 @@ dev = ["flake8 (==6.0.0)", "flake8-bugbear (==23.7.10)", "mypy (==1.4.1)", "pre-
 docs = ["alabaster (==0.7.13)", "autodocsumm (==0.2.11)", "sphinx (==7.0.1)", "sphinx-issues (==3.0.1)", "sphinx-version-warning (==1.1.2)"]
 lint = ["flake8 (==6.0.0)", "flake8-bugbear (==23.7.10)", "mypy (==1.4.1)", "pre-commit (>=2.4,<4.0)"]
 tests = ["pytest", "pytz", "simplejson"]
-
-[[package]]
-name = "marshmallow-dataclass"
-version = "8.6.0"
-description = "Python library to convert dataclasses into marshmallow schemas."
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "marshmallow_dataclass-8.6.0-py3-none-any.whl", hash = "sha256:7885e9b5f5287b64573b174d69334fd20de1628001a4fa2adc8e75be5196755e"},
-    {file = "marshmallow_dataclass-8.6.0.tar.gz", hash = "sha256:a21f4d050a1d24249fd43aa56c7e4aea4b6454e049dc2c5f1496f479e30bf5d7"},
-]
-
-[package.dependencies]
-marshmallow = ">=3.13.0,<4.0"
-typing-extensions = {version = ">=4.2.0", markers = "python_version < \"3.11\" and python_version >= \"3.7\""}
-typing-inspect = ">=0.8.0,<1.0"
-
-[package.extras]
-dev = ["marshmallow (>=3.18.0,<4.0)", "marshmallow-enum", "pre-commit (>=2.17,<3.0)", "pytest (>=5.4)", "pytest-mypy-plugins (>=1.2.0)", "sphinx", "typeguard (>=2.4.1,<4.0.0)"]
-docs = ["sphinx"]
-enum = ["marshmallow (>=3.18.0,<4.0)", "marshmallow-enum"]
-lint = ["pre-commit (>=2.17,<3.0)"]
-tests = ["pytest (>=5.4)", "pytest-mypy-plugins (>=1.2.0)"]
-union = ["typeguard (>=2.4.1,<4.0.0)"]
 
 [[package]]
 name = "marshmallow-enum"
@@ -4082,21 +4029,6 @@ files = [
     {file = "typing_extensions-4.9.0-py3-none-any.whl", hash = "sha256:af72aea155e91adfc61c3ae9e0e342dbc0cba726d6cba4b6c72c1f34e47291cd"},
     {file = "typing_extensions-4.9.0.tar.gz", hash = "sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783"},
 ]
-
-[[package]]
-name = "typing-inspect"
-version = "0.9.0"
-description = "Runtime inspection utilities for typing module."
-optional = false
-python-versions = "*"
-files = [
-    {file = "typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f"},
-    {file = "typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78"},
-]
-
-[package.dependencies]
-mypy-extensions = ">=0.3.0"
-typing-extensions = ">=3.7.4"
 
 [[package]]
 name = "tzdata"
