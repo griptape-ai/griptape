@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 @define(slots=False)
 class ImageArtifactFileOutputMixin:
-    output_dir: str | None = field(default=None, kw_only=True)
-    output_file: str | None = field(default=None, kw_only=True)
+    output_dir: Optional[str] = field(default=None, kw_only=True)
+    output_file: Optional[str] = field(default=None, kw_only=True)
 
     @output_dir.validator  # pyright: ignore
     def validate_output_dir(self, _, output_dir: str) -> None:

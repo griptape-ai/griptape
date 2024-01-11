@@ -18,7 +18,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """
 
     model: str = field(kw_only=True, metadata={"serialize": True})
-    tokenizer: BaseTokenizer | None = field(default=None, kw_only=True)
+    tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
     chunker: BaseChunker = field(init=False)
 
     def __attrs_post_init__(self) -> None:

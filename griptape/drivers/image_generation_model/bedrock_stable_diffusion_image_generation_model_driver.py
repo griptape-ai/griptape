@@ -27,19 +27,19 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
     """
 
     cfg_scale: int = field(default=7, kw_only=True)
-    style_preset: str | None = field(default=None, kw_only=True)
-    clip_guidance_preset: str | None = field(default=None, kw_only=True)
-    sampler: str | None = field(default=None, kw_only=True)
-    steps: int | None = field(default=None, kw_only=True)
-    start_schedule: float | None = field(default=None, kw_only=True)
+    style_preset: Optional[str] = field(default=None, kw_only=True)
+    clip_guidance_preset: Optional[str] = field(default=None, kw_only=True)
+    sampler: Optional[str] = field(default=None, kw_only=True)
+    steps: Optional[int] = field(default=None, kw_only=True)
+    start_schedule: Optional[float] = field(default=None, kw_only=True)
 
     def text_to_image_request_parameters(
         self,
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(
             prompts, width=image_width, height=image_height, negative_prompts=negative_prompts, seed=seed
@@ -49,8 +49,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(prompts, image=image, negative_prompts=negative_prompts, seed=seed)
 
@@ -59,8 +59,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(
             prompts,
@@ -76,8 +76,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(
             prompts,
@@ -91,13 +91,13 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
     def _request_parameters(
         self,
         prompts: list[str],
-        width: int | None = None,
-        height: int | None = None,
-        image: ImageArtifact | None = None,
-        mask: ImageArtifact | None = None,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
-        mask_source: str | None = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        image: Optional[ImageArtifact] = None,
+        mask: Optional[ImageArtifact] = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+        mask_source: Optional[str] = None,
     ) -> dict:
         if negative_prompts is None:
             negative_prompts = []

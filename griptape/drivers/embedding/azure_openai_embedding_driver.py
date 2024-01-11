@@ -22,8 +22,8 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
 
     azure_deployment: str = field(kw_only=True)
     azure_endpoint: str = field(kw_only=True)
-    azure_ad_token: str | None = field(kw_only=True, default=None)
-    azure_ad_token_provider: str | None = field(kw_only=True, default=None)
+    azure_ad_token: Optional[str] = field(kw_only=True, default=None)
+    azure_ad_token_provider: Optional[str] = field(kw_only=True, default=None)
     api_version: str = field(default="2023-05-15", kw_only=True)
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True

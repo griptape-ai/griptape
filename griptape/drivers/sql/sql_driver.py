@@ -20,7 +20,7 @@ class SqlDriver(BaseSqlDriver):
 
         self.engine = sqlalchemy.create_engine(self.engine_url, **self.create_engine_params)
 
-    def execute_query(self, query: str) -> list[BaseSqlDriver.RowResult] | None:
+    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)
 
         if rows:
@@ -28,7 +28,7 @@ class SqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None:
+    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.begin() as con:
@@ -39,7 +39,7 @@ class SqlDriver(BaseSqlDriver):
             else:
                 return None
 
-    def get_table_schema(self, table: str, schema: str | None = None) -> str | None:
+    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:

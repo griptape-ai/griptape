@@ -19,14 +19,14 @@ class SummaryConversationMemory(ConversationMemory):
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True,
     )
-    summary: str | None = field(default=None, kw_only=True, metadata={"serialize": True})
+    summary: Optional[str] = field(default=None, kw_only=True, metadata={"serialize": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serialize": True})
     summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
     summarize_conversation_template_generator: J2 = field(
         default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")), kw_only=True
     )
 
-    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
+    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
             stack.add_user_input(self.summary_template_generator.render(summary=self.summary))
@@ -37,7 +37,7 @@ class SummaryConversationMemory(ConversationMemory):
 
         return stack
 
-    def unsummarized_runs(self, last_n: int | None = None) -> list[Run]:
+    def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
         summary_index_runs = self.runs[self.summary_index :]
 
         if last_n:

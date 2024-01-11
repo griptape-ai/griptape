@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 @define
 class DataFrameLoader(BaseLoader):
-    embedding_driver: BaseEmbeddingDriver | None = field(default=None, kw_only=True)
+    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
 
     def load(self, dataframe: DataFrame) -> list[CsvRowArtifact]:
         return self._load_file(dataframe)

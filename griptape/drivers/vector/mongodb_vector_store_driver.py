@@ -42,9 +42,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: str | None = None,
-        namespace: str | None = None,
-        meta: dict | None = None,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in the collection.
@@ -62,7 +62,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Loads a document entry from the MongoDB collection based on the vector ID.
 
         Returns:
@@ -81,7 +81,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                 id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
             )
 
-    def load_entries(self, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Loads all document entries from the MongoDB collection.
 
         Entries can optionally be filtered by namespace.
@@ -102,10 +102,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: int | None = None,
-        namespace: str | None = None,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
         include_vectors: bool = False,
-        offset: int | None = None,
+        offset: Optional[int] = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Queries the MongoDB collection for documents that match the provided query string.

@@ -10,7 +10,7 @@ from griptape.rules import Ruleset
 class BaseImageGenerationEngine:
     image_generation_driver: BaseImageGenerationDriver = field(kw_only=True)
 
-    def _ruleset_to_prompts(self, prompts: list[str] | None, rulesets: list[Ruleset] | None) -> list[str]:
+    def _ruleset_to_prompts(self, prompts: Optional[list[str]], rulesets: Optional[list[Ruleset]]) -> list[str]:
         if not prompts:
             prompts = []
 

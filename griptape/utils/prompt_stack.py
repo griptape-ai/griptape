@@ -51,7 +51,7 @@ class PromptStack(SerializableMixin):
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, self.ASSISTANT_ROLE)
 
-    def add_conversation_memory(self, memory: ConversationMemory, index: int | None = None) -> list[Input]:
+    def add_conversation_memory(self, memory: ConversationMemory, index: Optional[int] = None) -> list[Input]:
         """Add the Conversation Memory runs to the Prompt Stack.
 
         If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack

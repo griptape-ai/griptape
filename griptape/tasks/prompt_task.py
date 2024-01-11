@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(BaseTextInputTask):
-    prompt_driver: BasePromptDriver | None = field(default=None, kw_only=True)
+    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
     )
 
-    output: TextArtifact | ErrorArtifact | InfoArtifact | None = field(default=None, init=False)
+    output: TextArtifact | ErrorArtifact | Optional[InfoArtifact] = field(default=None, init=False)
 
     @property
     def prompt_stack(self) -> PromptStack:
