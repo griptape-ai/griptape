@@ -27,7 +27,6 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
     """
 
     cfg_scale: int = field(default=7, kw_only=True)
-    mask_source: str = field(default="MASK_IMAGE_BLACK", kw_only=True)
     style_preset: str | None = field(default=None, kw_only=True)
     clip_guidance_preset: str | None = field(default=None, kw_only=True)
     sampler: str | None = field(default=None, kw_only=True)
@@ -63,7 +62,14 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         negative_prompts: list[str] | None = None,
         seed: int | None = None,
     ) -> dict:
-        return self._request_parameters(prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=seed)
+        return self._request_parameters(
+            prompts,
+            image=image,
+            mask=mask,
+            mask_source="MASK_IMAGE_BLACK",
+            negative_prompts=negative_prompts,
+            seed=seed,
+        )
 
     def image_outpainting_request_parameters(
         self,
@@ -73,7 +79,14 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         negative_prompts: list[str] | None = None,
         seed: int | None = None,
     ) -> dict:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
+        return self._request_parameters(
+            prompts,
+            image=image,
+            mask=mask,
+            mask_source="MASK_IMAGE_WHITE",
+            negative_prompts=negative_prompts,
+            seed=seed,
+        )
 
     def _request_parameters(
         self,
@@ -84,6 +97,7 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         mask: ImageArtifact | None = None,
         negative_prompts: list[str] | None = None,
         seed: int | None = None,
+        mask_source: str | None = None,
     ) -> dict:
         if negative_prompts is None:
             negative_prompts = []
@@ -114,7 +128,10 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
             request["seed"] = seed
 
         if mask:
-            request["mask_source"] = self.mask_source
+            if not mask_source:
+                raise ValueError("mask_source must be provided when mask is provided")
+
+            request["mask_source"] = mask_source
             request["mask_image"] = mask.base64
 
         if self.start_schedule:
