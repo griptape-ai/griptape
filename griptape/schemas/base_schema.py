@@ -3,7 +3,7 @@ from types import UnionType
 from abc import ABC
 from typing import Union, get_origin, get_args, Any
 import attrs
-from marshmallow import Schema, fields, pre_dump
+from marshmallow import Schema, fields
 
 from griptape.schemas.bytes_field import Bytes
 
@@ -13,27 +13,21 @@ class BaseSchema(Schema):
 
     @classmethod
     def from_attrscls(cls, attrscls):
-        """Generate a Schema from an attrs class."""
+        """Generate a Schema from an attrs class.
+
+        Args:
+            attrscls: An attrs class.
+        """
+
         from marshmallow import post_load
+        from griptape.utils import PromptStack
+        from griptape.structures import Structure
+        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
 
         class SubSchema(cls):
             @post_load
             def make_obj(self, data, **kwargs):
-                if hasattr(attrscls, "before_load"):
-                    data = attrscls.before_load(data)
-
                 return attrscls(**data)
-
-            @pre_dump
-            def transform(self, data, **kwargs):
-                if hasattr(data, "before_dump"):
-                    data = attrscls.before_dump(data)
-
-                return data
-
-        from griptape.utils import PromptStack
-        from griptape.structures import Structure
-        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
 
         attrs.resolve_types(
             attrscls,
@@ -80,6 +74,7 @@ class BaseSchema(Schema):
             return fields.List(cls_or_instance=cls.make_field_for_type(args[0]))
         else:
             FieldClass = cls.DATACLASS_TYPE_MAPPING[field_class]
+
             return FieldClass(**field_kwargs)
 
     @classmethod

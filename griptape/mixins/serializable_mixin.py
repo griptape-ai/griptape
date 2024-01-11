@@ -21,14 +21,6 @@ class SerializableMixin(Generic[T]):
     )
 
     @classmethod
-    def before_load(cls: type[T], data: dict) -> dict:
-        return data
-
-    @classmethod
-    def before_dump(cls: type[T], data: T) -> T:
-        return data
-
-    @classmethod
     def get_schema(cls: type[T], obj_type: str) -> Schema:
         schema_class = cls.try_get_schema(obj_type)
 
