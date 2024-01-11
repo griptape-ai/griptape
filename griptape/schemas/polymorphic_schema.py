@@ -14,7 +14,7 @@ class PolymorphicSchema(BaseSchema):
         self.inner_class = inner_class
 
     type_field = "type"
-    type_field_remove = False
+    type_field_remove = True
 
     def get_obj_type(self, obj):
         """Returns name of the schema during dump() calls, given the object
