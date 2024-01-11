@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, cast
 
 from attr import Factory, define, field
 
@@ -44,8 +44,11 @@ class SerializableMixin(Generic[T]):
         return class_registry.get_class(obj_type)
 
     @classmethod
-    def from_dict(cls, data: dict) -> T:
-        return cls.get_schema(data["type"]).load(data)
+    def from_dict(cls: type[T], data: dict) -> T:
+        if "type" in data:
+            return cast(T, cls.get_schema(data["type"]).load(data))
+        else:
+            raise ValueError(f"Missing type field in data: {data}")
 
     @classmethod
     def from_json(cls: type[T], data: str) -> T:

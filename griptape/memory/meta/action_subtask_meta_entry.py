@@ -13,6 +13,8 @@ class ActionSubtaskMetaEntry(BaseMetaEntry):
         answer: tool-generated and memory-processed response from Griptape.
     """
 
+    type: str = field(default=BaseMetaEntry.__name__, kw_only=True, metadata={"serialize": False})
+
     thought: str = field(kw_only=True, metadata={"serialize": True})
     action: str = field(kw_only=True, metadata={"serialize": True})
     answer: str = field(kw_only=True, metadata={"serialize": True})
