@@ -193,3 +193,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 self.client.indices.create(index=self.index_name, body=mapping)
         except Exception as e:
             logging.error(f"Error while handling index: {e}")
+
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

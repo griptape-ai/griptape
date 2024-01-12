@@ -148,3 +148,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         ]
 
         return results
+
+    def delete_vector(self, vector_id: str):
+        """Deletes the vector from the collection."""
+        collection = self.get_collection()
+        collection.delete_one({"_id": vector_id})

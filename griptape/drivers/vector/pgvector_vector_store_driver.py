@@ -174,3 +174,6 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             meta = Column(JSON)
 
         return VectorModel
+
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

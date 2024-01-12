@@ -172,3 +172,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def _get_doc_prefix(self, namespace: Optional[str] = None) -> str:
         """Get the document prefix based on the provided namespace."""
         return f"{namespace}:" if namespace else ""
+
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
