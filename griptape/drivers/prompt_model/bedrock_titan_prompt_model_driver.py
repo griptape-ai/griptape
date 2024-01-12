@@ -13,7 +13,7 @@ from griptape.drivers import AmazonBedrockPromptDriver
 class BedrockTitanPromptModelDriver(BasePromptModelDriver):
     top_p: float = field(default=0.9, kw_only=True)
     _tokenizer: BedrockTitanTokenizer = field(default=None, kw_only=True)
-    prompt_driver: AmazonBedrockPromptDriver | None = field(default=None, kw_only=True)
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 
     @property
     def tokenizer(self) -> BedrockTitanTokenizer:

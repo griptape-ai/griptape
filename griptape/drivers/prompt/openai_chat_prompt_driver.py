@@ -33,9 +33,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         _ratelimit_tokens_reset_at: The time at which the current rate limit window resets.
     """
 
-    base_url: str | None = field(default=None, kw_only=True)
-    api_key: str | None = field(default=None, kw_only=True)
-    organization: str | None = field(default=None, kw_only=True)
+    base_url: Optional[str] = field(default=None, kw_only=True)
+    api_key: Optional[str] = field(default=None, kw_only=True)
+    organization: Optional[str] = field(default=None, kw_only=True)
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
@@ -47,8 +47,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     user: str = field(default="", kw_only=True)
-    response_format: Literal["json_object"] | None = field(default=None, kw_only=True)
-    seed: int | None = field(default=None, kw_only=True)
+    response_format: Optional[Literal["json_object"]] = field(default=None, kw_only=True)
+    seed: Optional[int] = field(default=None, kw_only=True)
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
             lambda: (
@@ -62,12 +62,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
-    _ratelimit_request_limit: int | None = field(init=False, default=None)
-    _ratelimit_requests_remaining: int | None = field(init=False, default=None)
-    _ratelimit_requests_reset_at: datetime | None = field(init=False, default=None)
-    _ratelimit_token_limit: int | None = field(init=False, default=None)
-    _ratelimit_tokens_remaining: int | None = field(init=False, default=None)
-    _ratelimit_tokens_reset_at: datetime | None = field(init=False, default=None)
+    _ratelimit_request_limit: Optional[int] = field(init=False, default=None)
+    _ratelimit_requests_remaining: Optional[int] = field(init=False, default=None)
+    _ratelimit_requests_reset_at: Optional[datetime] = field(init=False, default=None)
+    _ratelimit_token_limit: Optional[int] = field(init=False, default=None)
+    _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
+    _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = self.client.chat.completions.with_raw_response.create(**self._base_params(prompt_stack))

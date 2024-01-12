@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from typing import Optional
 from attr import define, field, Factory
 from griptape.drivers import OpenAiChatPromptDriver
@@ -22,7 +22,7 @@ class SummaryConversationMemory(ConversationMemory):
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True,
     )
-    summary: str | None = field(default=None, kw_only=True)
+    summary: Optional[str] = field(default=None, kw_only=True)
     summary_index: int = field(default=0, kw_only=True)
     summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
     summarize_conversation_template_generator: J2 = field(
@@ -37,7 +37,7 @@ class SummaryConversationMemory(ConversationMemory):
     def from_json(cls, memory_json: str) -> SummaryConversationMemory:
         return SummaryConversationMemory.from_dict(json.loads(memory_json))
 
-    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
+    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
             stack.add_user_input(self.summary_template_generator.render(summary=self.summary))
@@ -51,7 +51,7 @@ class SummaryConversationMemory(ConversationMemory):
     def to_dict(self) -> dict:
         return dict(SummaryConversationMemorySchema().dump(self))
 
-    def unsummarized_runs(self, last_n: int | None = None) -> list[Run]:
+    def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
         summary_index_runs = self.runs[self.summary_index :]
 
         if last_n:

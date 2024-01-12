@@ -11,10 +11,10 @@ from schema import Schema
 @define
 class SqlClient(BaseTool):
     sql_loader: SqlLoader = field(kw_only=True)
-    schema_name: str | None = field(default=None, kw_only=True)
+    schema_name: Optional[str] = field(default=None, kw_only=True)
     table_name: str = field(kw_only=True)
-    table_description: str | None = field(default=None, kw_only=True)
-    engine_name: str | None = field(default=None, kw_only=True)
+    table_description: Optional[str] = field(default=None, kw_only=True)
+    engine_name: Optional[str] = field(default=None, kw_only=True)
 
     @property
     def full_table_name(self) -> str:

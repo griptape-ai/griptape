@@ -125,7 +125,7 @@ def to_select_response(status: str, message_count: int):
     return (status, (str(message_count),))
 
 
-def to_fetch_message(body: str, content_type: str | None):
+def to_fetch_message(body: str, content_type: Optional[str]):
     return to_fetch_response(to_message(body, content_type))
 
 
@@ -133,7 +133,7 @@ def to_fetch_response(message: message):
     return (None, ((None, message.as_bytes()),))
 
 
-def to_message(body: str, content_type: str | None) -> message:
+def to_message(body: str, content_type: Optional[str]) -> message:
     message = email.message_from_string(body)
     if content_type:
         message.set_type(content_type)

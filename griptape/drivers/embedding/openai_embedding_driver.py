@@ -27,8 +27,8 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
     base_url: str = field(default=None, kw_only=True)
-    api_key: str | None = field(default=None, kw_only=True)
-    organization: str | None = field(default=None, kw_only=True)
+    api_key: Optional[str] = field(default=None, kw_only=True)
+    organization: Optional[str] = field(default=None, kw_only=True)
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),

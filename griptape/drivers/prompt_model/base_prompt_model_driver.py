@@ -11,7 +11,7 @@ from griptape.tokenizers import BaseTokenizer
 @define
 class BasePromptModelDriver(ABC):
     max_tokens: int = field(default=600, kw_only=True)
-    prompt_driver: BasePromptDriver | None = field(default=None, kw_only=True)
+    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     supports_streaming: bool = field(default=True, kw_only=True)
 
     @property

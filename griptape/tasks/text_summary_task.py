@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.engines import PromptSummaryEngine

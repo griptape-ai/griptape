@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 @define
 class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
-    subtask: ActionSubtask | None = field(default=None, kw_only=True)
-    task_memory: TaskMemory | None = field(default=None, kw_only=True)
+    subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
+    task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         self.set_default_tools_memory(self.task_memory)
@@ -54,16 +54,16 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
 
         return self.output
 
-    def find_tool(self, tool_name: str) -> BaseTool | None:
+    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         if self.tool.name == tool_name:
             return self.tool
         else:
             return None
 
-    def find_memory(self, memory_name: str) -> TaskMemory | None:
+    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
         return None
 
-    def find_subtask(self, subtask_id: str) -> ActionSubtask | None:
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
         return self.subtask if self.subtask.id == subtask_id else None
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
