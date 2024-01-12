@@ -89,12 +89,20 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
 
     def try_image_inpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
     def try_image_outpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 

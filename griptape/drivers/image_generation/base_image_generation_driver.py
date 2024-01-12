@@ -53,7 +53,11 @@ class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
             raise Exception("Failed to generate image variations")
 
     def run_image_inpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
@@ -67,7 +71,11 @@ class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
             raise Exception("Failed to run image inpainting")
 
     def run_image_outpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
@@ -92,12 +100,20 @@ class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
 
     @abstractmethod
     def try_image_inpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         ...
 
     @abstractmethod
     def try_image_outpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         ...
