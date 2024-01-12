@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import openai
 from attr import field, Factory, define
+from typing import Optional
 
 from griptape.drivers import OpenAiImageGenerationDriver
 

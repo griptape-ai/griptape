@@ -1,6 +1,7 @@
 from __future__ import annotations
 import json
 import itertools as it
+from typing import Optional
 from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack

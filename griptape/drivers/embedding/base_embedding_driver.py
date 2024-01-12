@@ -1,5 +1,6 @@
 from __future__ import annotations
 import numpy as np
+from typing import Optional
 from abc import ABC, abstractmethod
 from attr import define, field
 from griptape.artifacts import TextArtifact

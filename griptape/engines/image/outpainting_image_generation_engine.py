@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from attr import define
+from typing import Optional
 
 from griptape.artifacts import ImageArtifact
 from griptape.rules import Ruleset

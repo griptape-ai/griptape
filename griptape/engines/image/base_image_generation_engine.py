@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from attr import field, define
+from typing import Optional
 
 from griptape.drivers import BaseImageGenerationDriver
 from griptape.rules import Ruleset

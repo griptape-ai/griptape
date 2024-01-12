@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from attr import define
+from typing import Optional
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.rules import Ruleset
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
+from typing import Optional
 from attr import define, field, Factory
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.utils import J2, PromptStack

@@ -3,6 +3,7 @@ from griptape.artifacts import ListArtifact, TextArtifact, ErrorArtifact, InfoAr
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
+from typing import Optional
 from attr import define, field
 import requests
 import logging

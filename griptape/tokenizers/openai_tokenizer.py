@@ -3,6 +3,7 @@ import logging
 from attr import define, field, Factory
 import tiktoken
 from griptape.tokenizers import BaseTokenizer
+from typing import Optional
 
 
 @define(frozen=True)

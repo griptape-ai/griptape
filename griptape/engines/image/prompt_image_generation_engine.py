@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from attr import define
+from typing import Optional
 
 from griptape.rules import Ruleset
 from griptape.artifacts import ImageArtifact
