@@ -1,7 +1,7 @@
 from __future__ import annotations
 from attrs import define, field
 from abc import ABC
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Union
 from griptape.artifacts import BaseArtifact
 from .base_event import BaseEvent
 
@@ -15,7 +15,7 @@ class BaseTaskEvent(BaseEvent, ABC):
     task_parent_ids: list[str] = field(kw_only=True, metadata={"serialize": True})
     task_child_ids: list[str] = field(kw_only=True, metadata={"serialize": True})
 
-    task_input: BaseArtifact | BaseArtifact | tuple[BaseArtifact, ...] = field(
+    task_input: Union[BaseArtifact, BaseArtifact, tuple[BaseArtifact, ...]] = field(
         kw_only=True, metadata={"serialize": True}
     )
     task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serialize": True})
