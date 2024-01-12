@@ -14,6 +14,6 @@ class BaseMetaEntry(SerializableMixin, ABC):
     def try_get_schema(cls, obj_type: str) -> list[type[Schema]] | type[Schema]:
         from griptape.memory.meta import ActionSubtaskMetaEntry
 
-        class_registry.register("ConversationMemory", BaseSchema.from_attrs_cls(ActionSubtaskMetaEntry))
+        class_registry.register("ActionSubtaskMetaEntry", BaseSchema.from_attrs_cls(ActionSubtaskMetaEntry))
 
         return class_registry.get_class(obj_type)

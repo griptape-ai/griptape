@@ -10,5 +10,5 @@ if TYPE_CHECKING:
 
 @define
 class StartPromptEvent(BasePromptEvent):
-    prompt_stack: PromptStack = field(kw_only=True, metadata={"serialize": True})
-    prompt: str = field(kw_only=True, metadata={"serialize": True})
+    prompt_stack: PromptStack = field(kw_only=True, metadata={"serializable": True})
+    prompt: str = field(kw_only=True, metadata={"serializable": True})

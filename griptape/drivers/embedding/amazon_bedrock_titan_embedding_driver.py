@@ -22,7 +22,7 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
 
     DEFAULT_MODEL = "amazon.titan-embed-text-v1"
 
-    model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serialize": True})
+    model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     tokenizer: BedrockTitanTokenizer = field(
         default=Factory(lambda self: BedrockTitanTokenizer(model=self.model), takes_self=True), kw_only=True

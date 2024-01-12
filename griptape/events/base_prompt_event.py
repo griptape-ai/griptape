@@ -6,4 +6,4 @@ from .base_event import BaseEvent
 
 @define
 class BasePromptEvent(BaseEvent, ABC):
-    token_count: int = field(kw_only=True, metadata={"serialize": True})
+    token_count: int = field(kw_only=True, metadata={"serializable": True})

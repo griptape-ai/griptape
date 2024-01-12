@@ -17,8 +17,8 @@ class PromptStack(SerializableMixin):
 
     @define
     class Input:
-        content: Union[str, list[dict]] = field(metadata={"serialize": True})
-        role: str = field(metadata={"serialize": True})
+        content: Union[str, list[dict]] = field(metadata={"serializable": True})
+        role: str = field(metadata={"serializable": True})
 
         def is_generic(self) -> bool:
             return self.role == PromptStack.GENERIC_ROLE
@@ -32,7 +32,7 @@ class PromptStack(SerializableMixin):
         def is_assistant(self) -> bool:
             return self.role == PromptStack.ASSISTANT_ROLE
 
-    inputs: list[Input] = field(factory=list, kw_only=True, metadata={"serialize": True})
+    inputs: list[Input] = field(factory=list, kw_only=True, metadata={"serializable": True})
 
     def add_input(self, content: str, role: str) -> Input:
         self.inputs.append(self.Input(content=content, role=role))

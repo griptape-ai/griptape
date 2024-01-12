@@ -11,14 +11,14 @@ if TYPE_CHECKING:
 
 @define
 class BaseTaskEvent(BaseEvent, ABC):
-    task_id: str = field(kw_only=True, metadata={"serialize": True})
-    task_parent_ids: list[str] = field(kw_only=True, metadata={"serialize": True})
-    task_child_ids: list[str] = field(kw_only=True, metadata={"serialize": True})
+    task_id: str = field(kw_only=True, metadata={"serializable": True})
+    task_parent_ids: list[str] = field(kw_only=True, metadata={"serializable": True})
+    task_child_ids: list[str] = field(kw_only=True, metadata={"serializable": True})
 
     task_input: Union[BaseArtifact, BaseArtifact, tuple[BaseArtifact, ...]] = field(
-        kw_only=True, metadata={"serialize": True}
+        kw_only=True, metadata={"serializable": True}
     )
-    task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serialize": True})
+    task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serializable": True})
 
     @classmethod
     def from_task(cls, task: BaseTask) -> BaseTaskEvent:

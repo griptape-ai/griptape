@@ -17,11 +17,11 @@ if TYPE_CHECKING:
 @define
 class BaseConversationMemory(SerializableMixin, ABC):
     driver: Optional[BaseConversationMemoryDriver] = field(default=None, kw_only=True)
-    runs: list[Run] = field(factory=list, kw_only=True, metadata={"serialize": True})
+    runs: list[Run] = field(factory=list, kw_only=True, metadata={"serializable": True})
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
-    max_runs: Optional[int] = field(default=None, kw_only=True, metadata={"serialize": True})
+    max_runs: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         if self.driver and self.autoload:

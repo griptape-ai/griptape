@@ -10,7 +10,7 @@ from griptape.schemas import BaseSchema
 
 @define
 class BaseEvent(SerializableMixin, ABC):
-    timestamp: float = field(default=Factory(lambda: time.time()), kw_only=True, metadata={"serialize": True})
+    timestamp: float = field(default=Factory(lambda: time.time()), kw_only=True, metadata={"serializable": True})
 
     @classmethod
     def try_get_schema(cls, obj_type: str) -> list[type[Schema]] | type[Schema]:

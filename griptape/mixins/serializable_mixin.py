@@ -17,7 +17,7 @@ class SerializableMixin(Generic[T]):
     type: str = field(
         default=Factory(lambda self: self.__class__.__name__, takes_self=True),
         kw_only=True,
-        metadata={"serialize": True},
+        metadata={"serializable": True},
     )
 
     @classmethod

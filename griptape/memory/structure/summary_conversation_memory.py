@@ -15,13 +15,13 @@ if TYPE_CHECKING:
 
 @define
 class SummaryConversationMemory(ConversationMemory):
-    offset: int = field(default=1, kw_only=True, metadata={"serialize": True})
+    offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True,
     )
-    summary: Optional[str] = field(default=None, kw_only=True, metadata={"serialize": True})
-    summary_index: int = field(default=0, kw_only=True, metadata={"serialize": True})
+    summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
     summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
     summarize_conversation_template_generator: J2 = field(
         default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")), kw_only=True

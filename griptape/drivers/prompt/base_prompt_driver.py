@@ -29,16 +29,16 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
     """
 
-    temperature: float = field(default=0.1, kw_only=True, metadata={"serialize": True})
-    max_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serialize": True})
+    temperature: float = field(default=0.1, kw_only=True, metadata={"serializable": True})
+    max_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     structure: Structure = field(default=None, kw_only=True)
     prompt_stack_to_string: Callable[[PromptStack], str] = field(
         default=Factory(lambda self: self.default_prompt_stack_to_string_converter, takes_self=True), kw_only=True
     )
     ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
-    model: str = field(metadata={"serialize": True})
+    model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
-    stream: bool = field(default=False, kw_only=True, metadata={"serialize": True})
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def max_output_tokens(self, text: str | list) -> int:
         tokens_left = self.tokenizer.count_tokens_left(text)

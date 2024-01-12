@@ -39,7 +39,7 @@ class BaseSchema(Schema):
             },
         )
         return SubSchema.from_dict(
-            {a.name: cls.make_field_for_type(a.type) for a in attrs.fields(attrscls) if a.metadata.get("serialize")},
+            {a.name: cls.make_field_for_type(a.type) for a in attrs.fields(attrscls) if a.metadata.get("serializable")},
             name=f"{attrscls.__name__}Schema",
         )
 

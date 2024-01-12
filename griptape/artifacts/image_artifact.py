@@ -22,13 +22,13 @@ class ImageArtifact(BlobArtifact):
         prompt: Optionally specify the prompt used to generate the image.
     """
 
-    mime_type: str = field(kw_only=True, default="image/png", metadata={"serialize": True})
-    width: int = field(kw_only=True, metadata={"serialize": True})
-    height: int = field(kw_only=True, metadata={"serialize": True})
-    model: Optional[str] = field(default=None, kw_only=True, metadata={"serialize": True})
-    prompt: Optional[str] = field(default=None, kw_only=True, metadata={"serialize": True})
+    mime_type: str = field(kw_only=True, default="image/png", metadata={"serializable": True})
+    width: int = field(kw_only=True, metadata={"serializable": True})
+    height: int = field(kw_only=True, metadata={"serializable": True})
+    model: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    prompt: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     name: str = field(
-        default=Factory(lambda self: self.make_name(), takes_self=True), kw_only=True, metadata={"serialize": True}
+        default=Factory(lambda self: self.make_name(), takes_self=True), kw_only=True, metadata={"serializable": True}
     )
 
     def make_name(self) -> str:

@@ -7,8 +7,8 @@ from griptape.artifacts import BaseArtifact
 
 @define
 class BlobArtifact(BaseArtifact):
-    value: bytes = field(converter=BaseArtifact.value_to_bytes, metadata={"serialize": True})
-    dir_name: Optional[str] = field(default=None, kw_only=True, metadata={"serialize": True})
+    value: bytes = field(converter=BaseArtifact.value_to_bytes, metadata={"serializable": True})
+    dir_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     encoding: str = field(default="utf-8", kw_only=True)
     encoding_error_handler: str = field(default="strict", kw_only=True)
 

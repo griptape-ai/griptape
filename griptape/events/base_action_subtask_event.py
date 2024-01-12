@@ -11,11 +11,11 @@ if TYPE_CHECKING:
 
 @define
 class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
-    subtask_parent_task_id: Optional[str] = field(kw_only=True, metadata={"serialize": True})
-    subtask_thought: Optional[str] = field(kw_only=True, metadata={"serialize": True})
-    subtask_action_name: Optional[str] = field(kw_only=True, metadata={"serialize": True})
-    subtask_action_path: Optional[str] = field(kw_only=True, metadata={"serialize": True})
-    subtask_action_input: Optional[dict] = field(kw_only=True, metadata={"serialize": True})
+    subtask_parent_task_id: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_thought: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_action_name: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_action_path: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_action_input: Optional[dict] = field(kw_only=True, metadata={"serializable": True})
 
     @classmethod
     def from_task(cls, task: ActionSubtask) -> BaseActionSubtaskEvent:

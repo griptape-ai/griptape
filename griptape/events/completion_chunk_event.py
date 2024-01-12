@@ -5,4 +5,4 @@ from griptape.events.base_event import BaseEvent
 
 @define
 class CompletionChunkEvent(BaseEvent):
-    token: str = field(kw_only=True, metadata={"serialize": True})
+    token: str = field(kw_only=True, metadata={"serializable": True})

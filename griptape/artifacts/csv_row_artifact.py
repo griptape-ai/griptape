@@ -7,8 +7,8 @@ from griptape.artifacts import TextArtifact, BaseArtifact
 
 @define
 class CsvRowArtifact(TextArtifact):
-    value: dict[str, str] = field(converter=BaseArtifact.value_to_dict, metadata={"serialize": True})
-    delimiter: str = field(default=",", kw_only=True, metadata={"serialize": True})
+    value: dict[str, str] = field(converter=BaseArtifact.value_to_dict, metadata={"serializable": True})
+    delimiter: str = field(default=",", kw_only=True, metadata={"serializable": True})
 
     def __add__(self, other: BaseArtifact) -> CsvRowArtifact:
         return CsvRowArtifact(self.value | other.value)

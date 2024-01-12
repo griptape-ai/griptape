@@ -11,9 +11,9 @@ from griptape.schemas.base_schema import BaseSchema
 
 @define()
 class BaseArtifact(SerializableMixin, ABC):
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serialize": True})
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
     name: str = field(
-        default=Factory(lambda self: self.id, takes_self=True), kw_only=True, metadata={"serialize": True}
+        default=Factory(lambda self: self.id, takes_self=True), kw_only=True, metadata={"serializable": True}
     )
     value: Any = field()
 
