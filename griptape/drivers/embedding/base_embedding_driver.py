@@ -1,5 +1,6 @@
 from __future__ import annotations
 import numpy as np
+from typing import Optional
 from abc import ABC, abstractmethod
 from attr import define, field
 from griptape.artifacts import TextArtifact
@@ -17,7 +18,7 @@ class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
     """
 
     model: str = field(kw_only=True)
-    tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
+    tokenizer: BaseTokenizer | None = field(default=None, kw_only=True)
     chunker: BaseChunker = field(init=False)
 
     def __attrs_post_init__(self) -> None:
