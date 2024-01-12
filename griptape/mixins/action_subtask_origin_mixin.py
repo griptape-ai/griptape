@@ -12,15 +12,15 @@ if TYPE_CHECKING:
 @define(slots=False)
 class ActionSubtaskOriginMixin:
     @abstractmethod
-    def find_tool(self, tool_name: str) -> BaseTool | None:
+    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
         ...
 
     @abstractmethod
-    def find_memory(self, memory_name: str) -> TaskMemory | None:
+    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
         ...
 
     @abstractmethod
-    def find_subtask(self, subtask_id: str) -> ActionSubtask | None:
+    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
         ...
 
     @abstractmethod

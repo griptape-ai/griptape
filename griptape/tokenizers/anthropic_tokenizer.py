@@ -1,6 +1,6 @@
 from __future__ import annotations
 from attr import define, field, Factory
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
 

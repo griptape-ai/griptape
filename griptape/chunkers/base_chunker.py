@@ -24,7 +24,7 @@ class BaseChunker(ABC):
 
         return [TextArtifact(c) for c in self._chunk_recursively(text)]
 
-    def _chunk_recursively(self, chunk: str, current_separator: ChunkSeparator | None = None) -> list[str]:
+    def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:
         token_count = self.tokenizer.count_tokens(chunk)
 
         if token_count <= self.max_tokens:

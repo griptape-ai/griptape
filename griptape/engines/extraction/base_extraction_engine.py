@@ -44,5 +44,5 @@ class BaseExtractionEngine(ABC):
         )
 
     @abstractmethod
-    def extract(self, text: str | ListArtifact, rulesets: list[Ruleset] | None = None, **kwargs) -> ListArtifact:
+    def extract(self, text: str | ListArtifact, rulesets: Optional[list[Ruleset]] = None, **kwargs) -> ListArtifact:
         ...

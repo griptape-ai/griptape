@@ -40,7 +40,7 @@ class FileManager(BaseTool):
         ),
         kw_only=True,
     )
-    save_file_encoding: str | None = field(default=None, kw_only=True)
+    save_file_encoding: Optional[str] = field(default=None, kw_only=True)
 
     @workdir.validator  # pyright: ignore
     def validate_workdir(self, _, workdir: str) -> None:

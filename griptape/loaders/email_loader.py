@@ -23,9 +23,9 @@ class EmailLoader(BaseLoader):
         """
 
         label: str = field(kw_only=True)
-        key: str | None = field(default=None, kw_only=True)
-        search_criteria: str | None = field(default=None, kw_only=True)
-        max_count: int | None = field(default=None, kw_only=True)
+        key: Optional[str] = field(default=None, kw_only=True)
+        search_criteria: Optional[str] = field(default=None, kw_only=True)
+        max_count: Optional[int] = field(default=None, kw_only=True)
 
     imap_url: str = field(kw_only=True)
     username: str = field(kw_only=True)

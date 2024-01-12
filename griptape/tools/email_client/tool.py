@@ -35,18 +35,18 @@ class EmailClient(BaseTool):
         email_loader: Used to retrieve email.
     """
 
-    username: str | None = field(default=None, kw_only=True)
-    password: str | None = field(default=None, kw_only=True)
-    email_max_retrieve_count: int | None = field(default=None, kw_only=True)
-    smtp_host: str | None = field(default=None, kw_only=True)
-    smtp_port: int | None = field(default=None, kw_only=True)
+    username: Optional[str] = field(default=None, kw_only=True)
+    password: Optional[str] = field(default=None, kw_only=True)
+    email_max_retrieve_count: Optional[int] = field(default=None, kw_only=True)
+    smtp_host: Optional[str] = field(default=None, kw_only=True)
+    smtp_port: Optional[int] = field(default=None, kw_only=True)
     smtp_use_ssl: bool = field(default=True, kw_only=True)
-    smtp_user: str | None = field(default=Factory(lambda self: self.username, takes_self=True), kw_only=True)
-    smtp_password: str | None = field(default=Factory(lambda self: self.password, takes_self=True), kw_only=True)
-    imap_url: str | None = field(default=None, kw_only=True)
-    imap_user: str | None = field(default=Factory(lambda self: self.username, takes_self=True), kw_only=True)
-    imap_password: str | None = field(default=Factory(lambda self: self.password, takes_self=True), kw_only=True)
-    mailboxes: dict[str, str] | None = field(default=None, kw_only=True)
+    smtp_user: Optional[str] = field(default=Factory(lambda self: self.username, takes_self=True), kw_only=True)
+    smtp_password: Optional[str] = field(default=Factory(lambda self: self.password, takes_self=True), kw_only=True)
+    imap_url: Optional[str] = field(default=None, kw_only=True)
+    imap_user: Optional[str] = field(default=Factory(lambda self: self.username, takes_self=True), kw_only=True)
+    imap_password: Optional[str] = field(default=Factory(lambda self: self.password, takes_self=True), kw_only=True)
+    mailboxes: dict[str, Optional[str]] = field(default=None, kw_only=True)
     email_loader: EmailLoader = field(
         default=Factory(
             lambda self: EmailLoader(imap_url=self.imap_url, username=self.imap_user, password=self.imap_password),
