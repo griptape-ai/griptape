@@ -1,7 +1,7 @@
 from __future__ import annotations
 from attrs import define, field
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from griptape.artifacts import BaseArtifact
 from .base_event import BaseEvent
 
@@ -18,7 +18,7 @@ class BaseTaskEvent(BaseEvent, ABC):
     task_input: BaseArtifact | BaseArtifact | tuple[BaseArtifact, ...] = field(
         kw_only=True, metadata={"serialize": True}
     )
-    task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serialize": True})
+    task_output: BaseArtifact | None = field(kw_only=True, metadata={"serialize": True})
 
     @classmethod
     def from_task(cls, task: BaseTask) -> BaseTaskEvent:

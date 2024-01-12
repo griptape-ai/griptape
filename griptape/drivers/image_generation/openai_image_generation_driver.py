@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import Literal
+from typing import Literal, Optional
 
 import openai
 from attr import field, Factory, define
@@ -31,24 +31,24 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
     """
 
     api_type: str = field(default=openai.api_type, kw_only=True)
-    api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
+    api_version: str | None = field(default=openai.api_version, kw_only=True)
     base_url: str = field(default=None, kw_only=True)
-    api_key: Optional[str] = field(default=None, kw_only=True)
-    organization: Optional[str] = field(default=openai.organization, kw_only=True)
+    api_key: str | None = field(default=None, kw_only=True)
+    organization: str | None = field(default=openai.organization, kw_only=True)
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
         )
     )
-    style: Optional[str] = field(default=None, kw_only=True)
+    style: str | None = field(default=None, kw_only=True)
     quality: Literal["standard"] | Literal["hd"] = field(default="standard", kw_only=True)
     image_size: (
         Literal["256x256"] | Literal["512x512"] | Literal["1024x1024"] | Literal["1024x1792"] | Literal["1792x1024"]
     ) = field(default="1024x1024", kw_only=True)
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True)
 
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         prompt = ", ".join(prompts)
 
         additional_params = {}
@@ -84,17 +84,17 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
 
     def try_image_inpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
     def try_image_outpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 

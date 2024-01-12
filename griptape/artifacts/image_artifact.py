@@ -3,6 +3,7 @@ from __future__ import annotations
 import string
 import time
 import random
+from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact
 
@@ -24,8 +25,8 @@ class ImageArtifact(BlobArtifact):
     mime_type: str = field(kw_only=True, default="image/png", metadata={"serialize": True})
     width: int = field(kw_only=True, metadata={"serialize": True})
     height: int = field(kw_only=True, metadata={"serialize": True})
-    model: Optional[str] = field(default=None, kw_only=True, metadata={"serialize": True})
-    prompt: Optional[str] = field(default=None, kw_only=True, metadata={"serialize": True})
+    model: str | None = field(default=None, kw_only=True, metadata={"serialize": True})
+    prompt: str | None = field(default=None, kw_only=True, metadata={"serialize": True})
     name: str = field(
         default=Factory(lambda self: self.make_name(), takes_self=True), kw_only=True, metadata={"serialize": True}
     )
