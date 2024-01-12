@@ -16,7 +16,7 @@ class TextArtifact(BaseArtifact):
     _embedding: list[float] = field(factory=list, kw_only=True)
 
     @property
-    def embedding(self) -> list[float] | None:
+    def embedding(self) -> Optional[list[float]]:
         return None if len(self._embedding) == 0 else self._embedding
 
     def __add__(self, other: BaseArtifact) -> TextArtifact:
@@ -25,7 +25,7 @@ class TextArtifact(BaseArtifact):
     def __bool__(self) -> bool:
         return bool(self.value.strip())
 
-    def generate_embedding(self, driver: BaseEmbeddingDriver) -> list[float] | None:
+    def generate_embedding(self, driver: BaseEmbeddingDriver) -> Optional[list[float]]:
         self._embedding.clear()
         self._embedding.extend(driver.embed_string(str(self.value)))
 

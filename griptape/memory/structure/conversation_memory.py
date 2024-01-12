@@ -13,7 +13,7 @@ class ConversationMemory(BaseConversationMemory):
             while len(self.runs) > self.max_runs:
                 self.runs.pop(0)
 
-    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
+    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         prompt_stack = PromptStack()
         runs = self.runs[-last_n:] if last_n else self.runs
         for run in runs:

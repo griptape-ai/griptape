@@ -16,12 +16,12 @@ if TYPE_CHECKING:
 
 @define
 class BaseConversationMemory(SerializableMixin, ABC):
-    driver: BaseConversationMemoryDriver | None = field(default=None, kw_only=True)
+    driver: Optional[BaseConversationMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True, metadata={"serialize": True})
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
-    max_runs: int | None = field(default=None, kw_only=True, metadata={"serialize": True})
+    max_runs: Optional[int] = field(default=None, kw_only=True, metadata={"serialize": True})
 
     def __attrs_post_init__(self) -> None:
         if self.driver and self.autoload:
@@ -48,7 +48,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
         ...
 
     @abstractmethod
-    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
+    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         ...
 
     @classmethod

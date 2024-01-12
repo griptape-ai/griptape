@@ -18,7 +18,7 @@ class BaseTaskEvent(BaseEvent, ABC):
     task_input: BaseArtifact | BaseArtifact | tuple[BaseArtifact, ...] = field(
         kw_only=True, metadata={"serialize": True}
     )
-    task_output: BaseArtifact | None = field(kw_only=True, metadata={"serialize": True})
+    task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serialize": True})
 
     @classmethod
     def from_task(cls, task: BaseTask) -> BaseTaskEvent:
