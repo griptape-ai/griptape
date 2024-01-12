@@ -7,8 +7,8 @@ repos:
     rev: v3.15.0
     hooks:
     - id: pyupgrade
+      args: [--py39-plus, --keep-runtime-typing]
 -   repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.342
     hooks:
     - id: pyright
-      args: [--py39-plus]
