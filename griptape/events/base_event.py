@@ -26,14 +26,14 @@ class BaseEvent(SerializableMixin, ABC):
             CompletionChunkEvent,
         )
 
-        class_registry.register("StartPromptEvent", BaseSchema.from_attrscls(StartPromptEvent))
-        class_registry.register("FinishPromptEvent", BaseSchema.from_attrscls(FinishPromptEvent))
-        class_registry.register("StartTaskEvent", BaseSchema.from_attrscls(StartTaskEvent))
-        class_registry.register("FinishTaskEvent", BaseSchema.from_attrscls(FinishTaskEvent))
-        class_registry.register("StartActionSubtaskEvent", BaseSchema.from_attrscls(StartActionSubtaskEvent))
-        class_registry.register("FinishActionSubtaskEvent", BaseSchema.from_attrscls(FinishActionSubtaskEvent))
-        class_registry.register("StartStructureRunEvent", BaseSchema.from_attrscls(StartStructureRunEvent))
-        class_registry.register("FinishStructureRunEvent", BaseSchema.from_attrscls(FinishStructureRunEvent))
-        class_registry.register("CompletionChunkEvent", BaseSchema.from_attrscls(CompletionChunkEvent))
+        class_registry.register("StartPromptEvent", BaseSchema.from_attrs_cls(StartPromptEvent))
+        class_registry.register("FinishPromptEvent", BaseSchema.from_attrs_cls(FinishPromptEvent))
+        class_registry.register("StartTaskEvent", BaseSchema.from_attrs_cls(StartTaskEvent))
+        class_registry.register("FinishTaskEvent", BaseSchema.from_attrs_cls(FinishTaskEvent))
+        class_registry.register("StartActionSubtaskEvent", BaseSchema.from_attrs_cls(StartActionSubtaskEvent))
+        class_registry.register("FinishActionSubtaskEvent", BaseSchema.from_attrs_cls(FinishActionSubtaskEvent))
+        class_registry.register("StartStructureRunEvent", BaseSchema.from_attrs_cls(StartStructureRunEvent))
+        class_registry.register("FinishStructureRunEvent", BaseSchema.from_attrs_cls(FinishStructureRunEvent))
+        class_registry.register("CompletionChunkEvent", BaseSchema.from_attrs_cls(CompletionChunkEvent))
 
         return class_registry.get_class(obj_type)

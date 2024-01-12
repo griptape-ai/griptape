@@ -1,5 +1,4 @@
 from __future__ import annotations
-import sys
 from abc import ABC
 from typing import Union, get_origin, get_args, Any
 import attrs
@@ -12,7 +11,7 @@ class BaseSchema(Schema):
     DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
 
     @classmethod
-    def from_attrscls(cls, attrscls):
+    def from_attrs_cls(cls, attrscls):
         """Generate a Schema from an attrs class.
 
         Args:
@@ -40,16 +39,12 @@ class BaseSchema(Schema):
             },
         )
         return SubSchema.from_dict(
-            {
-                a.name: cls.make_field_for_type(a.type, a.default)
-                for a in attrs.fields(attrscls)
-                if a.metadata.get("serialize")
-            },
+            {a.name: cls.make_field_for_type(a.type) for a in attrs.fields(attrscls) if a.metadata.get("serialize")},
             name=f"{attrscls.__name__}Schema",
         )
 
     @classmethod
-    def make_field_for_type(cls, type_: type, default=None):
+    def make_field_for_type(cls, type_: type):
         """Generate a marshmallow Field instance from a Python type."""
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
@@ -69,7 +64,7 @@ class BaseSchema(Schema):
             if issubclass(field_class, ABC):
                 return fields.Nested(PolymorphicSchema(inner_class=field_class))
             else:
-                return fields.Nested(cls.from_attrscls(type_))
+                return fields.Nested(cls.from_attrs_cls(type_))
         elif issubclass(field_class, list):
             return fields.List(cls_or_instance=cls.make_field_for_type(args[0]))
         else:
@@ -81,9 +76,4 @@ class BaseSchema(Schema):
     def is_union(cls, t: object) -> bool:
         origin = get_origin(t)
 
-        if sys.version_info >= (3, 10):
-            from types import UnionType
-
-            return origin is Union or origin is UnionType
-        else:
-            return origin is Union
+        return origin is Union

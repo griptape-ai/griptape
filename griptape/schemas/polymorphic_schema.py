@@ -60,7 +60,7 @@ class PolymorphicSchema(BaseSchema):
         if not obj_type:
             return (None, {"_schema": "Unknown object class: %s" % obj.__class__.__name__})
 
-        type_schema = BaseSchema.from_attrscls(obj.__class__)
+        type_schema = BaseSchema.from_attrs_cls(obj.__class__)
 
         if not type_schema:
             return None, {"_schema": "Unsupported object type: %s" % obj_type}

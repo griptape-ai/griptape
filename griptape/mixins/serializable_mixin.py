@@ -31,7 +31,7 @@ class SerializableMixin(Generic[T]):
 
     @classmethod
     def try_get_schema(cls: type[T], obj_type: str) -> list[type[Schema]] | type[Schema]:
-        class_registry.register(obj_type, BaseSchema.from_attrscls(cls))
+        class_registry.register(obj_type, BaseSchema.from_attrs_cls(cls))
 
         return class_registry.get_class(obj_type)
 
@@ -53,6 +53,6 @@ class SerializableMixin(Generic[T]):
         return json.dumps(self.to_dict())
 
     def to_dict(self) -> dict:
-        schema = BaseSchema.from_attrscls(self.__class__)
+        schema = BaseSchema.from_attrs_cls(self.__class__)
 
         return dict(schema().dump(self))

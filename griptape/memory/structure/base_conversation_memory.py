@@ -55,7 +55,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
     def try_get_schema(cls, obj_type: str) -> list[type[Schema]] | type[Schema]:
         from griptape.memory.structure import ConversationMemory, SummaryConversationMemory
 
-        class_registry.register("ConversationMemory", BaseSchema.from_attrscls(ConversationMemory))
-        class_registry.register("SummaryConversationMemory", BaseSchema.from_attrscls(SummaryConversationMemory))
+        class_registry.register("ConversationMemory", BaseSchema.from_attrs_cls(ConversationMemory))
+        class_registry.register("SummaryConversationMemory", BaseSchema.from_attrs_cls(SummaryConversationMemory))
 
         return class_registry.get_class(obj_type)

@@ -45,13 +45,13 @@ class BaseArtifact(SerializableMixin, ABC):
             ImageArtifact,
         )
 
-        class_registry.register("TextArtifact", BaseSchema.from_attrscls(TextArtifact))
-        class_registry.register("InfoArtifact", BaseSchema.from_attrscls(InfoArtifact))
-        class_registry.register("ErrorArtifact", BaseSchema.from_attrscls(ErrorArtifact))
-        class_registry.register("BlobArtifact", BaseSchema.from_attrscls(BlobArtifact))
-        class_registry.register("CsvRowArtifact", BaseSchema.from_attrscls(CsvRowArtifact))
-        class_registry.register("ListArtifact", BaseSchema.from_attrscls(ListArtifact))
-        class_registry.register("ImageArtifact", BaseSchema.from_attrscls(ImageArtifact))
+        class_registry.register("TextArtifact", BaseSchema.from_attrs_cls(TextArtifact))
+        class_registry.register("InfoArtifact", BaseSchema.from_attrs_cls(InfoArtifact))
+        class_registry.register("ErrorArtifact", BaseSchema.from_attrs_cls(ErrorArtifact))
+        class_registry.register("BlobArtifact", BaseSchema.from_attrs_cls(BlobArtifact))
+        class_registry.register("CsvRowArtifact", BaseSchema.from_attrs_cls(CsvRowArtifact))
+        class_registry.register("ListArtifact", BaseSchema.from_attrs_cls(ListArtifact))
+        class_registry.register("ImageArtifact", BaseSchema.from_attrs_cls(ImageArtifact))
 
         return class_registry.get_class(obj_type)
 
