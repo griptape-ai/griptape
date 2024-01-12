@@ -20,8 +20,8 @@ class BaseImageGenerationModelDriver(ABC):
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...
 
@@ -30,8 +30,8 @@ class BaseImageGenerationModelDriver(ABC):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...
 
@@ -41,8 +41,8 @@ class BaseImageGenerationModelDriver(ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...
 
@@ -52,7 +52,7 @@ class BaseImageGenerationModelDriver(ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...
