@@ -75,6 +75,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         )
 
     @abstractmethod
+    def delete_vector(self, vector_id: str) -> None:
+        ...
+
+    @abstractmethod
     def upsert_vector(
         self,
         vector: list[float],

@@ -100,3 +100,6 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         pinecone = import_optional_dependency("pinecone")
         pinecone.create_index(**params)
+
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
