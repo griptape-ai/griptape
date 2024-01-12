@@ -56,6 +56,19 @@ class TestToolkitSubtask:
         assert len(task.subtasks) == 3
         assert isinstance(task.output, ErrorArtifact)
 
+    def test_run_invalid_react_prompt(self):
+        output = """foo bar"""
+
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
+        agent = Agent(prompt_driver=MockValuePromptDriver(output))
+
+        agent.add_task(task)
+
+        result = agent.run()
+
+        assert len(task.subtasks) == 1
+        assert result.output_task.output.to_text() == "foo bar"
+
     def test_init_from_prompt_1(self):
         valid_input = (
             "Thought: need to test\n"
