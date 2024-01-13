@@ -25,7 +25,7 @@ class WebScraper(BaseTool):
         if isinstance(page, ErrorArtifact):
             return page
         else:
-            return ListArtifact(TextLoader().text_to_artifacts(page.get("text")))
+            return ListArtifact(TextLoader().text_to_artifacts(page["text"]))
 
     @activity(
         config={

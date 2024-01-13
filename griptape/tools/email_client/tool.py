@@ -100,6 +100,14 @@ class EmailClient(BaseTool):
     )
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
+        if self.smtp_user is None:
+            return ErrorArtifact("smtp_user is required")
+        if self.smtp_password is None:
+            return ErrorArtifact("smtp_password is required")
+        if self.smtp_host is None:
+            return ErrorArtifact("smtp_host is required")
+        if self.smtp_port is None:
+            return ErrorArtifact("smtp_port is required")
 
         msg = MIMEText(values["body"])
         msg["Subject"] = values["subject"]
@@ -107,7 +115,7 @@ class EmailClient(BaseTool):
         msg["To"] = values["to"]
 
         try:
-            with self._create_smtp_client() as client:
+            with self._create_smtp_client(self.smtp_host, self.smtp_port) as client:
                 client.login(self.smtp_user, self.smtp_password)
                 client.sendmail(msg["From"], [msg["To"]], msg.as_string())
                 return InfoArtifact("email was successfully sent")
@@ -115,10 +123,7 @@ class EmailClient(BaseTool):
             logging.error(e)
             return ErrorArtifact(f"error sending email: {e}")
 
-    def _create_smtp_client(self) -> smtplib.SMTP | smtplib.SMTP_SSL:
-        smtp_host = self.smtp_host
-        smtp_port = int(self.smtp_port)
-
+    def _create_smtp_client(self, smtp_host: str, smtp_port: int) -> smtplib.SMTP | smtplib.SMTP_SSL:
         if self.smtp_use_ssl:
             return smtplib.SMTP_SSL(smtp_host, smtp_port)
         else:

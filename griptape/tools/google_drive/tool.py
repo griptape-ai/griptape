@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from typing import List, Dict, Any
+from typing import Any
 from schema import Schema, Literal, Optional, Or
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
@@ -44,7 +44,7 @@ class GoogleDriveClient(BaseGoogleClient):
     )
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
-        from google.auth.exceptions import MalformedError
+        from google.auth.exceptions import MalformedError  # pyright: ignore
 
         folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
 
@@ -115,7 +115,7 @@ class GoogleDriveClient(BaseGoogleClient):
                             for a in artifacts:
                                 self._save_to_drive(f"{a.name}-{file_name}", a.value, folder_id)
 
-                        return InfoArtifact(f"saved successfully")
+                        return InfoArtifact("saved successfully")
 
                     except Exception as e:
                         return ErrorArtifact(f"error saving file to Google Drive: {e}")
@@ -148,7 +148,7 @@ class GoogleDriveClient(BaseGoogleClient):
         try:
             self._save_to_drive(filename, content)
 
-            return InfoArtifact(f"saved successfully")
+            return InfoArtifact("saved successfully")
         except Exception as e:
             return ErrorArtifact(f"error saving file to Google Drive: {e}")
 
@@ -167,8 +167,8 @@ class GoogleDriveClient(BaseGoogleClient):
         }
     )
     def download_files(self, params: dict) -> ListArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError
-        from googleapiclient.errors import HttpError
+        from google.auth.exceptions import MalformedError  # pyright: ignore
+        from googleapiclient.errors import HttpError  # pyright: ignore
 
         values = params["values"]
         downloaded_files = []
@@ -228,8 +228,8 @@ class GoogleDriveClient(BaseGoogleClient):
         }
     )
     def search_files(self, params: dict) -> ListArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError
-        from googleapiclient.errors import HttpError
+        from google.auth.exceptions import MalformedError  # pyright: ignore
+        from googleapiclient.errors import HttpError  # pyright: ignore
 
         values = params["values"]
 
@@ -253,6 +253,8 @@ class GoogleDriveClient(BaseGoogleClient):
                     query = f"name='{values['search_query']}'"
                 elif search_mode == "content":
                     query = f"fullText contains '{values['search_query']}'"
+                else:
+                    return ErrorArtifact(f"Invalid search mode: {search_mode}")
 
                 query += " and trashed=false"
                 if folder_id != self.DEFAULT_FOLDER_PATH:
@@ -288,8 +290,8 @@ class GoogleDriveClient(BaseGoogleClient):
         }
     )
     def share_file(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError
-        from googleapiclient.errors import HttpError
+        from google.auth.exceptions import MalformedError  # pyright: ignore
+        from googleapiclient.errors import HttpError  # pyright: ignore
 
         values = params["values"]
         file_path = values.get("file_path")
@@ -322,8 +324,8 @@ class GoogleDriveClient(BaseGoogleClient):
         except Exception as e:
             return ErrorArtifact(f"error sharing file: {e}")
 
-    def _save_to_drive(self, filename: str, value: any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
-        from googleapiclient.http import MediaIoBaseUpload
+    def _save_to_drive(self, filename: str, value: Any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
+        from googleapiclient.http import MediaIoBaseUpload  # pyright: ignore
 
         service = self._build_client(self.DRIVE_FILE_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email)
 
@@ -338,7 +340,7 @@ class GoogleDriveClient(BaseGoogleClient):
                 return ErrorArtifact(f"Could not find folder: {directory}")
             filename = parts[-1]
 
-        file_metadata = {"name": filename}
+        file_metadata = {"name": filename, "parents": []}
         if parent_folder_id:
             file_metadata["parents"] = [parent_folder_id]
 
