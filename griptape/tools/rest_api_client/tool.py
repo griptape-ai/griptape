@@ -57,10 +57,9 @@ class RestApiClient(BaseTool):
         path = self.path
         body = values["body"]
         url = self._build_url(base_url, path=path)
-        headers = values.get("headers", self.request_headers)
 
         try:
-            response = put(url, json=body, timeout=30, headers=headers)
+            response = put(url, json=body, timeout=30, headers=self.request_headers)
 
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
@@ -93,11 +92,10 @@ class RestApiClient(BaseTool):
         path = self.path
         body = values["body"]
         path_params = values["path_params"]
-        headers = values.get("headers", self.request_headers)
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = patch(url, json=body, timeout=30, headers=headers)
+            response = patch(url, json=body, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -123,10 +121,9 @@ class RestApiClient(BaseTool):
         path = self.path
         url = self._build_url(base_url, path=path)
         body = values["body"]
-        headers = values.get("headers", self.request_headers)
 
         try:
-            response = post(url, json=body, timeout=30, headers=headers)
+            response = post(url, json=body, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -147,7 +144,6 @@ class RestApiClient(BaseTool):
                     {
                         schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
                         schema.Optional(Literal("path_params", description="The request path parameters.")): list,
-                        schema.Optional(Literal("headers", description="The request headers.")): dict,
                     }
                 )
             ),
@@ -159,18 +155,16 @@ class RestApiClient(BaseTool):
         values = params["values"]
         base_url = self.base_url
         path = self.path
-        headers = values.get("headers", self.request_headers)
 
         query_params = {}
         path_params = []
         if values:
             query_params = values.get("query_params", {})
             path_params = values.get("path_params", [])
-
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = get(url, params=query_params, timeout=30, headers=headers)
+            response = get(url, params=query_params, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -198,15 +192,14 @@ class RestApiClient(BaseTool):
 
         values = params["values"]
         base_url = self.base_url
-        path = values.get("path", self.path)
+        path = self.path
+
         query_params = values.get("query_params", {})
         path_params = values.get("path_params", [])
-        headers = values.get("headers", self.request_headers)
-
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = delete(url, params=query_params, timeout=30, headers=headers)
+            response = delete(url, params=query_params, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
