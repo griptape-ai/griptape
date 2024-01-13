@@ -32,7 +32,7 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
             ExpressionAttributeValues={":value": memory.to_json()},
         )
 
-    def load(self) -> ConversationMemory | None:
+    def load(self) -> Optional[ConversationMemory]:
         response = self.table.get_item(Key={self.partition_key: self.partition_key_value})
 
         if "Item" in response and self.value_attribute_key in response["Item"]:

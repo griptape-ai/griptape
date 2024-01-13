@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attrs import define
 from attrs import field
 from griptape.events.base_prompt_event import BasePromptEvent
