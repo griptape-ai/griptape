@@ -7,7 +7,6 @@ from attr import Factory, define, field
 from abc import ABC
 
 from marshmallow import Schema
-from marshmallow.exceptions import RegistryError
 from griptape.schemas.base_schema import BaseSchema
 from importlib import import_module
 
@@ -24,22 +23,18 @@ class SerializableMixin(Generic[T]):
 
     @classmethod
     def get_schema(cls: type[T], obj_type: str) -> Schema:
-        schema_class = cls.try_get_schema(obj_type)
-
-        if isinstance(schema_class, type):
-            return schema_class()
-        else:
-            raise RegistryError(f"Unsupported type: {obj_type}")
-
-    @classmethod
-    def try_get_schema(cls: type[T], obj_type: str) -> list[type[Schema]] | type[Schema]:
         if issubclass(cls, ABC):
             package_name = ".".join(cls.__module__.split(".")[:-1])
-            module = getattr(import_module(package_name), obj_type)
+            module = getattr(import_module(package_name), obj_type, None)
 
-            return BaseSchema.from_attrs_cls(module)
+            if module is None:
+                raise ValueError(f"Could not find module: {package_name}.{obj_type}")
+
+            schema_class = BaseSchema.from_attrs_cls(module)
         else:
-            return BaseSchema.from_attrs_cls(cls)
+            schema_class = BaseSchema.from_attrs_cls(cls)
+
+        return schema_class()
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:

@@ -1,5 +1,4 @@
 import pytest
-from marshmallow.exceptions import RegistryError
 from griptape.artifacts import (
     BaseArtifact,
     TextArtifact,
@@ -66,5 +65,5 @@ class TestBaseArtifact:
 
     def test_unsupported_from_dict(self):
         dict_value = {"type": "foo", "value": "foobar"}
-        with pytest.raises(RegistryError):
+        with pytest.raises(ValueError):
             BaseArtifact.from_dict(dict_value)
