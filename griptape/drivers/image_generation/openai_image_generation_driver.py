@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import Literal, Optional
+from typing import Literal, Optional, cast
 
 import openai
 from attr import field, Factory, define
@@ -89,23 +89,25 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         if self.model != "dall-e-2":
             raise NotImplementedError(f"{self.__class__.__name__} only supports dall-e-2 for image variation")
 
-        if self.image_size in {"1024x1792", "1792x1024"}:
-            raise ValueError(f"dall-e-2 image variation does not support image sizes 1024x1792 and 1792x1024")
+        if self.image_size not in {"256x256", "512x512", "1024x1024"}:
+            raise ValueError(f"dall-e-2 image variation support image sizes 256x256, 512x512, and 1024x1024")
 
+        image_size = cast(Literal["256x256", "512x512", "1024x1024"], self.image_size)
         response = self.client.images.create_variation(
-            image=image.value,
-            n=1,
-            response_format=self.response_format,
-            size=self.image_size,
+            image=image.value, n=1, response_format=self.response_format, size=image_size
         )
 
+        if not response.data[0] or not response.data[0].b64_json:
+            raise Exception("Failed to generate image")
+
         image_data = base64.b64decode(response.data[0].b64_json)
+        image_dimensions = self._image_size_to_ints(self.image_size)
 
         return ImageArtifact(
             value=image_data,
             mime_type="image/png",
-            width=image.width,
-            height=image.height,
+            width=image_dimensions[0],
+            height=image_dimensions[1],
             model=self.model,
         )
 
@@ -116,7 +118,32 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
+        if self.model != "dall-e-2":
+            raise NotImplementedError(f"{self.__class__.__name__} only supports dall-e-2 for image variation")
+
+        if self.image_size not in {"256x256", "512x512", "1024x1024"}:
+            raise ValueError(f"dall-e-2 image variation support image sizes 256x256, 512x512, and 1024x1024")
+
+        image_size = cast(Literal["256x256", "512x512", "1024x1024"], self.image_size)
+        prompt = ", ".join(prompts)
+        response = self.client.images.edit(
+            prompt=prompt, image=image.value, mask=mask.value, response_format=self.response_format, size=image_size
+        )
+
+        if not response.data[0] or not response.data[0].b64_json:
+            raise Exception("Failed to generate image")
+
+        image_data = base64.b64decode(response.data[0].b64_json)
+        image_dimensions = self._image_size_to_ints(self.image_size)
+
+        return ImageArtifact(
+            value=image_data,
+            mime_type="image/png",
+            width=image_dimensions[0],
+            height=image_dimensions[1],
+            model=self.model,
+            prompt=prompt,
+        )
 
     def try_image_outpainting(
         self,
@@ -129,9 +156,3 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
 
     def _image_size_to_ints(self, image_size: str) -> list[int]:
         return [int(x) for x in image_size.split("x")]
-
-    def _image_size_filter(self) -> Literal["256x256", "512x512", "1024x1024"]:
-        if self.image_size not in {"256x256", "512x512", "1024x1024"}:
-            raise ValueError(f"image_size must be one of 256x256, 512x512, 1024x1024")
-
-        return self.image_size
