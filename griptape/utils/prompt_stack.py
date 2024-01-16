@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional
 from attr import define, field
 
 from griptape.mixins import SerializableMixin
@@ -17,7 +17,7 @@ class PromptStack(SerializableMixin):
 
     @define
     class Input:
-        content: Union[str, list[dict]] = field(metadata={"serializable": True})
+        content: str = field(metadata={"serializable": True})
         role: str = field(metadata={"serializable": True})
 
         def is_generic(self) -> bool:

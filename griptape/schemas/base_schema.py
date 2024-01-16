@@ -13,7 +13,7 @@ class BaseSchema(Schema):
     DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
 
     @classmethod
-    def from_attrs_cls(cls, attrs_cls: type):
+    def from_attrs_cls(cls, attrs_cls: type) -> type:
         """Generate a Schema from an attrs class.
 
         Args:
@@ -37,48 +37,56 @@ class BaseSchema(Schema):
         )
 
     @classmethod
-    def _get_field_for_type(cls, field_type: type):
+    def _get_field_for_type(cls, field_type: type) -> fields.Field | fields.Nested:
         """Generate a marshmallow Field instance from a Python type.
 
         Args:
-            field_type: An variable type.
+            field_type: A field type.
         """
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
         field_kwargs: dict[str, Any] = {"allow_none": False}
 
-        field_class, args = cls._get_field_class(field_type)
+        field_class, args, optional = cls._get_field_type_info(field_type)
 
         if attrs.has(field_class):
-            if issubclass(field_class, ABC):
+            if ABC in field_class.__bases__:
                 return fields.Nested(PolymorphicSchema(inner_class=field_class))
             else:
                 return fields.Nested(cls.from_attrs_cls(field_type))
         elif issubclass(field_class, list):
-            return fields.List(cls_or_instance=cls._get_field_for_type(args[0]))
+            if args:
+                return fields.List(cls_or_instance=cls._get_field_for_type(args[0]))
+            else:
+                raise ValueError(f"Missing type for list field: {field_type}")
         else:
             FieldClass = cls.DATACLASS_TYPE_MAPPING[field_class]
-            if len(args) > 1 and args[1] is type(None):
-                field_kwargs["allow_none"] = True
+            field_kwargs["allow_none"] = optional
 
             return FieldClass(**field_kwargs)
 
     @classmethod
-    def _get_field_class(cls, field_type: type):
+    def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
+        """Get information about a field type.
+
+        Args:
+            field_type: A field type.
+        """
         origin = get_origin(field_type) or field_type
+        args = get_args(field_type)
+        optional = False
 
         if origin is Union:
-            args = get_args(field_type)
-            field_class = args[0]
+            origin = args[0]
+            if len(args) > 1 and args[1] is type(None):
+                optional = True
 
-        else:
-            args = get_args(field_type)
-            field_class = origin
+            origin, args, _ = cls._get_field_type_info(origin)
 
-        return field_class, args
+        return origin, args, optional
 
     @classmethod
-    def _resolve_types(cls, attrs_cls: type):
+    def _resolve_types(cls, attrs_cls: type) -> None:
         """Resolve types in an attrs class.
 
         Args:

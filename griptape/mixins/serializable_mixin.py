@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TypeVar, Generic, cast
+from typing import TypeVar, Generic, cast, Optional
 
 from attr import Factory, define, field
 from abc import ABC
@@ -22,8 +22,11 @@ class SerializableMixin(Generic[T]):
     )
 
     @classmethod
-    def get_schema(cls: type[T], obj_type: str) -> Schema:
-        if issubclass(cls, ABC):
+    def get_schema(cls: type[T], obj_type: Optional[str] = None) -> Schema:
+        if ABC in cls.__bases__:
+            if obj_type is None:
+                raise ValueError(f"Type field is required for abstract class: {cls.__name__}")
+
             package_name = ".".join(cls.__module__.split(".")[:-1])
             module = getattr(import_module(package_name), obj_type, None)
 
@@ -38,10 +41,7 @@ class SerializableMixin(Generic[T]):
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:
-        if "type" in data:
-            return cast(T, cls.get_schema(data["type"]).load(data))
-        else:
-            raise ValueError(f"Missing type field in data: {data}")
+        return cast(T, cls.get_schema(obj_type=data["type"] if "type" in data else None).load(data))
 
     @classmethod
     def from_json(cls: type[T], data: str) -> T:
