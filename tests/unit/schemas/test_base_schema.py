@@ -7,6 +7,7 @@ from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.schemas import PolymorphicSchema
 from griptape.schemas.bytes_field import Bytes
 from griptape.schemas.base_schema import BaseSchema
+from griptape.loaders import TextLoader
 from tests.mocks.mock_serializable import MockSerializable
 
 
@@ -20,6 +21,9 @@ class TestBaseSchema:
         assert schema.fields["bar"].allow_none
         assert isinstance(schema.fields["baz"], fields.List)
         assert isinstance(schema.fields["baz"].inner, fields.Int)
+
+        with pytest.raises(ValueError):
+            BaseSchema.from_attrs_cls(TextLoader)
 
     def test_get_field_for_type(self):
         assert isinstance(BaseSchema._get_field_for_type(BaseArtifact), fields.Nested)

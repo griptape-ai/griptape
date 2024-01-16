@@ -16,7 +16,7 @@ class PromptStack(SerializableMixin):
     SYSTEM_ROLE = "system"
 
     @define
-    class Input:
+    class Input(SerializableMixin):
         content: str = field(metadata={"serializable": True})
         role: str = field(metadata={"serializable": True})
 

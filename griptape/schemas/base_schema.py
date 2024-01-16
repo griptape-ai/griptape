@@ -20,21 +20,25 @@ class BaseSchema(Schema):
             attrs_cls: An attrs class.
         """
         from marshmallow import post_load
+        from griptape.mixins import SerializableMixin
 
         class SubSchema(cls):
             @post_load
             def make_obj(self, data, **kwargs):
                 return attrs_cls(**data)
 
-        cls._resolve_types(attrs_cls)
-        return SubSchema.from_dict(
-            {
-                a.name: cls._get_field_for_type(a.type)
-                for a in attrs.fields(attrs_cls)
-                if a.metadata.get("serializable")
-            },
-            name=f"{attrs_cls.__name__}Schema",
-        )
+        if issubclass(attrs_cls, SerializableMixin):
+            cls._resolve_types(attrs_cls)
+            return SubSchema.from_dict(
+                {
+                    a.name: cls._get_field_for_type(a.type)
+                    for a in attrs.fields(attrs_cls)
+                    if a.metadata.get("serializable")
+                },
+                name=f"{attrs_cls.__name__}Schema",
+            )
+        else:
+            raise ValueError(f"Class must implement SerializableMixin: {attrs_cls}")
 
     @classmethod
     def _get_field_for_type(cls, field_type: type) -> fields.Field | fields.Nested:
