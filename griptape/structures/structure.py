@@ -23,6 +23,9 @@ from griptape.drivers import LocalVectorStoreDriver
 from griptape.events import EventListener
 from griptape.tasks import BaseTask
 
+if TYPE_CHECKING:
+    from griptape.memory.structure import BaseConversationMemory
+
 
 @define
 class Structure(ABC):
@@ -44,7 +47,7 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
-    conversation_memory: Optional[ConversationMemory] = field(
+    conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()), kw_only=True
     )
     task_memory: Optional[TaskMemory] = field(

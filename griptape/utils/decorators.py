@@ -26,3 +26,12 @@ def activity(config: dict):
         return wrapper
 
     return decorator
+
+
+def serializable(cls):
+    from marshmallow import class_registry
+    from griptape.schemas import BaseSchema
+
+    class_registry.register(cls.__name__, BaseSchema.from_attrs_cls(cls))
+
+    return cls

@@ -4,10 +4,12 @@ import json
 from typing import TypeVar, Generic, cast
 
 from attr import Factory, define, field
+from abc import ABC
 
-from marshmallow import class_registry, Schema
+from marshmallow import Schema
 from marshmallow.exceptions import RegistryError
 from griptape.schemas.base_schema import BaseSchema
+from importlib import import_module
 
 T = TypeVar("T", bound="SerializableMixin")
 
@@ -31,9 +33,13 @@ class SerializableMixin(Generic[T]):
 
     @classmethod
     def try_get_schema(cls: type[T], obj_type: str) -> list[type[Schema]] | type[Schema]:
-        class_registry.register(obj_type, BaseSchema.from_attrs_cls(cls))
+        if issubclass(cls, ABC):
+            package_name = ".".join(cls.__module__.split(".")[:-1])
+            module = getattr(import_module(package_name), obj_type)
 
-        return class_registry.get_class(obj_type)
+            return BaseSchema.from_attrs_cls(module)
+        else:
+            return BaseSchema.from_attrs_cls(cls)
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:

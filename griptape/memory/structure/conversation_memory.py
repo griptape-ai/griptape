@@ -1,5 +1,6 @@
 from __future__ import annotations
 from attr import define
+from typing import Optional
 from griptape.memory.structure import Run, BaseConversationMemory
 from griptape.utils import PromptStack
 
