@@ -22,16 +22,21 @@ class SerializableMixin(Generic[T]):
     )
 
     @classmethod
-    def get_schema(cls: type[T], obj_type: Optional[str] = None) -> Schema:
+    def get_schema(cls: type[T], subclass_name: Optional[str] = None) -> Schema:
+        """Generates a Marshmallow schema for the class.
+
+        Args:
+            subclass_name: An optional subclass name. Required if the class is abstract.
+        """
         if ABC in cls.__bases__:
-            if obj_type is None:
+            if subclass_name is None:
                 raise ValueError(f"Type field is required for abstract class: {cls.__name__}")
 
             package_name = ".".join(cls.__module__.split(".")[:-1])
-            module = getattr(import_module(package_name), obj_type, None)
+            module = getattr(import_module(package_name), subclass_name, None)
 
             if module is None:
-                raise ValueError(f"Could not find module: {package_name}.{obj_type}")
+                raise ValueError(f"Could not find module: {package_name}.{subclass_name}")
 
             schema_class = BaseSchema.from_attrs_cls(module)
         else:
@@ -41,7 +46,7 @@ class SerializableMixin(Generic[T]):
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:
-        return cast(T, cls.get_schema(obj_type=data["type"] if "type" in data else None).load(data))
+        return cast(T, cls.get_schema(subclass_name=data["type"] if "type" in data else None).load(data))
 
     @classmethod
     def from_json(cls: type[T], data: str) -> T:
