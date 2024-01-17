@@ -1,7 +1,8 @@
 from __future__ import annotations
 import logging
-from typing import Any
-from schema import Schema, Literal, Optional, Or
+from typing import Any, Optional
+import schema
+from schema import Schema, Literal, Or
 from attr import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
 from griptape.utils.decorators import activity
@@ -32,7 +33,7 @@ class GoogleDriveClient(BaseGoogleClient):
             "description": "Can be used to list files in a specific Google Drive folder.",
             "schema": Schema(
                 {
-                    Optional(
+                    schema.Optional(
                         "folder_path",
                         default=DEFAULT_FOLDER_PATH,
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
@@ -78,7 +79,7 @@ class GoogleDriveClient(BaseGoogleClient):
                     "memory_name": str,
                     "artifact_namespace": str,
                     "file_name": str,
-                    Optional(
+                    schema.Optional(
                         "folder_path",
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
                         "where the file should be saved.",
@@ -217,7 +218,7 @@ class GoogleDriveClient(BaseGoogleClient):
                         description="Query to search for. If search_mode is 'name', it's the file name. If 'content', "
                         "it's the text within files.",
                     ): str,
-                    Optional(
+                    schema.Optional(
                         "folder_path",
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
                         "where the search should be performed.",
@@ -280,7 +281,7 @@ class GoogleDriveClient(BaseGoogleClient):
                 {
                     Literal("file_path", description="The path of the file to share"): str,
                     Literal("email_address", description="The email address of the user to share with"): str,
-                    Optional(
+                    schema.Optional(
                         "role",
                         default="reader",
                         description="The role to give to the user, e.g., 'reader', 'writer', or 'commenter'",
@@ -324,7 +325,9 @@ class GoogleDriveClient(BaseGoogleClient):
         except Exception as e:
             return ErrorArtifact(f"error sharing file: {e}")
 
-    def _save_to_drive(self, filename: str, value: Any, parent_folder_id=None) -> InfoArtifact | ErrorArtifact:
+    def _save_to_drive(
+        self, filename: str, value: Any, parent_folder_id: Optional[str] = None
+    ) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaIoBaseUpload  # pyright: ignore
 
         service = self._build_client(self.DRIVE_FILE_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email)
