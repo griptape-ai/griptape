@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Union, get_args, get_origin
+from typing import Union, get_args, get_origin
+from collections.abc import Sequence
 
 import attrs
 from marshmallow import Schema, fields
@@ -56,7 +57,7 @@ class BaseSchema(Schema):
                 return fields.Nested(PolymorphicSchema(inner_class=field_class))
             else:
                 return fields.Nested(cls.from_attrs_cls(field_type))
-        elif issubclass(field_class, list):
+        elif cls.is_list_sequence(field_class):
             if args:
                 return fields.List(cls_or_instance=cls._get_field_for_type(args[0]))
             else:
@@ -109,3 +110,10 @@ class BaseSchema(Schema):
                 "BasePromptDriver": BasePromptDriver,
             },
         )
+
+    @classmethod
+    def is_list_sequence(cls, field_type: type) -> bool:
+        if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
+            return False
+        else:
+            return issubclass(field_type, Sequence)
