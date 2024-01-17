@@ -61,3 +61,10 @@ class TestBaseSchema:
         assert BaseSchema._get_field_type_info(Union[str, int]) == (str, (), False)
 
         assert BaseSchema._get_field_type_info(list) == (list, (), False)
+
+    def test_is_list_sequence(self):
+        assert BaseSchema.is_list_sequence(list)
+        assert not BaseSchema.is_list_sequence(tuple)
+        assert not BaseSchema.is_list_sequence(bytes)
+        assert not BaseSchema.is_list_sequence(str)
+        assert not BaseSchema.is_list_sequence(int)
