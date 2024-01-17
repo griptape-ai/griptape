@@ -49,8 +49,6 @@ class BaseSchema(Schema):
         """
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
-        field_kwargs: dict[str, Any] = {"allow_none": False}
-
         field_class, args, optional = cls._get_field_type_info(field_type)
 
         if attrs.has(field_class):
@@ -65,9 +63,8 @@ class BaseSchema(Schema):
                 raise ValueError(f"Missing type for list field: {field_type}")
         else:
             FieldClass = cls.DATACLASS_TYPE_MAPPING[field_class]
-            field_kwargs["allow_none"] = optional
 
-            return FieldClass(**field_kwargs)
+            return FieldClass(**{"allow_none": optional})
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
