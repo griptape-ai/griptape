@@ -37,7 +37,7 @@ class EmailClient(BaseTool):
 
     username: Optional[str] = field(default=None, kw_only=True)
     password: Optional[str] = field(default=None, kw_only=True)
-    email_max_retrieve_count: int = field(default=10, kw_only=True)
+    email_max_retrieve_count: Optional[int] = field(default=None, kw_only=True)
     smtp_host: Optional[str] = field(default=None, kw_only=True)
     smtp_port: Optional[int] = field(default=None, kw_only=True)
     smtp_use_ssl: bool = field(default=True, kw_only=True)
@@ -78,7 +78,7 @@ class EmailClient(BaseTool):
             return ErrorArtifact("mailboxes is required")
 
         values = params["values"]
-        max_count = int(values["max_count"]) if values.get("max_count") else self.email_max_retrieve_count
+        max_count = int(values["max_count"]) if values.get("max_count") is not None else self.email_max_retrieve_count
 
         return self.email_loader.load(
             EmailLoader.EmailQuery(

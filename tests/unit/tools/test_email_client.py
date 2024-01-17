@@ -29,7 +29,13 @@ class TestEmailClient:
 
     @pytest.fixture
     def client(self):
-        return EmailClient(username="fake-username", password="fake-password", smtp_host="foobar.com", smtp_port=86)
+        return EmailClient(
+            username="fake-username",
+            password="fake-password",
+            smtp_host="foobar.com",
+            smtp_port=86,
+            mailboxes={"INBOX": "default mailbox for incoming email", "SENT": "default mailbox for sent email"},
+        )
 
     @pytest.fixture
     def send_params(self):
@@ -57,7 +63,7 @@ class TestEmailClient:
 
     def test_retrieve_when_email_max_retrieve_count_set(self, mock_email_loader):
         # Given
-        client = EmailClient(email_max_retrieve_count=84)
+        client = EmailClient(email_max_retrieve_count=84, mailboxes={"INBOX": "default mailbox for incoming email"})
 
         # When
         client.retrieve({"values": {"label": "fake-label"}})
