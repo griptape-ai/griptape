@@ -21,7 +21,7 @@ class SqlClient(BaseTool):
         return f"{self.schema_name}.{self.table_name}" if self.schema_name else self.table_name
 
     @property
-    def table_schema(self) -> str:
+    def table_schema(self) -> Optional[str]:
         return self.sql_loader.sql_driver.get_table_schema(self.full_table_name, schema=self.schema_name)
 
     @activity(

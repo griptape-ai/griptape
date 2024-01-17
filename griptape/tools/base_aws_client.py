@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from abc import ABC
 from attr import define, field
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact

@@ -1,7 +1,7 @@
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.loaders.email_loader import EmailLoader
+from griptape.artifacts import TextArtifact
 from griptape.tools import EmailClient
-from griptape.utils import J2
 import pytest
 
 
@@ -12,7 +12,7 @@ class TestEmailClient:
             "griptape.tools.email_client.tool.EmailLoader",
             EmailQuery=EmailLoader.EmailQuery,  # Prevents mocking the nested EmailQuery class
         ).return_value
-        mock_email_loader.load.return_value = ListArtifact("fake-email-content")
+        mock_email_loader.load.return_value = ListArtifact([TextArtifact("fake-email-content")])
         return mock_email_loader
 
     @pytest.fixture(autouse=True)
@@ -29,7 +29,13 @@ class TestEmailClient:
 
     @pytest.fixture
     def client(self):
-        return EmailClient(username="fake-username", password="fake-password", smtp_port=86)
+        return EmailClient(
+            username="fake-username",
+            password="fake-password",
+            smtp_host="foobar.com",
+            smtp_port=86,
+            mailboxes={"INBOX": "default mailbox for incoming email", "SENT": "default mailbox for sent email"},
+        )
 
     @pytest.fixture
     def send_params(self):
@@ -53,11 +59,11 @@ class TestEmailClient:
 
         # Then
         mock_email_loader.load.assert_called_once_with(query)
-        assert artifact.value == "fake-email-content"
+        assert artifact[0].value == "fake-email-content"
 
     def test_retrieve_when_email_max_retrieve_count_set(self, mock_email_loader):
         # Given
-        client = EmailClient(email_max_retrieve_count=84)
+        client = EmailClient(email_max_retrieve_count=84, mailboxes={"INBOX": "default mailbox for incoming email"})
 
         # When
         client.retrieve({"values": {"label": "fake-label"}})
@@ -69,7 +75,6 @@ class TestEmailClient:
         "params", [{}, {"values": {}}, {"values": {"label": "fake-label", "max_count": "not-an-int"}}]
     )
     def test_retrieve_throws_when_params_invalid(self, client, params):
-        # When
         with pytest.raises(Exception) as e:
             client.retrieve(params)
 
