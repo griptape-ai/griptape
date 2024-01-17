@@ -18,21 +18,21 @@ class EmailClient(BaseTool):
 
     Attributes:
         username: Username/email address used to send email via the SMTP protocol and retrieve email via the IMAP protocol.
-            Example: bender@futurama.com
+            Example: bender@futurama.com.
         password: Password used to send email via the SMTP protocol and retrieve email via the IMAP protocol. If using gmail,
             this would be an App Password.
         email_max_retrieve_count: Used to limit the number of messages retrieved during any given activities.
-        smtp_host: Hostname or url of the SMTP server. Example: smtp.gmail.com
-        smtp_port: Port of the SMTP server. Example: 465
+        smtp_host: Hostname or url of the SMTP server. Example: smtp.gmail.com. Required when using the `send` activity.
+        smtp_port: Port of the SMTP server. Example: 465. Required when using the `send` activity.
         smtp_use_ssl: Whether to use SSL when sending email via the SMTP protocol.
-        smtp_user: Username/email address used to send email via the SMTP protocol. Overrides username for SMTP only.
-        smtp_password: Password to send email via the SMTP protocol. Overrides password for SMTP only.
-        imap_url: Hostname or url of the IMAP server. Example: imap.gmail.com
-        imap_user: Username/email address used to retrieve email via the IMAP protocol. Overrides username for IMAP only.
-        imap_password: Password to retrieve email via the IMAP protocol.  Overrides password for IMAP only.
-        mailboxes: Descriptions of mailboxes available for retrieving email via the IMAP protocol.
+        smtp_user: Username/email address used to send email via the SMTP protocol. Overrides username for SMTP only. Required when using the `send` activity.
+        smtp_password: Password to send email via the SMTP protocol. Overrides password for SMTP only. Required when using the `send` activity.
+        imap_url: Hostname or url of the IMAP server. Example: imap.gmail.com. Required when using the `retrieve` activity.
+        imap_user: Username/email address used to retrieve email via the IMAP protocol. Overrides username for IMAP only. Required when using the `retrieve` activity.
+        imap_password: Password to retrieve email via the IMAP protocol.  Overrides password for IMAP only. Required when using the `retrieve` activity.
+        mailboxes: Descriptions of mailboxes available for retrieving email via the IMAP protocol. Required when using the `retrieve` activity.
             Example: {'INBOX': 'default mailbox for incoming email', 'SENT': 'default mailbox for sent email'}
-        email_loader: Used to retrieve email.
+        email_loader: Instance of `EmailLoader`.
     """
 
     username: Optional[str] = field(default=None, kw_only=True)
@@ -74,8 +74,11 @@ class EmailClient(BaseTool):
         }
     )
     def retrieve(self, params: dict) -> ListArtifact | ErrorArtifact:
+        if self.mailboxes is None:
+            return ErrorArtifact("mailboxes is required")
+
         values = params["values"]
-        max_count = int(values["max_count"]) if values.get("max_count") else self.email_max_retrieve_count
+        max_count = int(values["max_count"]) if values.get("max_count") is not None else self.email_max_retrieve_count
 
         return self.email_loader.load(
             EmailLoader.EmailQuery(
@@ -100,6 +103,14 @@ class EmailClient(BaseTool):
     )
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
+        if self.smtp_user is None:
+            return ErrorArtifact("smtp_user is required")
+        if self.smtp_password is None:
+            return ErrorArtifact("smtp_password is required")
+        if self.smtp_host is None:
+            return ErrorArtifact("smtp_host is required")
+        if self.smtp_port is None:
+            return ErrorArtifact("smtp_port is required")
 
         msg = MIMEText(values["body"])
         msg["Subject"] = values["subject"]
@@ -107,7 +118,7 @@ class EmailClient(BaseTool):
         msg["To"] = values["to"]
 
         try:
-            with self._create_smtp_client() as client:
+            with self._create_smtp_client(self.smtp_host, self.smtp_port) as client:
                 client.login(self.smtp_user, self.smtp_password)
                 client.sendmail(msg["From"], [msg["To"]], msg.as_string())
                 return InfoArtifact("email was successfully sent")
@@ -115,10 +126,7 @@ class EmailClient(BaseTool):
             logging.error(e)
             return ErrorArtifact(f"error sending email: {e}")
 
-    def _create_smtp_client(self) -> smtplib.SMTP | smtplib.SMTP_SSL:
-        smtp_host = self.smtp_host
-        smtp_port = int(self.smtp_port)
-
+    def _create_smtp_client(self, smtp_host: str, smtp_port: int) -> smtplib.SMTP | smtplib.SMTP_SSL:
         if self.smtp_use_ssl:
             return smtplib.SMTP_SSL(smtp_host, smtp_port)
         else:

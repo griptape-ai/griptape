@@ -20,7 +20,7 @@ class Calculator(BaseTool):
         }
     )
     def calculate(self, params: dict) -> BaseArtifact:
-        import numexpr
+        import numexpr  # type: ignore
 
         try:
             expression = params["values"]["expression"]

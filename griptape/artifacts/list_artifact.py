@@ -1,11 +1,11 @@
-from typing import Optional
+from typing import Optional, Sequence
 from attr import field, define
 from griptape.artifacts import BaseArtifact
 
 
 @define
 class ListArtifact(BaseArtifact):
-    value: list[BaseArtifact] = field(factory=list, metadata={"serializable": True})
+    value: Sequence[BaseArtifact] = field(factory=list, metadata={"serializable": True})
     item_separator: str = field(default="\n\n", kw_only=True, metadata={"serializable": True})
 
     @value.validator  # pyright: ignore

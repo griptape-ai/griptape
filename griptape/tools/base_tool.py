@@ -53,6 +53,8 @@ class BaseTool(ActivityMixin, ABC):
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
                     raise ValueError(f"activity {activity_name} doesn't exist")
+                if memory_list is None:
+                    raise ValueError(f"memory list for activity '{activity_name}' can't be None")
 
                 output_memory_names = [memory.name for memory in memory_list]
 
@@ -92,7 +94,9 @@ class BaseTool(ActivityMixin, ABC):
                 {
                     Literal("name"): self.name,
                     Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
-                    Literal("input"): {"values": activity.config["schema"]} if self.activity_schema(activity) else {},
+                    Literal("input"): {"values": getattr(activity, "config")["schema"]}
+                    if self.activity_schema(activity)
+                    else {},
                 }
             )
             for activity in self.activities()
@@ -126,7 +130,8 @@ class BaseTool(ActivityMixin, ABC):
     def after_run(self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
         if value:
             if self.output_memory:
-                for memory in activity.__self__.output_memory.get(activity.name, []):
+                output_memories = self.output_memory[getattr(activity, "name")] or []
+                for memory in output_memories:
                     value = memory.process_output(activity, subtask, value)
 
                 if isinstance(value, BaseArtifact):
@@ -156,7 +161,7 @@ class BaseTool(ActivityMixin, ABC):
 
         return os.path.dirname(os.path.abspath(class_file))
 
-    def install_dependencies(self, env: dict[str, Optional[str]] = None) -> None:
+    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
         env = env if env else {}
 
         command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
