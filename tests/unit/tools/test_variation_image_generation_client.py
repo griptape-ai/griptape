@@ -36,7 +36,7 @@ class TestVariationImageGenerationClient:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.image_variation(
+        image_artifact = image_generator.image_variation_from_file(
             params={
                 "values": {
                     "prompts": ["test prompt"],
@@ -58,7 +58,7 @@ class TestVariationImageGenerationClient:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.image_variation(
+        image_artifact = image_generator.image_variation_from_file(
             params={
                 "values": {
                     "prompts": ["test prompt"],

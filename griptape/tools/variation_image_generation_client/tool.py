@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from attrs import define, field
 from schema import Schema, Literal
@@ -11,6 +11,7 @@ from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.mixins import ImageArtifactFileOutputMixin
+from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 
 @define
@@ -28,7 +29,7 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
 
     @activity(
         config={
-            "description": "Can be used to generate a variation of a given input image.",
+            "description": "Can be used to generate a variation of a given input image file.",
             "schema": Schema(
                 {
                     Literal(
@@ -47,16 +48,56 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
             ),
         }
     )
-    def image_variation(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
+    def image_variation_from_file(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         image_file = params["values"]["image_file"]
 
-        input_artifact = self.image_loader.load(image_file)
-        if isinstance(input_artifact, ErrorArtifact):
-            return input_artifact
+        image_artifact = self.image_loader.load(image_file)
+        if isinstance(image_artifact, ErrorArtifact):
+            return image_artifact
 
-        output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts, image=input_artifact)
+        return self._generate_variation(prompts, negative_prompts, image_artifact)
+
+    @activity(
+        config={
+            "description": "Can be used to generate a variation of a given input image artifact in memory.",
+            "schema": Schema(
+                {
+                    Literal(
+                        "prompts",
+                        description="A detailed list of features and descriptions to include in the generated image.",
+                    ): list[str],
+                    Literal(
+                        "negative_prompts",
+                        description="A detailed list of features and descriptions to avoid in the generated image.",
+                    ): list[str],
+                    "memory_name": str,
+                    "artifact_namespace": str,
+                    "artifact_name": str,
+                }
+            ),
+        }
+    )
+    def image_variation_from_memory(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
+        prompts = params["values"]["prompts"]
+        negative_prompts = params["values"]["negative_prompts"]
+        artifact_namespace = params["values"]["artifact_namespace"]
+        artifact_name = params["values"]["artifact_name"]
+        memory = self.find_input_memory(params["values"]["memory_name"])
+
+        if memory is None:
+            return ErrorArtifact("memory not found")
+
+        try:
+            image_artifact = load_artifact_from_memory(memory, artifact_namespace, artifact_name, ImageArtifact)
+        except ValueError as e:
+            return ErrorArtifact(str(e))
+
+        return self._generate_variation(prompts, negative_prompts, cast(ImageArtifact, image_artifact))
+
+    def _generate_variation(self, prompts: list[str], negative_prompts: list[str], image_artifact: ImageArtifact):
+        output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts, image=image_artifact)
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)

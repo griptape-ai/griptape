@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from abc import abstractmethod
 from attr import define
 
@@ -12,15 +12,15 @@ if TYPE_CHECKING:
 @define(slots=False)
 class ActionSubtaskOriginMixin:
     @abstractmethod
-    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
+    def find_tool(self, tool_name: str) -> BaseTool:
         ...
 
     @abstractmethod
-    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_memory(self, memory_name: str) -> TaskMemory:
         ...
 
     @abstractmethod
-    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
+    def find_subtask(self, subtask_id: str) -> ActionSubtask:
         ...
 
     @abstractmethod

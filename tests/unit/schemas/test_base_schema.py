@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import datetime
 import pytest
-from typing import Union, Optional
+from typing import Union, Optional, Literal
 from marshmallow import fields
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.schemas import PolymorphicSchema
@@ -61,3 +61,13 @@ class TestBaseSchema:
         assert BaseSchema._get_field_type_info(Union[str, int]) == (str, (), False)
 
         assert BaseSchema._get_field_type_info(list) == (list, (), False)
+
+        assert BaseSchema._get_field_type_info(Literal["foo"]) == (str, (), False)  # pyright: ignore
+        assert BaseSchema._get_field_type_info(Literal[5]) == (int, (), False)  # pyright: ignore
+
+    def test_is_list_sequence(self):
+        assert BaseSchema.is_list_sequence(list)
+        assert not BaseSchema.is_list_sequence(tuple)
+        assert not BaseSchema.is_list_sequence(bytes)
+        assert not BaseSchema.is_list_sequence(str)
+        assert not BaseSchema.is_list_sequence(int)
