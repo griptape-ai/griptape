@@ -1,1 +1,5 @@
-Please, continue!
+{% if subtask.output %}
+{{ stop_sequence }}: {{ subtask.output.to_text() }}
+{% else %}
+Please, keep going!
+{% endif %}

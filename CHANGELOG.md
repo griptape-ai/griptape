@@ -4,7 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added 
+- Image-to-image generation support for OpenAi Dall-E 2 model.
+- Image tools support loading artifacts from memory.
+- `AzureMongoDbVectorStoreDriver` for using CosmosDB with MongoDB vCore API.
+- `vector_path` field on `MongoDbAtlasVectorStoreDriver`.
+- `LeonardoImageGenerationDriver` supports image to image generation.
+
+### Fixed 
+- `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.
+
+### Changed
+- **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field.
+- **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`.
+
+## [0.22.3] - 2024-01-22
+
+### Fixed
+- `ToolkitTask`'s user subtask prompt occasionally causing the Task to end prematurely.
+
+## [0.22.2] - 2024-01-18
+
+### Fixed
+- `ToolkitTask`'s user subtask prompt occassionally causing a loop with Chain of Thought.
+
+### Security
+- Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]
+
 ## [0.22.1] - 2024-01-12
+
 ### Fixed
 - Action Subtasks incorrectly outputting the Task input after failing to follow the ReAct prompt.
 

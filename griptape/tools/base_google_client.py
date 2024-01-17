@@ -13,8 +13,8 @@ class BaseGoogleClient(BaseTool, ABC):
     service_account_credentials: dict = field(kw_only=True)
 
     def _build_client(self, scopes: list[str], service_name: str, version: str, owner_email: str) -> Any:
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
+        from google.oauth2 import service_account  # pyright: ignore
+        from googleapiclient.discovery import build  # pyright: ignore
 
         credentials = service_account.Credentials.from_service_account_info(
             self.service_account_credentials, scopes=scopes

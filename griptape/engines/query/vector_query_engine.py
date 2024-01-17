@@ -27,6 +27,7 @@ class VectorQueryEngine(BaseQueryEngine):
         self,
         query: str,
         namespace: Optional[str] = None,
+        *,
         rulesets: Optional[list[Ruleset]] = None,
         metadata: Optional[str] = None,
         top_n: Optional[int] = None,

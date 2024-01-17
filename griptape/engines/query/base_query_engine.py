@@ -10,7 +10,7 @@ from griptape.rules import Ruleset
 class BaseQueryEngine(ABC):
     @abstractmethod
     def query(
-        self, query: str, namespace: Optional[str] = None, rulesets: Optional[list[Ruleset]] = None
+        self, query: str, namespace: Optional[str] = None, *, rulesets: Optional[list[Ruleset]] = None
     ) -> TextArtifact:
         ...
 

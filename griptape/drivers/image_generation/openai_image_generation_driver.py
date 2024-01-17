@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import base64
-from typing import Literal, Optional
+from typing import Literal, Optional, cast
 
 import openai
+from openai.types.images_response import ImagesResponse
 from attr import field, Factory, define
 
 from griptape.artifacts import ImageArtifact
@@ -68,7 +69,58 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
             **additional_params,
         )
 
-        if not response.data[0] or not response.data[0].b64_json:
+        return self._parse_image_response(response, prompt)
+
+    def try_image_variation(
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+    ) -> ImageArtifact:
+        image_size = self._dall_e_2_filter_image_size("variation")
+
+        response = self.client.images.create_variation(
+            image=image.value, n=1, response_format=self.response_format, size=image_size
+        )
+
+        return self._parse_image_response(response, "")
+
+    def try_image_inpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        image_size = self._dall_e_2_filter_image_size("inpainting")
+
+        prompt = ", ".join(prompts)
+        response = self.client.images.edit(
+            prompt=prompt, image=image.value, mask=mask.value, response_format=self.response_format, size=image_size
+        )
+
+        return self._parse_image_response(response, prompt)
+
+    def try_image_outpainting(
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
+    ) -> ImageArtifact:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
+
+    def _image_size_to_ints(self, image_size: str) -> list[int]:
+        return [int(x) for x in image_size.split("x")]
+
+    def _dall_e_2_filter_image_size(self, method: str) -> Literal["256x256", "512x512", "1024x1024"]:
+        if self.model != "dall-e-2":
+            raise NotImplementedError(f"{method} only supports dall-e-2")
+
+        if self.image_size not in {"256x256", "512x512", "1024x1024"}:
+            raise ValueError(f"support image sizes for {method} are 256x256, 512x512, and 1024x1024")
+
+        return cast(Literal["256x256", "512x512", "1024x1024"], self.image_size)
+
+    def _parse_image_response(self, response: ImagesResponse, prompt: str) -> ImageArtifact:
+        if response.data is None or response.data[0] is None or response.data[0].b64_json is None:
             raise Exception("Failed to generate image")
 
         image_data = base64.b64decode(response.data[0].b64_json)
@@ -82,29 +134,3 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
             model=self.model,
             prompt=prompt,
         )
-
-    def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
-    ) -> ImageArtifact:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support variation")
-
-    def try_image_inpainting(
-        self,
-        prompts: list[str],
-        image: ImageArtifact,
-        mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-    ) -> ImageArtifact:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
-
-    def try_image_outpainting(
-        self,
-        prompts: list[str],
-        image: ImageArtifact,
-        mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-    ) -> ImageArtifact:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
-
-    def _image_size_to_ints(self, image_size: str) -> list[int]:
-        return [int(x) for x in image_size.split("x")]

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import string
 import time
 import random
@@ -30,6 +31,10 @@ class ImageArtifact(BlobArtifact):
     name: str = field(
         default=Factory(lambda self: self.make_name(), takes_self=True), kw_only=True, metadata={"serializable": True}
     )
+
+    @property
+    def base64(self) -> str:
+        return base64.b64encode(self.value).decode("utf-8")
 
     def make_name(self) -> str:
         entropy = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))

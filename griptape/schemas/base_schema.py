@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, Union, get_args, get_origin
+from typing import Union, Literal, get_args, get_origin
+from collections.abc import Sequence
 
 import attrs
 from marshmallow import Schema, fields
@@ -49,8 +50,6 @@ class BaseSchema(Schema):
         """
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
-        field_kwargs: dict[str, Any] = {"allow_none": False}
-
         field_class, args, optional = cls._get_field_type_info(field_type)
 
         if attrs.has(field_class):
@@ -58,16 +57,15 @@ class BaseSchema(Schema):
                 return fields.Nested(PolymorphicSchema(inner_class=field_class))
             else:
                 return fields.Nested(cls.from_attrs_cls(field_type))
-        elif issubclass(field_class, list):
+        elif cls.is_list_sequence(field_class):
             if args:
                 return fields.List(cls_or_instance=cls._get_field_for_type(args[0]))
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
         else:
             FieldClass = cls.DATACLASS_TYPE_MAPPING[field_class]
-            field_kwargs["allow_none"] = optional
 
-            return FieldClass(**field_kwargs)
+            return FieldClass(**{"allow_none": optional})
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
@@ -86,6 +84,9 @@ class BaseSchema(Schema):
                 optional = True
 
             origin, args, _ = cls._get_field_type_info(origin)
+        elif origin is Literal:
+            origin = type(args[0])
+            args = ()
 
         return origin, args, optional
 
@@ -112,3 +113,10 @@ class BaseSchema(Schema):
                 "BasePromptDriver": BasePromptDriver,
             },
         )
+
+    @classmethod
+    def is_list_sequence(cls, field_type: type) -> bool:
+        if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
+            return False
+        else:
+            return issubclass(field_type, Sequence)

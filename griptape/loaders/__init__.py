@@ -1,4 +1,5 @@
 from .base_loader import BaseLoader
+from .base_text_loader import BaseTextLoader
 from .text_loader import TextLoader
 from .pdf_loader import PdfLoader
 from .web_loader import WebLoader
@@ -12,6 +13,7 @@ from .image_loader import ImageLoader
 
 __all__ = [
     "BaseLoader",
+    "BaseTextLoader",
     "TextLoader",
     "PdfLoader",
     "WebLoader",

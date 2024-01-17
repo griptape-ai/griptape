@@ -160,39 +160,5 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             for hit in response["hits"]["hits"]
         ]
 
-    def create_index(self, vector_dimension: Optional[int] = None, settings_override: Optional[dict] = None) -> None:
-        """Creates a new vector index in OpenSearch.
-
-        The index is structured to support k-NN (k-nearest neighbors) queries.
-
-        Args:
-            vector_dimension: The dimension of vectors that will be stored in this index.
-
-        """
-        default_settings = {"number_of_shards": 1, "number_of_replicas": 1, "index.knn": True}
-
-        if settings_override:
-            default_settings.update(settings_override)
-
-        try:
-            if self.client.indices.exists(index=self.index_name):
-                logging.warning("Index already exists!")
-                return
-            else:
-                mapping = {
-                    "settings": default_settings,
-                    "mappings": {
-                        "properties": {
-                            "vector": {"type": "knn_vector", "dimension": vector_dimension},
-                            "namespace": {"type": "keyword"},
-                            "metadata": {"type": "object", "enabled": True},
-                        }
-                    },
-                }
-
-                self.client.indices.create(index=self.index_name, body=mapping)
-        except Exception as e:
-            logging.error(f"Error while handling index: {e}")
-
     def delete_vector(self, vector_id: str):
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

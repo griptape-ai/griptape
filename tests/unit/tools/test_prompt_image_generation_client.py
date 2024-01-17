@@ -21,18 +21,18 @@ class TestPromptImageGenerationClient:
         with pytest.raises(ValueError):
             PromptImageGenerationClient(engine=image_generation_engine, output_dir="test", output_file="test")
 
-    def test_text_to_image(self, image_generator) -> None:
+    def test_generate_image(self, image_generator) -> None:
         image_generator.engine.run.return_value = Mock(
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.text_to_image(
+        image_artifact = image_generator.generate_image(
             params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
         )
 
         assert image_artifact
 
-    def test_text_to_image_with_outfile(self, image_generation_engine) -> None:
+    def test_generate_image_with_outfile(self, image_generation_engine) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
         image_generator = PromptImageGenerationClient(engine=image_generation_engine, output_file=outfile)
 
@@ -40,7 +40,7 @@ class TestPromptImageGenerationClient:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.text_to_image(
+        image_artifact = image_generator.generate_image(
             params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
         )
 
