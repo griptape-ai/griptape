@@ -7,7 +7,6 @@ INSTALL_MAPPING = {
     "huggingface_hub": "huggingface-hub",
     "pinecone": "pinecone-client",
     "opensearchpy": "opensearch-py",
-    "requests_aws4auth": "requests-aws4auth",
 }
 
 
