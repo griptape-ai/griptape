@@ -1,5 +1,6 @@
 from __future__ import annotations
 import logging
+import warnings
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
@@ -33,15 +34,16 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     stream: bool = field(default=False, kw_only=True)
-    config: BaseStructureConfig = field(default=Factory(lambda: OpenAiStructureConfig()), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda self: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL, stream=self.stream),
             takes_self=True,
-        ),
-        kw_only=True,
+        )
     )
     embedding_driver: BaseEmbeddingDriver = field(default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True)
+    config: BaseStructureConfig = field(
+        default=Factory(lambda self: self.default_config, takes_self=True), kw_only=True
+    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
@@ -117,6 +119,28 @@ class Structure(ABC):
         return [s for s in self.tasks if s.is_finished()]
 
     @property
+    def default_config(self) -> BaseStructureConfig:
+        config = OpenAiStructureConfig()
+
+        if self.prompt_driver is not None:
+            warnings.warn("`prompt_driver` is deprecated, use `config.prompt_driver` instead.", DeprecationWarning)
+            config.prompt_driver = self.prompt_driver
+            config.task_memory.query_engine.prompt_driver = self.prompt_driver
+            config.task_memory.summary_engine.prompt_driver = self.prompt_driver
+            config.task_memory.extraction_engine.csv.prompt_driver = self.prompt_driver
+            config.task_memory.extraction_engine.json.prompt_driver = self.prompt_driver
+        if self.embedding_driver is not None:
+            warnings.warn(
+                "`embedding_driver` is deprecated, use config.task_memory.query_engine.vector_store_driver.embedding_driver` instead.",
+                DeprecationWarning,
+            )
+            config.task_memory.query_engine.vector_store_driver.embedding_driver = self.embedding_driver
+        if self.stream is not None:
+            warnings.warn("`stream` is deprecated, use `config.prompt_driver.stream` instead.", DeprecationWarning)
+
+        return config
+
+    @property
     def default_task_memory(self) -> TaskMemory:
         return TaskMemory(
             artifact_storages={
@@ -164,7 +188,7 @@ class Structure(ABC):
         if event_listener in self.event_listeners:
             self.event_listeners.remove(event_listener)
         else:
-            raise ValueError(f"Event Listener not found.")
+            raise ValueError("Event Listener not found.")
 
     def publish_event(self, event: BaseEvent) -> None:
         for event_listener in self.event_listeners:

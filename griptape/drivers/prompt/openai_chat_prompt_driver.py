@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Iterator, Optional, Any, Literal
+from typing import Optional, Any, Literal
+from collections.abc import Iterator
 import openai
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -42,7 +43,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             takes_self=True,
         )
     )
-    model: str = field(kw_only=True)
+    model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )

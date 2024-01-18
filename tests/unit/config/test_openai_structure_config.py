@@ -10,6 +10,7 @@ class TestOpenAiStructureConfig:
             "type": "OpenAiStructureConfig",
             "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
+                "model": "gpt-4",
                 "temperature": 0.1,
                 "max_tokens": None,
                 "stream": False,
@@ -20,13 +21,14 @@ class TestOpenAiStructureConfig:
                     "type": "StructureTaskMemoryQueryEngineConfig",
                     "prompt_driver": {
                         "type": "OpenAiChatPromptDriver",
+                        "model": "gpt-3.5-turbo",
                         "temperature": 0.1,
                         "max_tokens": None,
                         "stream": False,
                     },
                     "vector_store_driver": {
                         "type": "LocalVectorStoreDriver",
-                        "embedding_driver": {"type": "OpenAiEmbeddingDriver"},
+                        "embedding_driver": {"type": "OpenAiEmbeddingDriver", "model": "text-embedding-ada-002"},
                     },
                 },
                 "extraction_engine": {
@@ -35,6 +37,7 @@ class TestOpenAiStructureConfig:
                         "type": "StructureTaskMemoryExtractionEngineCsvConfig",
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
+                            "model": "gpt-3.5-turbo",
                             "temperature": 0.1,
                             "max_tokens": None,
                             "stream": False,
@@ -44,6 +47,7 @@ class TestOpenAiStructureConfig:
                         "type": "StructureTaskMemoryExtractionEngineJsonConfig",
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
+                            "model": "gpt-3.5-turbo",
                             "temperature": 0.1,
                             "max_tokens": None,
                             "stream": False,
@@ -54,6 +58,7 @@ class TestOpenAiStructureConfig:
                     "type": "StructureTaskMemorySummaryEngineConfig",
                     "prompt_driver": {
                         "type": "OpenAiChatPromptDriver",
+                        "model": "gpt-3.5-turbo",
                         "temperature": 0.1,
                         "max_tokens": None,
                         "stream": False,
