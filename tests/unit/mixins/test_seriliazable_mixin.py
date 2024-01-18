@@ -1,4 +1,8 @@
 import json
+import pytest
+from griptape.drivers import OpenAiChatPromptDriver
+from griptape.memory.structure import ConversationMemory
+from griptape.memory import TaskMemory
 from tests.mocks.mock_serializable import MockSerializable
 from griptape.schemas import BaseSchema
 from griptape.artifacts import BaseArtifact, TextArtifact
@@ -29,3 +33,17 @@ class TestSerializableMixin:
 
     def test_to_dict(self):
         assert MockSerializable().to_dict() == {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None}
+
+    def test_import_class_rec(self):
+        assert (
+            MockSerializable._import_cls_rec("griptape.drivers.base_prompt_driver", "OpenAiChatPromptDriver")
+            == OpenAiChatPromptDriver
+        )
+        assert (
+            MockSerializable._import_cls_rec("griptape.memory.structure.base_conversation_memory", "ConversationMemory")
+            == ConversationMemory
+        )
+        assert MockSerializable._import_cls_rec("griptape.memory.task.task_memory", "TaskMemory") == TaskMemory
+
+        with pytest.raises(ValueError):
+            MockSerializable._import_cls_rec("griptape.memory.task", "ConversationMemory")
