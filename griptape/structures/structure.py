@@ -7,6 +7,7 @@ from typing import Optional, TYPE_CHECKING, Any
 from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.artifacts import TextArtifact, BlobArtifact
+from griptape.config import BaseStructureConfig, OpenAiStructureConfig
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -19,7 +20,6 @@ from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
-from griptape.drivers import LocalVectorStoreDriver
 from griptape.events import EventListener
 from griptape.tasks import BaseTask
 
@@ -33,6 +33,7 @@ class Structure(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     stream: bool = field(default=False, kw_only=True)
+    config: BaseStructureConfig = field(default=Factory(lambda: OpenAiStructureConfig()), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda self: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL, stream=self.stream),
@@ -121,12 +122,18 @@ class Structure(ABC):
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     query_engine=VectorQueryEngine(
-                        prompt_driver=self.prompt_driver,
-                        vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.embedding_driver),
+                        prompt_driver=self.config.task_memory.query_engine.prompt_driver,
+                        vector_store_driver=self.config.task_memory.query_engine.vector_store_driver,
                     ),
-                    summary_engine=PromptSummaryEngine(prompt_driver=self.prompt_driver),
-                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.prompt_driver),
-                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.prompt_driver),
+                    summary_engine=PromptSummaryEngine(
+                        prompt_driver=self.config.task_memory.summary_engine.prompt_driver
+                    ),
+                    csv_extraction_engine=CsvExtractionEngine(
+                        prompt_driver=self.config.task_memory.extraction_engine.csv.prompt_driver
+                    ),
+                    json_extraction_engine=JsonExtractionEngine(
+                        prompt_driver=self.config.task_memory.extraction_engine.json.prompt_driver
+                    ),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
             }
