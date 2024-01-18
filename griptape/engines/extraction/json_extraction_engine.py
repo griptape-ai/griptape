@@ -16,6 +16,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
     def extract(
         self,
         text: str | ListArtifact,
+        *,
         rulesets: Optional[list[Ruleset]] = None,
         template_schema: Optional[list[dict]] = None,
         **kwargs,

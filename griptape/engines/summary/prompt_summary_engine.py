@@ -45,7 +45,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
             - self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier
         )
 
-    def summarize_artifacts(self, artifacts: ListArtifact, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
+    def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
         return self.summarize_artifacts_rec(cast(list[TextArtifact], artifacts.value), None, rulesets=rulesets)
 
     def summarize_artifacts_rec(
