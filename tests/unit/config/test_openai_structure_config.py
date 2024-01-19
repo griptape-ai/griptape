@@ -103,3 +103,8 @@ class TestOpenAiStructureConfig:
         )
 
         assert config.task_memory.extraction_engine.csv.prompt_driver.stream is True
+
+    def test_dot_update(self, config):
+        config.task_memory.extraction_engine.csv.prompt_driver.stream = True
+
+        assert config.task_memory.extraction_engine.csv.prompt_driver.stream is True

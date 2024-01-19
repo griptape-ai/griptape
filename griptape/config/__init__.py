@@ -9,6 +9,7 @@ from .structure_task_memory_summary_engine_config import StructureTaskMemorySumm
 from .base_structure_config import BaseStructureConfig
 
 from .openai_structure_config import OpenAiStructureConfig
+from .amazon_bedrock_structure_config import AmazonBedrockStructureConfig
 
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "StructureTaskMemoryExtractionEngineCsvConfig",
     "StructureTaskMemoryExtractionEngineJsonConfig",
     "OpenAiStructureConfig",
+    "AmazonBedrockStructureConfig",
 ]

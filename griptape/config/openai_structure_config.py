@@ -1,5 +1,14 @@
 from attrs import define, field, Factory
-from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver, LocalVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers import (
+    BasePromptDriver,
+    OpenAiChatPromptDriver,
+    LocalVectorStoreDriver,
+    OpenAiEmbeddingDriver,
+    BaseImageGenerationDriver,
+    OpenAiImageGenerationDriver,
+    BaseConversationMemoryDriver,
+    LocalConversationMemoryDriver,
+)
 from griptape.config import (
     BaseStructureConfig,
     StructureTaskMemoryConfig,
@@ -17,6 +26,14 @@ class OpenAiStructureConfig(BaseStructureConfig):
         default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-4", stream=False)),
         kw_only=True,
         metadata={"serializable": True},
+    )
+    image_generation_driver: BaseImageGenerationDriver = field(
+        default=Factory(lambda: OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    conversation_memory_driver: BaseConversationMemoryDriver = field(
+        default=Factory(lambda: LocalConversationMemoryDriver()), kw_only=True, metadata={"serializable": True}
     )
     task_memory: StructureTaskMemoryConfig = field(
         default=Factory(

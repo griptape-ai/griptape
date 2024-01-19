@@ -51,7 +51,10 @@ class Structure(ABC):
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()), kw_only=True
+        default=Factory(
+            lambda self: ConversationMemory(driver=self.config.conversation_memory_driver), takes_self=True
+        ),
+        kw_only=True,
     )
     task_memory: Optional[TaskMemory] = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
