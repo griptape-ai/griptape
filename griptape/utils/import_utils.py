@@ -3,11 +3,7 @@ from types import ModuleType
 from typing import Optional
 
 
-INSTALL_MAPPING = {
-    "huggingface_hub": "huggingface-hub",
-    "pinecone": "pinecone-client",
-    "opensearchpy": "opensearch-py",
-}
+INSTALL_MAPPING = {"huggingface_hub": "huggingface-hub", "pinecone": "pinecone-client", "opensearchpy": "opensearch-py"}
 
 
 def import_optional_dependency(name: str) -> Optional[ModuleType]:
