@@ -1,13 +1,10 @@
-import json
-from abc import ABC, abstractmethod
+from __future__ import annotations
 from attr import define
+from abc import ABC
+
+from griptape.mixins import SerializableMixin
 
 
 @define
-class BaseMetaEntry(ABC):
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict())
-
-    @abstractmethod
-    def to_dict(self) -> dict:
-        ...
+class BaseMetaEntry(SerializableMixin, ABC):
+    ...

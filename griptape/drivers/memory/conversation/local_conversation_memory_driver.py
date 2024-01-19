@@ -2,22 +2,22 @@ import os
 from attr import define, field
 from typing import Optional
 from griptape.drivers import BaseConversationMemoryDriver
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure import BaseConversationMemory
 
 
 @define
 class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
     file_path: str = field(default="griptape_memory.json", kw_only=True)
 
-    def store(self, memory: ConversationMemory) -> None:
+    def store(self, memory: BaseConversationMemory) -> None:
         with open(self.file_path, "w") as file:
             file.write(memory.to_json())
 
-    def load(self) -> Optional[ConversationMemory]:
+    def load(self) -> Optional[BaseConversationMemory]:
         if not os.path.exists(self.file_path):
             return None
         with open(self.file_path) as file:
-            memory = ConversationMemory.from_json(file.read())
+            memory = BaseConversationMemory.from_json(file.read())
 
             memory.driver = self
 

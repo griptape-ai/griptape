@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC
 from attrs import define, field
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from .base_task_event import BaseTaskEvent
 
 
@@ -11,11 +11,11 @@ if TYPE_CHECKING:
 
 @define
 class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
-    subtask_parent_task_id: Optional[str] = field(kw_only=True)
-    subtask_thought: Optional[str] = field(kw_only=True)
-    subtask_action_name: Optional[str] = field(kw_only=True)
-    subtask_action_path: Optional[str] = field(kw_only=True)
-    subtask_action_input: Optional[dict] = field(kw_only=True)
+    subtask_parent_task_id: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_thought: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_action_name: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_action_path: Optional[str] = field(kw_only=True, metadata={"serializable": True})
+    subtask_action_input: Optional[dict] = field(kw_only=True, metadata={"serializable": True})
 
     @classmethod
     def from_task(cls, task: ActionSubtask) -> BaseActionSubtaskEvent:

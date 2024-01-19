@@ -49,8 +49,9 @@ class TestBaseArtifact:
     def test_image_artifact_from_dict(self):
         dict_value = {
             "type": "ImageArtifact",
-            "base64": b"aW1hZ2UgZGF0YQ==",
+            "value": b"aW1hZ2UgZGF0YQ==",
             "mime_type": "image/png",
+            "dir_name": "foo",
             "width": 256,
             "height": 256,
             "model": "test-model",

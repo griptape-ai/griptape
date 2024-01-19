@@ -1,6 +1,4 @@
-from abc import abstractmethod
-from pydoc import locate
-from typing import Optional
+from typing import Any
 from marshmallow import ValidationError, Schema
 from griptape.schemas import BaseSchema
 
@@ -10,25 +8,10 @@ class PolymorphicSchema(BaseSchema):
     PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema
     """
 
-    def get_schema(self, class_name: str, obj: Optional[object], schema_namespace: Optional[str]):
-        if schema_namespace:
-            namespace = schema_namespace
-        elif obj is not None and hasattr(obj, "schema_namespace"):
-            if locate(f"griptape.schemas.{class_name}Schema"):
-                namespace = "griptape.schemas"
-            elif obj.schema_namespace is None:
-                namespace = obj.schema_namespace = f"{obj.__module__}_schema"
-            else:
-                namespace = obj.schema_namespace
-        else:
-            namespace = "griptape.schemas"
+    def __init__(self, inner_class: Any, **kwargs):
+        super().__init__(**kwargs)
 
-        klass = locate(f"{namespace}.{class_name}Schema")
-
-        if klass:
-            return klass
-        else:
-            raise ValidationError(f"Missing schema for '{class_name}'")
+        self.inner_class = inner_class
 
     type_field = "type"
     type_field_remove = True
@@ -77,7 +60,7 @@ class PolymorphicSchema(BaseSchema):
         if not obj_type:
             return (None, {"_schema": "Unknown object class: %s" % obj.__class__.__name__})
 
-        type_schema = self.get_schema(obj_type, obj, None)
+        type_schema = BaseSchema.from_attrs_cls(obj.__class__)
 
         if not type_schema:
             return None, {"_schema": "Unsupported object type: %s" % obj_type}
@@ -136,13 +119,7 @@ class PolymorphicSchema(BaseSchema):
         if data_type is None:
             raise ValidationError({self.type_field: ["Missing data for required field."]})
 
-        schema_namespace = data.get("schema_namespace")
-
-        try:
-            type_schema = self.get_schema(data_type, None, schema_namespace)
-        except TypeError:
-            # data_type could be unhashable
-            raise ValidationError({self.type_field: ["Invalid value: %s" % data_type]})
+        type_schema = self.inner_class.get_schema(data_type)
         if not type_schema:
             raise ValidationError({self.type_field: ["Unsupported value: %s" % data_type]})
 
