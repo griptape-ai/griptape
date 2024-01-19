@@ -29,11 +29,11 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         index: The name of the index to use.
     """
 
-    host: str = field(kw_only=True)
-    port: int = field(kw_only=True)
-    db: int = field(kw_only=True, default=0)
-    password: Optional[str] = field(default=None, kw_only=True)
-    index: str = field(kw_only=True)
+    host: str = field(kw_only=True, metadata={"serializable": True})
+    port: int = field(kw_only=True, metadata={"serializable": True})
+    db: int = field(kw_only=True, default=0, metadata={"serializable": True})
+    password: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    index: str = field(kw_only=True, metadata={"serializable": True})
 
     client: Redis = field(
         default=Factory(

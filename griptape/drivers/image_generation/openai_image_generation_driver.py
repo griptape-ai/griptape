@@ -31,23 +31,25 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
             a base64 encoded image in a JSON object.
     """
 
-    api_type: str = field(default=openai.api_type, kw_only=True)
-    api_version: Optional[str] = field(default=openai.api_version, kw_only=True)
-    base_url: str = field(default=None, kw_only=True)
-    api_key: Optional[str] = field(default=None, kw_only=True)
-    organization: Optional[str] = field(default=openai.organization, kw_only=True)
+    api_type: str = field(default=openai.api_type, kw_only=True, metadata={"serializable": True})
+    api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})
+    base_url: str = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
         )
     )
-    style: Optional[str] = field(default=None, kw_only=True)
-    quality: Literal["standard"] | Literal["hd"] = field(default="standard", kw_only=True)
+    style: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    quality: Literal["standard"] | Literal["hd"] = field(
+        default="standard", kw_only=True, metadata={"serializable": True}
+    )
     image_size: (
         Literal["256x256"] | Literal["512x512"] | Literal["1024x1024"] | Literal["1024x1792"] | Literal["1792x1024"]
-    ) = field(default="1024x1024", kw_only=True)
-    response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True)
+    ) = field(default="1024x1024", kw_only=True, metadata={"serializable": True})
+    response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True, metadata={"serializable": True})
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         prompt = ", ".join(prompts)

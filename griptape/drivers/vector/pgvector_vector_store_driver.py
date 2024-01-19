@@ -22,10 +22,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         table_name: Optionally specify the name of the table to used to store vectors.
     """
 
-    connection_string: Optional[str] = field(default=None, kw_only=True)
-    create_engine_params: dict = field(factory=dict, kw_only=True)
+    connection_string: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    create_engine_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     engine: Optional[Engine] = field(default=None, kw_only=True)
-    table_name: str = field(kw_only=True)
+    table_name: str = field(kw_only=True, metadata={"serializable": True})
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
     @connection_string.validator  # pyright: ignore

@@ -7,7 +7,7 @@ from griptape.memory.structure import BaseConversationMemory
 
 @define
 class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
-    file_path: str = field(default="griptape_memory.json", kw_only=True)
+    file_path: str = field(default="griptape_memory.json", kw_only=True, metadata={"serializable": True})
 
     def store(self, memory: BaseConversationMemory) -> None:
         with open(self.file_path, "w") as file:
