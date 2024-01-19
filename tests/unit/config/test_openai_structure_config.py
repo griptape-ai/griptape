@@ -1,12 +1,14 @@
+from pytest import fixture
 from griptape.config import OpenAiStructureConfig
 
 
 class TestOpenAiStructureConfig:
-    def test_to_dict(self):
-        openai_structure_config = OpenAiStructureConfig()
+    @fixture
+    def config(self):
+        return OpenAiStructureConfig()
 
-        print(openai_structure_config.to_json())
-        assert openai_structure_config.to_dict() == {
+    def test_to_dict(self, config):
+        assert config.to_dict() == {
             "type": "OpenAiStructureConfig",
             "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
@@ -67,10 +69,37 @@ class TestOpenAiStructureConfig:
             },
         }
 
-    def test_from_dict(self):
-        openai_structure_config = OpenAiStructureConfig()
+    def test_from_dict(self, config):
+        assert OpenAiStructureConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
 
+    def test_unchanged_merge_config(self, config):
         assert (
-            OpenAiStructureConfig.from_dict(openai_structure_config.to_dict()).to_dict()
-            == openai_structure_config.to_dict()
+            config.merge_config(
+                {
+                    "type": "OpenAiStructureConfig",
+                    "task_memory": {
+                        "extraction_engine": {
+                            "type": "StructureTaskMemoryExtractionEngineConfig",
+                            "csv": {
+                                "type": "StructureTaskMemoryExtractionEngineCsvConfig",
+                                "prompt_driver": {
+                                    "type": "OpenAiChatPromptDriver",
+                                    "model": "gpt-3.5-turbo",
+                                    "temperature": 0.1,
+                                    "max_tokens": None,
+                                    "stream": False,
+                                },
+                            },
+                        }
+                    },
+                }
+            ).to_dict()
+            == config.to_dict()
         )
+
+    def test_changed_merge_config(self, config):
+        config = config.merge_config(
+            {"task_memory": {"extraction_engine": {"csv": {"prompt_driver": {"stream": True}}}}}
+        )
+
+        assert config.task_memory.extraction_engine.csv.prompt_driver.stream is True
