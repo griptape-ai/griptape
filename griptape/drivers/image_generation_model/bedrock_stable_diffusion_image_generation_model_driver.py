@@ -115,7 +115,7 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         }
 
         if image:
-            request["init_image"] = image.value
+            request["init_image"] = image.base64
             request["width"] = image.width
             request["height"] = image.height
         else:
@@ -133,7 +133,7 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
                 raise ValueError("mask_source must be provided when mask is provided")
 
             request["mask_source"] = mask_source
-            request["mask_image"] = mask.value
+            request["mask_image"] = mask.base64
 
         if self.start_schedule:
             request["start_schedule"] = self.start_schedule
