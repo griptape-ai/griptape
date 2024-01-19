@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Union, get_args, get_origin
+from typing import Union, Literal, get_args, get_origin
 from collections.abc import Sequence
 
 import attrs
@@ -84,6 +84,9 @@ class BaseSchema(Schema):
                 optional = True
 
             origin, args, _ = cls._get_field_type_info(origin)
+        elif origin is Literal:
+            origin = type(args[0])
+            args = ()
 
         return origin, args, optional
 
