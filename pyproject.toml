@@ -52,7 +52,6 @@ pymongo = { version = "*", optional = true }
 marqo = { version = ">=1.1.0", optional = true }
 redis = { version = "^4.6.0", optional = true }
 opensearch-py = { version = "^2.3.1", optional = true }
-requests-aws4auth = { version = "1.2.3", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
 
@@ -75,7 +74,7 @@ drivers-vector-pinecone = ["pinecone-client"]
 drivers-vector-mongodb = ["pymongo"]
 drivers-vector-redis = ["redis"]
 drivers-vector-opensearch = ["opensearch-py"]
-drivers-vector-amazon-opensearch = ["opensearch-py", "boto3", "requests-aws4auth"]
+drivers-vector-amazon-opensearch = ["opensearch-py", "boto3"]
 drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
 
 drivers-embedding-amazon-bedrock = ["boto3"]
@@ -96,7 +95,6 @@ all = [
     "pymongo",
     "redis",
     "opensearch-py",
-    "requests-aws4auth",
     "pgvector",
     "psycopg2-binary",
 ]
