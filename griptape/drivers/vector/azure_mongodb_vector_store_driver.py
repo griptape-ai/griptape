@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @define
-class AzureMongoDbvCoreVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
+class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
     """A Vector Store Driver for CosmosDB with MongoDB vCore API."""
 
     def query(

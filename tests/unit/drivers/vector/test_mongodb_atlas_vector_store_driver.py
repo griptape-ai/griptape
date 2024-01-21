@@ -38,8 +38,8 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     def test_query(self, driver, monkeypatch):
         mock_query_result = [
-            BaseVectorStoreDriver.QueryResult("foo", [0.5, 0.5, 0.5], score=None, meta={}, namespace=None),
-            BaseVectorStoreDriver.QueryResult("foo", vector=[0.5, 0.5, 0.5], score=None, meta={}, namespace=None),
+            BaseVectorStoreDriver.QueryResult("foo", [0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
+            BaseVectorStoreDriver.QueryResult("foo", vector=[0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
         ]
 
         monkeypatch.setattr(MongoDbAtlasVectorStoreDriver, "query", lambda *args, **kwargs: mock_query_result)

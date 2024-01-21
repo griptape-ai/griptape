@@ -3,15 +3,15 @@ import mongomock
 from unittest.mock import patch
 from pymongo.errors import OperationFailure
 from griptape.artifacts import TextArtifact
-from griptape.drivers import MongoDbAtlasVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers import AzureMongoDbVectorStoreDriver, BaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestMongoDbAtlasVectorStoreDriver:
+class TestAzureMongoDbVectorStoreDriver:
     @pytest.fixture
     def driver(self, monkeypatch):
         embedding_driver = MockEmbeddingDriver()
-        return MongoDbAtlasVectorStoreDriver(
+        return AzureMongoDbVectorStoreDriver(
             embedding_driver=embedding_driver,
             connection_string="mongodb://mock_connection_string",
             database_name="mock_database_name",
@@ -42,7 +42,7 @@ class TestMongoDbAtlasVectorStoreDriver:
             BaseVectorStoreDriver.QueryResult("foo", vector=[0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
         ]
 
-        monkeypatch.setattr(MongoDbAtlasVectorStoreDriver, "query", lambda *args, **kwargs: mock_query_result)
+        monkeypatch.setattr(AzureMongoDbVectorStoreDriver, "query", lambda *args, **kwargs: mock_query_result)
 
         query_str = "some query string"
         results = driver.query(query_str, include_vectors=True)
