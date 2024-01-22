@@ -11,6 +11,7 @@ from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.mixins import ImageArtifactFileOutputMixin
+from griptape.utils.load_image_artifact_from_memory import load_image_artifact_from_memory
 
 
 @define
@@ -83,31 +84,19 @@ class OutpaintingImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         image_artifact_namespace = params["values"]["image_artifact_namespace"]
+        image_artifact_name = params["values"]["image_artifact_name"]
         mask_artifact_namespace = params["values"]["mask_artifact_namespace"]
+        mask_artifact_name = params["values"]["mask_artifact_name"]
         memory = self.find_input_memory(params["values"]["memory_name"])
 
-        if not memory:
+        if memory is None:
             return ErrorArtifact("memory not found")
 
-        image_artifacts = memory.load_artifacts(namespace=image_artifact_namespace)
-        if len(image_artifacts) == 0:
-            return ErrorArtifact("no image artifacts found")
-        elif len(image_artifacts) > 1:
-            return ErrorArtifact("multiple image artifacts found")
-        image_artifact = image_artifacts[0]
-
-        if not isinstance(image_artifact, ImageArtifact):
-            return ErrorArtifact("memory image artifact is not an ImageArtifact")
-
-        mask_artifacts = memory.load_artifacts(namespace=mask_artifact_namespace)
-        if len(mask_artifacts) == 0:
-            return ErrorArtifact("no mask artifacts found")
-        elif len(mask_artifacts) > 1:
-            return ErrorArtifact("multiple mask artifacts found")
-        mask_artifact = mask_artifacts[0]
-
-        if not isinstance(mask_artifact, ImageArtifact):
-            return ErrorArtifact("memory mask artifact is not an ImageArtifact")
+        try:
+            image_artifact = load_image_artifact_from_memory(memory, image_artifact_namespace, image_artifact_name)
+            mask_artifact = load_image_artifact_from_memory(memory, mask_artifact_namespace, mask_artifact_name)
+        except ValueError as e:
+            return ErrorArtifact(str(e))
 
         return self._generate_outpainting(prompts, negative_prompts, image_artifact, mask_artifact)
 

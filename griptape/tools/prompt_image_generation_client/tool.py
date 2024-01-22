@@ -39,7 +39,7 @@ class PromptImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
             ),
         }
     )
-    def text_to_image(self, params: dict[str, dict[str, list[str]]]) -> ImageArtifact | ErrorArtifact:
+    def generate_image(self, params: dict[str, dict[str, list[str]]]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
 

@@ -11,6 +11,7 @@ from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.mixins import ImageArtifactFileOutputMixin
+from griptape.utils.load_image_artifact_from_memory import load_image_artifact_from_memory
 
 
 @define
@@ -73,6 +74,7 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
                     ): list[str],
                     "memory_name": str,
                     "artifact_namespace": str,
+                    "artifact_name": str,
                 }
             ),
         }
@@ -81,20 +83,16 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
         prompts = params["values"]["prompts"]
         negative_prompts = params["values"]["negative_prompts"]
         artifact_namespace = params["values"]["artifact_namespace"]
+        artifact_name = params["values"]["artifact_name"]
         memory = self.find_input_memory(params["values"]["memory_name"])
 
-        if not memory:
+        if memory is None:
             return ErrorArtifact("memory not found")
 
-        image_artifacts = memory.load_artifacts(namespace=artifact_namespace)
-        if len(image_artifacts) == 0:
-            return ErrorArtifact("no image artifacts found in memory")
-        elif len(image_artifacts) > 1:
-            return ErrorArtifact("multiple image artifacts found in memory")
-        image_artifact = image_artifacts[0]
-
-        if not isinstance(image_artifact, ImageArtifact):
-            return ErrorArtifact("memory image artifact is not an ImageArtifact")
+        try:
+            image_artifact = load_image_artifact_from_memory(memory, artifact_namespace, artifact_name)
+        except ValueError as e:
+            return ErrorArtifact(str(e))
 
         return self._generate_variation(prompts, negative_prompts, image_artifact)
 
