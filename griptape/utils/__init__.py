@@ -13,7 +13,7 @@ from .hash import str_to_hash
 from .import_utils import import_optional_dependency
 from .stream import Stream
 from .constants import Constants as constants
-from .load_image_artifact_from_memory import load_image_artifact_from_memory
+from .load_artifact_from_memory import load_artifact_from_memory
 
 
 def minify_json(value: str) -> str:
@@ -36,5 +36,5 @@ __all__ = [
     "remove_null_values_in_dict_recursively",
     "Stream",
     "constants",
-    "load_image_artifact_from_memory",
+    "load_artifact_from_memory",
 ]

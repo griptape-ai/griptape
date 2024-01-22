@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from attrs import define, field
 from schema import Schema, Literal
@@ -11,7 +11,7 @@ from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.mixins import ImageArtifactFileOutputMixin
-from griptape.utils.load_image_artifact_from_memory import load_image_artifact_from_memory
+from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 
 @define
@@ -90,11 +90,11 @@ class VariationImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
             return ErrorArtifact("memory not found")
 
         try:
-            image_artifact = load_image_artifact_from_memory(memory, artifact_namespace, artifact_name)
+            image_artifact = load_artifact_from_memory(memory, artifact_namespace, artifact_name, ImageArtifact)
         except ValueError as e:
             return ErrorArtifact(str(e))
 
-        return self._generate_variation(prompts, negative_prompts, image_artifact)
+        return self._generate_variation(prompts, negative_prompts, cast(ImageArtifact, image_artifact))
 
     def _generate_variation(self, prompts: list[str], negative_prompts: list[str], image_artifact: ImageArtifact):
         output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts, image=image_artifact)

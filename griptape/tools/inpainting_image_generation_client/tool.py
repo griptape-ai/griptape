@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from attrs import define, field
 from schema import Schema, Literal
@@ -11,7 +11,7 @@ from griptape.loaders import ImageLoader
 from griptape.mixins import ImageArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.utils.load_image_artifact_from_memory import load_image_artifact_from_memory
+from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 
 @define
@@ -102,12 +102,18 @@ class InpaintingImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
             return ErrorArtifact("memory not found")
 
         try:
-            image_artifact = load_image_artifact_from_memory(memory, image_artifact_namespace, image_artifact_name)
-            mask_artifact = load_image_artifact_from_memory(memory, mask_artifact_namespace, mask_artifact_name)
+            image_artifact = load_artifact_from_memory(
+                memory, image_artifact_namespace, image_artifact_name, ImageArtifact
+            )
+            mask_artifact = load_artifact_from_memory(
+                memory, mask_artifact_namespace, mask_artifact_name, ImageArtifact
+            )
         except ValueError as e:
             return ErrorArtifact(str(e))
 
-        return self._generate_inpainting(prompts, negative_prompts, image_artifact, mask_artifact)
+        return self._generate_inpainting(
+            prompts, negative_prompts, cast(ImageArtifact, image_artifact), cast(ImageArtifact, mask_artifact)
+        )
 
     def _generate_inpainting(
         self,

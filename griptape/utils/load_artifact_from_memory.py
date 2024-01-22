@@ -1,8 +1,10 @@
-from griptape.artifacts import ImageArtifact
+from griptape.artifacts import BaseArtifact
 from griptape.memory import TaskMemory
 
 
-def load_image_artifact_from_memory(memory: TaskMemory, artifact_namespace: str, artifact_name: str) -> ImageArtifact:
+def load_artifact_from_memory(
+    memory: TaskMemory, artifact_namespace: str, artifact_name: str, artifact_type: type
+) -> BaseArtifact:
     if memory is None:
         raise ValueError("memory not found")
 
@@ -15,7 +17,7 @@ def load_image_artifact_from_memory(memory: TaskMemory, artifact_namespace: str,
     except IndexError:
         raise ValueError(f"artifact {artifact_name} not found in namespace {artifact_namespace}")
 
-    if not isinstance(artifact, ImageArtifact):
-        raise ValueError(f"{artifact.name} is not an ImageArtifact")
+    if not isinstance(artifact, artifact_type):
+        raise ValueError(f"{artifact.name} is not of type {artifact_type}")
 
     return artifact
