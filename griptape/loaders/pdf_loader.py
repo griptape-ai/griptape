@@ -16,10 +16,10 @@ class PdfLoader(TextLoader):
         kw_only=True,
     )
 
-    def load(self, stream: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:  # type: ignore
+    def load(self, stream: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:
         return self._load_pdf(stream, password)
 
-    def load_collection(  # type: ignore
+    def load_collection(
         self, streams: list[str | IO | Path], password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
         return execute_futures_dict(
