@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [0.22.3] - 2024-01-22
 ### Fixed
-- `ToolkitTask`'s user subtask prompt occassionally causing the Task to end prematurely.
+- `ToolkitTask`'s user subtask prompt occasionally causing the Task to end prematurely.
 
 ## [0.22.2] - 2024-01-18
 ### Fixed
