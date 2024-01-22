@@ -16,8 +16,8 @@ class PdfLoader(TextLoader):
         kw_only=True,
     )
 
-    def load(self, text: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:  # type: ignore
-        return self._load_pdf(text, password)
+    def load(self, stream: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:  # type: ignore
+        return self._load_pdf(stream, password)
 
     def load_collection(  # type: ignore
         self, streams: list[str | IO | Path], password: Optional[str] = None
