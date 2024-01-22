@@ -3,18 +3,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-## [0.22.3] - 2024-01-22
-### Fixed
-- `ToolkitTask`'s user subtask prompt occasionally causing the Task to end prematurely.
-
-## [0.22.2] - 2024-01-18
-### Fixed
-- `ToolkitTask`'s user subtask prompt occassionally causing a loop with Chain of Thought.
 
 ## Unreleased
 
 ### Added 
 - Image-to-image generation support for OpenAi Dall-E 2 model.
+- Image tools support loading artifacts from memory.
+
+## [0.22.3] - 2024-01-22
+
+### Fixed
+- `ToolkitTask`'s user subtask prompt occasionally causing the Task to end prematurely.
+
+## [0.22.2] - 2024-01-18
+
+### Fixed
+- `ToolkitTask`'s user subtask prompt occassionally causing a loop with Chain of Thought.
 
 ### Security
 - Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]
