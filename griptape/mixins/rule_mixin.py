@@ -17,7 +17,7 @@ class RuleMixin:
 
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
-    structure: Structure = field(default=None, kw_only=True)
+    structure: Optional[Structure] = field(default=None, kw_only=True)
 
     @rulesets.validator  # pyright: ignore
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:

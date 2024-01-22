@@ -37,7 +37,7 @@ class BaseTool(ActivityMixin, ABC):
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    output_memory: dict[str, Optional[list[TaskMemory]]] = field(default=None, kw_only=True)
+    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
