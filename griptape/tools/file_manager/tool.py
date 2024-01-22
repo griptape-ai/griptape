@@ -7,7 +7,7 @@ from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader
+from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader, ImageLoader
 from schema import Schema, Literal
 from typing import Optional, Any
 
@@ -36,6 +36,13 @@ class FileManager(BaseTool):
                 "json": TextLoader(),
                 "yaml": TextLoader(),
                 "xml": TextLoader(),
+                "png": ImageLoader(),
+                "jpg": ImageLoader(),
+                "jpeg": ImageLoader(),
+                "webp": ImageLoader(),
+                "gif": ImageLoader(),
+                "bmp": ImageLoader(),
+                "tiff": ImageLoader(),
             }
         ),
         kw_only=True,
