@@ -40,6 +40,9 @@ class FileManager(BaseTool):
                 "jpg": ImageLoader(),
                 "jpeg": ImageLoader(),
                 "webp": ImageLoader(),
+                "gif": ImageLoader(),
+                "bmp": ImageLoader(),
+                "tiff": ImageLoader(),
             }
         ),
         kw_only=True,
