@@ -101,8 +101,8 @@ class ActionSubtask(BaseTextInputTask):
             if self.action_name == "error":
                 self.output = ErrorArtifact(str(self.action_input))
             else:
-                if self._tool:
-                    if self.action_path:
+                if self._tool is not None:
+                    if self.action_path is not None:
                         response = self._tool.execute(getattr(self._tool, self.action_path), self)
                     else:
                         response = ErrorArtifact("action path not found")
@@ -184,6 +184,7 @@ class ActionSubtask(BaseTextInputTask):
                 data = action_matches[-1]
                 action_object: dict = json.loads(data, strict=False)
 
+                # validate(instance=action_object, schema=self.ACTION_SCHEMA.schema)
                 self.ACTION_SCHEMA.validate(action_object)
 
                 # Load action name; throw exception if the key is not present
