@@ -9,7 +9,7 @@ class TestCsvExtractionEngine:
         return CsvExtractionEngine(prompt_driver=MockPromptDriver())
 
     def test_extract(self, engine):
-        result = engine.extract("foo", ["test1"])
+        result = engine.extract("foo", column_names=["test1"])
 
         assert len(result.value) == 1
         assert result.value[0].value == {"test1": "mock output"}
