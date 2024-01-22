@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 from typing import IO, Optional
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from attr import define, field, Factory
 from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
@@ -16,10 +16,10 @@ class PdfLoader(TextLoader):
         kw_only=True,
     )
 
-    def load(self, stream: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:
-        return self._load_pdf(stream, password)
+    def load(self, text: str | IO | Path, password: Optional[str] = None) -> list[TextArtifact]:  # type: ignore
+        return self._load_pdf(text, password)
 
-    def load_collection(
+    def load_collection(  # type: ignore
         self, streams: list[str | IO | Path], password: Optional[str] = None
     ) -> dict[str, list[TextArtifact]]:
         return execute_futures_dict(
