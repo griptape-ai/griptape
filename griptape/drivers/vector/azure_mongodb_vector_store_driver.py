@@ -41,7 +41,7 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
                 "$search": {
                     "cosmosSearch": {
                         "vector": vector,
-                        "path": "vector",
+                        "path": self.vector_path,
                         "k": min(count * self.num_candidates_multiplier, self.MAX_NUM_CANDIDATES),
                     },
                     "returnStoredSource": True,
@@ -57,7 +57,7 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
         return [
             BaseVectorStoreDriver.QueryResult(
                 id=str(doc["_id"]),
-                vector=doc["vector"] if include_vectors else [],
+                vector=doc[self.vector_path] if include_vectors else [],
                 score=doc["similarityScore"],
                 meta=doc["document"]["meta"],
                 namespace=namespace,

@@ -17,7 +17,8 @@ class TestAzureMongoDbVectorStoreDriver:
             database_name="mock_database_name",
             collection_name="mock_collection_name",
             client=mongomock.MongoClient(),
-            index_name="mock_index_name",
+            index_name="vector",
+            vector_path="vector",
         )
 
     def test_upsert_vector(self, driver):
