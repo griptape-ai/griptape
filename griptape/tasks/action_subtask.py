@@ -9,7 +9,7 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
-from griptape.tasks import BaseTextInputTask, BaseTask, ToolkitTask
+from griptape.tasks import BaseTextInputTask, BaseTask
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
 
@@ -69,7 +69,7 @@ class ActionSubtask(BaseTextInputTask):
 
     @property
     def children(self) -> list[BaseTask]:
-        if isinstance(self.origin_task, ToolkitTask):
+        if isinstance(self.origin_task, ActionSubtaskOriginMixin):
             return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
