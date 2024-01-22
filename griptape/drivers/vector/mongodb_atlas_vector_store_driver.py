@@ -25,7 +25,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     connection_string: str = field(kw_only=True)
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
-    index_name: str = field(default="vector_index", kw_only=True)
+    index_name: str = field(kw_only=True)
     num_candidates_multiplier: int = field(
         default=10, kw_only=True
     )  # https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/#fields

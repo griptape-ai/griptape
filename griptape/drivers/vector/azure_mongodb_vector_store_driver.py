@@ -16,10 +16,10 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: int | None = None,
-        namespace: str | None = None,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
         include_vectors: bool = False,
-        offset: int | None = None,
+        offset: Optional[int] = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Queries the MongoDB collection for documents that match the provided query string.
