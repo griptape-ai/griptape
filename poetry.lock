@@ -4835,4 +4835,4 @@ drivers-vector-redis = ["redis"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b4c35b9ee7239f3e38299c78879c133252873ac4045756621ebd389a52a24053"
+content-hash = "2b24fdcff64b7b203ae31baf50231f5e12b1e7f780acf793319daa1482dc8b98"
