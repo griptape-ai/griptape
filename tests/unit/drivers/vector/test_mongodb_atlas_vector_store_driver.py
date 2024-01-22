@@ -17,6 +17,7 @@ class TestMongoDbAtlasVectorStoreDriver:
             database_name="mock_database_name",
             collection_name="mock_collection_name",
             client=mongomock.MongoClient(),
+            index_name="mock_index_name",
         )
 
     def test_upsert_vector(self, driver):
