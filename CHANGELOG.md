@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added 
 - Image-to-image generation support for OpenAi Dall-E 2 model.
 
+### Security
+- Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]
+
 ## [0.22.1] - 2024-01-12
 
 ### Fixed
