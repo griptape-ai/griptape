@@ -65,7 +65,20 @@ class ActionSubtask(PromptTask):
         self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
-        self.structure.publish_event(StartActionSubtaskEvent.from_task(self))
+        self.structure.publish_event(
+            StartActionSubtaskEvent(
+                task_id=self.id,
+                task_parent_ids=self.parent_ids,
+                task_child_ids=self.child_ids,
+                task_input=self.input,
+                task_output=self.output,
+                subtask_parent_task_id=self.parent_task_id,
+                subtask_thought=self.thought,
+                subtask_action_name=self.action_name,
+                subtask_action_path=self.action_path,
+                subtask_action_input=self.action_input,
+            )
+        )
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
@@ -89,7 +102,20 @@ class ActionSubtask(PromptTask):
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
 
-        self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
+        self.structure.publish_event(
+            FinishActionSubtaskEvent(
+                task_id=self.id,
+                task_parent_ids=self.parent_ids,
+                task_child_ids=self.child_ids,
+                task_input=self.input,
+                task_output=self.output,
+                subtask_parent_task_id=self.parent_task_id,
+                subtask_thought=self.thought,
+                subtask_action_name=self.action_name,
+                subtask_action_path=self.action_path,
+                subtask_action_input=self.action_input,
+            )
+        )
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
 
     def action_to_json(self) -> str:

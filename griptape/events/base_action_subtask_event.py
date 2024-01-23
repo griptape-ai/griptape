@@ -6,7 +6,7 @@ from .base_task_event import BaseTaskEvent
 
 
 if TYPE_CHECKING:
-    from griptape.tasks import ActionSubtask
+    from griptape.tasks import BaseTask, ActionSubtask
 
 
 @define
@@ -18,7 +18,9 @@ class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
     subtask_action_input: Optional[dict] = field(kw_only=True, metadata={"serializable": True})
 
     @classmethod
-    def from_task(cls, task: ActionSubtask) -> BaseActionSubtaskEvent:
+    def from_task(cls, task: BaseTask) -> BaseActionSubtaskEvent:
+        if not isinstance(task, ActionSubtask):
+            raise ValueError("Event must be of instance ActionSubtask.")
         return cls(
             task_id=task.id,
             task_parent_ids=task.parent_ids,
