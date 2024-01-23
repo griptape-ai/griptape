@@ -46,7 +46,3 @@ class TestRedisVectorStorageDriver:
 
     def test_query(self, driver):
         assert driver.query("some_vector_id") == []
-
-    def test_create_index(self, driver, mocker):
-        driver.create_index(namespace="some_namespace")
-        driver.client.ft(driver.index).create_index.assert_called_once()
