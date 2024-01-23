@@ -75,11 +75,27 @@ class BaseTask(ABC):
 
     def before_run(self) -> None:
         if self.structure:
-            self.structure.publish_event(StartTaskEvent.from_task(self))
+            self.structure.publish_event(
+                StartTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                )
+            )
 
     def after_run(self) -> None:
         if self.structure:
-            self.structure.publish_event(FinishTaskEvent.from_task(self))
+            self.structure.publish_event(
+                FinishTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                )
+            )
 
     def execute(self) -> Optional[BaseArtifact]:
         try:
