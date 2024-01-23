@@ -111,7 +111,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
 
         files = {"file": image.value}
         upload_response = requests.post(pre_signed_url, data=fields, files=files)
-        if upload_response.status_code >= 400:
+        if not upload_response.ok:
             raise Exception(f"failed to upload init image: {upload_response.text}")
 
         return init_image_id
@@ -157,7 +157,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         headers = {"Authorization": f"Bearer {self.api_key}"}
 
         response = self.requests_session.request(url=url, method=method, json=request, headers=headers)
-        if response.status_code >= 400:
+        if not response.ok:
             raise Exception(f"failed to make API request: {response.text}")
 
         return response.json()
