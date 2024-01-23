@@ -136,7 +136,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             metadata = getattr(document, "metadata", None)
             namespace = document.id.split(":")[0] if ":" in document.id else None
             vector_id = document.id.split(":")[1] if ":" in document.id else document.id
-            vector_float_list = json.loads(document["vec_string"])
+            vector_float_list = json.loads(document["vec_string"]) if include_vectors else None
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
                     id=vector_id,
