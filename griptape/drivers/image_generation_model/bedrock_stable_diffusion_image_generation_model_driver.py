@@ -106,15 +106,18 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         text_prompts = [{"text": prompt, "weight": 1.0} for prompt in prompts]
         text_prompts += [{"text": negative_prompt, "weight": -1.0} for negative_prompt in negative_prompts]
 
-        request = {
-            "text_prompts": text_prompts,
-            "cfg_scale": self.cfg_scale,
-            "style_preset": self.style_preset,
-            "clip_guidance_preset": self.clip_guidance_preset,
-            "sampler": self.sampler,
-        }
+        request = {"text_prompts": text_prompts, "cfg_scale": self.cfg_scale}
 
-        if image:
+        if self.style_preset is not None:
+            request["style_preset"] = self.style_preset
+
+        if self.clip_guidance_preset is not None:
+            request["clip_guidance_preset"] = self.clip_guidance_preset
+
+        if self.sampler is not None:
+            request["sampler"] = self.sampler
+
+        if image is not None:
             request["init_image"] = image.base64
             request["width"] = image.width
             request["height"] = image.height
@@ -122,20 +125,20 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
             request["width"] = width
             request["height"] = height
 
-        if self.steps:
+        if self.steps is not None:
             request["steps"] = self.steps
 
-        if seed:
+        if seed is not None:
             request["seed"] = seed
 
-        if mask:
+        if mask is not None:
             if not mask_source:
                 raise ValueError("mask_source must be provided when mask is provided")
 
             request["mask_source"] = mask_source
             request["mask_image"] = mask.base64
 
-        if self.start_schedule:
+        if self.start_schedule is not None:
             request["start_schedule"] = self.start_schedule
 
         return request

@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AzureMongoDbVectorStoreDriver` for using CosmosDB with MongoDB vCore API.
 - `vector_path` field on `MongoDbAtlasVectorStoreDriver`
 
+### Fixed 
+- `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.
+
 ### Changed
 - **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field
 - **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`
