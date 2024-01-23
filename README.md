@@ -148,7 +148,7 @@ We welcome and encourage pull requests. To streamline the process, please follow
 Install dev dependencies with Poetry:
 
 ```shell
-poetry install --with dev
+poetry install --all-extras --with dev --with test
 ```
 
 Configure pre-commit to ensure that your code is formatted correctly and passes all checks:

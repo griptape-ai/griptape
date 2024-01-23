@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 from typing import IO, Optional
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from attr import define, field, Factory
 from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
