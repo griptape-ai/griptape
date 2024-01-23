@@ -17,6 +17,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         connection_string: The connection string for the MongoDb Atlas cluster.
         database_name: The name of the database to use.
         collection_name: The name of the collection to use.
+        index_name: The name of the index to use.
+        vector_path: The path to the vector field in the collection.
         client: An optional MongoDb client to use. Defaults to a new client using the connection string.
     """
 
@@ -25,7 +27,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     connection_string: str = field(kw_only=True)
     database_name: str = field(kw_only=True)
     collection_name: str = field(kw_only=True)
-    index_name: str = field(default="vector_index", kw_only=True)
+    index_name: str = field(kw_only=True)
+    vector_path: str = field(kw_only=True)
     num_candidates_multiplier: int = field(
         default=10, kw_only=True
     )  # https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/#fields
@@ -54,11 +57,11 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         collection = self.get_collection()
 
         if vector_id is None:
-            result = collection.insert_one({"vector": vector, "namespace": namespace, "meta": meta})
+            result = collection.insert_one({self.vector_path: vector, "namespace": namespace, "meta": meta})
             vector_id = str(result.inserted_id)
         else:
             collection.replace_one(
-                {"_id": vector_id}, {"vector": vector, "namespace": namespace, "meta": meta}, upsert=True
+                {"_id": vector_id}, {self.vector_path: vector, "namespace": namespace, "meta": meta}, upsert=True
             )
         return vector_id
 
@@ -78,7 +81,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             return doc
         else:
             return BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
+                id=str(doc["_id"]), vector=doc[self.vector_path], namespace=doc["namespace"], meta=doc["meta"]
             )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -94,7 +97,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]), vector=doc["vector"], namespace=doc["namespace"], meta=doc["meta"]
+                id=str(doc["_id"]), vector=doc[self.vector_path], namespace=doc["namespace"], meta=doc["meta"]
             )
             for doc in cursor
         ]
@@ -124,13 +127,21 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             {
                 "$vectorSearch": {
                     "index": self.index_name,
-                    "path": "vector",
+                    "path": self.vector_path,
                     "queryVector": vector,
                     "numCandidates": min(count * self.num_candidates_multiplier, self.MAX_NUM_CANDIDATES),
                     "limit": count,
                 }
             },
-            {"$project": {"_id": 1, "vector": 1, "namespace": 1, "meta": 1, "score": {"$meta": "vectorSearchScore"}}},
+            {
+                "$project": {
+                    "_id": 1,
+                    self.vector_path: 1,
+                    "namespace": 1,
+                    "meta": 1,
+                    "score": {"$meta": "vectorSearchScore"},
+                }
+            },
         ]
 
         if namespace:
@@ -139,7 +150,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         results = [
             BaseVectorStoreDriver.QueryResult(
                 id=str(doc["_id"]),
-                vector=doc["vector"] if include_vectors else [],
+                vector=doc[self.vector_path] if include_vectors else [],
                 score=doc["score"],
                 meta=doc["meta"],
                 namespace=namespace,
