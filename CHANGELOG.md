@@ -10,14 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Image-to-image generation support for OpenAi Dall-E 2 model.
 - Image tools support loading artifacts from memory.
 - `AzureMongoDbVectorStoreDriver` for using CosmosDB with MongoDB vCore API.
-- `vector_path` field on `MongoDbAtlasVectorStoreDriver`
+- `vector_path` field on `MongoDbAtlasVectorStoreDriver`.
+- `LeonardoImageGenerationDriver` supports image to image generation.
 
 ### Fixed 
 - `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.
 
 ### Changed
-- **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field
-- **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`
+- **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field.
+- **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`.
 
 ## [0.22.3] - 2024-01-22
 
