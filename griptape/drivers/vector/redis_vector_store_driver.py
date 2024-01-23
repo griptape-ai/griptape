@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 import logging
 import numpy as np
-from griptape.utils import import_optional_dependency
+from griptape.utils import import_optional_dependency, str_to_hash
 from typing import Optional, List, TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.drivers import BaseVectorStoreDriver
@@ -57,7 +57,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         Metadata associated with the vector can also be provided.
         """
-        vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
+        vector_id = vector_id if vector_id else str_to_hash(str(vector))
         key = self._generate_key(vector_id, namespace)
         bytes_vector = json.dumps(vector).encode("utf-8")
 
@@ -92,10 +92,21 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         pattern = f"{namespace}:*" if namespace else "*"
         keys = self.client.keys(pattern)
 
-        return [self.load_entry(key.decode("utf-8"), namespace=namespace) for key in keys]
+        entries = []
+        for key in keys:
+            entry = self.load_entry(key.decode("utf-8"), namespace)
+            if entry:
+                entries.append(entry)
+
+        return entries
 
     def query(
-        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, **kwargs
+        self,
+        query: str,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on Redis to find vectors similar to the provided input vector.
 
@@ -136,34 +147,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
                 )
             )
         return query_results
-
-    def create_index(self, namespace: Optional[str] = None, vector_dimension: Optional[int] = None) -> None:
-        """Creates a new index in Redis with the specified properties.
-
-        If an index with the given name already exists, a warning is logged and the method does not proceed.
-        The method expects the dimension of the vectors (i.e., vector_dimension) that will be stored in this index.
-        Optionally, a namespace can be provided which will determine the prefix for document keys.
-        The index is constructed with a TagField named "tag" and a VectorField that utilizes the cosine distance metric on FLOAT32 type vectors.
-        """
-        TagField = import_optional_dependency("redis.commands.search.field").TagField
-        VectorField = import_optional_dependency("redis.commands.search.field").VectorField
-        IndexDefinition = import_optional_dependency("redis.commands.search.indexDefinition").IndexDefinition
-        IndexType = import_optional_dependency("redis.commands.search.indexDefinition").IndexType
-
-        try:
-            self.client.ft(self.index).info()
-            logging.warning("Index already exists!")
-        except:
-            schema = (
-                TagField("tag"),
-                VectorField(
-                    "vector", "FLAT", {"TYPE": "FLOAT32", "DIM": vector_dimension, "DISTANCE_METRIC": "COSINE"}
-                ),
-            )
-
-            doc_prefix = self._get_doc_prefix(namespace)
-            definition = IndexDefinition(prefix=[doc_prefix], index_type=IndexType.HASH)
-            self.client.ft(self.index).create_index(fields=schema, definition=definition)
 
     def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
         """Generates a Redis key using the provided vector ID and optionally a namespace."""
