@@ -187,15 +187,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             for r in results["hits"]
         ]
 
-    def create_index(self, name: str, **kwargs) -> dict[str, Any]:
-        """Create a new index in the Marqo client.
-
-        Args:
-            name: The name of the new index.
-        """
-
-        return self.mq.create_index(name, settings_dict=kwargs)
-
     def delete_index(self, name: str) -> dict[str, Any]:
         """Delete an index in the Marqo client.
 
