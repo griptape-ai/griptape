@@ -1,8 +1,23 @@
+import os
 from pytest import fixture
 from griptape.config import OpenAiStructureConfig
 
 
 class TestOpenAiStructureConfig:
+    MEMORY_FILE_PATH = "test_memory.json"
+
+    @fixture(autouse=True)
+    def run_before_and_after_tests(self):
+        self.__delete_file(self.MEMORY_FILE_PATH)
+
+        yield
+
+        self.__delete_file(self.MEMORY_FILE_PATH)
+
+    @fixture(autouse=True)
+    def mock_openai(self, mocker):
+        return mocker.patch("openai.OpenAI")
+
     @fixture
     def config(self):
         return OpenAiStructureConfig()
@@ -12,25 +27,59 @@ class TestOpenAiStructureConfig:
             "type": "OpenAiStructureConfig",
             "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
+                "api_key": None,
+                "base_url": None,
                 "model": "gpt-4",
+                "organization": None,
+                "response_format": None,
+                "seed": None,
                 "temperature": 0.1,
                 "max_tokens": None,
                 "stream": False,
+                "user": "",
+            },
+            "conversation_memory_driver": {
+                "file_path": "griptape_memory.json",
+                "type": "LocalConversationMemoryDriver",
+            },
+            "image_generation_driver": {
+                "api_key": None,
+                "api_version": None,
+                "base_url": None,
+                "image_size": "512x512",
+                "model": "dall-e-2",
+                "organization": None,
+                "quality": "standard",
+                "response_format": "b64_json",
+                "style": None,
+                "type": "OpenAiImageGenerationDriver",
             },
             "task_memory": {
                 "type": "StructureTaskMemoryConfig",
                 "query_engine": {
                     "type": "StructureTaskMemoryQueryEngineConfig",
                     "prompt_driver": {
+                        "api_key": None,
+                        "base_url": None,
                         "type": "OpenAiChatPromptDriver",
                         "model": "gpt-3.5-turbo",
+                        "organization": None,
+                        "response_format": None,
+                        "seed": None,
                         "temperature": 0.1,
                         "max_tokens": None,
                         "stream": False,
+                        "user": "",
                     },
                     "vector_store_driver": {
                         "type": "LocalVectorStoreDriver",
-                        "embedding_driver": {"type": "OpenAiEmbeddingDriver", "model": "text-embedding-ada-002"},
+                        "embedding_driver": {
+                            "type": "OpenAiEmbeddingDriver",
+                            "api_key": None,
+                            "base_url": None,
+                            "organization": None,
+                            "model": "text-embedding-ada-002",
+                        },
                     },
                 },
                 "extraction_engine": {
@@ -39,20 +88,32 @@ class TestOpenAiStructureConfig:
                         "type": "StructureTaskMemoryExtractionEngineCsvConfig",
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
+                            "api_key": None,
+                            "base_url": None,
                             "model": "gpt-3.5-turbo",
+                            "organization": None,
+                            "response_format": None,
+                            "seed": None,
                             "temperature": 0.1,
                             "max_tokens": None,
                             "stream": False,
+                            "user": "",
                         },
                     },
                     "json": {
                         "type": "StructureTaskMemoryExtractionEngineJsonConfig",
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
+                            "api_key": None,
+                            "base_url": None,
                             "model": "gpt-3.5-turbo",
+                            "organization": None,
+                            "response_format": None,
+                            "seed": None,
                             "temperature": 0.1,
                             "max_tokens": None,
                             "stream": False,
+                            "user": "",
                         },
                     },
                 },
@@ -60,10 +121,16 @@ class TestOpenAiStructureConfig:
                     "type": "StructureTaskMemorySummaryEngineConfig",
                     "prompt_driver": {
                         "type": "OpenAiChatPromptDriver",
+                        "api_key": None,
+                        "base_url": None,
                         "model": "gpt-3.5-turbo",
+                        "organization": None,
+                        "response_format": None,
+                        "seed": None,
                         "temperature": 0.1,
                         "max_tokens": None,
                         "stream": False,
+                        "user": "",
                     },
                 },
             },
@@ -108,3 +175,9 @@ class TestOpenAiStructureConfig:
         config.task_memory.extraction_engine.csv.prompt_driver.stream = True
 
         assert config.task_memory.extraction_engine.csv.prompt_driver.stream is True
+
+    def __delete_file(self, file_path):
+        try:
+            os.remove(file_path)
+        except FileNotFoundError:
+            pass

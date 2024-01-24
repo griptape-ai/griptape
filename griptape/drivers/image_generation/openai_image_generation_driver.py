@@ -17,7 +17,6 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
 
     Attributes:
         model: OpenAI model, for example 'dall-e-2' or 'dall-e-3'.
-        api_type: OpenAI API type, for example 'open_ai' or 'azure'.
         api_version: API version.
         base_url: API URL.
         api_key: OpenAI API key.
@@ -31,9 +30,8 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
             a base64 encoded image in a JSON object.
     """
 
-    api_type: str = field(default=openai.api_type, kw_only=True, metadata={"serializable": True})
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})
-    base_url: str = field(default=None, kw_only=True, metadata={"serializable": True})
+    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Union, get_args, get_origin
+from typing import Union, get_args, get_origin, Literal
 from collections.abc import Sequence
 
 import attrs
