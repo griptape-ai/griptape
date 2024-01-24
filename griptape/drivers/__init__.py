@@ -21,6 +21,7 @@ from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
 from .embedding.base_multi_model_embedding_driver import BaseMultiModelEmbeddingDriver
 from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
 from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
+from .embedding.amazon_bedrock_cohere_embedding_driver import AmazonBedrockCohereEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
 
 from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
@@ -86,6 +87,7 @@ __all__ = [
     "BaseMultiModelEmbeddingDriver",
     "AmazonSageMakerEmbeddingDriver",
     "AmazonBedrockTitanEmbeddingDriver",
+    "AmazonBedrockCohereEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
     "BaseEmbeddingModelDriver",
     "SageMakerHuggingFaceEmbeddingModelDriver",
