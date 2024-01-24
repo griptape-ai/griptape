@@ -8,8 +8,6 @@ from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
     BedrockTitanImageGenerationModelDriver,
     BaseImageGenerationDriver,
-    BaseConversationMemoryDriver,
-    LocalConversationMemoryDriver,
 )
 from griptape.config import (
     BaseStructureConfig,
@@ -42,9 +40,6 @@ class AmazonBedrockStructureConfig(BaseStructureConfig):
         ),
         kw_only=True,
         metadata={"serializable": True},
-    )
-    conversation_memory_driver: BaseConversationMemoryDriver = field(
-        default=Factory(lambda: LocalConversationMemoryDriver()), kw_only=True, metadata={"serializable": True}
     )
     task_memory: StructureTaskMemoryConfig = field(
         default=Factory(

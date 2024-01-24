@@ -6,8 +6,6 @@ from griptape.drivers import (
     OpenAiEmbeddingDriver,
     BaseImageGenerationDriver,
     OpenAiImageGenerationDriver,
-    BaseConversationMemoryDriver,
-    LocalConversationMemoryDriver,
 )
 from griptape.config import (
     BaseStructureConfig,
@@ -31,9 +29,6 @@ class OpenAiStructureConfig(BaseStructureConfig):
         default=Factory(lambda: OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")),
         kw_only=True,
         metadata={"serializable": True},
-    )
-    conversation_memory_driver: BaseConversationMemoryDriver = field(
-        default=Factory(lambda: LocalConversationMemoryDriver()), kw_only=True, metadata={"serializable": True}
     )
     task_memory: StructureTaskMemoryConfig = field(
         default=Factory(

@@ -4,16 +4,6 @@ from griptape.config import OpenAiStructureConfig
 
 
 class TestOpenAiStructureConfig:
-    MEMORY_FILE_PATH = "test_memory.json"
-
-    @fixture(autouse=True)
-    def run_before_and_after_tests(self):
-        self.__delete_file(self.MEMORY_FILE_PATH)
-
-        yield
-
-        self.__delete_file(self.MEMORY_FILE_PATH)
-
     @fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("openai.OpenAI")
@@ -38,10 +28,7 @@ class TestOpenAiStructureConfig:
                 "stream": False,
                 "user": "",
             },
-            "conversation_memory_driver": {
-                "file_path": "griptape_memory.json",
-                "type": "LocalConversationMemoryDriver",
-            },
+            "conversation_memory_driver": None,
             "image_generation_driver": {
                 "api_key": None,
                 "api_version": None,
@@ -175,9 +162,3 @@ class TestOpenAiStructureConfig:
         config.task_memory.extraction_engine.csv.prompt_driver.stream = True
 
         assert config.task_memory.extraction_engine.csv.prompt_driver.stream is True
-
-    def __delete_file(self, file_path):
-        try:
-            os.remove(file_path)
-        except FileNotFoundError:
-            pass

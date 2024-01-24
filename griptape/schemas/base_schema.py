@@ -54,18 +54,18 @@ class BaseSchema(Schema):
 
         if attrs.has(field_class):
             if ABC in field_class.__bases__:
-                return fields.Nested(PolymorphicSchema(inner_class=field_class))
+                return fields.Nested(PolymorphicSchema(inner_class=field_class), allow_none=optional)
             else:
-                return fields.Nested(cls.from_attrs_cls(field_type))
+                return fields.Nested(cls.from_attrs_cls(field_type), allow_none=optional)
         elif cls.is_list_sequence(field_class):
             if args:
-                return fields.List(cls_or_instance=cls._get_field_for_type(args[0]))
+                return fields.List(cls_or_instance=cls._get_field_for_type(args[0]), allow_none=optional)
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
         else:
             FieldClass = cls.DATACLASS_TYPE_MAPPING[field_class]
 
-            return FieldClass(**{"allow_none": optional})
+            return FieldClass(allow_none=optional)
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
