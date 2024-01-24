@@ -64,7 +64,7 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
 
         request = {
             "taskType": "IMAGE_VARIATION",
-            "imageVariationParams": {"text": prompt, "images": [image.value]},
+            "imageVariationParams": {"text": prompt, "images": [image.base64]},
             "imageGenerationConfig": {
                 "numberOfImages": 1,
                 "quality": self.quality,
@@ -94,7 +94,7 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
 
         request = {
             "taskType": "INPAINTING",
-            "inPaintingParams": {"text": prompt, "image": image.value, "maskImage": mask.value},
+            "inPaintingParams": {"text": prompt, "image": image.base64, "maskImage": mask.base64},
         }
 
         if negative_prompts:
@@ -116,8 +116,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
             "taskType": "OUTPAINTING",
             "outPaintingParams": {
                 "text": prompt,
-                "image": image.value,
-                "maskImage": mask.value,
+                "image": image.base64,
+                "maskImage": mask.base64,
                 "outPaintingMode": self.outpainting_mode,
             },
         }

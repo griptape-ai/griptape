@@ -136,7 +136,7 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
                 raise ValueError("mask_source must be provided when mask is provided")
 
             request["mask_source"] = mask_source
-            request["mask_image"] = mask.value
+            request["mask_image"] = mask.base64
 
         if self.start_schedule is not None:
             request["start_schedule"] = self.start_schedule
