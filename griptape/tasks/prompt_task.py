@@ -17,7 +17,7 @@ class PromptTask(BaseTextInputTask):
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
     )
 
-    output: BaseArtifact = field(default=None, init=False)
+    output: Optional[BaseArtifact] = field(default=None, init=False)
 
     @property
     def prompt_stack(self) -> PromptStack:
