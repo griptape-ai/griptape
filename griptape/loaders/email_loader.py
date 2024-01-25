@@ -60,7 +60,7 @@ class EmailLoader(BaseLoader):
                 if key and search_criteria:
                     _typ, [message_numbers] = client.search(None, key, f'"{search_criteria}"')
                     messages_count = self._count_messages(message_numbers)
-                elif len(mailbox) > 1 and len(mailbox[1]) > 0 and mailbox[1][0] is not None:
+                elif len(mailbox) > 1 and mailbox[1] and mailbox[1][0] is not None:
                     messages_count = int(mailbox[1][0])
                 else:
                     raise Exception("unable to parse number of messages")
@@ -69,7 +69,7 @@ class EmailLoader(BaseLoader):
                 for i in range(messages_count, top_n, -1):
                     result, data = client.fetch(str(i), "(RFC822)")
 
-                    if data is None or len(data) == 0 or data[0] is None:
+                    if data is None or not data or data[0] is None:
                         continue
 
                     message = mailparser.parse_from_bytes(data[0][1])
