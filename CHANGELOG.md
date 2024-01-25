@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 
 - `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.
+- `BedrockStableDiffusionImageGenerationModelDriver` correctly handles the CONTENT_FILTERED response case.
 
 ### Changed
 - **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field.
