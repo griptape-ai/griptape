@@ -24,7 +24,7 @@ class WebScraper(BaseTool):
         try:
             page = WebLoader().extract_page(url, self.include_links)
 
-            return ListArtifact(TextLoader().text_to_artifacts(page["text"]))
+            return ListArtifact(TextLoader().load(page["text"]))
         except Exception as e:
             return ErrorArtifact("Error getting page content: " + str(e))
 
