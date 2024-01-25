@@ -1,15 +1,19 @@
 from __future__ import annotations
+
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
+
 from attr import define, field, Factory
+
 from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
     from griptape.structures import Structure
+    from griptape.memory.meta import BaseMetaEntry
 
 
 @define
@@ -23,13 +27,15 @@ class BaseTask(ABC):
     state: State = field(default=State.PENDING, kw_only=True)
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
+    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
+    context: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @property
     @abstractmethod
-    def input(self) -> BaseArtifact:
+    def input(self) -> BaseArtifact | tuple[BaseArtifact, ...]:
         ...
 
     @property
@@ -39,6 +45,16 @@ class BaseTask(ABC):
     @property
     def children(self) -> list[BaseTask]:
         return [self.structure.find_task(child_id) for child_id in self.child_ids]
+
+    @property
+    def meta_memories(self) -> list[BaseMetaEntry]:
+        if self.structure and self.structure.meta_memory:
+            if self.max_meta_memory_entries:
+                return self.structure.meta_memory.entries[: self.max_meta_memory_entries]
+            else:
+                return self.structure.meta_memory.entries
+        else:
+            return []
 
     def __str__(self) -> str:
         return str(self.output.value)
@@ -59,11 +75,27 @@ class BaseTask(ABC):
 
     def before_run(self) -> None:
         if self.structure:
-            self.structure.publish_event(StartTaskEvent.from_task(self))
+            self.structure.publish_event(
+                StartTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                )
+            )
 
     def after_run(self) -> None:
         if self.structure:
-            self.structure.publish_event(FinishTaskEvent.from_task(self))
+            self.structure.publish_event(
+                FinishTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                )
+            )
 
     def execute(self) -> Optional[BaseArtifact]:
         try:
@@ -95,3 +127,14 @@ class BaseTask(ABC):
     @abstractmethod
     def run(self) -> BaseArtifact:
         ...
+
+    @property
+    def full_context(self) -> dict[str, Any]:
+        if self.structure:
+            structure_context = self.structure.context(self)
+
+            structure_context.update(self.context)
+
+            return structure_context
+        else:
+            return {}

@@ -1,7 +1,7 @@
 import pytest
 from griptape.memory.structure import ConversationMemory
-from griptape.memory import ToolMemory
-from griptape.memory.tool.storage import TextArtifactStorage
+from griptape.memory import TaskMemory
+from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -22,7 +22,7 @@ class TestAgent:
         assert isinstance(agent.task, PromptTask)
         assert agent.rulesets[0].name == "TestRuleset"
         assert agent.rulesets[0].rules[0].value == "test"
-        assert isinstance(agent.memory, ConversationMemory)
+        assert isinstance(agent.conversation_memory, ConversationMemory)
         assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
 
     def test_rulesets(self):
@@ -53,49 +53,49 @@ class TestAgent:
             agent = Agent()
             agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_tool_memory(self):
+    def test_with_default_task_memory(self):
         agent = Agent(tools=[MockTool()])
 
-        assert isinstance(agent.tool_memory, ToolMemory)
+        assert isinstance(agent.task_memory, TaskMemory)
         assert agent.tools[0].input_memory is not None
-        assert agent.tools[0].input_memory[0] == agent.tool_memory
+        assert agent.tools[0].input_memory[0] == agent.task_memory
         assert agent.tools[0].output_memory is not None
-        assert agent.tools[0].output_memory["test"][0] == agent.tool_memory
+        assert agent.tools[0].output_memory["test"][0] == agent.task_memory
 
-    def test_with_default_tool_memory_and_empty_tool_output_memory(self):
+    def test_with_default_task_memory_and_empty_tool_output_memory(self):
         agent = Agent(tools=[MockTool(output_memory={})])
 
-        assert isinstance(agent.tool_memory, ToolMemory)
-        assert agent.tools[0].input_memory[0] == agent.tool_memory
+        assert isinstance(agent.task_memory, TaskMemory)
+        assert agent.tools[0].input_memory[0] == agent.task_memory
         assert agent.tools[0].output_memory == {}
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
         agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
 
-        artifact_storage = list(agent.tool_memory.artifact_storages.values())[0]
+        artifact_storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(artifact_storage, TextArtifactStorage)
         memory_embedding_driver = artifact_storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
-    def test_without_default_tool_memory(self):
-        agent = Agent(tool_memory=None, tools=[MockTool()])
+    def test_without_default_task_memory(self):
+        agent = Agent(task_memory=None, tools=[MockTool()])
 
         assert agent.tools[0].input_memory is None
         assert agent.tools[0].output_memory is None
 
     def test_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
-        assert agent.memory is not None
-        assert len(agent.memory.runs) == 0
+        assert agent.conversation_memory is not None
+        assert len(agent.conversation_memory.runs) == 0
 
         agent.run()
         agent.run()
         agent.run()
 
-        assert len(agent.memory.runs) == 3
+        assert len(agent.conversation_memory.runs) == 3
 
     def test_tasks_initialization(self):
         with pytest.raises(ValueError):
@@ -151,7 +151,7 @@ class TestAgent:
             assert True
 
     def test_prompt_stack_without_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=None)
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None)
 
         task1 = PromptTask("test")
 
@@ -168,7 +168,7 @@ class TestAgent:
         assert len(task1.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         task1 = PromptTask("test")
 
@@ -221,12 +221,12 @@ class TestAgent:
 
         assert context["structure"] == agent
 
-    def test_tool_memory_defaults(self):
+    def test_task_memory_defaults(self):
         prompt_driver = MockPromptDriver()
         embedding_driver = MockEmbeddingDriver()
         agent = Agent(prompt_driver=prompt_driver, embedding_driver=embedding_driver)
 
-        storage = list(agent.tool_memory.artifact_storages.values())[0]
+        storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
         assert storage.query_engine.prompt_driver == prompt_driver

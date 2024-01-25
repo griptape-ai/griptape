@@ -28,7 +28,7 @@ class SqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
+    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.begin() as con:

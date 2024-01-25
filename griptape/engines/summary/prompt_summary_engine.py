@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, cast
 from attr import define, Factory, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
@@ -27,7 +27,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         kw_only=True,
     )
 
-    @max_token_multiplier.validator
+    @max_token_multiplier.validator  # pyright: ignore
     def validate_allowlist(self, _, max_token_multiplier: int) -> None:
         if max_token_multiplier > 1:
             raise ValueError("has to be less than or equal to 1")
@@ -45,11 +45,11 @@ class PromptSummaryEngine(BaseSummaryEngine):
             - self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier
         )
 
-    def summarize_artifacts(self, artifacts: ListArtifact, rulesets: Optional[Ruleset] = None) -> TextArtifact:
-        return self.summarize_artifacts_rec(artifacts.value, None, rulesets=rulesets)
+    def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
+        return self.summarize_artifacts_rec(cast(list[TextArtifact], artifacts.value), None, rulesets=rulesets)
 
     def summarize_artifacts_rec(
-        self, artifacts: list[BaseArtifact], summary: Optional[str], rulesets: Optional[Ruleset] = None
+        self, artifacts: list[TextArtifact], summary: Optional[str] = None, rulesets: Optional[list[Ruleset]] = None
     ) -> TextArtifact:
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 

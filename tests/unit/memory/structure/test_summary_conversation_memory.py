@@ -11,7 +11,7 @@ class TestSummaryConversationMemory:
     def test_unsummarized_subtasks(self):
         memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
 
-        pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
 
         pipeline.add_tasks(PromptTask("test"))
 
@@ -25,7 +25,7 @@ class TestSummaryConversationMemory:
     def test_after_run(self):
         memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
 
-        pipeline = Pipeline(memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
 
         pipeline.add_tasks(PromptTask("test"))
 
@@ -68,6 +68,11 @@ class TestSummaryConversationMemory:
 
         assert isinstance(memory.from_dict(memory_dict), SummaryConversationMemory)
         assert memory.from_dict(memory_dict).runs[0].input == "foo"
+        assert memory.from_dict(memory_dict).runs[0].output == "bar"
+        assert memory.from_dict(memory_dict).offset == memory.offset
+        assert memory.from_dict(memory_dict).summary == memory.summary
+        assert memory.from_dict(memory_dict).summary_index == memory.summary_index
+        assert memory.from_dict(memory_dict).max_runs == memory.max_runs
 
     def test_from_json(self):
         memory = SummaryConversationMemory()

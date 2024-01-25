@@ -5,12 +5,12 @@ from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact
 
 
-@define(frozen=True)
+@define
 class CsvRowArtifact(TextArtifact):
-    value: dict[str, str] = field(converter=BaseArtifact.value_to_dict)
-    delimiter: str = field(default=",", kw_only=True)
+    value: dict[str, str] = field(converter=BaseArtifact.value_to_dict, metadata={"serializable": True})
+    delimiter: str = field(default=",", kw_only=True, metadata={"serializable": True})
 
-    def __add__(self, other: CsvRowArtifact) -> CsvRowArtifact:
+    def __add__(self, other: BaseArtifact) -> CsvRowArtifact:
         return CsvRowArtifact(self.value | other.value)
 
     def to_text(self) -> str:
@@ -22,11 +22,6 @@ class CsvRowArtifact(TextArtifact):
             writer.writerow(self.value)
 
             return csvfile.getvalue().strip()
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import CsvRowArtifactSchema
-
-        return dict(CsvRowArtifactSchema().dump(self))
 
     def __bool__(self) -> bool:
         return len(self) > 0

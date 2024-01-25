@@ -13,7 +13,13 @@ class TestStartTaskEvent:
         agent.add_task(task)
         agent.run()
 
-        return StartTaskEvent.from_task(task)
+        return StartTaskEvent(
+            task_id=task.id,
+            task_parent_ids=task.parent_ids,
+            task_child_ids=task.child_ids,
+            task_input=task.input,
+            task_output=task.output,
+        )
 
     def test_to_dict(self, start_task_event):
         event_dict = start_task_event.to_dict()

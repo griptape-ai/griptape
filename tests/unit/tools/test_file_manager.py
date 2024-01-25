@@ -1,4 +1,5 @@
 import os.path
+import os
 import tempfile
 from pathlib import Path
 import pytest
@@ -16,7 +17,7 @@ class TestFileManager:
 
     def test_load_files_from_disk(self):
         result = FileManager(
-            input_memory=[defaults.text_tool_memory("Memory1")], workdir=os.path.abspath(os.path.dirname(__file__))
+            input_memory=[defaults.text_task_memory("Memory1")], workdir=os.path.abspath(os.path.dirname(__file__))
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result, ListArtifact)
@@ -40,7 +41,7 @@ class TestFileManager:
 
     def test_save_memory_artifacts_to_disk_for_one_artifact(self):
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = defaults.text_tool_memory("Memory1")
+            memory = defaults.text_task_memory("Memory1")
             artifact = TextArtifact("foobar")
 
             memory.store_artifact("foobar", artifact)
@@ -63,7 +64,7 @@ class TestFileManager:
         file_name = "foobar.txt"
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            memory = defaults.text_tool_memory("Memory1")
+            memory = defaults.text_task_memory("Memory1")
             artifacts = [TextArtifact("foobar"), TextArtifact("baz")]
 
             for a in artifacts:
@@ -118,3 +119,12 @@ class TestFileManager:
             assert isinstance(result, ListArtifact)
             assert len(result.value) == 1
             assert isinstance(result.value[0], TextArtifact)
+
+    def test_chrdir_getcwd(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            os.chdir(temp_dir)
+            file_manager_1 = FileManager()
+            assert file_manager_1.workdir.endswith(temp_dir)
+            os.chdir("/tmp")
+            file_manager_2 = FileManager()
+            assert file_manager_2.workdir.endswith("/tmp")

@@ -1,5 +1,6 @@
 import time
 import pytest
+from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.events import (
     StartPromptEvent,
     FinishPromptEvent,
@@ -26,22 +27,34 @@ class TestBaseEvent:
         assert "timestamp" in MockEvent().to_dict()
 
     def test_start_prompt_event_from_dict(self):
-        dict_value = {"type": "StartPromptEvent", "timestamp": 123.0, "token_count": 10}
+        dict_value = {
+            "type": "StartPromptEvent",
+            "timestamp": 123.0,
+            "token_count": 10,
+            "prompt_stack": {"inputs": [{"content": "foo", "role": "user"}, {"content": "bar", "role": "system"}]},
+            "prompt": "foo bar",
+        }
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, StartPromptEvent)
         assert event.timestamp == 123
         assert event.token_count == 10
+        assert event.prompt_stack.inputs[0].content == "foo"
+        assert event.prompt_stack.inputs[0].role == "user"
+        assert event.prompt_stack.inputs[1].content == "bar"
+        assert event.prompt_stack.inputs[1].role == "system"
+        assert event.prompt == "foo bar"
 
     def test_finish_prompt_event_from_dict(self):
-        dict_value = {"type": "FinishPromptEvent", "timestamp": 123.0, "token_count": 10}
+        dict_value = {"type": "FinishPromptEvent", "timestamp": 123.0, "token_count": 10, "result": "foo bar"}
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, FinishPromptEvent)
         assert event.timestamp == 123
         assert event.token_count == 10
+        assert event.result == "foo bar"
 
     def test_start_task_event_from_dict(self):
         dict_value = {
@@ -61,6 +74,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
 
@@ -87,6 +101,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
@@ -113,6 +128,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
 
@@ -139,6 +155,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"

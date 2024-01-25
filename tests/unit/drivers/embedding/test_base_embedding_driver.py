@@ -24,6 +24,13 @@ class TestBaseEmbeddingDriver:
 
         assert embedding == [0, 1]
 
+    def test_no_tokenizer(self, driver):
+        driver.tokenizer = None
+
+        embedding = driver.embed_string("foobar")
+
+        assert embedding == [0, 1]
+
     @patch.object(MockEmbeddingDriver, "try_embed_chunk")
     def test_embed_string_throws_when_retries_exhausted(self, try_embed_chunk, driver):
         try_embed_chunk.side_effect = Exception("nope")

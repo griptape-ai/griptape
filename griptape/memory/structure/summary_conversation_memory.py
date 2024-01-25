@@ -1,11 +1,9 @@
 from __future__ import annotations
-import json
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from typing import Optional
 from attr import define, field, Factory
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.schemas import SummaryConversationMemorySchema
 from griptape.utils import J2, PromptStack
 from griptape.memory.structure import ConversationMemory
 from griptape.tokenizers import OpenAiTokenizer
@@ -17,25 +15,17 @@ if TYPE_CHECKING:
 
 @define
 class SummaryConversationMemory(ConversationMemory):
-    offset: int = field(default=1, kw_only=True)
+    offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
         kw_only=True,
     )
-    summary: Optional[str] = field(default=None, kw_only=True)
-    summary_index: int = field(default=0, kw_only=True)
+    summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
     summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
     summarize_conversation_template_generator: J2 = field(
         default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")), kw_only=True
     )
-
-    @classmethod
-    def from_dict(cls, memory_dict: dict) -> SummaryConversationMemory:
-        return SummaryConversationMemorySchema().load(memory_dict)
-
-    @classmethod
-    def from_json(cls, memory_json: str) -> SummaryConversationMemory:
-        return SummaryConversationMemory.from_dict(json.loads(memory_json))
 
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
@@ -47,9 +37,6 @@ class SummaryConversationMemory(ConversationMemory):
             stack.add_assistant_input(r.output)
 
         return stack
-
-    def to_dict(self) -> dict:
-        return dict(SummaryConversationMemorySchema().dump(self))
 
     def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
         summary_index_runs = self.runs[self.summary_index :]

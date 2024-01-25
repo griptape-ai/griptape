@@ -52,11 +52,8 @@ class TestBedrockTitanPromptModelDriver:
         assert model_input["inputText"].startswith("Instructions: foo\n\nUser: bar\n\nBot:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["maxTokenCount"] == 4083
+        assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["maxTokenCount"] == 4090
         assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["temperature"] == 0.12345
 
     def test_process_output(self, driver):
         assert driver.process_output(json.dumps({"results": [{"outputText": "foobar"}]})).value == "foobar"
-
-    def test_session_initialization(self, driver, mock_session):
-        assert driver.tokenizer.session == mock_session

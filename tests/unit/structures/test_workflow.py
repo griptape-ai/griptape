@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.memory.tool.storage import TextArtifactStorage
+from griptape.memory.task.storage import TextArtifactStorage
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import PromptTask, BaseTask, ToolkitTask
@@ -61,16 +61,16 @@ class TestWorkflow:
             workflow = Workflow()
             workflow.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_tool_memory(self):
+    def test_with_default_task_memory(self):
         workflow = Workflow()
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is not None
-        assert workflow.tasks[0].tools[0].input_memory[0] == workflow.tool_memory
+        assert workflow.tasks[0].tools[0].input_memory[0] == workflow.task_memory
         assert workflow.tasks[0].tools[0].output_memory is not None
-        assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.tool_memory
+        assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.task_memory
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
@@ -78,13 +78,13 @@ class TestWorkflow:
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
-        storage = list(workflow.tool_memory.artifact_storages.values())[0]
+        storage = list(workflow.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
         memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
-    def test_with_default_tool_memory_and_empty_tool_output_memory(self):
+    def test_with_default_task_memory_and_empty_tool_output_memory(self):
         workflow = Workflow()
 
         workflow.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
@@ -92,8 +92,8 @@ class TestWorkflow:
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].output_memory == {}
 
-    def test_without_default_tool_memory(self):
-        workflow = Workflow(tool_memory=None)
+    def test_without_default_task_memory(self):
+        workflow = Workflow(task_memory=None)
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
@@ -106,18 +106,18 @@ class TestWorkflow:
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
 
-        workflow = Workflow(prompt_driver=MockPromptDriver(), memory=ConversationMemory())
+        workflow = Workflow(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         workflow + [first_task, second_task, third_task]
 
-        assert workflow.memory is not None
-        assert len(workflow.memory.runs) == 0
+        assert workflow.conversation_memory is not None
+        assert len(workflow.conversation_memory.runs) == 0
 
         workflow.run()
         workflow.run()
         workflow.run()
 
-        assert len(workflow.memory.runs) == 3
+        assert len(workflow.conversation_memory.runs) == 3
 
     def test_tasks_initialization(self):
         first_task = PromptTask(id="test1")

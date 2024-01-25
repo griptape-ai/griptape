@@ -21,7 +21,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         default=Factory(lambda self: self.session.client("redshift-data"), takes_self=True), kw_only=True
     )
 
-    @workgroup_name.validator
+    @workgroup_name.validator  # pyright: ignore
     def validate_params(self, _, workgroup_name: Optional[str]) -> None:
         if not self.cluster_identifier and not self.workgroup_name:
             raise ValueError("Provide a value for one of `cluster_identifier` or `workgroup_name`")
@@ -53,7 +53,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
+    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
         function_kwargs = {"Sql": query, "Database": self.database}
         if self.workgroup_name:
             function_kwargs["WorkgroupName"] = self.workgroup_name

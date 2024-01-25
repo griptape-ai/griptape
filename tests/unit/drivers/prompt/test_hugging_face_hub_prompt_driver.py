@@ -4,11 +4,17 @@ import pytest
 
 
 class TestHuggingFaceHubPromptDriver:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def mock_client(self, mocker):
-        mock_client = mocker.patch("huggingface_hub.InferenceApi").return_value
-        mock_client.task = "text-generation"
-        mock_client.return_value = [{"generated_text": "model-output"}]
+        mock_client = mocker.patch("huggingface_hub.InferenceClient").return_value
+        mock_client.text_generation.return_value = "model-output"
+        return mock_client
+
+    @pytest.fixture
+    def mock_client_stream(self, mocker):
+        mock_client = mocker.patch("huggingface_hub.InferenceClient").return_value
+        mock_client.text_generation.return_value = iter(["model-output"])
+
         return mock_client
 
     @pytest.fixture
@@ -29,7 +35,7 @@ class TestHuggingFaceHubPromptDriver:
     def test_init(self):
         assert HuggingFaceHubPromptDriver(api_token="foobar", model="gpt2")
 
-    def test_try_run(self, prompt_stack):
+    def test_try_run(self, prompt_stack, mock_client):
         # Given
         driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id")
 
@@ -39,27 +45,12 @@ class TestHuggingFaceHubPromptDriver:
         # Then
         assert text_artifact.value == "model-output"
 
-    @pytest.mark.parametrize("choices", [[], [1, 2]])
-    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_client, prompt_stack):
+    def test_try_stream(self, prompt_stack, mock_client_stream):
         # Given
-        driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id")
-        mock_client.return_value = choices
+        driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id", stream=True)
 
         # When
-        with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-        e.value.args[0] == "completion with more than one choice is not supported yet"
-
-    def test_try_run_throws_when_unsupported_task_returned(self, prompt_stack, mock_client):
-        # Given
-        driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id")
-        mock_client.task = "obviously-an-unsupported-task"
-
-        # When
-        with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
-
-        # Then
-        assert e.value.args[0].startswith("only models with the following tasks are supported: ")
+        assert text_artifact.value == "model-output"

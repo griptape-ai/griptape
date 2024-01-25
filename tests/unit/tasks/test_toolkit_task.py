@@ -1,9 +1,9 @@
 import pytest
-from griptape.artifacts import ErrorArtifact
+from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
-from griptape.tasks import ToolkitTask, ActionSubtask
+from griptape.tasks import ToolkitTask, ActionSubtask, PromptTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -32,7 +32,7 @@ class TestToolkitSubtask:
         output = """Answer: done"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
-        agent = Agent(prompt_driver=MockValuePromptDriver(output))
+        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
 
         agent.add_task(task)
 
@@ -46,7 +46,7 @@ class TestToolkitSubtask:
         output = """Action: {"name": "blah"}"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockValuePromptDriver(output))
+        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
 
         agent.add_task(task)
 
@@ -55,10 +55,23 @@ class TestToolkitSubtask:
         assert len(task.subtasks) == 3
         assert isinstance(task.output, ErrorArtifact)
 
+    def test_run_invalid_react_prompt(self):
+        output = """foo bar"""
+
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
+        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+
+        agent.add_task(task)
+
+        result = agent.run()
+
+        assert len(task.subtasks) == 1
+        assert result.output_task.output.to_text() == "foo bar"
+
     def test_init_from_prompt_1(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"name": "test", "path": "test action", "input": "test input"}\n'
+            'Action: {"name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -69,9 +82,9 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ActionSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_name == "test"
-        assert subtask.action_path == "test action"
-        assert subtask.action_input == "test input"
+        assert subtask.action_name == "Tool1"
+        assert subtask.action_path == "test"
+        assert subtask.action_input == {"values": {"test": "value"}}
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
@@ -131,8 +144,8 @@ class TestToolkitSubtask:
         assert task.find_tool(tool.name) == tool
 
     def test_find_memory(self, query_engine):
-        m1 = defaults.text_tool_memory("Memory1")
-        m2 = defaults.text_tool_memory("Memory2")
+        m1 = defaults.text_task_memory("Memory1")
+        m2 = defaults.text_task_memory("Memory2")
 
         tool = MockTool(name="Tool1", output_memory={"test": [m1, m2]})
         task = ToolkitTask("test", tools=[tool])
@@ -145,12 +158,12 @@ class TestToolkitSubtask:
     def test_memory(self, query_engine):
         tool1 = MockTool(
             name="Tool1",
-            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory2")]},
+            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},
         )
 
         tool2 = MockTool(
             name="Tool2",
-            output_memory={"test": [defaults.text_tool_memory("Memory1"), defaults.text_tool_memory("Memory3")]},
+            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory3")]},
         )
 
         task = ToolkitTask(tools=[tool1, tool2])
@@ -161,3 +174,20 @@ class TestToolkitSubtask:
         assert task.tool_output_memory[0].name == "Memory1"
         assert task.tool_output_memory[1].name == "Memory2"
         assert task.tool_output_memory[2].name == "Memory3"
+
+    def test_meta_memory(self):
+        memory = defaults.text_task_memory("TestMemory")
+        subtask = ActionSubtask()
+        agent = Agent(task_memory=memory)
+
+        subtask.structure = agent
+
+        memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+
+        task = ToolkitTask(tools=[MockTool()])
+
+        agent.add_task(task)
+
+        system_template = task.generate_system_template(PromptTask())
+
+        assert "You have access to additional contextual information" in system_template

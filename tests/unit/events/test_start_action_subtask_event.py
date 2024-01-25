@@ -21,7 +21,18 @@ class TestStartActionSubtaskEvent:
         task.add_subtask(subtask)
         agent.run()
 
-        return StartActionSubtaskEvent.from_task(subtask)
+        return StartActionSubtaskEvent(
+            task_id=subtask.id,
+            task_parent_ids=subtask.parent_ids,
+            task_child_ids=subtask.child_ids,
+            task_input=subtask.input,
+            task_output=subtask.output,
+            subtask_parent_task_id=subtask.parent_task_id,
+            subtask_thought=subtask.thought,
+            subtask_action_name=subtask.action_name,
+            subtask_action_path=subtask.action_path,
+            subtask_action_input=subtask.action_input,
+        )
 
     def test_to_dict(self, start_subtask_event):
         event_dict = start_subtask_event.to_dict()

@@ -1,15 +1,17 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
-from typing import Optional
 from attr import define, field, Factory
+from typing import Optional
 from griptape import utils
+from griptape.mixins import SerializableMixin
 from griptape.artifacts import TextArtifact
-from griptape.drivers import BaseEmbeddingDriver, OpenAiEmbeddingDriver
+from griptape.drivers import BaseEmbeddingDriver
 
 
 @define
-class BaseVectorStoreDriver(ABC):
+class BaseVectorStoreDriver(SerializableMixin, ABC):
     DEFAULT_QUERY_COUNT = 5
 
     @dataclass
@@ -27,7 +29,7 @@ class BaseVectorStoreDriver(ABC):
         meta: Optional[dict] = None
         namespace: Optional[str] = None
 
-    embedding_driver: BaseEmbeddingDriver = field(kw_only=True)
+    embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def upsert_text_artifacts(
@@ -62,15 +64,19 @@ class BaseVectorStoreDriver(ABC):
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         return self.upsert_vector(
             self.embedding_driver.embed_string(string),
             vector_id=vector_id,
             namespace=namespace,
             meta=meta if meta else {},
-            **kwargs
+            **kwargs,
         )
+
+    @abstractmethod
+    def delete_vector(self, vector_id: str) -> None:
+        ...
 
     @abstractmethod
     def upsert_vector(
@@ -79,12 +85,12 @@ class BaseVectorStoreDriver(ABC):
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ) -> str:
         ...
 
     @abstractmethod
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Entry:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[Entry]:
         ...
 
     @abstractmethod
@@ -98,6 +104,6 @@ class BaseVectorStoreDriver(ABC):
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        **kwargs
+        **kwargs,
     ) -> list[QueryResult]:
         ...

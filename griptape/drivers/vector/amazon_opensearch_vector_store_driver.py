@@ -5,8 +5,8 @@ from griptape.drivers import OpenSearchVectorStoreDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    import boto3
-    from opensearchpy import OpenSearch, RequestsHttpConnection
+    from boto3 import Session
+    from opensearchpy import OpenSearch
 
 
 @define
@@ -15,19 +15,19 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
 
     Attributes:
         session: The boto3 session to use.
+        service: Service name for AWS Signature v4. Values can be 'es' or 'aoss' for for OpenSearch Serverless. Defaults to 'es'.
         http_auth: The HTTP authentication credentials to use. Defaults to using credentials in the boto3 session.
         client: An optional OpenSearch client to use. Defaults to a new client using the host, port, http_auth, use_ssl, and verify_certs attributes.
     """
 
-    session: boto3.Session = field(kw_only=True)
+    session: Optional[Session] = field(default=None, kw_only=True)
+
+    service: Optional[str] = field(default="es", kw_only=True)
 
     http_auth: Optional[str | Tuple[str, str]] = field(
         default=Factory(
-            lambda self: import_optional_dependency("requests_aws4auth").AWS4Auth(
-                self.session.get_credentials().access_key,
-                self.session.get_credentials().secret_key,
-                self.session.region_name,
-                "es",
+            lambda self: import_optional_dependency("opensearchpy").AWSV4SignerAuth(
+                self.session.get_credentials(), self.session.region_name, self.service
             ),
             takes_self=True,
         )
@@ -35,12 +35,12 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
 
     client: Optional[OpenSearch] = field(
         default=Factory(
-            lambda self: OpenSearch(
+            lambda self: import_optional_dependency("opensearchpy").OpenSearch(
                 hosts=[{"host": self.host, "port": self.port}],
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,
                 verify_certs=self.verify_certs,
-                connection_class=RequestsHttpConnection,
+                connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
         )

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 import json
 from attr import define, field
@@ -34,9 +35,7 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockJurassicTokenizer(
-                model=self.prompt_driver.model, session=self.prompt_driver.session
-            )
+            self._tokenizer = BedrockJurassicTokenizer(model=self.prompt_driver.model)
             return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
@@ -46,12 +45,12 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
             if i.is_user():
                 prompt_lines.append(f"User: {i.content}")
             elif i.is_assistant():
-                prompt_lines.append(f"Bot: {i.content}")
+                prompt_lines.append(f"Assistant: {i.content}")
             elif i.is_system():
-                prompt_lines.append(f"Instructions: {i.content}")
+                prompt_lines.append(f"System: {i.content}")
             else:
                 prompt_lines.append(i.content)
-        prompt_lines.append("Bot:")
+        prompt_lines.append("Assistant:")
 
         prompt = "\n".join(prompt_lines)
 
@@ -69,7 +68,9 @@ class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
             "frequencyPenalty": {"scale": 0},
         }
 
-    def process_output(self, response_body: str) -> TextArtifact:
-        body = json.loads(response_body)
-
+    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
+        if isinstance(output, bytes):
+            body = json.loads(output.decode())
+        else:
+            raise Exception("Output must be bytes.")
         return TextArtifact(body["completions"][0]["data"]["text"])

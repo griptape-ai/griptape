@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional
 from abc import ABC, abstractmethod
 from attr import define, field, Factory
-from griptape.artifacts import ListArtifact
+from griptape.artifacts import ListArtifact, ErrorArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.rules import Ruleset
@@ -25,7 +25,7 @@ class BaseExtractionEngine(ABC):
         kw_only=True,
     )
 
-    @max_token_multiplier.validator
+    @max_token_multiplier.validator  # pyright: ignore
     def validate_max_token_multiplier(self, _, max_token_multiplier: int) -> None:
         if max_token_multiplier > 1:
             raise ValueError("has to be less than or equal to 1")
@@ -44,5 +44,7 @@ class BaseExtractionEngine(ABC):
         )
 
     @abstractmethod
-    def extract(self, text: str | ListArtifact, rulesets: Optional[list[Ruleset]] = None, **kwargs) -> ListArtifact:
+    def extract(
+        self, text: str | ListArtifact, *, rulesets: Optional[list[Ruleset]] = None, **kwargs
+    ) -> ListArtifact | ErrorArtifact:
         ...

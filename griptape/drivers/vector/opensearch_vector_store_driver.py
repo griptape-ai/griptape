@@ -7,7 +7,7 @@ from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field, Factory
 
 if TYPE_CHECKING:
-    from opensearchpy import OpenSearch, RequestsHttpConnection
+    from opensearchpy import OpenSearch
 
 
 @define
@@ -25,7 +25,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
     host: str = field(kw_only=True)
     port: int = field(default=443, kw_only=True)
-    http_auth: Optional[str | Tuple[str, str]] = field(default=None, kw_only=True)
+    http_auth: str | tuple[str, Optional[str]] = field(default=None, kw_only=True)
     use_ssl: bool = field(default=True, kw_only=True)
     verify_certs: bool = field(default=True, kw_only=True)
     index_name: str = field(kw_only=True)
@@ -37,7 +37,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 http_auth=self.http_auth,
                 use_ssl=self.use_ssl,
                 verify_certs=self.verify_certs,
-                connection_class=RequestsHttpConnection,
+                connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
         )
@@ -122,10 +122,10 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         self,
         query: str,
         count: Optional[int] = None,
-        field_name: str = "vector",
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         include_metadata=True,
+        field_name: str = "vector",
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string.
@@ -160,36 +160,5 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             for hit in response["hits"]["hits"]
         ]
 
-    def create_index(self, vector_dimension: Optional[int] = None, settings_override: Optional[dict] = None) -> None:
-        """Creates a new vector index in OpenSearch.
-
-        The index is structured to support k-NN (k-nearest neighbors) queries.
-
-        Args:
-            vector_dimension: The dimension of vectors that will be stored in this index.
-
-        """
-        default_settings = {"number_of_shards": 1, "number_of_replicas": 1, "index.knn": True}
-
-        if settings_override:
-            default_settings.update(settings_override)
-
-        try:
-            if self.client.indices.exists(index=self.index_name):
-                logging.warning("Index already exists!")
-                return
-            else:
-                mapping = {
-                    "settings": default_settings,
-                    "mappings": {
-                        "properties": {
-                            "vector": {"type": "knn_vector", "dimension": vector_dimension},
-                            "namespace": {"type": "keyword"},
-                            "metadata": {"type": "object", "enabled": True},
-                        }
-                    },
-                }
-
-                self.client.indices.create(index=self.index_name, body=mapping)
-        except Exception as e:
-            logging.error(f"Error while handling index: {e}")
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

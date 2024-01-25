@@ -10,9 +10,9 @@ MAX_TOKENS = 50
 
 
 class TestTextLoader:
-    @pytest.fixture
-    def loader(self):
-        return TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
+    @pytest.fixture(params=["ascii", "utf-8", None])
+    def loader(self, request):
+        return TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver(), encoding=request.param)
 
     def test_load_with_str(self, loader):
         text = gen_paragraph(MAX_TOKENS * 2, loader.tokenizer, " ")
@@ -20,6 +20,7 @@ class TestTextLoader:
 
         assert len(artifacts) == 3
         assert artifacts[0].value.startswith("foo-0 foo-1")
+        assert artifacts[0].encoding == loader.encoding
 
         assert artifacts[0].embedding == [0, 1]
 
@@ -30,6 +31,7 @@ class TestTextLoader:
 
         assert len(artifacts) == 39
         assert artifacts[0].value.startswith("foobar foobar foobar")
+        assert artifacts[0].encoding == loader.encoding
 
         assert artifacts[0].embedding == [0, 1]
 
@@ -38,6 +40,10 @@ class TestTextLoader:
 
         assert list(artifacts.keys()) == [utils.str_to_hash("bar"), utils.str_to_hash("bat")]
         assert [a.value for artifact_list in artifacts.values() for a in artifact_list] == ["bar", "bat"]
+        assert [a.encoding for artifact_list in artifacts.values() for a in artifact_list] == [
+            loader.encoding,
+            loader.encoding,
+        ]
 
         assert list(artifacts.values())[0][0].embedding == [0, 1]
 
@@ -51,3 +57,4 @@ class TestTextLoader:
         assert len(artifacts[key]) == 39
 
         assert list(artifacts.values())[0][0].embedding == [0, 1]
+        assert list(artifacts.values())[0][0].encoding == loader.encoding

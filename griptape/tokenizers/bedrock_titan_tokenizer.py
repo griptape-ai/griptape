@@ -1,38 +1,15 @@
 from __future__ import annotations
-import json
 from attr import define, field, Factory
-from typing import Any, TYPE_CHECKING
-from griptape.tokenizers import BaseTokenizer
-from griptape.utils import import_optional_dependency
-
-if TYPE_CHECKING:
-    import boto3
+from .simple_tokenizer import SimpleTokenizer
 
 
 @define(frozen=True)
-class BedrockTitanTokenizer(BaseTokenizer):
+class BedrockTitanTokenizer(SimpleTokenizer):
     DEFAULT_MODEL = "amazon.titan-text-express-v1"
+    DEFAULT_CHARACTERS_PER_TOKEN = 6  # https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization-prepare.html#model-customization-prepare-finetuning
     DEFAULT_MAX_TOKENS = 4096
 
-    DEFAULT_EMBEDDING_MODELS = "amazon.titan-embed-text-v1"
-
-    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    stop_sequences: list[str] = field(factory=list, kw_only=True)
+    characters_per_token: int = field(default=DEFAULT_CHARACTERS_PER_TOKEN, kw_only=True)
+    max_tokens: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
+    stop_sequences: list[str] = field(default=Factory(lambda: ["User:"]), kw_only=True)
     model: str = field(kw_only=True)
-    bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True
-    )
-
-    @property
-    def max_tokens(self) -> int:
-        return self.DEFAULT_MAX_TOKENS
-
-    def count_tokens(self, text: str) -> int:
-        payload = {"inputText": text}
-
-        response = self.bedrock_client.invoke_model(
-            body=json.dumps(payload), modelId=self.model, accept="application/json", contentType="application/json"
-        )
-        response_body = json.loads(response.get("body").read())
-
-        return response_body["inputTextTokenCount"]

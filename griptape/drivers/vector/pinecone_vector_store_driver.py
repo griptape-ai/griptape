@@ -95,8 +95,5 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             for r in results["matches"]
         ]
 
-    def create_index(self, name: str, **kwargs) -> None:
-        params = {"name": name, "dimension": self.embedding_driver.dimensions} | kwargs
-
-        pinecone = import_optional_dependency("pinecone")
-        pinecone.create_index(**params)
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

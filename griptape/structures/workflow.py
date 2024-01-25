@@ -109,12 +109,15 @@ class Workflow(Structure):
 
                     break
 
-        if self.memory:
-            run = Run(input=self.input_task.input.to_text(), output=self.output_task.output.to_text())
+        if self.conversation_memory:
+            if isinstance(self.input_task.input, tuple):
+                input_text = self.input_task.input[0].to_text()
+            else:
+                input_text = self.input_task.input.to_text()
 
-            self.memory.add_run(run)
+            run = Run(input=input_text, output=self.output_task.output.to_text())
 
-        self._execution_args = ()
+            self.conversation_memory.add_run(run)
 
         return self
 

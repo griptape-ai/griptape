@@ -3,6 +3,8 @@
 [![PyPI Version](https://img.shields.io/pypi/v/griptape.svg)](https://pypi.python.org/pypi/griptape)
 [![Tests](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml)
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io/)
+[![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
 **Griptape** is a modular Python framework for building AI-powered applications that connect securely to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
@@ -36,18 +38,18 @@ pip install griptape[all] -U
 
 Second, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses two tools with shared short-term memory.
+With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses three tools and moves the data around in short-term memory.
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, FileManager, ToolMemoryClient
+from griptape.tools import WebScraper, FileManager, TaskMemoryClient
 
 agent = Agent(
     input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
         WebScraper(),
         FileManager(),
-        ToolMemoryClient()
+        TaskMemoryClient(off_prompt=True)
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
@@ -67,20 +69,20 @@ And here is the output:
                              "https://griptape.ai"}}}                           
                     INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
                              Response: Output of "WebScraper.get_content" was   
-                             stored in memory with memory_name "ToolMemory" and 
+                             stored in memory with memory_name "TaskMemory" and 
                              artifact_namespace                                 
                              "c497d83c1d134db694b9994596016320"                 
 [11/02/23 15:28:50] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
                              Thought: Now that the webpage content is stored in 
-                             memory, I need to use the ToolMemoryClient action  
+                             memory, I need to use the TaskMemoryClient action  
                              to summarize the content.                          
-                             Action: {"name": "ToolMemoryClient", "path":   
+                             Action: {"name": "TaskMemoryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
-                             "ToolMemory", "artifact_namespace":                
+                             "TaskMemory", "artifact_namespace":                
                              "c497d83c1d134db694b9994596016320"}}}              
 [11/02/23 15:29:06] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
-                             Response: Output of "ToolMemoryClient.summarize"
-                             was stored in memory with memory_name "ToolMemory" 
+                             Response: Output of "TaskMemoryClient.summarize"
+                             was stored in memory with memory_name "TaskMemory" 
                              and artifact_namespace                             
                              "77584322d33d40e992da9767d02a9018"                 
 [11/02/23 15:29:25] INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
@@ -90,7 +92,7 @@ And here is the output:
                              Action: {"name": "FileManager", "path":           
                              "save_memory_artifacts_to_disk", "input":          
                              {"values": {"dir_name": ".", "file_name":          
-                             "griptape.txt", "memory_name": "ToolMemory",       
+                             "griptape.txt", "memory_name": "TaskMemory",       
                              "artifact_namespace":                              
                              "77584322d33d40e992da9767d02a9018"}}}              
                     INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
@@ -102,9 +104,12 @@ And here is the output:
 ```
 
 During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Tool Memory**, queried it to answer the original question, and finally saved the answer to a file.
-The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content never goes back to the main prompt.
 
-[Check out our docs](https://docs.griptape.ai/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
+The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
+
+All tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `TaskMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other tools.
+
+[Check out our docs](https://docs.griptape.ai/latest/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
 ## Versioning
 
@@ -117,6 +122,12 @@ Thank you for considering contributing to Griptape! Before you start, please rea
 ### Submitting Issues
 
 If you have identified a bug, want to propose a new feature, or have a question, please submit an issue through our public [issue tracker](https://github.com/griptape-ai/griptape/issues). Before submitting a new issue, please check the existing issues to ensure it hasn't been reported or discussed before.
+
+### New Griptape Tools
+
+Griptape's extensibility allows anyone to develop and distribute tools independently. With rare exceptions for tools providing broadly applicable functionality, new Griptape tools should be managed as their own projects and not submitted to the core framework. Pull requests for new tools (unless addressing an [existing issue](https://github.com/griptape-ai/griptape/issues)) will be closed.
+
+The [Griptape Tool Template](https://github.com/griptape-ai/tool-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new tools. In the Template, select **Use this template** then **Create a new repository** to begin a new tool project.
 
 ### Submitting Pull Requests
 
@@ -137,7 +148,7 @@ We welcome and encourage pull requests. To streamline the process, please follow
 Install dev dependencies with Poetry:
 
 ```shell
-poetry install --with dev
+poetry install --all-extras --with dev --with test
 ```
 
 Configure pre-commit to ensure that your code is formatted correctly and passes all checks:

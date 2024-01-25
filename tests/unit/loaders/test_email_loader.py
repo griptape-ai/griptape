@@ -67,14 +67,14 @@ class TestEmailLoader:
         list_artifact = loader.load(EmailLoader.EmailQuery(label="INBOX", key="key", search_criteria="search-criteria"))
 
         # Then
-        mock_search.called_once_with(None, "key", '"search-criteria"')
+        mock_search.assert_called_once_with(None, "key", '"search-criteria"')
         assert mock_fetch.call_count == match_count
         assert isinstance(list_artifact, ListArtifact)
         assert to_value_set(list_artifact) == {f"message-{i}" for i in range(match_count)}
 
     def test_load_returns_error_artifact_when_select_returns_non_ok(self, loader, mock_select):
         # Given
-        mock_select.return_value = (None, ["NOT-OK".encode()])
+        mock_select.return_value = (None, [b"NOT-OK"])
 
         # When
         artifact = loader.load(EmailLoader.EmailQuery(label="INBOX"))
@@ -142,14 +142,10 @@ def to_message(body: str, content_type: Optional[str]) -> message:
 
 def to_value_set(artifact_or_dict: ListArtifact | dict[str, ListArtifact]) -> set[str]:
     if isinstance(artifact_or_dict, ListArtifact):
-        return set([value.value for value in artifact_or_dict.value])
+        return {value.value for value in artifact_or_dict.value}
     elif isinstance(artifact_or_dict, dict):
-        return set(
-            [
-                text_artifact.value
-                for list_artifact in artifact_or_dict.values()
-                for text_artifact in list_artifact.value
-            ]
-        )
+        return {
+            text_artifact.value for list_artifact in artifact_or_dict.values() for text_artifact in list_artifact.value
+        }
     else:
         raise Exception

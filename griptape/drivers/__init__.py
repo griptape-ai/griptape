@@ -4,8 +4,8 @@ from .prompt.openai_completion_prompt_driver import OpenAiCompletionPromptDriver
 from .prompt.azure_openai_chat_prompt_driver import AzureOpenAiChatPromptDriver
 from .prompt.azure_openai_completion_prompt_driver import AzureOpenAiCompletionPromptDriver
 from .prompt.cohere_prompt_driver import CoherePromptDriver
-from .prompt.hugging_face_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
-from .prompt.hugging_face_hub_prompt_driver import HuggingFaceHubPromptDriver
+from .prompt.huggingface_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
+from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
@@ -18,17 +18,25 @@ from .memory.conversation.amazon_dynamodb_conversation_memory_driver import Amaz
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
-from .embedding.bedrock_titan_embedding_driver import BedrockTitanEmbeddingDriver
+from .embedding.base_multi_model_embedding_driver import BaseMultiModelEmbeddingDriver
+from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
+from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
+from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
+
+from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
+from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
+from .embedding_model.sagemaker_tensorflow_hub_embedding_model_driver import SageMakerTensorFlowHubEmbeddingModelDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
 from .vector.pinecone_vector_store_driver import PineconeVectorStoreDriver
 from .vector.marqo_vector_store_driver import MarqoVectorStoreDriver
-from .vector.mongodb_vector_store_driver import MongoDbAtlasVectorStoreDriver
+from .vector.mongodb_atlas_vector_store_driver import MongoDbAtlasVectorStoreDriver
 from .vector.redis_vector_store_driver import RedisVectorStoreDriver
 from .vector.opensearch_vector_store_driver import OpenSearchVectorStoreDriver
 from .vector.amazon_opensearch_vector_store_driver import AmazonOpenSearchVectorStoreDriver
 from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
+from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -41,7 +49,20 @@ from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPr
 from .prompt_model.bedrock_titan_prompt_model_driver import BedrockTitanPromptModelDriver
 from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePromptModelDriver
 from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPromptModelDriver
+from .prompt_model.bedrock_llama_prompt_model_driver import BedrockLlamaPromptModelDriver
 
+from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
+from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
+    BedrockStableDiffusionImageGenerationModelDriver,
+)
+from .image_generation_model.bedrock_titan_image_generation_model_driver import BedrockTitanImageGenerationModelDriver
+
+from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
+from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
+from .image_generation.openai_image_generation_driver import OpenAiImageGenerationDriver
+from .image_generation.leonardo_image_generation_driver import LeonardoImageGenerationDriver
+from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
+from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -62,7 +83,13 @@ __all__ = [
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
-    "BedrockTitanEmbeddingDriver",
+    "BaseMultiModelEmbeddingDriver",
+    "AmazonSageMakerEmbeddingDriver",
+    "AmazonBedrockTitanEmbeddingDriver",
+    "HuggingFaceHubEmbeddingDriver",
+    "BaseEmbeddingModelDriver",
+    "SageMakerHuggingFaceEmbeddingModelDriver",
+    "SageMakerTensorFlowHubEmbeddingModelDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
@@ -82,4 +109,14 @@ __all__ = [
     "BedrockTitanPromptModelDriver",
     "BedrockClaudePromptModelDriver",
     "BedrockJurassicPromptModelDriver",
+    "BedrockLlamaPromptModelDriver",
+    "BaseImageGenerationModelDriver",
+    "BedrockStableDiffusionImageGenerationModelDriver",
+    "BedrockTitanImageGenerationModelDriver",
+    "BaseImageGenerationDriver",
+    "BaseMultiModelImageGenerationDriver",
+    "OpenAiImageGenerationDriver",
+    "LeonardoImageGenerationDriver",
+    "AmazonBedrockImageGenerationDriver",
+    "AzureOpenAiImageGenerationDriver",
 ]

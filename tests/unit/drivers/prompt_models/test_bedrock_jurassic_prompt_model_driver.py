@@ -59,10 +59,10 @@ class TestBedrockJurassicPromptModelDriver:
         model_input = driver.prompt_stack_to_model_input(stack)
 
         assert isinstance(model_input, dict)
-        assert model_input["prompt"].startswith("Instructions: foo\nUser: bar\nBot:")
+        assert model_input["prompt"].startswith("System: foo\nUser: bar\nAssistant:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8189
+        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8186
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver):
@@ -70,6 +70,3 @@ class TestBedrockJurassicPromptModelDriver:
             driver.process_output(json.dumps({"completions": [{"data": {"text": "foobar"}}]}).encode()).value
             == "foobar"
         )
-
-    def test_session_initialization(self, driver, mock_session):
-        assert driver.tokenizer.session == mock_session
