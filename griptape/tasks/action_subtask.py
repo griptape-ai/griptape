@@ -32,7 +32,7 @@ class ActionSubtask(BaseTextInputTask):
         },
     )
 
-    _input: Optional[str] = field(default=None)
+    _input: Optional[str | TextArtifact | Callable[[BaseTask], TextArtifact]] = field(default=None)
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
     action_name: Optional[str] = field(default=None, kw_only=True)
@@ -44,14 +44,16 @@ class ActionSubtask(BaseTextInputTask):
 
     @property
     def input(self) -> TextArtifact:
-        return TextArtifact(self._input)
+        if isinstance(self._input, TextArtifact):
+            return self._input
+        elif isinstance(self._input, Callable):
+            return self._input(self)
+        else:
+            return TextArtifact(self._input)
 
     @input.setter
     def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
-        if isinstance(value, str):
-            self._input = value
-        else:
-            raise Exception("ActionSubtask input must be a string.")
+        self._input = value
 
     @property
     def origin_task(self) -> BaseTask:
