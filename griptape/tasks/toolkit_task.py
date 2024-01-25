@@ -3,8 +3,7 @@ import json
 from typing import TYPE_CHECKING, Callable, Optional
 from attr import define, field, Factory
 from griptape import utils
-from griptape.artifacts import TextArtifact, ErrorArtifact
-from griptape.artifacts.info_artifact import InfoArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.utils import PromptStack
 from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import ActionSubtask
@@ -114,7 +113,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                 if tool.output_memory is None and tool.off_prompt:
                     tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}
 
-    def run(self) -> TextArtifact | InfoArtifact | ErrorArtifact:
+    def run(self) -> BaseArtifact:
         from griptape.tasks import ActionSubtask
 
         self.subtasks.clear()
@@ -143,8 +142,11 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return self.output
 
-    def find_subtask(self, subtask_id: str) -> Optional[ActionSubtask]:
-        return next((subtask for subtask in self.subtasks if subtask.id == subtask_id), None)
+    def find_subtask(self, subtask_id: str) -> ActionSubtask:
+        for subtask in self.subtasks:
+            if subtask.id == subtask_id:
+                return subtask
+        raise ValueError(f"Subtask with id {subtask_id} not found.")
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         subtask.attach_to(self)
@@ -156,8 +158,14 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return subtask
 
-    def find_tool(self, tool_name: str) -> Optional[BaseTool]:
-        return next((t for t in self.tools if t.name == tool_name), None)
+    def find_tool(self, tool_name: str) -> BaseTool:
+        for tool in self.tools:
+            if tool.name == tool_name:
+                return tool
+        raise ValueError(f"Tool with name {tool_name} not found.")
 
-    def find_memory(self, memory_name: str) -> Optional[TaskMemory]:
-        return next((m for m in self.tool_output_memory if m.name == memory_name), None)
+    def find_memory(self, memory_name: str) -> TaskMemory:
+        for memory in self.tool_output_memory:
+            if memory.name == memory_name:
+                return memory
+        raise ValueError(f"Memory with name {memory_name} not found.")
