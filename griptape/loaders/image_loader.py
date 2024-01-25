@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import os
 from io import BytesIO
+from typing import Optional
 
-from pathlib import Path
 from attr import define, field
 from PIL import Image
 
@@ -14,42 +13,53 @@ from griptape.loaders import BaseLoader
 
 @define
 class ImageLoader(BaseLoader):
-    """Loader for images.
+    """Loads images into image artifacts.
 
     Attributes:
-        format: Attempt to ensure image artifacts are in this format when loaded. For example, when set to 'PNG',
-            loading image.jpg will return an ImageArtifact contianing the image bytes in PNG format.
-            Defaults to PNG.
+        format: If provided, attempts to ensure image artifacts are in this format when loaded.
+                For example, when set to 'PNG', loading image.jpg will return an ImageArtifact containing the image
+                    bytes in PNG format.
     """
 
-    format: str = field(default="PNG", kw_only=True)
+    format: Optional[str] = field(default=None, kw_only=True)
 
-    def load(self, source: str | Path, *args, **kwargs) -> ImageArtifact:
-        return self.file_to_artifact(source)
+    FORMAT_TO_MIME_TYPE = {
+        "bmp": "image/bmp",
+        "gif": "image/gif",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "tiff": "image/tiff",
+        "webp": "image/webp",
+    }
 
-    def load_collection(self, sources: list[str | Path], *args, **kwargs) -> dict[str, ImageArtifact]:
+    def load(self, source: bytes, *args, **kwargs) -> ImageArtifact:
+        return self._load(source)
+
+    def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, ImageArtifact]:
         return utils.execute_futures_dict(
-            {
-                utils.str_to_hash(str(source)): self.futures_executor.submit(self.file_to_artifact, source)
-                for source in sources
-            }
+            {utils.str_to_hash(str(source)): self.futures_executor.submit(self._load, source) for source in sources}
         )
 
-    def file_to_artifact(self, path: str | Path) -> ImageArtifact:
-        file_name = os.path.basename(path)
-        dir_name = os.path.dirname(path)
+    def _load(self, source: bytes) -> ImageArtifact:
+        image = Image.open(BytesIO(source))
 
-        image = Image.open(path)
+        # Normalize format only if requested.
+        if self.format is not None:
+            byte_stream = BytesIO()
+            image.save(byte_stream, format=self.format)
+            image = Image.open(byte_stream)
 
-        # Ensure image is in the specified format.
-        byte_stream = BytesIO()
-        image.save(byte_stream, format=self.format)
-
-        return ImageArtifact(
-            byte_stream.getvalue(),
-            name=file_name,
-            dir_name=dir_name,
-            mime_type=f"image/{self.format.lower()}",
-            width=image.width,
-            height=image.height,
+        image_artifact = ImageArtifact(
+            image.tobytes(), mime_type=self._get_mime_type(image.format), width=image.width, height=image.height
         )
+
+        return image_artifact
+
+    def _get_mime_type(self, image_format: str | None) -> str:
+        if image_format is None:
+            raise ValueError("image_format is None")
+
+        if image_format.lower() not in self.FORMAT_TO_MIME_TYPE:
+            raise ValueError(f"Unsupported image format {image_format}")
+
+        return self.FORMAT_TO_MIME_TYPE[image_format.lower()]
