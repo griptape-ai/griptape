@@ -1,11 +1,8 @@
 from __future__ import annotations
-
 import hashlib
 from typing import Optional, TYPE_CHECKING
-
 import pandas as pd
 from attr import define, field
-
 from griptape import utils
 from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseEmbeddingDriver
@@ -19,14 +16,14 @@ if TYPE_CHECKING:
 class DataFrameLoader(BaseLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
 
-    def load(self, source: DataFrame, *args, **kwargs) -> list[CsvRowArtifact]:
-        return self._load_file(source)
+    def load(self, dataframe: DataFrame) -> list[CsvRowArtifact]:
+        return self._load_file(dataframe)
 
-    def load_collection(self, sources: list[DataFrame], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
+    def load_collection(self, dataframes: list[DataFrame]) -> dict[str, list[CsvRowArtifact]]:
         return utils.execute_futures_dict(
             {
-                self._dataframe_to_hash(source): self.futures_executor.submit(self._load_file, source)
-                for source in sources
+                self._dataframe_to_hash(dataframe): self.futures_executor.submit(self._load_file, dataframe)
+                for dataframe in dataframes
             }
         )
 

@@ -1,9 +1,7 @@
 import json
 import logging
 from attr import define
-
 import trafilatura
-
 from griptape.utils import str_to_hash, execute_futures_dict
 from griptape.artifacts import TextArtifact
 from griptape.loaders import TextLoader
@@ -11,12 +9,12 @@ from griptape.loaders import TextLoader
 
 @define
 class WebLoader(TextLoader):
-    def load(self, source: str, include_links: bool = True, *args, **kwargs) -> list[TextArtifact]:
-        return self._load_page_to_artifacts(source, include_links)
+    def load(self, url: str, include_links: bool = True) -> list[TextArtifact]:
+        return self._load_page_to_artifacts(url, include_links)
 
-    def load_collection(self, sources: list[str], include_links: bool = True, *args, **kwargs) -> dict[str, list[TextArtifact]]:
+    def load_collection(self, urls: list[str], include_links: bool = True) -> dict[str, list[TextArtifact]]:
         return execute_futures_dict(
-            {str_to_hash(source): self.futures_executor.submit(self._load_page_to_artifacts, source, include_links) for source in sources}
+            {str_to_hash(u): self.futures_executor.submit(self._load_page_to_artifacts, u, include_links) for u in urls}
         )
 
     def _load_page_to_artifacts(self, url: str, include_links: bool = True) -> list[TextArtifact]:

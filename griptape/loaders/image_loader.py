@@ -1,15 +1,12 @@
 from __future__ import annotations
-
 import os
 from io import BytesIO
-
 from pathlib import Path
 from attr import define, field
-from PIL import Image
-
 from griptape import utils
 from griptape.artifacts import ImageArtifact
 from griptape.loaders import BaseLoader
+from PIL import Image
 
 
 @define
@@ -24,12 +21,12 @@ class ImageLoader(BaseLoader):
 
     format: str = field(default="PNG", kw_only=True)
 
-    def load(self, source: str | Path, *args, **kwargs) -> ImageArtifact:
-        return self.file_to_artifact(source)
+    def load(self, path: str | Path) -> ImageArtifact:  # pyright: ignore
+        return self.file_to_artifact(path)
 
-    def load_collection(self, sources: list[str | Path], *args, **kwargs) -> dict[str, ImageArtifact]:
+    def load_collection(self, paths: list[str | Path]) -> dict[str, ImageArtifact]:  # pyright: ignore
         return utils.execute_futures_dict(
-            {utils.str_to_hash(str(source)): self.futures_executor.submit(self.file_to_artifact, source) for source in sources}
+            {utils.str_to_hash(str(path)): self.futures_executor.submit(self.file_to_artifact, path) for path in paths}
         )
 
     def file_to_artifact(self, path: str | Path) -> ImageArtifact:

@@ -1,10 +1,7 @@
 from __future__ import annotations
-
-from typing import Optional, IO
-
-from attr import field, define, Factory
 from pathlib import Path
-
+from typing import Optional
+from attr import field, define, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import TextChunker
@@ -33,15 +30,15 @@ class TextLoader(BaseLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load(self, source: str | IO | Path, *args, **kwargs) -> list[TextArtifact]:
-        return self.text_to_artifacts(source)
+    def load(self, text: str | Path) -> list[TextArtifact]:
+        return self.text_to_artifacts(text)
 
-    def load_collection(self, sources: list[str | IO | Path], *args, **kwargs) -> dict[str, list[TextArtifact]]:
+    def load_collection(self, texts: list[str | Path]) -> dict[str, list[TextArtifact]]:
         return utils.execute_futures_dict(
-            {utils.str_to_hash(str(source)): self.futures_executor.submit(self.text_to_artifacts, source) for source in sources}
+            {utils.str_to_hash(str(text)): self.futures_executor.submit(self.text_to_artifacts, text) for text in texts}
         )
 
-    def text_to_artifacts(self, text: str) -> list[TextArtifact]:
+    def text_to_artifacts(self, text: str | Path) -> list[TextArtifact]:
         artifacts = []
 
         if isinstance(text, Path):
