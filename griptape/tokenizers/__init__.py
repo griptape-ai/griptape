@@ -4,6 +4,7 @@ from griptape.tokenizers.cohere_tokenizer import CohereTokenizer
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
 from griptape.tokenizers.anthropic_tokenizer import AnthropicTokenizer
 from griptape.tokenizers.bedrock_titan_tokenizer import BedrockTitanTokenizer
+from griptape.tokenizers.bedrock_cohere_tokenizer import BedrockCohereTokenizer
 from griptape.tokenizers.bedrock_jurassic_tokenizer import BedrockJurassicTokenizer
 from griptape.tokenizers.bedrock_claude_tokenizer import BedrockClaudeTokenizer
 from griptape.tokenizers.bedrock_llama_tokenizer import BedrockLlamaTokenizer
@@ -17,6 +18,7 @@ __all__ = [
     "HuggingFaceTokenizer",
     "AnthropicTokenizer",
     "BedrockTitanTokenizer",
+    "BedrockCohereTokenizer",
     "BedrockJurassicTokenizer",
     "BedrockClaudeTokenizer",
     "BedrockLlamaTokenizer",
