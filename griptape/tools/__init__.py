@@ -23,6 +23,7 @@ from .prompt_image_generation_client.tool import PromptImageGenerationClient
 from .variation_image_generation_client.tool import VariationImageGenerationClient
 from .inpainting_image_generation_client.tool import InpaintingImageGenerationClient
 from .outpainting_image_generation_client.tool import OutpaintingImageGenerationClient
+from .griptape_cloud_knowledge_base_client.tool import GriptapeCloudKnowledgeBaseClient
 
 __all__ = [
     "BaseTool",
@@ -50,4 +51,5 @@ __all__ = [
     "VariationImageGenerationClient",
     "InpaintingImageGenerationClient",
     "OutpaintingImageGenerationClient",
+    "GriptapeCloudKnowledgeBaseClient",
 ]
