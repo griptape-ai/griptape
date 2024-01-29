@@ -37,7 +37,7 @@ class TestToolTask:
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
         subtask = ActionSubtask()
-        subtask.thought = "I'm Thinking"
+
         agent = Agent(task_memory=memory)
 
         subtask.structure = agent

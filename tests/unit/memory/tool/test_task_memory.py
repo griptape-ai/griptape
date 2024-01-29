@@ -46,8 +46,6 @@ class TestTaskMemory:
         artifact = TextArtifact("foo")
         subtask = ActionSubtask()
 
-        subtask.thought = "I'm thinking"
-
         subtask.structure = Agent()
 
         output = memory.process_output(MockTool().test, subtask, artifact)
