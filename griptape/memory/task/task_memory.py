@@ -63,9 +63,14 @@ class TaskMemory(ActivityMixin):
                 )
 
                 if subtask.structure and subtask.structure.meta_memory:
-                    subtask.structure.meta_memory.add_entry(
-                        ActionSubtaskMetaEntry(thought=subtask.thought, action=subtask.action_to_json(), answer=output)
-                    )
+                    if subtask.thought is not None:
+                        subtask.structure.meta_memory.add_entry(
+                            ActionSubtaskMetaEntry(
+                                thought=subtask.thought, action=subtask.action_to_json(), answer=output
+                            )
+                        )
+                    else:
+                        raise ValueError("Subtask thought cannot be None")
 
                 return InfoArtifact(output, name=namespace)
         else:

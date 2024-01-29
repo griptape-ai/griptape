@@ -54,7 +54,6 @@ redis = { version = "^4.6.0", optional = true }
 opensearch-py = { version = "^2.3.1", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
-pyright = "^1.1.349"
 
 
 [tool.poetry.extras]

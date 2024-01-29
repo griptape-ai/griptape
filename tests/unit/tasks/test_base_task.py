@@ -20,6 +20,7 @@ class TestBaseTask:
 
     def test_meta_memories(self, task):
         subtask = ActionSubtask()
+        subtask.thought = "I'm thinking"
 
         subtask.structure = task.structure
 

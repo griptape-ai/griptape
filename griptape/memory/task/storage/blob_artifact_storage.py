@@ -19,7 +19,7 @@ class BlobArtifactStorage(BaseArtifactStorage):
 
             self.blobs[namespace].append(artifact)
         else:
-            raise ValueError("Must be a BlobArtifact")
+            raise ValueError("Artifact must be of instance BlobArtifact")
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         return ListArtifact(next((blobs for key, blobs in self.blobs.items() if key == namespace), []))

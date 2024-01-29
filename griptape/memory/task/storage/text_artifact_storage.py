@@ -22,7 +22,7 @@ class TextArtifactStorage(BaseArtifactStorage):
         if isinstance(artifact, TextArtifact):
             self.query_engine.upsert_text_artifact(artifact, namespace)
         else:
-            raise ValueError("Must be a TextArtifact")
+            raise ValueError("Artifact must be of instance TextArtifact")
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         return self.query_engine.load_artifacts(namespace)
