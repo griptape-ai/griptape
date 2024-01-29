@@ -1,6 +1,8 @@
+from __future__ import annotations
+from typing import Any
 from abc import ABC, abstractmethod
 from attr import define
-from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact, InfoArtifact, BlobArtifact
 
 
 @define
@@ -18,9 +20,9 @@ class BaseArtifactStorage(ABC):
         ...
 
     @abstractmethod
-    def summarize(self, namespace: str) -> TextArtifact:
+    def summarize(self, namespace: str) -> TextArtifact | InfoArtifact:
         ...
 
     @abstractmethod
-    def query(self, namespace: str, query: str, metadata: any = None) -> TextArtifact:
+    def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact | InfoArtifact:
         ...
