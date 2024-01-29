@@ -15,10 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 
 - `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.
+- `BedrockStableDiffusionImageGenerationModelDriver` correctly handles the CONTENT_FILTERED response case.
 
 ### Changed
 - **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field.
 - **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`.
+- **BREAKING**: `ImageLoader().load()` now accepts image bytes instead of a file path.
 
 ## [0.22.3] - 2024-01-22
 
