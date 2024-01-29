@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import logging
 from typing import Optional
 
 from attr import field, define
@@ -145,7 +146,11 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
 
     def get_generated_image(self, response: dict) -> bytes:
         image_response = response["artifacts"][0]
-        if image_response.get("finishReason") != "SUCCESS":
-            raise ValueError(f"Image generation failed: {image_response.get('finishReason')}")
+
+        # finishReason may be SUCCESS, CONTENT_FILTERED, or ERROR.
+        if image_response.get("finishReason") == "ERROR":
+            raise Exception(f"Image generation failed: {image_response.get('finishReason')}")
+        elif image_response.get("finishReason") == "CONTENT_FILTERED":
+            logging.warning(f"Image generation triggered content filter and may be blurred")
 
         return base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))
