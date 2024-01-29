@@ -39,7 +39,7 @@ class TaskMemory(ActivityMixin):
             return find_storage(artifact)
 
     def process_output(
-            self, tool_activity: Callable, subtask: ActionSubtask, output_artifact: BaseArtifact
+        self, tool_activity: Callable, subtask: ActionSubtask, output_artifact: BaseArtifact
     ) -> BaseArtifact:
         from griptape.utils import J2
 
@@ -64,9 +64,7 @@ class TaskMemory(ActivityMixin):
 
                 if subtask.structure and subtask.structure.meta_memory:
                     subtask.structure.meta_memory.add_entry(
-                        ActionSubtaskMetaEntry(
-                            thought=subtask.thought, action=subtask.action_to_json(), answer=output
-                        )
+                        ActionSubtaskMetaEntry(thought=subtask.thought, action=subtask.action_to_json(), answer=output)
                     )
 
                 return InfoArtifact(output, name=namespace)
