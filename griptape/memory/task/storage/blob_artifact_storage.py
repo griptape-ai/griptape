@@ -1,5 +1,4 @@
 from typing import Any
-
 from attr import define, field
 from griptape.artifacts import BaseArtifact, ListArtifact, BlobArtifact, InfoArtifact
 from griptape.memory.task.storage import BaseArtifactStorage
