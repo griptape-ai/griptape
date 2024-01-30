@@ -5,10 +5,9 @@ from typing import IO, Optional
 from collections.abc import Sequence
 
 from pathlib import Path
-from pypdf import PdfReader
 
 from griptape.loaders import BaseTextLoader
-from griptape.utils import str_to_hash, execute_futures_dict
+from griptape.utils import str_to_hash, execute_futures_dict, import_optional_dependency
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import PdfChunker
 
@@ -36,6 +35,8 @@ class PdfLoader(BaseTextLoader):
         )
 
     def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
+        PdfReader = import_optional_dependency("pypdf").PdfReader
+
         reader = PdfReader(stream, strict=True, password=password)
 
         return self._text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))
