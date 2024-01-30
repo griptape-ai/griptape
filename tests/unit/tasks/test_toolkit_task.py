@@ -178,7 +178,6 @@ class TestToolkitSubtask:
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
         subtask = ActionSubtask()
-
         agent = Agent(task_memory=memory)
 
         subtask.structure = agent

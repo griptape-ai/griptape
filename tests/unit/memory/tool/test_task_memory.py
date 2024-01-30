@@ -57,6 +57,7 @@ class TestTaskMemory:
         assert entries[0].answer.startswith(
             'Output of "MockTool.test" was stored in memory with memory_name "MyMemory"'
         )
+        assert entries[0].thought is None
 
         assert output.to_text().startswith('Output of "MockTool.test" was stored in memory')
         assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
