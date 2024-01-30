@@ -17,4 +17,4 @@ class BaseMultiModelImageGenerationDriver(BaseImageGenerationDriver, ABC):
         image_generation_model_driver: Image Model Driver to use.
     """
 
-    image_generation_model_driver: BaseImageGenerationModelDriver = field(kw_only=True)
+    image_generation_model_driver: BaseImageGenerationModelDriver = field(kw_only=True, metadata={"serializable": True})

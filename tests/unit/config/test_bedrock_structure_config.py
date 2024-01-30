@@ -16,7 +16,7 @@ class TestOpenAiStructureConfig:
             "type": "OpenAiStructureConfig",
             "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
-                "api_key": "",
+                "api_key": None,
                 "base_url": None,
                 "model": "gpt-4",
                 "organization": None,
@@ -29,7 +29,7 @@ class TestOpenAiStructureConfig:
             },
             "conversation_memory_driver": None,
             "image_generation_driver": {
-                "api_key": "",
+                "api_key": None,
                 "api_version": None,
                 "base_url": None,
                 "image_size": "512x512",
@@ -45,7 +45,7 @@ class TestOpenAiStructureConfig:
                 "query_engine": {
                     "type": "StructureTaskMemoryQueryEngineConfig",
                     "prompt_driver": {
-                        "api_key": "",
+                        "api_key": None,
                         "base_url": None,
                         "type": "OpenAiChatPromptDriver",
                         "model": "gpt-3.5-turbo",
@@ -61,7 +61,7 @@ class TestOpenAiStructureConfig:
                         "type": "LocalVectorStoreDriver",
                         "embedding_driver": {
                             "type": "OpenAiEmbeddingDriver",
-                            "api_key": "",
+                            "api_key": None,
                             "base_url": None,
                             "organization": None,
                             "model": "text-embedding-ada-002",
@@ -74,7 +74,7 @@ class TestOpenAiStructureConfig:
                         "type": "StructureTaskMemoryExtractionEngineCsvConfig",
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
-                            "api_key": "",
+                            "api_key": None,
                             "base_url": None,
                             "model": "gpt-3.5-turbo",
                             "organization": None,
@@ -90,7 +90,7 @@ class TestOpenAiStructureConfig:
                         "type": "StructureTaskMemoryExtractionEngineJsonConfig",
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
-                            "api_key": "",
+                            "api_key": None,
                             "base_url": None,
                             "model": "gpt-3.5-turbo",
                             "organization": None,
@@ -107,7 +107,7 @@ class TestOpenAiStructureConfig:
                     "type": "StructureTaskMemorySummaryEngineConfig",
                     "prompt_driver": {
                         "type": "OpenAiChatPromptDriver",
-                        "api_key": "",
+                        "api_key": None,
                         "base_url": None,
                         "model": "gpt-3.5-turbo",
                         "organization": None,

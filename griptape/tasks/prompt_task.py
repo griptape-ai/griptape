@@ -8,6 +8,7 @@ from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
+    from griptape.structures import Structure
 
 
 @define
@@ -37,18 +38,26 @@ class PromptTask(BaseTextInputTask):
 
         return stack
 
+    @property
+    def active_driver(self) -> BasePromptDriver:
+        if self.prompt_driver is None:
+            return self.structure.config.prompt_driver
+        else:
+            return self.prompt_driver
+
+    def preprocess(self, structure: Structure) -> PromptTask:
+        super().preprocess(structure)
+        if self.active_driver is not None:
+            self.active_driver.structure = structure
+
+        return self
+
     def default_system_template_generator(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets)
         )
 
     def run(self) -> BaseArtifact:
-        self.output = self.active_driver().run(self.prompt_stack)
+        self.output = self.active_driver.run(self.prompt_stack)
 
         return self.output
-
-    def active_driver(self) -> BasePromptDriver:
-        if self.prompt_driver is None:
-            return self.structure.config.prompt_driver
-        else:
-            return self.prompt_driver

@@ -1,4 +1,22 @@
 from __future__ import annotations
+from attrs import define, field, Factory
+from griptape.drivers import (
+    BasePromptDriver,
+    OpenAiChatPromptDriver,
+    LocalVectorStoreDriver,
+    OpenAiEmbeddingDriver,
+    BaseImageGenerationDriver,
+    OpenAiImageGenerationDriver,
+)
+from griptape.config import (
+    BaseStructureConfig,
+    StructureTaskMemoryConfig,
+    StructureTaskMemoryQueryEngineConfig,
+    StructureTaskMemoryExtractionEngineConfig,
+    StructureTaskMemorySummaryEngineConfig,
+    StructureTaskMemoryExtractionEngineJsonConfig,
+    StructureTaskMemoryExtractionEngineCsvConfig,
+)
 import logging
 import warnings
 import uuid
@@ -9,8 +27,7 @@ from attr import define, field, Factory
 from rich.logging import RichHandler
 from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig
-from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
-from griptape.drivers.embedding.openai_embedding_driver import OpenAiEmbeddingDriver, BaseEmbeddingDriver
+from griptape.drivers import BasePromptDriver, BaseEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory.meta import MetaMemory
@@ -19,7 +36,6 @@ from griptape.memory import TaskMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Ruleset, Rule
 from griptape.events import BaseEvent
-from griptape.tokenizers import OpenAiTokenizer
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.events import EventListener
 from griptape.tasks import BaseTask
@@ -33,14 +49,9 @@ class Structure(ABC):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    stream: bool = field(default=False, kw_only=True)
-    prompt_driver: BasePromptDriver = field(
-        default=Factory(
-            lambda self: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL, stream=self.stream),
-            takes_self=True,
-        )
-    )
-    embedding_driver: BaseEmbeddingDriver = field(default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True)
+    stream: Optional[bool] = field(default=None, kw_only=True)
+    prompt_driver: Optional[BasePromptDriver] = field(default=None)
+    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     config: BaseStructureConfig = field(
         default=Factory(lambda self: self.default_config, takes_self=True), kw_only=True
     )
@@ -50,7 +61,7 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
-    conversation_memory: Optional[BaseConversationMemory] = field(
+    conversation_memory: BaseConversationMemory = field(
         default=Factory(
             lambda self: ConversationMemory(driver=self.config.conversation_memory_driver), takes_self=True
         ),
@@ -59,7 +70,7 @@ class Structure(ABC):
     task_memory: Optional[TaskMemory] = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
     )
-    meta_memory: Optional[MetaMemory] = field(default=Factory(lambda: MetaMemory()), kw_only=True)
+    meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
@@ -86,7 +97,6 @@ class Structure(ABC):
         tasks = self.tasks.copy()
         self.tasks.clear()
         self.add_tasks(*tasks)
-        self.prompt_driver.structure = self
 
     def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
         return self.add_tasks(*other) if isinstance(other, list) else self + [other]

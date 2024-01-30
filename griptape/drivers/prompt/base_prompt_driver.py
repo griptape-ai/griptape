@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable, Tuple, Type, Iterator
+from typing import TYPE_CHECKING, Optional, Callable, Tuple, Type
+from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
 from griptape.memory import meta
@@ -31,11 +32,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     temperature: float = field(default=0.1, kw_only=True, metadata={"serializable": True})
     max_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    structure: Structure = field(default=None, kw_only=True)
+    structure: Optional[Structure] = field(default=None, kw_only=True)
     prompt_stack_to_string: Callable[[PromptStack], str] = field(
         default=Factory(lambda self: self.default_prompt_stack_to_string_converter, takes_self=True), kw_only=True
     )
-    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
+    ignored_exception_types: tuple[type[Exception], ...] = field(
+        default=Factory(lambda: (ImportError, ValueError)), kw_only=True
+    )
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
@@ -76,7 +79,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     tokens = []
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
-                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
+                        if self.structure:
+                            self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
+                        else:
+                            raise ValueError("Streaming requires a structure")
                         tokens.append(chunk.value)
                     result = TextArtifact(value="".join(tokens).strip())
                 else:
