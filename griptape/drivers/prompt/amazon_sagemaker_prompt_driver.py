@@ -44,5 +44,5 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def try_stream(self, _: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")

@@ -1,3 +1,4 @@
+from __future__ import annotations
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
@@ -30,5 +31,8 @@ class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
             "temperature": self.prompt_driver.temperature,
         }
 
-    def process_output(self, output: list[dict]) -> TextArtifact:
-        return TextArtifact(output[0]["generation"]["content"].strip())
+    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
+        if isinstance(output, list):
+            return TextArtifact(output[0]["generation"]["content"].strip())
+        else:
+            raise ValueError("output must be of instance 'list'")

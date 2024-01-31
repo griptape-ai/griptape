@@ -53,7 +53,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
+    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]] | None:
         function_kwargs = {"Sql": query, "Database": self.database}
         if self.workgroup_name:
             function_kwargs["WorkgroupName"] = self.workgroup_name
@@ -101,4 +101,4 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         if self.database_credentials_secret_arn:
             function_kwargs["SecretArn"] = self.database_credentials_secret_arn
         response = self.client.describe_table(**function_kwargs)
-        return [col["name"] for col in response["ColumnList"]]
+        return str([col["name"] for col in response["ColumnList"]])

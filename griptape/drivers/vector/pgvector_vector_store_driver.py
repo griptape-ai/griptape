@@ -52,7 +52,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("An engine or connection string is required")
 
     def __attrs_post_init__(self) -> None:
-        """If a an engine is provided, it will be used to connect to the database.
+        """If an engine is provided, it will be used to connect to the database.
         If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
@@ -86,7 +86,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             obj = session.merge(obj)
             session.commit()
 
-            return str(obj.id)
+            return str(getattr(obj, "id"))
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
@@ -94,7 +94,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
-                id=result.id, vector=result.vector, namespace=result.namespace, meta=result.meta
+                id=getattr(result, "id"),
+                vector=getattr(result, "vector"),
+                namespace=getattr(result, "namespace"),
+                meta=getattr(result, "meta")
             )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -152,7 +155,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             return [
                 BaseVectorStoreDriver.QueryResult(
                     id=str(result[0].id),
-                    vector=result[0].vector if include_vectors else None,
+                    vector=list(result[0].vector) if include_vectors else None,
                     score=result[1],
                     meta=result[0].meta,
                     namespace=result[0].namespace,

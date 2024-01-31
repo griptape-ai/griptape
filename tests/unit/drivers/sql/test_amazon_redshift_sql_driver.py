@@ -162,4 +162,4 @@ class TestAmazonRedshiftSqlDriver:
         assert statement_driver.execute_query("query") == [BaseSqlDriver.RowResult(row) for row in rows]
 
     def test_get_table_schema(self, describe_table_driver):
-        assert describe_table_driver.get_table_schema("dev") == ["first_name", "last_name"]
+        assert describe_table_driver.get_table_schema("dev") == "['first_name', 'last_name']"

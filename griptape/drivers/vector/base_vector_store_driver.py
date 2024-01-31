@@ -17,7 +17,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     @dataclass
     class QueryResult:
         id: str
-        vector: list[float]
+        vector: Optional[list[float]]
         score: float
         meta: Optional[dict] = None
         namespace: Optional[str] = None
