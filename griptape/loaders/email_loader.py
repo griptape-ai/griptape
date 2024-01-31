@@ -5,9 +5,8 @@ import logging
 import imaplib
 
 from attr import astuple, define, field
-import mailparser
 
-from griptape import utils
+from griptape.utils import execute_futures_dict, import_optional_dependency, str_to_hash
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.loaders import BaseLoader
 
@@ -38,14 +37,15 @@ class EmailLoader(BaseLoader):
         return self._retrieve_email(source)
 
     def load_collection(self, sources: list[EmailQuery], *args, **kwargs) -> dict[str, ListArtifact | ErrorArtifact]:
-        return utils.execute_futures_dict(
+        return execute_futures_dict(
             {
-                utils.str_to_hash(str(source)): self.futures_executor.submit(self._retrieve_email, source)
+                str_to_hash(str(source)): self.futures_executor.submit(self._retrieve_email, source)
                 for source in set(sources)
             }
         )
 
     def _retrieve_email(self, query: EmailQuery) -> ListArtifact | ErrorArtifact:
+        mailparser = import_optional_dependency("mailparser")
         label, key, search_criteria, max_count = astuple(query)
 
         artifacts = []
