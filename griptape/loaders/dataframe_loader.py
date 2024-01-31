@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import hashlib
 from typing import Optional, TYPE_CHECKING
 
-from pandas.core.util.hashing import hash_pandas_object
 from attr import define, field
 
 from griptape import utils
 from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from pandas import DataFrame
@@ -45,4 +44,6 @@ class DataFrameLoader(BaseLoader):
         return artifacts
 
     def _dataframe_to_hash(self, dataframe: DataFrame) -> str:
+        hash_pandas_object = import_optional_dependency("pandas.core.util.hashing").hash_pandas_object
+
         return utils.str_to_hash(str(hash_pandas_object(dataframe, index=True).values))

@@ -17,7 +17,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     @dataclass
     class QueryResult:
         id: str
-        vector: list[float]
+        vector: Optional[list[float]]
         score: float
         meta: Optional[dict] = None
         namespace: Optional[str] = None
@@ -56,7 +56,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         else:
             vector = artifact.generate_embedding(self.embedding_driver)
 
-        return self.upsert_vector(vector, vector_id=artifact.id, namespace=namespace, meta=meta, **kwargs)
+        if isinstance(vector, list):
+            return self.upsert_vector(vector, vector_id=artifact.id, namespace=namespace, meta=meta, **kwargs)
+        else:
+            raise ValueError("Vector must be an instance of 'list'.")
 
     def upsert_text(
         self,

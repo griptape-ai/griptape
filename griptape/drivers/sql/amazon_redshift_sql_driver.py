@@ -53,7 +53,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
         function_kwargs = {"Sql": query, "Database": self.database}
         if self.workgroup_name:
             function_kwargs["WorkgroupName"] = self.workgroup_name
@@ -88,8 +88,8 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         elif statement["Status"] in ["FAILED", "ABORTED"]:
             return None
 
-    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
-        function_kwargs = {"Database": self.database, "Table": table}
+    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
+        function_kwargs = {"Database": self.database, "Table": table_name}
         if schema:
             function_kwargs["Schema"] = schema
         if self.workgroup_name:
@@ -101,4 +101,4 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         if self.database_credentials_secret_arn:
             function_kwargs["SecretArn"] = self.database_credentials_secret_arn
         response = self.client.describe_table(**function_kwargs)
-        return [col["name"] for col in response["ColumnList"]]
+        return str([col["name"] for col in response["ColumnList"]])

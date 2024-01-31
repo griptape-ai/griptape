@@ -14,6 +14,10 @@ class TestOpenAiTokenizer:
     def test_token_count_for_text(self, tokenizer):
         assert tokenizer.count_tokens("foo bar huzzah") == 5
 
+    def test_initialize_with_unknown_model(self):
+        tokenizer = OpenAiTokenizer(model="not-a-real-model")
+        assert tokenizer.max_tokens == OpenAiTokenizer.DEFAULT_MAX_TOKENS - OpenAiTokenizer.TOKEN_OFFSET
+
     def test_token_count_for_messages(self, tokenizer):
         assert (
             tokenizer.count_tokens(

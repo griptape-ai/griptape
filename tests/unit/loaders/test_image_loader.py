@@ -1,6 +1,8 @@
 import os
+from io import BytesIO
 
 import pytest
+from PIL import Image
 
 from griptape.artifacts import ImageArtifact
 from griptape.loaders import ImageLoader
@@ -99,9 +101,12 @@ class TestImageLoader:
         with open(path, "rb") as file:
             artifact = loader.load(file.read())
 
+        image = Image.open(BytesIO(artifact.value))
+
         assert isinstance(artifact, ImageArtifact)
         assert artifact.name.endswith(".png")
         assert artifact.height == 32
         assert artifact.width == 32
         assert artifact.mime_type == "image/png"
         assert len(artifact.value) > 0
+        assert image.format == "PNG"
