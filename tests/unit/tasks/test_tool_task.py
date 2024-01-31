@@ -30,7 +30,6 @@ class TestToolTask:
 
         agent.add_task(task)
 
-        agent.meta_memory = None
         assert task.run().to_text().startswith('Output of "MockTool.test" was stored in memory')
 
     def test_meta_memory(self):
