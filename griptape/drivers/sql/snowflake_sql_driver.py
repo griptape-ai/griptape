@@ -53,10 +53,13 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         with self.engine.connect() as con:
             results = con.execute(sqlalchemy.text(query))
 
-            if results.returns_rows:
-                return [{column: value for column, value in result.items()} for result in results]
+            if results is not None:
+                if results.returns_rows:
+                    return [{column: value for column, value in result.items()} for result in results]
+                else:
+                    return None
             else:
-                return None
+                raise ValueError("Results cannot be 'None'")
 
     def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
@@ -65,6 +68,6 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             metadata_obj = sqlalchemy.MetaData()
             metadata_obj.reflect(bind=self.engine)
             table = sqlalchemy.Table(table, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
-            return str([(c.name, c.type) for c in table.columns])
+            return str([(c.name, c.type) for c in getattr(table, "columns")])
         except sqlalchemy.exc.NoSuchTableError:
             return None

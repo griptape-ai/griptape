@@ -59,7 +59,10 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             doc["namespace"] = namespace
 
         response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description"])
-        return response["items"][0]["_id"]
+        if isinstance(response, dict) and "items" in response and response["items"]:
+            return response["items"][0]["_id"]
+        else:
+            raise ValueError(f"Failed to upsert text: {response}")
 
     def upsert_text_artifact(
         self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
@@ -85,7 +88,10 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         }
 
         response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
-        return response["items"][0]["_id"]
+        if isinstance(response, dict) and "items" in response and response["items"]:
+            return response["items"][0]["_id"]
+        else:
+            raise ValueError(f"Failed to upsert text: {response}")
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Load a document entry from the Marqo index.

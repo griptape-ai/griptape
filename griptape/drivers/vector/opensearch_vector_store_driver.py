@@ -154,7 +154,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 id=hit["_id"],
                 namespace=hit["_source"].get("namespace") if namespace else None,
                 score=hit["_score"],
-                vector=hit["_source"].get("vector") if include_vectors else None,
+                vector=hit["_source"]["vector"] if include_vectors else [],
                 meta=hit["_source"].get("metadata") if include_metadata else None,
             )
             for hit in response["hits"]["hits"]

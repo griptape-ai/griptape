@@ -155,7 +155,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             return [
                 BaseVectorStoreDriver.QueryResult(
                     id=str(result[0].id),
-                    vector=list(result[0].vector) if include_vectors else None,
+                    vector=result[0].vector if include_vectors else [],
                     score=result[1],
                     meta=result[0].meta,
                     namespace=result[0].namespace,
