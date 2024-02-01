@@ -1,45 +1,42 @@
-from attrs import define, field, Factory
-from griptape.drivers import BasePromptDriver, LocalVectorStoreDriver
-from griptape.drivers import (
-    AmazonBedrockPromptDriver,
-    BedrockClaudePromptModelDriver,
-    BedrockTitanPromptModelDriver,
-    AmazonBedrockTitanEmbeddingDriver,
-    AmazonBedrockImageGenerationDriver,
-    BedrockTitanImageGenerationModelDriver,
-    BaseImageGenerationDriver,
-)
+from attrs import Factory, define, field
+
 from griptape.config import (
     BaseStructureConfig,
     StructureTaskMemoryConfig,
-    StructureTaskMemoryQueryEngineConfig,
     StructureTaskMemoryExtractionEngineConfig,
-    StructureTaskMemorySummaryEngineConfig,
-    StructureTaskMemoryExtractionEngineJsonConfig,
     StructureTaskMemoryExtractionEngineCsvConfig,
+    StructureTaskMemoryExtractionEngineJsonConfig,
+    StructureTaskMemoryQueryEngineConfig,
+    StructureTaskMemorySummaryEngineConfig,
+)
+from griptape.config.structure_global_drivers_config import StructureGlobalDriversConfig
+from griptape.drivers import (
+    AmazonBedrockImageGenerationDriver,
+    AmazonBedrockPromptDriver,
+    AmazonBedrockTitanEmbeddingDriver,
+    BedrockClaudePromptModelDriver,
+    BedrockTitanImageGenerationModelDriver,
+    BedrockTitanPromptModelDriver,
+    LocalVectorStoreDriver,
 )
 
 
 @define(kw_only=True)
 class AmazonBedrockStructureConfig(BaseStructureConfig):
-    prompt_driver: BasePromptDriver = field(
+    global_drivers: StructureGlobalDriversConfig = field(
         default=Factory(
-            lambda: AmazonBedrockPromptDriver(
-                model="anthropic.claude-v2", stream=False, prompt_model_driver=BedrockClaudePromptModelDriver()
+            lambda: StructureGlobalDriversConfig(
+                prompt_driver=AmazonBedrockPromptDriver(
+                    model="anthropic.claude-v2", stream=False, prompt_model_driver=BedrockClaudePromptModelDriver()
+                ),
+                image_generation_driver=AmazonBedrockImageGenerationDriver(
+                    model="amazon.titan-image-generator-v1",
+                    image_generation_model_driver=BedrockTitanImageGenerationModelDriver(),
+                ),
+                embedding_driver=AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1"),
             )
         ),
         kw_only=True,
-        metadata={"serializable": True},
-    )
-    image_generation_driver: BaseImageGenerationDriver = field(
-        default=Factory(
-            lambda: AmazonBedrockImageGenerationDriver(
-                model="amazon.titan-image-generator-v1",
-                image_generation_model_driver=BedrockTitanImageGenerationModelDriver(),
-            )
-        ),
-        kw_only=True,
-        metadata={"serializable": True},
     )
     task_memory: StructureTaskMemoryConfig = field(
         default=Factory(

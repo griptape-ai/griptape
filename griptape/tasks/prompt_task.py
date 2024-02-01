@@ -41,7 +41,7 @@ class PromptTask(BaseTextInputTask):
     @property
     def active_driver(self) -> BasePromptDriver:
         if self.prompt_driver is None:
-            return self.structure.config.prompt_driver
+            return self.structure.config.global_drivers.prompt_driver
         else:
             return self.prompt_driver
 

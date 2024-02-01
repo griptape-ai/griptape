@@ -6,7 +6,7 @@ from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.utils import PromptStack
-from griptape.rules import Ruleset, rule
+from griptape.rules import Ruleset
 
 
 @define

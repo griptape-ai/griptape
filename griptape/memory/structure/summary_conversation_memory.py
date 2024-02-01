@@ -1,12 +1,9 @@
 from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
-from typing import Optional
 from attr import define, field, Factory
-from griptape.drivers import OpenAiChatPromptDriver
 from griptape.utils import J2, PromptStack
 from griptape.memory.structure import ConversationMemory
-from griptape.tokenizers import OpenAiTokenizer
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -16,16 +13,25 @@ if TYPE_CHECKING:
 @define
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
-    prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
-    )
+    _prompt_driver: BasePromptDriver = field(kw_only=True, default=None, alias="prompt_driver")
     summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
     summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
     summarize_conversation_template_generator: J2 = field(
         default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")), kw_only=True
     )
+
+    @property
+    def prompt_driver(self) -> BasePromptDriver:
+        if self._prompt_driver is None and self.structure is not None:
+            self._prompt_driver = self.structure.config.global_drivers.prompt_driver
+        else:
+            raise ValueError("Prompt Driver is not set.")
+        return self._prompt_driver
+
+    @prompt_driver.setter
+    def prompt_driver(self, value: BasePromptDriver) -> None:
+        self._prompt_driver = value
 
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()

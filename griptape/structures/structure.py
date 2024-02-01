@@ -1,43 +1,27 @@
 from __future__ import annotations
-from attrs import define, field, Factory
-from griptape.drivers import (
-    BasePromptDriver,
-    OpenAiChatPromptDriver,
-    LocalVectorStoreDriver,
-    OpenAiEmbeddingDriver,
-    BaseImageGenerationDriver,
-    OpenAiImageGenerationDriver,
-)
-from griptape.config import (
-    BaseStructureConfig,
-    StructureTaskMemoryConfig,
-    StructureTaskMemoryQueryEngineConfig,
-    StructureTaskMemoryExtractionEngineConfig,
-    StructureTaskMemorySummaryEngineConfig,
-    StructureTaskMemoryExtractionEngineJsonConfig,
-    StructureTaskMemoryExtractionEngineCsvConfig,
-)
+
 import logging
-import warnings
 import uuid
+import warnings
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Optional, TYPE_CHECKING, Any
-from attr import define, field, Factory
+from typing import TYPE_CHECKING, Any, Optional
+
+from attrs import Factory, define, field
 from rich.logging import RichHandler
-from griptape.artifacts import TextArtifact, BlobArtifact
+
+from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig
-from griptape.drivers import BasePromptDriver, BaseEmbeddingDriver, OpenAiChatPromptDriver
+from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver
+from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
+from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
+from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
-from griptape.memory import TaskMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
-from griptape.rules import Ruleset, Rule
-from griptape.events import BaseEvent
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
-from griptape.events import EventListener
+from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask
 
 if TYPE_CHECKING:
@@ -63,7 +47,8 @@ class Structure(ABC):
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     conversation_memory: BaseConversationMemory = field(
         default=Factory(
-            lambda self: ConversationMemory(driver=self.config.conversation_memory_driver), takes_self=True
+            lambda self: ConversationMemory(driver=self.config.global_drivers.conversation_memory_driver),
+            takes_self=True,
         ),
         kw_only=True,
     )
@@ -136,40 +121,46 @@ class Structure(ABC):
         config = OpenAiStructureConfig()
 
         if self.prompt_driver is not None:
-            warnings.warn("`prompt_driver` is deprecated, use `config.prompt_driver` instead.", DeprecationWarning)
-            config.prompt_driver = self.prompt_driver
+            warnings.warn(
+                "`prompt_driver` is deprecated, use `config.global_drivers.prompt_driver` instead.", DeprecationWarning
+            )
+            config.global_drivers.prompt_driver = self.prompt_driver
             config.task_memory.query_engine.prompt_driver = self.prompt_driver
             config.task_memory.summary_engine.prompt_driver = self.prompt_driver
             config.task_memory.extraction_engine.csv.prompt_driver = self.prompt_driver
             config.task_memory.extraction_engine.json.prompt_driver = self.prompt_driver
         if self.embedding_driver is not None:
             warnings.warn(
-                "`embedding_driver` is deprecated, use config.task_memory.query_engine.vector_store_driver.embedding_driver` instead.",
+                "`embedding_driver` is deprecated, use config.global_drivers.embedding_driver` instead.",
                 DeprecationWarning,
             )
             config.task_memory.query_engine.vector_store_driver.embedding_driver = self.embedding_driver
         if self.stream is not None:
             warnings.warn("`stream` is deprecated, use `config.prompt_driver.stream` instead.", DeprecationWarning)
+            config.global_drivers.prompt_driver.stream = self.stream
 
         return config
 
     @property
     def default_task_memory(self) -> TaskMemory:
+        global_drivers = self.config.global_drivers
+        task_memory = self.config.task_memory
         return TaskMemory(
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     query_engine=VectorQueryEngine(
-                        prompt_driver=self.config.task_memory.query_engine.prompt_driver,
-                        vector_store_driver=self.config.task_memory.query_engine.vector_store_driver,
+                        prompt_driver=task_memory.query_engine.prompt_driver or global_drivers.prompt_driver,
+                        vector_store_driver=task_memory.query_engine.vector_store_driver
+                        or global_drivers.vector_store_driver,
                     ),
                     summary_engine=PromptSummaryEngine(
-                        prompt_driver=self.config.task_memory.summary_engine.prompt_driver
+                        prompt_driver=task_memory.summary_engine.prompt_driver or global_drivers.prompt_driver
                     ),
                     csv_extraction_engine=CsvExtractionEngine(
-                        prompt_driver=self.config.task_memory.extraction_engine.csv.prompt_driver
+                        prompt_driver=task_memory.extraction_engine.csv.prompt_driver or global_drivers.prompt_driver
                     ),
                     json_extraction_engine=JsonExtractionEngine(
-                        prompt_driver=self.config.task_memory.extraction_engine.json.prompt_driver
+                        prompt_driver=task_memory.extraction_engine.json.prompt_driver or global_drivers.prompt_driver
                     ),
                 ),
                 BlobArtifact: BlobArtifactStorage(),

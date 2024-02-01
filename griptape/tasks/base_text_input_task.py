@@ -15,7 +15,9 @@ from griptape.utils import J2
 class BaseTextInputTask(RuleMixin, BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
+        default=DEFAULT_INPUT_TEMPLATE, alias="input"
+    )
 
     @property
     def input(self) -> TextArtifact:

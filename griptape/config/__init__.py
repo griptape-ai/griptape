@@ -1,5 +1,6 @@
 from .base_config import BaseConfig
 
+from .structure_global_drivers_config import StructureGlobalDriversConfig
 from .structure_task_memory_extraction_engine_csv_config import StructureTaskMemoryExtractionEngineCsvConfig
 from .structure_task_memory_extraction_engine_json_config import StructureTaskMemoryExtractionEngineJsonConfig
 from .structure_task_memory_extraction_engine_config import StructureTaskMemoryExtractionEngineConfig
@@ -16,6 +17,7 @@ __all__ = [
     "BaseConfig",
     "BaseStructureConfig",
     "StructureTaskMemoryConfig",
+    "StructureGlobalDriversConfig",
     "StructureTaskMemoryQueryEngineConfig",
     "StructureTaskMemorySummaryEngineConfig",
     "StructureTaskMemoryExtractionEngineConfig",
