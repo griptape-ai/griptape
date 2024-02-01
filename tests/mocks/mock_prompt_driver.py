@@ -1,4 +1,4 @@
-from typing import Iterator
+from collections.abc import Iterator
 from attr import define, field
 from griptape.events import CompletionChunkEvent
 from griptape.utils import PromptStack
@@ -10,7 +10,7 @@ from griptape.artifacts import TextArtifact
 @define
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
-    tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+    tokenizer: BaseTokenizer = OpenAiTokenizer(model="gpt-3.5-turbo")
     mock_output: str = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:

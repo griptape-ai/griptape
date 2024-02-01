@@ -286,9 +286,9 @@ class TestPipeline:
     def test_text_artifact_token_count(self):
         text = "foobar"
 
-        assert TextArtifact(text).token_count(
-            OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
-        ) == OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL).count_tokens(text)
+        assert TextArtifact(text).token_count(OpenAiTokenizer(model="gpt-3.5-turbo")) == OpenAiTokenizer(
+            model="gpt-3.5-turbo"
+        ).count_tokens(text)
 
     def test_run(self):
         task = PromptTask("test")

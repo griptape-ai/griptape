@@ -1,4 +1,4 @@
-from typing import Iterator
+from collections.abc import Iterator
 from attr import define
 
 from griptape.utils import PromptStack
@@ -12,7 +12,7 @@ class MockFailingPromptDriver(BasePromptDriver):
     max_failures: int
     current_attempt: int = 0
     model: str = "test-model"
-    tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+    tokenizer: BaseTokenizer = OpenAiTokenizer(model="gpt-3.5-turbo")
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         if self.current_attempt < self.max_failures:

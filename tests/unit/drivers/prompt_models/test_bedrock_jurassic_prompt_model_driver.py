@@ -27,7 +27,7 @@ class TestBedrockJurassicPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model=BedrockJurassicTokenizer.DEFAULT_MODEL,
+            model="ai21.j2-ultra-v1",
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockJurassicPromptModelDriver(),
             temperature=0.12345,
@@ -62,7 +62,7 @@ class TestBedrockJurassicPromptModelDriver:
         assert model_input["prompt"].startswith("System: foo\nUser: bar\nAssistant:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8186
+        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8185
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver):

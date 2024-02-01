@@ -17,9 +17,7 @@ from griptape.tokenizers import OpenAiTokenizer
 class TextLoader(BaseTextLoader):
     MAX_TOKEN_RATIO = 0.5
 
-    tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
-    )
+    tokenizer: OpenAiTokenizer = field(default=Factory(lambda: OpenAiTokenizer(model="gpt-3.5-turbo")), kw_only=True)
     max_tokens: int = field(
         default=Factory(lambda self: round(self.tokenizer.max_tokens * self.MAX_TOKEN_RATIO), takes_self=True),
         kw_only=True,

@@ -27,7 +27,7 @@ class TestBedrockLlamaPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model=BedrockLlamaTokenizer.DEFAULT_MODEL,
+            model="meta.llama2-13b-chat-v1",
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockLlamaPromptModelDriver(),
             temperature=0.12345,
@@ -57,7 +57,7 @@ class TestBedrockLlamaPromptModelDriver:
         )
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["max_gen_len"] == 2026
+        assert driver.prompt_stack_to_model_params(stack)["max_gen_len"] == 4074
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver):

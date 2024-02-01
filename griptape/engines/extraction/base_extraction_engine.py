@@ -14,8 +14,7 @@ class BaseExtractionEngine(ABC):
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     chunk_joiner: str = field(default="\n\n", kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
+        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-3.5-turbo")), kw_only=True
     )
     chunker: BaseChunker = field(
         default=Factory(

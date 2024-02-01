@@ -37,12 +37,7 @@ class TestTextArtifact:
             assert TextArtifact("ß", encoding="ascii").to_bytes()
 
     def test_token_count(self):
-        assert (
-            TextArtifact("foobarbaz").token_count(
-                OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
-            )
-            == 2
-        )
+        assert TextArtifact("foobarbaz").token_count(OpenAiTokenizer(model="gpt-3.5-turbo")) == 2
 
     def test_to_dict(self):
         assert TextArtifact("foobar").to_dict()["value"] == "foobar"

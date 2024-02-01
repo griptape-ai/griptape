@@ -34,10 +34,7 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     stream: bool = field(default=False, kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(
-            lambda self: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL, stream=self.stream),
-            takes_self=True,
-        ),
+        default=Factory(lambda self: OpenAiChatPromptDriver(model="gpt-4", stream=self.stream), takes_self=True),
         kw_only=True,
     )
     embedding_driver: BaseEmbeddingDriver = field(default=Factory(lambda: OpenAiEmbeddingDriver()), kw_only=True)

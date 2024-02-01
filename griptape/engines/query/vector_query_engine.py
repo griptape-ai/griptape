@@ -18,8 +18,7 @@ class VectorQueryEngine(BaseQueryEngine):
     answer_token_offset: int = field(default=400, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
+        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-3.5-turbo")), kw_only=True
     )
     template_generator: J2 = field(default=Factory(lambda: J2("engines/query/vector_query.j2")), kw_only=True)
 

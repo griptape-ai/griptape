@@ -8,8 +8,6 @@ from typing import Optional
 
 @define(frozen=True)
 class OpenAiTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
-    DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
     TOKEN_OFFSET = 8

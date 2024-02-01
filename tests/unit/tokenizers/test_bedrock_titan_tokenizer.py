@@ -20,8 +20,8 @@ class TestBedrockTitanTokenizer:
 
     def test_titan_tokens_left(self):
         assert (
-            BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL).count_tokens_left(
+            BedrockTitanTokenizer(model="amazon.titan-text-express-v1").count_tokens_left(
                 "Instructions: foo\nUser: bar\nBot:"
             )
-            == 4090
+            == 7994
         )

@@ -21,13 +21,13 @@ class TestAmazonSagemakerEmbeddingDriver:
     def test_init(self):
         assert AmazonSageMakerEmbeddingDriver(
             model="test-endpoint",
-            tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
+            tokenizer=OpenAiTokenizer(model="gpt-3.5-turbo"),
             embedding_model_driver=SageMakerHuggingFaceEmbeddingModelDriver(),
         )
 
     def test_try_embed_chunk(self):
         assert AmazonSageMakerEmbeddingDriver(
             model="test-endpoint",
-            tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
+            tokenizer=OpenAiTokenizer(model="gpt-3.5-turbo"),
             embedding_model_driver=SageMakerHuggingFaceEmbeddingModelDriver(),
         ).try_embed_chunk("foobar") == [0, 1, 0]

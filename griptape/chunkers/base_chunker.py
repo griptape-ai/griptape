@@ -14,9 +14,7 @@ class BaseChunker(ABC):
     separators: list[ChunkSeparator] = field(
         default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True), kw_only=True
     )
-    tokenizer: BaseTokenizer = field(
-        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
-    )
+    tokenizer: BaseTokenizer = field(default=Factory(lambda: OpenAiTokenizer(model="gpt-3.5-turbo")), kw_only=True)
     max_tokens: int = field(default=Factory(lambda self: self.tokenizer.max_tokens, takes_self=True), kw_only=True)
 
     def chunk(self, text: TextArtifact | str) -> list[TextArtifact]:

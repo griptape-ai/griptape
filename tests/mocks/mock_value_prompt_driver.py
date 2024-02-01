@@ -10,9 +10,7 @@ from griptape.utils.prompt_stack import PromptStack
 class MockValuePromptDriver(BasePromptDriver):
     value: str = field(kw_only=True)
     model: str = field(default="test-model")
-    tokenizer: BaseTokenizer = field(
-        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL))
-    )
+    tokenizer: BaseTokenizer = field(default=Factory(lambda: OpenAiTokenizer(model="gpt-3.5-turbo")))
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         return TextArtifact(value=self.value)

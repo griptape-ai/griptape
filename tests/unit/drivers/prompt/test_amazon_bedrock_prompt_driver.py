@@ -25,21 +25,21 @@ class TestAmazonBedrockPromptDriver:
 
     def test_init(self):
         assert AmazonBedrockPromptDriver(
-            model=BedrockClaudeTokenizer.DEFAULT_MODEL, prompt_model_driver=BedrockClaudePromptModelDriver()
+            model="anthropic.claude-v2:1", prompt_model_driver=BedrockClaudePromptModelDriver()
         )
 
     def test_custom_tokenizer(self):
         assert isinstance(
             AmazonBedrockPromptDriver(
-                model=BedrockClaudeTokenizer.DEFAULT_MODEL, prompt_model_driver=BedrockClaudePromptModelDriver()
+                model="anthropic.claude-v2:1", prompt_model_driver=BedrockClaudePromptModelDriver()
             ).tokenizer,
             AnthropicTokenizer,
         )
 
         assert isinstance(
             AmazonBedrockPromptDriver(
-                model=BedrockTitanTokenizer.DEFAULT_MODEL,
-                tokenizer=BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL),
+                model="amazon.titan-text-express-v1",
+                tokenizer=BedrockTitanTokenizer(model="amazon.titan-text-express-v1"),
                 prompt_model_driver=BedrockTitanPromptModelDriver(),
             ).tokenizer,
             BedrockTitanTokenizer,

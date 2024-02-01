@@ -33,7 +33,7 @@ class TestAmazonSageMakerPromptDriver:
         assert isinstance(
             AmazonSageMakerPromptDriver(
                 model="foo",
-                tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
+                tokenizer=OpenAiTokenizer(model="gpt-3.5-turbo"),
                 prompt_model_driver=SageMakerLlamaPromptModelDriver(),
             ).tokenizer,
             OpenAiTokenizer,

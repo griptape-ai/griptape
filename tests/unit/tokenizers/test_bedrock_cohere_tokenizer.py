@@ -19,4 +19,4 @@ class TestBedrockCohereTokenizer:
         mock_session_class.return_value = mock_session_object
 
     def test_cohere_tokens_left(self):
-        assert BedrockCohereTokenizer().count_tokens_left("foo bar") == 510
+        assert BedrockCohereTokenizer(model="cohere.embed").count_tokens_left("foo bar") == 510

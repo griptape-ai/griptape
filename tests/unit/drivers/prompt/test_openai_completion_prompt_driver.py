@@ -48,11 +48,11 @@ class TestOpenAiCompletionPromptDriverFixtureMixin:
 
 class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMixin):
     def test_init(self):
-        assert OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        assert OpenAiCompletionPromptDriver(model="gpt-3.5-turbo")
 
     def test_try_run(self, mock_completion_create, prompt_stack, prompt):
         # Given
-        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        driver = OpenAiCompletionPromptDriver(model="gpt-3.5-turbo")
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -70,7 +70,7 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
 
     def test_try_stream_run(self, mock_completion_stream_create, prompt_stack, prompt):
         # Given
-        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
+        driver = OpenAiCompletionPromptDriver(model="gpt-3.5-turbo", stream=True)
 
         # When
         text_artifact = next(driver.try_stream(prompt_stack))
@@ -89,7 +89,7 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
 
     def test_try_run_throws_when_prompt_stack_is_string(self):
         # Given
-        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        driver = OpenAiCompletionPromptDriver(model="gpt-3.5-turbo")
 
         # When
         with pytest.raises(Exception) as e:
@@ -101,7 +101,7 @@ class TestOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixtureMi
     @pytest.mark.parametrize("choices", [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_completion_create, prompt_stack):
         # Given
-        driver = OpenAiCompletionPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+        driver = OpenAiCompletionPromptDriver(model="gpt-3.5-turbo")
         mock_completion_create.return_value.choices = choices
 
         # When

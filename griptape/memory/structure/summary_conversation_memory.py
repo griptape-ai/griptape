@@ -1,12 +1,11 @@
 from __future__ import annotations
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from typing import Optional
 from attr import define, field, Factory
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.utils import J2, PromptStack
 from griptape.memory.structure import ConversationMemory
-from griptape.tokenizers import OpenAiTokenizer
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -17,8 +16,7 @@ if TYPE_CHECKING:
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
+        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-3.5-turbo")), kw_only=True
     )
     summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
