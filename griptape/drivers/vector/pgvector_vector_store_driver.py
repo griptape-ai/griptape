@@ -145,12 +145,12 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
-            query = session.query(self._model, op(vector).label("score")).order_by(op(vector))
+            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))
 
             if namespace:
-                query = query.filter_by(namespace=namespace)
+                query_result = query_result.filter_by(namespace=namespace)
 
-            results = query.limit(count).all()
+            results = query_result.limit(count).all()
 
             return [
                 BaseVectorStoreDriver.QueryResult(

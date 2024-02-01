@@ -34,7 +34,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         params = {"namespace": namespace} | kwargs
 
-        self.index.upsert([(vector_id, vector, meta)], **params)
+        self.index.upsert([(vector_id, vector, meta)], str(params))
 
         return vector_id
 
