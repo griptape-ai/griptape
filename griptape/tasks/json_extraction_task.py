@@ -10,12 +10,13 @@ class JsonExtractionTask(ExtractionTask):
 
     @property
     def extraction_engine(self) -> JsonExtractionEngine:
-        if self._extraction_engine is None and self.structure is not None:
-            self._extraction_engine = JsonExtractionEngine(
-                prompt_driver=self.structure.config.global_drivers.prompt_driver
-            )
-        else:
-            raise ValueError("Extraction Engine is not set.")
+        if self._extraction_engine is None:
+            if self.structure is not None:
+                self._extraction_engine = JsonExtractionEngine(
+                    prompt_driver=self.structure.config.global_drivers.prompt_driver
+                )
+            else:
+                raise ValueError("Extraction Engine is not set.")
         return self._extraction_engine
 
     @extraction_engine.setter

@@ -15,11 +15,14 @@ class TextQueryTask(BaseTextInputTask):
 
     @property
     def query_engine(self) -> BaseQueryEngine:
-        if self._query_engine is None and self.structure is not None:
-            self._query_engine = VectorQueryEngine(
-                prompt_driver=self.structure.config.global_drivers.prompt_driver,
-                vector_store_driver=self.structure.config.global_drivers.vector_store_driver,
-            )
+        if self._query_engine is None:
+            if self.structure is not None:
+                self._query_engine = VectorQueryEngine(
+                    prompt_driver=self.structure.config.global_drivers.prompt_driver,
+                    vector_store_driver=self.structure.config.global_drivers.vector_store_driver,
+                )
+            else:
+                raise ValueError("Query Engine is not set.")
         return self._query_engine
 
     @query_engine.setter

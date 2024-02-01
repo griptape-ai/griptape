@@ -23,10 +23,11 @@ class SummaryConversationMemory(ConversationMemory):
 
     @property
     def prompt_driver(self) -> BasePromptDriver:
-        if self._prompt_driver is None and self.structure is not None:
-            self._prompt_driver = self.structure.config.global_drivers.prompt_driver
-        else:
-            raise ValueError("Prompt Driver is not set.")
+        if self._prompt_driver is None:
+            if self.structure is not None:
+                self._prompt_driver = self.structure.config.global_drivers.prompt_driver
+            else:
+                raise ValueError("Prompt Driver is not set.")
         return self._prompt_driver
 
     @prompt_driver.setter

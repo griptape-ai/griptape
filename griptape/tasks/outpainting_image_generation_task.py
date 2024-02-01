@@ -53,12 +53,13 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
 
     @property
     def image_generation_engine(self) -> OutpaintingImageGenerationEngine:
-        if self._image_generation_engine is None and self.structure is not None:
-            self._image_generation_engine = OutpaintingImageGenerationEngine(
-                image_generation_driver=self.structure.config.global_drivers.image_generation_driver
-            )
-        else:
-            raise ValueError("Image Generation Engine is not set.")
+        if self._image_generation_engine is None:
+            if self.structure is not None:
+                self._image_generation_engine = OutpaintingImageGenerationEngine(
+                    image_generation_driver=self.structure.config.global_drivers.image_generation_driver
+                )
+            else:
+                raise ValueError("Image Generation Engine is not set.")
 
         return self._image_generation_engine
 
