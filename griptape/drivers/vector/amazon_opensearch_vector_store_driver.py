@@ -31,7 +31,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
         )
     )
 
-    client: Optional[OpenSearch] = field(
+    client: OpenSearch = field(
         default=Factory(
             lambda self: import_optional_dependency("opensearchpy").OpenSearch(
                 hosts=[{"host": self.host, "port": self.port}],
