@@ -8,17 +8,13 @@ from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
 
 @define
 class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
-    tokenizer: BaseTokenizer = field(
-        default=Factory(
-            lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency("transformers").LlamaTokenizerFast.from_pretrained(
-                    "hf-internal-testing/llama-tokenizer", model_max_length=self.max_tokens
-                )
-            ),
-            takes_self=True,
-        ),
-        kw_only=True,
-    )
+    @property
+    def tokenizer(self) -> HuggingFaceTokenizer:
+        return HuggingFaceTokenizer(
+            tokenizer=import_optional_dependency("transformers").LlamaTokenizerFast.from_pretrained(
+                "hf-internal-testing/llama-tokenizer", model_max_length=self.max_tokens
+            )
+        )
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> list:
         return [[{"role": i.role, "content": i.content} for i in prompt_stack.inputs]]

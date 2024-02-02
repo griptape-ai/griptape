@@ -125,6 +125,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         filter_string = f"namespace:{namespace}" if namespace else None
+
         results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
 
         # get all _id's from search results

@@ -1,4 +1,5 @@
 import uuid
+from logging import exception
 from typing import Optional, Any
 from attr import define, field, Factory
 from dataclasses import dataclass
@@ -56,7 +57,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
-            self.engine = create_engine(self.connection_string, **self.create_engine_params)
+            self.engine = create_engine(self.connection_string, **self.create_engine_params)  # pyright: ignore
 
     def setup(
         self, create_schema: bool = True, install_uuid_extension: bool = True, install_vector_extension: bool = True
@@ -97,7 +98,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 id=getattr(result, "id"),
                 vector=getattr(result, "vector"),
                 namespace=getattr(result, "namespace"),
-                meta=getattr(result, "meta")
+                meta=getattr(result, "meta"),
             )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -145,7 +146,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
-            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))
+            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore
 
             if namespace:
                 query_result = query_result.filter_by(namespace=namespace)

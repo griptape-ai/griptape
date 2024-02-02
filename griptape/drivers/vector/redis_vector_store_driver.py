@@ -3,12 +3,11 @@ import json
 import logging
 import numpy as np
 from griptape.utils import import_optional_dependency, str_to_hash
-from typing import Optional, List, TYPE_CHECKING
+from typing import Optional, List, TYPE_CHECKING, Dict, Any
 from attr import define, field, Factory
 from griptape.drivers import BaseVectorStoreDriver
 
 logging.basicConfig(level=logging.WARNING)
-
 
 if TYPE_CHECKING:
     from redis import Redis
@@ -61,7 +60,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         key = self._generate_key(vector_id, namespace)
         bytes_vector = json.dumps(vector).encode("utf-8")
 
-        mapping = {"vector": np.array(vector, dtype=np.float32).tobytes(), "vec_string": bytes_vector}
+        mapping = {}
+        mapping["vector"] = np.array(vector, dtype=np.float32).tobytes()
+        mapping["vec_string"] = bytes_vector
 
         if meta:
             mapping["metadata"] = json.dumps(meta)
@@ -129,7 +130,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_params = {"vector": np.array(vector, dtype=np.float32).tobytes()}
 
-        results = self.client.ft(self.index).search(query_expression, query_params).docs
+        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore
 
         query_results = []
         for document in results:

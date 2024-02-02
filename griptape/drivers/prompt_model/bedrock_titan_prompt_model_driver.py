@@ -26,7 +26,7 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         This ensures that by the time we need to initialize the Tokenizer, the
         Prompt Driver has already been initialized.
 
-        See this thread more more information: https://github.com/griptape-ai/griptape/issues/244
+        See this thread for more information: https://github.com/griptape-ai/griptape/issues/244
 
         Returns:
             BedrockTitanTokenizer: The tokenizer for this driver.
