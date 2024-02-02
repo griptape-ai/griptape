@@ -1,10 +1,14 @@
 from typing import Optional
+from attrs import define, field
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseEmbeddingDriver
+from griptape.drivers import BaseImageGenerationDriver
 from griptape.exceptions import NopException
 
 
-class NopImageGenerationDriver(BaseEmbeddingDriver):
+@define
+class NopImageGenerationDriver(BaseImageGenerationDriver):
+    model: str = field(init=False)
+
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         raise NopException(__class__.__name__, "try_text_to_image")
 

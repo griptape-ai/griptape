@@ -10,6 +10,7 @@ from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
+from .prompt.nop_prompt_driver import NopPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
@@ -23,6 +24,7 @@ from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddin
 from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
 from .embedding.amazon_bedrock_cohere_embedding_driver import AmazonBedrockCohereEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
+from .embedding.nop_embedding_driver import NopEmbeddingDriver
 
 from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
 from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
@@ -64,6 +66,7 @@ from .image_generation.openai_image_generation_driver import OpenAiImageGenerati
 from .image_generation.leonardo_image_generation_driver import LeonardoImageGenerationDriver
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
 from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
+from .image_generation.nop_image_generation_driver import NopImageGenerationDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -78,6 +81,7 @@ __all__ = [
     "AmazonSageMakerPromptDriver",
     "AmazonBedrockPromptDriver",
     "BaseMultiModelPromptDriver",
+    "NopPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
@@ -89,6 +93,7 @@ __all__ = [
     "AmazonBedrockTitanEmbeddingDriver",
     "AmazonBedrockCohereEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
+    "NopEmbeddingDriver",
     "BaseEmbeddingModelDriver",
     "SageMakerHuggingFaceEmbeddingModelDriver",
     "SageMakerTensorFlowHubEmbeddingModelDriver",
@@ -97,6 +102,7 @@ __all__ = [
     "PineconeVectorStoreDriver",
     "MarqoVectorStoreDriver",
     "MongoDbAtlasVectorStoreDriver",
+    "AzureMongoDbVectorStoreDriver",
     "RedisVectorStoreDriver",
     "OpenSearchVectorStoreDriver",
     "AmazonOpenSearchVectorStoreDriver",
@@ -121,4 +127,5 @@ __all__ = [
     "LeonardoImageGenerationDriver",
     "AmazonBedrockImageGenerationDriver",
     "AzureOpenAiImageGenerationDriver",
+    "NopImageGenerationDriver",
 ]
