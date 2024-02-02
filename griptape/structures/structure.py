@@ -131,7 +131,7 @@ class Structure(ABC):
             config.task_memory.extraction_engine.json.prompt_driver = self.prompt_driver
         if self.embedding_driver is not None:
             warnings.warn(
-                "`embedding_driver` is deprecated, use config.global_drivers.embedding_driver` instead.",
+                "`embedding_driver` is deprecated, use `config.global_drivers.embedding_driver` instead.",
                 DeprecationWarning,
             )
             config.task_memory.query_engine.vector_store_driver.embedding_driver = self.embedding_driver

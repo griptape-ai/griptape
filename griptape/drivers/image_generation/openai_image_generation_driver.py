@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import Literal, Optional, cast
+from typing import Literal, Optional, cast, Union
 
 import openai
 from openai.types.images_response import ImagesResponse
@@ -43,11 +43,11 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         )
     )
     style: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    quality: Literal["standard"] | Literal["hd"] = field(
+    quality: Union[Literal["standard"], Literal["hd"]] = field(
         default="standard", kw_only=True, metadata={"serializable": True}
     )
     image_size: (
-        Literal["256x256"] | Literal["512x512"] | Literal["1024x1024"] | Literal["1024x1792"] | Literal["1792x1024"]
+        Union[Literal["256x256"], Literal["512x512"], Literal["1024x1024"], Literal["1024x1792"], Literal["1792x1024"]]
     ) = field(default="1024x1024", kw_only=True, metadata={"serializable": True})
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True, metadata={"serializable": True})
 
