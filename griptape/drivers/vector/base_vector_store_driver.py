@@ -33,7 +33,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def upsert_text_artifacts(
-            self, artifacts: dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
+        self, artifacts: dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
     ) -> None:
         utils.execute_futures_dict(
             {
@@ -44,7 +44,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         )
 
     def upsert_text_artifact(
-            self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
     ) -> str:
         if not meta:
             meta = {}
@@ -59,16 +59,15 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         if isinstance(vector, list):
             return self.upsert_vector(vector, vector_id=artifact.id, namespace=namespace, meta=meta, **kwargs)
         else:
-            raise ValueError("Vector must be of instance 'list'."
-                             "")
+            raise ValueError("Vector must be of instance 'list'." "")
 
     def upsert_text(
-            self,
-            string: str,
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs,
+        self,
+        string: str,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs,
     ) -> str:
         return self.upsert_vector(
             self.embedding_driver.embed_string(string),
@@ -84,12 +83,12 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
 
     @abstractmethod
     def upsert_vector(
-            self,
-            vector: list[float],
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs,
+        self,
+        vector: list[float],
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs,
     ) -> str:
         ...
 
@@ -103,11 +102,11 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
 
     @abstractmethod
     def query(
-            self,
-            query: str,
-            count: Optional[int] = None,
-            namespace: Optional[str] = None,
-            include_vectors: bool = False,
-            **kwargs,
+        self,
+        query: str,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
     ) -> list[QueryResult]:
         ...
