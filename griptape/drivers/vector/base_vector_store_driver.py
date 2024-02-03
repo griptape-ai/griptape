@@ -17,7 +17,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     @dataclass
     class QueryResult:
         id: str
-        vector: list[float]
+        vector: Optional[list[float]]
         score: float
         meta: Optional[dict] = None
         namespace: Optional[str] = None
@@ -59,7 +59,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         if isinstance(vector, list):
             return self.upsert_vector(vector, vector_id=artifact.id, namespace=namespace, meta=meta, **kwargs)
         else:
-            raise ValueError("Vector must be of instance 'list'." "")
+            raise ValueError("Vector must be of instance 'list'.")
 
     def upsert_text(
         self,

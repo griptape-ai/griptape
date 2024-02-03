@@ -53,7 +53,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]] | None:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
         function_kwargs = {"Sql": query, "Database": self.database}
         if self.workgroup_name:
             function_kwargs["WorkgroupName"] = self.workgroup_name

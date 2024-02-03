@@ -59,7 +59,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
                 else:
                     return None
             else:
-                raise ValueError("Results cannot be 'None'")
+                raise ValueError("No results found")
 
     def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")

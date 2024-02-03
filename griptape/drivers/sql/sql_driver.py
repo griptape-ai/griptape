@@ -40,7 +40,7 @@ class SqlDriver(BaseSqlDriver):
                 else:
                     return None
             else:
-                raise ValueError("results cannot be 'None'")
+                raise ValueError("No result found")
 
     def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
