@@ -46,9 +46,9 @@ class SqlDriver(BaseSqlDriver):
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:
-            table = sqlalchemy.Table(
+            table_name = sqlalchemy.Table(
                 table, sqlalchemy.MetaData(bind=self.engine), schema=schema, autoload=True, autoload_with=self.engine
             )
-            return str([(c.name, c.type) for c in getattr(table, "columns")])
+            return str([(c.name, c.type) for c in table_name.columns])
         except sqlalchemy.exc.NoSuchTableError:
             return None

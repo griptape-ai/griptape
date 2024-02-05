@@ -12,7 +12,7 @@ class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
 
     @property
     def tokenizer(self) -> HuggingFaceTokenizer:
-        if not self._tokenizer:
+        if self._tokenizer is None:
             self._tokenizer = HuggingFaceTokenizer(
                 tokenizer=import_optional_dependency("transformers").LlamaTokenizerFast.from_pretrained(
                     "hf-internal-testing/llama-tokenizer", model_max_length=self.max_tokens

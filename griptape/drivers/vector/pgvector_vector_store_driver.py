@@ -1,6 +1,6 @@
 import uuid
 from logging import exception
-from typing import Optional, Any
+from typing import Optional, Any, cast
 from attr import define, field, Factory
 from dataclasses import dataclass
 from griptape.drivers import BaseVectorStoreDriver
@@ -57,7 +57,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
-            self.engine = create_engine(self.connection_string, **self.create_engine_params)  # pyright: ignore
+            self.engine = cast(Engine, create_engine(self.connection_string, **self.create_engine_params))
 
     def setup(
         self, create_schema: bool = True, install_uuid_extension: bool = True, install_vector_extension: bool = True

@@ -12,7 +12,7 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
 
     @property
     def tokenizer(self) -> HuggingFaceTokenizer:
-        if not self._tokenizer:
+        if self._tokenizer is None:
             self._tokenizer = HuggingFaceTokenizer(
                 tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(
                     "tiiuae/falcon-40b", model_max_length=self.max_tokens

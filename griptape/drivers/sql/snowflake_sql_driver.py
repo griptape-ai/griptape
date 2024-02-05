@@ -47,7 +47,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]] | None:
+    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:
@@ -57,7 +57,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
                 if results.returns_rows:
                     return [{column: value for column, value in result.items()} for result in results]
                 else:
-                    return None
+                    raise ValueError("No results found")
             else:
                 raise ValueError("No results found")
 
@@ -67,7 +67,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         try:
             metadata_obj = sqlalchemy.MetaData()
             metadata_obj.reflect(bind=self.engine)
-            table = sqlalchemy.Table(table, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
-            return str([(c.name, c.type) for c in getattr(table, "columns")])
+            table_name = sqlalchemy.Table(table, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
+            return str([(c.name, c.type) for c in table_name.columns])
         except sqlalchemy.exc.NoSuchTableError:
             return None
