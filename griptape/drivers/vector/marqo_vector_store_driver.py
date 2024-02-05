@@ -125,7 +125,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         filter_string = f"namespace:{namespace}" if namespace else None
-        results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
+
+        if filter_string is not None:
+            results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
+        else:
+            results = self.mq.index(self.index).search("", limit=10000)
 
         # get all _id's from search results
         ids = [r["_id"] for r in results["hits"]]
@@ -210,7 +214,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         # Change this once API issue is fixed (entries in results are no longer objects but dicts)
-        return [index.index_name for index in self.mq.get_indexes()["results"]]
+        return [index["index"] for index in self.mq.get_indexes()["results"]]
 
     def upsert_vector(
         self,
