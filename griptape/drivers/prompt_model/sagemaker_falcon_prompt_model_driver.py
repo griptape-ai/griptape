@@ -38,4 +38,4 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
         if isinstance(output, list):
             return TextArtifact(output[0]["generated_text"].strip())
         else:
-            raise ValueError("output must be of instance 'list'")
+            raise ValueError("output must be an instance of 'list'")

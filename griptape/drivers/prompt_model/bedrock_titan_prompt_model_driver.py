@@ -80,4 +80,4 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
             else:
                 return TextArtifact(body["results"][0]["outputText"])
         else:
-            raise ValueError("output must be of instance 'str' or 'bytes'")
+            raise ValueError("output must be an instance of 'str' or 'bytes'")

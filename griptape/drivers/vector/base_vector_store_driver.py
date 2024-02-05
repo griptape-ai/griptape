@@ -59,7 +59,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         if isinstance(vector, list):
             return self.upsert_vector(vector, vector_id=artifact.id, namespace=namespace, meta=meta, **kwargs)
         else:
-            raise ValueError("Vector must be of instance 'list'.")
+            raise ValueError("Vector must be an instance of 'list'.")
 
     def upsert_text(
         self,
