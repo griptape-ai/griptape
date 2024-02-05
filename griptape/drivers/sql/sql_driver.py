@@ -28,7 +28,7 @@ class SqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]] | None:
+    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.begin() as con:
@@ -38,7 +38,7 @@ class SqlDriver(BaseSqlDriver):
                 if results.returns_rows:
                     return [{column: value for column, value in result.items()} for result in results]
                 else:
-                    return None
+                    raise ValueError("No result found")
             else:
                 raise ValueError("No result found")
 
