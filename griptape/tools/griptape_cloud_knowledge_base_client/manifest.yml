@@ -1,0 +1,5 @@
+version: "v1"
+name: Griptape Cloud Knowledge Base Client
+description: Tool for using the Griptape Cloud Knowledge Base API.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
