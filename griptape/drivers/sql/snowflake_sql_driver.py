@@ -57,7 +57,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
                 if results.returns_rows:
                     return [{column: value for column, value in result.items()} for result in results]
                 else:
-                    raise ValueError("No results found")
+                    return None
             else:
                 raise ValueError("No results found")
 
