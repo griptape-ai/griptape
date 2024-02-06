@@ -47,7 +47,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Optional[Any]]]:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:

@@ -213,7 +213,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The list of all indexes.
         """
 
-        # Change this once API issue is fixed (entries in results are no longer objects but dicts)
         return [index["index"] for index in self.mq.get_indexes()["results"]]
 
     def upsert_vector(
