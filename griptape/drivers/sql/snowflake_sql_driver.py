@@ -68,6 +68,6 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             metadata_obj = sqlalchemy.MetaData()
             metadata_obj.reflect(bind=self.engine)
             table = sqlalchemy.Table(table_name, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
-            return str([(c.name, c.type) for c in table.__table__.columns])
+            return str([(c.name, c.type) for c in table.columns])
         except sqlalchemy.exc.NoSuchTableError:
             return None
