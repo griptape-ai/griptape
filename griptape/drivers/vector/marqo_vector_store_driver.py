@@ -213,7 +213,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The list of all indexes.
         """
 
-        return [index["index"] for index in self.mq.get_indexes()["results"]]
+        return [index.index_name for index in self.mq.get_indexes()["results"]]
 
     def upsert_vector(
         self,
