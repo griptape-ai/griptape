@@ -4,7 +4,6 @@ from griptape.drivers import BaseSqlDriver
 from griptape.utils import import_optional_dependency
 from attr import define, field
 
-
 if TYPE_CHECKING:
     from sqlalchemy.engine import Engine
 
@@ -42,13 +41,17 @@ class SqlDriver(BaseSqlDriver):
             else:
                 raise ValueError("No result found")
 
-    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
+    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:
             table = sqlalchemy.Table(
-                table, sqlalchemy.MetaData(bind=self.engine), schema=schema, autoload=True, autoload_with=self.engine
+                table_name,
+                sqlalchemy.MetaData(bind=self.engine),
+                schema=schema,
+                autoload=True,
+                autoload_with=self.engine,
             )
-            return str([(c.name, c.type) for c in table.columns])  # pyright: ignore
+            return str([(c.name, c.type) for c in table.columns])
         except sqlalchemy.exc.NoSuchTableError:
             return None

@@ -61,13 +61,13 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             else:
                 raise ValueError("No results found")
 
-    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
+    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:
             metadata_obj = sqlalchemy.MetaData()
             metadata_obj.reflect(bind=self.engine)
-            table = sqlalchemy.Table(table, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
-            return str([(c.name, c.type) for c in table.columns])  # pyright: ignore
+            table = sqlalchemy.Table(table_name, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
+            return str([(c.name, c.type) for c in table.__table__.columns])
         except sqlalchemy.exc.NoSuchTableError:
             return None

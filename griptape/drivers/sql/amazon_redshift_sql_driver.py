@@ -88,8 +88,8 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         elif statement["Status"] in ["FAILED", "ABORTED"]:
             return None
 
-    def get_table_schema(self, table: str, schema: Optional[str] = None) -> Optional[str]:
-        function_kwargs = {"Database": self.database, "Table": table}
+    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
+        function_kwargs = {"Database": self.database, "Table": table_name}
         if schema:
             function_kwargs["Schema"] = schema
         if self.workgroup_name:
