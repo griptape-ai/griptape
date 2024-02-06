@@ -59,5 +59,5 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         else:
             raise Exception(f"only models with the following tasks are supported: {self.SUPPORTED_TASKS}")
 
-    def try_stream(self, _: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")

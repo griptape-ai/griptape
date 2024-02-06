@@ -59,7 +59,10 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             doc["namespace"] = namespace
 
         response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description"])
-        return response["items"][0]["_id"]
+        if isinstance(response, dict) and "items" in response and response["items"]:
+            return response["items"][0]["_id"]
+        else:
+            raise ValueError(f"Failed to upsert text: {response}")
 
     def upsert_text_artifact(
         self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
@@ -85,7 +88,10 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         }
 
         response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
-        return response["items"][0]["_id"]
+        if isinstance(response, dict) and "items" in response and response["items"]:
+            return response["items"][0]["_id"]
+        else:
+            raise ValueError(f"Failed to upsert text: {response}")
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Load a document entry from the Marqo index.
@@ -119,7 +125,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         filter_string = f"namespace:{namespace}" if namespace else None
-        results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
+
+        if filter_string is not None:
+            results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
+        else:
+            results = self.mq.index(self.index).search("", limit=10000)
 
         # get all _id's from search results
         ids = [r["_id"] for r in results["hits"]]
@@ -203,8 +213,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The list of all indexes.
         """
 
-        # Change this once API issue is fixed (entries in results are no longer objects but dicts)
-        return [index.index_name for index in self.mq.get_indexes()["results"]]
+        return [index["index"] for index in self.mq.get_indexes()["results"]]
 
     def upsert_vector(
         self,

@@ -193,7 +193,7 @@ class TestMarqoVectorStorageDriver:
 
         # Assert
         assert len(entries) == 1
-        mock_marqo.index().search.assert_called_once_with("", limit=10000, filter_string=None)
+        mock_marqo.index().search.assert_called_once_with("", limit=10000)
         mock_marqo.index().get_documents.assert_called_once_with(
             document_ids=["5aed93eb-3878-4f12-bc92-0fda01c7d23d"], expose_facets=True
         )

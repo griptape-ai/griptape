@@ -1,5 +1,6 @@
 import uuid
-from typing import Optional, Any
+from logging import exception
+from typing import Optional, Any, cast
 from attr import define, field, Factory
 from dataclasses import dataclass
 from griptape.drivers import BaseVectorStoreDriver
@@ -52,11 +53,11 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("An engine or connection string is required")
 
     def __attrs_post_init__(self) -> None:
-        """If a an engine is provided, it will be used to connect to the database.
+        """If an engine is provided, it will be used to connect to the database.
         If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
-            self.engine = create_engine(self.connection_string, **self.create_engine_params)
+            self.engine = cast(Engine, create_engine(self.connection_string, **self.create_engine_params))
 
     def setup(
         self, create_schema: bool = True, install_uuid_extension: bool = True, install_vector_extension: bool = True
@@ -86,7 +87,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             obj = session.merge(obj)
             session.commit()
 
-            return str(obj.id)
+            return str(getattr(obj, "id"))
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
@@ -94,7 +95,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
-                id=result.id, vector=result.vector, namespace=result.namespace, meta=result.meta
+                id=getattr(result, "id"),
+                vector=getattr(result, "vector"),
+                namespace=getattr(result, "namespace"),
+                meta=getattr(result, "meta"),
             )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -142,12 +146,12 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
-            query = session.query(self._model, op(vector).label("score")).order_by(op(vector))
+            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore
 
             if namespace:
-                query = query.filter_by(namespace=namespace)
+                query_result = query_result.filter_by(namespace=namespace)
 
-            results = query.limit(count).all()
+            results = query_result.limit(count).all()
 
             return [
                 BaseVectorStoreDriver.QueryResult(

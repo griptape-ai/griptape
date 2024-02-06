@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 from griptape.utils import str_to_hash, import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field
@@ -32,7 +32,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         vector_id = vector_id if vector_id else str_to_hash(str(vector))
 
-        params = {"namespace": namespace} | kwargs
+        params: dict[str, Any] = {"namespace": namespace} | kwargs
 
         self.index.upsert([(vector_id, vector, meta)], **params)
 
