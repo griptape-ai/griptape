@@ -1,14 +1,18 @@
 from pytest import fixture
 from griptape.config import AmazonBedrockStructureConfig
+from tests.utils.aws import mock_aws_credentials
 
 
 class TestAmazonBedrockStructureConfig:
+    @fixture(autouse=True)
+    def run_before_and_after_tests(self):
+        mock_aws_credentials()
+
     @fixture
     def config(self):
         return AmazonBedrockStructureConfig()
 
     def test_to_dict(self, config):
-        print(config.to_dict())
         assert config.to_dict() == {
             "global_drivers": {
                 "conversation_memory_driver": None,
