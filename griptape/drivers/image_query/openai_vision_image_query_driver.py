@@ -53,6 +53,4 @@ class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
 
         response = self.client.chat.completions.create(**params)
 
-        print(response.usage.completion_tokens, response.usage.total_tokens)
-
         return TextArtifact(response.choices[0].message.content)
