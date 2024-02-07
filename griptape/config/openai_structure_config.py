@@ -1,19 +1,20 @@
-from attrs import define, field, Factory
-from griptape.drivers import (
-    OpenAiChatPromptDriver,
-    LocalVectorStoreDriver,
-    OpenAiEmbeddingDriver,
-    OpenAiImageGenerationDriver,
-)
+from attrs import Factory, define, field
+
 from griptape.config import (
     BaseStructureConfig,
     StructureGlobalDriversConfig,
     StructureTaskMemoryConfig,
-    StructureTaskMemoryQueryEngineConfig,
     StructureTaskMemoryExtractionEngineConfig,
-    StructureTaskMemorySummaryEngineConfig,
-    StructureTaskMemoryExtractionEngineJsonConfig,
     StructureTaskMemoryExtractionEngineCsvConfig,
+    StructureTaskMemoryExtractionEngineJsonConfig,
+    StructureTaskMemoryQueryEngineConfig,
+    StructureTaskMemorySummaryEngineConfig,
+)
+from griptape.drivers import (
+    LocalVectorStoreDriver,
+    OpenAiChatPromptDriver,
+    OpenAiEmbeddingDriver,
+    OpenAiImageGenerationDriver,
 )
 
 
@@ -25,6 +26,9 @@ class OpenAiStructureConfig(BaseStructureConfig):
                 prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
                 image_generation_driver=OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512"),
                 embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-ada-002"),
+                vector_store_driver=LocalVectorStoreDriver(
+                    embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-ada-002")
+                ),
             )
         ),
         kw_only=True,

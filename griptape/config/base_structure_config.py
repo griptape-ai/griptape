@@ -1,9 +1,11 @@
 from __future__ import annotations
+
 from abc import ABC
+
 from attr import define, field
+
+from griptape.config import BaseConfig, StructureGlobalDriversConfig, StructureTaskMemoryConfig
 from griptape.utils import dict_merge
-from griptape.config import BaseConfig
-from griptape.config import StructureTaskMemoryConfig, StructureGlobalDriversConfig
 
 
 @define

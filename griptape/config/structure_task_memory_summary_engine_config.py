@@ -1,9 +1,9 @@
-from attrs import define, field
+from attrs import define, field, Factory
 
-from griptape.drivers import BasePromptDriver
+from griptape.drivers import BasePromptDriver, NopPromptDriver
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 
 @define(kw_only=True)
 class StructureTaskMemorySummaryEngineConfig(SerializableMixin):
-    prompt_driver: BasePromptDriver = field(metadata={"serializable": True})
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: NopPromptDriver()), metadata={"serializable": True})

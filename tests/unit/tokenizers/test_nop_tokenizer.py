@@ -3,7 +3,7 @@ from griptape.exceptions import NopException
 from griptape.tokenizers import NopTokenizer
 
 
-class TestSimpleTokenizer:
+class TestNopTokenizer:
     @pytest.fixture
     def tokenizer(self):
         return NopTokenizer()

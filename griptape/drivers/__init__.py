@@ -40,6 +40,7 @@ from .vector.opensearch_vector_store_driver import OpenSearchVectorStoreDriver
 from .vector.amazon_opensearch_vector_store_driver import AmazonOpenSearchVectorStoreDriver
 from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDriver
+from .vector.nop_vector_store_driver import NopVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -107,6 +108,7 @@ __all__ = [
     "OpenSearchVectorStoreDriver",
     "AmazonOpenSearchVectorStoreDriver",
     "PgVectorVectorStoreDriver",
+    "NopVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",

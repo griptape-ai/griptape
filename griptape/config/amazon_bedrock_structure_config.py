@@ -2,6 +2,7 @@ from attrs import Factory, define, field
 
 from griptape.config import (
     BaseStructureConfig,
+    StructureGlobalDriversConfig,
     StructureTaskMemoryConfig,
     StructureTaskMemoryExtractionEngineConfig,
     StructureTaskMemoryExtractionEngineCsvConfig,
@@ -9,7 +10,6 @@ from griptape.config import (
     StructureTaskMemoryQueryEngineConfig,
     StructureTaskMemorySummaryEngineConfig,
 )
-from griptape.config.structure_global_drivers_config import StructureGlobalDriversConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
     AmazonBedrockPromptDriver,
@@ -34,9 +34,13 @@ class AmazonBedrockStructureConfig(BaseStructureConfig):
                     image_generation_model_driver=BedrockTitanImageGenerationModelDriver(),
                 ),
                 embedding_driver=AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1"),
+                vector_store_driver=LocalVectorStoreDriver(
+                    embedding_driver=AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1")
+                ),
             )
         ),
         kw_only=True,
+        metadata={"serializable": True},
     )
     task_memory: StructureTaskMemoryConfig = field(
         default=Factory(

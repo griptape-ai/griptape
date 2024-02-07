@@ -12,7 +12,13 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig
-from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver
+from griptape.drivers import (
+    BaseEmbeddingDriver,
+    BasePromptDriver,
+    NopPromptDriver,
+    NopVectorStoreDriver,
+    NopEmbeddingDriver,
+)
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -145,22 +151,42 @@ class Structure(ABC):
     def default_task_memory(self) -> TaskMemory:
         global_drivers = self.config.global_drivers
         task_memory = self.config.task_memory
+
         return TaskMemory(
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     query_engine=VectorQueryEngine(
-                        prompt_driver=task_memory.query_engine.prompt_driver or global_drivers.prompt_driver,
-                        vector_store_driver=task_memory.query_engine.vector_store_driver
-                        or global_drivers.vector_store_driver,
+                        prompt_driver=(
+                            task_memory.query_engine.prompt_driver
+                            if not isinstance(task_memory.query_engine.prompt_driver, NopPromptDriver)
+                            else global_drivers.prompt_driver
+                        ),
+                        vector_store_driver=(
+                            task_memory.query_engine.vector_store_driver
+                            if not isinstance(task_memory.query_engine.prompt_driver, NopVectorStoreDriver)
+                            else global_drivers.vector_store_driver
+                        ),
                     ),
                     summary_engine=PromptSummaryEngine(
-                        prompt_driver=task_memory.summary_engine.prompt_driver or global_drivers.prompt_driver
+                        prompt_driver=(
+                            task_memory.summary_engine.prompt_driver
+                            if not isinstance(task_memory.summary_engine.prompt_driver, NopPromptDriver)
+                            else global_drivers.prompt_driver
+                        )
                     ),
                     csv_extraction_engine=CsvExtractionEngine(
-                        prompt_driver=task_memory.extraction_engine.csv.prompt_driver or global_drivers.prompt_driver
+                        prompt_driver=(
+                            task_memory.extraction_engine.csv.prompt_driver
+                            if not isinstance(task_memory.extraction_engine.csv.prompt_driver, NopPromptDriver)
+                            else global_drivers.prompt_driver
+                        )
                     ),
                     json_extraction_engine=JsonExtractionEngine(
-                        prompt_driver=task_memory.extraction_engine.json.prompt_driver or global_drivers.prompt_driver
+                        prompt_driver=(
+                            task_memory.extraction_engine.json.prompt_driver
+                            if not isinstance(task_memory.extraction_engine.json.prompt_driver, NopPromptDriver)
+                            else global_drivers.prompt_driver
+                        )
                     ),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
