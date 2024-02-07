@@ -44,7 +44,7 @@ class VectorQueryEngine(BaseQueryEngine):
         ]
         text_segments = []
         message = ""
-        preamble = preamble if preamble else DEFAULT_QUERY_PREAMBLE
+        preamble = preamble if preamble else self.DEFAULT_QUERY_PREAMBLE
 
         for artifact in artifacts:
             text_segments.append(artifact.value)
