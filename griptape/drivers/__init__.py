@@ -69,6 +69,9 @@ from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedro
 from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 from .image_generation.dummy_image_generation_driver import DummyImageGenerationDriver
 
+from .image_query.base_image_query_driver import BaseImageQueryDriver
+from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -130,4 +133,6 @@ __all__ = [
     "AmazonBedrockImageGenerationDriver",
     "AzureOpenAiImageGenerationDriver",
     "DummyImageGenerationDriver",
+    "BaseImageQueryDriver",
+    "OpenAiVisionImageQueryDriver",
 ]
