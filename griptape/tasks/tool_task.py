@@ -40,7 +40,7 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         )
 
     def run(self) -> BaseArtifact:
-        prompt_output = self.active_driver.run(prompt_stack=self.prompt_stack).to_text()
+        prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
 
         subtask = self.add_subtask(ActionSubtask(f"Action: {prompt_output}"))
 

@@ -1,3 +1,4 @@
+from tests.mocks.mock_structure_config import MockStructureConfig
 import pytest
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
@@ -33,3 +34,15 @@ class TestTextQueryTask:
         Agent().add_task(task)
 
         assert task.input.to_text() == "test value"
+
+    def test_config_query_engine(self, task):
+        Agent(config=MockStructureConfig()).add_task(task)
+
+        assert isinstance(task.query_engine, VectorQueryEngine)
+        assert isinstance(task.query_engine.prompt_driver, MockPromptDriver)
+
+    def test_missing_summary_engine(self):
+        task = TextQueryTask("test")
+
+        with pytest.raises(ValueError):
+            task.query_engine

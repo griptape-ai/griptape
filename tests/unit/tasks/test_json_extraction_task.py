@@ -1,3 +1,4 @@
+from griptape.engines import JsonExtractionEngine
 import pytest
 from schema import Schema
 from griptape.structures import Agent
@@ -26,3 +27,13 @@ class TestJsonExtractionTask:
         assert len(result.value) == 2
         assert result.value[0].value == "{'test_key_1': 'test_value_1'}"
         assert result.value[1].value == "{'test_key_2': 'test_value_2'}"
+
+    def test_config_extraction_engine(self, task):
+        Agent(config=MockStructureConfig()).add_task(task)
+
+        assert isinstance(task.extraction_engine, JsonExtractionEngine)
+        assert isinstance(task.extraction_engine.prompt_driver, MockPromptDriver)
+
+    def test_missing_extraction_engine(self, task):
+        with pytest.raises(ValueError):
+            task.extraction_engine

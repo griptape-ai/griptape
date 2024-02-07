@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(BaseTextInputTask):
-    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
+    _prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True, alias="prompt_driver")
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
     )
@@ -39,16 +39,18 @@ class PromptTask(BaseTextInputTask):
         return stack
 
     @property
-    def active_driver(self) -> BasePromptDriver:
-        if self.prompt_driver is None:
-            return self.structure.config.global_drivers.prompt_driver
-        else:
-            return self.prompt_driver
+    def prompt_driver(self) -> BasePromptDriver:
+        if self._prompt_driver is None:
+            if self.structure is not None:
+                self._prompt_driver = self.structure.config.global_drivers.prompt_driver
+            else:
+                raise ValueError("Prompt Driver is not set")
+        return self._prompt_driver
 
     def preprocess(self, structure: Structure) -> PromptTask:
         super().preprocess(structure)
-        if self.active_driver is not None:
-            self.active_driver.structure = structure
+        if self.prompt_driver is not None:
+            self.prompt_driver.structure = structure
 
         return self
 
@@ -58,6 +60,6 @@ class PromptTask(BaseTextInputTask):
         )
 
     def run(self) -> BaseArtifact:
-        self.output = self.active_driver.run(self.prompt_stack)
+        self.output = self.prompt_driver.run(self.prompt_stack)
 
         return self.output

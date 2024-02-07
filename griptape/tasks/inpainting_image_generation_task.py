@@ -29,9 +29,10 @@ class InpaintingImageGenerationTask(BaseImageGenerationTask):
     _image_generation_engine: InpaintingImageGenerationEngine = field(
         default=None, kw_only=True, alias="image_generation_engine"
     )
-    _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
-        [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
-    ] = field(default=None)
+    _input: (
+        tuple[str | TextArtifact, ImageArtifact, ImageArtifact]
+        | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]]
+    ) = field(default=None)
 
     @property
     def input(self) -> tuple[TextArtifact, ImageArtifact, ImageArtifact]:
@@ -53,12 +54,13 @@ class InpaintingImageGenerationTask(BaseImageGenerationTask):
 
     @property
     def image_generation_engine(self) -> InpaintingImageGenerationEngine:
-        if self._image_generation_engine is None and self.structure is not None:
-            self._image_generation_engine = InpaintingImageGenerationEngine(
-                image_generation_driver=self.structure.config.global_drivers.image_generation_driver
-            )
-        else:
-            raise ValueError("Image Generation Engine is not set.")
+        if self._image_generation_engine is None:
+            if self.structure is not None:
+                self._image_generation_engine = InpaintingImageGenerationEngine(
+                    image_generation_driver=self.structure.config.global_drivers.image_generation_driver
+                )
+            else:
+                raise ValueError("Image Generation Engine is not set.")
         return self._image_generation_engine
 
     @image_generation_engine.setter
