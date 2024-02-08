@@ -13,7 +13,7 @@ class BaseTaskEvent(BaseEvent, ABC):
     task_parent_ids: list[str] = field(kw_only=True, metadata={"serializable": True})
     task_child_ids: list[str] = field(kw_only=True, metadata={"serializable": True})
 
-    task_input: Union[
-        BaseArtifact, BaseArtifact, tuple[BaseArtifact, ...], tuple[BaseArtifact, Sequence[BaseArtifact]]
-    ] = field(kw_only=True, metadata={"serializable": True})
+    task_input: Union[BaseArtifact, tuple[BaseArtifact, ...], tuple[BaseArtifact, Sequence[BaseArtifact]]] = field(
+        kw_only=True, metadata={"serializable": True}
+    )
     task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serializable": True})

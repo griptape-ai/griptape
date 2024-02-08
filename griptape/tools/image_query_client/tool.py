@@ -52,15 +52,8 @@ class ImageQueryClient(BaseTool):
                         "query",
                         description="A detailed question to be answered using the contents of the provided images.",
                     ): str,
-                    Literal("image_artifact_references", description="Image artifact memory references."): [
-                        {
-                            Literal(
-                                "image_artifact_namespace", description="The namespace of the image artifact in memory."
-                            ): str,
-                            Literal(
-                                "image_artifact_name", description="The name of the image artifact in memory."
-                            ): str,
-                        }
+                    Literal("image_artifacts", description="Image artifact memory references."): [
+                        {"namespace": str, "name": str}
                     ],
                     "memory_name": str,
                 }
@@ -69,7 +62,7 @@ class ImageQueryClient(BaseTool):
     )
     def query_images_from_memory(self, params: dict[str, Any]) -> TextArtifact | ErrorArtifact:
         query = params["values"]["query"]
-        image_artifact_references = params["values"]["image_artifact_references"]
+        image_artifact_references = params["values"]["image_artifacts"]
         memory = self.find_input_memory(params["values"]["memory_name"])
 
         if memory is None:

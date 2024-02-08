@@ -20,7 +20,7 @@ class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
     model: str = field(default="gpt-4-vision-preview", kw_only=True, metadata={"serializable": True})
     api_type: str = field(default=openai.api_type, kw_only=True, metadata={"serializable": True})
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})
-    base_url: str = field(default=None, kw_only=True, metadata={"serializable": True})
+    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
     image_quality: Literal["auto", "low", "high"] = field(default="auto", kw_only=True, metadata={"serializable": True})
@@ -52,5 +52,8 @@ class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
             params["max_tokens"] = self.max_tokens
 
         response = self.client.chat.completions.create(**params)
+
+        if len(response.choices) != 1:
+            raise Exception("Image query responses with more than one choice are not supported yet.")
 
         return TextArtifact(response.choices[0].message.content)

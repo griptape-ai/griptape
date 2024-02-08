@@ -18,8 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `JsonExtractionTask` for convenience over using `ExtractionTask` with a `JsonExtractionEngine`.
 - `CsvExtractionTask` for convenience over using `ExtractionTask` with a `CsvExtractionEngine`.
 - `OpenAiVisionImageQueryDriver` to support queries on images using OpenAI's Vision model.
-- `ImageQueryClient` allowing an agent to make queries on images on disk or in memory.
-- `ImageQueryEngine` and `ImageQueryTask`.
+- `ImageQueryClient` allowing an Agent to make queries on images on disk or in Task Memory.
+- `ImageQueryTask` and `ImageQueryEngine`.
 
 ### Fixed 
 - `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.

@@ -12,6 +12,16 @@ from griptape.utils import J2
 
 @define
 class ImageQueryTask(BaseTask):
+    """A task that executes a natural language query on one or more input images. Accepts a text prompt and a list of
+    images as input in one of the following formats:
+    - tuple of (template string, list[ImageArtifact])
+    - tuple of (TextArtifact, list[ImageArtifact])
+    - Callable that returns a tuple of (TextArtifact, list[ImageArtifact])
+
+    Attributes:
+        image_query_engine: The engine used to execute the query.
+    """
+
     image_query_engine: ImageQueryEngine = field(kw_only=True)
     _input: tuple[str, list[ImageArtifact]] | tuple[TextArtifact, list[ImageArtifact]] | Callable[
         [BaseTask], tuple[TextArtifact, list[ImageArtifact]]
@@ -30,8 +40,8 @@ class ImageQueryTask(BaseTask):
             return self._input(self)
         else:
             raise ValueError(
-                "Input must be a tuple of a text artifact and a list of image artifacts or a callable that "
-                "returns a tuple of a text artifact and a list of image artifacts."
+                "Input must be a tuple of a TextArtifact and a list of ImageArtifacts or a callable that "
+                "returns a tuple of a TextArtifact and a list of ImageArtifacts."
             )
 
     @input.setter
@@ -43,8 +53,7 @@ class ImageQueryTask(BaseTask):
         self._input = value
 
     def run(self) -> TextArtifact:
-        query = self.input[0]
-        image_artifacts = self.input[1]
+        query, image_artifacts = self.input
 
         response = self.image_query_engine.run(query.value, image_artifacts)
 
