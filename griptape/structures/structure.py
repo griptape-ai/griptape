@@ -157,35 +157,35 @@ class Structure(ABC):
                 TextArtifact: TextArtifactStorage(
                     query_engine=VectorQueryEngine(
                         prompt_driver=(
-                            task_memory.query_engine.prompt_driver
-                            if not isinstance(task_memory.query_engine.prompt_driver, NopPromptDriver)
-                            else global_drivers.prompt_driver
+                            global_drivers.prompt_driver
+                            if isinstance(task_memory.query_engine.prompt_driver, NopPromptDriver)
+                            else task_memory.query_engine.prompt_driver
                         ),
                         vector_store_driver=(
-                            task_memory.query_engine.vector_store_driver
-                            if not isinstance(task_memory.query_engine.prompt_driver, NopVectorStoreDriver)
-                            else global_drivers.vector_store_driver
+                            global_drivers.vector_store_driver
+                            if isinstance(task_memory.query_engine.prompt_driver, NopVectorStoreDriver)
+                            else task_memory.query_engine.vector_store_driver
                         ),
                     ),
                     summary_engine=PromptSummaryEngine(
                         prompt_driver=(
-                            task_memory.summary_engine.prompt_driver
-                            if not isinstance(task_memory.summary_engine.prompt_driver, NopPromptDriver)
-                            else global_drivers.prompt_driver
+                            global_drivers.prompt_driver
+                            if isinstance(task_memory.summary_engine.prompt_driver, NopPromptDriver)
+                            else task_memory.summary_engine.prompt_driver
                         )
                     ),
                     csv_extraction_engine=CsvExtractionEngine(
                         prompt_driver=(
-                            task_memory.extraction_engine.csv.prompt_driver
-                            if not isinstance(task_memory.extraction_engine.csv.prompt_driver, NopPromptDriver)
-                            else global_drivers.prompt_driver
+                            global_drivers.prompt_driver
+                            if isinstance(task_memory.extraction_engine.csv.prompt_driver, NopPromptDriver)
+                            else task_memory.extraction_engine.csv.prompt_driver
                         )
                     ),
                     json_extraction_engine=JsonExtractionEngine(
                         prompt_driver=(
-                            task_memory.extraction_engine.json.prompt_driver
-                            if not isinstance(task_memory.extraction_engine.json.prompt_driver, NopPromptDriver)
-                            else global_drivers.prompt_driver
+                            global_drivers.prompt_driver
+                            if isinstance(task_memory.extraction_engine.json.prompt_driver, NopPromptDriver)
+                            else task_memory.extraction_engine.json.prompt_driver
                         )
                     ),
                 ),
