@@ -23,12 +23,12 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         index_name: The name of the index to use.
     """
 
-    host: str = field(kw_only=True)
-    port: int = field(default=443, kw_only=True)
-    http_auth: str | tuple[str, Optional[str]] = field(default=None, kw_only=True)
-    use_ssl: bool = field(default=True, kw_only=True)
-    verify_certs: bool = field(default=True, kw_only=True)
-    index_name: str = field(kw_only=True)
+    host: str = field(kw_only=True, metadata={"serializable": True})
+    port: int = field(default=443, kw_only=True, metadata={"serializable": True})
+    http_auth: str | tuple[str, Optional[str]] = field(default=None, kw_only=True, metadata={"serializable": True})
+    use_ssl: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    verify_certs: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    index_name: str = field(kw_only=True, metadata={"serializable": True})
 
     client: OpenSearch = field(
         default=Factory(

@@ -118,7 +118,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         self.subtasks.clear()
 
-        subtask = self.add_subtask(ActionSubtask(self.active_driver().run(prompt_stack=self.prompt_stack).to_text()))
+        subtask = self.add_subtask(ActionSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
 
         while True:
             if subtask.output is None:
@@ -133,7 +133,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     subtask.after_run()
 
                     subtask = self.add_subtask(
-                        ActionSubtask(self.active_driver().run(prompt_stack=self.prompt_stack).to_text())
+                        ActionSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text())
                     )
             else:
                 break

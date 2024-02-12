@@ -20,15 +20,15 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         index: The name of the index to use.
     """
 
-    api_key: str = field(kw_only=True)
-    url: str = field(kw_only=True)
+    api_key: str = field(kw_only=True, metadata={"serializable": True})
+    url: str = field(kw_only=True, metadata={"serializable": True})
     mq: Optional[marqo.Client] = field(
         default=Factory(
             lambda self: import_optional_dependency("marqo").Client(self.url, api_key=self.api_key), takes_self=True
         ),
         kw_only=True,
     )
-    index: str = field(kw_only=True)
+    index: str = field(kw_only=True, metadata={"serializable": True})
 
     def upsert_text(
         self,

@@ -23,8 +23,8 @@ class BaseMultiModelPromptDriver(BasePromptDriver, ABC):
     """
 
     tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
-    prompt_model_driver: BasePromptModelDriver = field(kw_only=True)
-    stream: bool = field(default=False, kw_only=True)
+    prompt_model_driver: BasePromptModelDriver = field(kw_only=True, metadata={"serializable": True})
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     @stream.validator  # pyright: ignore
     def validate_stream(self, _, stream):

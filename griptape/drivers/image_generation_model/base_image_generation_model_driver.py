@@ -6,10 +6,11 @@ from typing import Any, Optional
 from attr import define
 
 from griptape.artifacts import ImageArtifact
+from griptape.mixins import SerializableMixin
 
 
 @define
-class BaseImageGenerationModelDriver(ABC):
+class BaseImageGenerationModelDriver(SerializableMixin, ABC):
     @abstractmethod
     def get_generated_image(self, response: dict) -> bytes:
         ...
