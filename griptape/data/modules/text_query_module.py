@@ -23,8 +23,8 @@ class TextQueryModule(BaseModule):
 
     def process(self, context: dict) -> dict:
         query = context.get("query")
-        before_text_query = context.get("before_text_query")
-        after_text_query = context.get("before_text_query")
+        before_text_query = context.get("before_text_query", [])
+        after_text_query = context.get("before_text_query", [])
         text_artifact_chunks = context.get("text_artifact_chunks")
 
         if query and text_artifact_chunks:
@@ -62,10 +62,10 @@ class TextQueryModule(BaseModule):
         )
 
     def default_system_template_generator(
-            self, text_chunks: list[str], before_system_prompt: Optional[str], after_system_prompt: Optional[str]
+            self, text_chunks: list[str], before_system_prompt: list, after_system_prompt: list
     ) -> str:
         return J2("data/modules/text_query/system.j2").render(
             text_chunks=text_chunks,
-            before_system_prompt=before_system_prompt,
-            after_system_prompt=after_system_prompt
+            before_system_prompt="\n\n".join(before_system_prompt),
+            after_system_prompt="\n\n".join(after_system_prompt)
         )

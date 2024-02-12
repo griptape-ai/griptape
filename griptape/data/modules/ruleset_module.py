@@ -12,8 +12,8 @@ class RulesetModule(BaseModule):
         rules_text = J2("rulesets/rulesets.j2").render(rulesets=self.rulesets)
 
         if not context.get("before_text_query"):
-            context["before_text_query"] = ""
+            context["before_text_query"] = []
 
-        context["before_text_query"] += rules_text
+        context["before_text_query"].append(rules_text)
 
         return context

@@ -11,8 +11,8 @@ class MetadataModule(BaseModule):
         metadata_text = J2("data/modules/metadata/system.j2").render(metadata=self.metadata)
 
         if not context.get("before_text_query"):
-            context["before_text_query"] = ""
+            context["before_text_query"] = []
 
-        context["before_text_query"] += metadata_text
+        context["before_text_query"].append(metadata_text)
 
         return context
