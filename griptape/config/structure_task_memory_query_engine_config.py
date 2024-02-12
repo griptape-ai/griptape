@@ -10,10 +10,13 @@ from griptape.drivers import (
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 
-@define(kw_only=True)
+@define
 class StructureTaskMemoryQueryEngineConfig(SerializableMixin):
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: NopPromptDriver()), metadata={"serializable": True})
+    prompt_driver: BasePromptDriver = field(
+        kw_only=True, default=Factory(lambda: NopPromptDriver()), metadata={"serializable": True}
+    )
     vector_store_driver: BaseVectorStoreDriver = field(
+        kw_only=True,
         default=Factory(lambda: NopVectorStoreDriver(embedding_driver=NopEmbeddingDriver())),
         metadata={"serializable": True},
     )

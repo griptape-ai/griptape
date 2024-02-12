@@ -16,7 +16,7 @@ from griptape.drivers import (
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 
-@define(kw_only=True)
+@define
 class StructureGlobalDriversConfig(SerializableMixin):
     prompt_driver: BasePromptDriver = field(
         kw_only=True, default=Factory(lambda: NopPromptDriver()), metadata={"serializable": True}

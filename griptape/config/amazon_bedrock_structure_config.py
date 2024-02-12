@@ -21,7 +21,7 @@ from griptape.drivers import (
 )
 
 
-@define(kw_only=True)
+@define()
 class AmazonBedrockStructureConfig(BaseStructureConfig):
     global_drivers: StructureGlobalDriversConfig = field(
         default=Factory(

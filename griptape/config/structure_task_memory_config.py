@@ -8,14 +8,16 @@ from griptape.config import (
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 
-@define(kw_only=True)
+@define
 class StructureTaskMemoryConfig(SerializableMixin):
     query_engine: StructureTaskMemoryQueryEngineConfig = field(
-        default=Factory(lambda: StructureTaskMemoryQueryEngineConfig()), metadata={"serializable": True}
+        kw_only=True, default=Factory(lambda: StructureTaskMemoryQueryEngineConfig()), metadata={"serializable": True}
     )
     extraction_engine: StructureTaskMemoryExtractionEngineConfig = field(
-        default=Factory(lambda: StructureTaskMemoryExtractionEngineConfig()), metadata={"serializable": True}
+        kw_only=True,
+        default=Factory(lambda: StructureTaskMemoryExtractionEngineConfig()),
+        metadata={"serializable": True},
     )
     summary_engine: StructureTaskMemorySummaryEngineConfig = field(
-        default=Factory(lambda: StructureTaskMemorySummaryEngineConfig()), metadata={"serializable": True}
+        kw_only=True, default=Factory(lambda: StructureTaskMemorySummaryEngineConfig()), metadata={"serializable": True}
     )

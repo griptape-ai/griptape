@@ -18,7 +18,7 @@ from griptape.drivers import (
 )
 
 
-@define(kw_only=True)
+@define
 class OpenAiStructureConfig(BaseStructureConfig):
     global_drivers: StructureGlobalDriversConfig = field(
         default=Factory(

@@ -15,7 +15,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-@define(kw_only=True)
+@define
 class MockStructureConfig(BaseStructureConfig):
     global_drivers: StructureGlobalDriversConfig = field(
         default=Factory(
