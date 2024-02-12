@@ -12,13 +12,13 @@ class TestStructureConfig:
             "type": "StructureConfig",
             "global_drivers": {
                 "type": "StructureGlobalDriversConfig",
-                "prompt_driver": {"type": "NopPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False},
+                "prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False},
                 "conversation_memory_driver": None,
-                "embedding_driver": {"type": "NopEmbeddingDriver"},
-                "image_generation_driver": {"type": "NopImageGenerationDriver"},
+                "embedding_driver": {"type": "DummyEmbeddingDriver"},
+                "image_generation_driver": {"type": "DummyImageGenerationDriver"},
                 "vector_store_driver": {
-                    "embedding_driver": {"type": "NopEmbeddingDriver"},
-                    "type": "NopVectorStoreDriver",
+                    "embedding_driver": {"type": "DummyEmbeddingDriver"},
+                    "type": "DummyVectorStoreDriver",
                 },
             },
             "task_memory": {
@@ -26,14 +26,14 @@ class TestStructureConfig:
                 "query_engine": {
                     "type": "StructureTaskMemoryQueryEngineConfig",
                     "prompt_driver": {
-                        "type": "NopPromptDriver",
+                        "type": "DummyPromptDriver",
                         "stream": False,
                         "temperature": 0.1,
                         "max_tokens": None,
                     },
                     "vector_store_driver": {
-                        "type": "NopVectorStoreDriver",
-                        "embedding_driver": {"type": "NopEmbeddingDriver"},
+                        "type": "DummyVectorStoreDriver",
+                        "embedding_driver": {"type": "DummyEmbeddingDriver"},
                     },
                 },
                 "extraction_engine": {
@@ -41,7 +41,7 @@ class TestStructureConfig:
                     "csv": {
                         "type": "StructureTaskMemoryExtractionEngineCsvConfig",
                         "prompt_driver": {
-                            "type": "NopPromptDriver",
+                            "type": "DummyPromptDriver",
                             "temperature": 0.1,
                             "max_tokens": None,
                             "stream": False,
@@ -50,7 +50,7 @@ class TestStructureConfig:
                     "json": {
                         "type": "StructureTaskMemoryExtractionEngineJsonConfig",
                         "prompt_driver": {
-                            "type": "NopPromptDriver",
+                            "type": "DummyPromptDriver",
                             "temperature": 0.1,
                             "max_tokens": None,
                             "stream": False,
@@ -60,7 +60,7 @@ class TestStructureConfig:
                 "summary_engine": {
                     "type": "StructureTaskMemorySummaryEngineConfig",
                     "prompt_driver": {
-                        "type": "NopPromptDriver",
+                        "type": "DummyPromptDriver",
                         "temperature": 0.1,
                         "max_tokens": None,
                         "stream": False,
@@ -83,7 +83,7 @@ class TestStructureConfig:
                             "csv": {
                                 "type": "StructureTaskMemoryExtractionEngineCsvConfig",
                                 "prompt_driver": {
-                                    "type": "NopPromptDriver",
+                                    "type": "DummyPromptDriver",
                                     "temperature": 0.1,
                                     "max_tokens": None,
                                     "stream": False,

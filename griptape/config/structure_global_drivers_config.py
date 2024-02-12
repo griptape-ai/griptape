@@ -8,10 +8,10 @@ from griptape.drivers import (
     BaseImageGenerationDriver,
     BasePromptDriver,
     BaseVectorStoreDriver,
-    NopVectorStoreDriver,
-    NopEmbeddingDriver,
-    NopImageGenerationDriver,
-    NopPromptDriver,
+    DummyVectorStoreDriver,
+    DummyEmbeddingDriver,
+    DummyImageGenerationDriver,
+    DummyPromptDriver,
 )
 from griptape.mixins.serializable_mixin import SerializableMixin
 
@@ -19,16 +19,16 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 @define
 class StructureGlobalDriversConfig(SerializableMixin):
     prompt_driver: BasePromptDriver = field(
-        kw_only=True, default=Factory(lambda: NopPromptDriver()), metadata={"serializable": True}
+        kw_only=True, default=Factory(lambda: DummyPromptDriver()), metadata={"serializable": True}
     )
     image_generation_driver: BaseImageGenerationDriver = field(
-        kw_only=True, default=Factory(lambda: NopImageGenerationDriver()), metadata={"serializable": True}
+        kw_only=True, default=Factory(lambda: DummyImageGenerationDriver()), metadata={"serializable": True}
     )
     embedding_driver: BaseEmbeddingDriver = field(
-        kw_only=True, default=Factory(lambda: NopEmbeddingDriver()), metadata={"serializable": True}
+        kw_only=True, default=Factory(lambda: DummyEmbeddingDriver()), metadata={"serializable": True}
     )
     vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda: NopVectorStoreDriver()), kw_only=True, metadata={"serializable": True}
+        default=Factory(lambda: DummyVectorStoreDriver()), kw_only=True, metadata={"serializable": True}
     )
     conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
         default=None, kw_only=True, metadata={"serializable": True}

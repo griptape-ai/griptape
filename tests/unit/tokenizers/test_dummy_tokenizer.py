@@ -1,17 +1,17 @@
 import pytest
-from griptape.exceptions import NopException
-from griptape.tokenizers import NopTokenizer
+from griptape.exceptions import DummyException
+from griptape.tokenizers import DummyTokenizer
 
 
-class TestNopTokenizer:
+class TestDummyTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return NopTokenizer()
+        return DummyTokenizer()
 
     def test_token_count(self, tokenizer):
-        with pytest.raises(NopException):
+        with pytest.raises(DummyException):
             tokenizer.count_tokens("foo bar huzzah")
 
     def test_tokens_left(self, tokenizer):
-        with pytest.raises(NopException):
+        with pytest.raises(DummyException):
             tokenizer.count_tokens("foo bar huzzah")

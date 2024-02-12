@@ -2,20 +2,20 @@ from typing import Optional
 from attrs import define, field
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
-from griptape.exceptions import NopException
+from griptape.exceptions import DummyException
 
 
 @define
-class NopImageGenerationDriver(BaseImageGenerationDriver):
+class DummyImageGenerationDriver(BaseImageGenerationDriver):
     model: str = field(init=False)
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
-        raise NopException(__class__.__name__, "try_text_to_image")
+        raise DummyException(__class__.__name__, "try_text_to_image")
 
     def try_image_variation(
         self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
     ) -> ImageArtifact:
-        raise NopException(__class__.__name__, "try_image_variation")
+        raise DummyException(__class__.__name__, "try_image_variation")
 
     def try_image_inpainting(
         self,
@@ -24,7 +24,7 @@ class NopImageGenerationDriver(BaseImageGenerationDriver):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        raise NopException(__class__.__name__, "try_image_inpainting")
+        raise DummyException(__class__.__name__, "try_image_inpainting")
 
     def try_image_outpainting(
         self,
@@ -33,4 +33,4 @@ class NopImageGenerationDriver(BaseImageGenerationDriver):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        raise NopException(__class__.__name__, "try_image_outpainting")
+        raise DummyException(__class__.__name__, "try_image_outpainting")

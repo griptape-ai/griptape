@@ -1,11 +1,11 @@
 from attrs import define, field
 from griptape.drivers import BaseEmbeddingDriver
-from griptape.exceptions import NopException
+from griptape.exceptions import DummyException
 
 
 @define
-class NopEmbeddingDriver(BaseEmbeddingDriver):
+class DummyEmbeddingDriver(BaseEmbeddingDriver):
     model: str = field(init=False)
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
-        raise NopException(__class__.__name__, "try_embed_chunk")
+        raise DummyException(__class__.__name__, "try_embed_chunk")

@@ -1,3 +1,3 @@
-from .nop_exception import NopException
+from .dummy_exception import DummyException
 
-__all__ = ["NopException"]
+__all__ = ["DummyException"]

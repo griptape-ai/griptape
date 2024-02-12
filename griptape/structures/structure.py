@@ -11,7 +11,7 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig
-from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, NopPromptDriver, NopVectorStoreDriver
+from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, DummyPromptDriver, DummyVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -181,33 +181,33 @@ class Structure(ABC):
                     query_engine=VectorQueryEngine(
                         prompt_driver=(
                             global_drivers.prompt_driver
-                            if isinstance(task_memory.query_engine.prompt_driver, NopPromptDriver)
+                            if isinstance(task_memory.query_engine.prompt_driver, DummyPromptDriver)
                             else task_memory.query_engine.prompt_driver
                         ),
                         vector_store_driver=(
                             global_drivers.vector_store_driver
-                            if isinstance(task_memory.query_engine.prompt_driver, NopVectorStoreDriver)
+                            if isinstance(task_memory.query_engine.prompt_driver, DummyVectorStoreDriver)
                             else task_memory.query_engine.vector_store_driver
                         ),
                     ),
                     summary_engine=PromptSummaryEngine(
                         prompt_driver=(
                             global_drivers.prompt_driver
-                            if isinstance(task_memory.summary_engine.prompt_driver, NopPromptDriver)
+                            if isinstance(task_memory.summary_engine.prompt_driver, DummyPromptDriver)
                             else task_memory.summary_engine.prompt_driver
                         )
                     ),
                     csv_extraction_engine=CsvExtractionEngine(
                         prompt_driver=(
                             global_drivers.prompt_driver
-                            if isinstance(task_memory.extraction_engine.csv.prompt_driver, NopPromptDriver)
+                            if isinstance(task_memory.extraction_engine.csv.prompt_driver, DummyPromptDriver)
                             else task_memory.extraction_engine.csv.prompt_driver
                         )
                     ),
                     json_extraction_engine=JsonExtractionEngine(
                         prompt_driver=(
                             global_drivers.prompt_driver
-                            if isinstance(task_memory.extraction_engine.json.prompt_driver, NopPromptDriver)
+                            if isinstance(task_memory.extraction_engine.json.prompt_driver, DummyPromptDriver)
                             else task_memory.extraction_engine.json.prompt_driver
                         )
                     ),

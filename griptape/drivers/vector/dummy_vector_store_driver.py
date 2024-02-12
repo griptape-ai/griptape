@@ -1,17 +1,17 @@
 from attrs import field, define, Factory
 from typing import Optional
-from griptape.drivers import BaseVectorStoreDriver, BaseEmbeddingDriver, NopEmbeddingDriver
-from griptape.exceptions import NopException
+from griptape.drivers import BaseVectorStoreDriver, BaseEmbeddingDriver, DummyEmbeddingDriver
+from griptape.exceptions import DummyException
 
 
 @define()
-class NopVectorStoreDriver(BaseVectorStoreDriver):
+class DummyVectorStoreDriver(BaseVectorStoreDriver):
     embedding_driver: BaseEmbeddingDriver = field(
-        kw_only=True, default=Factory(lambda: NopEmbeddingDriver()), metadata={"serializable": True}
+        kw_only=True, default=Factory(lambda: DummyEmbeddingDriver()), metadata={"serializable": True}
     )
 
     def delete_vector(self, vector_id: str) -> None:
-        raise NopException(__class__.__name__, "delete_vector")
+        raise DummyException(__class__.__name__, "delete_vector")
 
     def upsert_vector(
         self,
@@ -21,13 +21,13 @@ class NopVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        raise NopException(__class__.__name__, "upsert_vector")
+        raise DummyException(__class__.__name__, "upsert_vector")
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        raise NopException(__class__.__name__, "load_entry")
+        raise DummyException(__class__.__name__, "load_entry")
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        raise NopException(__class__.__name__, "load_entries")
+        raise DummyException(__class__.__name__, "load_entries")
 
     def query(
         self,
@@ -37,4 +37,4 @@ class NopVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
-        raise NopException(__class__.__name__, "query")
+        raise DummyException(__class__.__name__, "query")
