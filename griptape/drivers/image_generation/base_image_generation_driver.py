@@ -7,15 +7,15 @@ from attr import define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.events import StartImageGenerationEvent, FinishImageGenerationEvent
-from griptape.mixins import ExponentialBackoffMixin
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
 
 
 @define
-class BaseImageGenerationDriver(ExponentialBackoffMixin, ABC):
-    model: str = field(kw_only=True)
+class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
+    model: str = field(kw_only=True, metadata={"serializable": True})
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
     def before_run(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> None:

@@ -19,9 +19,9 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         outpainting_mode: Specifies the outpainting mode, defaults to PRECISE.
     """
 
-    quality: str = field(default="standard", kw_only=True)
-    cfg_scale: int = field(default=7, kw_only=True)
-    outpainting_mode: str = field(default="PRECISE", kw_only=True)
+    quality: str = field(default="standard", kw_only=True, metadata={"serializable": True})
+    cfg_scale: int = field(default=7, kw_only=True, metadata={"serializable": True})
+    outpainting_mode: str = field(default="PRECISE", kw_only=True, metadata={"serializable": True})
 
     def text_to_image_request_parameters(
         self,

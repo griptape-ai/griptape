@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from attr import define, field
+from attr import define, field, Factory
 
 from griptape.engines import PromptImageGenerationEngine
 from griptape.artifacts import ImageArtifact, TextArtifact
@@ -28,7 +28,9 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
-    image_generation_engine: PromptImageGenerationEngine = field(kw_only=True)
+    _image_generation_engine: PromptImageGenerationEngine = field(
+        default=None, kw_only=True, alias="image_generation_engine"
+    )
 
     @property
     def input(self) -> TextArtifact:
@@ -42,6 +44,21 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
     @input.setter
     def input(self, value: TextArtifact) -> None:
         self._input = value
+
+    @property
+    def image_generation_engine(self) -> PromptImageGenerationEngine:
+        if self._image_generation_engine is None:
+            if self.structure is not None:
+                self._image_generation_engine = PromptImageGenerationEngine(
+                    image_generation_driver=self.structure.config.global_drivers.image_generation_driver
+                )
+            else:
+                raise ValueError("Image Generation Engine is not set.")
+        return self._image_generation_engine
+
+    @image_generation_engine.setter
+    def image_generation_engine(self, value: PromptImageGenerationEngine) -> None:
+        self._image_generation_engine = value
 
     def run(self) -> ImageArtifact:
         image_artifact = self.image_generation_engine.run(

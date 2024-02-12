@@ -28,12 +28,12 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
             image in image-to-image generation.
     """
 
-    cfg_scale: int = field(default=7, kw_only=True)
-    style_preset: Optional[str] = field(default=None, kw_only=True)
-    clip_guidance_preset: Optional[str] = field(default=None, kw_only=True)
-    sampler: Optional[str] = field(default=None, kw_only=True)
-    steps: Optional[int] = field(default=None, kw_only=True)
-    start_schedule: Optional[float] = field(default=None, kw_only=True)
+    cfg_scale: int = field(default=7, kw_only=True, metadata={"serializable": True})
+    style_preset: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    clip_guidance_preset: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    sampler: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    steps: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    start_schedule: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def text_to_image_request_parameters(
         self,

@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Iterator, TYPE_CHECKING
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
@@ -20,8 +21,8 @@ class AnthropicPromptDriver(BasePromptDriver):
         tokenizer: Custom `AnthropicTokenizer`.
     """
 
-    api_key: str = field(kw_only=True)
-    model: str = field(kw_only=True)
+    api_key: str = field(kw_only=True, metadata={"serializable": True})
+    model: str = field(kw_only=True, metadata={"serializable": True})
     client: Anthropic = field(
         default=Factory(
             lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key), takes_self=True

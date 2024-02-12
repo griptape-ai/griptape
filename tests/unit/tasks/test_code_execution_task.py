@@ -18,7 +18,7 @@ def deliberate_exception(task: CodeExecutionTask) -> BaseArtifact:
     raise ValueError("Intentional Error")
 
 
-class TestPromptSubtask:
+class TestCodeExecutionTask:
     def test_hello_world_fn(self):
         task = CodeExecutionTask(run_fn=hello_world)
 

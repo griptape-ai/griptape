@@ -1,4 +1,4 @@
-from typing import Iterator
+from collections.abc import Iterator
 from os import environ
 
 from griptape.utils import PromptStack
@@ -25,8 +25,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     SUPPORTED_TASKS = ["text2text-generation", "text-generation"]
     DEFAULT_PARAMS = {"return_full_text": False, "num_return_sequences": 1}
 
-    model: str = field(kw_only=True)
-    params: dict = field(factory=dict, kw_only=True)
+    model: str = field(kw_only=True, metadata={"serializable": True})
+    params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(

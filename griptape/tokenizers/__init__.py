@@ -9,6 +9,7 @@ from griptape.tokenizers.bedrock_jurassic_tokenizer import BedrockJurassicTokeni
 from griptape.tokenizers.bedrock_claude_tokenizer import BedrockClaudeTokenizer
 from griptape.tokenizers.bedrock_llama_tokenizer import BedrockLlamaTokenizer
 from griptape.tokenizers.simple_tokenizer import SimpleTokenizer
+from griptape.tokenizers.dummy_tokenizer import DummyTokenizer
 
 
 __all__ = [
@@ -23,4 +24,5 @@ __all__ = [
     "BedrockClaudeTokenizer",
     "BedrockLlamaTokenizer",
     "SimpleTokenizer",
+    "DummyTokenizer",
 ]

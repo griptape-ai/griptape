@@ -10,10 +10,10 @@ if TYPE_CHECKING:
 
 @define
 class PineconeVectorStoreDriver(BaseVectorStoreDriver):
-    api_key: str = field(kw_only=True)
-    index_name: str = field(kw_only=True)
-    environment: str = field(kw_only=True)
-    project_name: Optional[str] = field(default=None, kw_only=True)
+    api_key: str = field(kw_only=True, metadata={"serializable": True})
+    index_name: str = field(kw_only=True, metadata={"serializable": True})
+    environment: str = field(kw_only=True, metadata={"serializable": True})
+    project_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     index: pinecone.Index = field(init=False)
 
     def __attrs_post_init__(self) -> None:

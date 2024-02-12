@@ -9,6 +9,7 @@ from .futures import execute_futures_dict
 from .token_counter import TokenCounter
 from .prompt_stack import PromptStack
 from .dict_utils import remove_null_values_in_dict_recursively
+from .dict_utils import dict_merge
 from .hash import str_to_hash
 from .import_utils import import_optional_dependency
 from .stream import Stream
@@ -34,6 +35,7 @@ __all__ = [
     "TokenCounter",
     "PromptStack",
     "remove_null_values_in_dict_recursively",
+    "dict_merge",
     "Stream",
     "constants",
     "load_artifact_from_memory",

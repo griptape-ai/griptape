@@ -30,9 +30,9 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client(service_name="bedrock-runtime"), takes_self=True)
     )
-    image_width: int = field(default=512, kw_only=True)
-    image_height: int = field(default=512, kw_only=True)
-    seed: Optional[int] = field(default=None, kw_only=True)
+    image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})
+    image_height: int = field(default=512, kw_only=True, metadata={"serializable": True})
+    seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         request = self.image_generation_model_driver.text_to_image_request_parameters(

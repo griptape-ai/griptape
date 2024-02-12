@@ -29,17 +29,19 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         init_strength: Optionally specify the strength of the initial image, [0.0, 1.0].
     """
 
-    api_key: str = field(kw_only=True)
+    api_key: str = field(kw_only=True, metadata={"serializable": True})
     requests_session: requests.Session = field(default=Factory(lambda: requests.Session()), kw_only=True)
     api_base: str = "https://cloud.leonardo.ai/api/rest/v1"
-    max_attempts: int = field(default=10, kw_only=True)
-    image_width: int = field(default=512, kw_only=True)
-    image_height: int = field(default=512, kw_only=True)
-    steps: Optional[int] = field(default=None, kw_only=True)
-    seed: Optional[int] = field(default=None, kw_only=True)
-    init_strength: Optional[float] = field(default=None, kw_only=True)
-    control_net: bool = field(default=False, kw_only=True)
-    control_net_type: Optional[Literal["POSE", "CANNY", "DEPTH"]] = field(default=None, kw_only=True)
+    max_attempts: int = field(default=10, kw_only=True, metadata={"serializable": True})
+    image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})
+    image_height: int = field(default=512, kw_only=True, metadata={"serializable": True})
+    steps: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    init_strength: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
+    control_net: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    control_net_type: Optional[Literal["POSE", "CANNY", "DEPTH"]] = field(
+        default=None, kw_only=True, metadata={"serializable": True}
+    )
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         if negative_prompts is None:

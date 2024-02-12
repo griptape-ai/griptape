@@ -24,13 +24,13 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
     MAX_NUM_CANDIDATES = 10000
 
-    connection_string: str = field(kw_only=True)
-    database_name: str = field(kw_only=True)
-    collection_name: str = field(kw_only=True)
-    index_name: str = field(kw_only=True)
-    vector_path: str = field(kw_only=True)
+    connection_string: str = field(kw_only=True, metadata={"serializable": True})
+    database_name: str = field(kw_only=True, metadata={"serializable": True})
+    collection_name: str = field(kw_only=True, metadata={"serializable": True})
+    index_name: str = field(kw_only=True, metadata={"serializable": True})
+    vector_path: str = field(kw_only=True, metadata={"serializable": True})
     num_candidates_multiplier: int = field(
-        default=10, kw_only=True
+        default=10, kw_only=True, metadata={"serializable": True}
     )  # https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/#fields
     client: MongoClient = field(
         default=Factory(

@@ -26,7 +26,9 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    image_generation_engine: VariationImageGenerationEngine = field(kw_only=True)
+    _image_generation_engine: VariationImageGenerationEngine = field(
+        default=None, kw_only=True, alias="image_generation_engine"
+    )
     _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact]] = field(
         default=None
     )
@@ -48,6 +50,21 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
     @input.setter
     def input(self, value: tuple[TextArtifact, ImageArtifact]) -> None:
         self._input = value
+
+    @property
+    def image_generation_engine(self) -> VariationImageGenerationEngine:
+        if self._image_generation_engine is None:
+            if self.structure is not None:
+                self._image_generation_engine = VariationImageGenerationEngine(
+                    image_generation_driver=self.structure.config.global_drivers.image_generation_driver
+                )
+            else:
+                raise ValueError("Image Generation Engine is not set.")
+        return self._image_generation_engine
+
+    @image_generation_engine.setter
+    def image_generation_engine(self, value: VariationImageGenerationEngine) -> None:
+        self._image_generation_engine = value
 
     def run(self) -> ImageArtifact:
         prompt_artifact = self.input[0]

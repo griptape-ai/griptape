@@ -4,19 +4,15 @@ from abc import ABC, abstractmethod
 from attr import define, field, Factory
 from griptape.artifacts import ListArtifact, ErrorArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
+from griptape.drivers import BasePromptDriver
 from griptape.rules import Ruleset
-from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
 class BaseExtractionEngine(ABC):
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     chunk_joiner: str = field(default="\n\n", kw_only=True)
-    prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
-    )
+    prompt_driver: BasePromptDriver = field(kw_only=True)
     chunker: BaseChunker = field(
         default=Factory(
             lambda self: TextChunker(tokenizer=self.prompt_driver.tokenizer, max_tokens=self.max_chunker_tokens),

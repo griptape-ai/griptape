@@ -12,10 +12,10 @@ if TYPE_CHECKING:
 @define
 class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    table_name: str = field(kw_only=True)
-    partition_key: str = field(kw_only=True)
-    value_attribute_key: str = field(kw_only=True)
-    partition_key_value: str = field(kw_only=True)
+    table_name: str = field(kw_only=True, metadata={"serializable": True})
+    partition_key: str = field(kw_only=True, metadata={"serializable": True})
+    value_attribute_key: str = field(kw_only=True, metadata={"serializable": True})
+    partition_key_value: str = field(kw_only=True, metadata={"serializable": True})
 
     table: Any = field(init=False)
 

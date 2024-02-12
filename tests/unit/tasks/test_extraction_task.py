@@ -5,7 +5,7 @@ from griptape.tasks import ExtractionTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-class TestTextQueryTask:
+class TestExtractionTask:
     @pytest.fixture
     def task(self):
         return ExtractionTask(

@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Iterator, Optional, Any, Literal
+from typing import Optional, Any, Literal
+from collections.abc import Iterator
 import openai
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -33,22 +34,24 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         _ratelimit_tokens_reset_at: The time at which the current rate limit window resets.
     """
 
-    base_url: Optional[str] = field(default=None, kw_only=True)
-    api_key: Optional[str] = field(default=None, kw_only=True)
-    organization: Optional[str] = field(default=None, kw_only=True)
+    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
         )
     )
-    model: str = field(kw_only=True)
+    model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
-    user: str = field(default="", kw_only=True)
-    response_format: Optional[Literal["json_object"]] = field(default=None, kw_only=True)
-    seed: Optional[int] = field(default=None, kw_only=True)
+    user: str = field(default="", kw_only=True, metadata={"serializable": True})
+    response_format: Optional[Literal["json_object"]] = field(
+        default=None, kw_only=True, metadata={"serializable": True}
+    )
+    seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
             lambda: (

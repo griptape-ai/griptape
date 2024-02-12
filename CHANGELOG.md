@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AzureMongoDbVectorStoreDriver` for using CosmosDB with MongoDB vCore API.
 - `vector_path` field on `MongoDbAtlasVectorStoreDriver`.
 - `LeonardoImageGenerationDriver` supports image to image generation.
+- `OpenAiStructureConfig` for providing Structures with all OpenAi Driver configuration. 
+- `AmazonBedrockStructureConfig` for providing Structures with all Amazon Bedrock Driver configuration. 
+- `StructureConfig` for building your own Structure configuration.
+- `JsonExtractionTask` for convenience over using `ExtractionTask` with a `JsonExtractionEngine`.
+- `CsvExtractionTask` for convenience over using `ExtractionTask` with a `CsvExtractionEngine`.
 
 ### Fixed 
 - `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.
@@ -21,6 +26,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field.
 - **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`.
 - **BREAKING**: `ImageLoader().load()` now accepts image bytes instead of a file path.
+- Deprecated `Structure.prompt_driver` in favor of `Structure.global_drivers.prompt_driver`.
+- Deprecated `Structure.embedding_driver` in favor of `Structure.global_drivers.embedding_driver`.
+- Deprecated `Structure.stream` in favor of `Structure.global_drivers.prompt_driver.stream`.
+- `TextSummaryTask.summary_engine` now defaults to a `PromptSummaryEngine` with a Prompt Driver default of `Structure.global_drivers.prompt_driver`.
+- `TextQueryTask.query_engine` now defaults to a `VectorQueryEngine` with a Prompt Driver default of `Structure.global_drivers.prompt_driver` and Vector Store Driver default of `Structure.global_drivers.vector_store_driver`.
+- `PromptImageGenerationTask.image_generation_engine` now defaults to a `PromptImageGenerationEngine` with an Image Generation Driver default of `Structure.global_drivers.image_generation_driver`.
+- `VariationImageGenerationTask.image_generation_engine` now defaults to a `VariationImageGenerationEngine` with an Image Generation Driver default of `Structure.global_drivers.image_generation_driver`.
+- `InpaintingImageGenerationTask.image_generation_engine` now defaults to an `InpaintingImageGenerationEngine` with an Image Generation Driver default of `Structure.global_drivers.image_generation_driver`.
+- `OutpaintingImageGenerationTask.image_generation_engine` now defaults to an `OutpaintingImageGenerationEngine` with an Image Generation Driver default of `Structure.global_drivers.image_generation_driver`.
 
 ## [0.22.3] - 2024-01-22
 
