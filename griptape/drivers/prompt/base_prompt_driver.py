@@ -79,10 +79,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     tokens = []
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
-                        if self.structure:
-                            self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
-                        else:
-                            raise ValueError("Streaming requires a structure")
+                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
                         tokens.append(chunk.value)
                     result = TextArtifact(value="".join(tokens).strip())
                 else:
