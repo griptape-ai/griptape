@@ -15,6 +15,7 @@ from .prompt_image_generation_task import PromptImageGenerationTask
 from .inpainting_image_generation_task import InpaintingImageGenerationTask
 from .outpainting_image_generation_task import OutpaintingImageGenerationTask
 from .variation_image_generation_task import VariationImageGenerationTask
+from .image_query_task import ImageQueryTask
 
 __all__ = [
     "BaseTask",
@@ -34,4 +35,5 @@ __all__ = [
     "VariationImageGenerationTask",
     "InpaintingImageGenerationTask",
     "OutpaintingImageGenerationTask",
+    "ImageQueryTask",
 ]

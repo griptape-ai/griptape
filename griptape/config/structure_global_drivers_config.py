@@ -12,6 +12,8 @@ from griptape.drivers import (
     DummyEmbeddingDriver,
     DummyImageGenerationDriver,
     DummyPromptDriver,
+    DummyImageQueryDriver,
+    BaseImageQueryDriver,
 )
 from griptape.mixins.serializable_mixin import SerializableMixin
 
@@ -23,6 +25,9 @@ class StructureGlobalDriversConfig(SerializableMixin):
     )
     image_generation_driver: BaseImageGenerationDriver = field(
         kw_only=True, default=Factory(lambda: DummyImageGenerationDriver()), metadata={"serializable": True}
+    )
+    image_query_driver: BaseImageQueryDriver = field(
+        kw_only=True, default=Factory(lambda: DummyImageQueryDriver()), metadata={"serializable": True}
     )
     embedding_driver: BaseEmbeddingDriver = field(
         kw_only=True, default=Factory(lambda: DummyEmbeddingDriver()), metadata={"serializable": True}
