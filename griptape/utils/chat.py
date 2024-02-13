@@ -21,7 +21,7 @@ class Chat:
     )
 
     def default_output_fn(self, text: str) -> None:
-        if self.structure.prompt_driver.stream:
+        if self.structure.config.global_drivers.prompt_driver.stream:
             print(text, end="", flush=True)
         else:
             print(text)
@@ -36,7 +36,7 @@ class Chat:
                 self.output_fn(self.exiting_text)
                 break
 
-            if self.structure.prompt_driver.stream:
+            if self.structure.config.global_drivers.prompt_driver.stream:
                 self.output_fn(self.processing_text + "\n")
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)
