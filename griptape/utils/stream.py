@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 from threading import Thread
 from queue import Queue
 from griptape.artifacts.text_artifact import TextArtifact
@@ -32,7 +33,7 @@ class Stream:
 
     @structure.validator  # pyright: ignore
     def validate_structure(self, _, structure: Structure):
-        if structure and not structure.prompt_driver.stream:
+        if structure and not structure.config.global_drivers.prompt_driver.stream:
             raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))

@@ -157,16 +157,16 @@ class Structure(ABC):
     def default_config(self) -> BaseStructureConfig:
         config = OpenAiStructureConfig()
 
-        if self.prompt_driver is not None:
-            config.global_drivers.prompt_driver = self.prompt_driver
-            config.task_memory.query_engine.prompt_driver = self.prompt_driver
-            config.task_memory.summary_engine.prompt_driver = self.prompt_driver
-            config.task_memory.extraction_engine.csv.prompt_driver = self.prompt_driver
-            config.task_memory.extraction_engine.json.prompt_driver = self.prompt_driver
-        if self.embedding_driver is not None:
-            config.task_memory.query_engine.vector_store_driver.embedding_driver = self.embedding_driver
-        if self.stream is not None:
-            config.global_drivers.prompt_driver.stream = self.stream
+        if self._prompt_driver is not None:
+            config.global_drivers.prompt_driver = self._prompt_driver
+            config.task_memory.query_engine.prompt_driver = self._prompt_driver
+            config.task_memory.summary_engine.prompt_driver = self._prompt_driver
+            config.task_memory.extraction_engine.csv.prompt_driver = self._prompt_driver
+            config.task_memory.extraction_engine.json.prompt_driver = self._prompt_driver
+        if self._embedding_driver is not None:
+            config.task_memory.query_engine.vector_store_driver.embedding_driver = self._embedding_driver
+        if self._stream is not None:
+            config.global_drivers.prompt_driver.stream = self._stream
 
         return config
 
