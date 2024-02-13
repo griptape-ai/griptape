@@ -71,6 +71,7 @@ from .image_generation.dummy_image_generation_driver import DummyImageGeneration
 
 from .image_query.base_image_query_driver import BaseImageQueryDriver
 from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
+from .image_query.dummy_image_query_driver import DummyImageQueryDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -135,4 +136,5 @@ __all__ = [
     "DummyImageGenerationDriver",
     "BaseImageQueryDriver",
     "OpenAiVisionImageQueryDriver",
+    "DummyImageQueryDriver",
 ]
