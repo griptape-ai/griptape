@@ -10,7 +10,6 @@ class MockTokenCount:
 
 
 class MockGenerativeModel(GenerativeModel):
-
     def __init__(self):
         pass
 
@@ -19,7 +18,6 @@ class MockGenerativeModel(GenerativeModel):
 
 
 class TestGeminiTokenizer:
-
     @pytest.fixture
     def mock_gemini(self):
         return MockGenerativeModel()
