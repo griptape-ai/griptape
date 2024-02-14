@@ -11,7 +11,6 @@ class GeminiTokenizer(BaseTokenizer):
 
     # https://ai.google.dev/models/gemini
     MODEL_PREFIXES_TO_MAX_TOKENS = {"gemini-pro": 30720, "gemini-pro-vision": 12288}
-    EMBEDDING_MODELS = ["embedding-001"]
 
     model: str = field(default=DEFAULT_GEMINI_TEXT_MODEL, kw_only=True)
     gemini: GenerativeModel = field(default=Factory(lambda self: GenerativeModel(self.model), takes_self=True))
