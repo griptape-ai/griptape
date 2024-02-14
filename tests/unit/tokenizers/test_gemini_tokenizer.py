@@ -19,8 +19,9 @@ class TestGeminiTokenizer:
         return GeminiTokenizer(model=request.param, gemini=mock_gemini)
 
     @pytest.mark.parametrize(
-        "tokenizer,expected", [("gemini-pro", EXPECTED_TOTAL_TOKENS), ("gemini-pro-vision", EXPECTED_TOTAL_TOKENS)],
-        indirect=["tokenizer"]
+        "tokenizer,expected",
+        [("gemini-pro", EXPECTED_TOTAL_TOKENS), ("gemini-pro-vision", EXPECTED_TOTAL_TOKENS)],
+        indirect=["tokenizer"],
     )
     def test_token_count(self, tokenizer, expected):
         assert tokenizer.count_tokens("foo bar huzzah") == expected
