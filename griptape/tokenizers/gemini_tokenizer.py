@@ -20,6 +20,9 @@ class GeminiTokenizer(BaseTokenizer):
     def default_max_tokens(self) -> int:
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model == k), None)
 
+        if tokens is None:
+            raise ValueError(f"Model {self.model} is not supported.")
+
         return tokens
 
     def count_tokens(self, text: str | list) -> int:
