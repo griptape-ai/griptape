@@ -1,9 +1,6 @@
 from unittest.mock import Mock
 import pytest
-from griptape.drivers import OpenAiEmbeddingDriver, GeminiEmbeddingDriver
-from griptape.tokenizers import OpenAiTokenizer
-from vertexai.language_models import TextEmbeddingModel
-
+from griptape.drivers import GeminiEmbeddingDriver
 
 class TestGeminiEmbeddingDriver:
     @pytest.fixture()
