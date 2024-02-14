@@ -1,26 +1,16 @@
 import pytest
-from attr import field, define
+from unittest import mock
 from griptape.tokenizers import GeminiTokenizer
 from vertexai.preview.generative_models import GenerativeModel
 
 
-@define
-class MockTokenCount:
-    total_tokens: int = field(default=5, kw_only=True)
-
-
-class MockGenerativeModel(GenerativeModel):
-    def __init__(self):
-        pass
-
-    def count_tokens(self, text: str) -> MockTokenCount:
-        return MockTokenCount(total_tokens=5)
-
-
 class TestGeminiTokenizer:
-    @pytest.fixture
+    @pytest.fixture(autouse=True)
     def mock_gemini(self):
-        return MockGenerativeModel()
+        mock_gemini = mock.Mock(GenerativeModel)
+        mock_gemini.count_tokens.return_value = mock.Mock(total_tokens=5)
+
+        return mock_gemini
 
     @pytest.fixture
     def tokenizer(self, request, mock_gemini):
