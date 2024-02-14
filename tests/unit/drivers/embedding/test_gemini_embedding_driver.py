@@ -2,6 +2,7 @@ from unittest.mock import Mock
 import pytest
 from griptape.drivers import GeminiEmbeddingDriver
 
+
 class TestGeminiEmbeddingDriver:
     @pytest.fixture()
     def mock_client(self, mocker):
