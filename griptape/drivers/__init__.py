@@ -25,6 +25,7 @@ from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanE
 from .embedding.amazon_bedrock_cohere_embedding_driver import AmazonBedrockCohereEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
+from .embedding.gemini_embedding_driver import GeminiEmbeddingDriver
 
 from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
 from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
@@ -99,6 +100,7 @@ __all__ = [
     "AmazonBedrockCohereEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
     "DummyEmbeddingDriver",
+    "GeminiEmbeddingDriver",
     "BaseEmbeddingModelDriver",
     "SageMakerHuggingFaceEmbeddingModelDriver",
     "SageMakerTensorFlowHubEmbeddingModelDriver",
