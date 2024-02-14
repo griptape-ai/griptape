@@ -5156,6 +5156,17 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "p
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
+name = "vertexai"
+version = "0.0.1"
+description = "Please run pip install google-cloud-aiplatform to use the Vertex SDK."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "vertexai-0.0.1-py3-none-any.whl", hash = "sha256:99e261af3b4d4e0a61eca346b668f7c52f0b47ceaaf4712093daff1790954790"},
+    {file = "vertexai-0.0.1.tar.gz", hash = "sha256:5f485fa39684e3c2e8c68ba1ae57d163f8364d092ddd040bcd84d36f127b902a"},
+]
+
+[[package]]
 name = "virtualenv"
 version = "20.25.0"
 description = "Virtual Python Environment builder"
@@ -5381,4 +5392,4 @@ loaders-web = ["trafilatura"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "339d7e0242dadf01bd00c8795d496451167f753e8dfbf1e55277f9554cdb84ba"
+content-hash = "b289d884a1988a4f80ffab10f5ecdbee6423c0abbfd883c1d144b9184c7c59f1"
