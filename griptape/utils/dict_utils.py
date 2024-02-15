@@ -5,7 +5,7 @@ def remove_null_values_in_dict_recursively(d: dict) -> dict:
         return d
 
 
-def dict_merge(dct: dict, merge_dct: dict, add_keys: bool = True):
+def dict_merge(dct: dict, merge_dct: dict, add_keys: bool = True) -> dict:
     """Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
     updating only top-level keys, dict_merge recurses down into dicts nested
     to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
