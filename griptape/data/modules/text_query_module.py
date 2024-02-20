@@ -24,7 +24,7 @@ class TextQueryModule(BaseModule):
     def process(self, context: dict) -> dict:
         query = context.get("query")
         before_text_query = context.get("before_text_query", [])
-        after_text_query = context.get("before_text_query", [])
+        after_text_query = context.get("after_text_query", [])
         text_artifact_chunks = context.get("text_artifact_chunks")
 
         if query and text_artifact_chunks:
