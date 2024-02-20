@@ -11,6 +11,7 @@ from griptape.config import (
     StructureTaskMemoryExtractionEngineCsvConfig,
 )
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
+from tests.mocks.mock_image_query_driver import MockImageQueryDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -22,6 +23,7 @@ class MockStructureConfig(BaseStructureConfig):
             lambda: StructureGlobalDriversConfig(
                 prompt_driver=MockPromptDriver(),
                 image_generation_driver=MockImageGenerationDriver(model="dall-e-2"),
+                image_query_driver=MockImageQueryDriver(model="gpt-4-vision-preview"),
                 embedding_driver=MockEmbeddingDriver(model="text-embedding-ada-002"),
             )
         ),

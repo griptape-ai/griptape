@@ -14,6 +14,8 @@ from .completion_chunk_event import CompletionChunkEvent
 from .event_listener import EventListener
 from .start_image_generation_event import StartImageGenerationEvent
 from .finish_image_generation_event import FinishImageGenerationEvent
+from .start_image_query_event import StartImageQueryEvent
+from .finish_image_query_event import FinishImageQueryEvent
 
 
 __all__ = [
@@ -33,4 +35,6 @@ __all__ = [
     "EventListener",
     "StartImageGenerationEvent",
     "FinishImageGenerationEvent",
+    "StartImageQueryEvent",
+    "FinishImageQueryEvent",
 ]

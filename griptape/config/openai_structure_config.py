@@ -15,6 +15,7 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
     OpenAiImageGenerationDriver,
+    OpenAiVisionImageQueryDriver,
 )
 
 
@@ -25,6 +26,7 @@ class OpenAiStructureConfig(BaseStructureConfig):
             lambda: StructureGlobalDriversConfig(
                 prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
                 image_generation_driver=OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512"),
+                image_query_driver=OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview", max_tokens=300),
                 embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-ada-002"),
                 vector_store_driver=LocalVectorStoreDriver(
                     embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-ada-002")

@@ -1,0 +1,5 @@
+version: "v1"
+name: Image Query Client
+description: Tool for executing a natural language query on images.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

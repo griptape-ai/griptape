@@ -33,6 +33,7 @@ class TestAmazonBedrockStructureConfig:
                     "seed": None,
                     "type": "AmazonBedrockImageGenerationDriver",
                 },
+                "image_query_driver": {"type": "DummyImageQueryDriver"},
                 "prompt_driver": {
                     "max_tokens": None,
                     "model": "anthropic.claude-v2",

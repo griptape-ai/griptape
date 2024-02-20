@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from attr import define, field
 
 from griptape.utils import execute_futures_dict, str_to_hash, import_optional_dependency
 from griptape.artifacts import ImageArtifact
 from griptape.loaders import BaseLoader
+
+if TYPE_CHECKING:
+    import PIL.Image as Image
 
 
 @define
@@ -40,7 +43,7 @@ class ImageLoader(BaseLoader):
         )
 
     def _load(self, source: bytes) -> ImageArtifact:
-        Image = import_optional_dependency("PIL").Image
+        Image = import_optional_dependency("PIL.Image")
         image = Image.open(BytesIO(source))
 
         # Normalize format only if requested.
