@@ -10,8 +10,16 @@ from attrs import Factory, define, field
 from rich.logging import RichHandler
 
 from griptape.artifacts import BlobArtifact, TextArtifact
-from griptape.config import BaseStructureConfig, OpenAiStructureConfig
-from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, DummyPromptDriver, DummyVectorStoreDriver
+from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
+from griptape.drivers import (
+    BaseEmbeddingDriver,
+    BasePromptDriver,
+    DummyPromptDriver,
+    DummyVectorStoreDriver,
+    OpenAiEmbeddingDriver,
+    OpenAiChatPromptDriver,
+)
+from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -155,18 +163,35 @@ class Structure(ABC):
 
     @property
     def default_config(self) -> BaseStructureConfig:
-        config = OpenAiStructureConfig()
+        if self._prompt_driver is not None or self._embedding_driver is not None:
+            config = StructureConfig()
 
-        if self._prompt_driver is not None:
-            config.global_drivers.prompt_driver = self._prompt_driver
-            config.task_memory.query_engine.prompt_driver = self._prompt_driver
-            config.task_memory.summary_engine.prompt_driver = self._prompt_driver
-            config.task_memory.extraction_engine.csv.prompt_driver = self._prompt_driver
-            config.task_memory.extraction_engine.json.prompt_driver = self._prompt_driver
-        if self._embedding_driver is not None:
-            config.task_memory.query_engine.vector_store_driver.embedding_driver = self._embedding_driver
-        if self._stream is not None:
-            config.global_drivers.prompt_driver.stream = self._stream
+            if self._prompt_driver is None:
+                prompt_driver = OpenAiChatPromptDriver(model="gpt-4")
+            else:
+                prompt_driver = self._prompt_driver
+
+            if self._embedding_driver is None:
+                embedding_driver = OpenAiEmbeddingDriver()
+            else:
+                embedding_driver = self._embedding_driver
+
+            if self._stream is not None:
+                prompt_driver.stream = self._stream
+
+            vector_store_driver = LocalVectorStoreDriver(embedding_driver=embedding_driver)
+
+            config.global_drivers.prompt_driver = prompt_driver
+            config.global_drivers.vector_store_driver = vector_store_driver
+            config.global_drivers.embedding_driver = embedding_driver
+
+            config.task_memory.query_engine.prompt_driver = prompt_driver
+            config.task_memory.query_engine.vector_store_driver = vector_store_driver
+            config.task_memory.summary_engine.prompt_driver = prompt_driver
+            config.task_memory.extraction_engine.csv.prompt_driver = prompt_driver
+            config.task_memory.extraction_engine.json.prompt_driver = prompt_driver
+        else:
+            config = OpenAiStructureConfig()
 
         return config
 
