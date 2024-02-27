@@ -4833,4 +4833,4 @@ loaders-web = ["trafilatura"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "6726a8a3eac420501d33eb22f8a231e4d08aafa30279931530a314c6aa967d6e"
+content-hash = "ff913e483b55c0d660bbe32eb6a79428ee27acaac5ca090a32af110a691bb1f9"
