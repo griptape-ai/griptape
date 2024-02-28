@@ -74,7 +74,11 @@ class FileManager(BaseTool):
             full_path = Path(os.path.join(self.workdir, path))
             extension = path.split(".")[-1]
             loader = self.loaders.get(extension) or self.default_loader
-            result = loader.load(full_path)
+            if isinstance(loader, ImageLoader):
+                with open(full_path, "rb") as file:
+                    result = loader.load(file.read())
+            else:
+                result = loader.load(full_path)
 
             if isinstance(result, list):
                 artifacts.extend(result)
