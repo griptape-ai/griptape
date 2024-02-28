@@ -94,9 +94,9 @@ class BaseTool(ActivityMixin, ABC):
                 {
                     Literal("name"): self.name,
                     Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
-                    Literal("input"): {"values": getattr(activity, "config")["schema"]}
-                    if self.activity_schema(activity)
-                    else {},
+                    **self.activity_to_input(
+                        activity
+                    ),  # Unpack the dictionary in order to only add the key-values if there are any
                 }
             )
             for activity in self.activities()

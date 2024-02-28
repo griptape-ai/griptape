@@ -64,6 +64,7 @@ class TestBaseTool:
             output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]}
         )
 
+        assert tool.output_memory is not None
         assert len(tool.output_memory["test"]) == 2
 
     def test_memory_validation(self):
@@ -146,9 +147,8 @@ class TestBaseTool:
                     "properties": {
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_list_output"},
-                        "input": {"type": "object", "properties": {}, "required": [], "additionalProperties": False},
                     },
-                    "required": ["name", "path", "input"],
+                    "required": ["name", "path"],
                     "additionalProperties": False,
                 },
                 {
@@ -156,9 +156,8 @@ class TestBaseTool:
                     "properties": {
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_no_schema"},
-                        "input": {"type": "object", "properties": {}, "required": [], "additionalProperties": False},
                     },
-                    "required": ["name", "path", "input"],
+                    "required": ["name", "path"],
                     "additionalProperties": False,
                 },
                 {
