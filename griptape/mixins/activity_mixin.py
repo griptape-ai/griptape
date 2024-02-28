@@ -86,11 +86,10 @@ class ActivityMixin:
             return None
 
     def activity_to_input(self, activity: Callable) -> dict:
-        return (
-            {Literal("input"): {"values": getattr(activity, "config")["schema"]}}
-            if self.activity_schema(activity)
-            else {}
-        )
+        if self.activity_schema(activity):
+            return {Literal("input"): {"values": getattr(activity, "config")["schema"]}}
+        else:
+            return {}
 
     def _validate_tool_activity(self, activity_name):
         tool = self.__class__
