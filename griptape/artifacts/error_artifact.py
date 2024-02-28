@@ -3,17 +3,9 @@ from attr import define, field
 from griptape.artifacts import BaseArtifact
 
 
-@define(frozen=True)
+@define
 class ErrorArtifact(BaseArtifact):
-    value: str = field(converter=str)
+    value: str = field(converter=str, metadata={"serializable": True})
 
-    def __add__(self, other: ErrorArtifact) -> ErrorArtifact:
+    def __add__(self, other: BaseArtifact) -> ErrorArtifact:
         return ErrorArtifact(self.value + other.value)
-
-    def to_text(self) -> str:
-        return self.value
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import ErrorArtifactSchema
-
-        return dict(ErrorArtifactSchema().dump(self))

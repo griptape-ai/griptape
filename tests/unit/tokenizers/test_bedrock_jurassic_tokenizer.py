@@ -21,7 +21,7 @@ class TestBedrockJurassicTokenizer:
     def test_titan_tokens_left(self):
         assert (
             BedrockJurassicTokenizer(model=BedrockJurassicTokenizer.DEFAULT_MODEL).count_tokens_left(
-                "Instructions: foo\nUser: bar\nBot:"
+                "System: foo\nUser: bar\nAssistant:"
             )
             == 8186
         )

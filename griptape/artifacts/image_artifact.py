@@ -1,15 +1,15 @@
 from __future__ import annotations
 
+import base64
 import string
 import time
 import random
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import BlobArtifact
-import base64
 
 
-@define(frozen=True)
+@define
 class ImageArtifact(BlobArtifact):
     """ImageArtifact is a type of BlobArtifact that represents an image.
 
@@ -23,12 +23,18 @@ class ImageArtifact(BlobArtifact):
         prompt: Optionally specify the prompt used to generate the image.
     """
 
-    mime_type: str = field(kw_only=True)
-    width: int = field(kw_only=True)
-    height: int = field(kw_only=True)
-    model: str | None = field(default=None, kw_only=True)
-    prompt: str | None = field(default=None, kw_only=True)
-    name: str = field(default=Factory(lambda self: self.make_name(), takes_self=True), kw_only=True)
+    mime_type: str = field(kw_only=True, default="image/png", metadata={"serializable": True})
+    width: int = field(kw_only=True, metadata={"serializable": True})
+    height: int = field(kw_only=True, metadata={"serializable": True})
+    model: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    prompt: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    name: str = field(
+        default=Factory(lambda self: self.make_name(), takes_self=True), kw_only=True, metadata={"serializable": True}
+    )
+
+    @property
+    def base64(self) -> str:
+        return base64.b64encode(self.value).decode("utf-8")
 
     def make_name(self) -> str:
         entropy = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
@@ -37,14 +43,5 @@ class ImageArtifact(BlobArtifact):
 
         return f"image_artifact_{fmt_time}_{entropy}.{extension}"
 
-    @property
-    def base64(self) -> str:
-        return base64.b64encode(self.value).decode("utf-8")
-
     def to_text(self) -> str:
         return f"Image, dimensions: {self.width}x{self.height}, type: {self.mime_type}, size: {len(self.value)} bytes"
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import ImageArtifactSchema
-
-        return dict(ImageArtifactSchema().dump(self))

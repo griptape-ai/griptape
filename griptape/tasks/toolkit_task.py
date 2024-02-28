@@ -1,9 +1,9 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING, Optional, Callable
+from typing import TYPE_CHECKING, Callable, Optional
 from attr import define, field, Factory
 from griptape import utils
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.utils import PromptStack
 from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import ActionSubtask
@@ -22,7 +22,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
-    task_memory: TaskMemory | None = field(default=None, kw_only=True)
+    task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
         default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True), kw_only=True
@@ -32,9 +32,10 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     )
 
     def __attrs_post_init__(self) -> None:
-        self.set_default_tools_memory(self.task_memory)
+        if self.task_memory:
+            self.set_default_tools_memory(self.task_memory)
 
-    @tools.validator
+    @tools.validator  # pyright: ignore
     def validate_tools(self, _, tools: list[BaseTool]) -> None:
         tool_names = [t.name for t in tools]
 
@@ -78,7 +79,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     def preprocess(self, structure: Structure) -> ToolkitTask:
         super().preprocess(structure)
 
-        if self.task_memory is None:
+        if self.task_memory is None and structure.task_memory:
             self.set_default_tools_memory(structure.task_memory)
 
         return self
@@ -94,7 +95,9 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:
-        return J2("tasks/toolkit_task/assistant_subtask.j2").render(subtask=subtask)
+        return J2("tasks/toolkit_task/assistant_subtask.j2").render(
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
+        )
 
     def default_user_subtask_template_generator(self, subtask: ActionSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
@@ -109,14 +112,14 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                 if tool.input_memory is None:
                     tool.input_memory = [self.task_memory]
                 if tool.output_memory is None and tool.off_prompt:
-                    tool.output_memory = {a.name: [self.task_memory] for a in tool.activities()}
+                    tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}
 
-    def run(self) -> TextArtifact:
+    def run(self) -> BaseArtifact:
         from griptape.tasks import ActionSubtask
 
         self.subtasks.clear()
 
-        subtask = self.add_subtask(ActionSubtask(self.active_driver().run(prompt_stack=self.prompt_stack).to_text()))
+        subtask = self.add_subtask(ActionSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
 
         while True:
             if subtask.output is None:
@@ -124,14 +127,14 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
                 elif subtask.action_name is None:
                     # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
-                    subtask.output = TextArtifact(subtask.input_template)
+                    subtask.output = subtask.input
                 else:
                     subtask.before_run()
                     subtask.run()
                     subtask.after_run()
 
                     subtask = self.add_subtask(
-                        ActionSubtask(self.active_driver().run(prompt_stack=self.prompt_stack).to_text())
+                        ActionSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text())
                     )
             else:
                 break
@@ -140,8 +143,11 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return self.output
 
-    def find_subtask(self, subtask_id: str) -> ActionSubtask | None:
-        return next((subtask for subtask in self.subtasks if subtask.id == subtask_id), None)
+    def find_subtask(self, subtask_id: str) -> ActionSubtask:
+        for subtask in self.subtasks:
+            if subtask.id == subtask_id:
+                return subtask
+        raise ValueError(f"Subtask with id {subtask_id} not found.")
 
     def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
         subtask.attach_to(self)
@@ -153,8 +159,14 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return subtask
 
-    def find_tool(self, tool_name: str) -> BaseTool | None:
-        return next((t for t in self.tools if t.name == tool_name), None)
+    def find_tool(self, tool_name: str) -> BaseTool:
+        for tool in self.tools:
+            if tool.name == tool_name:
+                return tool
+        raise ValueError(f"Tool with name {tool_name} not found.")
 
-    def find_memory(self, memory_name: str) -> TaskMemory | None:
-        return next((m for m in self.tool_output_memory if m.name == memory_name), None)
+    def find_memory(self, memory_name: str) -> TaskMemory:
+        for memory in self.tool_output_memory:
+            if memory.name == memory_name:
+                return memory
+        raise ValueError(f"Memory with name {memory_name} not found.")

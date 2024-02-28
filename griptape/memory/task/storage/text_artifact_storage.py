@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Any
 from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.memory.task.storage import BaseArtifactStorage
@@ -18,8 +18,11 @@ class TextArtifactStorage(BaseArtifactStorage):
     def can_store(self, artifact: BaseArtifact) -> bool:
         return isinstance(artifact, TextArtifact)
 
-    def store_artifact(self, namespace: str, artifact: TextArtifact) -> None:
-        self.query_engine.upsert_text_artifact(artifact, namespace)
+    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> None:
+        if isinstance(artifact, TextArtifact):
+            self.query_engine.upsert_text_artifact(artifact, namespace)
+        else:
+            raise ValueError("Artifact must be of instance TextArtifact")
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         return self.query_engine.load_artifacts(namespace)
@@ -27,5 +30,5 @@ class TextArtifactStorage(BaseArtifactStorage):
     def summarize(self, namespace: str) -> TextArtifact:
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
-    def query(self, namespace: str, query: str, metadata: any = None) -> TextArtifact:
+    def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact:
         return self.query_engine.query(namespace=namespace, query=query, metadata=str(metadata) if metadata else None)

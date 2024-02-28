@@ -25,10 +25,10 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
 
     DEFAULT_MODEL = "text-embedding-ada-002"
 
-    model: str = field(default=DEFAULT_MODEL, kw_only=True)
-    base_url: str = field(default=None, kw_only=True)
-    api_key: str | None = field(default=None, kw_only=True)
-    organization: str | None = field(default=None, kw_only=True)
+    model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
+    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),

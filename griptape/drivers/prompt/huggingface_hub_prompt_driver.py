@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Iterator, TYPE_CHECKING
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 from os import environ
 from griptape.utils import PromptStack, import_optional_dependency
 
@@ -27,10 +28,10 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
     """
 
-    api_token: str = field(kw_only=True)
-    max_tokens: int = field(default=250, kw_only=True)
-    params: dict = field(factory=dict, kw_only=True)
-    model: str = field(kw_only=True)
+    api_token: str = field(kw_only=True, metadata={"serializable": True})
+    max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
+    params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
+    model: str = field(kw_only=True, metadata={"serializable": True})
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(

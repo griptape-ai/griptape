@@ -3,6 +3,7 @@ from griptape.artifacts import ListArtifact, TextArtifact, ErrorArtifact, InfoAr
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from schema import Schema, Literal
+from typing import Optional
 from attr import define, field
 import requests
 import logging
@@ -92,7 +93,7 @@ class OpenWeatherClient(BaseTool):
         else:
             return ErrorArtifact(f"Error fetching coordinates for location: {location}")
 
-    def _fetch_coordinates(self, location: str) -> tuple[float, float] | None:
+    def _fetch_coordinates(self, location: str) -> Optional[tuple[float, Optional[float]]]:
         parts = location.split(",")
         if len(parts) == 2 and parts[1].strip() in self.US_STATE_CODES:
             location += ", US"

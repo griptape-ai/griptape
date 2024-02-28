@@ -1,5 +1,5 @@
 import json
-from griptape.memory.structure import ConversationMemory, Run
+from griptape.memory.structure import ConversationMemory, Run, BaseConversationMemory
 from griptape.structures import Pipeline
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.tasks import PromptTask
@@ -42,8 +42,8 @@ class TestConversationMemory:
         memory.add_run(Run(input="foo", output="bar"))
         memory_dict = memory.to_dict()
 
-        assert isinstance(memory.from_dict(memory_dict), ConversationMemory)
-        assert memory.from_dict(memory_dict).runs[0].input == "foo"
+        assert isinstance(BaseConversationMemory.from_dict(memory_dict), ConversationMemory)
+        assert BaseConversationMemory.from_dict(memory_dict).runs[0].input == "foo"
 
     def test_from_json(self):
         memory = ConversationMemory()

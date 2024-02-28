@@ -1,5 +1,5 @@
 import uuid
-from unittest.mock import Mock
+from unittest.mock import Mock, PropertyMock, MagicMock
 import pytest
 from griptape.drivers import LeonardoImageGenerationDriver
 
@@ -25,9 +25,12 @@ class TestLeonardoImageGenerationDriver:
 
     def _test_create_generation(self, driver, test_generation_id):
         # Mock post request to create image generation
-        driver.requests_session.post().json.return_value = {"sdGenerationJob": {"generationId": test_generation_id}}
+        response = Mock()
+        response.ok = True
+        response.json.return_value = {"sdGenerationJob": {"generationId": test_generation_id}}
+        driver.requests_session.request.return_value = response
 
-        return driver._create_generation(prompt="test_prompt", negative_prompt="test_negative_prompt")
+        return driver._create_generation(prompts=["test_prompt"], negative_prompts=["test_negative_prompt"])
 
     def test_get_image_url(self, driver):
         test_image_url = "test_image_url"
@@ -57,7 +60,7 @@ class TestLeonardoImageGenerationDriver:
 
         return driver._download_image(url="test_image_url")
 
-    def test_generate_image(self, driver):
+    def test_try_text_to_image(self, driver):
         test_generation_id = str(uuid.uuid4())
         test_image_url = "test_image_url"
 
@@ -65,7 +68,7 @@ class TestLeonardoImageGenerationDriver:
         self._test_get_image_url(driver=driver, test_image_url=test_image_url)
         self._test_download_image(driver=driver, test_image_data=b"test_image_data")
 
-        image_artifact = driver.generate_image(prompts=["test_prompt"], negative_prompts=["test_negative_prompt"])
+        image_artifact = driver.try_text_to_image(prompts=["test_prompt"], negative_prompts=["test_negative_prompt"])
 
         assert image_artifact.value == b"test_image_data"
         assert image_artifact.mime_type == "image/png"

@@ -1,5 +1,6 @@
 import uuid
-from typing import Optional, Any
+from logging import exception
+from typing import Optional, Any, cast
 from attr import define, field, Factory
 from dataclasses import dataclass
 from griptape.drivers import BaseVectorStoreDriver
@@ -22,13 +23,13 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         table_name: Optionally specify the name of the table to used to store vectors.
     """
 
-    connection_string: Optional[str] = field(default=None, kw_only=True)
-    create_engine_params: dict = field(factory=dict, kw_only=True)
+    connection_string: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    create_engine_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     engine: Optional[Engine] = field(default=None, kw_only=True)
-    table_name: str = field(kw_only=True)
+    table_name: str = field(kw_only=True, metadata={"serializable": True})
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
-    @connection_string.validator
+    @connection_string.validator  # pyright: ignore
     def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
@@ -41,7 +42,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         if not connection_string.startswith("postgresql://"):
             raise ValueError("The connection string must describe a Postgres database connection")
 
-    @engine.validator
+    @engine.validator  # pyright: ignore
     def validate_engine(self, _, engine: Optional[Engine]) -> None:
         # If a connection string is provided, an engine does not need to be provided.
         if self.connection_string is not None:
@@ -52,11 +53,11 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("An engine or connection string is required")
 
     def __attrs_post_init__(self) -> None:
-        """If a an engine is provided, it will be used to connect to the database.
+        """If an engine is provided, it will be used to connect to the database.
         If not, a connection string is used to create a new database connection here.
         """
         if self.engine is None:
-            self.engine = create_engine(self.connection_string, **self.create_engine_params)
+            self.engine = cast(Engine, create_engine(self.connection_string, **self.create_engine_params))
 
     def setup(
         self, create_schema: bool = True, install_uuid_extension: bool = True, install_vector_extension: bool = True
@@ -86,7 +87,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             obj = session.merge(obj)
             session.commit()
 
-            return str(obj.id)
+            return str(getattr(obj, "id"))
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
@@ -94,7 +95,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
-                id=result.id, vector=result.vector, namespace=result.namespace, meta=result.meta
+                id=getattr(result, "id"),
+                vector=getattr(result, "vector"),
+                namespace=getattr(result, "namespace"),
+                meta=getattr(result, "meta"),
             )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -142,12 +146,12 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
-            query = session.query(self._model, op(vector).label("score")).order_by(op(vector))
+            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore
 
             if namespace:
-                query = query.filter_by(namespace=namespace)
+                query_result = query_result.filter_by(namespace=namespace)
 
-            results = query.limit(count).all()
+            results = query_result.limit(count).all()
 
             return [
                 BaseVectorStoreDriver.QueryResult(
@@ -174,3 +178,6 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             meta = Column(JSON)
 
         return VectorModel
+
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

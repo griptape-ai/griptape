@@ -20,22 +20,22 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         index: The name of the index to use.
     """
 
-    api_key: str = field(kw_only=True)
-    url: str = field(kw_only=True)
-    mq: marqo.Client | None = field(
+    api_key: str = field(kw_only=True, metadata={"serializable": True})
+    url: str = field(kw_only=True, metadata={"serializable": True})
+    mq: Optional[marqo.Client] = field(
         default=Factory(
             lambda self: import_optional_dependency("marqo").Client(self.url, api_key=self.api_key), takes_self=True
         ),
         kw_only=True,
     )
-    index: str = field(kw_only=True)
+    index: str = field(kw_only=True, metadata={"serializable": True})
 
     def upsert_text(
         self,
         string: str,
-        vector_id: str | None = None,
-        namespace: str | None = None,
-        meta: dict | None = None,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
         """Upsert a text document into the Marqo index.
@@ -59,10 +59,13 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             doc["namespace"] = namespace
 
         response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description"])
-        return response["items"][0]["_id"]
+        if isinstance(response, dict) and "items" in response and response["items"]:
+            return response["items"][0]["_id"]
+        else:
+            raise ValueError(f"Failed to upsert text: {response}")
 
     def upsert_text_artifact(
-        self, artifact: TextArtifact, namespace: str | None = None, meta: dict | None = None, **kwargs
+        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
     ) -> str:
         """Upsert a text artifact into the Marqo index.
 
@@ -85,9 +88,12 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         }
 
         response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
-        return response["items"][0]["_id"]
+        if isinstance(response, dict) and "items" in response and response["items"]:
+            return response["items"][0]["_id"]
+        else:
+            raise ValueError(f"Failed to upsert text: {response}")
 
-    def load_entry(self, vector_id: str, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Load a document entry from the Marqo index.
 
         Args:
@@ -108,7 +114,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return None
 
-    def load_entries(self, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load all document entries from the Marqo index.
 
         Args:
@@ -119,7 +125,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         filter_string = f"namespace:{namespace}" if namespace else None
-        results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
+
+        if filter_string is not None:
+            results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
+        else:
+            results = self.mq.index(self.index).search("", limit=10000)
 
         # get all _id's from search results
         ids = [r["_id"] for r in results["hits"]]
@@ -145,8 +155,8 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: int | None = None,
-        namespace: str | None = None,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
         include_vectors: bool = False,
         include_metadata: bool = True,
         **kwargs,
@@ -187,15 +197,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             for r in results["hits"]
         ]
 
-    def create_index(self, name: str, **kwargs) -> dict[str, Any]:
-        """Create a new index in the Marqo client.
-
-        Args:
-            name: The name of the new index.
-        """
-
-        return self.mq.create_index(name, settings_dict=kwargs)
-
     def delete_index(self, name: str) -> dict[str, Any]:
         """Delete an index in the Marqo client.
 
@@ -212,15 +213,14 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The list of all indexes.
         """
 
-        # Change this once API issue is fixed (entries in results are no longer objects but dicts)
-        return [index.index_name for index in self.mq.get_indexes()["results"]]
+        return [index["index"] for index in self.mq.get_indexes()["results"]]
 
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: str | None = None,
-        namespace: str | None = None,
-        meta: dict | None = None,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
         """Upsert a vector into the Marqo index.
@@ -238,4 +238,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The ID of the vector that was added.
         """
 
-        raise Exception("not implemented")
+        raise NotImplementedError(f"{self.__class__.__name__} does not support upserting a vector.")
+
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

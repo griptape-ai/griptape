@@ -20,12 +20,13 @@ class WebScraper(BaseTool):
     )
     def get_content(self, params: dict) -> ListArtifact | ErrorArtifact:
         url = params["values"]["url"]
-        page = WebLoader().extract_page(url, self.include_links)
 
-        if isinstance(page, ErrorArtifact):
-            return page
-        else:
-            return ListArtifact(TextLoader().text_to_artifacts(page.get("text")))
+        try:
+            page = WebLoader().extract_page(url, self.include_links)
+
+            return ListArtifact(TextLoader().load(page["text"]))
+        except Exception as e:
+            return ErrorArtifact("Error getting page content: " + str(e))
 
     @activity(
         config={
@@ -35,9 +36,10 @@ class WebScraper(BaseTool):
     )
     def get_author(self, params: dict) -> BaseArtifact:
         url = params["values"]["url"]
-        page = WebLoader().extract_page(url, self.include_links)
 
-        if isinstance(page, ErrorArtifact):
-            return page
-        else:
-            return TextArtifact(page.get("author"))
+        try:
+            page = WebLoader().extract_page(url, self.include_links)
+
+            return TextArtifact(page["author"])
+        except Exception as e:
+            return ErrorArtifact("Error getting page author: " + str(e))

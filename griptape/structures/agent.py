@@ -14,9 +14,10 @@ if TYPE_CHECKING:
 class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
-    max_meta_memory_entries: int | None = field(default=20, kw_only=True)
+    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
         if len(self.tasks) == 0:
             if self.tools:
                 task = ToolkitTask(
@@ -26,8 +27,6 @@ class Agent(Structure):
                 task = PromptTask(self.input_template, max_meta_memory_entries=self.max_meta_memory_entries)
 
             self.add_task(task)
-
-        super().__attrs_post_init__()
 
     @property
     def task(self) -> BaseTask:
@@ -55,10 +54,13 @@ class Agent(Structure):
         self.task.execute()
 
         if self.conversation_memory:
-            run = Run(input=self.task.input.to_text(), output=self.task.output.to_text())
+            if isinstance(self.task.input, tuple):
+                input_text = self.task.input[0].to_text()
+            else:
+                input_text = self.task.input.to_text()
+
+            run = Run(input=input_text, output=self.task.output.to_text())
 
             self.conversation_memory.add_run(run)
-
-        self._execution_args = ()
 
         return self

@@ -1,6 +1,6 @@
 import os
 import pytest
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from griptape.chunkers import PdfChunker
 
 MAX_TOKENS = 500

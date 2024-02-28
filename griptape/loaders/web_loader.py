@@ -1,27 +1,41 @@
 import json
 import logging
+
 from attr import define
-import trafilatura
-from griptape.utils import str_to_hash, execute_futures_dict
+
+
+from griptape.utils import str_to_hash, execute_futures_dict, import_optional_dependency
 from griptape.artifacts import TextArtifact
-from griptape.loaders import TextLoader
+from griptape.loaders import BaseTextLoader
 
 
 @define
-class WebLoader(TextLoader):
-    def load(self, url: str, include_links: bool = True) -> list[TextArtifact]:
-        return self._load_page_to_artifacts(url, include_links)
+class WebLoader(BaseTextLoader):
+    def load(self, source: str, include_links: bool = True, *args, **kwargs) -> list[TextArtifact]:
+        return self._load_page_to_artifacts(source, include_links)
 
-    def load_collection(self, urls: list[str], include_links: bool = True) -> dict[str, list[TextArtifact]]:
+    def load_collection(
+        self, sources: list[str], include_links: bool = True, *args, **kwargs
+    ) -> dict[str, list[TextArtifact]]:
         return execute_futures_dict(
-            {str_to_hash(u): self.futures_executor.submit(self._load_page_to_artifacts, u, include_links) for u in urls}
+            {
+                str_to_hash(source): self.futures_executor.submit(self._load_page_to_artifacts, source, include_links)
+                for source in sources
+            }
         )
 
     def _load_page_to_artifacts(self, url: str, include_links: bool = True) -> list[TextArtifact]:
-        return self.text_to_artifacts(self.extract_page(url, include_links).get("text"))
+        page_text = self.extract_page(url, include_links).get("text")
+        if page_text is None:
+            return []
+
+        return self._text_to_artifacts(page_text)
 
     def extract_page(self, url: str, include_links: bool = True) -> dict:
-        config = trafilatura.settings.use_config()
+        trafilatura = import_optional_dependency("trafilatura")
+        use_config = trafilatura.settings.use_config
+
+        config = use_config()
         page = trafilatura.fetch_url(url, no_ssl=True)
 
         # This disables signal, so that trafilatura can work on any thread:

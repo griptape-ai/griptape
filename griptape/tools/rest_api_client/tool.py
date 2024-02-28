@@ -1,5 +1,5 @@
 from textwrap import dedent
-from typing import Optional
+from typing import Optional, Dict
 from urllib.parse import urljoin
 import schema
 from schema import Schema, Literal
@@ -20,6 +20,7 @@ class RestApiClient(BaseTool):
         request_query_params_schema: A JSON schema string describing the available query parameters.
         request_path_params_schema: A JSON schema string describing the available path parameters. The schema must describe an array of string values.
         response_body_schema: A JSON schema string describing the response body.
+        request_headers: Headers to include in the requests.
     """
 
     base_url: str = field(kw_only=True)
@@ -29,6 +30,7 @@ class RestApiClient(BaseTool):
     request_query_params_schema: Optional[str] = field(default=None, kw_only=True)
     request_body_schema: Optional[str] = field(default=None, kw_only=True)
     response_body_schema: Optional[str] = field(default=None, kw_only=True)
+    request_headers: Optional[Dict[str, str]] = field(default=None, kw_only=True)
 
     @property
     def full_url(self) -> str:
@@ -57,7 +59,7 @@ class RestApiClient(BaseTool):
         url = self._build_url(base_url, path=path)
 
         try:
-            response = put(url, json=body, timeout=30)
+            response = put(url, json=body, timeout=30, headers=self.request_headers)
 
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
@@ -93,7 +95,7 @@ class RestApiClient(BaseTool):
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = patch(url, json=body, timeout=30)
+            response = patch(url, json=body, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -121,7 +123,7 @@ class RestApiClient(BaseTool):
         body = values["body"]
 
         try:
-            response = post(url, json=body, timeout=30)
+            response = post(url, json=body, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -162,7 +164,7 @@ class RestApiClient(BaseTool):
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = get(url, params=query_params, timeout=30)
+            response = get(url, params=query_params, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
@@ -185,7 +187,7 @@ class RestApiClient(BaseTool):
             ),
         }
     )
-    def delete(self, params: dict = None) -> BaseArtifact:
+    def delete(self, params: dict) -> BaseArtifact:
         from requests import delete, exceptions
 
         values = params["values"]
@@ -197,7 +199,7 @@ class RestApiClient(BaseTool):
         url = self._build_url(base_url, path=path, path_params=path_params)
 
         try:
-            response = delete(url, params=query_params, timeout=30)
+            response = delete(url, params=query_params, timeout=30, headers=self.request_headers)
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))

@@ -1,23 +1,24 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from dataclasses import dataclass
+from typing import TYPE_CHECKING, Optional
 from attr import define, field
 
+from griptape.mixins import SerializableMixin
+
 if TYPE_CHECKING:
-    from griptape.memory.structure import ConversationMemory
+    from griptape.memory.structure import BaseConversationMemory
 
 
 @define
-class PromptStack:
+class PromptStack(SerializableMixin):
     GENERIC_ROLE = "generic"
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    @dataclass
-    class Input:
-        content: str | list[dict]
-        role: str
+    @define
+    class Input(SerializableMixin):
+        content: str = field(metadata={"serializable": True})
+        role: str = field(metadata={"serializable": True})
 
         def is_generic(self) -> bool:
             return self.role == PromptStack.GENERIC_ROLE
@@ -31,7 +32,7 @@ class PromptStack:
         def is_assistant(self) -> bool:
             return self.role == PromptStack.ASSISTANT_ROLE
 
-    inputs: list[Input] = field(factory=list, kw_only=True)
+    inputs: list[Input] = field(factory=list, kw_only=True, metadata={"serializable": True})
 
     def add_input(self, content: str, role: str) -> Input:
         self.inputs.append(self.Input(content=content, role=role))
@@ -50,7 +51,7 @@ class PromptStack:
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, self.ASSISTANT_ROLE)
 
-    def add_conversation_memory(self, memory: ConversationMemory, index: int | None = None) -> list[Input]:
+    def add_conversation_memory(self, memory: BaseConversationMemory, index: Optional[int] = None) -> list[Input]:
         """Add the Conversation Memory runs to the Prompt Stack.
 
         If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack
@@ -65,7 +66,7 @@ class PromptStack:
 
         if memory.autoprune and hasattr(memory, "structure"):
             should_prune = True
-            prompt_driver = memory.structure.prompt_driver
+            prompt_driver = memory.structure.config.global_drivers.prompt_driver
             temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can

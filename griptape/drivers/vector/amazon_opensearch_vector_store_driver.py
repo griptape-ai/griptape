@@ -1,8 +1,8 @@
 from __future__ import annotations
 from attr import define, field, Factory
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 from griptape.drivers import OpenSearchVectorStoreDriver
-from griptape.utils import import_optional_dependency
+from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:
     from boto3 import Session
@@ -15,25 +15,23 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
 
     Attributes:
         session: The boto3 session to use.
+        service: Service name for AWS Signature v4. Values can be 'es' or 'aoss' for for OpenSearch Serverless. Defaults to 'es'.
         http_auth: The HTTP authentication credentials to use. Defaults to using credentials in the boto3 session.
         client: An optional OpenSearch client to use. Defaults to a new client using the host, port, http_auth, use_ssl, and verify_certs attributes.
     """
 
-    session: Session = field(kw_only=True)
-
-    http_auth: str | tuple[str, str] | None = field(
+    session: Session = field(default=import_optional_dependency("boto3").Session(), kw_only=True)
+    service: str = field(default="es", kw_only=True)
+    http_auth: str | tuple[str, str] = field(
         default=Factory(
-            lambda self: import_optional_dependency("requests_aws4auth").AWS4Auth(
-                self.session.get_credentials().access_key,
-                self.session.get_credentials().secret_key,
-                self.session.region_name,
-                "es",
+            lambda self: import_optional_dependency("opensearchpy").AWSV4SignerAuth(
+                self.session.get_credentials(), self.session.region_name, self.service
             ),
             takes_self=True,
         )
     )
 
-    client: OpenSearch | None = field(
+    client: OpenSearch = field(
         default=Factory(
             lambda self: import_optional_dependency("opensearchpy").OpenSearch(
                 hosts=[{"host": self.host, "port": self.port}],
@@ -45,3 +43,27 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
             takes_self=True,
         )
     )
+
+    def upsert_vector(
+        self,
+        vector: list[float],
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs,
+    ) -> str:
+        """Inserts or updates a vector in OpenSearch.
+
+        If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
+        Metadata associated with the vector can also be provided.
+        """
+
+        vector_id = vector_id if vector_id else str_to_hash(str(vector))
+        doc = {"vector": vector, "namespace": namespace, "metadata": meta}
+        doc.update(kwargs)
+        if self.service == "aoss":
+            response = self.client.index(index=self.index_name, body=doc)
+        else:
+            response = self.client.index(index=self.index_name, id=vector_id, body=doc)
+
+        return response["_id"]

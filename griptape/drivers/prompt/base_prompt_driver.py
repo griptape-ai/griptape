@@ -1,8 +1,11 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable, Tuple, Type, Iterator
+from typing import TYPE_CHECKING, Optional, Callable, Tuple, Type
+from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
+from griptape.memory import meta
+from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import PromptStack
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
@@ -13,7 +16,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BasePromptDriver(ExponentialBackoffMixin, ABC):
+class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """Base class for Prompt Drivers.
 
     Attributes:
@@ -27,16 +30,18 @@ class BasePromptDriver(ExponentialBackoffMixin, ABC):
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
     """
 
-    temperature: float = field(default=0.1, kw_only=True)
-    max_tokens: int | None = field(default=None, kw_only=True)
-    structure: Structure | None = field(default=None, kw_only=True)
+    temperature: float = field(default=0.1, kw_only=True, metadata={"serializable": True})
+    max_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    structure: Optional[Structure] = field(default=None, kw_only=True)
     prompt_stack_to_string: Callable[[PromptStack], str] = field(
         default=Factory(lambda self: self.default_prompt_stack_to_string_converter, takes_self=True), kw_only=True
     )
-    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError)), kw_only=True)
-    model: str
+    ignored_exception_types: tuple[type[Exception], ...] = field(
+        default=Factory(lambda: (ImportError, ValueError)), kw_only=True
+    )
+    model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
-    stream: bool = field(default=False, kw_only=True)
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def max_output_tokens(self, text: str | list) -> int:
         tokens_left = self.tokenizer.count_tokens_left(text)

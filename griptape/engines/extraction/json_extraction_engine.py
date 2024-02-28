@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, cast
 import json
 from attr import field, Factory, define
 from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.utils import PromptStack
-from griptape.rules import Ruleset, rule
+from griptape.rules import Ruleset
 
 
 @define
@@ -14,14 +14,21 @@ class JsonExtractionEngine(BaseExtractionEngine):
     template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/json_extraction.j2")), kw_only=True)
 
     def extract(
-        self, text: str | ListArtifact, template_schema: dict, rulesets: Ruleset | None = None
+        self,
+        text: str | ListArtifact,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
+        template_schema: Optional[list[dict]] = None,
+        **kwargs,
     ) -> ListArtifact | ErrorArtifact:
+        if template_schema is None:
+            template_schema = []
         try:
             json_schema = json.dumps(template_schema)
 
             return ListArtifact(
                 self._extract_rec(
-                    text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                    cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
                     json_schema,
                     [],
                     rulesets=rulesets,
@@ -39,7 +46,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         json_template_schema: str,
         extractions: list[TextArtifact],
-        rulesets: Ruleset | None = None,
+        rulesets: Optional[list[Ruleset]] = None,
     ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(

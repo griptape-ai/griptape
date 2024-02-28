@@ -19,4 +19,17 @@ jobs:
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run formatter
-        run: black --check .
+        run: poetry run black --check .
+  type-check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9" ]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run type checker
+        run: poetry run pyright griptape/
