@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.23.0] - 2024-02-26
+
 ### Added 
 - Image-to-image generation support for OpenAi Dall-E 2 model.
 - Image tools support loading artifacts from memory.
