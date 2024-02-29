@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 @define
 class ActionSubtask(BaseTextInputTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
-    ACTIONS_PATTERN = r"(?s)Actions:[^{]*({.*})"
+    ACTIONS_PATTERN = r"(?s)Actions:\s*(\[[^\]]*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
     ACTIONS_SCHEMA = Schema(
         description="List of actions to be executed in parallel.",
