@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from attr import define
 
+from typing import Optional
 from griptape.engines import BaseImageGenerationEngine
 from griptape.artifacts import ImageArtifact
 from griptape.rules import Ruleset
@@ -12,10 +13,12 @@ class VariationImageGenerationEngine(BaseImageGenerationEngine):
     def run(
         self,
         prompts: list[str],
+        *args,
         image: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        rulesets: list[Ruleset] | None = None,
-        negative_rulesets: list[Ruleset] | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        rulesets: Optional[list[Ruleset]] = None,
+        negative_rulesets: Optional[list[Ruleset]] = None,
+        **kwargs,
     ) -> ImageArtifact:
         prompts = self._ruleset_to_prompts(prompts, rulesets)
         negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import Any
+from typing import Any, Optional
 
 from attr import field, define
 
@@ -19,17 +19,17 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         outpainting_mode: Specifies the outpainting mode, defaults to PRECISE.
     """
 
-    quality: str = field(default="standard", kw_only=True)
-    cfg_scale: int = field(default=7, kw_only=True)
-    outpainting_mode: str = field(default="PRECISE", kw_only=True)
+    quality: str = field(default="standard", kw_only=True, metadata={"serializable": True})
+    cfg_scale: int = field(default=7, kw_only=True, metadata={"serializable": True})
+    outpainting_mode: str = field(default="PRECISE", kw_only=True, metadata={"serializable": True})
 
     def text_to_image_request_parameters(
         self,
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -57,8 +57,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -87,8 +87,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -107,8 +107,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -132,7 +132,7 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
 
         return base64.decodebytes(bytes(b64_image_data, "utf-8"))
 
-    def _add_common_params(self, request: dict[str, Any], width: int, height: int, seed: int | None = None) -> dict:
+    def _add_common_params(self, request: dict[str, Any], width: int, height: int, seed: Optional[int] = None) -> dict:
         request["imageGenerationConfig"] = {
             "numberOfImages": 1,
             "quality": self.quality,

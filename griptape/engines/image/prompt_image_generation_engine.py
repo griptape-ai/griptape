@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from attr import define
+from typing import Optional
 
 from griptape.rules import Ruleset
 from griptape.artifacts import ImageArtifact
@@ -13,9 +14,11 @@ class PromptImageGenerationEngine(BaseImageGenerationEngine):
     def run(
         self,
         prompts: list[str],
-        negative_prompts: list[str] | None = None,
-        rulesets: list[Ruleset] | None = None,
-        negative_rulesets: list[Ruleset] | None = None,
+        *args,
+        negative_prompts: Optional[list[str]] = None,
+        rulesets: Optional[list[Ruleset]] = None,
+        negative_rulesets: Optional[list[Ruleset]] = None,
+        **kwargs,
     ) -> ImageArtifact:
         prompts = self._ruleset_to_prompts(prompts, rulesets)
         negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)

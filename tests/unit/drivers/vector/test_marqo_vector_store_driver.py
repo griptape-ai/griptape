@@ -89,13 +89,6 @@ class TestMarqoVectorStorageDriver:
             embedding_driver=MockEmbeddingDriver(),
         )
 
-    def test_create_index(self, driver, mock_marqo):
-        mock_marqo.create_index.reset_mock()
-        result = driver.create_index("my-first-index")
-        mock_marqo.create_index.assert_called_once()
-        assert result["acknowledged"] == True
-        assert result["index"] == "my-first-index"
-
     def test_upsert_text(self, driver, mock_marqo):
         result = driver.upsert_text("test text", vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d")
         mock_marqo.index().add_documents.assert_called()
@@ -154,7 +147,7 @@ class TestMarqoVectorStorageDriver:
         assert results[0].vector == [-0.10393160581588745, 0.0465407557785511, -0.01760256476700306]  # The vector
         # values should match the "_embedding" values of title in mock response
 
-    def test_laod_entry(self, driver, mock_marqo):
+    def test_load_entry(self, driver, mock_marqo):
         # Mock 'get_document' method to return a dictionary
         entry = driver.load_entry("5aed93eb-3878-4f12-bc92-0fda01c7d23d")
         mock_marqo.index().get_document.assert_called_once_with(
@@ -200,7 +193,7 @@ class TestMarqoVectorStorageDriver:
 
         # Assert
         assert len(entries) == 1
-        mock_marqo.index().search.assert_called_once_with("", limit=10000, filter_string=None)
+        mock_marqo.index().search.assert_called_once_with("", limit=10000)
         mock_marqo.index().get_documents.assert_called_once_with(
             document_ids=["5aed93eb-3878-4f12-bc92-0fda01c7d23d"], expose_facets=True
         )

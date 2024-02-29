@@ -1,17 +1,20 @@
 from __future__ import annotations
-from pathlib import Path
+
 from typing import Optional
+
 from attr import field, define, Factory
+from pathlib import Path
+
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import TextChunker
 from griptape.drivers import BaseEmbeddingDriver
-from griptape.loaders import BaseLoader
+from griptape.loaders import BaseTextLoader
 from griptape.tokenizers import OpenAiTokenizer
 
 
 @define
-class TextLoader(BaseLoader):
+class TextLoader(BaseTextLoader):
     MAX_TOKEN_RATIO = 0.5
 
     tokenizer: OpenAiTokenizer = field(
@@ -27,37 +30,16 @@ class TextLoader(BaseLoader):
         ),
         kw_only=True,
     )
-    embedding_driver: BaseEmbeddingDriver | None = field(default=None, kw_only=True)
+    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load(self, text: str | Path) -> list[TextArtifact]:
-        return self.text_to_artifacts(text)
+    def load(self, source: str | Path, *args, **kwargs) -> list[TextArtifact]:
+        return self._text_to_artifacts(source)
 
-    def load_collection(self, texts: list[str | Path]) -> dict[str, list[TextArtifact]]:
+    def load_collection(self, sources: list[str | Path], *args, **kwargs) -> dict[str, list[TextArtifact]]:
         return utils.execute_futures_dict(
-            {utils.str_to_hash(str(text)): self.futures_executor.submit(self.text_to_artifacts, text) for text in texts}
+            {
+                utils.str_to_hash(str(source)): self.futures_executor.submit(self._text_to_artifacts, source)
+                for source in sources
+            }
         )
-
-    def text_to_artifacts(self, text: str | Path) -> list[TextArtifact]:
-        artifacts = []
-
-        if isinstance(text, Path):
-            with open(text, encoding=self.encoding) as file:
-                body = file.read()
-        else:
-            body = text
-
-        if self.chunker:
-            chunks = self.chunker.chunk(body)
-        else:
-            chunks = [TextArtifact(body)]
-
-        if self.embedding_driver:
-            for chunk in chunks:
-                chunk.generate_embedding(self.embedding_driver)
-
-        for chunk in chunks:
-            chunk.encoding = self.encoding
-            artifacts.append(chunk)
-
-        return artifacts

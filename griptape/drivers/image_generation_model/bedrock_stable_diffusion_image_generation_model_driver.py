@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import base64
+import logging
+from typing import Optional
 
 from attr import field, define
 
@@ -26,20 +28,20 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
             image in image-to-image generation.
     """
 
-    cfg_scale: int = field(default=7, kw_only=True)
-    style_preset: str | None = field(default=None, kw_only=True)
-    clip_guidance_preset: str | None = field(default=None, kw_only=True)
-    sampler: str | None = field(default=None, kw_only=True)
-    steps: int | None = field(default=None, kw_only=True)
-    start_schedule: float | None = field(default=None, kw_only=True)
+    cfg_scale: int = field(default=7, kw_only=True, metadata={"serializable": True})
+    style_preset: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    clip_guidance_preset: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    sampler: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    steps: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    start_schedule: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def text_to_image_request_parameters(
         self,
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(
             prompts, width=image_width, height=image_height, negative_prompts=negative_prompts, seed=seed
@@ -49,8 +51,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(prompts, image=image, negative_prompts=negative_prompts, seed=seed)
 
@@ -59,8 +61,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(
             prompts,
@@ -76,8 +78,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(
             prompts,
@@ -91,13 +93,13 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
     def _request_parameters(
         self,
         prompts: list[str],
-        width: int | None = None,
-        height: int | None = None,
-        image: ImageArtifact | None = None,
-        mask: ImageArtifact | None = None,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
-        mask_source: str | None = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        image: Optional[ImageArtifact] = None,
+        mask: Optional[ImageArtifact] = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
+        mask_source: Optional[str] = None,
     ) -> dict:
         if negative_prompts is None:
             negative_prompts = []
@@ -105,15 +107,18 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         text_prompts = [{"text": prompt, "weight": 1.0} for prompt in prompts]
         text_prompts += [{"text": negative_prompt, "weight": -1.0} for negative_prompt in negative_prompts]
 
-        request = {
-            "text_prompts": text_prompts,
-            "cfg_scale": self.cfg_scale,
-            "style_preset": self.style_preset,
-            "clip_guidance_preset": self.clip_guidance_preset,
-            "sampler": self.sampler,
-        }
+        request = {"text_prompts": text_prompts, "cfg_scale": self.cfg_scale}
 
-        if image:
+        if self.style_preset is not None:
+            request["style_preset"] = self.style_preset
+
+        if self.clip_guidance_preset is not None:
+            request["clip_guidance_preset"] = self.clip_guidance_preset
+
+        if self.sampler is not None:
+            request["sampler"] = self.sampler
+
+        if image is not None:
             request["init_image"] = image.base64
             request["width"] = image.width
             request["height"] = image.height
@@ -121,27 +126,31 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
             request["width"] = width
             request["height"] = height
 
-        if self.steps:
+        if self.steps is not None:
             request["steps"] = self.steps
 
-        if seed:
+        if seed is not None:
             request["seed"] = seed
 
-        if mask:
+        if mask is not None:
             if not mask_source:
                 raise ValueError("mask_source must be provided when mask is provided")
 
             request["mask_source"] = mask_source
             request["mask_image"] = mask.base64
 
-        if self.start_schedule:
+        if self.start_schedule is not None:
             request["start_schedule"] = self.start_schedule
 
         return request
 
     def get_generated_image(self, response: dict) -> bytes:
         image_response = response["artifacts"][0]
-        if image_response.get("finishReason") != "SUCCESS":
-            raise ValueError(f"Image generation failed: {image_response.get('finishReason')}")
+
+        # finishReason may be SUCCESS, CONTENT_FILTERED, or ERROR.
+        if image_response.get("finishReason") == "ERROR":
+            raise Exception(f"Image generation failed: {image_response.get('finishReason')}")
+        elif image_response.get("finishReason") == "CONTENT_FILTERED":
+            logging.warning(f"Image generation triggered content filter and may be blurred")
 
         return base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))

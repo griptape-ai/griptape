@@ -25,18 +25,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: [ "3.9" ]
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
       - name: Init environment
         uses: ./.github/actions/init-environment
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v41
-        with:
-          files: |
-            **/*.py
       - name: Run type checker
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: poetry run pyright ${{ steps.changed-files.outputs.all_changed_files }}
+        run: poetry run pyright griptape/

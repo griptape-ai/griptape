@@ -57,4 +57,5 @@ class BaseImageGenerationTask(ImageArtifactFileOutputMixin, RuleMixin, BaseTask,
 
     def _read_from_file(self, path: str) -> ImageArtifact:
         self.structure.logger.info(f"Reading image from {os.path.abspath(path)}")
-        return ImageLoader().load(path)
+        with open(path, "rb") as file:
+            return ImageLoader().load(file.read())

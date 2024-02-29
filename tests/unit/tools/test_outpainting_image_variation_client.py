@@ -34,7 +34,7 @@ class TestOutpaintingImageGenerationClient:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.image_outpainting(
+        image_artifact = image_generator.image_outpainting_from_file(
             params={
                 "values": {
                     "prompts": ["test prompt"],
@@ -57,7 +57,7 @@ class TestOutpaintingImageGenerationClient:
             value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
-        image_artifact = image_generator.image_outpainting(
+        image_artifact = image_generator.image_outpainting_from_file(
             params={
                 "values": {
                     "prompts": ["test prompt"],

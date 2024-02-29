@@ -17,7 +17,7 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
         client: Custom `InferenceApi`.
     """
 
-    api_token: str = field(kw_only=True)
+    api_token: str = field(kw_only=True, metadata={"serializable": True})
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(

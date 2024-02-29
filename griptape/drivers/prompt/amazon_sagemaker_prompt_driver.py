@@ -1,6 +1,7 @@
 from __future__ import annotations
 import json
-from typing import TYPE_CHECKING, Iterator, Any
+from typing import TYPE_CHECKING, Any
+from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import import_optional_dependency
@@ -17,8 +18,8 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
     sagemaker_client: Any = field(
         default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True), kw_only=True
     )
-    custom_attributes: str = field(default="accept_eula=true", kw_only=True)
-    stream: bool = field(default=False, kw_only=True)
+    custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     @stream.validator  # pyright: ignore
     def validate_stream(self, _, stream):
@@ -44,5 +45,5 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def try_stream(self, _: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")

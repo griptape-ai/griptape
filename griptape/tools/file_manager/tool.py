@@ -7,9 +7,9 @@ from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader
+from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader, ImageLoader
 from schema import Schema, Literal
-from typing import Optional
+from typing import Optional, Any
 
 
 @define
@@ -36,11 +36,18 @@ class FileManager(BaseTool):
                 "json": TextLoader(),
                 "yaml": TextLoader(),
                 "xml": TextLoader(),
+                "png": ImageLoader(),
+                "jpg": ImageLoader(),
+                "jpeg": ImageLoader(),
+                "webp": ImageLoader(),
+                "gif": ImageLoader(),
+                "bmp": ImageLoader(),
+                "tiff": ImageLoader(),
             }
         ),
         kw_only=True,
     )
-    save_file_encoding: str | None = field(default=None, kw_only=True)
+    save_file_encoding: Optional[str] = field(default=None, kw_only=True)
 
     @workdir.validator  # pyright: ignore
     def validate_workdir(self, _, workdir: str) -> None:
@@ -61,7 +68,7 @@ class FileManager(BaseTool):
         }
     )
     def load_files_from_disk(self, params: dict) -> ListArtifact | ErrorArtifact:
-        list_artifact = ListArtifact()
+        artifacts = []
 
         for path in params["values"]["paths"]:
             full_path = Path(os.path.join(self.workdir, path))
@@ -70,13 +77,13 @@ class FileManager(BaseTool):
             result = loader.load(full_path)
 
             if isinstance(result, list):
-                list_artifact.value.extend(result)
+                artifacts.extend(result)
             elif isinstance(result, BaseArtifact):
-                list_artifact.value.append(result)
+                artifacts.append(result)
             else:
                 logging.warning(f"Unknown loader return type for file {path}")
 
-        return list_artifact
+        return ListArtifact(artifacts)
 
     @activity(
         config={
@@ -109,7 +116,7 @@ class FileManager(BaseTool):
                 try:
                     self._save_to_disk(os.path.join(self.workdir, dir_name, file_name), list_artifact.value[0].value)
 
-                    return InfoArtifact(f"saved successfully")
+                    return InfoArtifact("saved successfully")
                 except Exception as e:
                     return ErrorArtifact(f"error writing file to disk: {e}")
             else:
@@ -117,7 +124,7 @@ class FileManager(BaseTool):
                     for a in list_artifact.value:
                         self._save_to_disk(os.path.join(self.workdir, dir_name, f"{a.name}-{file_name}"), a.to_text())
 
-                    return InfoArtifact(f"saved successfully")
+                    return InfoArtifact("saved successfully")
                 except Exception as e:
                     return ErrorArtifact(f"error writing file to disk: {e}")
         else:
@@ -145,11 +152,11 @@ class FileManager(BaseTool):
         try:
             self._save_to_disk(full_path, content)
 
-            return InfoArtifact(f"saved successfully")
+            return InfoArtifact("saved successfully")
         except Exception as e:
             return ErrorArtifact(f"error writing file to disk: {e}")
 
-    def _save_to_disk(self, path: str, value: any) -> None:
+    def _save_to_disk(self, path: str, value: Any) -> None:
         os.makedirs(os.path.dirname(path), exist_ok=True)
 
         with open(path, "wb") as file:

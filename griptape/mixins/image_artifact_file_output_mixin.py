@@ -1,16 +1,19 @@
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 from attr import define, field
+from typing import Optional
 
-from griptape.artifacts import ImageArtifact
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
 
 
 @define(slots=False)
 class ImageArtifactFileOutputMixin:
-    output_dir: str | None = field(default=None, kw_only=True)
-    output_file: str | None = field(default=None, kw_only=True)
+    output_dir: Optional[str] = field(default=None, kw_only=True)
+    output_file: Optional[str] = field(default=None, kw_only=True)
 
     @output_dir.validator  # pyright: ignore
     def validate_output_dir(self, _, output_dir: str) -> None:

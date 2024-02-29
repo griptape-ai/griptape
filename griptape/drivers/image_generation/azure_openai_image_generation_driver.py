@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import openai
 from attr import field, Factory, define
+from typing import Optional
 
 from griptape.drivers import OpenAiImageGenerationDriver
 
@@ -19,11 +20,11 @@ class AzureOpenAiImageGenerationDriver(OpenAiImageGenerationDriver):
         client: An `openai.AzureOpenAI` client.
     """
 
-    azure_deployment: str = field(kw_only=True)
-    azure_endpoint: str = field(kw_only=True)
-    azure_ad_token: str | None = field(kw_only=True, default=None)
-    azure_ad_token_provider: str | None = field(kw_only=True, default=None)
-    api_version: str = field(default="2023-12-01-preview", kw_only=True)
+    azure_deployment: str = field(kw_only=True, metadata={"serializable": True})
+    azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
+    azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
+    azure_ad_token_provider: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
+    api_version: str = field(default="2023-12-01-preview", kw_only=True, metadata={"serializable": True})
     client: openai.AzureOpenAI = field(
         default=Factory(
             lambda self: openai.AzureOpenAI(

@@ -1,4 +1,5 @@
-from typing import Optional, Iterator
+from typing import Optional
+from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
@@ -22,21 +23,21 @@ class OpenAiCompletionPromptDriver(BasePromptDriver):
         ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
     """
 
-    base_url: Optional[str] = field(default=None, kw_only=True)
-    api_key: Optional[str] = field(default=None, kw_only=True)
-    organization: Optional[str] = field(default=None, kw_only=True)
+    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
         )
     )
-    model: str = field(kw_only=True)
+    model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
     )
-    user: str = field(default="", kw_only=True)
-    ignored_exception_types: Tuple[Type[Exception], ...] = field(
+    user: str = field(default="", kw_only=True, metadata={"serializable": True})
+    ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
             lambda: (
                 openai.BadRequestError,

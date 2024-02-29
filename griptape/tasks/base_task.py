@@ -3,7 +3,8 @@ from __future__ import annotations
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
+from collections.abc import Sequence
 
 from attr import define, field, Factory
 
@@ -27,15 +28,15 @@ class BaseTask(ABC):
     state: State = field(default=State.PENDING, kw_only=True)
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
-    max_meta_memory_entries: int | None = field(default=20, kw_only=True)
+    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
-    output: BaseArtifact | None = field(default=None, init=False)
-    structure: Structure | None = field(default=None, init=False)
+    output: Optional[BaseArtifact] = field(default=None, init=False)
+    structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @property
     @abstractmethod
-    def input(self) -> BaseArtifact | tuple[BaseArtifact, ...]:
+    def input(self) -> BaseArtifact | tuple[BaseArtifact, ...] | tuple[BaseArtifact, Sequence[BaseArtifact]]:
         ...
 
     @property
@@ -75,13 +76,29 @@ class BaseTask(ABC):
 
     def before_run(self) -> None:
         if self.structure:
-            self.structure.publish_event(StartTaskEvent.from_task(self))
+            self.structure.publish_event(
+                StartTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                )
+            )
 
     def after_run(self) -> None:
         if self.structure:
-            self.structure.publish_event(FinishTaskEvent.from_task(self))
+            self.structure.publish_event(
+                FinishTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                )
+            )
 
-    def execute(self) -> BaseArtifact | None:
+    def execute(self) -> Optional[BaseArtifact]:
         try:
             self.state = BaseTask.State.EXECUTING
 

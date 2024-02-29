@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional
 from attr import field, define
 from griptape.memory.meta import BaseMetaEntry
 
@@ -13,11 +14,7 @@ class ActionSubtaskMetaEntry(BaseMetaEntry):
         answer: tool-generated and memory-processed response from Griptape.
     """
 
-    thought: str = field(kw_only=True)
-    action: str = field(kw_only=True)
-    answer: str = field(kw_only=True)
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import ActionSubtaskMetaEntrySchema
-
-        return dict(ActionSubtaskMetaEntrySchema().dump(self))
+    type: str = field(default=BaseMetaEntry.__name__, kw_only=True, metadata={"serializable": False})
+    thought: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    action: str = field(kw_only=True, metadata={"serializable": True})
+    answer: str = field(kw_only=True, metadata={"serializable": True})

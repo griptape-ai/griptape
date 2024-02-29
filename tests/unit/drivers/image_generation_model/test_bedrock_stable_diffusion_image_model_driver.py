@@ -1,3 +1,5 @@
+import base64
+
 import pytest
 
 from griptape.artifacts import ImageArtifact
@@ -90,3 +92,31 @@ class TestBedrockStableDiffusionImageGenerationModelDriver:
         assert parameters["init_image"] == image_artifact.base64
         assert parameters["mask_image"] == mask_artifact.base64
         assert parameters["mask_source"] == "MASK_IMAGE_WHITE"
+
+    def test_get_generated_image_success(self, model_driver):
+        image_bytes = b"image data"
+
+        response = {"artifacts": [{"finishReason": "SUCCESS", "base64": base64.b64encode(image_bytes).decode("utf-8")}]}
+
+        returned_image_bytes = model_driver.get_generated_image(response)
+
+        assert image_bytes == returned_image_bytes
+
+    def test_get_generated_image_content_filtered(self, model_driver):
+        image_bytes = b"image data"
+
+        response = {
+            "artifacts": [{"finishReason": "CONTENT_FILTERED", "base64": base64.b64encode(image_bytes).decode("utf-8")}]
+        }
+
+        returned_image_bytes = model_driver.get_generated_image(response)
+
+        assert image_bytes == returned_image_bytes
+
+    def test_get_generated_image_failed(self, model_driver):
+        image_bytes = b"image data"
+
+        response = {"artifacts": [{"finishReason": "ERROR", "base64": base64.b64encode(image_bytes).decode("utf-8")}]}
+
+        with pytest.raises(Exception):
+            model_driver.get_generated_image(response)

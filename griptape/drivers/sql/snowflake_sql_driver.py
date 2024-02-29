@@ -39,7 +39,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         if not engine.url.render_as_string().startswith("snowflake://"):
             raise ValueError("Provide a Snowflake connection")
 
-    def execute_query(self, query: str) -> list[BaseSqlDriver.RowResult] | None:
+    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)
 
         if rows:
@@ -47,24 +47,27 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:
             results = con.execute(sqlalchemy.text(query))
 
-            if results.returns_rows:
-                return [{column: value for column, value in result.items()} for result in results]
+            if results is not None:
+                if results.returns_rows:
+                    return [{column: value for column, value in result.items()} for result in results]
+                else:
+                    return None
             else:
-                return None
+                raise ValueError("No results found")
 
-    def get_table_schema(self, table: str, schema: str | None = None) -> str | None:
+    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:
             metadata_obj = sqlalchemy.MetaData()
             metadata_obj.reflect(bind=self.engine)
-            table = sqlalchemy.Table(table, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
+            table = sqlalchemy.Table(table_name, metadata_obj, schema=schema, autoload=True, autoload_with=self.engine)
             return str([(c.name, c.type) for c in table.columns])
         except sqlalchemy.exc.NoSuchTableError:
             return None

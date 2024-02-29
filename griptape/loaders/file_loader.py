@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 import os
-from pathlib import Path
 from typing import Optional
+
+from pathlib import Path
 from attr import define, field
+
 from griptape import utils
 from griptape.artifacts import BlobArtifact, TextArtifact, ErrorArtifact
 from griptape.loaders import BaseLoader
@@ -10,14 +13,19 @@ from griptape.loaders import BaseLoader
 
 @define
 class FileLoader(BaseLoader):
-    encoding: str | None = field(default=None, kw_only=True)
+    encoding: Optional[str] = field(default=None, kw_only=True)
 
-    def load(self, path: str | Path) -> TextArtifact | BlobArtifact | ErrorArtifact:
-        return self.file_to_artifact(path)
+    def load(self, source: str | Path, *args, **kwargs) -> TextArtifact | BlobArtifact | ErrorArtifact:
+        return self.file_to_artifact(source)
 
-    def load_collection(self, paths: list[str | Path]) -> dict[str, TextArtifact | BlobArtifact | ErrorArtifact]:
+    def load_collection(
+        self, sources: list[str | Path], *args, **kwargs
+    ) -> dict[str, TextArtifact | BlobArtifact | ErrorArtifact]:
         return utils.execute_futures_dict(
-            {utils.str_to_hash(str(path)): self.futures_executor.submit(self.file_to_artifact, path) for path in paths}
+            {
+                utils.str_to_hash(str(source)): self.futures_executor.submit(self.file_to_artifact, source)
+                for source in sources
+            }
         )
 
     def file_to_artifact(self, path: str | Path) -> TextArtifact | BlobArtifact | ErrorArtifact:

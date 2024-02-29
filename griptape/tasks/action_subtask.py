@@ -1,17 +1,16 @@
 from __future__ import annotations
 import json
 import re
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Callable
 import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, Literal
-from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
-from griptape.tasks import PromptTask, BaseTask
-from griptape.artifacts import BaseArtifact
+from griptape.tasks import BaseTextInputTask, BaseTask
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
 
 if TYPE_CHECKING:
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ActionSubtask(PromptTask):
+class ActionSubtask(BaseTextInputTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -33,31 +32,49 @@ class ActionSubtask(PromptTask):
         },
     )
 
-    _input: str | None = field(default=None)
-    parent_task_id: str | None = field(default=None, kw_only=True)
-    thought: str | None = field(default=None, kw_only=True)
-    action_name: str | None = field(default=None, kw_only=True)
-    action_path: str | None = field(default=None, kw_only=True)
-    action_input: dict | None = field(default=None, kw_only=True)
+    _input: Optional[str | TextArtifact | Callable[[BaseTask], TextArtifact]] = field(default=None)
+    parent_task_id: Optional[str] = field(default=None, kw_only=True)
+    thought: Optional[str] = field(default=None, kw_only=True)
+    action_name: Optional[str] = field(default=None, kw_only=True)
+    action_path: Optional[str] = field(default=None, kw_only=True)
+    action_input: Optional[dict] = field(default=None, kw_only=True)
 
-    _tool: BaseTool | None = None
-    _memory: TaskMemory | None = None
+    _tool: Optional[BaseTool] = None
+    _memory: Optional[TaskMemory] = None
 
     @property
     def input(self) -> TextArtifact:
-        return TextArtifact(self._input)
+        if isinstance(self._input, TextArtifact):
+            return self._input
+        elif isinstance(self._input, Callable):
+            return self._input(self)
+        else:
+            return TextArtifact(self._input)
+
+    @input.setter
+    def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
+        self._input = value
 
     @property
-    def origin_task(self) -> ActionSubtaskOriginMixin | None:
-        return self.structure.find_task(self.parent_task_id)
+    def origin_task(self) -> BaseTask:
+        if self.parent_task_id:
+            return self.structure.find_task(self.parent_task_id)
+        else:
+            raise Exception("ActionSubtask has no parent task.")
 
     @property
-    def parents(self) -> list[ActionSubtask]:
-        return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
+    def parents(self) -> list[BaseTask]:
+        if isinstance(self.origin_task, ActionSubtaskOriginMixin):
+            return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
+        else:
+            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
     @property
-    def children(self) -> list[ActionSubtask]:
-        return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
+    def children(self) -> list[BaseTask]:
+        if isinstance(self.origin_task, ActionSubtaskOriginMixin):
+            return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
+        else:
+            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
@@ -65,7 +82,20 @@ class ActionSubtask(PromptTask):
         self.__init_from_prompt(self.input.to_text())
 
     def before_run(self) -> None:
-        self.structure.publish_event(StartActionSubtaskEvent.from_task(self))
+        self.structure.publish_event(
+            StartActionSubtaskEvent(
+                task_id=self.id,
+                task_parent_ids=self.parent_ids,
+                task_child_ids=self.child_ids,
+                task_input=self.input,
+                task_output=self.output,
+                subtask_parent_task_id=self.parent_task_id,
+                subtask_thought=self.thought,
+                subtask_action_name=self.action_name,
+                subtask_action_path=self.action_path,
+                subtask_action_input=self.action_input,
+            )
+        )
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
@@ -73,8 +103,11 @@ class ActionSubtask(PromptTask):
             if self.action_name == "error":
                 self.output = ErrorArtifact(str(self.action_input))
             else:
-                if self._tool:
-                    response = self._tool.execute(getattr(self._tool, self.action_path), self)
+                if self._tool is not None:
+                    if self.action_path is not None:
+                        response = self._tool.execute(getattr(self._tool, self.action_path), self)
+                    else:
+                        response = ErrorArtifact("action path not found")
                 else:
                     response = ErrorArtifact("tool not found")
 
@@ -84,12 +117,28 @@ class ActionSubtask(PromptTask):
 
             self.output = ErrorArtifact(str(e))
         finally:
-            return self.output
+            if self.output is not None:
+                return self.output
+            else:
+                return ErrorArtifact("no tool output")
 
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
 
-        self.structure.publish_event(FinishActionSubtaskEvent.from_task(self))
+        self.structure.publish_event(
+            FinishActionSubtaskEvent(
+                task_id=self.id,
+                task_parent_ids=self.parent_ids,
+                task_child_ids=self.child_ids,
+                task_input=self.input,
+                task_output=self.output,
+                subtask_parent_task_id=self.parent_task_id,
+                subtask_thought=self.thought,
+                subtask_action_name=self.action_name,
+                subtask_action_path=self.action_path,
+                subtask_action_input=self.action_input,
+            )
+        )
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
 
     def action_to_json(self) -> str:
@@ -137,7 +186,8 @@ class ActionSubtask(PromptTask):
                 data = action_matches[-1]
                 action_object: dict = json.loads(data, strict=False)
 
-                validate(instance=action_object, schema=self.ACTION_SCHEMA.schema)
+                # validate(instance=action_object, schema=self.ACTION_SCHEMA.schema)
+                self.ACTION_SCHEMA.validate(action_object)
 
                 # Load action name; throw exception if the key is not present
                 if self.action_name is None:
@@ -157,10 +207,18 @@ class ActionSubtask(PromptTask):
 
                 # Load the action itself
                 if self.action_name:
-                    self._tool = self.origin_task.find_tool(self.action_name)
+                    if isinstance(self.origin_task, ActionSubtaskOriginMixin):
+                        self._tool = self.origin_task.find_tool(self.action_name)
+                    else:
+                        raise Exception(
+                            "ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
+                        )
 
                 if self._tool:
-                    self.__validate_action_input(self.action_input, self._tool)
+                    if self.action_input:
+                        self.__validate_action_input(self.action_input, self._tool)
+                    else:
+                        raise Exception("Action input not found.")
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
@@ -181,7 +239,15 @@ class ActionSubtask(PromptTask):
 
     def __validate_action_input(self, action_input: dict, mixin: ActivityMixin) -> None:
         try:
-            activity_schema = mixin.activity_schema(getattr(mixin, self.action_path))
+            if self.action_path is not None:
+                activity = getattr(mixin, self.action_path)
+            else:
+                raise Exception("Action path not found.")
+
+            if activity is not None:
+                activity_schema = mixin.activity_schema(activity)
+            else:
+                raise Exception("Activity not found.")
 
             if activity_schema:
                 validate(instance=action_input, schema=activity_schema)

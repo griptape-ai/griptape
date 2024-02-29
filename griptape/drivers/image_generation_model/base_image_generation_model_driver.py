@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
 
 from attr import define
 
 from griptape.artifacts import ImageArtifact
+from griptape.mixins import SerializableMixin
 
 
 @define
-class BaseImageGenerationModelDriver(ABC):
+class BaseImageGenerationModelDriver(SerializableMixin, ABC):
     @abstractmethod
     def get_generated_image(self, response: dict) -> bytes:
         ...
@@ -20,8 +21,8 @@ class BaseImageGenerationModelDriver(ABC):
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...
 
@@ -30,8 +31,8 @@ class BaseImageGenerationModelDriver(ABC):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...
 
@@ -41,8 +42,8 @@ class BaseImageGenerationModelDriver(ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...
 
@@ -52,7 +53,7 @@ class BaseImageGenerationModelDriver(ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: list[str] | None = None,
-        seed: int | None = None,
+        negative_prompts: Optional[list[str]] = None,
+        seed: Optional[int] = None,
     ) -> dict[str, Any]:
         ...

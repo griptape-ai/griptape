@@ -1,21 +1,17 @@
 from __future__ import annotations
 import io
-from typing import TYPE_CHECKING
+from typing import Any
 from schema import Schema, Literal
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
-
-if TYPE_CHECKING:
-    import boto3
+from mypy_boto3_s3 import Client
 
 
 @define
 class AwsS3Client(BaseAwsClient):
-    s3_client: boto3.client = field(
-        default=Factory(lambda self: self.session.client("s3"), takes_self=True), kw_only=True
-    )
+    s3_client: Client = field(default=Factory(lambda self: self.session.client("s3"), takes_self=True), kw_only=True)
 
     @activity(
         config={
@@ -123,7 +119,7 @@ class AwsS3Client(BaseAwsClient):
                 try:
                     self._upload_object(bucket_name, object_key, artifacts.value[0].value)
 
-                    return InfoArtifact(f"uploaded successfully")
+                    return InfoArtifact("uploaded successfully")
                 except Exception as e:
                     return ErrorArtifact(f"error uploading objects to the bucket: {e}")
             else:
@@ -131,7 +127,7 @@ class AwsS3Client(BaseAwsClient):
                     for a in artifacts.value:
                         self._upload_object(bucket_name, object_key, a.value)
 
-                    return InfoArtifact(f"uploaded successfully")
+                    return InfoArtifact("uploaded successfully")
                 except Exception as e:
                     return ErrorArtifact(f"error uploading objects to the bucket: {e}")
         else:
@@ -157,7 +153,7 @@ class AwsS3Client(BaseAwsClient):
         try:
             self._upload_object(bucket_name, object_key, content)
 
-            return InfoArtifact(f"uploaded successfully")
+            return InfoArtifact("uploaded successfully")
         except Exception as e:
             return ErrorArtifact(f"error uploading objects to the bucket: {e}")
 
@@ -182,20 +178,20 @@ class AwsS3Client(BaseAwsClient):
     )
     def download_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
         objects = params["values"]["objects"]
-        artifact = ListArtifact()
+        artifacts = []
         for object_info in objects:
             try:
                 obj = self.s3_client.get_object(Bucket=object_info["bucket_name"], Key=object_info["object_key"])
 
                 content = obj["Body"].read()
-                artifact.value.append(BlobArtifact(content))
+                artifacts.append(BlobArtifact(content, name=object_info["object_key"]))
 
             except Exception as e:
                 return ErrorArtifact(f"error downloading objects from bucket: {e}")
 
-        return artifact
+        return ListArtifact(artifacts)
 
-    def _upload_object(self, bucket_name: str, object_name: str, value: any) -> None:
+    def _upload_object(self, bucket_name: str, object_name: str, value: Any) -> None:
         self.s3_client.create_bucket(Bucket=bucket_name)
 
         self.s3_client.upload_fileobj(

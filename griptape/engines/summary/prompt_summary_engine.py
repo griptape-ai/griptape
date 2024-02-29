@@ -1,12 +1,11 @@
-from typing import Optional
+from typing import Optional, cast
 from attr import define, Factory, field
-from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
+from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.utils import PromptStack
-from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
+from griptape.drivers import BasePromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
-from griptape.tokenizers import OpenAiTokenizer
 from griptape.rules import Ruleset
 
 
@@ -15,10 +14,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
     chunk_joiner: str = field(default="\n\n", kw_only=True)
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/prompt_summary.j2")), kw_only=True)
-    prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
-    )
+    prompt_driver: BasePromptDriver = field(kw_only=True)
     chunker: BaseChunker = field(
         default=Factory(
             lambda self: TextChunker(tokenizer=self.prompt_driver.tokenizer, max_tokens=self.max_chunker_tokens),
@@ -45,11 +41,11 @@ class PromptSummaryEngine(BaseSummaryEngine):
             - self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier
         )
 
-    def summarize_artifacts(self, artifacts: ListArtifact, rulesets: Optional[Ruleset] = None) -> TextArtifact:
-        return self.summarize_artifacts_rec(artifacts.value, None, rulesets=rulesets)
+    def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
+        return self.summarize_artifacts_rec(cast(list[TextArtifact], artifacts.value), None, rulesets=rulesets)
 
     def summarize_artifacts_rec(
-        self, artifacts: list[BaseArtifact], summary: Optional[str], rulesets: Optional[Ruleset] = None
+        self, artifacts: list[TextArtifact], summary: Optional[str] = None, rulesets: Optional[list[Ruleset]] = None
     ) -> TextArtifact:
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 

@@ -11,9 +11,9 @@ from griptape.drivers import AmazonBedrockPromptDriver
 
 @define
 class BedrockJurassicPromptModelDriver(BasePromptModelDriver):
-    top_p: float = field(default=0.9, kw_only=True)
+    top_p: float = field(default=0.9, kw_only=True, metadata={"serializable": True})
     _tokenizer: BedrockJurassicTokenizer = field(default=None, kw_only=True)
-    prompt_driver: AmazonBedrockPromptDriver | None = field(default=None, kw_only=True)
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
     supports_streaming: bool = field(default=False, kw_only=True)
 
     @property

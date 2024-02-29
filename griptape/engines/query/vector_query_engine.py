@@ -1,12 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
-from griptape.drivers import OpenAiChatPromptDriver
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
-from griptape.tokenizers import OpenAiTokenizer
 from griptape.rules import Ruleset
 
 if TYPE_CHECKING:
@@ -17,19 +15,17 @@ if TYPE_CHECKING:
 class VectorQueryEngine(BaseQueryEngine):
     answer_token_offset: int = field(default=400, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
-    prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
-    )
+    prompt_driver: BasePromptDriver = field(kw_only=True)
     template_generator: J2 = field(default=Factory(lambda: J2("engines/query/vector_query.j2")), kw_only=True)
 
     def query(
         self,
         query: str,
-        namespace: str | None = None,
-        rulesets: list[Ruleset] | None = None,
-        metadata: str | None = None,
-        top_n: int | None = None,
+        namespace: Optional[str] = None,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
+        metadata: Optional[str] = None,
+        top_n: Optional[int] = None,
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace)
@@ -68,7 +64,7 @@ class VectorQueryEngine(BaseQueryEngine):
 
         return self.prompt_driver.run(PromptStack(inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)]))
 
-    def upsert_text_artifact(self, artifact: TextArtifact, namespace: str | None = None) -> str:
+    def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         result = self.vector_store_driver.upsert_text_artifact(artifact, namespace=namespace)
 
         return result

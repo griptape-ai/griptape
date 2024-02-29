@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, cast
 import csv
 import io
 from attr import field, Factory, define
@@ -15,12 +15,19 @@ class CsvExtractionEngine(BaseExtractionEngine):
     template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv_extraction.j2")), kw_only=True)
 
     def extract(
-        self, text: str | ListArtifact, column_names: list[str], rulesets: Ruleset | None = None
+        self,
+        text: str | ListArtifact,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
+        column_names: Optional[list[str]] = None,
+        **kwargs,
     ) -> ListArtifact | ErrorArtifact:
+        if column_names is None:
+            column_names = []
         try:
             return ListArtifact(
                 self._extract_rec(
-                    text.value if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                    cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
                     column_names,
                     [],
                     rulesets=rulesets,
@@ -44,7 +51,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         column_names: list[str],
         rows: list[CsvRowArtifact],
-        rulesets: Ruleset | None = None,
+        rulesets: Optional[list[Ruleset]] = None,
     ) -> list[CsvRowArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(

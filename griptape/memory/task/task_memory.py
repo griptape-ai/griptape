@@ -27,7 +27,7 @@ class TaskMemory(ActivityMixin):
 
             seen_types.append(type(storage))
 
-    def get_storage_for(self, artifact: BaseArtifact) -> BaseArtifactStorage | None:
+    def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
         find_storage = lambda a: next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
 
         if isinstance(artifact, ListArtifact):
@@ -43,8 +43,8 @@ class TaskMemory(ActivityMixin):
     ) -> BaseArtifact:
         from griptape.utils import J2
 
-        tool_name = tool_activity.__self__.name
-        activity_name = tool_activity.name
+        tool_name = getattr(getattr(tool_activity, "__self__"), "name")
+        activity_name = getattr(tool_activity, "name")
         namespace = output_artifact.name
 
         if output_artifact:
@@ -71,7 +71,7 @@ class TaskMemory(ActivityMixin):
         else:
             return InfoArtifact("tool output is empty")
 
-    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> BaseArtifact | None:
+    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> Optional[BaseArtifact]:
         namespace_storage = self.namespace_storage.get(namespace)
         storage = self.get_storage_for(artifact)
 
@@ -107,7 +107,7 @@ class TaskMemory(ActivityMixin):
         else:
             return ListArtifact()
 
-    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
+    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if memory_name == self.name:
             return self
         else:

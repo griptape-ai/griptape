@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Tuple
+from typing import Callable
 
 from attr import define, field
 
@@ -26,14 +26,16 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    image_generation_engine: OutpaintingImageGenerationEngine = field(kw_only=True)
+    _image_generation_engine: OutpaintingImageGenerationEngine = field(
+        default=None, kw_only=True, alias="image_generation_engine"
+    )
     _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
         [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
     ] = field(default=None)
 
     @property
     def input(self) -> tuple[TextArtifact, ImageArtifact, ImageArtifact]:
-        if isinstance(self._input, Tuple):
+        if isinstance(self._input, tuple):
             if isinstance(self._input[0], TextArtifact):
                 input_text = self._input[0]
             else:
@@ -48,6 +50,22 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
     @input.setter
     def input(self, value: tuple[TextArtifact, ImageArtifact, ImageArtifact]) -> None:
         self._input = value
+
+    @property
+    def image_generation_engine(self) -> OutpaintingImageGenerationEngine:
+        if self._image_generation_engine is None:
+            if self.structure is not None:
+                self._image_generation_engine = OutpaintingImageGenerationEngine(
+                    image_generation_driver=self.structure.config.global_drivers.image_generation_driver
+                )
+            else:
+                raise ValueError("Image Generation Engine is not set.")
+
+        return self._image_generation_engine
+
+    @image_generation_engine.setter
+    def image_generation_engine(self, value: OutpaintingImageGenerationEngine) -> None:
+        self._image_generation_engine = value
 
     def run(self) -> ImageArtifact:
         prompt_artifact = self.input[0]

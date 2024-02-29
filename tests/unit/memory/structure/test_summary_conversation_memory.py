@@ -1,10 +1,12 @@
 import json
 
-from griptape.utils import PromptStack
-from griptape.memory.structure import SummaryConversationMemory, Run
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.tasks import PromptTask
+import pytest
+
+from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestSummaryConversationMemory:
@@ -81,3 +83,11 @@ class TestSummaryConversationMemory:
 
         assert isinstance(memory.from_dict(memory_dict), SummaryConversationMemory)
         assert memory.from_dict(memory_dict).runs[0].input == "foo"
+
+    def test_config_prompt_driver(self):
+        memory = SummaryConversationMemory()
+        pipeline = Pipeline(conversation_memory=memory, config=MockStructureConfig())
+
+        pipeline.add_tasks(PromptTask("test"))
+
+        assert isinstance(memory.prompt_driver, MockPromptDriver)

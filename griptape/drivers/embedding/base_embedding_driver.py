@@ -1,23 +1,25 @@
 from __future__ import annotations
 import numpy as np
+from typing import Optional
 from abc import ABC, abstractmethod
 from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
 from griptape.chunkers import BaseChunker, TextChunker
+from griptape.mixins import SerializableMixin
 
 
 @define
-class BaseEmbeddingDriver(ExponentialBackoffMixin, ABC):
+class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """
     Attributes:
         model: The name of the model to use.
         tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.
     """
 
-    model: str = field(kw_only=True)
-    tokenizer: BaseTokenizer | None = field(default=None, kw_only=True)
+    model: str = field(kw_only=True, metadata={"serializable": True})
+    tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
     chunker: BaseChunker = field(init=False)
 
     def __attrs_post_init__(self) -> None:

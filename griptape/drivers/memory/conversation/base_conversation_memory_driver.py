@@ -1,16 +1,17 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from abc import ABC, abstractmethod
+from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.memory.structure import ConversationMemory
+    from griptape.memory.structure import BaseConversationMemory
 
 
-class BaseConversationMemoryDriver(ABC):
+class BaseConversationMemoryDriver(SerializableMixin, ABC):
     @abstractmethod
-    def store(self, *args, **kwargs) -> None:
+    def store(self, memory: BaseConversationMemory) -> None:
         ...
 
     @abstractmethod
-    def load(self, *args, **kwargs) -> ConversationMemory | None:
+    def load(self) -> Optional[BaseConversationMemory]:
         ...

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from attr import define, field, Factory
 
@@ -30,11 +30,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client(service_name="bedrock-runtime"), takes_self=True)
     )
-    image_width: int = field(default=512, kw_only=True)
-    image_height: int = field(default=512, kw_only=True)
-    seed: int | None = field(default=None, kw_only=True)
+    image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})
+    image_height: int = field(default=512, kw_only=True, metadata={"serializable": True})
+    seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         request = self.image_generation_model_driver.text_to_image_request_parameters(
             prompts, self.image_width, self.image_height, negative_prompts=negative_prompts, seed=self.seed
         )
@@ -51,7 +51,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: list[str] | None = None
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_variation_request_parameters(
             prompts, image=image, negative_prompts=negative_prompts, seed=self.seed
@@ -69,7 +69,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_inpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_inpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
@@ -87,7 +91,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_outpainting(
-        self, prompts: list[str], image: ImageArtifact, mask: ImageArtifact, negative_prompts: list[str] | None = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        mask: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_outpainting_request_parameters(
             prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed

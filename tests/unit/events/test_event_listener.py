@@ -70,6 +70,8 @@ class TestEventListener:
         pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
+        start_prompt_event_handler.assert_called_once()
+        finish_prompt_event_handler.assert_called_once()
         start_task_event_handler.assert_called_once()
         finish_task_event_handler.assert_called_once()
         start_subtask_event_handler.assert_called_once()

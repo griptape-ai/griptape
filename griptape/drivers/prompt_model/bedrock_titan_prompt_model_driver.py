@@ -11,9 +11,9 @@ from griptape.drivers import AmazonBedrockPromptDriver
 
 @define
 class BedrockTitanPromptModelDriver(BasePromptModelDriver):
-    top_p: float = field(default=0.9, kw_only=True)
+    top_p: float = field(default=0.9, kw_only=True, metadata={"serializable": True})
     _tokenizer: BedrockTitanTokenizer = field(default=None, kw_only=True)
-    prompt_driver: AmazonBedrockPromptDriver | None = field(default=None, kw_only=True)
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 
     @property
     def tokenizer(self) -> BedrockTitanTokenizer:
@@ -26,7 +26,7 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
         This ensures that by the time we need to initialize the Tokenizer, the
         Prompt Driver has already been initialized.
 
-        See this thread more more information: https://github.com/griptape-ai/griptape/issues/244
+        See this thread for more information: https://github.com/griptape-ai/griptape/issues/244
 
         Returns:
             BedrockTitanTokenizer: The tokenizer for this driver.
@@ -67,14 +67,17 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
             }
         }
 
-    def process_output(self, response_body: str | bytes) -> TextArtifact:
+    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
         # When streaming, the response body comes back as bytes.
-        if isinstance(response_body, bytes):
-            response_body = response_body.decode()
+        if isinstance(output, str) or isinstance(output, bytes):
+            if isinstance(output, bytes):
+                output = output.decode()
 
-        body = json.loads(response_body)
+            body = json.loads(output)
 
-        if self.prompt_driver.stream:
-            return TextArtifact(body["outputText"])
+            if self.prompt_driver.stream:
+                return TextArtifact(body["outputText"])
+            else:
+                return TextArtifact(body["results"][0]["outputText"])
         else:
-            return TextArtifact(body["results"][0]["outputText"])
+            raise ValueError("output must be an instance of 'str' or 'bytes'")

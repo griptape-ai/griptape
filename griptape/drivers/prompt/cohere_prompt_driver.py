@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
@@ -20,8 +21,8 @@ class CoherePromptDriver(BasePromptDriver):
         tokenizer: Custom `CohereTokenizer`.
     """
 
-    api_key: str = field(kw_only=True)
-    model: str = field(kw_only=True)
+    api_key: str = field(kw_only=True, metadata={"serializable": True})
+    model: str = field(kw_only=True, metadata={"serializable": True})
     client: Client = field(
         default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
         kw_only=True,

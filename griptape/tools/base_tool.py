@@ -36,10 +36,10 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    input_memory: list[TaskMemory] | None = field(default=None, kw_only=True)
-    output_memory: dict[str, list[TaskMemory]] | None = field(default=None, kw_only=True)
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
+    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
-    dependencies_install_directory: str | None = field(default=None, kw_only=True)
+    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
     off_prompt: bool = field(default=True, kw_only=True)
 
@@ -48,11 +48,13 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator  # pyright: ignore
-    def validate_output_memory(self, _, output_memory: dict[str, list[TaskMemory]] | None) -> None:
+    def validate_output_memory(self, _, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
                     raise ValueError(f"activity {activity_name} doesn't exist")
+                if memory_list is None:
+                    raise ValueError(f"memory list for activity '{activity_name}' can't be None")
 
                 output_memory_names = [memory.name for memory in memory_list]
 
@@ -92,7 +94,9 @@ class BaseTool(ActivityMixin, ABC):
                 {
                     Literal("name"): self.name,
                     Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
-                    Literal("input"): {"values": activity.config["schema"]} if self.activity_schema(activity) else {},
+                    **self.activity_to_input(
+                        activity
+                    ),  # Unpack the dictionary in order to only add the key-values if there are any
                 }
             )
             for activity in self.activities()
@@ -108,10 +112,10 @@ class BaseTool(ActivityMixin, ABC):
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, value: dict | None) -> dict | None:
+    def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
         return value
 
-    def run(self, activity: Callable, subtask: ActionSubtask, value: dict | None) -> BaseArtifact:
+    def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
@@ -126,7 +130,8 @@ class BaseTool(ActivityMixin, ABC):
     def after_run(self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
         if value:
             if self.output_memory:
-                for memory in activity.__self__.output_memory.get(activity.name, []):
+                output_memories = self.output_memory[getattr(activity, "name")] or []
+                for memory in output_memories:
                     value = memory.process_output(activity, subtask, value)
 
                 if isinstance(value, BaseArtifact):
@@ -156,7 +161,7 @@ class BaseTool(ActivityMixin, ABC):
 
         return os.path.dirname(os.path.abspath(class_file))
 
-    def install_dependencies(self, env: dict[str, str] | None = None) -> None:
+    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
         env = env if env else {}
 
         command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
@@ -174,7 +179,7 @@ class BaseTool(ActivityMixin, ABC):
             stderr=None if self.verbose else subprocess.DEVNULL,
         )
 
-    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
+    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if self.input_memory:
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:

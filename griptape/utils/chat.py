@@ -13,7 +13,7 @@ class Chat:
     exit_keywords: list[str] = field(default=["exit"], kw_only=True)
     exiting_text: str = field(default="Exiting...", kw_only=True)
     processing_text: str = field(default="Thinking...", kw_only=True)
-    intro_text: str | None = field(default=None, kw_only=True)
+    intro_text: Optional[str] = field(default=None, kw_only=True)
     prompt_prefix: str = field(default="User: ", kw_only=True)
     response_prefix: str = field(default="Assistant: ", kw_only=True)
     output_fn: Callable[[str], None] = field(
@@ -21,7 +21,7 @@ class Chat:
     )
 
     def default_output_fn(self, text: str) -> None:
-        if self.structure.prompt_driver.stream:
+        if self.structure.config.global_drivers.prompt_driver.stream:
             print(text, end="", flush=True)
         else:
             print(text)
@@ -36,7 +36,7 @@ class Chat:
                 self.output_fn(self.exiting_text)
                 break
 
-            if self.structure.prompt_driver.stream:
+            if self.structure.config.global_drivers.prompt_driver.stream:
                 self.output_fn(self.processing_text + "\n")
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)

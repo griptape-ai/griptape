@@ -5,14 +5,14 @@ from attr import field, define
 from griptape.artifacts import BaseArtifact
 
 
-@define(frozen=True)
+@define
 class BlobArtifact(BaseArtifact):
-    value: bytes = field(converter=BaseArtifact.value_to_bytes)
-    dir_name: str | None = field(default=None, kw_only=True)
+    value: bytes = field(converter=BaseArtifact.value_to_bytes, metadata={"serializable": True})
+    dir_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     encoding: str = field(default="utf-8", kw_only=True)
     encoding_error_handler: str = field(default="strict", kw_only=True)
 
-    def __add__(self, other: BlobArtifact) -> BlobArtifact:
+    def __add__(self, other: BaseArtifact) -> BlobArtifact:
         return BlobArtifact(self.value + other.value, name=self.name)
 
     @property
@@ -21,8 +21,3 @@ class BlobArtifact(BaseArtifact):
 
     def to_text(self) -> str:
         return self.value.decode(encoding=self.encoding, errors=self.encoding_error_handler)
-
-    def to_dict(self) -> dict:
-        from griptape.schemas import BlobArtifactSchema
-
-        return dict(BlobArtifactSchema().dump(self))

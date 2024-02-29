@@ -1,5 +1,6 @@
 import time
 import pytest
+from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.events import (
     StartPromptEvent,
     FinishPromptEvent,
@@ -73,6 +74,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
 
@@ -99,6 +101,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
@@ -125,6 +128,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
 
@@ -151,6 +155,7 @@ class TestBaseEvent:
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
         assert event.task_child_ids == ["baz"]
+        assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"

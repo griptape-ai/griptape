@@ -4,7 +4,6 @@ from griptape.drivers import BaseSqlDriver
 from griptape.utils import import_optional_dependency
 from attr import define, field
 
-
 if TYPE_CHECKING:
     from sqlalchemy.engine import Engine
 
@@ -20,7 +19,7 @@ class SqlDriver(BaseSqlDriver):
 
         self.engine = sqlalchemy.create_engine(self.engine_url, **self.create_engine_params)
 
-    def execute_query(self, query: str) -> list[BaseSqlDriver.RowResult] | None:
+    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)
 
         if rows:
@@ -28,23 +27,30 @@ class SqlDriver(BaseSqlDriver):
         else:
             return None
 
-    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None:
+    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.begin() as con:
             results = con.execute(sqlalchemy.text(query))
 
-            if results.returns_rows:
-                return [{column: value for column, value in result.items()} for result in results]
+            if results is not None:
+                if results.returns_rows:
+                    return [{column: value for column, value in result.items()} for result in results]
+                else:
+                    return None
             else:
-                return None
+                raise ValueError("No result found")
 
-    def get_table_schema(self, table: str, schema: str | None = None) -> str | None:
+    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:
             table = sqlalchemy.Table(
-                table, sqlalchemy.MetaData(bind=self.engine), schema=schema, autoload=True, autoload_with=self.engine
+                table_name,
+                sqlalchemy.MetaData(bind=self.engine),
+                schema=schema,
+                autoload=True,
+                autoload_with=self.engine,
             )
             return str([(c.name, c.type) for c in table.columns])
         except sqlalchemy.exc.NoSuchTableError:

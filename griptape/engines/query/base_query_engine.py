@@ -1,6 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from attr import define
+from typing import Optional
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.rules import Ruleset
 
@@ -8,7 +9,14 @@ from griptape.rules import Ruleset
 @define
 class BaseQueryEngine(ABC):
     @abstractmethod
-    def query(self, query: str, namespace: str | None = None, rulesets: list[Ruleset] | None = None) -> TextArtifact:
+    def query(
+        self,
+        query: str,
+        namespace: Optional[str] = None,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
+        top_n: Optional[int] = None,
+    ) -> TextArtifact:
         ...
 
     @abstractmethod
@@ -16,7 +24,7 @@ class BaseQueryEngine(ABC):
         ...
 
     @abstractmethod
-    def upsert_text_artifact(self, artifact: TextArtifact, namespace: str | None = None) -> str:
+    def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         ...
 
     @abstractmethod
