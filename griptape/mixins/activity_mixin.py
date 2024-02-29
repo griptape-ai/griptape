@@ -87,7 +87,11 @@ class ActivityMixin:
 
     def activity_to_input(self, activity: Callable) -> dict:
         if self.activity_schema(activity):
-            return {Literal("input"): {"values": getattr(activity, "config")["schema"]}}
+            return {
+                Literal("input"): {
+                    "values": getattr(activity, "config")["schema"]
+                }
+            }
         else:
             return {}
 
