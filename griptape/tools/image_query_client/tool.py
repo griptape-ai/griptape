@@ -5,7 +5,7 @@ from typing import Any, cast
 from attr import define, field, Factory
 from schema import Schema, Literal
 
-from griptape.artifacts import TextArtifact, ImageArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ImageArtifact, ErrorArtifact, BlobArtifact
 from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
@@ -53,7 +53,7 @@ class ImageQueryClient(BaseTool):
                         description="A detailed question to be answered using the contents of the provided images.",
                     ): str,
                     Literal("image_artifacts", description="Image artifact memory references."): [
-                        {"namespace": str, "name": str}
+                        {"image_artifact_namespace": str, "image_artifact_name": str}
                     ],
                     "memory_name": str,
                 }
@@ -79,7 +79,18 @@ class ImageQueryClient(BaseTool):
                 )
 
                 image_artifacts.append(cast(ImageArtifact, image_artifact))
-            except ValueError as e:
+            except ValueError:
+                # If we're unable to parse the artifact as an ImageArtifact, attempt to
+                # parse a BlobArtifact and load it as an ImageArtifact.
+                blob_artifact = load_artifact_from_memory(
+                    memory,
+                    image_artifact_reference["image_artifact_namespace"],
+                    image_artifact_reference["image_artifact_name"],
+                    BlobArtifact,
+                )
+
+                image_artifacts.append(self.image_loader.load(blob_artifact.value))
+            except Exception as e:
                 return ErrorArtifact(str(e))
 
         return self.image_query_engine.run(query, image_artifacts)
