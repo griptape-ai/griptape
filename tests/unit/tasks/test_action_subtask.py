@@ -8,7 +8,7 @@ class TestActionSubtask:
     def test_to_json(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}\n'
+            'Actions: {"name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -25,7 +25,7 @@ class TestActionSubtask:
     def test_init_from_action_with_newlines(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n{"name": "MockTool",\n"path": "test",\n\n"input": {"values":\n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}}```!@#$%^&*()123(*!378934)'
+            'Actions:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n{"name": "MockTool",\n"path": "test",\n\n"input": {"values":\n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}}```!@#$%^&*()123(*!378934)'
             "Response: test response\n"
             "Answer: test output"
         )

@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 @define
 class ActionSubtask(BaseTextInputTask):
     @define(kw_only=True)
-    class Action:
+    class Actions:
         # TODO: drop the action_ prefix
         output_label: Optional[str] = field(default=None)
         action_name: str = field()
@@ -284,7 +284,7 @@ class ActionSubtask(BaseTextInputTask):
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 
-    def __error_to_action(self, error: str) -> Action:
+    def __error_to_action(self, error: str) -> Actions:
         return self.Action(
             action_name="error",
             action_input={"error": error}

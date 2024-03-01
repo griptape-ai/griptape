@@ -10,7 +10,7 @@ class TestStartActionSubtaskEvent:
     def start_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"name": "test", "path": "test action", "input": {"values": {"foo": "test input"}}}\n'
+            'Actions: {"name": "test", "path": "test action", "input": {"values": {"foo": "test input"}}}\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
