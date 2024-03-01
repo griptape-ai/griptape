@@ -20,14 +20,14 @@ if TYPE_CHECKING:
 
 @define
 class ActionSubtask(BaseTextInputTask):
-    @define
+    @define(kw_only=True)
     class Action:
         # TODO: drop the action_ prefix
-        action_name: Optional[str] = field(default=None, kw_only=True)
-        action_path: Optional[str] = field(default=None, kw_only=True)
-        action_input: Optional[dict] = field(default=None, kw_only=True)
-
-        tool: Optional[BaseTool] = None
+        output_label: Optional[str] = field(default=None)
+        action_name: str = field()
+        action_path: Optional[str] = field(default=None)
+        action_input: dict = field()
+        tool: Optional[BaseTool] = field(defaultl=None)
 
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:\s*(\[[^\]]*\])"
@@ -46,7 +46,7 @@ class ActionSubtask(BaseTextInputTask):
                     Literal("input", description="Optional action path input values object")
                 ): {
                     "values": dict
-                },
+                }
             }
         ]
     )
@@ -159,6 +159,9 @@ class ActionSubtask(BaseTextInputTask):
         for action in self.actions:
             json_dict = {}
 
+            if action.output_label:
+                json_dict["output_label"] = action.output_label
+
             if action.action_name:
                 json_dict["name"] = action.action_name
 
@@ -208,16 +211,17 @@ class ActionSubtask(BaseTextInputTask):
                 data = actions_matches[-1]
                 actions_list: list = json.loads(data, strict=False)
 
-                validate(instance=actions_list, schema=self.ACTIONS_SCHEMA.schema)
+                # validate(instance=actions_list, schema=self.ACTIONS_SCHEMA.schema)
 
                 for action_object in actions_list:
-                    new_action = self.Action()
+                    # Load action name; throw exception if the key is not present
+                    action_output_label = action_object["output_label"]
 
                     # Load action name; throw exception if the key is not present
-                    new_action.action_name = action_object["name"]
+                    action_name = action_object["name"]
 
                     # Load action method; throw exception if the key is not present
-                    new_action.action_path = action_object["path"]
+                    action_path = action_object["path"]
 
                     # Load optional input value; don't throw exceptions if key is not present
                     if "input" in action_object:
@@ -225,15 +229,25 @@ class ActionSubtask(BaseTextInputTask):
                         # correctly translated into JSON schema. For some optional input fields LLMs sometimes
                         # still provide null value, which trips up the validator. The temporary solution that
                         # works is to strip all key-values where value is null.
-                        new_action.action_input = remove_null_values_in_dict_recursively(action_object["input"])
+                        action_input = remove_null_values_in_dict_recursively(action_object["input"])
+                    else:
+                        action_input = {}
 
                     # Load the action itself
                     if isinstance(self.origin_task, ActionSubtaskOriginMixin):
-                        new_action.tool = self.origin_task.find_tool(new_action.action_name)
+                        tool = self.origin_task.find_tool(action_name)
                     else:
                         raise Exception(
                             "ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
                         )
+
+                    new_action = self.Action(
+                        output_label=action_output_label,
+                        action_name=action_name,
+                        action_path=action_path,
+                        action_input=action_input,
+                        tool=tool
+                    )
 
                     if new_action.tool:
                         if new_action.action_input:
