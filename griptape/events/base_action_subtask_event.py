@@ -4,7 +4,6 @@ from attrs import define, field
 from typing import TYPE_CHECKING, Optional
 from .base_task_event import BaseTaskEvent
 
-
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask, ActionsSubtask
 
@@ -27,5 +26,5 @@ class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
             task_output=task.output,
             subtask_parent_task_id=task.parent_task_id,
             subtask_thought=task.thought,
-            subtask_actions=task.actions
+            subtask_actions=task.actions_to_dicts()
         )
