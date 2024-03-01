@@ -53,7 +53,7 @@ class TaskMemory(ActivityMixin):
             if result:
                 return result
             else:
-                self.namespace_metadata[namespace] = subtask.action_to_json()
+                self.namespace_metadata[namespace] = subtask.actions_to_json()
 
                 output = J2("memory/tool.j2").render(
                     memory_name=self.name,
@@ -64,7 +64,7 @@ class TaskMemory(ActivityMixin):
 
                 if subtask.structure and subtask.structure.meta_memory:
                     subtask.structure.meta_memory.add_entry(
-                        ActionSubtaskMetaEntry(thought=subtask.thought, action=subtask.action_to_json(), answer=output)
+                        ActionSubtaskMetaEntry(thought=subtask.thought, actions=subtask.actions_to_json(), answer=output)
                     )
 
                 return InfoArtifact(output, name=namespace)

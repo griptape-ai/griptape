@@ -13,9 +13,7 @@ if TYPE_CHECKING:
 class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
     subtask_parent_task_id: Optional[str] = field(kw_only=True, metadata={"serializable": True})
     subtask_thought: Optional[str] = field(kw_only=True, metadata={"serializable": True})
-    subtask_action_name: Optional[str] = field(kw_only=True, metadata={"serializable": True})
-    subtask_action_path: Optional[str] = field(kw_only=True, metadata={"serializable": True})
-    subtask_action_input: Optional[dict] = field(kw_only=True, metadata={"serializable": True})
+    subtask_actions: Optional[list[dict]] = field(kw_only=True, metadata={"serializable": True})
 
     @classmethod
     def from_task(cls, task: BaseTask) -> BaseActionSubtaskEvent:
@@ -29,7 +27,5 @@ class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
             task_output=task.output,
             subtask_parent_task_id=task.parent_task_id,
             subtask_thought=task.thought,
-            subtask_action_name=task.action_name,
-            subtask_action_path=task.action_path,
-            subtask_action_input=task.action_input,
+            subtask_actions=task.actions
         )

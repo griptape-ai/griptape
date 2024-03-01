@@ -16,7 +16,7 @@ class TestActionSubtask:
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionSubtask(valid_input))
-        json_dict = json.loads(subtask.action_to_json())
+        json_dict = json.loads(subtask.actions_to_json())
 
         assert json_dict["name"] == "MockTool"
         assert json_dict["path"] == "test"
@@ -33,7 +33,7 @@ class TestActionSubtask:
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionSubtask(valid_input))
-        json_dict = json.loads(subtask.action_to_json())
+        json_dict = json.loads(subtask.actions_to_json())
 
         assert json_dict["name"] == "MockTool"
         assert json_dict["path"] == "test"
