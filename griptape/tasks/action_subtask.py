@@ -7,6 +7,8 @@ from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, Literal
+
+from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import BaseTextInputTask, BaseTask
@@ -137,23 +139,25 @@ class ActionSubtask(BaseTextInputTask):
                 return ErrorArtifact("no tool output")
 
     def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
-        results = []
+        results = utils.execute_futures_dict(
+            {a.output_label: self.futures_executor.submit(self.execute_action, a) for a in actions}
+        )
 
-        for action in actions:
-            if action.tool is not None:
-                if action.path is not None:
-                    output = action.tool.execute(getattr(action.tool, action.path), self, action)
-                else:
-                    output = ErrorArtifact("action path not found")
+        return [r for r in results.values()]
+
+    def execute_action(self, action: Action) -> tuple[str, BaseArtifact]:
+        if action.tool is not None:
+            if action.path is not None:
+                output = action.tool.execute(getattr(action.tool, action.path), self, action)
             else:
-                output = ErrorArtifact("action name not found")
+                output = ErrorArtifact("action path not found")
+        else:
+            output = ErrorArtifact("action name not found")
 
-            results.append((
-                action.output_label,
-                output
-            ))
-
-        return results
+        return (
+            action.output_label,
+            output
+        )
 
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
