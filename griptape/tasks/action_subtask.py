@@ -8,9 +8,9 @@ from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape.utils import remove_null_values_in_dict_recursively
-from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
+from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import BaseTextInputTask, BaseTask
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact
 from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
 
 if TYPE_CHECKING:
@@ -18,17 +18,18 @@ if TYPE_CHECKING:
     from griptape.tools import BaseTool
 
 
+@define(kw_only=True)
+class Action:
+    # TODO: drop the action_ prefix
+    output_label: Optional[str] = field()
+    action_name: str = field()
+    action_path: Optional[str] = field(default=None)
+    action_input: dict = field()
+    tool: Optional[BaseTool] = field(default=None)
+
+
 @define
 class ActionSubtask(BaseTextInputTask):
-    @define(kw_only=True)
-    class Action:
-        # TODO: drop the action_ prefix
-        output_label: Optional[str] = field(default=None)
-        action_name: str = field()
-        action_path: Optional[str] = field(default=None)
-        action_input: dict = field()
-        tool: Optional[BaseTool] = field(default=None)
-
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:\s*(\[[^\]]*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -113,21 +114,19 @@ class ActionSubtask(BaseTextInputTask):
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
+        format_output: Callable[[tuple[str, BaseArtifact]], str] = lambda o: f"{o[0]} output: {o[1].to_text()}"
+
         try:
             if any(a.action_name == "error" for a in self.actions):
-                errors = [a.action_input for a in self.actions if a.action_name == "error"]
+                errors = [a.action_input["error"] for a in self.actions if a.action_name == "error"]
 
                 self.output = ErrorArtifact("\n\n".join(errors))
             else:
-                if self._tool is not None:
-                    if self.action_path is not None:
-                        response = self._tool.execute(getattr(self._tool, self.action_path), self)
-                    else:
-                        response = ErrorArtifact("action path not found")
-                else:
-                    response = ErrorArtifact("tool not found")
+                results = self.execute_actions(self.actions)
 
-                self.output = response
+                self.output = ListArtifact(
+                    [TextArtifact(format_output(r)) for r in results]
+                )
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
@@ -137,6 +136,25 @@ class ActionSubtask(BaseTextInputTask):
                 return self.output
             else:
                 return ErrorArtifact("no tool output")
+
+    def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
+        results = []
+
+        for action in actions:
+            if action.tool is not None:
+                if action.action_path is not None:
+                    output = action.tool.execute(getattr(action.tool, action.action_path), self, action)
+                else:
+                    output = ErrorArtifact("action path not found")
+            else:
+                output = ErrorArtifact("action name not found")
+
+            results.append((
+                action.output_label,
+                output
+            ))
+
+        return results
 
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
@@ -243,7 +261,7 @@ class ActionSubtask(BaseTextInputTask):
                             "ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
                         )
 
-                    new_action = self.Action(
+                    new_action = Action(
                         output_label=action_output_label,
                         action_name=action_name,
                         action_path=action_path,
@@ -286,8 +304,9 @@ class ActionSubtask(BaseTextInputTask):
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 
-    def __error_to_action(self, error: str) -> Actions:
-        return self.Action(
+    def __error_to_action(self, error: str) -> Action:
+        return Action(
+            output_label="error",
             action_name="error",
             action_input={"error": error}
         )

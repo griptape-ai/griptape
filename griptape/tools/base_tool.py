@@ -16,6 +16,7 @@ from griptape.mixins import ActivityMixin
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
     from griptape.tasks import ActionSubtask
+    from griptape.tasks.action_subtask import Action
 
 
 @define
@@ -105,17 +106,17 @@ class BaseTool(ActivityMixin, ABC):
 
         return full_schema.json_schema(f"{self.name} Action Schema")
 
-    def execute(self, activity: Callable, subtask: ActionSubtask) -> BaseArtifact:
-        preprocessed_input = self.before_run(activity, subtask.action_input)
-        output = self.run(activity, subtask, preprocessed_input)
-        postprocessed_output = self.after_run(activity, subtask, output)
+    def execute(self, activity: Callable, subtask: ActionSubtask, action: Action) -> BaseArtifact:
+        preprocessed_input = self.before_run(activity, subtask, action)
+        output = self.run(activity, subtask, action, preprocessed_input)
+        postprocessed_output = self.after_run(activity, subtask, action, output)
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
-        return value
+    def before_run(self, activity: Callable, subtask: ActionSubtask, action: Action) -> Optional[dict]:
+        return action.action_input
 
-    def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
+    def run(self, activity: Callable, subtask: ActionSubtask, action: Action, value: Optional[dict]) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
@@ -127,7 +128,9 @@ class BaseTool(ActivityMixin, ABC):
 
         return result
 
-    def after_run(self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
+    def after_run(
+            self, activity: Callable, subtask: ActionSubtask, action: Action, value: BaseArtifact
+    ) -> BaseArtifact:
         if value:
             if self.output_memory:
                 output_memories = self.output_memory[getattr(activity, "name")] or []
