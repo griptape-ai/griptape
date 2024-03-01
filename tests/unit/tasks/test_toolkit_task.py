@@ -3,7 +3,7 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
-from griptape.tasks import ToolkitTask, ActionSubtask, PromptTask
+from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -79,7 +79,7 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
 
         assert subtask.thought == "need to test"
         assert subtask.action_name == "Tool1"
@@ -94,7 +94,7 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
 
         assert subtask.thought == "need to test"
         assert subtask.action_name is None
@@ -104,8 +104,8 @@ class TestToolkitSubtask:
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
-        subtask2 = ActionSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask1 = ActionsSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask2 = ActionsSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
 
         Agent().add_task(task)
 
@@ -124,8 +124,8 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
-        subtask2 = ActionSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask1 = ActionsSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask2 = ActionsSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
 
         Agent().add_task(task)
 
@@ -177,7 +177,7 @@ class TestToolkitSubtask:
 
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
-        subtask = ActionSubtask()
+        subtask = ActionsSubtask()
         agent = Agent(task_memory=memory)
 
         subtask.structure = agent

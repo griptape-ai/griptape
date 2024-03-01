@@ -6,7 +6,7 @@ from .base_task_event import BaseTaskEvent
 
 
 if TYPE_CHECKING:
-    from griptape.tasks import BaseTask, ActionSubtask
+    from griptape.tasks import BaseTask, ActionsSubtask
 
 
 @define
@@ -17,7 +17,7 @@ class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
 
     @classmethod
     def from_task(cls, task: BaseTask) -> BaseActionSubtaskEvent:
-        if not isinstance(task, ActionSubtask):
+        if not isinstance(task, ActionsSubtask):
             raise ValueError("Event must be of instance ActionSubtask.")
         return cls(
             task_id=task.id,

@@ -1,10 +1,10 @@
 import json
 from tests.mocks.mock_tool.tool import MockTool
-from griptape.tasks import ToolkitTask, ActionSubtask
+from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.structures import Agent
 
 
-class TestActionSubtask:
+class TestActionsSubtask:
     def test_to_json(self):
         valid_input = (
             "Thought: need to test\n"
@@ -15,7 +15,7 @@ class TestActionSubtask:
 
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
 
         assert json_dict["name"] == "MockTool"
@@ -32,7 +32,7 @@ class TestActionSubtask:
 
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
 
         assert json_dict["name"] == "MockTool"
@@ -40,4 +40,4 @@ class TestActionSubtask:
         assert json_dict["input"] == {"values": {"test": "test\n\ninput\n\nwith\nnewlines"}}
 
     def test_input(self):
-        assert ActionSubtask("{{ hello }}").input.value == "{{ hello }}"
+        assert ActionsSubtask("{{ hello }}").input.value == "{{ hello }}"

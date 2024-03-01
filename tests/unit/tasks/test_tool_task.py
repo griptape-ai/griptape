@@ -2,7 +2,7 @@ import json
 import pytest
 from griptape.artifacts import TextArtifact
 from griptape.structures import Agent
-from griptape.tasks import ToolTask, ActionSubtask
+from griptape.tasks import ToolTask, ActionsSubtask
 from griptape.utils import PromptStack
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -34,7 +34,7 @@ class TestToolTask:
 
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
-        subtask = ActionSubtask()
+        subtask = ActionsSubtask()
         agent = Agent(task_memory=memory)
 
         subtask.structure = agent

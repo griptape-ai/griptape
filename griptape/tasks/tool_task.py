@@ -4,7 +4,7 @@ from typing import Optional, TYPE_CHECKING
 from attr import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact, BaseArtifact
-from griptape.tasks import PromptTask, ActionSubtask
+from griptape.tasks import PromptTask, ActionsSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
 from griptape.mixins import ActionSubtaskOriginMixin
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 @define
 class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
-    subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
+    subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
@@ -42,7 +42,7 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     def run(self) -> BaseArtifact:
         prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
 
-        subtask = self.add_subtask(ActionSubtask(f"Actions: {prompt_output}"))
+        subtask = self.add_subtask(ActionsSubtask(f"Actions: {prompt_output}"))
 
         subtask.before_run()
         subtask.run()
@@ -64,13 +64,13 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     def find_memory(self, memory_name: str) -> TaskMemory:
         raise NotImplementedError("ToolTask does not support Task Memory.")
 
-    def find_subtask(self, subtask_id: str) -> ActionSubtask:
+    def find_subtask(self, subtask_id: str) -> ActionsSubtask:
         if self.subtask and self.subtask.id == subtask_id:
             return self.subtask
         else:
             raise ValueError(f"Subtask with id {subtask_id} not found.")
 
-    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
+    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
         self.subtask = subtask
         self.subtask.attach_to(self)
 

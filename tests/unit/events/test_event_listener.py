@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 import pytest
 from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask, ActionSubtask
+from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.events import (
     StartTaskEvent,
     FinishTaskEvent,
@@ -26,7 +26,7 @@ class TestEventListener:
         pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)
 
-        task.add_subtask(ActionSubtask("foo"))
+        task.add_subtask(ActionsSubtask("foo"))
         return pipeline
 
     def test_untyped_listeners(self, pipeline):

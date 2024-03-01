@@ -6,7 +6,7 @@ from griptape import utils
 from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.utils import PromptStack
 from griptape.mixins import ActionSubtaskOriginMixin
-from griptape.tasks import ActionSubtask
+from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
 
@@ -23,11 +23,11 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
-    subtasks: list[ActionSubtask] = field(factory=list)
-    generate_assistant_subtask_template: Callable[[ActionSubtask], str] = field(
+    subtasks: list[ActionsSubtask] = field(factory=list)
+    generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
         default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True), kw_only=True
     )
-    generate_user_subtask_template: Callable[[ActionSubtask], str] = field(
+    generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
         default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True), kw_only=True
     )
 
@@ -88,18 +88,18 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
-            actions_schema=ActionSubtask.ACTIONS_SCHEMA.json_schema("Actions Schema"),
+            actions_schema=ActionsSubtask.ACTIONS_SCHEMA.json_schema("Actions Schema"),
             action_schemas=[utils.minify_json(json.dumps(tool.schema())) for tool in self.tools],
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
 
-    def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:
+    def default_assistant_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
         )
 
-    def default_user_subtask_template_generator(self, subtask: ActionSubtask) -> str:
+    def default_user_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
         )
@@ -115,11 +115,11 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}
 
     def run(self) -> BaseArtifact:
-        from griptape.tasks import ActionSubtask
+        from griptape.tasks import ActionsSubtask
 
         self.subtasks.clear()
 
-        subtask = self.add_subtask(ActionSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
+        subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
 
         while True:
             if subtask.output is None:
@@ -134,7 +134,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
                     subtask.after_run()
 
                     subtask = self.add_subtask(
-                        ActionSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text())
+                        ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text())
                     )
             else:
                 break
@@ -143,13 +143,13 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
 
         return self.output
 
-    def find_subtask(self, subtask_id: str) -> ActionSubtask:
+    def find_subtask(self, subtask_id: str) -> ActionsSubtask:
         for subtask in self.subtasks:
             if subtask.id == subtask_id:
                 return subtask
         raise ValueError(f"Subtask with id {subtask_id} not found.")
 
-    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
+    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
         subtask.attach_to(self)
 
         if len(self.subtasks) > 0:

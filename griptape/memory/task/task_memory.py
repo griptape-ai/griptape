@@ -7,7 +7,7 @@ from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.memory.task.storage import BaseArtifactStorage
-    from griptape.tasks import ActionSubtask
+    from griptape.tasks import ActionsSubtask
 
 
 @define
@@ -39,7 +39,7 @@ class TaskMemory(ActivityMixin):
             return find_storage(artifact)
 
     def process_output(
-        self, tool_activity: Callable, subtask: ActionSubtask, output_artifact: BaseArtifact
+        self, tool_activity: Callable, subtask: ActionsSubtask, output_artifact: BaseArtifact
     ) -> BaseArtifact:
         from griptape.utils import J2
 

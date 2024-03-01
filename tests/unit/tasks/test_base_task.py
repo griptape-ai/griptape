@@ -2,7 +2,7 @@ import pytest
 
 from griptape.artifacts import TextArtifact
 from griptape.structures import Agent
-from griptape.tasks import ActionSubtask
+from griptape.tasks import ActionsSubtask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_task import MockTask
@@ -19,7 +19,7 @@ class TestBaseTask:
         return agent.task
 
     def test_meta_memories(self, task):
-        subtask = ActionSubtask()
+        subtask = ActionsSubtask()
 
         subtask.structure = task.structure
 

@@ -30,7 +30,7 @@ class Action:
 
 
 @define
-class ActionSubtask(BaseTextInputTask):
+class ActionsSubtask(BaseTextInputTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:\s*(\[[^\]]*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -203,7 +203,7 @@ class ActionSubtask(BaseTextInputTask):
             self.actions_to_dicts()
         )
 
-    def add_child(self, child: ActionSubtask) -> ActionSubtask:
+    def add_child(self, child: ActionsSubtask) -> ActionsSubtask:
         if child.id not in self.child_ids:
             self.child_ids.append(child.id)
 
@@ -212,7 +212,7 @@ class ActionSubtask(BaseTextInputTask):
 
         return child
 
-    def add_parent(self, parent: ActionSubtask) -> ActionSubtask:
+    def add_parent(self, parent: ActionsSubtask) -> ActionsSubtask:
         if parent.id not in self.parent_ids:
             self.parent_ids.append(parent.id)
 
