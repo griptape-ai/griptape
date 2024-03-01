@@ -29,9 +29,7 @@ class TestFinishActionSubtaskEvent:
             task_output=subtask.output,
             subtask_parent_task_id=subtask.parent_task_id,
             subtask_thought=subtask.thought,
-            subtask_action_name=subtask.action_name,
-            subtask_action_path=subtask.action_path,
-            subtask_action_input=subtask.action_input,
+            subtask_actions=subtask.actions_to_dicts()
         )
 
     def test_to_dict(self, finish_subtask_event):

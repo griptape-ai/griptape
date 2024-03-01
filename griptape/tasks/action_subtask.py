@@ -20,11 +20,10 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class Action:
-    # TODO: drop the action_ prefix
     output_label: Optional[str] = field()
-    action_name: str = field()
-    action_path: Optional[str] = field(default=None)
-    action_input: dict = field()
+    name: str = field()
+    path: Optional[str] = field(default=None)
+    input: dict = field()
     tool: Optional[BaseTool] = field(default=None)
 
 
@@ -117,8 +116,8 @@ class ActionSubtask(BaseTextInputTask):
         format_output: Callable[[tuple[str, BaseArtifact]], str] = lambda o: f"{o[0]} output: {o[1].to_text()}"
 
         try:
-            if any(a.action_name == "error" for a in self.actions):
-                errors = [a.action_input["error"] for a in self.actions if a.action_name == "error"]
+            if any(a.name == "error" for a in self.actions):
+                errors = [a.input["error"] for a in self.actions if a.name == "error"]
 
                 self.output = ErrorArtifact("\n\n".join(errors))
             else:
@@ -142,8 +141,8 @@ class ActionSubtask(BaseTextInputTask):
 
         for action in actions:
             if action.tool is not None:
-                if action.action_path is not None:
-                    output = action.tool.execute(getattr(action.tool, action.action_path), self, action)
+                if action.path is not None:
+                    output = action.tool.execute(getattr(action.tool, action.path), self, action)
                 else:
                     output = ErrorArtifact("action path not found")
             else:
@@ -182,14 +181,14 @@ class ActionSubtask(BaseTextInputTask):
             if action.output_label:
                 json_dict["output_label"] = action.output_label
 
-            if action.action_name:
-                json_dict["name"] = action.action_name
+            if action.name:
+                json_dict["name"] = action.name
 
-            if action.action_path:
-                json_dict["path"] = action.action_path
+            if action.path:
+                json_dict["path"] = action.path
 
-            if action.action_input:
-                json_dict["input"] = action.action_input
+            if action.input:
+                json_dict["input"] = action.input
 
             json_list.append(json_dict)
 
@@ -263,14 +262,14 @@ class ActionSubtask(BaseTextInputTask):
 
                     new_action = Action(
                         output_label=action_output_label,
-                        action_name=action_name,
-                        action_path=action_path,
-                        action_input=action_input,
+                        name=action_name,
+                        path=action_path,
+                        input=action_input,
                         tool=tool
                     )
 
                     if new_action.tool:
-                        if new_action.action_input:
+                        if new_action.input:
                             self.__validate_action(new_action)
                         else:
                             raise Exception("Action input not found.")
@@ -307,14 +306,14 @@ class ActionSubtask(BaseTextInputTask):
     def __error_to_action(self, error: str) -> Action:
         return Action(
             output_label="error",
-            action_name="error",
-            action_input={"error": error}
+            name="error",
+            input={"error": error}
         )
 
     def __validate_action(self, action: Action) -> None:
         try:
-            if action.action_path is not None:
-                activity = getattr(action.tool, action.action_path)
+            if action.path is not None:
+                activity = getattr(action.tool, action.path)
             else:
                 raise Exception("Action path not found.")
 
@@ -324,7 +323,7 @@ class ActionSubtask(BaseTextInputTask):
                 raise Exception("Activity not found.")
 
             if activity_schema:
-                validate(instance=action.action_input, schema=activity_schema)
+                validate(instance=action.input, schema=activity_schema)
         except ValidationError as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 

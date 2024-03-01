@@ -114,7 +114,7 @@ class BaseTool(ActivityMixin, ABC):
         return postprocessed_output
 
     def before_run(self, activity: Callable, subtask: ActionSubtask, action: Action) -> Optional[dict]:
-        return action.action_input
+        return action.input
 
     def run(self, activity: Callable, subtask: ActionSubtask, action: Action, value: Optional[dict]) -> BaseArtifact:
         activity_result = activity(value)
