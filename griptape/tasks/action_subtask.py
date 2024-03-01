@@ -21,13 +21,13 @@ if TYPE_CHECKING:
 @define
 class ActionSubtask(BaseTextInputTask):
     @define(kw_only=True)
-    class Actions:
+    class Action:
         # TODO: drop the action_ prefix
         output_label: Optional[str] = field(default=None)
         action_name: str = field()
         action_path: Optional[str] = field(default=None)
         action_input: dict = field()
-        tool: Optional[BaseTool] = field(defaultl=None)
+        tool: Optional[BaseTool] = field(default=None)
 
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:\s*(\[[^\]]*\])"
@@ -115,7 +115,9 @@ class ActionSubtask(BaseTextInputTask):
     def run(self) -> BaseArtifact:
         try:
             if any(a.action_name == "error" for a in self.actions):
-                self.output = ErrorArtifact(str(self.action_input))
+                errors = [a.action_input for a in self.actions if a.action_name == "error"]
+
+                self.output = ErrorArtifact("\n\n".join(errors))
             else:
                 if self._tool is not None:
                     if self.action_path is not None:
