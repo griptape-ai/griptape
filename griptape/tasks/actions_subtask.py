@@ -94,9 +94,9 @@ class ActionsSubtask(BaseTextInputTask):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
-    @property
-    def json_actions_schema(self) -> dict:
-        return self.ACTIONS_SCHEMA.json_schema("Actions Schema")
+    @classmethod
+    def json_actions_schema(cls) -> dict:
+        return cls.ACTIONS_SCHEMA.json_schema("Actions Schema")
 
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
@@ -238,7 +238,7 @@ class ActionsSubtask(BaseTextInputTask):
                 data = actions_matches[-1]
                 actions_list: list = json.loads(data, strict=False)
 
-                validate(instance=actions_list, schema=self.json_actions_schema)
+                validate(instance=actions_list, schema=self.json_actions_schema())
 
                 for action_object in actions_list:
                     # Load action name; throw exception if the key is not present
