@@ -30,7 +30,7 @@ class TestFinishActionSubtaskEvent:
             task_output=subtask.output,
             subtask_parent_task_id=subtask.parent_task_id,
             subtask_thought=subtask.thought,
-            subtask_actions=subtask.actions_to_dicts()
+            subtask_actions=subtask.actions_to_dicts(),
         )
 
     def test_to_dict(self, finish_subtask_event):
@@ -45,7 +45,9 @@ class TestFinishActionSubtaskEvent:
 
         assert event_dict["subtask_parent_task_id"] == finish_subtask_event.subtask_parent_task_id
         assert event_dict["subtask_thought"] == finish_subtask_event.subtask_thought
-        assert event_dict["subtask_actions"][0]["output_label"] == finish_subtask_event.subtask_actions[0]["output_label"]
+        assert (
+            event_dict["subtask_actions"][0]["output_label"] == finish_subtask_event.subtask_actions[0]["output_label"]
+        )
         assert event_dict["subtask_actions"][0]["name"] == finish_subtask_event.subtask_actions[0]["name"]
         assert event_dict["subtask_actions"][0]["path"] == finish_subtask_event.subtask_actions[0]["path"]
         assert event_dict["subtask_actions"][0]["input"] == finish_subtask_event.subtask_actions[0]["input"]

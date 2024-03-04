@@ -89,14 +89,7 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_actions": [
-                {
-                    "output_label": "foo",
-                    "name": "qux",
-                    "path": "foopath",
-                    "input": {"value": "quux"}
-                }
-            ]
+            "subtask_actions": [{"output_label": "foo", "name": "qux", "path": "foopath", "input": {"value": "quux"}}],
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -149,14 +142,7 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_actions": [
-                {
-                    "output_label": "foo",
-                    "name": "qux",
-                    "path": "foopath",
-                    "input": {"value": "quux"}
-                }
-            ]
+            "subtask_actions": [{"output_label": "foo", "name": "qux", "path": "foopath", "input": {"value": "quux"}}],
         }
 
         event = BaseEvent.from_dict(dict_value)

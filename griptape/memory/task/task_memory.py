@@ -64,7 +64,9 @@ class TaskMemory(ActivityMixin):
 
                 if subtask.structure and subtask.structure.meta_memory:
                     subtask.structure.meta_memory.add_entry(
-                        ActionSubtaskMetaEntry(thought=subtask.thought, actions=subtask.actions_to_json(), answer=output)
+                        ActionSubtaskMetaEntry(
+                            thought=subtask.thought, actions=subtask.actions_to_json(), answer=output
+                        )
                     )
 
                 return InfoArtifact(output, name=namespace)

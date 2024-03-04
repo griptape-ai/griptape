@@ -104,8 +104,12 @@ class TestToolkitSubtask:
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionsSubtask("test1", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
-        subtask2 = ActionsSubtask("test2", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
+        subtask1 = ActionsSubtask(
+            "test1", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})]
+        )
+        subtask2 = ActionsSubtask(
+            "test2", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})]
+        )
 
         Agent().add_task(task)
 
@@ -124,8 +128,12 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionsSubtask("test1", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
-        subtask2 = ActionsSubtask("test2", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
+        subtask1 = ActionsSubtask(
+            "test1", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})]
+        )
+        subtask2 = ActionsSubtask(
+            "test2", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})]
+        )
 
         Agent().add_task(task)
 

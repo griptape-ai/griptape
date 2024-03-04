@@ -40,19 +40,16 @@ class ActionsSubtask(BaseTextInputTask):
             "actions": [
                 {
                     Literal(
-                        "output_label",
-                        description="Action label that can later be used to identify action output"
+                        "output_label", description="Action label that can later be used to identify action output"
                     ): str,
                     Literal("name", description="Action name"): str,
                     Literal("path", description="Action path"): str,
-                    schema.Optional(
-                        Literal("input", description="Optional action path input values object")
-                    ): {
+                    schema.Optional(Literal("input", description="Optional action path input values object")): {
                         "values": dict
-                    }
+                    },
                 }
             ]
-        }
+        },
     )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
@@ -115,7 +112,7 @@ class ActionsSubtask(BaseTextInputTask):
                 task_output=self.output,
                 subtask_parent_task_id=self.parent_task_id,
                 subtask_thought=self.thought,
-                subtask_actions=self.actions_to_dicts()
+                subtask_actions=self.actions_to_dicts(),
             )
         )
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
@@ -131,9 +128,7 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 results = self.execute_actions(self.actions)
 
-                self.output = ListArtifact(
-                    [TextArtifact(format_output(r)) for r in results]
-                )
+                self.output = ListArtifact([TextArtifact(format_output(r)) for r in results])
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
@@ -160,10 +155,7 @@ class ActionsSubtask(BaseTextInputTask):
         else:
             output = ErrorArtifact("action name not found")
 
-        return (
-            action.output_label,
-            output
-        )
+        return (action.output_label, output)
 
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
@@ -177,7 +169,7 @@ class ActionsSubtask(BaseTextInputTask):
                 task_output=self.output,
                 subtask_parent_task_id=self.parent_task_id,
                 subtask_thought=self.thought,
-                subtask_actions=self.actions_to_dicts()
+                subtask_actions=self.actions_to_dicts(),
             )
         )
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
@@ -205,9 +197,7 @@ class ActionsSubtask(BaseTextInputTask):
         return json_list
 
     def actions_to_json(self) -> str:
-        return json.dumps(
-            self.actions_to_dicts()
-        )
+        return json.dumps(self.actions_to_dicts())
 
     def add_child(self, child: ActionsSubtask) -> ActionsSubtask:
         if child.id not in self.child_ids:
@@ -275,7 +265,7 @@ class ActionsSubtask(BaseTextInputTask):
                         name=action_name,
                         path=action_path,
                         input=action_input,
-                        tool=tool
+                        tool=tool,
                     )
 
                     if new_action.tool:
@@ -289,36 +279,20 @@ class ActionsSubtask(BaseTextInputTask):
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
-                self.actions.append(
-                    self.__error_to_action(
-                        f"syntax error: {e}"
-                    )
-                )
+                self.actions.append(self.__error_to_action(f"syntax error: {e}"))
             except ValidationError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
-                self.actions.append(
-                    self.__error_to_action(
-                        f"Action JSON validation error: {e}"
-                    )
-                )
+                self.actions.append(self.__error_to_action(f"Action JSON validation error: {e}"))
             except Exception as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
 
-                self.actions.append(
-                    self.__error_to_action(
-                        f"Action input parsing error: {e}"
-                    )
-                )
+                self.actions.append(self.__error_to_action(f"Action input parsing error: {e}"))
         elif self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
 
     def __error_to_action(self, error: str) -> Action:
-        return Action(
-            output_label="error",
-            name="error",
-            input={"error": error}
-        )
+        return Action(output_label="error", name="error", input={"error": error})
 
     def __validate_action(self, action: Action) -> None:
         try:
@@ -337,8 +311,4 @@ class ActionsSubtask(BaseTextInputTask):
         except ValidationError as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 
-            self.actions.append(
-                self.__error_to_action(
-                    f"Activity input JSON validation error: {e}"
-                )
-            )
+            self.actions.append(self.__error_to_action(f"Activity input JSON validation error: {e}"))

@@ -129,7 +129,7 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-            self, activity: Callable, subtask: ActionsSubtask, action: Action, value: BaseArtifact
+        self, activity: Callable, subtask: ActionsSubtask, action: Action, value: BaseArtifact
     ) -> BaseArtifact:
         if value:
             if self.output_memory:
