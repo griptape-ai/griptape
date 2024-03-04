@@ -4,6 +4,7 @@ from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
+from griptape.tasks.actions_subtask import Action
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -98,15 +99,13 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ActionsSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_name is None
-        assert subtask.action_path is None
-        assert subtask.action_input is None
+        assert subtask.actions == []
         assert subtask.output.to_text() == "test output"
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionsSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
-        subtask2 = ActionsSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask1 = ActionsSubtask("test1", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
+        subtask2 = ActionsSubtask("test2", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
 
         Agent().add_task(task)
 
@@ -125,8 +124,8 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionsSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
-        subtask2 = ActionsSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask1 = ActionsSubtask("test1", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
+        subtask2 = ActionsSubtask("test2", actions=[Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})])
 
         Agent().add_task(task)
 
