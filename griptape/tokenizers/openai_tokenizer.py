@@ -31,7 +31,7 @@ class OpenAiTokenizer(BaseTokenizer):
         "text-embedding-ada-001": 2046,
     }
 
-    EMBEDDING_MODELS = ["text-embedding-ada-002", "text-embedding-ada-001"]
+    EMBEDDING_MODELS = ["text-embedding-ada-002", "text-embedding-ada-001", "text-embedding-3-small"]
 
     model: str = field(kw_only=True)
     max_tokens: int = field(kw_only=True, default=Factory(lambda self: self.default_max_tokens(), takes_self=True))
