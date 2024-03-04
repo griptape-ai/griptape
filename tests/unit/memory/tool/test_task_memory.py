@@ -53,7 +53,7 @@ class TestTaskMemory:
         entries = subtask.structure.meta_memory.entries
 
         assert len(entries) == 1
-        assert entries[0].action == "{}"
+        assert entries[0].actions == "[]"
         assert entries[0].answer.startswith(
             'Output of "MockTool.test" was stored in memory with memory_name "MyMemory"'
         )

@@ -71,7 +71,7 @@ class TestToolkitSubtask:
     def test_init_from_prompt_1(self):
         valid_input = (
             "Thought: need to test\n"
-            'Actions: {"name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}\n'
+            'Actions: {"actions": [{"output_label": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]}\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -82,9 +82,10 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ActionsSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_name == "Tool1"
-        assert subtask.action_path == "test"
-        assert subtask.action_input == {"values": {"test": "value"}}
+        assert subtask.actions[0].output_label == "foo"
+        assert subtask.actions[0].name == "Tool1"
+        assert subtask.actions[0].path == "test"
+        assert subtask.actions[0].input == {"values": {"test": "value"}}
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
