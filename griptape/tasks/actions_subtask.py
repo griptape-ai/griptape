@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class Action:
-    output_label: Optional[str] = field()
+    output_label: str = field()
     name: str = field()
     path: Optional[str] = field(default=None)
     input: dict = field()
@@ -154,7 +154,7 @@ class ActionsSubtask(BaseTextInputTask):
         else:
             output = ErrorArtifact("action name not found")
 
-        return (action.output_label, output)
+        return action.output_label, output
 
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
