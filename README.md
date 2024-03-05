@@ -64,9 +64,9 @@ And here is the output:
                              Thought: First, I need to use the WebScraper action to
                              load the content of the webpage.                   
                                                                                 
-                             Actions: [{"name": "WebScraper", "path":            
+                             Actions: {"actions": [{"name": "WebScraper", "path":            
                              "get_content", "input": {"values": {"url":         
-                             "https://griptape.ai"}}}]                           
+                             "https://griptape.ai"}}}]}                           
                     INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
                              Response: Output of "WebScraper.get_content" was   
                              stored in memory with memory_name "TaskMemory" and 
@@ -76,10 +76,10 @@ And here is the output:
                              Thought: Now that the webpage content is stored in 
                              memory, I need to use the TaskMemoryClient action  
                              to summarize the content.                          
-                             Actions: [{"name": "TaskMemoryClient", "path":   
+                             Actions: {"actions": [{"name": "TaskMemoryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
                              "TaskMemory", "artifact_namespace":                
-                             "c497d83c1d134db694b9994596016320"}}}[              
+                             "c497d83c1d134db694b9994596016320"}}}]}              
 [11/02/23 15:29:06] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
                              Response: Output of "TaskMemoryClient.summarize"
                              was stored in memory with memory_name "TaskMemory" 
@@ -89,12 +89,12 @@ And here is the output:
                              Thought: Now that the summary is stored in memory, 
                              I need to use the FileManager action to save the      
                              summary to a file named griptape.txt.              
-                             Actions: [{"name": "FileManager", "path":           
+                             Actions: {"actions": [{"name": "FileManager", "path":           
                              "save_memory_artifacts_to_disk", "input":          
                              {"values": {"dir_name": ".", "file_name":          
                              "griptape.txt", "memory_name": "TaskMemory",       
                              "artifact_namespace":                              
-                             "77584322d33d40e992da9767d02a9018"}}}]              
+                             "77584322d33d40e992da9767d02a9018"}}}]}              
                     INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
                              Response: saved successfully                       
 [11/02/23 15:29:30] INFO     ToolkitTask 72b89a905be84245a0563b206795ac73       
