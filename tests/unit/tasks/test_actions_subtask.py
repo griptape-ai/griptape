@@ -5,7 +5,7 @@ from griptape.structures import Agent
 
 
 class TestActionsSubtask:
-    def test_to_json(self):
+    def test_basic_input(self):
         valid_input = (
             "Thought: need to test\n"
             'Actions: {"actions": [{"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}]}\n'
@@ -22,7 +22,7 @@ class TestActionsSubtask:
         assert json_dict[0]["path"] == "test"
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
 
-    def test_init_from_action_with_newlines(self):
+    def test_input_with_multiline_actions(self):
         valid_input = (
             "Thought: need to test\n"
             'Actions:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n{"actions": [{"output_label": "foo", "name": "MockTool",\n"path": "test",\n\n"input": {"values":\n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}}]}```!@#$%^&*()123(*!378934)'
