@@ -47,12 +47,8 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
 
             action_dict["output_label"] = self.tool.name
 
-            subtask_input = J2("tasks/tool_task/subtask.j2").render(
-                action_json=json.dumps(action_dict)
-            )
-            subtask = self.add_subtask(
-                ActionsSubtask(subtask_input)
-            )
+            subtask_input = J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict))
+            subtask = self.add_subtask(ActionsSubtask(subtask_input))
 
             subtask.before_run()
             subtask.run()

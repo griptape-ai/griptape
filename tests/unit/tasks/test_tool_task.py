@@ -13,7 +13,12 @@ from tests.utils import defaults
 class TestToolTask:
     @pytest.fixture
     def agent(self):
-        output_dict = {"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
+        output_dict = {
+            "output_label": "foo",
+            "name": "MockTool",
+            "path": "test",
+            "input": {"values": {"test": "foobar"}},
+        }
 
         return Agent(
             prompt_driver=MockPromptDriver(mock_output=json.dumps(output_dict)), embedding_driver=MockEmbeddingDriver()
