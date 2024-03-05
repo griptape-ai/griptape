@@ -3,7 +3,7 @@ import json
 from typing import Optional, TYPE_CHECKING
 from attr import define, field
 from griptape import utils
-from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact, BaseArtifact
+from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact
 from griptape.tasks import PromptTask, ActionsSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
@@ -42,17 +42,28 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     def run(self) -> BaseArtifact:
         prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
 
-        subtask = self.add_subtask(ActionsSubtask(f"Actions: {prompt_output}"))
+        try:
+            action_dict = json.loads(prompt_output)
 
-        subtask.before_run()
-        subtask.run()
-        subtask.after_run()
+            action_dict["output_label"] = self.tool.name
 
-        if subtask.output:
-            self.output = subtask.output
-        else:
-            self.output = InfoArtifact("No tool output")
+            subtask_input = J2("tasks/tool_task/subtask.j2").render(
+                action_json=json.dumps(action_dict)
+            )
+            subtask = self.add_subtask(
+                ActionsSubtask(subtask_input)
+            )
 
+            subtask.before_run()
+            subtask.run()
+            subtask.after_run()
+
+            if subtask.output:
+                self.output = subtask.output
+            else:
+                self.output = InfoArtifact("No tool output")
+        except Exception as e:
+            self.output = ErrorArtifact(f"Error processing tool input: {e}")
         return self.output
 
     def find_tool(self, tool_name: str) -> BaseTool:

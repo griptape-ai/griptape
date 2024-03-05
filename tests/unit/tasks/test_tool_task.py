@@ -13,11 +13,8 @@ from tests.utils import defaults
 class TestToolTask:
     @pytest.fixture
     def agent(self):
-        output_dict = {
-            "actions": [
-                {"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
-            ]
-        }
+        output_dict = {"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
+
         return Agent(
             prompt_driver=MockPromptDriver(mock_output=json.dumps(output_dict)), embedding_driver=MockEmbeddingDriver()
         )
@@ -27,14 +24,14 @@ class TestToolTask:
 
         agent.add_task(task)
 
-        assert task.run().to_text() == "foo output: ack foobar"
+        assert task.run().to_text() == "MockTool output: ack foobar"
 
     def test_run_with_memory(self, agent):
         task = ToolTask(tool=MockTool())
 
         agent.add_task(task)
 
-        assert task.run().to_text().startswith('foo output: Output of "MockTool.test" was stored in memory')
+        assert task.run().to_text().startswith('MockTool output: Output of "MockTool.test" was stored in memory')
 
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
@@ -45,10 +42,10 @@ class TestToolTask:
 
         memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
 
-        task = ToolTask(tool=MockTool())
+        task = ToolTask(tool=MockTool(off_prompt=False))
 
         agent.add_task(task)
 
-        system_template = task.generate_system_template(PromptStack())
+        system_template = task.generate_system_template(task)
 
         assert "You have access to additional contextual information" in system_template
