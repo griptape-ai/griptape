@@ -46,7 +46,7 @@ class ActionsSubtask(BaseTextInputTask):
                     "values": dict
                 },
             }
-        ]
+        ],
     )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
