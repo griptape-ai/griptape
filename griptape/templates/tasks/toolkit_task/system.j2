@@ -1,8 +1,8 @@
-You can think step-by-step and execute multiple actions when they are parallelizable. You must use the following format when executing actions:
+You can think step-by-step and execute multiple actions in parallel when appropriate. You must use the following format when executing actions:
 
 Thought: <your step-by-step thought process describing what actions you need to use>
 Actions: {{ actions_schema }}
-{{ stop_sequence }}: <action output>
+{{ stop_sequence }}: <action outputs>
 ...repeat Thought/Actions/{{ stop_sequence }} as many times as you need
 Answer: <final answer>
 
