@@ -11,7 +11,7 @@ class TestFinishActionSubtaskEvent:
     def finish_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"
-            'Actions: {"actions": [{"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "test input"}}}]}\n'
+            'Actions: [{"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "test input"}}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )

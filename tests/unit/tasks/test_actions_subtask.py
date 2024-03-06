@@ -8,7 +8,7 @@ class TestActionsSubtask:
     def test_basic_input(self):
         valid_input = (
             "Thought: need to test\n"
-            'Actions: {"actions": [{"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}]}\n'
+            'Actions: [{"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -25,7 +25,7 @@ class TestActionsSubtask:
     def test_input_with_multiline_actions(self):
         valid_input = (
             "Thought: need to test\n"
-            'Actions:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n{"actions": [{"output_label": "foo", "name": "MockTool",\n"path": "test",\n\n"input": {"values":\n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}}]}```!@#$%^&*()123(*!378934)'
+            'Actions:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n[{"output_label": "foo", "name": "MockTool",\n"path": "test",\n\n"input": {"values":\n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}}]```!@#$%^&*()123(*!378934)'
             "Response: test response\n"
             "Answer: test output"
         )

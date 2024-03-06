@@ -44,7 +44,7 @@ class TestToolkitSubtask:
         assert result.output_task.output.to_text() == "done"
 
     def test_run_max_subtasks(self):
-        output = """Actions: {"name": "blah"}"""
+        output = """Actions: [{"name": "blah"}]"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
@@ -72,7 +72,7 @@ class TestToolkitSubtask:
     def test_init_from_prompt_1(self):
         valid_input = (
             "Thought: need to test\n"
-            'Actions: {"actions": [{"output_label": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]}\n'
+            'Actions: [{"output_label": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )

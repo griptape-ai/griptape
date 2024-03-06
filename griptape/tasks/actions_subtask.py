@@ -31,24 +31,22 @@ class Action:
 @define
 class ActionsSubtask(BaseTextInputTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
-    ACTIONS_PATTERN = r"(?s)Actions:[^{]*({.*})"
+    ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
     ACTIONS_SCHEMA = Schema(
-        description="JSON schema for actions to be executed in parallel.",
-        schema={
-            "actions": [
-                {
-                    Literal(
-                        "output_label", description="Action label that can later be used to identify action output"
-                    ): str,
-                    Literal("name", description="Action name"): str,
-                    Literal("path", description="Action path"): str,
-                    schema.Optional(Literal("input", description="Optional action path input values object")): {
-                        "values": dict
-                    },
-                }
-            ]
-        },
+        description="JSON schema for an array of actions to be executed in parallel.",
+        schema=[
+            {
+                Literal(
+                    "output_label", description="Action label that can later be used to identify action output"
+                ): str,
+                Literal("name", description="Action name"): str,
+                Literal("path", description="Action path"): str,
+                schema.Optional(Literal("input", description="Optional action path input values object")): {
+                    "values": dict
+                },
+            }
+        ]
     )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
@@ -227,11 +225,11 @@ class ActionsSubtask(BaseTextInputTask):
         if len(actions_matches) > 0:
             try:
                 data = actions_matches[-1]
-                actions_dict: dict = json.loads(data, strict=False)
+                actions_list: list = json.loads(data, strict=False)
 
-                validate(instance=actions_dict, schema=self.json_actions_schema())
+                validate(instance=actions_list, schema=self.json_actions_schema())
 
-                for action_object in actions_dict["actions"]:
+                for action_object in actions_list:
                     # Load action name; throw exception if the key is not present
                     action_output_label = action_object["output_label"]
 
