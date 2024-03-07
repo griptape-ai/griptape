@@ -11,9 +11,7 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 @define
 class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
     _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
-    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(
-        default=None, kw_only=True
-    )
+    prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 
     @property
     def tokenizer(self) -> BedrockClaudeTokenizer:
@@ -34,18 +32,12 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockClaudeTokenizer(
-                model=self.prompt_driver.model
-            )
+            self._tokenizer = BedrockClaudeTokenizer(model=self.prompt_driver.model)
             return self._tokenizer
 
     # https://docs.anthropic.com/claude/reference/claude-on-amazon-bedrock
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> list[Any]:
-        system_input = "".join(
-            prompt_input.content
-            for prompt_input in prompt_stack.inputs
-            if prompt_input.is_system()
-        )
+        system_input = "".join(prompt_input.content for prompt_input in prompt_stack.inputs if prompt_input.is_system())
         inputs = [
             {"role": prompt_input.role, "content": prompt_input.content}
             for prompt_input in prompt_stack.inputs
@@ -62,6 +54,7 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
             "system": system,
             "messages": messages,
             "anthropic_version": "bedrock-2023-05-31",
+            "stop_sequences": ["</function_calls>"],
         }
 
     def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:

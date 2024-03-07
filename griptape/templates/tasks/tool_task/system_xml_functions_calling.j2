@@ -1,0 +1,34 @@
+Output a XML object that strictly adheres to the specified tool with no additional text or commentary.
+The object should only include fields defined in the schema.
+
+In this environment you have access to a set of tools you can use to answer the user's question.
+Your answer MUST look like this:
+
+Action: <Your answer as XML in the format provided below>
+Your answer MUST not contain anything that is NOT an XML.
+Your answer MUST adhere the XML schema provided below.
+Strictly adhere the schema when it comes to Parameters. (<Parameters><ParameterName>Parameter_Value</ParameterName></Parameters>). DO NOT use any other format for parameters
+
+This is the XML answer format:
+<function_calls>
+<invoke>
+<tool_name>$TOOL_NAME</tool_name>
+<path>$PATH_TO_TOOL</path>
+<parameters>
+<$PARAMETER_NAME>$PARAMETER_VALUE</$PARAMETER_NAME>
+</parameters>
+</invoke>
+</function_calls>
+
+
+This is the available tool:
+{{ action_schema }}
+
+{% if meta_memory %}
+
+{{ meta_memory }}
+{% endif %}
+{% if rulesets %}
+
+{{ rulesets }}
+{% endif %}

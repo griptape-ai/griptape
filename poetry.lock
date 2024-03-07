@@ -1353,6 +1353,17 @@ files = [
 ]
 
 [[package]]
+name = "dicttoxml"
+version = "1.7.16"
+description = "Converts a Python dictionary or other native data type into a valid XML string."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "dicttoxml-1.7.16-py3-none-any.whl", hash = "sha256:8677671496d0d38e66c7179f82a7e9059f94887777955dc71b0ac602ee637c26"},
+    {file = "dicttoxml-1.7.16.tar.gz", hash = "sha256:6f36ce644881db5cd8940bee9b7cb3f3f6b7b327ba8a67d83d3e2caa0538bf9d"},
+]
+
+[[package]]
 name = "distlib"
 version = "0.3.8"
 description = "Distribution utilities"
@@ -6237,4 +6248,4 @@ loaders-web = ["trafilatura"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "038414bc9dd4039f7ed20be119cdfff94aba4da3c935f8754b221b6dc11df116"
+content-hash = "688a61f70ca40fe726e1d80a78c2ce19c52a5e10dd74bed84999b4d29d21f63e"
