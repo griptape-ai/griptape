@@ -40,20 +40,18 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
             return self._tokenizer
 
     # https://docs.anthropic.com/claude/reference/claude-on-amazon-bedrock
-    def prompt_stack_to_model_input(
-        self, prompt_stack: PromptStack
-    ) -> list[Any]:
+    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> list[Any]:
         system_input = "".join(
             prompt_input.content
             for prompt_input in prompt_stack.inputs
             if prompt_input.is_system()
         )
-        user_input = "".join(
-            prompt_input.content
+        inputs = [
+            {"role": prompt_input.role, "content": prompt_input.content}
             for prompt_input in prompt_stack.inputs
-            if prompt_input.is_user()
-        )
-        return [system_input, [{"role": "user", "content": user_input}]]
+            if prompt_input.is_user() or prompt_input.is_assistant()
+        ]
+        return [system_input, inputs]
 
     # https://docs.anthropic.com/claude/reference/messages_post
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:

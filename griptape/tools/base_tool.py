@@ -12,6 +12,7 @@ import yaml
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
+import xml.etree.ElementTree as ET
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -35,11 +36,20 @@ class BaseTool(ActivityMixin, ABC):
     MANIFEST_FILE = "manifest.yml"
     REQUIREMENTS_FILE = "requirements.txt"
 
-    name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
+    name: str = field(
+        default=Factory(lambda self: self.class_name, takes_self=True),
+        kw_only=True,
+    )
+    input_memory: Optional[list[TaskMemory]] = field(
+        default=None, kw_only=True
+    )
+    output_memory: Optional[dict[str, list[TaskMemory]]] = field(
+        default=None, kw_only=True
+    )
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
-    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
+    dependencies_install_directory: Optional[str] = field(
+        default=None, kw_only=True
+    )
     verbose: bool = field(default=False, kw_only=True)
     off_prompt: bool = field(default=True, kw_only=True)
 
@@ -48,18 +58,24 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator  # pyright: ignore
-    def validate_output_memory(self, _, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
+    def validate_output_memory(
+        self, _, output_memory: dict[str, Optional[list[TaskMemory]]]
+    ) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
                     raise ValueError(f"activity {activity_name} doesn't exist")
                 if memory_list is None:
-                    raise ValueError(f"memory list for activity '{activity_name}' can't be None")
+                    raise ValueError(
+                        f"memory list for activity '{activity_name}' can't be None"
+                    )
 
                 output_memory_names = [memory.name for memory in memory_list]
 
                 if len(output_memory_names) > len(set(output_memory_names)):
-                    raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
+                    raise ValueError(
+                        f"memory names have to be unique in activity '{activity_name}' output"
+                    )
 
     @property
     def class_name(self):
@@ -88,12 +104,14 @@ class BaseTool(ActivityMixin, ABC):
 
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `self.activities`.
-    def schema(self) -> dict:
+    def schema(self):
         action_schemas = [
             Schema(
                 {
                     Literal("name"): self.name,
-                    Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
+                    Literal(
+                        "path", description=self.activity_description(activity)
+                    ): self.activity_name(activity),
                     **self.activity_to_input(
                         activity
                     ),  # Unpack the dictionary in order to only add the key-values if there are any
@@ -101,36 +119,56 @@ class BaseTool(ActivityMixin, ABC):
             )
             for activity in self.activities()
         ]
-        full_schema = Schema(Or(*action_schemas), description=f"{self.name} action schema.")
+        full_schema = Schema(
+            Or(*action_schemas), description=f"{self.name} action schema."
+        )
 
-        return full_schema.json_schema(f"{self.name} Action Schema")
+        test = str(full_schema.json_schema(f"{self.name} Action Schema"))
 
-    def execute(self, activity: Callable, subtask: ActionSubtask) -> BaseArtifact:
+        return self.dict_to_xml(
+            full_schema.json_schema(f"{self.name} Action Schema")
+        )
+
+    # return full_schema.json_schema(f"{self.name} Action Schema")
+
+    def execute(
+        self, activity: Callable, subtask: ActionSubtask
+    ) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask.action_input)
         output = self.run(activity, subtask, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, output)
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
+    def before_run(
+        self, activity: Callable, value: Optional[dict]
+    ) -> Optional[dict]:
         return value
 
-    def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
+    def run(
+        self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]
+    ) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
             result = activity_result
         else:
-            logging.warning("Activity result is not an artifact; converting result to InfoArtifact")
+            logging.warning(
+                "Activity result is not an artifact; converting result to InfoArtifact"
+            )
 
             result = InfoArtifact(activity_result)
 
         return result
 
-    def after_run(self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
+    def after_run(
+        self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact
+    ) -> BaseArtifact:
         if value:
             if self.output_memory:
-                output_memories = self.output_memory[getattr(activity, "name")] or []
+                output_memories = (
+                    self.output_memory[getattr(activity, "name")] or []
+                )
                 for memory in output_memories:
                     value = memory.process_output(activity, subtask, value)
 
@@ -161,10 +199,19 @@ class BaseTool(ActivityMixin, ABC):
 
         return os.path.dirname(os.path.abspath(class_file))
 
-    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
+    def install_dependencies(
+        self, env: Optional[dict[str, str]] = None
+    ) -> None:
         env = env if env else {}
 
-        command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+        command = [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "-r",
+            "requirements.txt",
+        ]
 
         if self.dependencies_install_directory is None:
             command.extend(["-U"])
@@ -181,6 +228,69 @@ class BaseTool(ActivityMixin, ABC):
 
     def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if self.input_memory:
-            return next((m for m in self.input_memory if m.name == memory_name), None)
+            return next(
+                (m for m in self.input_memory if m.name == memory_name), None
+            )
         else:
             return None
+
+    def dict_to_xml(self, schema_dict: dict):
+        def add_parameters(properties, required, parameters_section):
+            for param_name, param_info in properties.items():
+                if param_name in required:
+                    parameter = ET.SubElement(parameters_section, "parameter")
+                    ET.SubElement(parameter, "name").text = param_name
+                    param_type = param_info.get(
+                        "type", "string"
+                    )  # Default type is string
+                    ET.SubElement(parameter, "type").text = param_type
+                    description = param_info.get("description", "")
+                    if description:
+                        ET.SubElement(parameter, "description").text = (
+                            description
+                        )
+
+        root = ET.Element("tool_description")
+
+        # Tool name and description
+        ET.SubElement(root, "tool_name").text = schema_dict.get(
+            "$id", ""
+        ).replace(" Action Schema", "")
+        ET.SubElement(root, "description").text = schema_dict.get(
+            "description", ""
+        )
+
+        parameters_section = ET.SubElement(root, "parameters")
+
+        if "properties" in schema_dict:
+            properties = schema_dict.get("properties", {})
+            required = schema_dict.get("required", [])
+            add_parameters(properties, required, parameters_section)
+        elif "anyOf" in schema_dict:
+            for option in schema_dict["anyOf"]:
+                properties = option.get("properties", {})
+                required = option.get("required", [])
+                add_parameters(properties, required, parameters_section)
+                # Handle nested properties like 'input' if necessary
+
+        def prettify(element, indent="    "):
+            queue = [(0, element)]  # (level, element)
+            while queue:
+                level, element = queue.pop(0)
+                children = [(level + 1, child) for child in list(element)]
+                if children:
+                    element.text = "\n" + indent * (
+                        level + 1
+                    )  # for child open
+                if queue:
+                    element.tail = (
+                        "\n" + indent * queue[0][0]
+                    )  # for next sibling
+                else:
+                    element.tail = "\n" + indent * (
+                        level - 1
+                    )  # for close of parent
+                queue[0:0] = children  # add children to the start of the queue
+
+        prettify(root)
+        return ET.tostring(root, encoding="unicode")

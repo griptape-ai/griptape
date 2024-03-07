@@ -1,5 +1,28 @@
-Output a JSON object that strictly adheres to the specified schema with no additional text or commentary. The object should only include fields defined in the schema
-Schema: """{{ action_schema }}"""
+Output a XML object that strictly adheres to the specified tool with no additional text or commentary. The object should only include fields defined in the schema
+
+In this environment you have access to a set of tools you can use to answer the user's question.
+You may call them like this:
+{% raw %}
+<function_calls>
+<invoke>
+<tool_name>$TOOL_NAME</tool_name>
+<parameters>
+<$PARAMETER_NAME>$PARAMETER_VALUE</$PARAMETER_NAME>
+...
+</parameters>
+</invoke>
+</function_calls>
+{% endraw %}
+
+
+Here are the tools available:
+{% raw %}
+<tools>
+{% endraw %}
+{{ action_schema }}
+{% raw %}
+</tools>
+{% endraw %}
 
 {% if meta_memory %}
 
