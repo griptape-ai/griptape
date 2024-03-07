@@ -3,7 +3,7 @@ import json
 from typing import Optional, TYPE_CHECKING
 from attr import define, field
 from griptape import utils
-from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact, BaseArtifact
+from griptape.artifacts import InfoArtifact, BaseArtifact
 from griptape.tasks import PromptTask, ActionSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
@@ -23,6 +23,8 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     def __attrs_post_init__(self) -> None:
         if self.task_memory is not None:
             self.set_default_tools_memory(self.task_memory)
+        if self.tool.xml_functions_calling:
+            self.xml_functions_calling = True
 
     def preprocess(self, structure: Structure) -> ToolTask:
         super().preprocess(structure)
@@ -33,16 +35,27 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
         return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
-        return J2("tasks/tool_task/system.j2").render(
+        action_schema = (
+            self.tool.schema() if self.xml_functions_calling else utils.minify_json(json.dumps(self.tool.schema()))
+        )
+        j2_system_file = (
+            "tasks/tool_task/system_xml_functions_calling.j2"
+            if self.xml_functions_calling
+            else "tasks/tool_task/system.j2"
+        )
+
+        return J2(j2_system_file).render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
-            action_schema=utils.minify_json(json.dumps(self.tool.schema())),
+            action_schema=action_schema,
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
         )
 
     def run(self) -> BaseArtifact:
         prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
 
-        subtask = self.add_subtask(ActionSubtask(f"Action: {prompt_output}"))
+        subtask = self.add_subtask(
+            ActionSubtask(f"Action: {prompt_output}", xml_functions_calling=self.xml_functions_calling)
+        )
 
         subtask.before_run()
         subtask.run()

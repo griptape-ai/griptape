@@ -11,7 +11,11 @@ if TYPE_CHECKING:
 @define(frozen=True)
 class AnthropicTokenizer(BaseTokenizer):
     DEFAULT_MODEL = "claude-2.1"
-    MODEL_PREFIXES_TO_MAX_TOKENS = {"claude-2.1": 200000, "claude": 100000}
+    MODEL_PREFIXES_TO_MAX_TOKENS = {
+        "anthropic.claude-3-sonnet-20240229-v1:0": 200000,
+        "claude-2.1": 200000,
+        "claude": 100000,
+    }
 
     model: str = field(kw_only=True)
     max_tokens: int = field(kw_only=True, default=Factory(lambda self: self.default_max_tokens(), takes_self=True))

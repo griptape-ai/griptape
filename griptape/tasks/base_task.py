@@ -29,6 +29,7 @@ class BaseTask(ABC):
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    xml_functions_calling: Optional[bool] = field(default=False, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
