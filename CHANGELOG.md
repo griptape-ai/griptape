@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Action Subtask incorrectly raising an exception for actions without an input. 
 - Incorrect `GriptapeCloudKnowledgeBaseClient`'s API URLs. 
+- Issue with Tool Task system prompt causing the LLM to generate an invalid action.
 
 ## [0.23.0] - 2024-02-26
 

@@ -1,6 +1,7 @@
-Output a JSON object that strictly adheres to the specified schema with no additional text or commentary. The object should only include fields defined in the schema
-Schema: """{{ action_schema }}"""
+Your output should always be an action in the form of a JSON object with the following schema: 
+{{ action_schema }}
 
+NEVER make up action names. NEVER make up action paths. Actions must ALWAYS be plain JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. Your output should always be a JSON object with no additional text before or after.
 {% if meta_memory %}
 
 {{ meta_memory }}
