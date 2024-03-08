@@ -214,11 +214,8 @@ class ActionSubtask(BaseTextInputTask):
                             "ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
                         )
 
-                if self._tool:
-                    if self.action_input:
-                        self.__validate_action_input(self.action_input, self._tool)
-                    else:
-                        raise Exception("Action input not found.")
+                if self._tool and self.action_input:
+                    self.__validate_action_input(self.action_input, self._tool)
             except SyntaxError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
