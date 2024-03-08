@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## [0.23.1] - 2024-03-07
+
 ### Fixed
 - Action Subtask incorrectly raising an exception for actions without an input. 
 - Incorrect `GriptapeCloudKnowledgeBaseClient`'s API URLs. 
