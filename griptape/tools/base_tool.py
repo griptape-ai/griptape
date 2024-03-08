@@ -12,9 +12,6 @@ import yaml
 from attr import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
-from dicttoxml import dicttoxml
-import html
-from griptape.utils import format_xml
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -108,9 +105,6 @@ class BaseTool(ActivityMixin, ABC):
 
         full_schema = Schema(Or(*action_schemas), description=f"{self.name} action schema.")
 
-        if self.xml_functions_calling:
-            return self.dict_to_xml(full_schema.json_schema(f"{self.name} Action Schema"))
-
         return full_schema.json_schema(f"{self.name} Action Schema")
 
     def execute(self, activity: Callable, subtask: ActionSubtask) -> BaseArtifact:
@@ -192,11 +186,3 @@ class BaseTool(ActivityMixin, ABC):
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:
             return None
-
-    def dict_to_xml(self, schema_dict: dict):
-        xml = dicttoxml(schema_dict, custom_root="tool_description", attr_type=False).decode("utf-8")
-        xml = html.unescape(xml)
-        xml = xml.replace('<?xml version="1.0" encoding="UTF-8" ?>', "").replace(
-            '<key name="$schema">http://json-schema.org/draft-07/schema#</key>', ""
-        )
-        return format_xml(xml)

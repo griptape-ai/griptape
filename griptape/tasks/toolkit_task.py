@@ -34,6 +34,7 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
     def __attrs_post_init__(self) -> None:
         if self.task_memory:
             self.set_default_tools_memory(self.task_memory)
+        self.xml_functions_calling = any(tool.xml_functions_calling for tool in self.tools)
 
     @tools.validator  # pyright: ignore
     def validate_tools(self, _, tools: list[BaseTool]) -> None:
@@ -85,17 +86,27 @@ class ToolkitTask(PromptTask, ActionSubtaskOriginMixin):
         return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
+        actions_schemas = [
+            utils.schema_to_xml(tool.schema())
+            if tool.xml_functions_calling
+            else utils.minify_json(json.dumps(tool.schema()))
+            for tool in self.tools
+        ]
+
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
-            action_schemas=[utils.minify_json(json.dumps(tool.schema())) for tool in self.tools],
+            action_schemas=actions_schemas,
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
+            xml_functions_calling=self.xml_functions_calling,
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionSubtask) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
-            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
+            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
+            subtask=subtask,
+            xml_functions_calling=self.xml_functions_calling,
         )
 
     def default_user_subtask_template_generator(self, subtask: ActionSubtask) -> str:

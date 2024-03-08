@@ -4,6 +4,7 @@ import re
 from typing import Optional, TYPE_CHECKING, Callable
 import schema
 import xml.etree.ElementTree as ET
+import xml.dom.minidom
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
@@ -23,7 +24,7 @@ if TYPE_CHECKING:
 class ActionSubtask(BaseTextInputTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
-    ACTION_XML_PATTERN = r"Action:\s*<function_calls>\s*<invoke>.*<\/invoke>"
+    ACTION_XML_PATTERN = r"Action:\s*([\s\S]*<\/invoke>)"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
     ACTION_SCHEMA = Schema(
         description="Actions have name, path, and input object.",
@@ -80,6 +81,7 @@ class ActionSubtask(BaseTextInputTask):
 
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
+        self.xml_functions_calling = parent_task.xml_functions_calling
         self.structure = parent_task.structure
         self.__init_from_prompt(self.input.to_text())
 
@@ -157,6 +159,18 @@ class ActionSubtask(BaseTextInputTask):
 
         return json.dumps(json_dict)
 
+    def action_to_xml(self) -> str:
+        root = ET.Element("function_calls")
+        invoke = ET.SubElement(root, "invoke")
+        ET.SubElement(invoke, "tool_name").text = self.action_name
+        ET.SubElement(invoke, "path").text = self.action_path
+        parameters = ET.SubElement(invoke, "parameters")
+        for key, value in self.action_input["values"].items():
+            ET.SubElement(parameters, key).text = str(value)
+        action_xml = xml.dom.minidom.parseString(ET.tostring(root, encoding="unicode")).toprettyxml()
+
+        return action_xml.replace('<?xml version="1.0" ?>\n', "")
+
     def add_child(self, child: ActionSubtask) -> ActionSubtask:
         if child.id not in self.child_ids:
             self.child_ids.append(child.id)
@@ -176,8 +190,9 @@ class ActionSubtask(BaseTextInputTask):
         return parent
 
     def get_matches(self, value) -> tuple[list, list, list]:
+        action_pattern = self.ACTION_XML_PATTERN if self.xml_functions_calling else self.ACTION_PATTERN
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
-        action_matches = re.findall(self.ACTION_PATTERN, value, re.DOTALL)
+        action_matches = re.findall(action_pattern, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
         return thought_matches, action_matches, answer_matches
@@ -206,12 +221,6 @@ class ActionSubtask(BaseTextInputTask):
             # works is to strip all key-values where value is null.
             self.action_input = remove_null_values_in_dict_recursively(action_object["input"])
 
-    # TODO add thoughts and answers
-    def get_xml_matches(self, value) -> tuple[list, list, list]:
-        action_matches = re.findall(self.ACTION_XML_PATTERN, value, re.DOTALL)
-
-        return [], action_matches, []
-
     def build_xml_action(self, action_matches: list) -> None:
         data = action_matches[-1]
         # remove "Action: " for XML
@@ -235,9 +244,7 @@ class ActionSubtask(BaseTextInputTask):
             self.action_input = result
 
     def __init_from_prompt(self, value: str) -> None:
-        thought_matches, action_matches, answer_matches = (
-            self.get_xml_matches(value) if self.xml_functions_calling else self.get_matches(value)
-        )
+        thought_matches, action_matches, answer_matches = self.get_matches(value)
 
         if self.thought is None and len(thought_matches) > 0:
             self.thought = thought_matches[-1]

@@ -15,7 +15,7 @@ from .import_utils import import_optional_dependency
 from .stream import Stream
 from .constants import Constants as constants
 from .load_artifact_from_memory import load_artifact_from_memory
-from .xml_utils import format_xml
+from .xml_utils import schema_to_xml
 
 
 def minify_json(value: str) -> str:
@@ -40,5 +40,5 @@ __all__ = [
     "Stream",
     "constants",
     "load_artifact_from_memory",
-    "format_xml",
+    "schema_to_xml",
 ]

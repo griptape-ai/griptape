@@ -191,3 +191,9 @@ class TestToolkitSubtask:
         system_template = task.generate_system_template(PromptTask())
 
         assert "You have access to additional contextual information" in system_template
+
+    def test_xml_functions_calling_true(self):
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1", xml_functions_calling=True)])
+        Agent().add_task(task)
+
+        assert task.xml_functions_calling

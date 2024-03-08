@@ -1,23 +1,30 @@
-import xml.etree.ElementTree as ET
-import html
-from typing import LiteralString
+def schema_to_xml(action: dict) -> str:
+    def json2xml(json_obj: dict, line_padding=""):
+        result_list = list()
 
+        if line_padding == "":
+            result_list.append("<tool_description>")
 
-def format_xml(xml_string: LiteralString | str | bytes) -> str:
-    root = ET.fromstring(xml_string)
-    formatted_lines = []
+        json_obj_type = type(json_obj)
 
-    def format_element(elem, level=0):
-        elem_str = ET.tostring(elem, encoding="unicode", method="xml")
-        decoded_elem_str = html.unescape(elem_str)
-        formatted_lines.append(decoded_elem_str + "\n")
-        for child in elem:
-            format_element(child, level + 1)
-        if not list(elem):
-            formatted_lines.append("\n")
+        if json_obj_type is list:
+            for sub_elem in json_obj:
+                result_list.append(json2xml(sub_elem, line_padding))
 
-    format_element(root)
+        elif json_obj_type is dict:
+            for tag_name in json_obj:
+                sub_obj = json_obj[tag_name]
+                result_list.append("%s<%s>" % (line_padding, tag_name))
+                result_list.append(json2xml(sub_obj, "\t" + line_padding))
+                result_list.append("%s</%s>" % (line_padding, tag_name))
 
-    formatted_xml = "".join(formatted_lines)
+        else:
+            result_list.append("%s%s" % (line_padding, json_obj))
+        if line_padding == "":
+            result_list.append("</tool_description>")
 
-    return formatted_xml
+        return "\n".join(result_list)
+
+    del action["$schema"]
+    del action["$id"]
+    return json2xml(action)

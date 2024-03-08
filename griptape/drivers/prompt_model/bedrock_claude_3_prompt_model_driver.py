@@ -5,16 +5,16 @@ from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptModelDriver, AmazonBedrockPromptDriver
-from griptape.tokenizers import BedrockClaudeTokenizer
+from griptape.tokenizers import BedrockClaude3Tokenizer
 
 
 @define
 class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
-    _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
+    _tokenizer: BedrockClaude3Tokenizer = field(default=None, kw_only=True)
     prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
 
     @property
-    def tokenizer(self) -> BedrockClaudeTokenizer:
+    def tokenizer(self) -> BedrockClaude3Tokenizer:
         """Returns the tokenizer for this driver.
 
         We need to pass the `session` field from the Prompt Driver to the
@@ -32,7 +32,7 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
         if self._tokenizer:
             return self._tokenizer
         else:
-            self._tokenizer = BedrockClaudeTokenizer(model=self.prompt_driver.model)
+            self._tokenizer = BedrockClaude3Tokenizer(model=self.prompt_driver.model)
             return self._tokenizer
 
     # https://docs.anthropic.com/claude/reference/claude-on-amazon-bedrock
@@ -54,7 +54,7 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
             "system": system,
             "messages": messages,
             "anthropic_version": "bedrock-2023-05-31",
-            "stop_sequences": ["</function_calls>"],
+            "stop_sequences": self.tokenizer.stop_sequences,
         }
 
     def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:

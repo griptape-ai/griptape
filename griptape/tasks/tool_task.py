@@ -36,26 +36,22 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         action_schema = (
-            self.tool.schema() if self.xml_functions_calling else utils.minify_json(json.dumps(self.tool.schema()))
-        )
-        j2_system_file = (
-            "tasks/tool_task/system_xml_functions_calling.j2"
+            utils.schema_to_xml(self.tool.schema())
             if self.xml_functions_calling
-            else "tasks/tool_task/system.j2"
+            else utils.minify_json(json.dumps(self.tool.schema()))
         )
 
-        return J2(j2_system_file).render(
+        return J2("tasks/tool_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=action_schema,
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
+            xml_functions_calling=self.xml_functions_calling,
         )
 
     def run(self) -> BaseArtifact:
         prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
 
-        subtask = self.add_subtask(
-            ActionSubtask(f"Action: {prompt_output}", xml_functions_calling=self.xml_functions_calling)
-        )
+        subtask = self.add_subtask(ActionSubtask(f"Action: {prompt_output}"))
 
         subtask.before_run()
         subtask.run()
