@@ -54,7 +54,7 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
             "system": system,
             "messages": messages,
             "anthropic_version": "bedrock-2023-05-31",
-            "stop_sequences": ["</function_calls>"],
+            "stop_sequences": self.tokenizer.stop_sequences,
         }
 
     def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:

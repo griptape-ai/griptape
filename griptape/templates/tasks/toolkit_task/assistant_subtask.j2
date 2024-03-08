@@ -1,4 +1,8 @@
 {% if subtask.thought %}
 Thought: {{ subtask.thought }}
 {% endif %}
+{% if xml_functions_calling %}
+Action: {{ subtask.action_to_xml() }}
+{% else %}
 Action: {{ subtask.action_to_json() }}
+{% endif %}
