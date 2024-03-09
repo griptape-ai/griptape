@@ -4,7 +4,6 @@ import re
 from typing import Optional, TYPE_CHECKING, Callable
 import schema
 import xml.etree.ElementTree as ET
-import xml.dom.minidom
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
@@ -167,9 +166,8 @@ class ActionSubtask(BaseTextInputTask):
         parameters = ET.SubElement(invoke, "parameters")
         for key, value in self.action_input["values"].items():
             ET.SubElement(parameters, key).text = str(value)
-        action_xml = xml.dom.minidom.parseString(ET.tostring(root, encoding="unicode")).toprettyxml()
 
-        return action_xml.replace('<?xml version="1.0" ?>\n', "")
+        return ET.tostring(root, encoding="unicode")
 
     def add_child(self, child: ActionSubtask) -> ActionSubtask:
         if child.id not in self.child_ids:
