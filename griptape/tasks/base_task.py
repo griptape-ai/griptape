@@ -99,6 +99,7 @@ class BaseTask(ABC):
             )
 
     def execute(self) -> Optional[BaseArtifact]:
+        exception = None
         try:
             self.state = BaseTask.State.EXECUTING
 
@@ -111,8 +112,13 @@ class BaseTask(ABC):
             self.structure.logger.error(f"{self.__class__.__name__} {self.id}\n{e}", exc_info=True)
 
             self.output = ErrorArtifact(str(e))
+
+            exception = e
         finally:
             self.state = BaseTask.State.FINISHED
+
+            if exception is not None:
+                raise exception
 
             return self.output
 
