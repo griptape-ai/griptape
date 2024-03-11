@@ -19,8 +19,8 @@ class TestJsonExtractionEngine:
         result = engine.extract("foo", template_schema=json_schema)
 
         assert len(result.value) == 2
-        assert result.value[0].value == "{'test_key_1': 'test_value_1'}"
-        assert result.value[1].value == "{'test_key_2': 'test_value_2'}"
+        assert result.value[0].value == '{"test_key_1": "test_value_1"}'
+        assert result.value[1].value == '{"test_key_2": "test_value_2"}'
 
     def test_extract_error(self, engine):
         assert isinstance(engine.extract("foo", template_schema=lambda: "non serializable"), ErrorArtifact)
