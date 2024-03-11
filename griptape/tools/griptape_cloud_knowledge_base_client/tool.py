@@ -20,7 +20,7 @@ class GriptapeCloudKnowledgeBaseClient(BaseTool):
     """
 
     description: Optional[str] = field(default=None, kw_only=True)
-    base_url: str = field(default="https://api.cloud.griptape.ai", kw_only=True)
+    base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
     api_key: str = field(kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
@@ -39,7 +39,7 @@ class GriptapeCloudKnowledgeBaseClient(BaseTool):
         from requests import post, exceptions
 
         query = params["values"]["query"]
-        url = urljoin(self.base_url.strip("/"), f"knowledge-bases/{self.knowledge_base_id}/query")
+        url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
 
         try:
             response = post(url, json={"query": query}, headers=self.headers)
@@ -54,7 +54,7 @@ class GriptapeCloudKnowledgeBaseClient(BaseTool):
         if self.description:
             return self.description
         else:
-            url = urljoin(self.base_url.strip("/"), f"knowledge-bases/{self.knowledge_base_id}/")
+            url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/")
 
             response = get(url, headers=self.headers).json()
             if "description" in response:
