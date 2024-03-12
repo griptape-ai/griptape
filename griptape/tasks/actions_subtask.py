@@ -12,7 +12,7 @@ from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionSubtaskOriginMixin
 from griptape.tasks import BaseTextInputTask, BaseTask
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact
-from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
+from griptape.events import StartActionsSubtaskEvent, FinishActionsSubtaskEvent
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -100,7 +100,7 @@ class ActionsSubtask(BaseTextInputTask):
 
     def before_run(self) -> None:
         self.structure.publish_event(
-            StartActionSubtaskEvent(
+            StartActionsSubtaskEvent(
                 task_id=self.id,
                 task_parent_ids=self.parent_ids,
                 task_child_ids=self.child_ids,
@@ -157,7 +157,7 @@ class ActionsSubtask(BaseTextInputTask):
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
 
         self.structure.publish_event(
-            FinishActionSubtaskEvent(
+            FinishActionsSubtaskEvent(
                 task_id=self.id,
                 task_parent_ids=self.parent_ids,
                 task_child_ids=self.child_ids,

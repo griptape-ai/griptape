@@ -6,8 +6,8 @@ from griptape.events import (
     FinishPromptEvent,
     StartTaskEvent,
     FinishTaskEvent,
-    StartActionSubtaskEvent,
-    FinishActionSubtaskEvent,
+    StartActionsSubtaskEvent,
+    FinishActionsSubtaskEvent,
     CompletionChunkEvent,
     StartStructureRunEvent,
     FinishStructureRunEvent,
@@ -94,7 +94,7 @@ class TestBaseEvent:
 
         event = BaseEvent.from_dict(dict_value)
 
-        assert isinstance(event, StartActionSubtaskEvent)
+        assert isinstance(event, StartActionsSubtaskEvent)
         assert event.timestamp == 123
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]
@@ -147,7 +147,7 @@ class TestBaseEvent:
 
         event = BaseEvent.from_dict(dict_value)
 
-        assert isinstance(event, FinishActionSubtaskEvent)
+        assert isinstance(event, FinishActionsSubtaskEvent)
         assert event.timestamp == 123
         assert event.task_id == "foo"
         assert event.task_parent_ids == ["bar"]

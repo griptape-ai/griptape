@@ -9,13 +9,13 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseActionSubtaskEvent(BaseTaskEvent, ABC):
+class BaseActionsSubtaskEvent(BaseTaskEvent, ABC):
     subtask_parent_task_id: Optional[str] = field(kw_only=True, metadata={"serializable": True})
     subtask_thought: Optional[str] = field(kw_only=True, metadata={"serializable": True})
     subtask_actions: Optional[list[dict]] = field(kw_only=True, metadata={"serializable": True})
 
     @classmethod
-    def from_task(cls, task: BaseTask) -> BaseActionSubtaskEvent:
+    def from_task(cls, task: BaseTask) -> BaseActionsSubtaskEvent:
         if not isinstance(task, ActionsSubtask):
             raise ValueError("Event must be of instance ActionSubtask.")
         return cls(

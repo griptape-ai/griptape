@@ -1,12 +1,12 @@
 import pytest
-from griptape.events import FinishActionSubtaskEvent
+from griptape.events import FinishActionsSubtaskEvent
 from griptape.structures import Agent
 from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestFinishActionSubtaskEvent:
+class TestFinishActionsSubtaskEvent:
     @pytest.fixture
     def finish_subtask_event(self):
         valid_input = (
@@ -22,7 +22,7 @@ class TestFinishActionSubtaskEvent:
         task.add_subtask(subtask)
         agent.run()
 
-        return FinishActionSubtaskEvent(
+        return FinishActionsSubtaskEvent(
             task_id=subtask.id,
             task_parent_ids=subtask.parent_ids,
             task_child_ids=subtask.child_ids,
