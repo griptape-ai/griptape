@@ -48,9 +48,12 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
     # https://docs.anthropic.com/claude/reference/messages_post
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         system, messages = self.prompt_stack_to_model_input(prompt_stack)
+        # this is required to "calculate" the correct left over tokens for the request
+        model_input = ' '.join(message['content'] for message in messages).strip() + system
+        tokens_left = self.tokenizer.count_tokens_left(model_input)
 
         return {
-            "max_tokens": self.tokenizer.max_tokens,
+            "max_tokens": tokens_left,
             "system": system,
             "messages": messages,
             "anthropic_version": "bedrock-2023-05-31",
