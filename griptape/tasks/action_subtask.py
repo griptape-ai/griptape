@@ -13,6 +13,7 @@ from griptape.mixins import ActivityMixin, ActionSubtaskOriginMixin
 from griptape.tasks import BaseTextInputTask, BaseTask
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.events import StartActionSubtaskEvent, FinishActionSubtaskEvent
+from xml.dom.minidom import parseString
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -167,7 +168,9 @@ class ActionSubtask(BaseTextInputTask):
         for key, value in self.action_input["values"].items():
             ET.SubElement(parameters, key).text = str(value)
 
-        return ET.tostring(root, encoding="unicode")
+        dom = parseString(ET.tostring(root, encoding="unicode"))
+
+        return dom.toprettyxml(indent="").replace('<?xml version="1.0" ?>\n', "")
 
     def add_child(self, child: ActionSubtask) -> ActionSubtask:
         if child.id not in self.child_ids:
