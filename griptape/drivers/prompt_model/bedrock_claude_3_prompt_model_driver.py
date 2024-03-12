@@ -49,7 +49,7 @@ class BedrockClaude3PromptModelDriver(BasePromptModelDriver):
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         system, messages = self.prompt_stack_to_model_input(prompt_stack)
         # this is required to "calculate" the correct left over tokens for the request
-        model_input = ' '.join(message['content'] for message in messages).strip() + system
+        model_input = " ".join(message["content"] for message in messages).strip() + system
         tokens_left = self.tokenizer.count_tokens_left(model_input)
 
         return {
