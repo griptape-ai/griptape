@@ -205,7 +205,8 @@ class ActionsSubtask(BaseTextInputTask):
                 data = actions_matches[-1]
                 actions_list: list = json.loads(data, strict=False)
 
-                validate(instance=actions_list, schema=self.origin_task.actions_schema())
+                if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
+                    validate(instance=actions_list, schema=self.origin_task.actions_schema())
 
                 for action_object in actions_list:
                     # Load action name; throw exception if the key is not present
