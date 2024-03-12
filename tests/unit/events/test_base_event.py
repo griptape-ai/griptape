@@ -80,7 +80,7 @@ class TestBaseEvent:
 
     def test_start_subtask_event_from_dict(self):
         dict_value = {
-            "type": "StartActionSubtaskEvent",
+            "type": "StartActionsSubtaskEvent",
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
@@ -133,7 +133,7 @@ class TestBaseEvent:
 
     def test_finish_subtask_event_from_dict(self):
         dict_value = {
-            "type": "FinishActionSubtaskEvent",
+            "type": "FinishActionsSubtaskEvent",
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
