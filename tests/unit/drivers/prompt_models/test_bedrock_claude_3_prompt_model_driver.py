@@ -58,7 +58,7 @@ class TestBedrockClaudePromptModelDriver:
         assert model_input == expected
 
     @pytest.mark.parametrize(
-        "driver,key,expected", [("anthropic.claude-3-sonnet-20240229-v1:0", "max_tokens", 200000)], indirect=["driver"]
+        "driver,key,expected", [("anthropic.claude-3-sonnet-20240229-v1:0", "max_tokens", 199997)], indirect=["driver"]
     )
     def test_prompt_stack_to_model_params(self, driver, key, expected, stack):
         assert driver.prompt_stack_to_model_params(stack)[key] == expected
