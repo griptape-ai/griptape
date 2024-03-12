@@ -54,3 +54,11 @@ class TestToolTask:
         system_template = task.generate_system_template(task)
 
         assert "You have access to additional contextual information" in system_template
+
+    def test_actions_schema(self):
+        tool = MockTool()
+        task = ToolTask("test", tool=tool)
+
+        Agent().add_task(task)
+
+        assert isinstance(task.actions_schema(), dict)

@@ -39,6 +39,9 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
         )
 
+    def actions_schema(self) -> dict:
+        return self._actions_schema_for_tools([self.tool])
+
     def run(self) -> BaseArtifact:
         prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
 

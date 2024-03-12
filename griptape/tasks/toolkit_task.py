@@ -4,11 +4,11 @@ from typing import TYPE_CHECKING, Callable, Optional
 from attr import define, field, Factory
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ErrorArtifact
-from griptape.utils import PromptStack
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
+from griptape.utils import PromptStack
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -88,8 +88,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
-            actions_schema=ActionsSubtask.json_actions_schema(),
-            action_schemas=[utils.minify_json(json.dumps(tool.schema())) for tool in self.tools],
+            actions_schema=utils.minify_json(json.dumps(self.actions_schema())),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
@@ -103,6 +102,9 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         return J2("tasks/toolkit_task/user_subtask.j2").render(
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
         )
+
+    def actions_schema(self) -> dict:
+        return self._actions_schema_for_tools(self.tools)
 
     def set_default_tools_memory(self, memory: TaskMemory) -> None:
         self.task_memory = memory

@@ -2,11 +2,9 @@ from __future__ import annotations
 import json
 import re
 from typing import Optional, TYPE_CHECKING, Callable
-import schema
 from attr import define, field
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
-from schema import Schema, Literal
 from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
@@ -32,21 +30,6 @@ class ActionsSubtask(BaseTextInputTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
-    ACTIONS_SCHEMA = Schema(
-        description="JSON schema for an array of actions to be executed in parallel.",
-        schema=[
-            {
-                Literal(
-                    "output_label", description="Action label that can later be used to identify action output"
-                ): str,
-                Literal("name", description="Action name"): str,
-                Literal("path", description="Action path"): str,
-                schema.Optional(Literal("input", description="Optional action path input values object")): {
-                    "values": dict
-                },
-            }
-        ],
-    )
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
@@ -88,10 +71,6 @@ class ActionsSubtask(BaseTextInputTask):
             return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
-
-    @classmethod
-    def json_actions_schema(cls) -> dict:
-        return cls.ACTIONS_SCHEMA.json_schema("Actions Schema")
 
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
@@ -226,7 +205,7 @@ class ActionsSubtask(BaseTextInputTask):
                 data = actions_matches[-1]
                 actions_list: list = json.loads(data, strict=False)
 
-                validate(instance=actions_list, schema=self.json_actions_schema())
+                validate(instance=actions_list, schema=self.origin_task.actions_schema())
 
                 for action_object in actions_list:
                     # Load action name; throw exception if the key is not present

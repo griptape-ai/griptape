@@ -202,3 +202,11 @@ class TestToolkitSubtask:
         system_template = task.generate_system_template(PromptTask())
 
         assert "You have access to additional contextual information" in system_template
+
+    def test_actions_schema(self):
+        tool = MockTool()
+        task = ToolkitTask("test", tools=[tool])
+
+        Agent().add_task(task)
+
+        assert isinstance(task.actions_schema(), dict)

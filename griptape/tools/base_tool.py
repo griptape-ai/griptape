@@ -89,7 +89,12 @@ class BaseTool(ActivityMixin, ABC):
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `self.activities`.
     def schema(self) -> dict:
-        action_schemas = [
+        full_schema = Schema(Or(*self.activity_schemas()), description=f"{self.name} action schema.")
+
+        return full_schema.json_schema(f"{self.name} Action Schema")
+
+    def activity_schemas(self) -> list[Schema]:
+        return [
             Schema(
                 {
                     Literal("name"): self.name,
@@ -101,9 +106,6 @@ class BaseTool(ActivityMixin, ABC):
             )
             for activity in self.activities()
         ]
-        full_schema = Schema(Or(*action_schemas), description=f"{self.name} action schema.")
-
-        return full_schema.json_schema(f"{self.name} Action Schema")
 
     def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask, action)
