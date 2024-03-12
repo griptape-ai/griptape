@@ -39,7 +39,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             return ErrorArtifact(f"error extracting JSON: {e}")
 
     def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
-        return [TextArtifact(e) for e in json.loads(json_input)]
+        return [TextArtifact(json.dumps(e)) for e in json.loads(json_input)]
 
     def _extract_rec(
         self,
