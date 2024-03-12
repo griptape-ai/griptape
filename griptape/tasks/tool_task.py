@@ -7,7 +7,7 @@ from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact
 from griptape.tasks import PromptTask, ActionsSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
-from griptape.mixins import ActionSubtaskOriginMixin
+from griptape.mixins import ActionsSubtaskOriginMixin
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolTask(PromptTask, ActionSubtaskOriginMixin):
+class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)

@@ -9,7 +9,7 @@ from jsonschema.validators import validate
 from schema import Schema, Literal
 from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
-from griptape.mixins import ActionSubtaskOriginMixin
+from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTextInputTask, BaseTask
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact
 from griptape.events import StartActionsSubtaskEvent, FinishActionsSubtaskEvent
@@ -77,14 +77,14 @@ class ActionsSubtask(BaseTextInputTask):
 
     @property
     def parents(self) -> list[BaseTask]:
-        if isinstance(self.origin_task, ActionSubtaskOriginMixin):
+        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
             return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
     @property
     def children(self) -> list[BaseTask]:
-        if isinstance(self.origin_task, ActionSubtaskOriginMixin):
+        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
             return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
@@ -249,7 +249,7 @@ class ActionsSubtask(BaseTextInputTask):
                         action_input = {}
 
                     # Load the action itself
-                    if isinstance(self.origin_task, ActionSubtaskOriginMixin):
+                    if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
                         tool = self.origin_task.find_tool(action_name)
                     else:
                         raise Exception(
