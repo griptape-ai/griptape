@@ -19,17 +19,16 @@ if TYPE_CHECKING:
     from griptape.tools import BaseTool
 
 
-@define(kw_only=True)
-class Action:
-    output_label: str = field()
-    name: str = field()
-    path: Optional[str] = field(default=None)
-    input: dict = field()
-    tool: Optional[BaseTool] = field(default=None)
-
-
 @define
 class ActionsSubtask(BaseTextInputTask):
+    @define(kw_only=True)
+    class Action:
+        output_label: str = field()
+        name: str = field()
+        path: Optional[str] = field(default=None)
+        input: dict = field()
+        tool: Optional[BaseTool] = field(default=None)
+
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -257,7 +256,7 @@ class ActionsSubtask(BaseTextInputTask):
                             "ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
                         )
 
-                    new_action = Action(
+                    new_action = ActionsSubtask.Action(
                         output_label=action_output_label,
                         name=action_name,
                         path=action_path,
@@ -289,7 +288,7 @@ class ActionsSubtask(BaseTextInputTask):
             self.output = TextArtifact(answer_matches[-1])
 
     def __error_to_action(self, error: str) -> Action:
-        return Action(output_label="error", name="error", input={"error": error})
+        return ActionsSubtask.Action(output_label="error", name="error", input={"error": error})
 
     def __validate_action(self, action: Action) -> None:
         try:
