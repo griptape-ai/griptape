@@ -9,13 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Every subtask in `ToolkitTask` can now execute multiple actions in parallel.
 - Added `BaseActionSubtaskEvent.subtask_actions`.
+- Support for `text-embedding-3-small` and `text-embedding-3-large` models.
 
 ### Fixed
-- Improved system prompt in`ToolTask` to support more use cases.
+- Improved system prompt in `ToolTask` to support more use cases.
 
 ### Changed
 - **BREAKING**: `ActionSubtask` was renamed to `ActionsSubtask`.
 - **BREAKING**: Removed `subtask_action_name`, `subtask_action_path`, and `subtask_action_input` in `BaseActionSubtaskEvent`.
+- Default embedding model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
+- Default embedding model of `OpenAiStructureConfig` to `text-embedding-3-small`.
+- `BaseTextLoader` to accept a `BaseChunker`.
 
 ## [0.23.1] - 2024-03-07
 
