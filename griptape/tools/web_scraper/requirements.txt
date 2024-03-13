@@ -1,1 +1,3 @@
 trafilatura>=1.6
+playwright>=1.42
+markdownify>=0.11.6
