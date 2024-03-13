@@ -33,7 +33,7 @@ class TestOpenAiStructureConfig:
                 "embedding_driver": {
                     "api_key": None,
                     "base_url": None,
-                    "model": "text-embedding-ada-002",
+                    "model": "text-embedding-3-small",
                     "organization": None,
                     "type": "OpenAiEmbeddingDriver",
                 },
@@ -62,7 +62,7 @@ class TestOpenAiStructureConfig:
                     "embedding_driver": {
                         "api_key": None,
                         "base_url": None,
-                        "model": "text-embedding-ada-002",
+                        "model": "text-embedding-3-small",
                         "organization": None,
                         "type": "OpenAiEmbeddingDriver",
                     },
@@ -93,7 +93,7 @@ class TestOpenAiStructureConfig:
                             "api_key": None,
                             "base_url": None,
                             "organization": None,
-                            "model": "text-embedding-ada-002",
+                            "model": "text-embedding-3-small",
                         },
                     },
                 },

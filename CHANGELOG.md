@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Support for `text-embedding-3-small` and `text-embedding-3-large` models.
+
+### Changed
+- Default embedding model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
+- Default embedding model of `OpenAiStructureConfig` to `text-embedding-3-small`.
+
 ## [0.23.1] - 2024-03-07
 
 ### Fixed

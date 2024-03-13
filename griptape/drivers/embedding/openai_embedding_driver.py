@@ -10,7 +10,7 @@ import openai
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     """
     Attributes:
-        model: OpenAI embedding model name. Defaults to `text-embedding-ada-002`.
+        model: OpenAI embedding model name. Defaults to `text-embedding-3-small`.
         base_url: API URL. Defaults to OpenAI's v1 API URL.
         api_key: API key to pass directly. Defaults to `OPENAI_API_KEY` environment variable.
         organization: OpenAI organization. Defaults to 'OPENAI_ORGANIZATION' environment variable.
@@ -23,7 +23,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         api_version: An Azure OpenAi API version.
     """
 
-    DEFAULT_MODEL = "text-embedding-ada-002"
+    DEFAULT_MODEL = "text-embedding-3-small"
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
