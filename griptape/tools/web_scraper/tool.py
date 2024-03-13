@@ -1,6 +1,6 @@
 from __future__ import annotations
-from attr import define, field
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact, ListArtifact
+from attr import define, field, Factory
+from griptape.artifacts import ErrorArtifact, ListArtifact
 from griptape.loaders import TextLoader
 from schema import Schema, Literal
 from griptape.tools import BaseTool
@@ -10,6 +10,7 @@ from griptape.loaders import WebLoader
 
 @define
 class WebScraper(BaseTool):
+    web_loader: WebLoader = field(default=Factory(lambda: WebLoader()))
     include_links: bool = field(default=True, kw_only=True)
 
     @activity(
@@ -22,24 +23,8 @@ class WebScraper(BaseTool):
         url = params["values"]["url"]
 
         try:
-            page = WebLoader().extract_page(url, self.include_links)
+            page = self.web_loader.extract_page(url, self.include_links)
 
-            return ListArtifact(TextLoader().load(page["text"]))
+            return ListArtifact(TextLoader().load(page))
         except Exception as e:
             return ErrorArtifact("Error getting page content: " + str(e))
-
-    @activity(
-        config={
-            "description": "Can be used to load a web page author",
-            "schema": Schema({Literal("url", description="Valid HTTP URL"): str}),
-        }
-    )
-    def get_author(self, params: dict) -> BaseArtifact:
-        url = params["values"]["url"]
-
-        try:
-            page = WebLoader().extract_page(url, self.include_links)
-
-            return TextArtifact(page["author"])
-        except Exception as e:
-            return ErrorArtifact("Error getting page author: " + str(e))
