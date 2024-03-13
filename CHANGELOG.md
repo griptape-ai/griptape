@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Default embedding model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
 - Default embedding model of `OpenAiStructureConfig` to `text-embedding-3-small`.
+- `BaseTextLoader` to accept a `BaseChunker`.
 
 ## [0.23.1] - 2024-03-07
 
