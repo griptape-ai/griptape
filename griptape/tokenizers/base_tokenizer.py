@@ -16,7 +16,7 @@ class BaseTokenizer(ABC):
 
     def __attrs_post_init__(self) -> None:
         if self.max_input_tokens is None:
-            self.max_input_tokens = self._default_max_tokens()
+            self.max_input_tokens = self._default_max_input_tokens()
 
         if self.max_output_tokens is None:
             self.max_output_tokens = self._default_max_output_tokens()
@@ -41,7 +41,7 @@ class BaseTokenizer(ABC):
     def count_tokens(self, text: str | list[dict]) -> int:
         ...
 
-    def _default_max_tokens(self) -> int:
+    def _default_max_input_tokens(self) -> int:
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model.startswith(k)), None)
 
         if tokens is None:
