@@ -6,8 +6,8 @@ from griptape import utils
 
 @define()
 class BaseTokenizer(ABC):
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {}
-    MODEL_PREFIXES_TO_MAX_TOKENS = {}
 
     model: str = field(kw_only=True)
     stop_sequences: list[str] = field(default=Factory(lambda: [utils.constants.RESPONSE_STOP_SEQUENCE]), kw_only=True)
@@ -42,7 +42,7 @@ class BaseTokenizer(ABC):
         ...
 
     def _default_max_input_tokens(self) -> int:
-        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model.startswith(k)), None)
+        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
 
         if tokens is None:
             raise ValueError(f"Unknown model default max tokens: {self.model}")

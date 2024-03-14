@@ -17,7 +17,7 @@ class OpenAiTokenizer(BaseTokenizer):
     TOKEN_OFFSET = 8
 
     # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
-    MODEL_PREFIXES_TO_MAX_TOKENS = {
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
@@ -51,7 +51,7 @@ class OpenAiTokenizer(BaseTokenizer):
             return tiktoken.get_encoding(self.DEFAULT_ENCODING)
 
     def _default_max_input_tokens(self) -> int:
-        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model.startswith(k)), None)
+        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
         offset = 0 if self.model in self.EMBEDDING_MODELS else self.TOKEN_OFFSET
 
         return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset

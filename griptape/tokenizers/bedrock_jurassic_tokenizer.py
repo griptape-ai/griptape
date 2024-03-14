@@ -6,7 +6,7 @@ from .simple_tokenizer import SimpleTokenizer
 @define()
 class BedrockJurassicTokenizer(SimpleTokenizer):
     DEFAULT_CHARACTERS_PER_TOKEN = 6  # https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization-prepare.html#model-customization-prepare-finetuning
-    MODEL_PREFIXES_TO_MAX_TOKENS = {"ai21": 8192}
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"ai21": 8192}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {
         "ai21.j2-mid-v1": 8191,
         "ai21.j2-ultra-v1": 8191,
