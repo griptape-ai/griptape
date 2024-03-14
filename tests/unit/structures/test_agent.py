@@ -235,3 +235,13 @@ class TestAgent:
         assert storage.summary_engine.prompt_driver == prompt_driver
         assert storage.csv_extraction_engine.prompt_driver == prompt_driver
         assert storage.json_extraction_engine.prompt_driver == prompt_driver
+
+    def test_deprecation(self):
+        with pytest.deprecated_call():
+            Agent(prompt_driver=MockPromptDriver())
+
+        with pytest.deprecated_call():
+            Agent(embedding_driver=MockEmbeddingDriver())
+
+        with pytest.deprecated_call():
+            Agent(stream=True)
