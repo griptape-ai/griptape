@@ -53,7 +53,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
             summary=summary, text=artifacts_text, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets)
         )
 
-        if self.prompt_driver.tokenizer.count_tokens_left(full_text) >= self.min_response_tokens:
+        if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             return self.prompt_driver.run(
                 PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
             )

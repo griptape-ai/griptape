@@ -20,7 +20,7 @@ class TestBedrockLlamaTokenizer:
 
     def test_tokens_left(self):
         assert (
-            BedrockLlamaTokenizer(model="meta.llama").count_tokens_left(
+            BedrockLlamaTokenizer(model="meta.llama").count_input_tokens_left(
                 "<s>[INST] <<SYS>>\n{{ system_prompt }}\n<</SYS>>\n\n{{ usr_msg_1 }} [/INST] {{ model_msg_1 }} </s><s>[INST] {{ usr_msg_2 }} [/INST]"
             )
             == 2026

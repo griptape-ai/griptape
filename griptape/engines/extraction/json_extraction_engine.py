@@ -55,7 +55,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
-        if self.prompt_driver.tokenizer.count_tokens_left(full_text) >= self.min_response_tokens:
+        if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(

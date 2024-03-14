@@ -45,7 +45,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         generator = pipeline(
             tokenizer=self.tokenizer.tokenizer,
             model=self.model,
-            max_new_tokens=self.tokenizer.count_tokens_left(prompt),
+            max_new_tokens=self.tokenizer.count_output_tokens_left(prompt),
         )
 
         if generator.task in self.SUPPORTED_TASKS:
