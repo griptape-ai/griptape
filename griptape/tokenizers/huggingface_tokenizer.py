@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class HuggingFaceTokenizer(BaseTokenizer):
     tokenizer: PreTrainedTokenizerBase = field(kw_only=True)
     model: str = field(init=False, kw_only=True)
-    max_tokens: int = field(
+    max_input_tokens: int = field(
         default=Factory(lambda self: self.tokenizer.model_max_length, takes_self=True), kw_only=True
     )
     max_output_tokens: int = field(kw_only=True)

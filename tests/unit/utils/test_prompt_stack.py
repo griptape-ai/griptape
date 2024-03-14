@@ -66,7 +66,7 @@ class TestPromptStack:
 
     def test_add_conversation_memory_autopruing_enabled(self):
         # All memory is pruned.
-        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_tokens=0)))
+        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=0)))
         memory = ConversationMemory(
             autoprune=True,
             runs=[
@@ -87,7 +87,7 @@ class TestPromptStack:
         assert len(prompt_stack.inputs) == 3
 
         # No memory is pruned.
-        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_tokens=1000)))
+        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=1000)))
         memory = ConversationMemory(
             autoprune=True,
             runs=[
@@ -108,9 +108,9 @@ class TestPromptStack:
         assert len(prompt_stack.inputs) == 13
 
         # One memory is pruned.
-        # MockTokenizer's max_tokens set to one below the sum of memory + system prompt tokens
+        # MockTokenizer's max_input_tokens set to one below the sum of memory + system prompt tokens
         # so that a single memory is pruned.
-        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_tokens=160)))
+        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=160)))
         memory = ConversationMemory(
             autoprune=True,
             runs=[

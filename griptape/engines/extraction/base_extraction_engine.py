@@ -30,13 +30,13 @@ class BaseExtractionEngine(ABC):
 
     @property
     def max_chunker_tokens(self) -> int:
-        return round(self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier)
+        return round(self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier)
 
     @property
     def min_response_tokens(self) -> int:
         return round(
-            self.prompt_driver.tokenizer.max_tokens
-            - self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier
+            self.prompt_driver.tokenizer.max_input_tokens
+            - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier
         )
 
     @abstractmethod

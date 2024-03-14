@@ -16,7 +16,7 @@ class TestOpenAiTokenizer:
 
     def test_initialize_with_unknown_model(self):
         tokenizer = OpenAiTokenizer(model="not-a-real-model")
-        assert tokenizer.max_tokens == OpenAiTokenizer.DEFAULT_MAX_TOKENS - OpenAiTokenizer.TOKEN_OFFSET
+        assert tokenizer.max_input_tokens == OpenAiTokenizer.DEFAULT_MAX_TOKENS - OpenAiTokenizer.TOKEN_OFFSET
 
     def test_token_count_for_messages(self, tokenizer):
         assert (

@@ -10,7 +10,7 @@ from tests.mocks.mock_tokenizer import MockTokenizer
 @define
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
-    tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_tokens=4096, max_output_tokens=4096)
+    tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
     mock_output: str = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
