@@ -86,7 +86,7 @@ drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]
-loaders-web = ["trafilatura", "playwright", "markdownify"]
+loaders-web = ["trafilatura", "playwright", "beautifulsoup4", "markdownify"]
 loaders-email = ["mail-parser"]
 
 all = [
@@ -113,6 +113,7 @@ all = [
     "pillow",
     "trafilatura",
     "playwright",
+    "beautifulsoup4",
     "markdownify",
     "mail-parser",
 ]

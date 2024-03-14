@@ -1,9 +1,10 @@
 import pytest
 
-from griptape.drivers.web_scraper.playwright_markdownify_web_scraper_driver import PlaywrightMarkdownifyWebScraperDriver
+from griptape.drivers.web_scraper.markdown_web_scraper_driver import MarkdownWebScraperDriver
+from griptape.utils.import_utils import import_optional_dependency
 
 
-class TestPlaywrightMarkdownifyWebScraperDriver:
+class TestMarkdownWebScraperDriver:
     @pytest.fixture(autouse=True)
     def mock_playwright(self, mocker):
         fake_response = '<html><a href="foobar.com">foobar</a></html>'
@@ -14,18 +15,17 @@ class TestPlaywrightMarkdownifyWebScraperDriver:
 
     @pytest.fixture
     def web_scraper(self):
-        return PlaywrightMarkdownifyWebScraperDriver()
+        return MarkdownWebScraperDriver()
 
     def test_scrape_url(self, web_scraper):
-        text = web_scraper.scrape_url("https://example.com/")
-        assert '[foobar](foobar.com)' == text
+        content = web_scraper.scrape_url("https://example.com/")
+        assert '[foobar](foobar.com)' == content
 
-    # TODO: Fix this test
-    # def test_scrape_url_exclude_links(self):
-    #     web_scraper = PlaywrightMarkdownifyWebScraperDriver(include_links=False)
-    #     text = web_scraper.scrape_url("https://example.com/")
-    #     assert '[foobar](foobar.com)' not in text
-    #     assert "foobar" == text
+    def test_scrape_url_exclude_links(self):
+        web_scraper = MarkdownWebScraperDriver(include_links=False)
+        text = web_scraper.scrape_url("https://example.com/")
+        assert '[foobar](foobar.com)' not in text
+        assert "foobar" == text
 
     def test_scrape_url_raises_on_empty_string_from_playwright(self, web_scraper, mocker):
         playwright = mocker.MagicMock()
