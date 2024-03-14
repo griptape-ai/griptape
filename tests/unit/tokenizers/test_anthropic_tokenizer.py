@@ -15,4 +15,4 @@ class TestAnthropicTokenizer:
         "tokenizer,expected", [("claude-2.1", 199995), ("claude-2.0", 99995)], indirect=["tokenizer"]
     )
     def test_tokens_left(self, tokenizer, expected):
-        assert tokenizer.count_tokens_left("foo bar huzzah") == expected
+        assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected

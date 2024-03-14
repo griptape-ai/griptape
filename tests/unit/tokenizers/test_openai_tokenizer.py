@@ -44,7 +44,7 @@ class TestOpenAiTokenizer:
         )
 
     def test_tokens_left(self, tokenizer):
-        assert tokenizer.count_tokens_left("foo bar huzzah") == 4083
+        assert tokenizer.count_input_tokens_left("foo bar huzzah") == 4083
 
     def test_tokens_left_32k(self, tokenizer_32k):
-        assert tokenizer_32k.count_tokens_left("foo bar huzzah") == 32755
+        assert tokenizer_32k.count_input_tokens_left("foo bar huzzah") == 32755

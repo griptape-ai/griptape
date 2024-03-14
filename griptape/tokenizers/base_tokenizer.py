@@ -21,7 +21,7 @@ class BaseTokenizer(ABC):
         if self.max_output_tokens is None:
             self.max_output_tokens = self._default_max_output_tokens()
 
-    def count_tokens_left(self, text: str | list) -> int:
+    def count_input_tokens_left(self, text: str | list) -> int:
         diff = self.max_input_tokens - self.count_tokens(text)
 
         if diff > 0:

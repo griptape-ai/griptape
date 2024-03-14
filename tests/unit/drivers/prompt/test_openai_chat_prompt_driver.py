@@ -169,7 +169,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, max_tokens=max_tokens_request
         )
-        tokens_left = driver.tokenizer.count_tokens_left(driver._prompt_stack_to_messages(prompt_stack))
+        tokens_left = driver.tokenizer.count_input_tokens_left(driver._prompt_stack_to_messages(prompt_stack))
 
         # When
         text_artifact = driver.try_run(prompt_stack)

@@ -19,4 +19,4 @@ class TestBedrockClaudeTokenizer:
         indirect=["tokenizer"],
     )
     def test_tokens_left(self, tokenizer, expected):
-        assert tokenizer.count_tokens_left("foo bar huzzah") == expected
+        assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected

@@ -16,4 +16,4 @@ class TestHuggingFaceTokenizer:
         assert tokenizer.count_tokens("foo bar huzzah") == 5
 
     def test_tokens_left(self, tokenizer):
-        assert tokenizer.count_tokens_left("foo bar huzzah") == 1019
+        assert tokenizer.count_input_tokens_left("foo bar huzzah") == 1019

@@ -11,4 +11,4 @@ class TestSimpleTokenizer:
         assert tokenizer.count_tokens("foo bar huzzah") == 3
 
     def test_tokens_left(self, tokenizer):
-        assert tokenizer.count_tokens_left("foo bar huzzah") == 1021
+        assert tokenizer.count_input_tokens_left("foo bar huzzah") == 1021
