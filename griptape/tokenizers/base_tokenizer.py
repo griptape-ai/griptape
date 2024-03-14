@@ -11,18 +11,18 @@ class BaseTokenizer(ABC):
 
     model: str = field(kw_only=True)
     stop_sequences: list[str] = field(default=Factory(lambda: [utils.constants.RESPONSE_STOP_SEQUENCE]), kw_only=True)
-    max_tokens: int = field(kw_only=True, default=None)
+    max_input_tokens: int = field(kw_only=True, default=None)
     max_output_tokens: int = field(kw_only=True, default=None)
 
     def __attrs_post_init__(self) -> None:
-        if self.max_tokens is None:
-            self.max_tokens = self._default_max_tokens()
+        if self.max_input_tokens is None:
+            self.max_input_tokens = self._default_max_tokens()
 
         if self.max_output_tokens is None:
             self.max_output_tokens = self._default_max_output_tokens()
 
     def count_tokens_left(self, text: str | list) -> int:
-        diff = self.max_tokens - self.count_tokens(text)
+        diff = self.max_input_tokens - self.count_tokens(text)
 
         if diff > 0:
             return diff
