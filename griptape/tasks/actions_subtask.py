@@ -247,8 +247,6 @@ class ActionsSubtask(BaseTextInputTask):
                     if new_action.tool:
                         if new_action.input:
                             self.__validate_action(new_action)
-                        else:
-                            raise Exception("Action input not found.")
 
                     # Don't forget to add it to the subtask actions list!
                     self.actions.append(new_action)
