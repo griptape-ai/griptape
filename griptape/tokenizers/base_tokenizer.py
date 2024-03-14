@@ -46,8 +46,8 @@ class BaseTokenizer(ABC):
 
         if tokens is None:
             raise ValueError(f"Unknown model default max tokens: {self.model}")
-
-        return tokens
+        else:
+            return tokens
 
     def _default_max_output_tokens(self) -> int:
         tokens = next(
@@ -56,5 +56,5 @@ class BaseTokenizer(ABC):
 
         if tokens is None:
             raise ValueError(f"Unknown model for default max output tokens: {self.model}")
-
-        return tokens
+        else:
+            return tokens
