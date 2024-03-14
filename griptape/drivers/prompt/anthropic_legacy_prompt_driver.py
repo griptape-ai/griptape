@@ -1,6 +1,5 @@
 from __future__ import annotations
-import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -13,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @define
-class AnthropicPromptDriver(BasePromptDriver):
+class AnthropicLegacyPromptDriver(BasePromptDriver):
     """
     Attributes:
         api_key: Anthropic API key.
@@ -35,8 +34,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        print(json.dumps(self._base_params(prompt_stack)))
-        response = self.client.messages.create(**self._base_params(prompt_stack))
+        response = self.client.completions.create(**self._base_params(prompt_stack))
 
         return TextArtifact(value=response.completion)
 
@@ -46,32 +44,34 @@ class AnthropicPromptDriver(BasePromptDriver):
         for chunk in response:
             yield TextArtifact(value=chunk.completion)
 
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
-        return [
-            {"role": self.__to_anthropic_role(i), "content": i.content}
-            for i in prompt_stack.inputs
-            if i.is_user() or i.is_assistant()
-        ]
+    def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
+        prompt_lines = []
+
+        for i in prompt_stack.inputs:
+            if i.is_assistant():
+                prompt_lines.append(f"\n\nAssistant: {i.content}")
+            elif i.is_user():
+                prompt_lines.append(f"\n\nHuman: {i.content}")
+            elif i.is_system():
+                if self.model == "claude-2.1":
+                    prompt_lines.append(f"{i.content}")
+                else:
+                    prompt_lines.append(f"\n\nHuman: {i.content}")
+                    prompt_lines.append("\n\nAssistant:")
+            else:
+                prompt_lines.append(f"\n\nHuman: {i.content}")
+
+        prompt_lines.append("\n\nAssistant:")
+
+        return "".join(prompt_lines)
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        params = {
-            "messages": self._prompt_stack_to_messages(prompt_stack),
+        prompt = self.prompt_stack_to_string(prompt_stack)
+
+        return {
+            "prompt": self.prompt_stack_to_string(prompt_stack),
             "model": self.model,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
-            "max_tokens": self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
+            "max_tokens_to_sample": self.max_output_tokens(prompt),
         }
-
-        system_input = next((i for i in prompt_stack.inputs if i.is_system()), None)
-        if system_input is not None:
-            params["system"] = system_input.content
-
-        return params
-
-    def __to_anthropic_role(self, prompt_input: PromptStack.Input) -> str:
-        if prompt_input.is_system():
-            return "system"
-        elif prompt_input.is_assistant():
-            return "assistant"
-        else:
-            return "user"
