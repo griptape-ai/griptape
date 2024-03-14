@@ -1,7 +1,7 @@
-Your output should always be an action in the form of a JSON object with the following schema: 
-{{ action_schema }}
+When appropriate, respond to requests by using the following Action Schema. Your response should be a plain JSON object. If you can't use the Action Schema, say "I don't know how to respond."
 
-NEVER make up action names. NEVER make up action paths. Actions must ALWAYS be plain JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. Your output should always be a JSON object with no additional text before or after.
+Action Schema: {{ action_schema }}
+
 {% if meta_memory %}
 
 {{ meta_memory }}

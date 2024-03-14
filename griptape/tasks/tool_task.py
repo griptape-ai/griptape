@@ -3,11 +3,11 @@ import json
 from typing import Optional, TYPE_CHECKING
 from attr import define, field
 from griptape import utils
-from griptape.artifacts import TextArtifact, InfoArtifact, ErrorArtifact, BaseArtifact
-from griptape.tasks import PromptTask, ActionSubtask
+from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact
+from griptape.tasks import PromptTask, ActionsSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
-from griptape.mixins import ActionSubtaskOriginMixin
+from griptape.mixins import ActionsSubtaskOriginMixin
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -15,9 +15,9 @@ if TYPE_CHECKING:
 
 
 @define
-class ToolTask(PromptTask, ActionSubtaskOriginMixin):
+class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
-    subtask: Optional[ActionSubtask] = field(default=None, kw_only=True)
+    subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
@@ -39,20 +39,30 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
         )
 
+    def actions_schema(self) -> dict:
+        return self._actions_schema_for_tools([self.tool])
+
     def run(self) -> BaseArtifact:
         prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
 
-        subtask = self.add_subtask(ActionSubtask(f"Action: {prompt_output}"))
+        try:
+            action_dict = json.loads(prompt_output)
 
-        subtask.before_run()
-        subtask.run()
-        subtask.after_run()
+            action_dict["output_label"] = self.tool.name
 
-        if subtask.output:
-            self.output = subtask.output
-        else:
-            self.output = InfoArtifact("No tool output")
+            subtask_input = J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict))
+            subtask = self.add_subtask(ActionsSubtask(subtask_input))
 
+            subtask.before_run()
+            subtask.run()
+            subtask.after_run()
+
+            if subtask.output:
+                self.output = subtask.output
+            else:
+                self.output = InfoArtifact("No tool output")
+        except Exception as e:
+            self.output = ErrorArtifact(f"Error processing tool input: {e}")
         return self.output
 
     def find_tool(self, tool_name: str) -> BaseTool:
@@ -64,13 +74,13 @@ class ToolTask(PromptTask, ActionSubtaskOriginMixin):
     def find_memory(self, memory_name: str) -> TaskMemory:
         raise NotImplementedError("ToolTask does not support Task Memory.")
 
-    def find_subtask(self, subtask_id: str) -> ActionSubtask:
+    def find_subtask(self, subtask_id: str) -> ActionsSubtask:
         if self.subtask and self.subtask.id == subtask_id:
             return self.subtask
         else:
             raise ValueError(f"Subtask with id {subtask_id} not found.")
 
-    def add_subtask(self, subtask: ActionSubtask) -> ActionSubtask:
+    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
         self.subtask = subtask
         self.subtask.attach_to(self)
 

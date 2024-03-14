@@ -78,6 +78,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         self._extract_ratelimit_metadata(result)
 
         parsed_result = result.parse()
+
         if len(parsed_result.choices) == 1:
             return TextArtifact(value=parsed_result.choices[0].message.content.strip())
         else:

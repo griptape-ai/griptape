@@ -3,7 +3,7 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
-from griptape.tasks import ToolkitTask, ActionSubtask, PromptTask
+from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -43,7 +43,7 @@ class TestToolkitSubtask:
         assert result.output_task.output.to_text() == "done"
 
     def test_run_max_subtasks(self):
-        output = """Action: {"name": "blah"}"""
+        output = """Actions: [{"name": "blah"}]"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
@@ -71,7 +71,7 @@ class TestToolkitSubtask:
     def test_init_from_prompt_1(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}\n'
+            'Actions: [{"output_label": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -79,12 +79,13 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_name == "Tool1"
-        assert subtask.action_path == "test"
-        assert subtask.action_input == {"values": {"test": "value"}}
+        assert subtask.actions[0].output_label == "foo"
+        assert subtask.actions[0].name == "Tool1"
+        assert subtask.actions[0].path == "test"
+        assert subtask.actions[0].input == {"values": {"test": "value"}}
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
@@ -94,18 +95,22 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        subtask = task.add_subtask(ActionSubtask(valid_input))
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.action_name is None
-        assert subtask.action_path is None
-        assert subtask.action_input is None
+        assert subtask.actions == []
         assert subtask.output.to_text() == "test output"
 
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
-        subtask2 = ActionSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask1 = ActionsSubtask(
+            "test1",
+            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+        )
+        subtask2 = ActionsSubtask(
+            "test2",
+            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+        )
 
         Agent().add_task(task)
 
@@ -124,8 +129,14 @@ class TestToolkitSubtask:
 
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
-        subtask1 = ActionSubtask("test1", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
-        subtask2 = ActionSubtask("test2", action_name="test", action_path="test", action_input={"values": {"f": "b"}})
+        subtask1 = ActionsSubtask(
+            "test1",
+            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+        )
+        subtask2 = ActionsSubtask(
+            "test2",
+            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+        )
 
         Agent().add_task(task)
 
@@ -177,7 +188,7 @@ class TestToolkitSubtask:
 
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
-        subtask = ActionSubtask()
+        subtask = ActionsSubtask()
         agent = Agent(task_memory=memory)
 
         subtask.structure = agent
@@ -191,3 +202,11 @@ class TestToolkitSubtask:
         system_template = task.generate_system_template(PromptTask())
 
         assert "You have access to additional contextual information" in system_template
+
+    def test_actions_schema(self):
+        tool = MockTool()
+        task = ToolkitTask("test", tools=[tool])
+
+        Agent().add_task(task)
+
+        assert isinstance(task.actions_schema(), dict)
