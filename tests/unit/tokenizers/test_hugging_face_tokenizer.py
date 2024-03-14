@@ -10,7 +10,7 @@ from griptape.tokenizers import HuggingFaceTokenizer
 class TestHuggingFaceTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return HuggingFaceTokenizer(tokenizer=GPT2Tokenizer.from_pretrained("gpt2"))
+        return HuggingFaceTokenizer(tokenizer=GPT2Tokenizer.from_pretrained("gpt2"), max_output_tokens=1024)
 
     def test_token_count(self, tokenizer):
         assert tokenizer.count_tokens("foo bar huzzah") == 5

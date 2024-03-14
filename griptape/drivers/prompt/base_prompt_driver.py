@@ -44,7 +44,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def max_output_tokens(self, text: str | list) -> int:
-        tokens_left = self.tokenizer.count_tokens_left(text)
+        tokens_left = self.tokenizer.count_output_tokens_left(text)
 
         if self.max_tokens:
             return min(self.max_tokens, tokens_left)

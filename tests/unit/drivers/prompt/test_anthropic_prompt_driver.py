@@ -1,6 +1,5 @@
 from griptape.drivers import AnthropicPromptDriver
 from griptape.utils import PromptStack
-from griptape.tokenizers import AnthropicTokenizer
 from unittest.mock import ANY, Mock
 import pytest
 
@@ -128,7 +127,7 @@ class TestAnthropicPromptDriver:
     def test_try_run_throws_when_prompt_stack_is_string(self):
         # Given
         prompt_stack = "prompt-stack"
-        driver = AnthropicPromptDriver(model=AnthropicTokenizer.DEFAULT_MODEL, api_key="api-key")
+        driver = AnthropicPromptDriver(model="claude", api_key="api-key")
 
         # When
         with pytest.raises(Exception) as e:
