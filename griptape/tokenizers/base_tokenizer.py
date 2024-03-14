@@ -4,10 +4,22 @@ from attr import define, field, Factory
 from griptape import utils
 
 
-@define(frozen=True)
+@define()
 class BaseTokenizer(ABC):
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {}
+    MODEL_PREFIXES_TO_MAX_TOKENS = {}
+
+    model: str = field(kw_only=True)
     stop_sequences: list[str] = field(default=Factory(lambda: [utils.constants.RESPONSE_STOP_SEQUENCE]), kw_only=True)
-    max_tokens: int = field(kw_only=True)
+    max_tokens: int = field(kw_only=True, default=None)
+    max_output_tokens: int = field(kw_only=True, default=None)
+
+    def __attrs_post_init__(self) -> None:
+        if self.max_tokens is None:
+            self.max_tokens = self._default_max_tokens()
+
+        if self.max_output_tokens is None:
+            self.max_output_tokens = self._default_max_output_tokens()
 
     def count_tokens_left(self, text: str | list) -> int:
         diff = self.max_tokens - self.count_tokens(text)
@@ -17,6 +29,32 @@ class BaseTokenizer(ABC):
         else:
             return 0
 
+    def count_output_tokens_left(self, text: str | list) -> int:
+        diff = self.max_output_tokens - self.count_tokens(text)
+
+        if diff > 0:
+            return diff
+        else:
+            return 0
+
     @abstractmethod
     def count_tokens(self, text: str | list[dict]) -> int:
         ...
+
+    def _default_max_tokens(self) -> int:
+        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model.startswith(k)), None)
+
+        if tokens is None:
+            raise ValueError(f"Unknown model default max tokens: {self.model}")
+
+        return tokens
+
+    def _default_max_output_tokens(self) -> int:
+        tokens = next(
+            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)), None
+        )
+
+        if tokens is None:
+            raise ValueError(f"Unknown model for default max output tokens: {self.model}")
+
+        return tokens

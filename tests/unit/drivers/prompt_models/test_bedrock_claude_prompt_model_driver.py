@@ -61,8 +61,8 @@ class TestBedrockClaudePromptModelDriver:
     @pytest.mark.parametrize(
         "driver,key,expected",
         [
-            ("anthropic.claude-v2:1", "max_tokens_to_sample", 199979),
-            ("anthropic.claude-v2", "max_tokens_to_sample", 99971),
+            ("anthropic.claude-v2:1", "max_tokens_to_sample", 4075),
+            ("anthropic.claude-v2", "max_tokens_to_sample", 4067),
             ("anthropic.claude-v2:1", "temperature", 0.12345),
             ("anthropic.claude-v2", "temperature", 0.12345),
         ],

@@ -1,9 +1,9 @@
 from __future__ import annotations
-from attr import define, field, Factory
+from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptModelDriver
-from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
+from griptape.tokenizers import HuggingFaceTokenizer
 
 
 @define
@@ -15,8 +15,9 @@ class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
         if self._tokenizer is None:
             self._tokenizer = HuggingFaceTokenizer(
                 tokenizer=import_optional_dependency("transformers").LlamaTokenizerFast.from_pretrained(
-                    "hf-internal-testing/llama-tokenizer", model_max_length=self.max_tokens
-                )
+                    "hf-internal-testing/llama-tokenizer"
+                ),
+                max_output_tokens=self.max_tokens,
             )
         return self._tokenizer
 

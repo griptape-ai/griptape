@@ -18,10 +18,8 @@ class TestBedrockJurassicTokenizer:
         mock_session_object.client.return_value = mock_client
         mock_session_class.return_value = mock_session_object
 
-    def test_titan_tokens_left(self):
+    def test_tokens_left(self):
         assert (
-            BedrockJurassicTokenizer(model=BedrockJurassicTokenizer.DEFAULT_MODEL).count_tokens_left(
-                "System: foo\nUser: bar\nAssistant:"
-            )
+            BedrockJurassicTokenizer(model="ai21.j2-mid-v2").count_tokens_left("System: foo\nUser: bar\nAssistant:")
             == 8186
         )
