@@ -9,8 +9,7 @@ from griptape.loaders import BaseTextLoader
 @define
 class WebLoader(BaseTextLoader):
     web_scraper_driver: BaseWebScraperDriver = field(
-        default=Factory(lambda: TrafilaturaWebScraperDriver()),
-        kw_only=True
+        default=Factory(lambda: TrafilaturaWebScraperDriver()), kw_only=True
     )
 
     def load(self, source: str, include_links: bool = True, *args, **kwargs) -> list[TextArtifact]:
@@ -34,5 +33,5 @@ class WebLoader(BaseTextLoader):
 
         return self._text_to_artifacts(page_text)
 
-    def extract_page(self, url: str, include_links: bool = True) -> Optional[str]:
+    def extract_page(self, url: str, include_links: bool = True) -> str:
         return self.web_scraper_driver.scrape_url(url, include_links)

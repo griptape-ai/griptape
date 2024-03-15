@@ -13,7 +13,7 @@ class MarkdownWebScraperDriver(BaseWebScraperDriver):
     exclude_classes: list[str] = field(default=Factory(list), kw_only=True)
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
 
-    def scrape_url(self, url: str, *args, **kwargs) -> Optional[str]:
+    def scrape_url(self, url: str, *args, **kwargs) -> str:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright
         BeautifulSoup = import_optional_dependency("bs4").BeautifulSoup
         MarkdownConverter = import_optional_dependency("markdownify").MarkdownConverter

@@ -23,7 +23,6 @@ class TestTrafilaturaWebScraperDriver:
     def test_scrape_url_exclude_links(self):
         web_scraper = TrafilaturaWebScraperDriver(include_links=False)
         text = web_scraper.scrape_url("https://example.com/")
-        assert text is not None
         assert "[foobar](foobar.com)" not in text
         assert "foobar" in text
 

@@ -10,7 +10,7 @@ from griptape.utils import import_optional_dependency
 class TrafilaturaWebScraperDriver(BaseWebScraperDriver):
     include_links: bool = field(default=True, kw_only=True)
 
-    def scrape_url(self, url: str, *args, **kwargs) -> Optional[str]:
+    def scrape_url(self, url: str, *args, **kwargs) -> str:
         trafilatura = import_optional_dependency("trafilatura")
         use_config = trafilatura.settings.use_config
 
