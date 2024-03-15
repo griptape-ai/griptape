@@ -114,6 +114,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
             "seed": self.seed,
+            "max_tokens": self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
         }
 
         if self.response_format == "json_object":
@@ -122,9 +123,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             prompt_stack.add_system_input("Provide your response as a valid JSON object.")
 
         messages = self._prompt_stack_to_messages(prompt_stack)
-
-        if self.max_tokens:
-            params["max_tokens"] = self.max_tokens
 
         params["messages"] = messages
 

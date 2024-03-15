@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 @define()
 class CohereTokenizer(BaseTokenizer):
-    DEFAULT_MAX_TOKENS = 2048
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"command": 4096}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"command": 4096}
 
