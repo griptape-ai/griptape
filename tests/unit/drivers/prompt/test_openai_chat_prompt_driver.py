@@ -100,6 +100,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=messages,
+            max_tokens=driver.max_output_tokens(driver.prompt_stack_to_string(prompt_stack)),
             seed=driver.seed,
         )
         assert text_artifact.value == "model-output"
@@ -121,6 +122,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
             seed=driver.seed,
+            max_tokens=driver.max_output_tokens(driver.prompt_stack_to_string(prompt_stack)),
             response_format={"type": "json_object"},
         )
         assert text_artifact.value == "model-output"
@@ -140,6 +142,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             stream=True,
             messages=messages,
+            max_tokens=driver.max_output_tokens(driver.prompt_stack_to_string(prompt_stack)),
             seed=driver.seed,
         )
         assert text_artifact.value == "model-output"
@@ -181,7 +184,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=messages,
-            max_tokens=9999999,
+            max_tokens=driver.max_output_tokens(driver.prompt_stack_to_string(prompt_stack)),
             seed=driver.seed,
         )
         assert max_tokens_request > tokens_left

@@ -114,7 +114,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
             "seed": self.seed,
-            "max_tokens": self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
         }
 
         if self.response_format == "json_object":
@@ -124,6 +123,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         messages = self._prompt_stack_to_messages(prompt_stack)
 
+        params["max_tokens"] = self.max_output_tokens(self.prompt_stack_to_string(prompt_stack))
         params["messages"] = messages
 
         return params
