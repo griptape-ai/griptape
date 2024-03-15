@@ -39,7 +39,8 @@ class ActionsSubtaskOriginMixin:
             for activity_schema in tool.activity_schemas():
                 action_schema = activity_schema.schema
                 output_label_key = Literal(
-                    "output_label", description="Action label that can later be used to identify action output"
+                    "output_label", description="Label to identify action output. "
+                                                "output_label values should NEVER be referenced in other action inputs."
                 )
 
                 action_schema[output_label_key] = str
