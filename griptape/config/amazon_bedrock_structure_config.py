@@ -16,7 +16,6 @@ from griptape.drivers import (
     AmazonBedrockTitanEmbeddingDriver,
     BedrockClaudePromptModelDriver,
     BedrockTitanImageGenerationModelDriver,
-    BedrockTitanPromptModelDriver,
     LocalVectorStoreDriver,
 )
 
@@ -44,33 +43,18 @@ class AmazonBedrockStructureConfig(BaseStructureConfig):
     )
     task_memory: StructureTaskMemoryConfig = field(
         default=Factory(
-            lambda: StructureTaskMemoryConfig(
+            lambda self: StructureTaskMemoryConfig(
                 query_engine=StructureTaskMemoryQueryEngineConfig(
-                    prompt_driver=AmazonBedrockPromptDriver(
-                        model="amazon.titan-text-express-v1", prompt_model_driver=BedrockTitanPromptModelDriver()
-                    ),
-                    vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1")
-                    ),
+                    prompt_driver=self.global_drivers.prompt_driver,
+                    vector_store_driver=self.global_drivers.vector_store_driver,
                 ),
                 extraction_engine=StructureTaskMemoryExtractionEngineConfig(
-                    csv=StructureTaskMemoryExtractionEngineCsvConfig(
-                        prompt_driver=AmazonBedrockPromptDriver(
-                            model="amazon.titan-text-express-v1", prompt_model_driver=BedrockTitanPromptModelDriver()
-                        )
-                    ),
-                    json=StructureTaskMemoryExtractionEngineJsonConfig(
-                        prompt_driver=AmazonBedrockPromptDriver(
-                            model="amazon.titan-text-express-v1", prompt_model_driver=BedrockTitanPromptModelDriver()
-                        )
-                    ),
+                    csv=StructureTaskMemoryExtractionEngineCsvConfig(prompt_driver=self.global_drivers.prompt_driver),
+                    json=StructureTaskMemoryExtractionEngineJsonConfig(prompt_driver=self.global_drivers.prompt_driver),
                 ),
-                summary_engine=StructureTaskMemorySummaryEngineConfig(
-                    prompt_driver=AmazonBedrockPromptDriver(
-                        model="amazon.titan-text-express-v1", prompt_model_driver=BedrockTitanPromptModelDriver()
-                    )
-                ),
-            )
+                summary_engine=StructureTaskMemorySummaryEngineConfig(prompt_driver=self.global_drivers.prompt_driver),
+            ),
+            takes_self=True,
         ),
         kw_only=True,
         metadata={"serializable": True},
