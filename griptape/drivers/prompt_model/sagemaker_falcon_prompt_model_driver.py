@@ -1,13 +1,15 @@
 from __future__ import annotations
-from attr import define, field, Factory
+from attr import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptModelDriver
-from griptape.tokenizers import BaseTokenizer, HuggingFaceTokenizer
+from griptape.tokenizers import HuggingFaceTokenizer
 
 
 @define
 class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
+    DEFAULT_MAX_TOKENS = 400
+
     _tokenizer: HuggingFaceTokenizer = field(default=None, kw_only=True)
 
     @property
@@ -15,7 +17,7 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
         if self._tokenizer is None:
             self._tokenizer = HuggingFaceTokenizer(
                 tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained("tiiuae/falcon-40b"),
-                max_output_tokens=self.max_tokens,
+                max_output_tokens=self.max_tokens or self.DEFAULT_MAX_TOKENS,
             )
         return self._tokenizer
 
