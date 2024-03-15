@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default embedding model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
 - Default embedding model of `OpenAiStructureConfig` to `text-embedding-3-small`.
 - `BaseTextLoader` to accept a `BaseChunker`.
+## [0.23.2] - 2024-03-15
+
+### Fixed
+- Deprecation warnings not displaying for `Structure.prompt_driver`, `Structure.embedding_driver`, and `Structure.stream`.
+- `DummyException` error message not fully displaying.
+- `StructureConfig.task_memory` not defaulting to using `StructureConfig.global_drivers` by default.
 
 ## [0.23.1] - 2024-03-07
 

@@ -33,7 +33,7 @@ class TestStructureConfig:
                         "max_tokens": None,
                     },
                     "vector_store_driver": {
-                        "type": "DummyVectorStoreDriver",
+                        "type": "LocalVectorStoreDriver",
                         "embedding_driver": {"type": "DummyEmbeddingDriver"},
                     },
                 },
