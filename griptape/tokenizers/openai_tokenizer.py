@@ -8,7 +8,7 @@ from typing import Optional
 
 @define()
 class OpenAiTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "text-davinci-003"
+    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "gpt-3.5-turbo-instruct"
     DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
     DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
@@ -25,9 +25,6 @@ class OpenAiTokenizer(BaseTokenizer):
         "gpt-3.5-turbo": 4096,
         "gpt-35-turbo-16k": 16384,
         "gpt-35-turbo": 4096,
-        "text-davinci-003": 4097,
-        "text-davinci-002": 4097,
-        "code-davinci-002": 8001,
         "text-embedding-ada-002": 8191,
         "text-embedding-ada-001": 2046,
         "text-embedding-3-small": 8191,
