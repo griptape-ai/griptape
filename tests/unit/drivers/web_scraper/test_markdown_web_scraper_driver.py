@@ -1,7 +1,6 @@
 import pytest
 
 from griptape.drivers.web_scraper.markdown_web_scraper_driver import MarkdownWebScraperDriver
-from griptape.utils.import_utils import import_optional_dependency
 
 
 class TestMarkdownWebScraperDriver:
@@ -10,7 +9,9 @@ class TestMarkdownWebScraperDriver:
         fake_response = '<html><a href="foobar.com">foobar</a></html>'
 
         playwright = mocker.MagicMock()
-        playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_page.return_value.content.return_value = fake_response
+        playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_page.return_value.content.return_value = (
+            fake_response
+        )
         mocker.patch("playwright.sync_api.sync_playwright", return_value=playwright)
 
     @pytest.fixture
@@ -19,17 +20,18 @@ class TestMarkdownWebScraperDriver:
 
     def test_scrape_url(self, web_scraper):
         content = web_scraper.scrape_url("https://example.com/")
-        assert '[foobar](foobar.com)' == content
+        assert "[foobar](foobar.com)" == content
 
     def test_scrape_url_exclude_links(self):
         web_scraper = MarkdownWebScraperDriver(include_links=False)
         text = web_scraper.scrape_url("https://example.com/")
-        assert '[foobar](foobar.com)' not in text
         assert "foobar" == text
 
     def test_scrape_url_raises_on_empty_string_from_playwright(self, web_scraper, mocker):
         playwright = mocker.MagicMock()
-        playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_page.return_value.content.return_value = ""
+        playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_page.return_value.content.return_value = (
+            ""
+        )
         mocker.patch("playwright.sync_api.sync_playwright", return_value=playwright)
 
         with pytest.raises(Exception, match="can't access URL"):
@@ -37,9 +39,10 @@ class TestMarkdownWebScraperDriver:
 
     def test_scrape_url_raises_on_none_from_playwright(self, web_scraper, mocker):
         playwright = mocker.MagicMock()
-        playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_page.return_value.content.return_value = None
+        playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_page.return_value.content.return_value = (
+            None
+        )
         mocker.patch("playwright.sync_api.sync_playwright", return_value=playwright)
 
         with pytest.raises(Exception, match="can't access URL"):
             web_scraper.scrape_url("https://example.com/")
-

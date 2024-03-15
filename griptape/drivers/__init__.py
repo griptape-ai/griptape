@@ -75,6 +75,7 @@ from .image_query.dummy_image_query_driver import DummyImageQueryDriver
 
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
+from .web_scraper.markdown_web_scraper_driver import MarkdownWebScraperDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -141,5 +142,6 @@ __all__ = [
     "OpenAiVisionImageQueryDriver",
     "DummyImageQueryDriver",
     "BaseWebScraperDriver",
-    "TrafilaturaWebScraperDriver"
+    "TrafilaturaWebScraperDriver",
+    "MarkdownWebScraperDriver",
 ]

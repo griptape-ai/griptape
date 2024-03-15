@@ -4888,7 +4888,7 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [extras]
-all = ["anthropic", "boto3", "cohere", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "trafilatura", "transformers"]
+all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "trafilatura", "transformers"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
@@ -4908,13 +4908,15 @@ drivers-vector-opensearch = ["opensearch-py"]
 drivers-vector-pinecone = ["pinecone-client"]
 drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
 drivers-vector-redis = ["redis"]
+drivers-web-scraper-markdown = ["beautifulsoup4", "markdownify", "playwright"]
+drivers-web-scraper-trafilatura = ["trafilatura"]
 loaders-dataframe = ["pandas"]
 loaders-email = ["mail-parser"]
 loaders-image = ["pillow"]
 loaders-pdf = ["pypdf"]
-loaders-web = ["markdownify", "playwright", "trafilatura"]
+loaders-web = []
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "ddcdc983348d58389dc4ff73068e030118bc2f7c42d3ba8f9467d5d151ddf8c6"
+content-hash = "f6d1e0a73c3d68d3bd7bc2f6d2e7ff20c781aabe113f6f84f7e7d1adfe2bbdb5"
