@@ -6,6 +6,18 @@ from griptape.utils import import_optional_dependency
 
 @define
 class MarkdownWebScraperDriver(BaseWebScraperDriver):
+    """Driver to scrape a webpage and return the content in markdown format.
+
+    As a prerequisite to using MarkdownWebScraperDriver, you need to install the browsers used by playwright. You can do this by running:
+    `poetry run playwright install`. For details, see https://playwright.dev/python/docs/library.
+
+    Attributes:
+        include_links: If `True`, the driver will include link urls in the markdown output.
+        exclude_tags: Optionally provide custom tags to exclude from the scraped content.
+        exclude_classes: Optionally provide custom classes to exclude from the scraped content.
+        exclude_ids: Optionally provide custom ids to exclude from the scraped content.
+    """
+
     include_links: bool = field(default=True, kw_only=True)
     exclude_tags: list[str] = field(
         default=Factory(lambda: ["script", "style", "head", "header", "footer"]), kw_only=True
