@@ -109,15 +109,15 @@ all = [
     "opensearch-py",
     "pgvector",
     "psycopg2-binary",
+    "trafilatura",
+    "playwright",
+    "beautifulsoup4",
+    "markdownify",
 
     # loaders
     "pandas",
     "pypdf",
     "pillow",
-    "trafilatura",
-    "playwright",
-    "beautifulsoup4",
-    "markdownify",
     "mail-parser",
 ]
 
