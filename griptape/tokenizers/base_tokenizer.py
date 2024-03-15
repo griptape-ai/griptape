@@ -45,7 +45,7 @@ class BaseTokenizer(ABC):
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
 
         if tokens is None:
-            raise ValueError(f"Unknown model default max tokens: {self.model}")
+            raise ValueError(f"Unknown model default max input tokens: {self.model}")
         else:
             return tokens
 
