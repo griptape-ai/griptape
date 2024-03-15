@@ -65,10 +65,6 @@ class StructureTester:
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]),
             enabled=True,
         ),
-        "OPENAI_COMPLETION_DAVINCI": TesterPromptDriverOption(
-            prompt_driver=OpenAiCompletionPromptDriver(api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"),
-            enabled=True,
-        ),
         "AZURE_CHAT_35_TURBO": TesterPromptDriverOption(
             prompt_driver=AzureOpenAiChatPromptDriver(
                 api_key=os.environ["AZURE_OPENAI_API_KEY"],
