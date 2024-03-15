@@ -24,7 +24,7 @@ class TextLoader(BaseTextLoader):
         default=Factory(lambda self: round(self.tokenizer.max_input_tokens * self.MAX_TOKEN_RATIO), takes_self=True),
         kw_only=True,
     )
-    chunker: BaseChunker = field(
+    chunker: TextChunker = field(
         default=Factory(
             lambda self: TextChunker(tokenizer=self.tokenizer, max_tokens=self.max_tokens), takes_self=True
         ),
