@@ -82,7 +82,7 @@ class StructureTester:
             prompt_driver=AzureOpenAiChatPromptDriver(
                 api_key=os.environ["AZURE_OPENAI_API_KEY"],
                 model="gpt-35-turbo-16k",
-                azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16k_DEPLOYMENT_ID"],
+                azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID"],
                 azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
             ),
             enabled=True,
@@ -100,7 +100,7 @@ class StructureTester:
             prompt_driver=AzureOpenAiChatPromptDriver(
                 api_key=os.environ["AZURE_OPENAI_API_KEY"],
                 model="gpt-4-32k",
-                azure_deployment=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
+                azure_deployment=os.environ["AZURE_OPENAI_4_32K_DEPLOYMENT_ID"],
                 azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
             ),
             enabled=True,
