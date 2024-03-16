@@ -1,7 +1,7 @@
 import json
 import logging
-from typing import Optional
 from attr import define, field
+from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseWebScraperDriver
 from griptape.utils import import_optional_dependency
 
@@ -10,7 +10,7 @@ from griptape.utils import import_optional_dependency
 class TrafilaturaWebScraperDriver(BaseWebScraperDriver):
     include_links: bool = field(default=True, kw_only=True)
 
-    def scrape_url(self, url: str, *args, **kwargs) -> str:
+    def scrape_url(self, url: str) -> TextArtifact:
         trafilatura = import_optional_dependency("trafilatura")
         use_config = trafilatura.settings.use_config
 
@@ -32,7 +32,9 @@ class TrafilaturaWebScraperDriver(BaseWebScraperDriver):
                 page, include_links=self.include_links, output_format="json", config=config
             )
 
-            if extracted_page:
-                return json.loads(extracted_page).get("text")
-            else:
-                raise Exception("can't extract page")
+        if not extracted_page:
+            raise Exception("can't extract page")
+
+        text = json.loads(extracted_page).get("text")
+
+        return TextArtifact(text)

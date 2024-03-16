@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+
+from griptape.artifacts import TextArtifact
 
 
 class BaseWebScraperDriver(ABC):
     @abstractmethod
-    def scrape_url(self, url: str, *args, **kwargs) -> str:
+    def scrape_url(self, url: str) -> TextArtifact:
         ...

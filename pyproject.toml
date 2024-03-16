@@ -84,12 +84,11 @@ drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 
 drivers-web-scraper-trafilatura = ["trafilatura"]
-drivers-web-scraper-markdown = ["playwright", "beautifulsoup4", "markdownify"]
+drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]
-loaders-web = []
 loaders-email = ["mail-parser"]
 
 all = [
