@@ -18,7 +18,8 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
         exclude_tags: Optionally provide custom tags to exclude from the scraped content.
         exclude_classes: Optionally provide custom classes to exclude from the scraped content.
         exclude_ids: Optionally provide custom ids to exclude from the scraped content.
-        timeout: Optionally provide a timeout in milliseconds for the page to load.
+        timeout: Optionally provide a timeout in milliseconds for the page to continue loading after
+            the browser has emitted the "load" event.
     """
 
     include_links: bool = field(default=True, kw_only=True)
