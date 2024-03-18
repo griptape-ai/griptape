@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every subtask in `ToolkitTask` can now execute multiple actions in parallel.
 - Added `BaseActionSubtaskEvent.subtask_actions`.
 - Support for `text-embedding-3-small` and `text-embedding-3-large` models.
+- Support for `claude-3-opus`, `claude-3-sonnet`, and `claude-3-haiku` in `AnthropicPromptDriver`.
+- Support for `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-haiku-20240307-v1:0` in `BedrockClaudePromptModelDriver`.
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
@@ -20,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default embedding model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
 - Default embedding model of `OpenAiStructureConfig` to `text-embedding-3-small`.
 - `BaseTextLoader` to accept a `BaseChunker`.
+- `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Messages API.
+
+
 ## [0.23.2] - 2024-03-15
 
 ### Fixed
