@@ -34,7 +34,11 @@ boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], ver
 
 # drivers
 cohere = { version = ">=4", optional = true }
+<<<<<<< HEAD
 anthropic = { version = "^0.20.0", optional = true }
+=======
+anthropic = { version = "^0.17.0", optional = true }
+>>>>>>> 0655f92 (Adding anthropic image query driver)
 transformers = { version = "^4.30", optional = true }
 huggingface-hub = { version = ">=0.13", optional = true }
 boto3 = { version = "^1.28.2", optional = true }
