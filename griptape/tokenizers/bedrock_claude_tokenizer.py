@@ -5,7 +5,7 @@ from griptape.tokenizers import AnthropicTokenizer
 @define()
 class BedrockClaudeTokenizer(AnthropicTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
-        "anthropic.claude-3-sonnet-20240229-v1:0": 200000,
+        "anthropic.claude-3": 200000,
         "anthropic.claude-v2:1": 200000,
         "anthropic.claude": 100000,
     }
