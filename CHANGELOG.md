@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every subtask in `ToolkitTask` can now execute multiple actions in parallel.
 - Added `BaseActionSubtaskEvent.subtask_actions`.
 - Support for `text-embedding-3-small` and `text-embedding-3-large` models.
+- `BaseWebScraperDriver` allowing multiple web scraping implementations.
+- `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
+- `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
