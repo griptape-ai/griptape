@@ -98,6 +98,9 @@ class TestBedrockClaudePromptModelDriver:
                 {"role": "assistant", "content": "baz"},
                 {"role": "user", "content": "qux"},
             ],
+            "top_p": 0.999,
+            "top_k": 250,
+            "stop_sequences": ["<|Response|>"],
             **({"system": "foo"} if system_enabled else {}),
         }
 

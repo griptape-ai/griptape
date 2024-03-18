@@ -51,12 +51,14 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         else:
             return {"messages": messages}
 
-    # https://docs.anthropic.com/claude/reference/messages_post
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         input = self.prompt_stack_to_model_input(prompt_stack)
 
         return {
+            "stop_sequences": self.tokenizer.stop_sequences,
             "temperature": self.prompt_driver.temperature,
+            "top_p": self.top_p,
+            "top_k": self.top_k,
             "max_tokens": self.prompt_driver.max_output_tokens(self.prompt_driver.prompt_stack_to_string(prompt_stack)),
             "anthropic_version": self.anthropic_version,
             **input,
