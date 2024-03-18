@@ -67,6 +67,8 @@ class TestAnthropicPromptDriver:
             model=driver.model,
             max_tokens=4091,
             temperature=0.1,
+            top_p=0.999,
+            top_k=250,
             **{"system": "system-input"} if system_enabled else {},
         )
         assert text_artifact.value == "model-output"
@@ -109,6 +111,8 @@ class TestAnthropicPromptDriver:
             max_tokens=4091,
             temperature=0.1,
             stream=True,
+            top_p=0.999,
+            top_k=250,
             **{"system": "system-input"} if system_enabled else {},
         )
         assert text_artifact.value == "model-output"

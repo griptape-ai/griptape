@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -32,6 +32,8 @@ class AnthropicPromptDriver(BasePromptDriver):
     tokenizer: AnthropicTokenizer = field(
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True), kw_only=True
     )
+    top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
+    top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         response = self.client.messages.create(**self._base_params(prompt_stack))
@@ -64,6 +66,8 @@ class AnthropicPromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
+            "top_p": self.top_p,
+            "top_k": self.top_k,
             **self._prompt_stack_to_model_input(prompt_stack),
         }
 
