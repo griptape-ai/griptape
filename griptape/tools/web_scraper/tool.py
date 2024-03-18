@@ -9,7 +9,7 @@ from griptape.loaders import WebLoader
 
 @define
 class WebScraper(BaseTool):
-    web_loader: WebLoader = field(default=Factory(lambda: WebLoader()))
+    web_loader: WebLoader = field(default=Factory(lambda: WebLoader()), kw_only=True)
 
     @activity(
         config={
