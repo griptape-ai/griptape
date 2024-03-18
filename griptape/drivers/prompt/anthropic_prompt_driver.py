@@ -45,27 +45,27 @@ class AnthropicPromptDriver(BasePromptDriver):
             if chunk.type == "content_block_delta":
                 yield TextArtifact(value=chunk.delta.text)
 
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
-        return [
-            {"role": self.__to_anthropic_role(i), "content": i.content}
-            for i in prompt_stack.inputs
-            if i.is_user() or i.is_assistant()
+    def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
+        messages = [
+            {"role": self.__to_anthropic_role(prompt_input), "content": prompt_input.content}
+            for prompt_input in prompt_stack.inputs
+            if not prompt_input.is_system()
         ]
+        system = next((i for i in prompt_stack.inputs if i.is_system()), None)
+
+        if system is not None:
+            return {"messages": messages, "system": system.content}
+        else:
+            return {"messages": messages}
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        params = {
-            "messages": self._prompt_stack_to_messages(prompt_stack),
+        return {
             "model": self.model,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
+            **self._prompt_stack_to_model_input(prompt_stack),
         }
-
-        system_input = next((i for i in prompt_stack.inputs if i.is_system()), None)
-        if system_input is not None:
-            params["system"] = system_input.content
-
-        return params
 
     def __to_anthropic_role(self, prompt_input: PromptStack.Input) -> str:
         if prompt_input.is_system():
