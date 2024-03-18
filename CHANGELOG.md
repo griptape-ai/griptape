@@ -19,10 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: `ActionSubtask` was renamed to `ActionsSubtask`.
 - **BREAKING**: Removed `subtask_action_name`, `subtask_action_path`, and `subtask_action_input` in `BaseActionSubtaskEvent`.
-- Default embedding model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
-- Default embedding model of `OpenAiStructureConfig` to `text-embedding-3-small`.
+- Default model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
+- Default model of `OpenAiStructureConfig` to `text-embedding-3-small`.
 - `BaseTextLoader` to accept a `BaseChunker`.
-- `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Messages API.
+- Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
+- `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
 
 
 ## [0.23.2] - 2024-03-15

@@ -10,6 +10,8 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 
 @define
 class BedrockClaudePromptModelDriver(BasePromptModelDriver):
+    top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
+    top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
     _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
     prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
     anthropic_version: str = field(default="bedrock-2023-05-31", kw_only=True, metadata={"serializable": True})
