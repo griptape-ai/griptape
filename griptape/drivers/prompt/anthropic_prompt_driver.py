@@ -35,16 +35,16 @@ class AnthropicPromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        print(json.dumps(self._base_params(prompt_stack)))
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
-        return TextArtifact(value=response.completion)
+        return TextArtifact(value=response.content[0].text)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        response = self.client.completions.create(**self._base_params(prompt_stack), stream=True)
+        response = self.client.messages.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in response:
-            yield TextArtifact(value=chunk.completion)
+            if chunk.type == "content_block_delta":
+                yield TextArtifact(value=chunk.delta.text)
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
         return [
