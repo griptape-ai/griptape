@@ -2,19 +2,17 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from attr import define, field, Factory
 from griptape.artifacts import ImageArtifact, TextArtifact
-from griptape.drivers.image_query.base_image_query_driver import BaseImageQueryDriver
+from griptape.drivers import BaseImageQueryDriver
 from griptape.tokenizers import AnthropicTokenizer
 from griptape.utils import import_optional_dependency
 import base64
 
 if TYPE_CHECKING:
     from anthropic import Anthropic
-    from anthropic.types import MessageParam, ImageBlockParam, TextBlockParam
-    from anthropic.types.image_block_param import Source
 
 
 @define
-class AnthropicVisionImageQueryDriver(BaseImageQueryDriver):
+class AnthropicImageQueryDriver(BaseImageQueryDriver):
     """
     Attributes:
         api_key: Anthropic API key.
@@ -32,7 +30,9 @@ class AnthropicVisionImageQueryDriver(BaseImageQueryDriver):
         kw_only=True,
     )
     tokenizer: AnthropicTokenizer = field(
-        default=Factory(lambda self: AnthropicTokenizer(model=self.model, max_tokens=4096), takes_self=True),
+        default=Factory(
+            lambda self: AnthropicTokenizer(model=self.model, max_tokens=4096), takes_self=True
+        ),  # TODO: Fix tokens after Collin's change goes in
         kw_only=True,
     )
 
@@ -42,8 +42,7 @@ class AnthropicVisionImageQueryDriver(BaseImageQueryDriver):
             content.append(self._construct_image_message(image))
 
         content.append(self._construct_text_message(query))
-
-        messages: list[MessageParam] = [MessageParam(content=content, role="user")]
+        messages = self._construct_messages(content)
 
         response = self.client.messages.create(
             model=self.model, max_tokens=self.tokenizer.max_tokens, messages=messages
@@ -53,11 +52,15 @@ class AnthropicVisionImageQueryDriver(BaseImageQueryDriver):
 
         return TextArtifact(text_content)
 
-    def _construct_image_message(self, image_data: ImageArtifact) -> ImageBlockParam:
+    def _construct_image_message(self, image_data: ImageArtifact) -> dict:
         data = base64.b64encode(image_data.value).decode("utf-8")
         type = image_data.mime_type
 
-        return ImageBlockParam(source=Source(data=data, media_type=type, type="base64"), type="image")
+        return {"source": {"data": data, "media_type": type, "type": "base64"}, "type": "image"}
 
-    def _construct_text_message(self, query: str) -> TextBlockParam:
-        return TextBlockParam(text=query, type="text")
+
+    def _construct_text_message(self, query: str) -> dict:
+        return {"text": query, "type": "text"}
+
+    def _construct_messages(self, content: list) -> list:
+        return [{"content": content, "role": "user"}]

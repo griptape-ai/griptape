@@ -72,10 +72,15 @@ from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedro
 from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 from .image_generation.dummy_image_generation_driver import DummyImageGenerationDriver
 
+from .image_query_model.base_image_query_model_driver import BaseImageQueryModelDriver
+from .image_query_model.bedrock_claude_image_query_model_driver import BedrockClaudeImageQueryModelDriver
+
 from .image_query.base_image_query_driver import BaseImageQueryDriver
-from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
+from .image_query.base_multi_model_image_query_driver import BaseMultiModelImageQueryDriver
 from .image_query.dummy_image_query_driver import DummyImageQueryDriver
-from .image_query.anthropic_vision_image_query_driver import AnthropicVisionImageQueryDriver
+from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
+from .image_query.anthropic_image_query_driver import AnthropicImageQueryDriver
+from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQueryDriver
 
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
@@ -145,10 +150,14 @@ __all__ = [
     "AmazonBedrockImageGenerationDriver",
     "AzureOpenAiImageGenerationDriver",
     "DummyImageGenerationDriver",
+    BaseImageQueryModelDriver,
+    BedrockClaudeImageQueryModelDriver,
     "BaseImageQueryDriver",
     "OpenAiVisionImageQueryDriver",
     "DummyImageQueryDriver",
-    AnthropicVisionImageQueryDriver
+    AnthropicImageQueryDriver,
+    BaseMultiModelImageQueryDriver,
+    AmazonBedrockImageQueryDriver
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",
