@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every subtask in `ToolkitTask` can now execute multiple actions in parallel.
 - Added `BaseActionSubtaskEvent.subtask_actions`.
 - Support for `text-embedding-3-small` and `text-embedding-3-large` models.
+- `GooglePromptDriver` and `GoogleTokenizer` for use with Gemini Pro. 
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
