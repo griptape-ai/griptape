@@ -13,9 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GooglePromptDriver` and `GoogleTokenizer` for use with `gemini-pro`. 
 - `GoogleEmbeddingDriver` for use with `embedding-001`. 
 - `GoogleStructureConfig` for providing Structures with Google Prompt and Embedding Driver configuration.
+- Support for `claude-3-opus`, `claude-3-sonnet`, and `claude-3-haiku` in `AnthropicPromptDriver`.
+- Support for `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-haiku-20240307-v1:0` in `BedrockClaudePromptModelDriver`.
+- `top_k` and `top_p` parameters in `AnthropicPromptDriver`.
 - `BaseWebScraperDriver` allowing multiple web scraping implementations.
 - `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
+- `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models. 
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
@@ -23,9 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: `ActionSubtask` was renamed to `ActionsSubtask`.
 - **BREAKING**: Removed `subtask_action_name`, `subtask_action_path`, and `subtask_action_input` in `BaseActionSubtaskEvent`.
-- Default embedding model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
-- Default embedding model of `OpenAiStructureConfig` to `text-embedding-3-small`.
+- Default model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
+- Default model of `OpenAiStructureConfig` to `text-embedding-3-small`.
 - `BaseTextLoader` to accept a `BaseChunker`.
+- Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
+- `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
+
+
 ## [0.23.2] - 2024-03-15
 
 ### Fixed
