@@ -73,6 +73,10 @@ from .image_query.base_image_query_driver import BaseImageQueryDriver
 from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
 from .image_query.dummy_image_query_driver import DummyImageQueryDriver
 
+from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
+from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
+from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -137,4 +141,7 @@ __all__ = [
     "BaseImageQueryDriver",
     "OpenAiVisionImageQueryDriver",
     "DummyImageQueryDriver",
+    "BaseWebScraperDriver",
+    "TrafilaturaWebScraperDriver",
+    "MarkdownifyWebScraperDriver",
 ]
