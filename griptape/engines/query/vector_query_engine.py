@@ -50,7 +50,7 @@ class VectorQueryEngine(BaseQueryEngine):
                 PromptStack(inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)])
             )
 
-            if message_token_count + self.answer_token_offset >= tokenizer.max_tokens:
+            if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
                 text_segments.pop()
 
                 message = self.template_generator.render(

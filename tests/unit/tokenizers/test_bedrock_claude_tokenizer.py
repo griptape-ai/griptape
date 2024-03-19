@@ -18,5 +18,11 @@ class TestBedrockClaudeTokenizer:
         [("anthropic.claude-v2:1", 199995), ("anthropic.claude-v2", 99995)],
         indirect=["tokenizer"],
     )
-    def test_tokens_left(self, tokenizer, expected):
-        assert tokenizer.count_tokens_left("foo bar huzzah") == expected
+    def test_input_tokens_left(self, tokenizer, expected):
+        assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected
+
+    @pytest.mark.parametrize(
+        "tokenizer,expected", [("anthropic.claude-v2:1", 4091), ("anthropic.claude-v2", 4091)], indirect=["tokenizer"]
+    )
+    def test_output_tokens_left(self, tokenizer, expected):
+        assert tokenizer.count_output_tokens_left("foo bar huzzah") == expected

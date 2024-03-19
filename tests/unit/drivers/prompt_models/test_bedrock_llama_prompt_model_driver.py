@@ -27,7 +27,7 @@ class TestBedrockLlamaPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model=BedrockLlamaTokenizer.DEFAULT_MODEL,
+            model="meta.llama",
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockLlamaPromptModelDriver(),
             temperature=0.12345,

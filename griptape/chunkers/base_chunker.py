@@ -17,7 +17,9 @@ class BaseChunker(ABC):
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
     )
-    max_tokens: int = field(default=Factory(lambda self: self.tokenizer.max_tokens, takes_self=True), kw_only=True)
+    max_tokens: int = field(
+        default=Factory(lambda self: self.tokenizer.max_input_tokens, takes_self=True), kw_only=True
+    )
 
     def chunk(self, text: TextArtifact | str) -> list[TextArtifact]:
         text = text.value if isinstance(text, TextArtifact) else text
