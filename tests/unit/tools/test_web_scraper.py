@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import BaseArtifact, ListArtifact
+from griptape.artifacts import ListArtifact
 
 
 class TestWebScraper:
@@ -12,9 +12,4 @@ class TestWebScraper:
     def test_get_content(self, scraper):
         assert isinstance(
             scraper.get_content({"values": {"url": "https://github.com/griptape-ai/griptape"}}), ListArtifact
-        )
-
-    def test_get_authors(self, scraper):
-        assert isinstance(
-            scraper.get_author({"values": {"url": "https://github.com/griptape-ai/griptape"}}), BaseArtifact
         )

@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `claude-3-opus`, `claude-3-sonnet`, and `claude-3-haiku` in `AnthropicPromptDriver`.
 - Support for `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-haiku-20240307-v1:0` in `BedrockClaudePromptModelDriver`.
 - `top_k` and `top_p` parameters in `AnthropicPromptDriver`.
+- `BaseWebScraperDriver` allowing multiple web scraping implementations.
+- `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
+- `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
