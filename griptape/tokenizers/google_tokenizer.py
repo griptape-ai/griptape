@@ -19,9 +19,7 @@ class GoogleTokenizer(BaseTokenizer):
     )
 
     def count_tokens(self, text: str | list) -> int:
-        if isinstance(text, str):
-            return self.model_client.count_tokens(text).total_tokens
-        elif isinstance(text, list):
+        if isinstance(text, str) or isinstance(text, list):
             return self.model_client.count_tokens(text).total_tokens
         else:
             raise ValueError("Text must be a string or a list.")

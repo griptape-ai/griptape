@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `text-embedding-3-small` and `text-embedding-3-large` models.
 - `GooglePromptDriver` and `GoogleTokenizer` for use with `gemini-pro`. 
 - `GoogleEmbeddingDriver` for use with `embedding-001`. 
+- `GoogleStructureConfig` for providing Structures with Google Prompt and Embedding Driver configuration.
 - `BaseWebScraperDriver` allowing multiple web scraping implementations.
 - `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
