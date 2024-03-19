@@ -17,8 +17,8 @@ class GooglePromptDriver(BasePromptDriver):
     """
     Attributes:
         api_key: Google API key.
-        model: Anthropic model name.
-        model_client: Custom `Anthropic` client.
+        model: Google model name.
+        model_client: Custom `GenerativeModel` client.
         tokenizer: Custom `GoogleTokenizer`.
         top_p: Optional value for top_p.
         top_k: Optional value for top_k.
