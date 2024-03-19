@@ -20,7 +20,3 @@ class TestGoogleEmbeddingDriver:
 
     def test_try_embed_chunk(self):
         assert GoogleEmbeddingDriver().try_embed_chunk("foobar") == [0, 1, 0]
-
-    def test_try_embed_chunk_replaces_newlines_in_older_ada_models(self, model, mock_genai):
-        GoogleEmbeddingDriver(model="models/embedding-001").try_embed_chunk("foo\nbar")
-        assert mock_genai.call_args.kwargs["input"] == "foo bar" if model.endswith("001") else "foo\nbar"

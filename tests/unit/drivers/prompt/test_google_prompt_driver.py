@@ -34,7 +34,9 @@ class TestGooglePromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
-        driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", tokenizer=MockTokenizer(model="gemini-pro"))
+        driver = GooglePromptDriver(
+            model="gemini-pro", api_key="api-key", tokenizer=MockTokenizer(model="gemini-pro"), top_p=0.5, top_k=50
+        )
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -42,13 +44,17 @@ class TestGooglePromptDriver:
         # Then
         mock_generative_model.return_value.start_chat.assert_called_once_with(
             history=[
-                {"parts": ["*system-input*", "generic-input"], "role": "user"},
+                {"parts": ["generic-input"], "role": "user"},
+                {"parts": ["system-input"], "role": "user"},
+                {"parts": ["Understood."], "role": "model"},
                 {"parts": ["user-input"], "role": "user"},
             ]
         )
         mock_generative_model.return_value.start_chat.return_value.send_message.assert_called_once_with(
             "assistant-input",
-            generation_config=GenerationConfig(max_output_tokens=915, temperature=0.1, top_p=None, top_k=None),
+            generation_config=GenerationConfig(
+                max_output_tokens=995, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=["<|Response|>"]
+            ),
         )
         assert text_artifact.value == "model-output"
 
@@ -60,7 +66,12 @@ class TestGooglePromptDriver:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         driver = GooglePromptDriver(
-            model="gemini-pro", api_key="api-key", stream=True, tokenizer=MockTokenizer(model="gemini-pro")
+            model="gemini-pro",
+            api_key="api-key",
+            stream=True,
+            tokenizer=MockTokenizer(model="gemini-pro"),
+            top_p=0.5,
+            top_k=50,
         )
 
         # When
@@ -70,13 +81,17 @@ class TestGooglePromptDriver:
         text_artifact = next(text_artifact_stream)
         mock_stream_generative_model.return_value.start_chat.assert_called_once_with(
             history=[
-                {"parts": ["*system-input*", "generic-input"], "role": "user"},
+                {"parts": ["generic-input"], "role": "user"},
+                {"parts": ["system-input"], "role": "user"},
+                {"parts": ["Understood."], "role": "model"},
                 {"parts": ["user-input"], "role": "user"},
             ]
         )
         mock_stream_generative_model.return_value.start_chat.return_value.send_message.assert_called_once_with(
             "assistant-input",
             stream=True,
-            generation_config=GenerationConfig(max_output_tokens=915, temperature=0.1, top_p=None, top_k=None),
+            generation_config=GenerationConfig(
+                max_output_tokens=995, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=["<|Response|>"]
+            ),
         )
         assert text_artifact.value == "model-output"
