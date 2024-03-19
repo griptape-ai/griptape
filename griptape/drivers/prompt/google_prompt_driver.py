@@ -48,6 +48,7 @@ class GooglePromptDriver(BasePromptDriver):
         response = chat.send_message(
             input["message"],
             generation_config=GenerationConfig(
+                stop_sequences=self.tokenizer.stop_sequences,
                 max_output_tokens=self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
                 temperature=self.temperature,
                 top_p=self.top_p,
@@ -66,6 +67,7 @@ class GooglePromptDriver(BasePromptDriver):
             input["message"],
             stream=True,
             generation_config=GenerationConfig(
+                stop_sequences=self.tokenizer.stop_sequences,
                 max_output_tokens=self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
                 temperature=self.temperature,
                 top_p=self.top_p,
