@@ -38,12 +38,12 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         content.append(self._construct_text_message(query))
         messages = self._construct_messages(content)
 
-        if self.max_output_tokens is None:
-            self.max_output_tokens = 4096 # max allowed by Claude 3
+        params = {"model": self.model, "messages": messages}
 
-        response = self.client.messages.create(
-            model=self.model, max_tokens=self.max_output_tokens, messages=messages
-        )
+        if self.max_output_tokens is not None:
+            params["max_tokens"] = self.max_output_tokens
+
+        response = self.client.messages.create(**params)
 
         text_content = response.content
 
@@ -54,7 +54,6 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         type = image_data.mime_type
 
         return {"source": {"data": data, "media_type": type, "type": "base64"}, "type": "image"}
-
 
     def _construct_text_message(self, query: str) -> dict:
         return {"text": query, "type": "text"}
