@@ -46,10 +46,10 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
         ]
         system = next((i for i in prompt_stack.inputs if i.is_system()), None)
 
-        if system is not None:
-            return {"messages": messages, "system": system.content}
-        else:
+        if system is None:
             return {"messages": messages}
+        else:
+            return {"messages": messages, "system": system.content}
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
         input = self.prompt_stack_to_model_input(prompt_stack)

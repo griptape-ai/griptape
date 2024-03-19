@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseWebScraperDriver` allowing multiple web scraping implementations.
 - `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
+- `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models. 
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
