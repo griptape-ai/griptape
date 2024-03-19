@@ -1,3 +1,4 @@
+from textwrap import dedent
 import pytest
 
 from griptape.drivers.web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
@@ -24,6 +25,31 @@ class TestMarkdownifyWebScraperDriver:
     def test_scrape_url(self, web_scraper):
         artifact = web_scraper.scrape_url("https://example.com/")
         assert "[foobar](foobar.com)" == artifact.value
+
+    def test_scrape_url_whitespace(self, web_scraper, mock_content):
+        mock_content.return_value = dedent(
+            """\
+            <html>
+                \t<br><br>
+                <br>
+                <h2>foo</h2>
+                <br>
+                <br>
+                <ul>
+                    <li>
+                        bar:
+                        <ul>
+                            <li>baz</li>
+                            <li>baz</li><br>\t<br>
+                            <li>baz</li>
+                        </ul>
+                    </li>
+                </ul><br>\t
+            </html>
+            """
+        )
+        artifact = web_scraper.scrape_url("https://example.com/")
+        assert "foo\n---\n\n* bar:\n  + baz\n  + baz\n\n  + baz" == artifact.value
 
     def test_scrape_url_no_excludes(self):
         web_scraper = MarkdownifyWebScraperDriver(exclude_tags=[], exclude_classes=[], exclude_ids=[])

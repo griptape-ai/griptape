@@ -4908,15 +4908,14 @@ drivers-vector-opensearch = ["opensearch-py"]
 drivers-vector-pinecone = ["pinecone-client"]
 drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
 drivers-vector-redis = ["redis"]
-drivers-web-scraper-markdown = ["beautifulsoup4", "markdownify", "playwright"]
+drivers-web-scraper-markdownify = ["beautifulsoup4", "markdownify", "playwright"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 loaders-dataframe = ["pandas"]
 loaders-email = ["mail-parser"]
 loaders-image = ["pillow"]
 loaders-pdf = ["pypdf"]
-loaders-web = []
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f6d1e0a73c3d68d3bd7bc2f6d2e7ff20c781aabe113f6f84f7e7d1adfe2bbdb5"
+content-hash = "7d8645e478a43b6051ab8dac055c3f883cf882fd76a0d3625fd44a7d716713d2"
