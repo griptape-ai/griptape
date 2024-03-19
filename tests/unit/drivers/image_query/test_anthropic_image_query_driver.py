@@ -1,6 +1,6 @@
 import pytest
 import base64
-from unittest.mock import ANY
+from unittest.mock import ANY, Mock
 from griptape.drivers import AnthropicImageQueryDriver
 from griptape.artifacts import ImageArtifact
 
@@ -9,7 +9,9 @@ class TestAnthropicImageQueryDriver:
     @pytest.fixture
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
-        mock_client.return_value.messages.create.return_value.content = ["content-block"]
+
+        return_value = Mock(text="Content")
+        mock_client.return_value.messages.create.return_value.content = [return_value]
 
         return mock_client
 
@@ -34,7 +36,7 @@ class TestAnthropicImageQueryDriver:
             model=driver.model, max_tokens=4096, messages=[expected_message]
         )
 
-        assert text_artifact.value == "['content-block']"
+        assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_value(self, mock_client):
         driver = AnthropicImageQueryDriver(api_key="1234key5678", max_output_tokens=1024)
@@ -51,7 +53,7 @@ class TestAnthropicImageQueryDriver:
             model=driver.model, max_tokens=1024, messages=[expected_message]
         )
 
-        assert text_artifact.value == "['content-block']"
+        assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_none(self, mock_client):
         driver = AnthropicImageQueryDriver(api_key="1234key5678", max_output_tokens=None)
@@ -68,7 +70,7 @@ class TestAnthropicImageQueryDriver:
             model=driver.model, messages=[expected_message]
         )
 
-        assert text_artifact.value == "['content-block']"
+        assert text_artifact.value == "Content"
 
     def test_try_query_wrong_media_type(self, mock_client):
         driver = AnthropicImageQueryDriver(api_key="1234key5678", max_output_tokens=None)
@@ -87,7 +89,7 @@ class TestAnthropicImageQueryDriver:
             model=driver.model, messages=[expected_message]
         )
 
-        assert text_artifact.value == "['content-block']"
+        assert text_artifact.value == "Content"
 
     def _expected_message(self, expected_data, expected_media_type, expected_prompt_string):
         encoded_data = base64.b64encode(expected_data).decode("utf-8")

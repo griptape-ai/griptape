@@ -31,8 +31,12 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
         return input_params
 
     def process_output(self, output: dict) -> TextArtifact:
-        content = output["content"]
-        return TextArtifact(content)
+        content_blocks = output["content"]
+        if len(content_blocks) < 1:
+            raise ValueError("Response content is empty")
+
+        text_content = content_blocks[0]["text"]
+        return TextArtifact(text_content)
 
     def _construct_image_message(self, image_data: ImageArtifact) -> dict:
         data = base64.b64encode(image_data.value).decode("utf-8")

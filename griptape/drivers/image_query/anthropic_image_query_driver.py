@@ -45,8 +45,11 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
 
         response = self.client.messages.create(**params)
 
-        text_content = response.content
+        content_blocks = response.content
+        if len(content_blocks) < 1:
+            raise ValueError("Response content is empty")
 
+        text_content = content_blocks[0].text
         return TextArtifact(text_content)
 
     def _construct_image_message(self, image_data: ImageArtifact) -> dict:

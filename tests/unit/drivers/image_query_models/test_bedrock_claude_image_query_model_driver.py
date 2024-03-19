@@ -37,11 +37,19 @@ class TestBedrockClaudeImageQueryModelDriver:
 
     def test_process_output(self):
         model_driver = BedrockClaudeImageQueryModelDriver()
-        output = model_driver.process_output({"content": ["ContentBlock"]})
+        output = model_driver.process_output({"content": [{"text": "Content"}]})
 
         assert isinstance(output, TextArtifact)
-        assert output.value == "['ContentBlock']"
+        assert output.value == "Content"
 
-    def test_process_output_bad(self):
+    def test_process_output_no_content_key(self):
         with pytest.raises(KeyError):
             BedrockClaudeImageQueryModelDriver().process_output({"explicitly-not-content": ["ContentBlock"]})
+
+    def test_process_output_bad_length(self):
+        with pytest.raises(ValueError):
+            BedrockClaudeImageQueryModelDriver().process_output({"content": []})
+
+    def test_process_output_no_text_key(self):
+        with pytest.raises(KeyError):
+            BedrockClaudeImageQueryModelDriver().process_output({"content": [{"not-text": "Content"}]})

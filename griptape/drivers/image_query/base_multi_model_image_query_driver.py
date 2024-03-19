@@ -17,5 +17,6 @@ class BaseMultiModelImageQueryDriver(BaseImageQueryDriver, ABC):
         model: Model name to use
         image_query_model_driver: Image Model Driver to use.
     """
+
     model: str = field(kw_only=True, metadata={"serializable": True})
     image_query_model_driver: BaseImageQueryModelDriver = field(kw_only=True, metadata={"serializable": True})
