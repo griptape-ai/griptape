@@ -18,7 +18,8 @@ class TestBedrockClaudeImageQueryModelDriver:
         assert params["anthropic_version"] == "bedrock-2023-05-31"
         assert "messages" in params
         assert len(params["messages"]) == 1
-        assert "max_tokens" not in params
+        assert "max_tokens" in params
+        assert params["max_tokens"] == 4096
 
     def test_construct_image_query_request_parameters_max_tokens(self):
         model_driver = BedrockClaudeImageQueryModelDriver(max_output_tokens=1024)

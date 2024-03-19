@@ -28,7 +28,7 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         ),
         kw_only=True,
     )
-    max_output_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    max_output_tokens: Optional[int] = field(default=4096, kw_only=True, metadata={"serializable": True})
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
         content = []

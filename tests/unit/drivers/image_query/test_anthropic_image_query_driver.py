@@ -31,7 +31,7 @@ class TestAnthropicImageQueryDriver:
         expected_message = self._expected_message(test_binary_data, "image/png", test_prompt_string)
 
         mock_client.return_value.messages.create.assert_called_once_with(
-            model=driver.model, messages=[expected_message]
+            model=driver.model, max_tokens=4096, messages=[expected_message]
         )
 
         assert text_artifact.value == "['content-block']"
