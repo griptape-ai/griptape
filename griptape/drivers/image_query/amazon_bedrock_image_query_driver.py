@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 from attr import define, field, Factory
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseMultiModelImageQueryDriver
@@ -16,20 +16,17 @@ class AmazonBedrockImageQueryDriver(BaseMultiModelImageQueryDriver):
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True
     )
+    max_output_tokens: Optional[int] = field(default=4096, kw_only=True, metadata={"serializable": True})
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
 
-        payload = {
-                "max_tokens": 256,
-                "messages": [{"role": "user", "content": "Hello, world"}],
-                "anthropic_version": "bedrock-2023-05-31",
-        }
+        payload = self.image_query_model_driver.construct_query_image_request_parameters(query, images)
 
         response = self.bedrock_client.invoke_model(
             modelId=self.model, contentType="application/json", accept="application/json", body=json.dumps(payload)
         )
 
-        response_body = response["body"].read()
+        response_body = json.loads(response.get("body").read())
 
         if response_body:
             return self.image_query_model_driver.process_output(response_body)
