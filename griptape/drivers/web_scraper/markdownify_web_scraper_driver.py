@@ -1,3 +1,4 @@
+import re
 from typing import Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -22,9 +23,11 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
             the browser has emitted the "load" event.
     """
 
+    DEFAULT_EXCLUDE_TAGS = ["script", "style", "head"]
+
     include_links: bool = field(default=True, kw_only=True)
     exclude_tags: list[str] = field(
-        default=Factory(lambda: ["script", "style", "head", "header", "footer", "svg"]), kw_only=True
+        default=Factory(lambda self: self.DEFAULT_EXCLUDE_TAGS, takes_self=True), kw_only=True
     )
     exclude_classes: list[str] = field(default=Factory(list), kw_only=True)
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
@@ -79,5 +82,17 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
                         s.extract()
 
                 text = OptionalLinksMarkdownConverter().convert_soup(soup)
+
+                # Remove leading and trailing whitespace from the entire text
+                text = text.strip()
+
+                # Remove trailing whitespace from each line
+                text = re.sub(r"[ \t]+$", "", text, flags=re.MULTILINE)
+
+                # Indent using 2 spaces instead of tabs
+                text = re.sub(r"(\n?\s*?)\t", r"\1  ", text)
+
+                # Remove triple+ newlines (keep double newlines for paragraphs)
+                text = re.sub(r"\n\n+", "\n\n", text)
 
                 return TextArtifact(text)
