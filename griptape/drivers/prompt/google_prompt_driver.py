@@ -46,10 +46,10 @@ class GooglePromptDriver(BasePromptDriver):
         input = self._prompt_stack_to_model_input(prompt_stack)
         chat = self.model_client.start_chat(history=input["history"])
         response = chat.send_message(
-            input["message"],
+            input["message"]["parts"][0],
             generation_config=GenerationConfig(
                 stop_sequences=self.tokenizer.stop_sequences,
-                max_output_tokens=self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
+                max_output_tokens=self.max_output_tokens(input["history"] + [input["message"]]),
                 temperature=self.temperature,
                 top_p=self.top_p,
                 top_k=self.top_k,
@@ -64,11 +64,11 @@ class GooglePromptDriver(BasePromptDriver):
         input = self._prompt_stack_to_model_input(prompt_stack)
         chat = self.model_client.start_chat(history=input["history"])
         response = chat.send_message(
-            input["message"],
+            input["message"]["parts"][0],
             stream=True,
             generation_config=GenerationConfig(
                 stop_sequences=self.tokenizer.stop_sequences,
-                max_output_tokens=self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
+                max_output_tokens=self.max_output_tokens(input["history"] + [input["message"]]),
                 temperature=self.temperature,
                 top_p=self.top_p,
                 top_k=self.top_k,
@@ -78,27 +78,26 @@ class GooglePromptDriver(BasePromptDriver):
         for chunk in response:
             yield TextArtifact(value=chunk.text)
 
+    def default_prompt_stack_to_string_converter(self, prompt_stack: PromptStack) -> str:
+        return "".join([i.content for i in prompt_stack.inputs])
+
     def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict[str, Any]:
         history_inputs = prompt_stack.inputs[:-1]
-        message = prompt_stack.inputs[-1].content
+        message_input = self.__to_content_dict(prompt_stack.inputs[-1])
 
         content = []
-        system_message = None
         for prompt_input in history_inputs:
             if prompt_input.is_system():
-                system_message = prompt_input.content
+                content.append(self.__to_content_dict(prompt_input))
+                content.append(
+                    self.__to_content_dict(PromptStack.Input(role=PromptStack.ASSISTANT_ROLE, content="Understood."))
+                )
             elif prompt_input.is_assistant():
                 content.append(self.__to_content_dict(prompt_input))
             else:
                 content.append(self.__to_content_dict(prompt_input))
 
-        if system_message is not None:
-            if content:
-                content[0]["parts"].insert(0, f"*{system_message}*")
-            else:
-                message = f"*{system_message}* {message}"
-
-        return {"message": message, "history": content}
+        return {"message": message_input, "history": content}
 
     def __to_content_dict(self, prompt_input: PromptStack.Input) -> ContentDict:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
@@ -107,7 +106,7 @@ class GooglePromptDriver(BasePromptDriver):
 
     def __to_google_role(self, prompt_input: PromptStack.Input) -> str:
         if prompt_input.is_system():
-            return "system"
+            return "user"
         elif prompt_input.is_assistant():
             return "model"
         else:

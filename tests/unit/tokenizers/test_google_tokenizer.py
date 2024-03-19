@@ -18,11 +18,14 @@ class TestGoogleTokenizer:
     @pytest.mark.parametrize("tokenizer,expected", [("gemini-pro", 5)], indirect=["tokenizer"])
     def test_token_count(self, tokenizer, expected):
         assert tokenizer.count_tokens("foo bar huzzah") == expected
+        assert tokenizer.count_tokens(["foo", "bar", "huzzah"]) == expected
 
     @pytest.mark.parametrize("tokenizer,expected", [("gemini-pro", 30715)], indirect=["tokenizer"])
     def test_input_tokens_left(self, tokenizer, expected):
         assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected
+        assert tokenizer.count_input_tokens_left(["foo", "bar", "huzzah"]) == expected
 
     @pytest.mark.parametrize("tokenizer,expected", [("gemini-pro", 2043)], indirect=["tokenizer"])
     def test_output_tokens_left(self, tokenizer, expected):
         assert tokenizer.count_output_tokens_left("foo bar huzzah") == expected
+        assert tokenizer.count_output_tokens_left(["foo", "bar", "huzzah"]) == expected
