@@ -9,6 +9,7 @@ from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
+from .prompt.google_prompt_driver import GooglePromptDriver
 from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 from .prompt.dummy_prompt_driver import DummyPromptDriver
 
@@ -85,6 +86,7 @@ __all__ = [
     "AnthropicPromptDriver",
     "AmazonSageMakerPromptDriver",
     "AmazonBedrockPromptDriver",
+    "GooglePromptDriver",
     "BaseMultiModelPromptDriver",
     "DummyPromptDriver",
     "BaseConversationMemoryDriver",
