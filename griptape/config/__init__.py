@@ -12,6 +12,7 @@ from .base_structure_config import BaseStructureConfig
 from .structure_config import StructureConfig
 from .openai_structure_config import OpenAiStructureConfig
 from .amazon_bedrock_structure_config import AmazonBedrockStructureConfig
+from .anthropic_structure_config import AnthropicStructureConfig
 
 
 __all__ = [
@@ -27,4 +28,5 @@ __all__ = [
     "StructureConfig",
     "OpenAiStructureConfig",
     "AmazonBedrockStructureConfig",
+    "AnthropicStructureConfig",
 ]
