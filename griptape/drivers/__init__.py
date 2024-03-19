@@ -157,7 +157,7 @@ __all__ = [
     "DummyImageQueryDriver",
     AnthropicImageQueryDriver,
     BaseMultiModelImageQueryDriver,
-    AmazonBedrockImageQueryDriver
+    AmazonBedrockImageQueryDriver,
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",
