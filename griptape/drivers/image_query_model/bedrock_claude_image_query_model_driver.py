@@ -1,7 +1,6 @@
 from __future__ import annotations
 import base64
-import json
-from typing import Any, Optional
+from typing import Optional
 from attr import field, define
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryModelDriver
@@ -16,7 +15,7 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
 
     max_output_tokens: Optional[int] = field(default=4096, kw_only=True, metadata={"serializable": True})
 
-    def construct_query_image_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
+    def construct_image_query_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
         content = []
         for image in images:
             content.append(self._construct_image_message(image))
