@@ -13,7 +13,7 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
         max_output_tokens: Max output tokens to return.
     """
 
-    max_output_tokens: Optional[int] = field(default=4096, kw_only=True, metadata={"serializable": True})
+    max_output_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def construct_image_query_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
         content = []
@@ -23,11 +23,10 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
         content.append(self._construct_text_message(query))
         messages = self._construct_messages(content)
 
-        input_params = {
-            "max_tokens": self.max_output_tokens,
-            "messages": messages,
-            "anthropic_version": "bedrock-2023-05-31",
-        }
+        input_params = {"messages": messages, "anthropic_version": "bedrock-2023-05-31"}
+
+        if self.max_output_tokens is not None:
+            input_params["max_tokens"] = self.max_output_tokens
 
         return input_params
 

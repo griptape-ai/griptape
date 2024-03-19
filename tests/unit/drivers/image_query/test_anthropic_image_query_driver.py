@@ -1,8 +1,8 @@
 import pytest
 import base64
-from unittest.mock import ANY, Mock
+from unittest.mock import ANY
 from griptape.drivers import AnthropicImageQueryDriver
-from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.artifacts import ImageArtifact
 
 
 class TestAnthropicImageQueryDriver:
@@ -31,7 +31,24 @@ class TestAnthropicImageQueryDriver:
         expected_message = self._expected_message(test_binary_data, "image/png", test_prompt_string)
 
         mock_client.return_value.messages.create.assert_called_once_with(
-            model=driver.model, max_tokens=ANY, messages=[expected_message]
+            model=driver.model, messages=[expected_message]
+        )
+
+        assert text_artifact.value == "['content-block']"
+
+    def test_try_query_max_tokens_value(self, mock_client):
+        driver = AnthropicImageQueryDriver(api_key="1234key5678", max_output_tokens=1024)
+
+        test_prompt_string = "Prompt String"
+        test_binary_data = b"test-data"
+        text_artifact = driver.try_query(
+            test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)]
+        )
+
+        expected_message = self._expected_message(test_binary_data, "image/png", test_prompt_string)
+
+        mock_client.return_value.messages.create.assert_called_once_with(
+            model=driver.model, max_tokens=1024, messages=[expected_message]
         )
 
         assert text_artifact.value == "['content-block']"
