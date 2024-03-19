@@ -18,6 +18,8 @@ class VectorQueryEngine(BaseQueryEngine):
     prompt_driver: BasePromptDriver = field(kw_only=True)
     template_generator: J2 = field(default=Factory(lambda: J2("engines/query/vector_query.j2")), kw_only=True)
 
+    DEFAULT_QUERY_PREAMBLE = "You can answer questions by searching through text segments. Always be truthful. Don't make up facts. Use the below list of text segments to respond to the subsequent query. If the answer cannot be found in the segments, say 'I could not find an answer'."
+
     def query(
         self,
         query: str,
@@ -26,6 +28,7 @@ class VectorQueryEngine(BaseQueryEngine):
         rulesets: Optional[list[Ruleset]] = None,
         metadata: Optional[str] = None,
         top_n: Optional[int] = None,
+        preamble: Optional[str] = None,
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace)
@@ -36,11 +39,13 @@ class VectorQueryEngine(BaseQueryEngine):
         ]
         text_segments = []
         message = ""
+        preamble = preamble if preamble else self.DEFAULT_QUERY_PREAMBLE
 
         for artifact in artifacts:
             text_segments.append(artifact.value)
 
             message = self.template_generator.render(
+                preamble=preamble,
                 metadata=metadata,
                 query=query,
                 text_segments=text_segments,
@@ -54,6 +59,7 @@ class VectorQueryEngine(BaseQueryEngine):
                 text_segments.pop()
 
                 message = self.template_generator.render(
+                    preamble=preamble,
                     metadata=metadata,
                     query=query,
                     text_segments=text_segments,
