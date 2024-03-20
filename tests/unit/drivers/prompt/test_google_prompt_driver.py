@@ -42,7 +42,7 @@ class TestGooglePromptDriver:
         # Then
         mock_generative_model.return_value.generate_content.assert_called_once_with(
             [
-                {"parts": ["*system-input*", "user-input"], "role": "user"},
+                {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
                 {"parts": ["generic-input"], "role": "user"},
             ],
@@ -75,7 +75,7 @@ class TestGooglePromptDriver:
         text_artifact = next(text_artifact_stream)
         mock_stream_generative_model.return_value.generate_content.assert_called_once_with(
             [
-                {"parts": ["*system-input*", "user-input"], "role": "user"},
+                {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
                 {"parts": ["generic-input"], "role": "user"},
             ],
@@ -102,7 +102,7 @@ class TestGooglePromptDriver:
 
         # Then
         assert model_input == [
-            {"role": "user", "parts": ["*system-input*", "user-input"]},
+            {"role": "user", "parts": ["system-input", "user-input"]},
             {"role": "model", "parts": ["assistant-input"]},
             {"role": "user", "parts": ["generic-input"]},
             {"role": "model", "parts": ["assistant-input"]},

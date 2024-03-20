@@ -84,7 +84,7 @@ class GooglePromptDriver(BasePromptDriver):
         # Gemini does not have the notion of a system message, so we insert it as part of the first message in the history.
         system = next((i for i in prompt_stack.inputs if i.is_system()), None)
         if system is not None:
-            inputs[0]["parts"].insert(0, f"*{system.content}*")
+            inputs[0]["parts"].insert(0, system.content)
 
         return inputs
 
