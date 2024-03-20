@@ -8,7 +8,7 @@ from griptape.mixins import SerializableMixin
 @define
 class BaseImageQueryModelDriver(SerializableMixin, ABC):
     @abstractmethod
-    def construct_image_query_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
+    def image_query_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
         ...
 
     @abstractmethod

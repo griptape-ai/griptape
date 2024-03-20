@@ -14,11 +14,8 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
 
     max_output_tokens: Optional[int] = field(default=4096, kw_only=True, metadata={"serializable": True})
 
-    def construct_image_query_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
-        content = []
-        for image in images:
-            content.append(self._construct_image_message(image))
-
+    def image_query_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
+        content = [self._construct_image_message(image) for image in images]
         content.append(self._construct_text_message(query))
         messages = self._construct_messages(content)
         input_params = {"messages": messages, "anthropic_version": "bedrock-2023-05-31"}

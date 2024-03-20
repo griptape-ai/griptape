@@ -21,7 +21,7 @@ class TestAnthropicImageQueryDriver:
         assert AnthropicImageQueryDriver(model=model)
 
     def test_try_query(self, mock_client):
-        driver = AnthropicImageQueryDriver()
+        driver = AnthropicImageQueryDriver(model="test-model")
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 
@@ -38,7 +38,7 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_value(self, mock_client):
-        driver = AnthropicImageQueryDriver(max_output_tokens=1024)
+        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=1024)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 
@@ -55,7 +55,7 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_none(self, mock_client):
-        driver = AnthropicImageQueryDriver(max_output_tokens=None)
+        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=None)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 
@@ -72,7 +72,7 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_wrong_media_type(self, mock_client):
-        driver = AnthropicImageQueryDriver(max_output_tokens=None)
+        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=None)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 

@@ -20,7 +20,7 @@ class TestAmazonBedrockImageQueryDriver:
     @pytest.fixture
     def model_driver(self):
         model_driver = Mock()
-        model_driver.construct_image_query_request_parameters.return_value = {}
+        model_driver.image_query_request_parameters.return_value = {}
         model_driver.process_output.return_value = TextArtifact("content")
 
         return model_driver

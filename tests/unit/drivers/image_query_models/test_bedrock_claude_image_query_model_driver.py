@@ -7,9 +7,9 @@ class TestBedrockClaudeImageQueryModelDriver:
     def test_init(self):
         assert BedrockClaudeImageQueryModelDriver()
 
-    def test_construct_image_query_request_parameters(self):
+    def test_image_query_request_parameters(self):
         model_driver = BedrockClaudeImageQueryModelDriver()
-        params = model_driver.construct_image_query_request_parameters(
+        params = model_driver.image_query_request_parameters(
             "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)]
         )
 
@@ -21,9 +21,9 @@ class TestBedrockClaudeImageQueryModelDriver:
         assert "max_tokens" in params
         assert params["max_tokens"] == 4096
 
-    def test_construct_image_query_request_parameters_max_tokens(self):
+    def test_image_query_request_parameters_max_tokens(self):
         model_driver = BedrockClaudeImageQueryModelDriver(max_output_tokens=1024)
-        params = model_driver.construct_image_query_request_parameters(
+        params = model_driver.image_query_request_parameters(
             "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)]
         )
 

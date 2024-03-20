@@ -18,7 +18,7 @@ class AmazonBedrockImageQueryDriver(BaseMultiModelImageQueryDriver):
     )
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
-        payload = self.image_query_model_driver.construct_image_query_request_parameters(query, images)
+        payload = self.image_query_model_driver.image_query_request_parameters(query, images)
 
         response = self.bedrock_client.invoke_model(
             modelId=self.model, contentType="application/json", accept="application/json", body=json.dumps(payload)
@@ -26,7 +26,7 @@ class AmazonBedrockImageQueryDriver(BaseMultiModelImageQueryDriver):
 
         response_body = json.loads(response.get("body").read())
 
-        if not response_body:
+        if response_body is None:
             raise ValueError("Model response is empty")
 
         try:
