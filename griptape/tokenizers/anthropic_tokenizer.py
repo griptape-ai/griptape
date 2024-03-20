@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 @define()
 class AnthropicTokenizer(BaseTokenizer):
-    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"claude-2.1": 200000, "claude": 100000}
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"claude-3": 200000, "claude-2.1": 200000, "claude": 100000}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"claude": 4096}
 
     client: Anthropic = field(
