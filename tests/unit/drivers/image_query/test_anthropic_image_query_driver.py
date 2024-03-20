@@ -9,7 +9,6 @@ class TestAnthropicImageQueryDriver:
     @pytest.fixture
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
-
         return_value = Mock(text="Content")
         mock_client.return_value.messages.create.return_value.content = [return_value]
 
@@ -19,13 +18,13 @@ class TestAnthropicImageQueryDriver:
         "model", [("claude-3-haiku-20240307"), ("claude-3-sonnet-20240229"), ("claude-3-opus-20240229")]
     )
     def test_init(self, model):
-        assert AnthropicImageQueryDriver(api_key="1234key5678", model=model)
+        assert AnthropicImageQueryDriver(model=model)
 
     def test_try_query(self, mock_client):
-        driver = AnthropicImageQueryDriver(api_key="1234key5678")
-
+        driver = AnthropicImageQueryDriver()
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
+
         text_artifact = driver.try_query(
             test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)]
         )
@@ -39,10 +38,10 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_value(self, mock_client):
-        driver = AnthropicImageQueryDriver(api_key="1234key5678", max_output_tokens=1024)
-
+        driver = AnthropicImageQueryDriver(max_output_tokens=1024)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
+
         text_artifact = driver.try_query(
             test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)]
         )
@@ -56,10 +55,10 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_none(self, mock_client):
-        driver = AnthropicImageQueryDriver(api_key="1234key5678", max_output_tokens=None)
-
+        driver = AnthropicImageQueryDriver(max_output_tokens=None)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
+
         text_artifact = driver.try_query(
             test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)]
         )
@@ -73,8 +72,7 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_wrong_media_type(self, mock_client):
-        driver = AnthropicImageQueryDriver(api_key="1234key5678", max_output_tokens=None)
-
+        driver = AnthropicImageQueryDriver(max_output_tokens=None)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 
