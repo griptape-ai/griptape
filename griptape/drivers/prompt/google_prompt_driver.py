@@ -37,13 +37,12 @@ class GooglePromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
-        history, message = self._prompt_stack_to_model_input(prompt_stack)
-        chat = self.model_client.start_chat(history=history)
-        response = chat.send_message(
-            message["parts"][0],
+        inputs = self._prompt_stack_to_model_input(prompt_stack)
+        response = self.model_client.generate_content(
+            inputs,
             generation_config=GenerationConfig(
                 stop_sequences=self.tokenizer.stop_sequences,
-                max_output_tokens=self.max_output_tokens(history + [message]),
+                max_output_tokens=self.max_output_tokens(inputs),
                 temperature=self.temperature,
                 top_p=self.top_p,
                 top_k=self.top_k,
@@ -55,14 +54,13 @@ class GooglePromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
-        history, message = self._prompt_stack_to_model_input(prompt_stack)
-        chat = self.model_client.start_chat(history=history)
-        response = chat.send_message(
-            message["parts"][0],
+        inputs = self._prompt_stack_to_model_input(prompt_stack)
+        response = self.model_client.generate_content(
+            inputs,
             stream=True,
             generation_config=GenerationConfig(
                 stop_sequences=self.tokenizer.stop_sequences,
-                max_output_tokens=self.max_output_tokens(history + [message]),
+                max_output_tokens=self.max_output_tokens(inputs),
                 temperature=self.temperature,
                 top_p=self.top_p,
                 top_k=self.top_k,
@@ -78,24 +76,17 @@ class GooglePromptDriver(BasePromptDriver):
 
         return genai.GenerativeModel(self.model)
 
-    def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> tuple[list[ContentDict], ContentDict]:
-        history_inputs = prompt_stack.inputs[:-1]
-        message_input = self.__to_content_dict(prompt_stack.inputs[-1])
+    def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> list[ContentDict]:
+        inputs = [
+            self.__to_content_dict(prompt_input) for prompt_input in prompt_stack.inputs if not prompt_input.is_system()
+        ]
 
-        history = []
-        for prompt_input in history_inputs:
-            if prompt_input.is_system():
-                # Gemini does not have the notion of a system message, so we create an artificial interaction between the user and the assistant to simulate one.
-                history.append(self.__to_content_dict(prompt_input))
-                history.append(
-                    self.__to_content_dict(PromptStack.Input(role=PromptStack.ASSISTANT_ROLE, content="Understood."))
-                )
-            elif prompt_input.is_assistant():
-                history.append(self.__to_content_dict(prompt_input))
-            else:
-                history.append(self.__to_content_dict(prompt_input))
+        # Gemini does not have the notion of a system message, so we insert it as part of the first message in the history.
+        system = next((i for i in prompt_stack.inputs if i.is_system()), None)
+        if system is not None:
+            inputs[0]["parts"].insert(0, f"*{system.content}*")
 
-        return history, message_input
+        return inputs
 
     def __to_content_dict(self, prompt_input: PromptStack.Input) -> ContentDict:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
