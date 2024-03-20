@@ -51,6 +51,7 @@ trafilatura = {version = "^1.6", optional = true}
 playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
 markdownify = {version = "^0.11.6", optional = true}
+voyageai = {version = "^0.2.1", optional = true}
 
 # loaders
 pandas = {version = "^1.3", optional = true}
@@ -82,6 +83,7 @@ drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
+drivers-embedding-voyageai = ["voyageai"]
 
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]
@@ -112,6 +114,7 @@ all = [
     "playwright",
     "beautifulsoup4",
     "markdownify",
+    "voyageai",
 
     # loaders
     "pandas",
