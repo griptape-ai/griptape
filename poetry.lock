@@ -3410,13 +3410,13 @@ image = ["Pillow (>=8.0.0)"]
 
 [[package]]
 name = "pyright"
-version = "1.1.348"
+version = "1.1.355"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyright-1.1.348-py3-none-any.whl", hash = "sha256:e7d4df504c4c082b5c3725a8c15fc3fda62da5d09fc77994baa77f359a1b62f2"},
-    {file = "pyright-1.1.348.tar.gz", hash = "sha256:1c6994546f7ab130b9da8c357f8b2a99bef268b6d8ae2eae292bde66923aa7af"},
+    {file = "pyright-1.1.355-py3-none-any.whl", hash = "sha256:bf30b6728fd68ae7d09c98292b67152858dd89738569836896df786e52b5fe48"},
+    {file = "pyright-1.1.355.tar.gz", hash = "sha256:dca4104cd53d6484e6b1b50b7a239ad2d16d2ffd20030bcf3111b56f44c263bf"},
 ]
 
 [package.dependencies]
@@ -5230,4 +5230,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "073bf6e01cc9a64734890f2c1069f00fbeec128ff2b01584246eecba980011bc"
+content-hash = "ef07eee1be3561b15286e81aa1be80606f0b23e1684aa6421939de24e20eaac7"
