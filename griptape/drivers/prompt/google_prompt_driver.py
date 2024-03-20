@@ -85,6 +85,7 @@ class GooglePromptDriver(BasePromptDriver):
         history = []
         for prompt_input in history_inputs:
             if prompt_input.is_system():
+                # Gemini does not have the notion of a system message, so we create an artificial interaction between the user and the assistant to simulate one.
                 history.append(self.__to_content_dict(prompt_input))
                 history.append(
                     self.__to_content_dict(PromptStack.Input(role=PromptStack.ASSISTANT_ROLE, content="Understood."))
