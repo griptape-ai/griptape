@@ -4,7 +4,6 @@ from attr import define, field, Factory
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryDriver
 from griptape.utils import import_optional_dependency
-import base64
 
 if TYPE_CHECKING:
     from anthropic import Anthropic
@@ -53,7 +52,7 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         return TextArtifact(text_content)
 
     def _construct_image_message(self, image_data: ImageArtifact) -> dict:
-        data = base64.b64encode(image_data.value).decode("utf-8")
+        data = image_data.base64
         type = image_data.mime_type
 
         return {"source": {"data": data, "media_type": type, "type": "base64"}, "type": "image"}

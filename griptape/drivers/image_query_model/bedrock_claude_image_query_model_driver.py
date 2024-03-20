@@ -1,5 +1,4 @@
 from __future__ import annotations
-import base64
 from typing import Optional
 from attr import field, define
 from griptape.artifacts import ImageArtifact, TextArtifact
@@ -39,7 +38,7 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
         return TextArtifact(text_content)
 
     def _construct_image_message(self, image_data: ImageArtifact) -> dict:
-        data = base64.b64encode(image_data.value).decode("utf-8")
+        data = image_data.base64
         type = image_data.mime_type
 
         return {"source": {"data": data, "media_type": type, "type": "base64"}, "type": "image"}
