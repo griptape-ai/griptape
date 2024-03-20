@@ -58,6 +58,7 @@ from .prompt_model.bedrock_titan_prompt_model_driver import BedrockTitanPromptMo
 from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePromptModelDriver
 from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPromptModelDriver
 from .prompt_model.bedrock_llama_prompt_model_driver import BedrockLlamaPromptModelDriver
+from .prompt_model.bedrock_mistral_prompt_model_driver import BedrockMistralPromptModelDriver
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
 from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
@@ -162,6 +163,7 @@ __all__ = [
     "BedrockClaudePromptModelDriver",
     "BedrockJurassicPromptModelDriver",
     "BedrockLlamaPromptModelDriver",
+    "BedrockMistralPromptModelDriver",
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",
