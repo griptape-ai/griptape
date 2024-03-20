@@ -1,6 +1,6 @@
 import pytest
 import base64
-from unittest.mock import ANY, Mock
+from unittest.mock import Mock
 from griptape.drivers import AnthropicImageQueryDriver
 from griptape.artifacts import ImageArtifact
 
