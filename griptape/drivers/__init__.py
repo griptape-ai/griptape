@@ -23,6 +23,7 @@ from .embedding.base_multi_model_embedding_driver import BaseMultiModelEmbedding
 from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
 from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
 from .embedding.amazon_bedrock_cohere_embedding_driver import AmazonBedrockCohereEmbeddingDriver
+from .embedding.voyageai_embedding_driver import VoyageAiEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
 
@@ -73,6 +74,10 @@ from .image_query.base_image_query_driver import BaseImageQueryDriver
 from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
 from .image_query.dummy_image_query_driver import DummyImageQueryDriver
 
+from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
+from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
+from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -97,6 +102,7 @@ __all__ = [
     "AmazonSageMakerEmbeddingDriver",
     "AmazonBedrockTitanEmbeddingDriver",
     "AmazonBedrockCohereEmbeddingDriver",
+    "VoyageAiEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
     "DummyEmbeddingDriver",
     "BaseEmbeddingModelDriver",
@@ -137,4 +143,7 @@ __all__ = [
     "BaseImageQueryDriver",
     "OpenAiVisionImageQueryDriver",
     "DummyImageQueryDriver",
+    "BaseWebScraperDriver",
+    "TrafilaturaWebScraperDriver",
+    "MarkdownifyWebScraperDriver",
 ]

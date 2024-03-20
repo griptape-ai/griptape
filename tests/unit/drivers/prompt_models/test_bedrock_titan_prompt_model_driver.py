@@ -2,7 +2,6 @@ from unittest import mock
 import json
 import boto3
 import pytest
-from griptape.tokenizers.bedrock_titan_tokenizer import BedrockTitanTokenizer
 from griptape.utils import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockTitanPromptModelDriver
 
@@ -27,7 +26,7 @@ class TestBedrockTitanPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model=BedrockTitanTokenizer.DEFAULT_MODEL,
+            model="amazon.titan",
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockTitanPromptModelDriver(),
             temperature=0.12345,
@@ -52,7 +51,7 @@ class TestBedrockTitanPromptModelDriver:
         assert model_input["inputText"].startswith("Instructions: foo\n\nUser: bar\n\nBot:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["maxTokenCount"] == 4090
+        assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["maxTokenCount"] == 7994
         assert driver.prompt_stack_to_model_params(stack)["textGenerationConfig"]["temperature"] == 0.12345
 
     def test_process_output(self, driver):

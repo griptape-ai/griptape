@@ -21,7 +21,7 @@ class TextLoader(BaseTextLoader):
         default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
     )
     max_tokens: int = field(
-        default=Factory(lambda self: round(self.tokenizer.max_tokens * self.MAX_TOKEN_RATIO), takes_self=True),
+        default=Factory(lambda self: round(self.tokenizer.max_input_tokens * self.MAX_TOKEN_RATIO), takes_self=True),
         kw_only=True,
     )
     chunker: TextChunker = field(

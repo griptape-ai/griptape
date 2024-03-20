@@ -16,6 +16,7 @@ class BaseQueryEngine(ABC):
         *,
         rulesets: Optional[list[Ruleset]] = None,
         top_n: Optional[int] = None,
+        filter: Optional[dict] = None,
     ) -> TextArtifact:
         ...
 

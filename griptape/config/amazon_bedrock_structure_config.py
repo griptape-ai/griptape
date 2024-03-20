@@ -26,7 +26,9 @@ class AmazonBedrockStructureConfig(BaseStructureConfig):
         default=Factory(
             lambda: StructureGlobalDriversConfig(
                 prompt_driver=AmazonBedrockPromptDriver(
-                    model="anthropic.claude-v2", stream=False, prompt_model_driver=BedrockClaudePromptModelDriver()
+                    model="anthropic.claude-3-sonnet-20240229-v1:0",
+                    stream=False,
+                    prompt_model_driver=BedrockClaudePromptModelDriver(),
                 ),
                 image_generation_driver=AmazonBedrockImageGenerationDriver(
                     model="amazon.titan-image-generator-v1",

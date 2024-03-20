@@ -32,13 +32,13 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
     @property
     def max_chunker_tokens(self) -> int:
-        return round(self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier)
+        return round(self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier)
 
     @property
     def min_response_tokens(self) -> int:
         return round(
-            self.prompt_driver.tokenizer.max_tokens
-            - self.prompt_driver.tokenizer.max_tokens * self.max_token_multiplier
+            self.prompt_driver.tokenizer.max_input_tokens
+            - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier
         )
 
     def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
@@ -53,7 +53,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
             summary=summary, text=artifacts_text, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets)
         )
 
-        if self.prompt_driver.tokenizer.count_tokens_left(full_text) >= self.min_response_tokens:
+        if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             return self.prompt_driver.run(
                 PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
             )
