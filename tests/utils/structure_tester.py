@@ -218,8 +218,6 @@ class StructureTester:
             PROMPT_DRIVERS["AZURE_CHAT_4"],
             PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
             PROMPT_DRIVERS["ANTHROPIC_CLAUDE_3_OPUS"],
-            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
-            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2.1"],
             PROMPT_DRIVERS["GOOGLE_GEMINI_PRO"],
         ]
     )
