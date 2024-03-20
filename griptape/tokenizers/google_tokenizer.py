@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 @define()
 class GoogleTokenizer(BaseTokenizer):
-    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"gemini-pro": 30720}
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"gemini": 30720}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"gemini": 2048}
 
     api_key: str = field(kw_only=True, metadata={"serializable": True})
