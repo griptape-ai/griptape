@@ -47,6 +47,7 @@ redis = { version = "^4.6.0", optional = true }
 opensearch-py = { version = "^2.3.1", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
+google-generativeai = { version = "^0.4.1", optional = true }
 trafilatura = {version = "^1.6", optional = true}
 playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
@@ -65,6 +66,7 @@ drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
+drivers-prompt-google = ["google-generativeai"]
 
 drivers-sql-redshift = ["sqlalchemy-redshift", "boto3"]
 drivers-sql-snowflake = ["snowflake-sqlalchemy", "snowflake", "snowflake-connector-python"]
@@ -84,6 +86,7 @@ drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
+drivers-embedding-google = ["google-generativeai"]
 
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]
@@ -110,6 +113,7 @@ all = [
     "opensearch-py",
     "pgvector",
     "psycopg2-binary",
+    "google-generativeai",
     "trafilatura",
     "playwright",
     "beautifulsoup4",
@@ -146,7 +150,7 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.286"
 black = "^23.7.0"
-pyright = "^1.1.324"
+pyright = "^1.1.355"
 pre-commit = "^3.5.0"
 
 [tool.black]

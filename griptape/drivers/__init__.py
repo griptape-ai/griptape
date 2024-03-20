@@ -9,6 +9,7 @@ from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
 from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
+from .prompt.google_prompt_driver import GooglePromptDriver
 from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 from .prompt.dummy_prompt_driver import DummyPromptDriver
 
@@ -25,6 +26,7 @@ from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanE
 from .embedding.amazon_bedrock_cohere_embedding_driver import AmazonBedrockCohereEmbeddingDriver
 from .embedding.voyageai_embedding_driver import VoyageAiEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
+from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
 
 from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
@@ -90,6 +92,7 @@ __all__ = [
     "AnthropicPromptDriver",
     "AmazonSageMakerPromptDriver",
     "AmazonBedrockPromptDriver",
+    "GooglePromptDriver",
     "BaseMultiModelPromptDriver",
     "DummyPromptDriver",
     "BaseConversationMemoryDriver",
@@ -104,6 +107,7 @@ __all__ = [
     "AmazonBedrockCohereEmbeddingDriver",
     "VoyageAiEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
+    "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "BaseEmbeddingModelDriver",
     "SageMakerHuggingFaceEmbeddingModelDriver",

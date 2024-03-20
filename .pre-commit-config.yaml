@@ -9,6 +9,6 @@ repos:
     - id: pyupgrade
       args: [--py39-plus, --keep-runtime-typing]
 -   repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.342
+    rev: v1.1.355
     hooks:
     - id: pyright
