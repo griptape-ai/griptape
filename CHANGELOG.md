@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Every subtask in `ToolkitTask` can now execute multiple actions in parallel.
 - Added `BaseActionSubtaskEvent.subtask_actions`.
 - Support for `text-embedding-3-small` and `text-embedding-3-large` models.
+- `GooglePromptDriver` and `GoogleTokenizer` for use with `gemini-pro`. 
+- `GoogleEmbeddingDriver` for use with `embedding-001`. 
+- `GoogleStructureConfig` for providing Structures with Google Prompt and Embedding Driver configuration.
 - Support for `claude-3-opus`, `claude-3-sonnet`, and `claude-3-haiku` in `AnthropicPromptDriver`.
 - Support for `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-haiku-20240307-v1:0` in `BedrockClaudePromptModelDriver`.
 - `top_k` and `top_p` parameters in `AnthropicPromptDriver`.
