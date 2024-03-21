@@ -123,22 +123,13 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "anthropic"
-<<<<<<< HEAD
 version = "0.20.0"
-=======
-version = "0.17.0"
->>>>>>> dd583ff (updating lock file for new dependencies)
 description = "The official Python library for the anthropic API"
 optional = true
 python-versions = ">=3.7"
 files = [
-<<<<<<< HEAD
     {file = "anthropic-0.20.0-py3-none-any.whl", hash = "sha256:754fe24596efbe1d7a49d3d59818a2a25d2bf29539e036eafd8a43427cd58134"},
     {file = "anthropic-0.20.0.tar.gz", hash = "sha256:f9f1a5213af4710d6e1f9b83208a4b158355d1a95eb4ae0906c7580aa0e0f1d1"},
-=======
-    {file = "anthropic-0.17.0-py3-none-any.whl", hash = "sha256:e582635d65d940cd0d957631d548aa2d8add4f261556bf53f8c1f6e5fa6082fd"},
-    {file = "anthropic-0.17.0.tar.gz", hash = "sha256:6f1958e7ffd706a19741260d6dfef3fd9af07d31a57b837792331b4ba0aa067c"},
->>>>>>> dd583ff (updating lock file for new dependencies)
 ]
 
 [package.dependencies]
@@ -5263,8 +5254,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-<<<<<<< HEAD
 content-hash = "ef07eee1be3561b15286e81aa1be80606f0b23e1684aa6421939de24e20eaac7"
-=======
-content-hash = "0ba10e57553f30068093d7f9eddd5575c7799a58741b88d3e1cfe05d7cfe88d8"
->>>>>>> dd583ff (updating lock file for new dependencies)
