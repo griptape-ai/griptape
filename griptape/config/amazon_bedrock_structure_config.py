@@ -12,9 +12,11 @@ from griptape.config import (
 )
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
+    AmazonBedrockImageQueryDriver,
     AmazonBedrockPromptDriver,
     AmazonBedrockTitanEmbeddingDriver,
     BedrockClaudePromptModelDriver,
+    BedrockClaudeImageQueryModelDriver,
     BedrockTitanImageGenerationModelDriver,
     LocalVectorStoreDriver,
 )
@@ -33,6 +35,10 @@ class AmazonBedrockStructureConfig(BaseStructureConfig):
                 image_generation_driver=AmazonBedrockImageGenerationDriver(
                     model="amazon.titan-image-generator-v1",
                     image_generation_model_driver=BedrockTitanImageGenerationModelDriver(),
+                ),
+                image_query_driver=AmazonBedrockImageQueryDriver(
+                    model="anthropic.claude-3-sonnet-20240229-v1:0",
+                    image_query_model_driver=BedrockClaudeImageQueryModelDriver(),
                 ),
                 embedding_driver=AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1"),
                 vector_store_driver=LocalVectorStoreDriver(

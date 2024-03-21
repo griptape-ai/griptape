@@ -28,7 +28,12 @@ class TestAnthropicStructureConfig:
                     "top_k": 250,
                 },
                 "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-                "image_query_driver": {"type": "DummyImageQueryDriver"},
+                "image_query_driver": {
+                    "type": "AnthropicImageQueryDriver",
+                    "model": "claude-3-opus-20240229",
+                    "api_key": None,
+                    "max_output_tokens": 256,
+                },
                 "embedding_driver": {
                     "type": "VoyageAiEmbeddingDriver",
                     "model": "voyage-large-2",

@@ -14,7 +14,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
     _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
     prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
-    anthropic_version: str = field(default="bedrock-2023-05-31", kw_only=True, metadata={"serializable": True})
+    anthropic_version: str = "bedrock-2023-05-31"  # static string for AWS: https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html#api-inference-examples-claude-multimodal-code-example
 
     @property
     def tokenizer(self) -> BedrockClaudeTokenizer:
