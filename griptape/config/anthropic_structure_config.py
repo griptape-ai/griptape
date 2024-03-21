@@ -10,7 +10,12 @@ from griptape.config import (
     StructureTaskMemoryQueryEngineConfig,
     StructureTaskMemorySummaryEngineConfig,
 )
-from griptape.drivers import LocalVectorStoreDriver, AnthropicPromptDriver, VoyageAiEmbeddingDriver
+from griptape.drivers import (
+    LocalVectorStoreDriver,
+    AnthropicPromptDriver,
+    AnthropicImageQueryDriver,
+    VoyageAiEmbeddingDriver,
+)
 
 
 @define
@@ -23,6 +28,7 @@ class AnthropicStructureConfig(BaseStructureConfig):
                 vector_store_driver=LocalVectorStoreDriver(
                     embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2")
                 ),
+                image_query_driver=AnthropicImageQueryDriver(model="claude-3-opus-20240229"),
             )
         ),
         kw_only=True,

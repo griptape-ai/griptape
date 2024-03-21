@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `claude-3-opus`, `claude-3-sonnet`, and `claude-3-haiku` in `AnthropicPromptDriver`.
 - Support for `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-haiku-20240307-v1:0` in `BedrockClaudePromptModelDriver`.
 - `top_k` and `top_p` parameters in `AnthropicPromptDriver`.
+- Added `AnthropicImageQueryDriver` for Claude-3 multi-modal models
+- Added `AmazonBedrockImageQueryDriver` along with `BedrockClaudeImageQueryDriverModel` for Claude-3 in Bedrock support
 - `BaseWebScraperDriver` allowing multiple web scraping implementations.
 - `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
@@ -28,12 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: `ActionSubtask` was renamed to `ActionsSubtask`.
 - **BREAKING**: Removed `subtask_action_name`, `subtask_action_path`, and `subtask_action_input` in `BaseActionSubtaskEvent`.
+- **BREAKING**: `OpenAiVisionImageQueryDriver` field `model` no longer defaults to `gpt-4-vision-preview` and must be specified
 - Default model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
 - Default model of `OpenAiStructureConfig` to `text-embedding-3-small`.
 - `BaseTextLoader` to accept a `BaseChunker`.
 - Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
 - `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
-
+- `OpenAiVisionImageQueryDriver` now has a required field `max_tokens` that defaults to 256
 
 ## [0.23.2] - 2024-03-15
 
