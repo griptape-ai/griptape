@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTextLoader` to accept a `BaseChunker`.
 - Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
 - `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
-- `OpenAIVisionImageQueryDriver` now has a required field `max_output_tokens` that defaults to 256
+- `OpenAiVisionImageQueryDriver` now has a required field `max_output_tokens` that defaults to 256
 
 ## [0.23.2] - 2024-03-15
 
