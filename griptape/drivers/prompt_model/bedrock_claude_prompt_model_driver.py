@@ -10,11 +10,12 @@ from griptape.tokenizers import BedrockClaudeTokenizer
 
 @define
 class BedrockClaudePromptModelDriver(BasePromptModelDriver):
+    ANTHROPIC_VERSION = "bedrock-2023-05-31"  # static string for AWS: https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html#api-inference-examples-claude-multimodal-code-example
+
     top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
     _tokenizer: BedrockClaudeTokenizer = field(default=None, kw_only=True)
     prompt_driver: Optional[AmazonBedrockPromptDriver] = field(default=None, kw_only=True)
-    anthropic_version: str = "bedrock-2023-05-31"  # static string for AWS: https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html#api-inference-examples-claude-multimodal-code-example
 
     @property
     def tokenizer(self) -> BedrockClaudeTokenizer:
@@ -60,7 +61,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
             "top_p": self.top_p,
             "top_k": self.top_k,
             "max_tokens": self.prompt_driver.max_output_tokens(self.prompt_driver.prompt_stack_to_string(prompt_stack)),
-            "anthropic_version": self.anthropic_version,
+            "anthropic_version": self.ANTHROPIC_VERSION,
             **input,
         }
 

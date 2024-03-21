@@ -7,7 +7,7 @@ from griptape.drivers import BaseImageQueryModelDriver
 
 @define
 class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
-    anthropic_version: str = "bedrock-2023-05-31"  # static string for AWS: https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html#api-inference-examples-claude-multimodal-code-example
+    ANTHROPIC_VERSION = "bedrock-2023-05-31"  # static string for AWS: https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html#api-inference-examples-claude-multimodal-code-example
 
     def image_query_request_parameters(self, query: str, images: list[ImageArtifact], max_output_tokens: int) -> dict:
         content = [self._construct_image_message(image) for image in images]
@@ -15,7 +15,7 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
         messages = self._construct_messages(content)
         input_params = {
             "messages": messages,
-            "anthropic_version": self.anthropic_version,
+            "anthropic_version": self.ANTHROPIC_VERSION,
             "max_tokens": max_output_tokens,
         }
 
