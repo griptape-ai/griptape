@@ -30,12 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: `ActionSubtask` was renamed to `ActionsSubtask`.
 - **BREAKING**: Removed `subtask_action_name`, `subtask_action_path`, and `subtask_action_input` in `BaseActionSubtaskEvent`.
+- **BREAKING**: `OpenAiVisionImageQueryDriver` field `model` no longer defaults to `gpt-4-vision-preview` and must be specified
 - Default model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
 - Default model of `OpenAiStructureConfig` to `text-embedding-3-small`.
 - `BaseTextLoader` to accept a `BaseChunker`.
 - Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
 - `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
-- `OpenAiVisionImageQueryDriver` now has a required field `max_output_tokens` that defaults to 256
+- `OpenAiVisionImageQueryDriver` now has a required field `max_tokens` that defaults to 256
 
 ## [0.23.2] - 2024-03-15
 

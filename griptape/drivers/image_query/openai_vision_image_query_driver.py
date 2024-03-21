@@ -17,7 +17,7 @@ from griptape.drivers.image_query.base_image_query_driver import BaseImageQueryD
 
 @define
 class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
-    model: str = field(default="gpt-4-vision-preview", kw_only=True, metadata={"serializable": True})
+    model: str = field(kw_only=True, metadata={"serializable": True})
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
