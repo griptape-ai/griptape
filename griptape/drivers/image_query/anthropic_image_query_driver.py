@@ -16,7 +16,6 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         api_key: Anthropic API key.
         model: Anthropic model name.
         client: Custom `Anthropic` client.
-        max_output_tokens: Max output tokens to return.
     """
 
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -27,9 +26,11 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         ),
         kw_only=True,
     )
-    max_output_tokens: Optional[int] = field(default=4096, kw_only=True, metadata={"serializable": True})
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
+        if self.max_output_tokens is None:
+            raise TypeError("max_output_tokens can't be empty")
+
         response = self.client.messages.create(**self._base_params(query, images))
         content_blocks = response.content
 
@@ -44,10 +45,7 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         content = [self._construct_image_message(image) for image in images]
         content.append(self._construct_text_message(text_query))
         messages = self._construct_messages(content)
-        params = {"model": self.model, "messages": messages}
-
-        if self.max_output_tokens is not None:
-            params["max_tokens"] = self.max_output_tokens
+        params = {"model": self.model, "messages": messages, "max_tokens": self.max_output_tokens}
 
         return params
 

@@ -32,7 +32,7 @@ class TestAnthropicImageQueryDriver:
         expected_message = self._expected_message(test_binary_data, "image/png", test_prompt_string)
 
         mock_client.return_value.messages.create.assert_called_once_with(
-            model=driver.model, max_tokens=4096, messages=[expected_message]
+            model=driver.model, max_tokens=256, messages=[expected_message]
         )
 
         assert text_artifact.value == "Content"
@@ -55,24 +55,14 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_none(self, mock_client):
-        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=None)
+        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=None)  # pyright: ignore
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
-
-        text_artifact = driver.try_query(
-            test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)]
-        )
-
-        expected_message = self._expected_message(test_binary_data, "image/png", test_prompt_string)
-
-        mock_client.return_value.messages.create.assert_called_once_with(
-            model=driver.model, messages=[expected_message]
-        )
-
-        assert text_artifact.value == "Content"
+        with pytest.raises(TypeError):
+            driver.try_query(test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)])
 
     def test_try_query_wrong_media_type(self, mock_client):
-        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=None)
+        driver = AnthropicImageQueryDriver(model="test-model")
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 
@@ -84,7 +74,7 @@ class TestAnthropicImageQueryDriver:
         expected_message = self._expected_message(test_binary_data, "image/exr", test_prompt_string)
 
         mock_client.return_value.messages.create.assert_called_once_with(
-            model=driver.model, messages=[expected_message]
+            model=driver.model, messages=[expected_message], max_tokens=256
         )
 
         assert text_artifact.value == "Content"

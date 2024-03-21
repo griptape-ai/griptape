@@ -24,7 +24,6 @@ class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
     image_quality: Literal["auto", "low", "high"] = field(default="auto", kw_only=True, metadata={"serializable": True})
-    max_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
@@ -46,10 +45,7 @@ class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
             )
 
         messages = ChatCompletionUserMessageParam(content=message_parts, role="user")
-        params = {"model": self.model, "messages": [messages]}
-
-        if self.max_tokens is not None:
-            params["max_tokens"] = self.max_tokens
+        params = {"model": self.model, "messages": [messages], "max_tokens": self.max_output_tokens}
 
         response = self.client.chat.completions.create(**params)
 

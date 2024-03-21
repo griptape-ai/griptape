@@ -7,21 +7,17 @@ from griptape.drivers import BaseImageQueryModelDriver
 
 @define
 class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
-    """
-    Attributes:
-        max_output_tokens: Max output tokens to return.
-    """
+    anthropic_version: str = "bedrock-2023-05-31"  # static string for AWS: https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html#api-inference-examples-claude-multimodal-code-example
 
-    max_output_tokens: Optional[int] = field(default=4096, kw_only=True, metadata={"serializable": True})
-
-    def image_query_request_parameters(self, query: str, images: list[ImageArtifact]) -> dict:
+    def image_query_request_parameters(self, query: str, images: list[ImageArtifact], max_output_tokens: int) -> dict:
         content = [self._construct_image_message(image) for image in images]
         content.append(self._construct_text_message(query))
         messages = self._construct_messages(content)
-        input_params = {"messages": messages, "anthropic_version": "bedrock-2023-05-31"}
-
-        if self.max_output_tokens is not None:
-            input_params["max_tokens"] = self.max_output_tokens
+        input_params = {
+            "messages": messages,
+            "anthropic_version": self.anthropic_version,
+            "max_tokens": max_output_tokens,
+        }
 
         return input_params
 

@@ -10,7 +10,7 @@ class TestBedrockClaudeImageQueryModelDriver:
     def test_image_query_request_parameters(self):
         model_driver = BedrockClaudeImageQueryModelDriver()
         params = model_driver.image_query_request_parameters(
-            "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)]
+            "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)], 256
         )
 
         assert isinstance(params, dict)
@@ -19,21 +19,7 @@ class TestBedrockClaudeImageQueryModelDriver:
         assert "messages" in params
         assert len(params["messages"]) == 1
         assert "max_tokens" in params
-        assert params["max_tokens"] == 4096
-
-    def test_image_query_request_parameters_max_tokens(self):
-        model_driver = BedrockClaudeImageQueryModelDriver(max_output_tokens=1024)
-        params = model_driver.image_query_request_parameters(
-            "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)]
-        )
-
-        assert isinstance(params, dict)
-        assert "anthropic_version" in params
-        assert params["anthropic_version"] == "bedrock-2023-05-31"
-        assert "messages" in params
-        assert len(params["messages"]) == 1
-        assert "max_tokens" in params
-        assert params["max_tokens"] == 1024
+        assert params["max_tokens"] == 256
 
     def test_process_output(self):
         model_driver = BedrockClaudeImageQueryModelDriver()

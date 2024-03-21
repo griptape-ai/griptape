@@ -18,7 +18,7 @@ class AmazonBedrockImageQueryDriver(BaseMultiModelImageQueryDriver):
     )
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
-        payload = self.image_query_model_driver.image_query_request_parameters(query, images)
+        payload = self.image_query_model_driver.image_query_request_parameters(query, images, self.max_output_tokens)
 
         response = self.bedrock_client.invoke_model(
             modelId=self.model, contentType="application/json", accept="application/json", body=json.dumps(payload)
