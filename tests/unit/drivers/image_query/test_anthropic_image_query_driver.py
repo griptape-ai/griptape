@@ -38,7 +38,7 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_value(self, mock_client):
-        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=1024)
+        driver = AnthropicImageQueryDriver(model="test-model", max_tokens=1024)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 
@@ -55,7 +55,7 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_none(self, mock_client):
-        driver = AnthropicImageQueryDriver(model="test-model", max_output_tokens=None)  # pyright: ignore
+        driver = AnthropicImageQueryDriver(model="test-model", max_tokens=None)  # pyright: ignore
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
         with pytest.raises(TypeError):

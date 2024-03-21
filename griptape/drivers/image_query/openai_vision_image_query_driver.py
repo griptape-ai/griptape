@@ -45,7 +45,7 @@ class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
             )
 
         messages = ChatCompletionUserMessageParam(content=message_parts, role="user")
-        params = {"model": self.model, "messages": [messages], "max_tokens": self.max_output_tokens}
+        params = {"model": self.model, "messages": [messages], "max_tokens": self.max_tokens}
 
         response = self.client.chat.completions.create(**params)
 

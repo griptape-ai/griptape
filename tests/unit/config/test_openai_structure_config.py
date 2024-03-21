@@ -53,7 +53,7 @@ class TestOpenAiStructureConfig:
                     "api_version": None,
                     "base_url": None,
                     "image_quality": "auto",
-                    "max_output_tokens": 256,
+                    "max_tokens": 256,
                     "model": "gpt-4-vision-preview",
                     "organization": None,
                     "type": "OpenAiVisionImageQueryDriver",

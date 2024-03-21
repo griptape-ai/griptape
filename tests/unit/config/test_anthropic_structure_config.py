@@ -32,7 +32,7 @@ class TestAnthropicStructureConfig:
                     "type": "AnthropicImageQueryDriver",
                     "model": "claude-3-opus-20240229",
                     "api_key": None,
-                    "max_output_tokens": 256,
+                    "max_tokens": 256,
                 },
                 "embedding_driver": {
                     "type": "VoyageAiEmbeddingDriver",

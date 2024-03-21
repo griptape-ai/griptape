@@ -29,7 +29,7 @@ class TestOpenAiVisionImageQueryDriver:
         assert text_artifact.value == "expected_output_text"
 
     def test_try_query_max_tokens(self, mock_completion_create):
-        driver = OpenAiVisionImageQueryDriver(max_output_tokens=1024)
+        driver = OpenAiVisionImageQueryDriver(max_tokens=1024)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
         test_image = ImageArtifact(value=test_binary_data, width=100, height=100)
