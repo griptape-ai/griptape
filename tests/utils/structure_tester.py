@@ -25,6 +25,7 @@ from griptape.drivers import (
     AmazonSageMakerPromptDriver,
     SageMakerLlamaPromptModelDriver,
     SageMakerFalconPromptModelDriver,
+    GooglePromptDriver,
 )
 
 
@@ -206,6 +207,9 @@ class StructureTester:
             ),
             enabled=False,
         ),
+        "GOOGLE_GEMINI_PRO": TesterPromptDriverOption(
+            prompt_driver=GooglePromptDriver(model="gemini-pro", api_key=os.environ["GOOGLE_API_KEY"]), enabled=True
+        ),
     }
     TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(
         [
@@ -214,6 +218,7 @@ class StructureTester:
             PROMPT_DRIVERS["AZURE_CHAT_4"],
             PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
             PROMPT_DRIVERS["ANTHROPIC_CLAUDE_3_OPUS"],
+            PROMPT_DRIVERS["GOOGLE_GEMINI_PRO"],
         ]
     )
     TOOL_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())

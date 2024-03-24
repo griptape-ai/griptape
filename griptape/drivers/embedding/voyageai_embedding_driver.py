@@ -1,12 +1,9 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, Any
 from attr import define, field, Factory
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import VoyageAiTokenizer
-
-if TYPE_CHECKING:
-    from voyageai import Client
 
 
 @define
@@ -24,7 +21,7 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    client: Client = field(
+    client: Any = field(
         default=Factory(
             lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key), takes_self=True
         )

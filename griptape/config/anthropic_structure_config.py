@@ -12,25 +12,23 @@ from griptape.config import (
 )
 from griptape.drivers import (
     LocalVectorStoreDriver,
-    OpenAiChatPromptDriver,
-    OpenAiEmbeddingDriver,
-    OpenAiImageGenerationDriver,
-    OpenAiVisionImageQueryDriver,
+    AnthropicPromptDriver,
+    AnthropicImageQueryDriver,
+    VoyageAiEmbeddingDriver,
 )
 
 
 @define
-class OpenAiStructureConfig(BaseStructureConfig):
+class AnthropicStructureConfig(BaseStructureConfig):
     global_drivers: StructureGlobalDriversConfig = field(
         default=Factory(
             lambda: StructureGlobalDriversConfig(
-                prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
-                image_generation_driver=OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512"),
-                image_query_driver=OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview"),
-                embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small"),
+                prompt_driver=AnthropicPromptDriver(model="claude-3-opus-20240229"),
+                embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2"),
                 vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small")
+                    embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2")
                 ),
+                image_query_driver=AnthropicImageQueryDriver(model="claude-3-opus-20240229"),
             )
         ),
         kw_only=True,

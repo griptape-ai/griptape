@@ -8,6 +8,7 @@ from griptape.exceptions import DummyException
 @define
 class DummyImageQueryDriver(BaseImageQueryDriver):
     model: str = field(init=False)
+    max_tokens: int = field(init=False)
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
         raise DummyException(__class__.__name__, "try_query")

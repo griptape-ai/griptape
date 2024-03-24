@@ -10,26 +10,18 @@ from griptape.config import (
     StructureTaskMemoryQueryEngineConfig,
     StructureTaskMemorySummaryEngineConfig,
 )
-from griptape.drivers import (
-    LocalVectorStoreDriver,
-    OpenAiChatPromptDriver,
-    OpenAiEmbeddingDriver,
-    OpenAiImageGenerationDriver,
-    OpenAiVisionImageQueryDriver,
-)
+from griptape.drivers import LocalVectorStoreDriver, GooglePromptDriver, GoogleEmbeddingDriver
 
 
 @define
-class OpenAiStructureConfig(BaseStructureConfig):
+class GoogleStructureConfig(BaseStructureConfig):
     global_drivers: StructureGlobalDriversConfig = field(
         default=Factory(
             lambda: StructureGlobalDriversConfig(
-                prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
-                image_generation_driver=OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512"),
-                image_query_driver=OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview"),
-                embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small"),
+                prompt_driver=GooglePromptDriver(model="gemini-pro"),
+                embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001"),
                 vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small")
+                    embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001")
                 ),
             )
         ),

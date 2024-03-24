@@ -71,3 +71,15 @@ class TestBaseSchema:
         assert not BaseSchema.is_list_sequence(bytes)
         assert not BaseSchema.is_list_sequence(str)
         assert not BaseSchema.is_list_sequence(int)
+
+    def test_load(self):
+        schema = BaseSchema.from_attrs_cls(MockSerializable)()
+        mock_serializable = schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3]})
+        assert mock_serializable.foo == "baz"
+        assert mock_serializable.bar == "qux"
+        assert mock_serializable.baz == [1, 2, 3]
+
+    def test_load_with_unknown_attribute(self):
+        schema = BaseSchema.from_attrs_cls(MockSerializable)()
+        mock_serializable = schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})
+        assert hasattr(mock_serializable, "zoop") is False

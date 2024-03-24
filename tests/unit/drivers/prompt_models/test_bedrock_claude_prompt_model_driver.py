@@ -92,7 +92,7 @@ class TestBedrockClaudePromptModelDriver:
         expected = {
             "temperature": 0.12345,
             "max_tokens": max_tokens,
-            "anthropic_version": driver.anthropic_version,
+            "anthropic_version": driver.ANTHROPIC_VERSION,
             "messages": [
                 {"role": "user", "content": "bar"},
                 {"role": "assistant", "content": "baz"},
