@@ -21,22 +21,22 @@ class TestDummyImageGenerationDriver:
         with pytest.raises(DummyException):
             image_generation_driver.try_image_variation(
                 "prompt-stack",
-                ImageArtifact(value=b"", width=100, height=100),
-                ImageArtifact(value=b"", width=100, height=100),
+                ImageArtifact(value=b"", width=100, height=100, format="png"),
+                ImageArtifact(value=b"", width=100, height=100, format="png"),
             )
 
     def test_try_image_inpainting(self, image_generation_driver):
         with pytest.raises(DummyException):
             image_generation_driver.try_image_inpainting(
                 "prompt-stack",
-                ImageArtifact(value=b"", width=100, height=100),
-                ImageArtifact(value=b"", width=100, height=100),
+                ImageArtifact(value=b"", width=100, height=100, format="png"),
+                ImageArtifact(value=b"", width=100, height=100, format="png"),
             )
 
     def test_try_image_outpainting(self, image_generation_driver):
         with pytest.raises(DummyException):
             image_generation_driver.try_image_outpainting(
                 "prompt-stack",
-                ImageArtifact(value=b"", width=100, height=100),
-                ImageArtifact(value=b"", width=100, height=100),
+                ImageArtifact(value=b"", width=100, height=100, format="png"),
+                ImageArtifact(value=b"", width=100, height=100, format="png"),
             )

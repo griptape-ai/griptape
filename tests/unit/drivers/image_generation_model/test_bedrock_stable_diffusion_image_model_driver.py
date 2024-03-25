@@ -13,11 +13,11 @@ class TestBedrockStableDiffusionImageGenerationModelDriver:
 
     @pytest.fixture
     def image_artifact(self):
-        return ImageArtifact(b"image", mime_type="image/png", width=1024, height=1024)
+        return ImageArtifact(b"image", format="png", width=1024, height=1024)
 
     @pytest.fixture
     def mask_artifact(self):
-        return ImageArtifact(b"mask", mime_type="image/png", width=1024, height=1024)
+        return ImageArtifact(b"mask", format="png", width=1024, height=1024)
 
     def test_init(self, model_driver):
         assert model_driver
