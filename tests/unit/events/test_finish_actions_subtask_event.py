@@ -11,7 +11,7 @@ class TestFinishActionsSubtaskEvent:
     def finish_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"
-            'Actions: [{"output_label": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "test input"}}}]\n'
+            'Actions: [{"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "test input"}}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -45,9 +45,7 @@ class TestFinishActionsSubtaskEvent:
 
         assert event_dict["subtask_parent_task_id"] == finish_subtask_event.subtask_parent_task_id
         assert event_dict["subtask_thought"] == finish_subtask_event.subtask_thought
-        assert (
-            event_dict["subtask_actions"][0]["output_label"] == finish_subtask_event.subtask_actions[0]["output_label"]
-        )
+        assert event_dict["subtask_actions"][0]["tag"] == finish_subtask_event.subtask_actions[0]["tag"]
         assert event_dict["subtask_actions"][0]["name"] == finish_subtask_event.subtask_actions[0]["name"]
         assert event_dict["subtask_actions"][0]["path"] == finish_subtask_event.subtask_actions[0]["path"]
         assert event_dict["subtask_actions"][0]["input"] == finish_subtask_event.subtask_actions[0]["input"]

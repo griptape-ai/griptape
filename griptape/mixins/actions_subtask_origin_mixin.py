@@ -38,16 +38,12 @@ class ActionsSubtaskOriginMixin:
         for tool in tools:
             for activity_schema in tool.activity_schemas():
                 action_schema = activity_schema.schema
-                output_label_key = Literal(
-                    "output_label", description="Action label that can later be used to identify action output"
-                )
+                tag_key = Literal("tag", description="Unique tag name for action execution.")
 
-                action_schema[output_label_key] = str
+                action_schema[tag_key] = str
 
                 action_schemas.append(action_schema)
 
-        actions_schema = Schema(
-            description="JSON schema for an array of actions to be executed in parallel.", schema=action_schemas
-        )
+        actions_schema = Schema(description="JSON schema for an array of actions.", schema=action_schemas)
 
         return actions_schema.json_schema("Actions Schema")

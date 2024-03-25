@@ -206,7 +206,7 @@ class TestBaseTool:
         assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
-        action = ActionsSubtask.Action(input={}, name="", output_label="")
+        action = ActionsSubtask.Action(input={}, name="", tag="")
         assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):

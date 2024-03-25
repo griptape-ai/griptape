@@ -33,16 +33,16 @@ class TestAmazonBedrockStructureConfig:
                     "seed": None,
                     "type": "AmazonBedrockImageGenerationDriver",
                 },
-                "image_query_driver": {"type": "DummyImageQueryDriver"},
+                "image_query_driver": {
+                    "type": "AmazonBedrockImageQueryDriver",
+                    "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+                    "max_tokens": 256,
+                    "image_query_model_driver": {"type": "BedrockClaudeImageQueryModelDriver"},
+                },
                 "prompt_driver": {
                     "max_tokens": None,
                     "model": "anthropic.claude-3-sonnet-20240229-v1:0",
-                    "prompt_model_driver": {
-                        "type": "BedrockClaudePromptModelDriver",
-                        "anthropic_version": "bedrock-2023-05-31",
-                        "top_k": 250,
-                        "top_p": 0.999,
-                    },
+                    "prompt_model_driver": {"type": "BedrockClaudePromptModelDriver", "top_k": 250, "top_p": 0.999},
                     "stream": False,
                     "temperature": 0.1,
                     "type": "AmazonBedrockPromptDriver",
@@ -66,12 +66,7 @@ class TestAmazonBedrockStructureConfig:
                         "temperature": 0.1,
                         "max_tokens": None,
                         "model": "anthropic.claude-3-sonnet-20240229-v1:0",
-                        "prompt_model_driver": {
-                            "type": "BedrockClaudePromptModelDriver",
-                            "anthropic_version": "bedrock-2023-05-31",
-                            "top_k": 250,
-                            "top_p": 0.999,
-                        },
+                        "prompt_model_driver": {"type": "BedrockClaudePromptModelDriver", "top_k": 250, "top_p": 0.999},
                         "stream": False,
                     },
                     "vector_store_driver": {
@@ -93,7 +88,6 @@ class TestAmazonBedrockStructureConfig:
                             "model": "anthropic.claude-3-sonnet-20240229-v1:0",
                             "prompt_model_driver": {
                                 "type": "BedrockClaudePromptModelDriver",
-                                "anthropic_version": "bedrock-2023-05-31",
                                 "top_k": 250,
                                 "top_p": 0.999,
                             },
@@ -109,7 +103,6 @@ class TestAmazonBedrockStructureConfig:
                             "model": "anthropic.claude-3-sonnet-20240229-v1:0",
                             "prompt_model_driver": {
                                 "type": "BedrockClaudePromptModelDriver",
-                                "anthropic_version": "bedrock-2023-05-31",
                                 "top_k": 250,
                                 "top_p": 0.999,
                             },
@@ -124,12 +117,7 @@ class TestAmazonBedrockStructureConfig:
                         "temperature": 0.1,
                         "max_tokens": None,
                         "model": "anthropic.claude-3-sonnet-20240229-v1:0",
-                        "prompt_model_driver": {
-                            "type": "BedrockClaudePromptModelDriver",
-                            "anthropic_version": "bedrock-2023-05-31",
-                            "top_k": 250,
-                            "top_p": 0.999,
-                        },
+                        "prompt_model_driver": {"type": "BedrockClaudePromptModelDriver", "top_k": 250, "top_p": 0.999},
                         "stream": False,
                     },
                 },
