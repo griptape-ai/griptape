@@ -2,7 +2,6 @@ from unittest import mock
 import json
 import boto3
 import pytest
-from griptape.tokenizers.bedrock_jurassic_tokenizer import BedrockJurassicTokenizer
 from griptape.utils import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockJurassicPromptModelDriver
 
@@ -27,7 +26,7 @@ class TestBedrockJurassicPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonBedrockPromptDriver(
-            model=BedrockJurassicTokenizer.DEFAULT_MODEL,
+            model="ai21.j2-ultra",
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=BedrockJurassicPromptModelDriver(),
             temperature=0.12345,
@@ -62,7 +61,7 @@ class TestBedrockJurassicPromptModelDriver:
         assert model_input["prompt"].startswith("System: foo\nUser: bar\nAssistant:")
 
     def test_prompt_stack_to_model_params(self, driver, stack):
-        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 8186
+        assert driver.prompt_stack_to_model_params(stack)["maxTokens"] == 2042
         assert driver.prompt_stack_to_model_params(stack)["temperature"] == 0.12345
 
     def test_process_output(self, driver):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 import logging
 import uuid
 from abc import ABC, abstractmethod
@@ -10,8 +11,16 @@ from attrs import Factory, define, field
 from rich.logging import RichHandler
 
 from griptape.artifacts import BlobArtifact, TextArtifact
-from griptape.config import BaseStructureConfig, OpenAiStructureConfig
-from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, DummyPromptDriver, DummyVectorStoreDriver
+from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
+from griptape.drivers import (
+    BaseEmbeddingDriver,
+    BasePromptDriver,
+    DummyPromptDriver,
+    DummyVectorStoreDriver,
+    OpenAiEmbeddingDriver,
+    OpenAiChatPromptDriver,
+)
+from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -22,7 +31,7 @@ from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask
-from griptape.utils.decorators import deprecated
+from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
     from griptape.memory.structure import BaseConversationMemory
@@ -33,9 +42,9 @@ class Structure(ABC):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    _stream: Optional[bool] = field(default=None, kw_only=True, alias="stream")
-    _prompt_driver: Optional[BasePromptDriver] = field(default=None, alias="prompt_driver")
-    _embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True, alias="embedding_driver")
+    stream: Optional[bool] = field(default=None, kw_only=True)
+    prompt_driver: Optional[BasePromptDriver] = field(default=None)
+    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     config: BaseStructureConfig = field(
         default=Factory(lambda self: self.default_config, takes_self=True), kw_only=True
     )
@@ -45,7 +54,7 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
-    conversation_memory: BaseConversationMemory = field(
+    conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(
             lambda self: ConversationMemory(driver=self.config.global_drivers.conversation_memory_driver),
             takes_self=True,
@@ -86,42 +95,22 @@ class Structure(ABC):
     def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
         return self.add_tasks(*other) if isinstance(other, list) else self + [other]
 
-    @property
-    @deprecated("use `config.global_drivers.prompt_driver` instead.")
-    def prompt_driver(self) -> Optional[BasePromptDriver]:
-        if self._prompt_driver is not None:
-            return self._prompt_driver
-        else:
-            return None
+    @prompt_driver.validator  # pyright: ignore
+    def validate_prompt_driver(self, attribute, value):
+        if value is not None:
+            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.global_drivers.prompt_driver` instead.")
 
-    @prompt_driver.setter
-    def prompt_driver(self, prompt_driver: Optional[BasePromptDriver]) -> None:
-        self._prompt_driver = prompt_driver
+    @embedding_driver.validator  # pyright: ignore
+    def validate_embedding_driver(self, attribute, value):
+        if value is not None:
+            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.global_drivers.embedding_driver` instead.")
 
-    @property
-    @deprecated("use `config.global_drivers.embedding_driver` instead.")
-    def embedding_driver(self) -> Optional[BaseEmbeddingDriver]:
-        if self._embedding_driver is not None:
-            return self._embedding_driver
-        else:
-            return None
-
-    @embedding_driver.setter
-    def embedding_driver(self, embedding_driver: Optional[BaseEmbeddingDriver]) -> None:
-        self._embedding_driver = embedding_driver
-
-    @property
-    @deprecated("`stream` is deprecated, use `config.prompt_driver.stream` instead.")
-    def stream(self) -> Optional[bool]:
-        if self._stream is not None:
-            return self._stream
-        else:
-            return None
-
-    @stream.setter
-    @deprecated("`stream` is deprecated, use `config.prompt_driver.stream` instead.")
-    def stream(self, stream: Optional[bool]) -> None:
-        self._stream = stream
+    @stream.validator  # pyright: ignore
+    def validate_stream(self, attribute, value):
+        if value is not None:
+            deprecation_warn(
+                f"`{attribute.name}` is deprecated, use `config.global_drivers.prompt_driver.stream` instead."
+            )
 
     @property
     def execution_args(self) -> tuple:
@@ -155,18 +144,35 @@ class Structure(ABC):
 
     @property
     def default_config(self) -> BaseStructureConfig:
-        config = OpenAiStructureConfig()
+        if self.prompt_driver is not None or self.embedding_driver is not None:
+            config = StructureConfig()
 
-        if self._prompt_driver is not None:
-            config.global_drivers.prompt_driver = self._prompt_driver
-            config.task_memory.query_engine.prompt_driver = self._prompt_driver
-            config.task_memory.summary_engine.prompt_driver = self._prompt_driver
-            config.task_memory.extraction_engine.csv.prompt_driver = self._prompt_driver
-            config.task_memory.extraction_engine.json.prompt_driver = self._prompt_driver
-        if self._embedding_driver is not None:
-            config.task_memory.query_engine.vector_store_driver.embedding_driver = self._embedding_driver
-        if self._stream is not None:
-            config.global_drivers.prompt_driver.stream = self._stream
+            if self.prompt_driver is None:
+                prompt_driver = OpenAiChatPromptDriver(model="gpt-4")
+            else:
+                prompt_driver = self.prompt_driver
+
+            if self.embedding_driver is None:
+                embedding_driver = OpenAiEmbeddingDriver()
+            else:
+                embedding_driver = self.embedding_driver
+
+            if self.stream is not None:
+                prompt_driver.stream = self.stream
+
+            vector_store_driver = LocalVectorStoreDriver(embedding_driver=embedding_driver)
+
+            config.global_drivers.prompt_driver = prompt_driver
+            config.global_drivers.vector_store_driver = vector_store_driver
+            config.global_drivers.embedding_driver = embedding_driver
+
+            config.task_memory.query_engine.prompt_driver = prompt_driver
+            config.task_memory.query_engine.vector_store_driver = vector_store_driver
+            config.task_memory.summary_engine.prompt_driver = prompt_driver
+            config.task_memory.extraction_engine.csv.prompt_driver = prompt_driver
+            config.task_memory.extraction_engine.json.prompt_driver = prompt_driver
+        else:
+            config = OpenAiStructureConfig()
 
         return config
 

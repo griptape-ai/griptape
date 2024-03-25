@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, Column, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Session
+from collections import OrderedDict
 
 
 @define
@@ -82,7 +83,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         """Inserts or updates a vector in the collection."""
         with Session(self.engine) as session:
-            obj = self._model(id=vector_id, vector=vector, namespace=namespace, meta=meta)
+            obj = self._model(id=vector_id, vector=vector, namespace=namespace, meta=meta, **kwargs)
 
             obj = session.merge(obj)
             session.commit()
@@ -148,8 +149,17 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             # The query should return both the vector and the distance metric score.
             query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore
 
-            if namespace:
-                query_result = query_result.filter_by(namespace=namespace)
+            filter_kwargs: Optional[OrderedDict] = None
+
+            if namespace is not None:
+                filter_kwargs = OrderedDict(namespace=namespace)
+
+            if "filter" in kwargs and isinstance(kwargs["filter"], dict):
+                filter_kwargs = filter_kwargs or OrderedDict()
+                filter_kwargs.update(kwargs["filter"])
+
+            if filter_kwargs is not None:
+                query_result = query_result.filter_by(**filter_kwargs)
 
             results = query_result.limit(count).all()
 

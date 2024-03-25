@@ -1,10 +1,9 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable, Tuple, Type
+from typing import TYPE_CHECKING, Optional, Callable
 from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
-from griptape.memory import meta
 from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import PromptStack
 from griptape.mixins import ExponentialBackoffMixin
@@ -44,7 +43,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def max_output_tokens(self, text: str | list) -> int:
-        tokens_left = self.tokenizer.count_tokens_left(text)
+        tokens_left = self.tokenizer.count_output_tokens_left(text)
 
         if self.max_tokens:
             return min(self.max_tokens, tokens_left)

@@ -29,7 +29,7 @@ class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
     input_type: str = field(default="search_query", kw_only=True)
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     tokenizer: BedrockCohereTokenizer = field(
-        default=Factory(lambda self: BedrockCohereTokenizer(), takes_self=True), kw_only=True
+        default=Factory(lambda self: BedrockCohereTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True

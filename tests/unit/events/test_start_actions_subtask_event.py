@@ -1,27 +1,28 @@
 import pytest
-from griptape.events import StartActionSubtaskEvent
+from griptape.events import StartActionsSubtaskEvent
 from griptape.structures import Agent
-from griptape.tasks import ActionSubtask, ToolkitTask
+from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
-class TestStartActionSubtaskEvent:
+class TestStartActionsSubtaskEvent:
     @pytest.fixture
     def start_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"
-            'Action: {"name": "test", "path": "test action", "input": {"values": {"foo": "test input"}}}\n'
+            'Actions: [{"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "test input"}}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
-        task = ToolkitTask()
+        task = ToolkitTask(tools=[MockTool()])
         agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
-        subtask = ActionSubtask(valid_input)
+        subtask = ActionsSubtask(valid_input)
         task.add_subtask(subtask)
         agent.run()
 
-        return StartActionSubtaskEvent(
+        return StartActionsSubtaskEvent(
             task_id=subtask.id,
             task_parent_ids=subtask.parent_ids,
             task_child_ids=subtask.child_ids,
@@ -29,9 +30,7 @@ class TestStartActionSubtaskEvent:
             task_output=subtask.output,
             subtask_parent_task_id=subtask.parent_task_id,
             subtask_thought=subtask.thought,
-            subtask_action_name=subtask.action_name,
-            subtask_action_path=subtask.action_path,
-            subtask_action_input=subtask.action_input,
+            subtask_actions=subtask.actions_to_dicts(),
         )
 
     def test_to_dict(self, start_subtask_event):
@@ -46,6 +45,7 @@ class TestStartActionSubtaskEvent:
 
         assert event_dict["subtask_parent_task_id"] == start_subtask_event.subtask_parent_task_id
         assert event_dict["subtask_thought"] == start_subtask_event.subtask_thought
-        assert event_dict["subtask_action_name"] == start_subtask_event.subtask_action_name
-        assert event_dict["subtask_action_path"] == start_subtask_event.subtask_action_path
-        assert event_dict["subtask_action_input"] == start_subtask_event.subtask_action_input
+        assert event_dict["subtask_actions"][0]["tag"] == start_subtask_event.subtask_actions[0]["tag"]
+        assert event_dict["subtask_actions"][0]["name"] == start_subtask_event.subtask_actions[0]["name"]
+        assert event_dict["subtask_actions"][0]["path"] == start_subtask_event.subtask_actions[0]["path"]
+        assert event_dict["subtask_actions"][0]["input"] == start_subtask_event.subtask_actions[0]["input"]

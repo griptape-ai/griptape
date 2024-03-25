@@ -24,7 +24,7 @@ class MockStructureConfig(BaseStructureConfig):
                 prompt_driver=MockPromptDriver(),
                 image_generation_driver=MockImageGenerationDriver(model="dall-e-2"),
                 image_query_driver=MockImageQueryDriver(model="gpt-4-vision-preview"),
-                embedding_driver=MockEmbeddingDriver(model="text-embedding-ada-002"),
+                embedding_driver=MockEmbeddingDriver(model="text-embedding-3-small"),
             )
         ),
         kw_only=True,
@@ -36,7 +36,7 @@ class MockStructureConfig(BaseStructureConfig):
                 query_engine=StructureTaskMemoryQueryEngineConfig(
                     prompt_driver=MockPromptDriver(model="gpt-3.5-turbo"),
                     vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver(model="text-embedding-ada-002")
+                        embedding_driver=MockEmbeddingDriver(model="text-embedding-3-small")
                     ),
                 ),
                 extraction_engine=StructureTaskMemoryExtractionEngineConfig(

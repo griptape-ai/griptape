@@ -18,10 +18,14 @@ class TestBedrockTitanTokenizer:
         mock_session_object.client.return_value = mock_client
         mock_session_class.return_value = mock_session_object
 
-    def test_titan_tokens_left(self):
+    def test_input_tokens_left(self):
         assert (
-            BedrockTitanTokenizer(model=BedrockTitanTokenizer.DEFAULT_MODEL).count_tokens_left(
-                "Instructions: foo\nUser: bar\nBot:"
-            )
+            BedrockTitanTokenizer(model="amazon.titan").count_input_tokens_left("Instructions: foo\nUser: bar\nBot:")
             == 4090
+        )
+
+    def test_output_tokens_left(self):
+        assert (
+            BedrockTitanTokenizer(model="amazon.titan").count_output_tokens_left("Instructions: foo\nUser: bar\nBot:")
+            == 7994
         )

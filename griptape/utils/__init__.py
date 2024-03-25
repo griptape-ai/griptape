@@ -15,6 +15,7 @@ from .import_utils import import_optional_dependency
 from .stream import Stream
 from .constants import Constants as constants
 from .load_artifact_from_memory import load_artifact_from_memory
+from .deprecation import deprecation_warn
 
 
 def minify_json(value: str) -> str:
@@ -39,4 +40,5 @@ __all__ = [
     "Stream",
     "constants",
     "load_artifact_from_memory",
+    "deprecation_warn",
 ]

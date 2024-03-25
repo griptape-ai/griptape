@@ -180,9 +180,7 @@ class Computer(BaseTool):
             image = self.docker_client.images.build(path=temp_dir, tag=self.image_name(tool), rm=True, forcerm=True)
 
             if isinstance(image, tuple):
-                response = [line for line in image[1]]
-
-                logging.info(f"Built image: {response[0].short_id}")
+                logging.info(f"Built image: {image[0].short_id}")
 
     def dependencies(self) -> list[str]:
         with open(self.requirements_txt_path) as file:

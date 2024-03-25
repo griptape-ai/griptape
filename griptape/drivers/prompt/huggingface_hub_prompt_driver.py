@@ -45,7 +45,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         default=Factory(
             lambda self: HuggingFaceTokenizer(
                 tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model),
-                max_tokens=self.max_tokens,
+                max_output_tokens=self.max_tokens,
             ),
             takes_self=True,
         ),

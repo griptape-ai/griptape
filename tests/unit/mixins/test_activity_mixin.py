@@ -1,5 +1,5 @@
 import pytest
-from schema import Schema
+from schema import Schema, Literal
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -71,3 +71,12 @@ class TestActivityMixin:
         tool.enable_activities()
 
         assert len(tool.activities()) > 0
+
+    def test_activity_to_input(self, tool):
+        input = tool.activity_to_input(tool.test)
+        assert str(input) == str(
+            {Literal("input", description=""): {"values": Schema({Literal("test"): str}, description="Test input")}}
+        )
+
+        input = tool.activity_to_input(tool.test_no_schema)
+        assert input == {}

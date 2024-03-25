@@ -18,10 +18,22 @@ class TestBedrockJurassicTokenizer:
         mock_session_object.client.return_value = mock_client
         mock_session_class.return_value = mock_session_object
 
-    def test_titan_tokens_left(self):
-        assert (
-            BedrockJurassicTokenizer(model=BedrockJurassicTokenizer.DEFAULT_MODEL).count_tokens_left(
-                "System: foo\nUser: bar\nAssistant:"
-            )
-            == 8186
-        )
+    @pytest.fixture
+    def tokenizer(self, request):
+        return BedrockJurassicTokenizer(model=request.param)
+
+    @pytest.mark.parametrize(
+        "tokenizer,expected",
+        [("ai21.j2-mid-v1", 8186), ("ai21.j2-ultra-v1", 8186), ("ai21.j2-large-v1", 8186), ("ai21.j2-large-v2", 8186)],
+        indirect=["tokenizer"],
+    )
+    def test_input_tokens_left(self, tokenizer, expected):
+        assert tokenizer.count_input_tokens_left("System: foo\nUser: bar\nAssistant:") == expected
+
+    @pytest.mark.parametrize(
+        "tokenizer,expected",
+        [("ai21.j2-mid-v1", 8185), ("ai21.j2-ultra-v1", 8185), ("ai21.j2-large-v1", 8185), ("ai21.j2-large-v2", 2042)],
+        indirect=["tokenizer"],
+    )
+    def test_output_tokens_left(self, tokenizer, expected):
+        assert tokenizer.count_output_tokens_left("System: foo\nUser: bar\nAssistant:") == expected

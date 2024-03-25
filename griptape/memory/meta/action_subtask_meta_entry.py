@@ -10,11 +10,11 @@ class ActionSubtaskMetaEntry(BaseMetaEntry):
 
     Attributes:
         thought: CoT thought string from the LLM.
-        action: ReAct action JSON string from the LLM.
+        actions: ReAct actions JSON string from the LLM.
         answer: tool-generated and memory-processed response from Griptape.
     """
 
     type: str = field(default=BaseMetaEntry.__name__, kw_only=True, metadata={"serializable": False})
     thought: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    action: str = field(kw_only=True, metadata={"serializable": True})
+    actions: str = field(kw_only=True, metadata={"serializable": True})
     answer: str = field(kw_only=True, metadata={"serializable": True})

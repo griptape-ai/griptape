@@ -11,7 +11,7 @@ from griptape.mixins import SerializableMixin
 
 @define
 class BasePromptModelDriver(SerializableMixin, ABC):
-    max_tokens: int = field(default=600, kw_only=True)
+    max_tokens: Optional[int] = field(default=None, kw_only=True)
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     supports_streaming: bool = field(default=True, kw_only=True)
 

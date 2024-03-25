@@ -335,3 +335,13 @@ class TestPipeline:
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child
+
+    def test_deprecation(self):
+        with pytest.deprecated_call():
+            Pipeline(prompt_driver=MockPromptDriver())
+
+        with pytest.deprecated_call():
+            Pipeline(embedding_driver=MockEmbeddingDriver())
+
+        with pytest.deprecated_call():
+            Pipeline(stream=True)

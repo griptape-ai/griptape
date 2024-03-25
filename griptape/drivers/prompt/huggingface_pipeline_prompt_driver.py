@@ -30,7 +30,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model)
+                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model),
+                max_output_tokens=self.max_tokens,
             ),
             takes_self=True,
         ),
@@ -44,7 +45,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         generator = pipeline(
             tokenizer=self.tokenizer.tokenizer,
             model=self.model,
-            max_new_tokens=self.tokenizer.count_tokens_left(prompt),
+            max_new_tokens=self.tokenizer.count_output_tokens_left(prompt),
         )
 
         if generator.task in self.SUPPORTED_TASKS:

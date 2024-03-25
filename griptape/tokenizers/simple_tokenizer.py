@@ -3,8 +3,9 @@ from attr import define, field
 from griptape.tokenizers import BaseTokenizer
 
 
-@define(frozen=True)
+@define()
 class SimpleTokenizer(BaseTokenizer):
+    model: str = field(kw_only=True, init=False)
     characters_per_token: int = field(kw_only=True)
 
     def count_tokens(self, text: str | list) -> int:

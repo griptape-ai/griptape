@@ -1,5 +1,6 @@
-Output a JSON object that strictly adheres to the specified schema with no additional text or commentary. The object should only include fields defined in the schema
-Schema: """{{ action_schema }}"""
+When appropriate, respond to requests by using the following Action Schema. Your response should be a plain JSON object. If you can't use the Action Schema, say "I don't know how to respond."
+
+Action Schema: {{ action_schema }}
 
 {% if meta_memory %}
 

@@ -20,7 +20,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
         client: An optional OpenSearch client to use. Defaults to a new client using the host, port, http_auth, use_ssl, and verify_certs attributes.
     """
 
-    session: Session = field(default=import_optional_dependency("boto3").Session(), kw_only=True)
+    session: Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     service: str = field(default="es", kw_only=True)
     http_auth: str | tuple[str, str] = field(
         default=Factory(

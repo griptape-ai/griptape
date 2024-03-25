@@ -184,7 +184,7 @@ class AwsS3Client(BaseAwsClient):
                 obj = self.s3_client.get_object(Bucket=object_info["bucket_name"], Key=object_info["object_key"])
 
                 content = obj["Body"].read()
-                artifacts.append(BlobArtifact(content))
+                artifacts.append(BlobArtifact(content, name=object_info["object_key"]))
 
             except Exception as e:
                 return ErrorArtifact(f"error downloading objects from bucket: {e}")

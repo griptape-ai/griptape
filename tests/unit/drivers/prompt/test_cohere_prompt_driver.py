@@ -1,6 +1,5 @@
 from griptape.drivers import CoherePromptDriver
 from griptape.utils import PromptStack
-from griptape.tokenizers import CohereTokenizer
 from unittest.mock import Mock
 import pytest
 
@@ -35,11 +34,11 @@ class TestCoherePromptDriver:
         return prompt_stack
 
     def test_init(self):
-        assert CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key="foobar")
+        assert CoherePromptDriver(model="command", api_key="foobar")
 
     def test_try_run(self, mock_client, prompt_stack):  # pyright: ignore
         # Given
-        driver = CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key="api-key")
+        driver = CoherePromptDriver(model="command", api_key="api-key")
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -49,7 +48,7 @@ class TestCoherePromptDriver:
 
     def test_try_stream_run(self, mock_stream_client, prompt_stack):  # pyright: ignore
         # Given
-        driver = CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key="api-key", stream=True)
+        driver = CoherePromptDriver(model="command", api_key="api-key", stream=True)
 
         # When
         text_artifact = next(driver.try_stream(prompt_stack))
@@ -60,7 +59,7 @@ class TestCoherePromptDriver:
     @pytest.mark.parametrize("choices", [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_client, prompt_stack):
         # Given
-        driver = CoherePromptDriver(model=CohereTokenizer.DEFAULT_MODEL, api_key="api-key")
+        driver = CoherePromptDriver(model="command", api_key="api-key")
         mock_client.generate.return_value.generations = choices
 
         # When

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from attr import define, field
 from griptape.tokenizers import BaseTokenizer
 
@@ -7,14 +7,12 @@ if TYPE_CHECKING:
     from cohere import Client
 
 
-@define(frozen=True)
+@define()
 class CohereTokenizer(BaseTokenizer):
-    DEFAULT_MODEL = "command"
-    DEFAULT_MAX_TOKENS = 2048
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"command": 4096}
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"command": 4096}
 
-    model: str = field(kw_only=True)
     client: Client = field(kw_only=True)
-    max_tokens: int = field(default=DEFAULT_MAX_TOKENS, kw_only=True)
 
     def count_tokens(self, text: str | list) -> int:
         if isinstance(text, str):

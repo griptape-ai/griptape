@@ -32,11 +32,11 @@ class TestHuggingFacePipelinePromptDriver:
         return prompt_stack
 
     def test_init(self):
-        assert HuggingFacePipelinePromptDriver(model="gpt2")
+        assert HuggingFacePipelinePromptDriver(model="gpt2", max_tokens=42)
 
     def test_try_run(self, prompt_stack):
         # Given
-        driver = HuggingFacePipelinePromptDriver(model="foo")
+        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -47,7 +47,7 @@ class TestHuggingFacePipelinePromptDriver:
     @pytest.mark.parametrize("choices", [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_generator, prompt_stack):
         # Given
-        driver = HuggingFacePipelinePromptDriver(model="foo")
+        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
         mock_generator.return_value = choices
 
         # When
@@ -59,7 +59,7 @@ class TestHuggingFacePipelinePromptDriver:
 
     def test_try_run_throws_when_unsupported_task_returned(self, prompt_stack, mock_generator):
         # Given
-        driver = HuggingFacePipelinePromptDriver(model="foo")
+        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
         mock_generator.task = "obviously-an-unsupported-task"
 
         # When

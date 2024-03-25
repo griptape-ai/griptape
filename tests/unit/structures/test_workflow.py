@@ -420,3 +420,13 @@ class TestWorkflow:
         assert context["structure"] == workflow
         assert context["parents"] == {parent.id: parent}
         assert context["children"] == {child.id: child}
+
+    def test_deprecation(self):
+        with pytest.deprecated_call():
+            Workflow(prompt_driver=MockPromptDriver())
+
+        with pytest.deprecated_call():
+            Workflow(embedding_driver=MockEmbeddingDriver())
+
+        with pytest.deprecated_call():
+            Workflow(stream=True)

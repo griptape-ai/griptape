@@ -1,3 +1,4 @@
+from typing import Any
 import uuid
 import pytest
 from unittest.mock import MagicMock, Mock
@@ -32,7 +33,7 @@ class TestPgVectorVectorStoreDriver:
             driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, table_name=self.table_name)
 
     def test_initialize_accepts_engine(self, embedding_driver):
-        engine = create_engine(self.connection_string)
+        engine: Any = create_engine(self.connection_string)
         driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, engine=engine, table_name=self.table_name)
 
     def test_initialize_accepts_connection_string(self, embedding_driver):
@@ -132,3 +133,24 @@ class TestPgVectorVectorStoreDriver:
         assert result[1].namespace == test_namespaces[1]
         assert result[0].meta == test_metas[0]
         assert result[1].meta == test_metas[1]
+
+    def test_query_filter(self, mock_session, mock_engine):
+        test_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_vecs = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+        test_namespaces = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_metas = [{"key": "value1"}, {"key": "value2"}]
+        test_result = [
+            [Mock(id=test_ids[0], vector=test_vecs[0], namespace=test_namespaces[0], meta=test_metas[0]), 0.1]
+        ]
+        mock_session.query().order_by().filter_by().limit().all.return_value = test_result
+
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+        )
+
+        result = driver.query("some query", include_vectors=True, filter={"namespace": test_namespaces[0]})
+
+        assert result[0].id == test_ids[0]
+        assert result[0].vector == test_vecs[0]
+        assert result[0].namespace == test_namespaces[0]
+        assert result[0].meta == test_metas[0]
