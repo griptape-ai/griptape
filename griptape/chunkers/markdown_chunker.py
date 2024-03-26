@@ -1,7 +1,7 @@
-from griptape.chunkers import BaseChunker, ChunkSeparator
+from griptape.chunkers import RecursiveChunker, ChunkSeparator
 
 
-class MarkdownChunker(BaseChunker):
+class MarkdownChunker(RecursiveChunker):
     DEFAULT_SEPARATORS = [
         ChunkSeparator("##", is_prefix=True),
         ChunkSeparator("###", is_prefix=True),

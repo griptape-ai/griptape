@@ -1,7 +1,7 @@
-from griptape.chunkers import BaseChunker, ChunkSeparator
+from griptape.chunkers import ChunkSeparator, RecursiveChunker
 
 
-class TextChunker(BaseChunker):
+class TextChunker(RecursiveChunker):
     DEFAULT_SEPARATORS = [
         ChunkSeparator("\n\n"),
         ChunkSeparator("\n"),

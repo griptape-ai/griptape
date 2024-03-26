@@ -1,7 +1,7 @@
-from griptape.chunkers import BaseChunker, ChunkSeparator
+from griptape.chunkers import RecursiveChunker, ChunkSeparator
 
 
-class PdfChunker(BaseChunker):
+class PdfChunker(RecursiveChunker):
     DEFAULT_SEPARATORS = [
         ChunkSeparator("\n\n"),
         ChunkSeparator(". "),
