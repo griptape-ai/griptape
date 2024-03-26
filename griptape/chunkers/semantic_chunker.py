@@ -10,7 +10,6 @@ from numpy.linalg import norm
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import BaseChunker
 from griptape.drivers.embedding.base_embedding_driver import BaseEmbeddingDriver
-from griptape.tokenizers import BaseTokenizer
 
 
 @define
@@ -30,7 +29,6 @@ class SemanticChunker(BaseChunker):
         "interquartile": 1.5,
     }
 
-    tokenizer: BaseTokenizer = field(kw_only=True)
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True)
     max_tokens: int = field(
         default=Factory(lambda self: self.tokenizer.max_input_tokens, takes_self=True), kw_only=True
