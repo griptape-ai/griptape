@@ -130,7 +130,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
 
         return ImageArtifact(
             value=image_data,
-            mime_type="image/png",
+            format="png",
             width=image_dimensions[0],
             height=image_dimensions[1],
             model=self.model,
