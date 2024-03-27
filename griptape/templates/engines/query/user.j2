@@ -6,9 +6,9 @@ Metadata: """
 """
 {% endif %}
 {% for segment in text_segments %}
-Page #{{loop.index}}:
 
-{{ segment }}
+Page #{{loop.index}}:
+"""{{ segment }}"""
 {% endfor %}
 ---------------------
 Given the context information and not prior knowledge, answer the query.

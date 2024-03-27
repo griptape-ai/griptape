@@ -33,14 +33,17 @@ class TestVectorQueryEngine:
         assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[0].meta["artifact"]).value == "foobar"
 
     def test_prompt_creation(self, engine):
-        message = engine.template_generator.render(
+        system_message = engine.system_template_generator.render(rulesets=["*RULESET*"])
+        user_message = engine.user_template_generator.render(
             metadata="*META*", query="*QUESTION*", text_segments=["*TEXT SEGMENT 1*", "*TEXT SEGMENT 2*"]
         )
 
-        assert "*META*" in message
-        assert "*QUESTION*" in message
-        assert "*TEXT SEGMENT 1*" in message
-        assert "*TEXT SEGMENT 2*" in message
+        assert "*RULESET*" in system_message
+
+        assert "*META*" in user_message
+        assert "*QUESTION*" in user_message
+        assert "*TEXT SEGMENT 1*" in user_message
+        assert "*TEXT SEGMENT 2*" in user_message
 
     def test_upsert_text_artifacts(self, engine):
         engine.upsert_text_artifacts(artifacts=[TextArtifact("foobar1"), TextArtifact("foobar2")], namespace="test")
