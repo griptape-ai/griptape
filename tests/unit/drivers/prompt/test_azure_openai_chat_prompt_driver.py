@@ -41,7 +41,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=messages,
-            max_tokens=driver.max_output_tokens(driver._prompt_stack_to_messages(prompt_stack)),
         )
         assert text_artifact.value == "model-output"
 
@@ -62,6 +61,5 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             stream=True,
             messages=messages,
-            max_tokens=driver.max_output_tokens(driver._prompt_stack_to_messages(prompt_stack)),
         )
         assert text_artifact.value == "model-output"
