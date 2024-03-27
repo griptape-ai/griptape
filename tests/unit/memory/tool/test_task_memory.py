@@ -4,7 +4,7 @@ from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.structures import Agent
-from griptape.tasks import ActionSubtask
+from griptape.tasks import ActionsSubtask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -44,7 +44,7 @@ class TestTaskMemory:
 
     def test_process_output(self, memory):
         artifact = TextArtifact("foo")
-        subtask = ActionSubtask()
+        subtask = ActionsSubtask()
 
         subtask.structure = Agent()
 
@@ -53,36 +53,36 @@ class TestTaskMemory:
         entries = subtask.structure.meta_memory.entries
 
         assert len(entries) == 1
-        assert entries[0].action == "{}"
+        assert entries[0].actions == "[]"
         assert entries[0].answer.startswith(
             'Output of "MockTool.test" was stored in memory with memory_name "MyMemory"'
         )
         assert entries[0].thought is None
 
         assert output.to_text().startswith('Output of "MockTool.test" was stored in memory')
-        assert memory.namespace_metadata[artifact.id] == subtask.action_to_json()
+        assert memory.namespace_metadata[artifact.id] == subtask.actions_to_json()
 
     def test_process_output_with_many_artifacts(self, memory):
         assert (
-            memory.process_output(MockTool().test, ActionSubtask(), ListArtifact([TextArtifact("foo")]))
+            memory.process_output(MockTool().test, ActionsSubtask(), ListArtifact([TextArtifact("foo")]))
             .to_text()
             .startswith('Output of "MockTool.test" was stored in memory')
         )
 
     def test_load_artifacts_for_text_artifact(self, memory):
-        memory.process_output(MockTool().test, ActionSubtask(), TextArtifact("foo", name="test"))
+        memory.process_output(MockTool().test, ActionsSubtask(), TextArtifact("foo", name="test"))
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_blob_artifact(self, memory):
-        memory.process_output(MockTool().test, ActionSubtask(), BlobArtifact(b"foo", name="test"))
+        memory.process_output(MockTool().test, ActionsSubtask(), BlobArtifact(b"foo", name="test"))
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_text_list_artifact(self, memory):
         memory.process_output(
             MockTool().test,
-            ActionSubtask(),
+            ActionsSubtask(),
             ListArtifact([TextArtifact("foo", name="test1"), TextArtifact("foo", name="test2")], name="test"),
         )
 
@@ -91,7 +91,7 @@ class TestTaskMemory:
     def test_load_artifacts_for_blob_list_artifact(self, memory):
         memory.process_output(
             MockTool().test,
-            ActionSubtask(),
+            ActionsSubtask(),
             ListArtifact([BlobArtifact(b"foo", name="test1"), BlobArtifact(b"foo", name="test2")], name="test"),
         )
 

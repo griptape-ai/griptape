@@ -78,6 +78,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         self._extract_ratelimit_metadata(result)
 
         parsed_result = result.parse()
+
         if len(parsed_result.choices) == 1:
             return TextArtifact(value=parsed_result.choices[0].message.content.strip())
         else:
@@ -122,7 +123,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         messages = self._prompt_stack_to_messages(prompt_stack)
 
-        if self.max_tokens:
+        if self.max_tokens is not None:
             params["max_tokens"] = self.max_tokens
 
         params["messages"] = messages

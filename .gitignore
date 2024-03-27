@@ -50,3 +50,6 @@ dist/**
 *.xlf
 *.nls.*.json
 *.i18n.json
+
+# asdf
+.tool-versions

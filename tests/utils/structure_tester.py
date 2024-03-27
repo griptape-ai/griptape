@@ -25,6 +25,7 @@ from griptape.drivers import (
     AmazonSageMakerPromptDriver,
     SageMakerLlamaPromptModelDriver,
     SageMakerFalconPromptModelDriver,
+    GooglePromptDriver,
 )
 
 
@@ -105,12 +106,34 @@ class StructureTester:
             ),
             enabled=True,
         ),
+        "ANTHROPIC_CLAUDE_2_INSTANT": TesterPromptDriverOption(
+            prompt_driver=AnthropicPromptDriver(model="claude-instant-1.2", api_key=os.environ["ANTHROPIC_API_KEY"]),
+            enabled=True,
+        ),
         "ANTHROPIC_CLAUDE_2": TesterPromptDriverOption(
             prompt_driver=AnthropicPromptDriver(model="claude-2.0", api_key=os.environ["ANTHROPIC_API_KEY"]),
             enabled=True,
         ),
         "ANTHROPIC_CLAUDE_2.1": TesterPromptDriverOption(
             prompt_driver=AnthropicPromptDriver(model="claude-2.1", api_key=os.environ["ANTHROPIC_API_KEY"]),
+            enabled=True,
+        ),
+        "ANTHROPIC_CLAUDE_3_OPUS": TesterPromptDriverOption(
+            prompt_driver=AnthropicPromptDriver(
+                model="claude-3-opus-20240229", api_key=os.environ["ANTHROPIC_API_KEY"]
+            ),
+            enabled=True,
+        ),
+        "ANTHROPIC_CLAUDE_3_SONNET": TesterPromptDriverOption(
+            prompt_driver=AnthropicPromptDriver(
+                model="claude-3-sonnet-20240229", api_key=os.environ["ANTHROPIC_API_KEY"]
+            ),
+            enabled=True,
+        ),
+        "ANTHROPIC_CLAUDE_3_HAIKU": TesterPromptDriverOption(
+            prompt_driver=AnthropicPromptDriver(
+                model="claude-3-haiku-20240307", api_key=os.environ["ANTHROPIC_API_KEY"]
+            ),
             enabled=True,
         ),
         "COHERE_COMMAND": TesterPromptDriverOption(
@@ -122,9 +145,33 @@ class StructureTester:
             ),
             enabled=True,
         ),
+        "BEDROCK_CLAUDE_INSTANT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="anthropic.claude-instant-v1", prompt_model_driver=BedrockClaudePromptModelDriver()
+            ),
+            enabled=True,
+        ),
         "BEDROCK_CLAUDE_2": TesterPromptDriverOption(
             prompt_driver=AmazonBedrockPromptDriver(
                 model="anthropic.claude-v2", prompt_model_driver=BedrockClaudePromptModelDriver()
+            ),
+            enabled=True,
+        ),
+        "BEDROCK_CLAUDE_2.1": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="anthropic.claude-v2:1", prompt_model_driver=BedrockClaudePromptModelDriver()
+            ),
+            enabled=True,
+        ),
+        "BEDROCK_CLAUDE_3_SONNET": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="anthropic.claude-3-sonnet-20240229-v1:0", prompt_model_driver=BedrockClaudePromptModelDriver()
+            ),
+            enabled=True,
+        ),
+        "BEDROCK_CLAUDE_3_HAIKU": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(
+                model="anthropic.claude-3-haiku-20240307-v1:0", prompt_model_driver=BedrockClaudePromptModelDriver()
             ),
             enabled=True,
         ),
@@ -160,6 +207,9 @@ class StructureTester:
             ),
             enabled=False,
         ),
+        "GOOGLE_GEMINI_PRO": TesterPromptDriverOption(
+            prompt_driver=GooglePromptDriver(model="gemini-pro", api_key=os.environ["GOOGLE_API_KEY"]), enabled=True
+        ),
     }
     TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(
         [
@@ -167,8 +217,8 @@ class StructureTester:
             PROMPT_DRIVERS["OPENAI_CHAT_4_1106_PREVIEW"],
             PROMPT_DRIVERS["AZURE_CHAT_4"],
             PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
-            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2"],
-            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_2.1"],
+            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_3_OPUS"],
+            PROMPT_DRIVERS["GOOGLE_GEMINI_PRO"],
         ]
     )
     TOOL_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(PROMPT_DRIVERS.values())

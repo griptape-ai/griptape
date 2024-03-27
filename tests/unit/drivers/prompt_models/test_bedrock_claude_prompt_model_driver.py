@@ -26,53 +26,104 @@ class TestBedrockClaudePromptModelDriver:
             temperature=0.12345,
         ).prompt_model_driver
 
-    @pytest.fixture
-    def stack(self):
-        stack = PromptStack()
-
-        stack.add_system_input("foo")
-        stack.add_user_input("bar")
-        stack.add_assistant_input("baz")
-        stack.add_generic_input("qux")
-
-        return stack
-
-    @pytest.mark.parametrize("driver", [("anthropic.claude-v2:1"), ("anthropic.claude-v2")], indirect=["driver"])
+    @pytest.mark.parametrize(
+        "driver,",
+        [
+            ("anthropic.claude-v2"),
+            ("anthropic.claude-v2:1"),
+            ("anthropic.claude-3-sonnet-20240229-v1:0"),
+            ("anthropic.claude-3-haiku-20240307-v1:0"),
+        ],
+        indirect=["driver"],
+    )
     def test_init(self, driver):
         assert driver.prompt_driver is not None
 
     @pytest.mark.parametrize(
-        "driver,expected",
+        "driver,",
         [
-            ("anthropic.claude-v2:1", "foo\n\nHuman: bar\n\nAssistant: baz\n\nHuman: qux\n\nAssistant:"),
-            (
-                "anthropic.claude-v2",
-                "\n\nHuman: foo\n\nAssistant:\n\nHuman: bar\n\nAssistant: baz\n\nHuman: qux\n\nAssistant:",
-            ),
+            ("anthropic.claude-v2"),
+            ("anthropic.claude-v2:1"),
+            ("anthropic.claude-3-sonnet-20240229-v1:0"),
+            ("anthropic.claude-3-haiku-20240307-v1:0"),
         ],
         indirect=["driver"],
     )
-    def test_prompt_stack_to_model_input(self, driver, expected, stack):
-        model_input = driver.prompt_stack_to_model_input(stack)
+    @pytest.mark.parametrize("system_enabled", [True, False])
+    def test_prompt_stack_to_model_input(self, driver, system_enabled):
+        stack = PromptStack()
+        if system_enabled:
+            stack.add_system_input("foo")
+        stack.add_user_input("bar")
+        stack.add_assistant_input("baz")
+        stack.add_generic_input("qux")
 
-        assert isinstance(model_input, dict)
-        assert model_input["prompt"].startswith(expected)
+        expected_messages = [
+            {"role": "user", "content": "bar"},
+            {"role": "assistant", "content": "baz"},
+            {"role": "user", "content": "qux"},
+        ]
+        actual = driver.prompt_stack_to_model_input(stack)
+        expected = {"messages": expected_messages, **({"system": "foo"} if system_enabled else {})}
+
+        assert actual == expected
 
     @pytest.mark.parametrize(
-        "driver,key,expected",
+        "driver,",
         [
-            ("anthropic.claude-v2:1", "max_tokens_to_sample", 199979),
-            ("anthropic.claude-v2", "max_tokens_to_sample", 99971),
-            ("anthropic.claude-v2:1", "temperature", 0.12345),
-            ("anthropic.claude-v2", "temperature", 0.12345),
+            ("anthropic.claude-v2"),
+            ("anthropic.claude-v2:1"),
+            ("anthropic.claude-3-sonnet-20240229-v1:0"),
+            ("anthropic.claude-3-haiku-20240307-v1:0"),
         ],
         indirect=["driver"],
     )
-    def test_prompt_stack_to_model_params(self, driver, key, expected, stack):
-        assert driver.prompt_stack_to_model_params(stack)[key] == expected
+    @pytest.mark.parametrize("system_enabled", [True, False])
+    def test_prompt_stack_to_model_params(self, driver, system_enabled):
+        stack = PromptStack()
+        if system_enabled:
+            stack.add_system_input("foo")
+        stack.add_user_input("bar")
+        stack.add_assistant_input("baz")
+        stack.add_generic_input("qux")
+
+        max_tokens = driver.prompt_driver.max_output_tokens(driver.prompt_driver.prompt_stack_to_string(stack))
+
+        expected = {
+            "temperature": 0.12345,
+            "max_tokens": max_tokens,
+            "anthropic_version": driver.ANTHROPIC_VERSION,
+            "messages": [
+                {"role": "user", "content": "bar"},
+                {"role": "assistant", "content": "baz"},
+                {"role": "user", "content": "qux"},
+            ],
+            "top_p": 0.999,
+            "top_k": 250,
+            "stop_sequences": ["<|Response|>"],
+            **({"system": "foo"} if system_enabled else {}),
+        }
+
+        assert driver.prompt_stack_to_model_params(stack) == expected
 
     @pytest.mark.parametrize(
-        "driver,expected", [("anthropic.claude-v2:1", "foobar"), ("anthropic.claude-v2", "foobar")], indirect=["driver"]
+        "driver,",
+        [
+            ("anthropic.claude-v2"),
+            ("anthropic.claude-v2:1"),
+            ("anthropic.claude-3-sonnet-20240229-v1:0"),
+            ("anthropic.claude-3-haiku-20240307-v1:0"),
+        ],
+        indirect=["driver"],
     )
-    def test_process_output(self, driver, expected):
-        assert driver.process_output(json.dumps({"completion": "foobar"}).encode()).value == expected
+    def test_process_output(self, driver):
+        assert (
+            driver.process_output(json.dumps({"type": "message", "content": [{"text": "foobar"}]}).encode()).value
+            == "foobar"
+        )
+        assert (
+            driver.process_output(
+                json.dumps({"type": "content_block_delta", "delta": {"text": "foobar"}}).encode()
+            ).value
+            == "foobar"
+        )

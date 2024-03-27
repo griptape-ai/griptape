@@ -18,5 +18,8 @@ class TestBedrockCohereTokenizer:
         mock_session_object.client.return_value = mock_client
         mock_session_class.return_value = mock_session_object
 
-    def test_cohere_tokens_left(self):
-        assert BedrockCohereTokenizer().count_tokens_left("foo bar") == 510
+    def test_input_tokens_left(self):
+        assert BedrockCohereTokenizer(model="cohere").count_input_tokens_left("foo bar") == 1022
+
+    def test_output_tokens_left(self):
+        assert BedrockCohereTokenizer(model="cohere").count_output_tokens_left("foo bar") == 4094

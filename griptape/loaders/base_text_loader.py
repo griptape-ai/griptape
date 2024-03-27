@@ -7,7 +7,7 @@ from attrs import define, field, Factory
 from pathlib import Path
 
 from griptape.artifacts import TextArtifact
-from griptape.chunkers import TextChunker
+from griptape.chunkers import TextChunker, BaseChunker
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
 from griptape.tokenizers import OpenAiTokenizer
@@ -21,10 +21,10 @@ class BaseTextLoader(BaseLoader, ABC):
         default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
     )
     max_tokens: int = field(
-        default=Factory(lambda self: round(self.tokenizer.max_tokens * self.MAX_TOKEN_RATIO), takes_self=True),
+        default=Factory(lambda self: round(self.tokenizer.max_input_tokens * self.MAX_TOKEN_RATIO), takes_self=True),
         kw_only=True,
     )
-    chunker: TextChunker = field(
+    chunker: BaseChunker = field(
         default=Factory(
             lambda self: TextChunker(tokenizer=self.tokenizer, max_tokens=self.max_tokens), takes_self=True
         ),

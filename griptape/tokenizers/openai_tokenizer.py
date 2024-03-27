@@ -1,22 +1,23 @@
 from __future__ import annotations
 import logging
-from attr import define, field, Factory
+from attr import define
 import tiktoken
 from griptape.tokenizers import BaseTokenizer
 from typing import Optional
 
 
-@define(frozen=True)
+@define()
 class OpenAiTokenizer(BaseTokenizer):
-    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "text-davinci-003"
+    DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "gpt-3.5-turbo-instruct"
     DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
     DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
+    DEFAULT_MAX_OUTPUT_TOKENS = 4096
     TOKEN_OFFSET = 8
 
     # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
-    MODEL_PREFIXES_TO_MAX_TOKENS = {
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
@@ -24,17 +25,20 @@ class OpenAiTokenizer(BaseTokenizer):
         "gpt-3.5-turbo": 4096,
         "gpt-35-turbo-16k": 16384,
         "gpt-35-turbo": 4096,
-        "text-davinci-003": 4097,
-        "text-davinci-002": 4097,
-        "code-davinci-002": 8001,
         "text-embedding-ada-002": 8191,
         "text-embedding-ada-001": 2046,
+        "text-embedding-3-small": 8191,
+        "text-embedding-3-large": 8191,
     }
 
-    EMBEDDING_MODELS = ["text-embedding-ada-002", "text-embedding-ada-001"]
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"gpt": 4096}
 
-    model: str = field(kw_only=True)
-    max_tokens: int = field(kw_only=True, default=Factory(lambda self: self.default_max_tokens(), takes_self=True))
+    EMBEDDING_MODELS = [
+        "text-embedding-ada-002",
+        "text-embedding-ada-001",
+        "text-embedding-3-small",
+        "text-embedding-3-large",
+    ]
 
     @property
     def encoding(self) -> tiktoken.Encoding:
@@ -43,11 +47,21 @@ class OpenAiTokenizer(BaseTokenizer):
         except KeyError:
             return tiktoken.get_encoding(self.DEFAULT_ENCODING)
 
-    def default_max_tokens(self) -> int:
-        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_TOKENS.items() if self.model.startswith(k)), None)
+    def _default_max_input_tokens(self) -> int:
+        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
         offset = 0 if self.model in self.EMBEDDING_MODELS else self.TOKEN_OFFSET
 
         return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
+
+    def _default_max_output_tokens(self) -> int:
+        tokens = next(
+            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)), None
+        )
+
+        if tokens is None:
+            return self.DEFAULT_MAX_OUTPUT_TOKENS
+        else:
+            return tokens
 
     def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:
         """

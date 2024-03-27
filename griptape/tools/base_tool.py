@@ -15,7 +15,7 @@ from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
-    from griptape.tasks import ActionSubtask
+    from griptape.tasks import ActionsSubtask
 
 
 @define
@@ -89,7 +89,12 @@ class BaseTool(ActivityMixin, ABC):
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `self.activities`.
     def schema(self) -> dict:
-        action_schemas = [
+        full_schema = Schema(Or(*self.activity_schemas()), description=f"{self.name} action schema.")
+
+        return full_schema.json_schema(f"{self.name} Action Schema")
+
+    def activity_schemas(self) -> list[Schema]:
+        return [
             Schema(
                 {
                     Literal("name"): self.name,
@@ -101,21 +106,20 @@ class BaseTool(ActivityMixin, ABC):
             )
             for activity in self.activities()
         ]
-        full_schema = Schema(Or(*action_schemas), description=f"{self.name} action schema.")
 
-        return full_schema.json_schema(f"{self.name} Action Schema")
-
-    def execute(self, activity: Callable, subtask: ActionSubtask) -> BaseArtifact:
-        preprocessed_input = self.before_run(activity, subtask.action_input)
-        output = self.run(activity, subtask, preprocessed_input)
-        postprocessed_output = self.after_run(activity, subtask, output)
+    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> BaseArtifact:
+        preprocessed_input = self.before_run(activity, subtask, action)
+        output = self.run(activity, subtask, action, preprocessed_input)
+        postprocessed_output = self.after_run(activity, subtask, action, output)
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, value: Optional[dict]) -> Optional[dict]:
-        return value
+    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> Optional[dict]:
+        return action.input
 
-    def run(self, activity: Callable, subtask: ActionSubtask, value: Optional[dict]) -> BaseArtifact:
+    def run(
+        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: Optional[dict]
+    ) -> BaseArtifact:
         activity_result = activity(value)
 
         if isinstance(activity_result, BaseArtifact):
@@ -127,7 +131,9 @@ class BaseTool(ActivityMixin, ABC):
 
         return result
 
-    def after_run(self, activity: Callable, subtask: ActionSubtask, value: BaseArtifact) -> BaseArtifact:
+    def after_run(
+        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: BaseArtifact
+    ) -> BaseArtifact:
         if value:
             if self.output_memory:
                 output_memories = self.output_memory[getattr(activity, "name")] or []

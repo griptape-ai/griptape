@@ -2,13 +2,131 @@ import inspect
 import os
 import pytest
 import yaml
-from schema import SchemaMissingKeyError
-from griptape.tasks import ActionSubtask, ToolkitTask
+from schema import SchemaMissingKeyError, Schema, Or
+from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
 
 class TestBaseTool:
+    TARGET_TOOL_SCHEMA = {
+        "description": "MockTool action schema.",
+        "anyOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description: foo", "const": "test"},
+                    "input": {
+                        "type": "object",
+                        "properties": {
+                            "values": {
+                                "description": "Test input",
+                                "type": "object",
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "additionalProperties": False,
+                            }
+                        },
+                        "required": ["values"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["name", "path", "input"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description: foo", "const": "test_error"},
+                    "input": {
+                        "type": "object",
+                        "properties": {
+                            "values": {
+                                "description": "Test input",
+                                "type": "object",
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "additionalProperties": False,
+                            }
+                        },
+                        "required": ["values"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["name", "path", "input"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description", "const": "test_list_output"},
+                },
+                "required": ["name", "path"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description", "const": "test_no_schema"},
+                },
+                "required": ["name", "path"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description: foo", "const": "test_str_output"},
+                    "input": {
+                        "type": "object",
+                        "properties": {
+                            "values": {
+                                "description": "Test input",
+                                "type": "object",
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "additionalProperties": False,
+                            }
+                        },
+                        "required": ["values"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["name", "path", "input"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description", "const": "test_without_default_memory"},
+                    "input": {
+                        "type": "object",
+                        "properties": {
+                            "values": {
+                                "description": "Test input",
+                                "type": "object",
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "additionalProperties": False,
+                            }
+                        },
+                        "required": ["values"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["name", "path", "input"],
+                "additionalProperties": False,
+            },
+        ],
+        "$id": "MockTool Action Schema",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+    }
+
     @pytest.fixture
     def tool(self):
         return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"})
@@ -88,125 +206,19 @@ class TestBaseTool:
         assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
-        assert tool.execute(tool.test_list_output, ActionSubtask("foo")).to_text() == "foo\n\nbar"
+        action = ActionsSubtask.Action(input={}, name="", tag="")
+        assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):
         tool = MockTool()
 
-        assert tool.schema() == {
-            "description": "MockTool action schema.",
-            "anyOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "name": {"const": "MockTool"},
-                        "path": {"description": "test description: foo", "const": "test"},
-                        "input": {
-                            "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
-                            "additionalProperties": False,
-                        },
-                    },
-                    "required": ["name", "path", "input"],
-                    "additionalProperties": False,
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "name": {"const": "MockTool"},
-                        "path": {"description": "test description: foo", "const": "test_error"},
-                        "input": {
-                            "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
-                            "additionalProperties": False,
-                        },
-                    },
-                    "required": ["name", "path", "input"],
-                    "additionalProperties": False,
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "name": {"const": "MockTool"},
-                        "path": {"description": "test description", "const": "test_list_output"},
-                    },
-                    "required": ["name", "path"],
-                    "additionalProperties": False,
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "name": {"const": "MockTool"},
-                        "path": {"description": "test description", "const": "test_no_schema"},
-                    },
-                    "required": ["name", "path"],
-                    "additionalProperties": False,
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "name": {"const": "MockTool"},
-                        "path": {"description": "test description: foo", "const": "test_str_output"},
-                        "input": {
-                            "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
-                            "additionalProperties": False,
-                        },
-                    },
-                    "required": ["name", "path", "input"],
-                    "additionalProperties": False,
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "name": {"const": "MockTool"},
-                        "path": {"description": "test description", "const": "test_without_default_memory"},
-                        "input": {
-                            "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
-                            "additionalProperties": False,
-                        },
-                    },
-                    "required": ["name", "path", "input"],
-                    "additionalProperties": False,
-                },
-            ],
-            "$id": "MockTool Action Schema",
-            "$schema": "http://json-schema.org/draft-07/schema#",
-        }
+        assert tool.schema() == self.TARGET_TOOL_SCHEMA
+
+    def test_activity_schemas(self, tool):
+        tool = MockTool()
+
+        full_schema = Schema(Or(*tool.activity_schemas()), description=f"{tool.name} action schema.")
+
+        tool_schema = full_schema.json_schema(f"{tool.name} Action Schema")
+
+        assert tool_schema == self.TARGET_TOOL_SCHEMA

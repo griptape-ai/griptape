@@ -2,9 +2,9 @@ from .base_event import BaseEvent
 from .base_task_event import BaseTaskEvent
 from .start_task_event import StartTaskEvent
 from .finish_task_event import FinishTaskEvent
-from .base_action_subtask_event import BaseActionSubtaskEvent
-from .start_action_subtask_event import StartActionSubtaskEvent
-from .finish_action_subtask_event import FinishActionSubtaskEvent
+from .base_actions_subtask_event import BaseActionsSubtaskEvent
+from .start_actions_subtask_event import StartActionsSubtaskEvent
+from .finish_actions_subtask_event import FinishActionsSubtaskEvent
 from .base_prompt_event import BasePromptEvent
 from .start_prompt_event import StartPromptEvent
 from .finish_prompt_event import FinishPromptEvent
@@ -23,9 +23,9 @@ __all__ = [
     "BaseTaskEvent",
     "StartTaskEvent",
     "FinishTaskEvent",
-    "BaseActionSubtaskEvent",
-    "StartActionSubtaskEvent",
-    "FinishActionSubtaskEvent",
+    "BaseActionsSubtaskEvent",
+    "StartActionsSubtaskEvent",
+    "FinishActionsSubtaskEvent",
     "BasePromptEvent",
     "StartPromptEvent",
     "FinishPromptEvent",
