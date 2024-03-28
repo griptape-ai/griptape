@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed boto3 type-checking stub dependency.
 
+### Changed
+
+- Use `schema` instaed of `jsonschema` for JSON validation.
+
 ## [0.24.0] - 2024-03-27
 
 ### Added
