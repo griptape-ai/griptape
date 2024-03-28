@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Use `schema` instaed of `jsonschema` for JSON validation.
+- Use `schema` instead of `jsonschema` for JSON validation.
 
 ## [0.24.0] - 2024-03-27
 
