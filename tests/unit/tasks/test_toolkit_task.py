@@ -205,4 +205,4 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        assert isinstance(task.actions_schema(), dict)
+        assert isinstance(task.actions_schema().json_schema("Actions Schema"), dict)

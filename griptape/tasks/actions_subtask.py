@@ -2,9 +2,9 @@ from __future__ import annotations
 import json
 import re
 from typing import Optional, TYPE_CHECKING, Callable
+
+import schema
 from attr import define, field
-from jsonschema.exceptions import ValidationError
-from jsonschema.validators import validate
 from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
@@ -206,7 +206,7 @@ class ActionsSubtask(BaseTextInputTask):
                 actions_list: list = json.loads(data, strict=False)
 
                 if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-                    validate(instance=actions_list, schema=self.origin_task.actions_schema())
+                    self.origin_task.actions_schema().validate(actions_list)
 
                 for action_object in actions_list:
                     # Load action name; throw exception if the key is not present
@@ -250,7 +250,7 @@ class ActionsSubtask(BaseTextInputTask):
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
                 self.actions.append(self.__error_to_action(f"syntax error: {e}"))
-            except ValidationError as e:
+            except schema.SchemaError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
                 self.actions.append(self.__error_to_action(f"Action JSON validation error: {e}"))
@@ -277,8 +277,8 @@ class ActionsSubtask(BaseTextInputTask):
                 raise Exception("Activity not found.")
 
             if activity_schema:
-                validate(instance=action.input, schema=activity_schema)
-        except ValidationError as e:
+                activity_schema.validate(action.input)
+        except schema.SchemaError as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 
             self.actions.append(self.__error_to_action(f"Activity input JSON validation error: {e}"))

@@ -29,10 +29,10 @@ class ActionsSubtaskOriginMixin:
         ...
 
     @abstractmethod
-    def actions_schema(self) -> dict:
+    def actions_schema(self) -> Schema:
         ...
 
-    def _actions_schema_for_tools(self, tools: list[BaseTool]) -> dict:
+    def _actions_schema_for_tools(self, tools: list[BaseTool]) -> Schema:
         action_schemas = []
 
         for tool in tools:
@@ -44,6 +44,4 @@ class ActionsSubtaskOriginMixin:
 
                 action_schemas.append(action_schema)
 
-        actions_schema = Schema(description="JSON schema for an array of actions.", schema=action_schemas)
-
-        return actions_schema.json_schema("Actions Schema")
+        return Schema(description="JSON schema for an array of actions.", schema=action_schemas)

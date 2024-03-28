@@ -73,7 +73,7 @@ class ActivityMixin:
         else:
             return Template(getattr(activity, "config")["description"]).render({"_self": self})
 
-    def activity_schema(self, activity: Callable) -> Optional[dict]:
+    def activity_schema(self, activity: Callable) -> Optional[Schema]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         elif getattr(activity, "config")["schema"]:
@@ -81,7 +81,7 @@ class ActivityMixin:
                 "values": getattr(activity, "config")["schema"].schema if getattr(activity, "config")["schema"] else {}
             }
 
-            return Schema(full_schema).json_schema("InputSchema")
+            return Schema(full_schema)
         else:
             return None
 
