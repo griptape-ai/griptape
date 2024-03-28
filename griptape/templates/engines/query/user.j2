@@ -1,11 +1,3 @@
-Context information is below.
----------------------
-{% for segment in text_segments %}
-
-Page #{{loop.index}}:
-"""{{ segment }}"""
-{% endfor %}
----------------------
 Given the context information and not prior knowledge, answer the query.
 Query: {{ query }}
 Answer:

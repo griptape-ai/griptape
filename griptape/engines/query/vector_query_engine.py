@@ -38,18 +38,24 @@ class VectorQueryEngine(BaseQueryEngine):
         ]
         text_segments = []
         user_message = ""
+        system_message = ""
 
         for artifact in artifacts:
             text_segments.append(artifact.value)
-
-            user_message = self.user_template_generator.render(
-                metadata=metadata,
-                query=query,
-                text_segments=text_segments,
+            system_message = self.system_template_generator.render(
                 rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
+                metadata=metadata,
+                text_segments=text_segments,
             )
+            user_message = self.user_template_generator.render(query=query)
+
             message_token_count = self.prompt_driver.token_count(
-                PromptStack(inputs=[PromptStack.Input(user_message, role=PromptStack.USER_ROLE)])
+                PromptStack(
+                    inputs=[
+                        PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
+                        PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
+                    ]
+                )
             )
 
             if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
@@ -59,9 +65,6 @@ class VectorQueryEngine(BaseQueryEngine):
 
                 break
 
-        system_message = self.system_template_generator.render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets), metadata=metadata
-        )
         return self.prompt_driver.run(
             PromptStack(
                 inputs=[

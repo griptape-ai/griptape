@@ -12,3 +12,12 @@ Metadata: """
 {{ metadata }}
 """
 {% endif %}
+
+Context information is below.
+---------------------
+{% for segment in text_segments %}
+
+Context segment #{{loop.index}}:
+"""{{ segment }}"""
+{% endfor %}
+---------------------
