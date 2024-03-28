@@ -2,6 +2,8 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Callable, Optional
 from attr import define, field, Factory
+from schema import Schema
+
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.mixins import ActionsSubtaskOriginMixin
@@ -88,7 +90,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
-            actions_schema=utils.minify_json(json.dumps(self.actions_schema())),
+            actions_schema=utils.minify_json(json.dumps(self.actions_schema().json_schema("Actions Schema"))),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )
@@ -103,7 +105,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
         )
 
-    def actions_schema(self) -> dict:
+    def actions_schema(self) -> Schema:
         return self._actions_schema_for_tools(self.tools)
 
     def set_default_tools_memory(self, memory: TaskMemory) -> None:
