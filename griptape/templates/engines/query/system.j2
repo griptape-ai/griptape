@@ -6,3 +6,9 @@ Avoid statements like 'Based on the context, ...' or 'The context information ..
 
 {{ rulesets }}
 {% endif %}
+{% if metadata %}
+
+Metadata: """
+{{ metadata }}
+"""
+{% endif %}
