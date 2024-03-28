@@ -3,6 +3,8 @@ import re
 import json
 from typing import Optional, TYPE_CHECKING
 from attr import define, field
+from schema import Schema
+
 from griptape import utils
 from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact
 from griptape.tasks import PromptTask, ActionsSubtask
@@ -42,7 +44,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
         )
 
-    def actions_schema(self) -> dict:
+    def actions_schema(self) -> Schema:
         return self._actions_schema_for_tools([self.tool])
 
     def run(self) -> BaseArtifact:
