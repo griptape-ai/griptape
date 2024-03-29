@@ -6,14 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Improved RAG performance in `VectorQueryEngine`.
+
 ## [0.24.1] - 2024-03-28
 
 ### Fixed 
-
 - Fixed boto3 type-checking stub dependency.
 
 ### Changed
-
 - Use `schema` instead of `jsonschema` for JSON validation.
 
 ## [0.24.0] - 2024-03-27
