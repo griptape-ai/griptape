@@ -27,7 +27,7 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(
         default=Factory(

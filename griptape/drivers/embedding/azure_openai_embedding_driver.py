@@ -22,7 +22,7 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
 
     azure_deployment: str = field(kw_only=True, metadata={"serializable": True})
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
-    azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
+    azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     azure_ad_token_provider: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
     tokenizer: OpenAiTokenizer = field(
