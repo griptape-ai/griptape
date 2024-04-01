@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "griptape"
-version = "0.24.0"
+version = "0.24.1"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
@@ -16,7 +16,6 @@ python = "^3.9"
 openai = "^1.1.1"
 attrs = ">=22"
 jinja2 = ">=3.1.3"
-jsonschema = ">=4"
 marshmallow = ">=3"
 marshmallow-enum = ">=1.5"
 tiktoken = ">=0.3"
@@ -30,7 +29,6 @@ docker = "^6.1.3"
 sqlalchemy = "~=1.0"
 dateparser = "^1.1.8"
 requests = "^2"
-boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], version = "^1.34.18"}
 
 # drivers
 cohere = { version = ">=4", optional = true }
@@ -152,6 +150,7 @@ ruff = "^0.0.286"
 black = "^23.7.0"
 pyright = "^1.1.355"
 pre-commit = "^3.5.0"
+boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], version = "^1.34.18"}
 
 [tool.black]
 line-length=120
