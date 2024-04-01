@@ -93,8 +93,6 @@ class ActionsSubtask(BaseTextInputTask):
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
-        format_output: Callable[[tuple[str, BaseArtifact]], str] = lambda o: f"{o[0]} output: {o[1].to_text()}"
-
         try:
             if any(a.name == "error" for a in self.actions):
                 errors = [a.input["error"] for a in self.actions if a.name == "error"]
@@ -103,7 +101,9 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 results = self.execute_actions(self.actions)
 
-                self.output = ListArtifact([TextArtifact(format_output(r)) for r in results])
+                self.output = ListArtifact(
+                    [TextArtifact(name=f"{r[0]} output: {r[1].to_text()}", value=r[1].to_text()) for r in results]
+                )
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
