@@ -31,7 +31,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     host: str = field(kw_only=True, metadata={"serializable": True})
     port: int = field(kw_only=True, metadata={"serializable": True})
     db: int = field(kw_only=True, default=0, metadata={"serializable": True})
-    password: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    password: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     index: str = field(kw_only=True, metadata={"serializable": True})
 
     client: Redis = field(
