@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Improved RAG performance in `VectorQueryEngine`.
+- **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
 
 ## [0.24.0] - 2024-03-27
 
