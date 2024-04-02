@@ -57,11 +57,7 @@ class FileManager(BaseTool):
         config={
             "description": "Can be used to list files on disk",
             "schema": Schema(
-                {
-                    Literal(
-                        "path", description="Relative path in the POSIX format. For example, 'foo/bar'"
-                    ): str
-                }
+                {Literal("path", description="Relative path in the POSIX format. For example, 'foo/bar'"): str}
             ),
         }
     )
