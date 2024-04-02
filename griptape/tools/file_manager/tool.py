@@ -1,10 +1,9 @@
 from __future__ import annotations
-
 import logging
 import os
 from pathlib import Path
 from attr import define, field, Factory
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader, ImageLoader
@@ -56,12 +55,31 @@ class FileManager(BaseTool):
 
     @activity(
         config={
+            "description": "Can be used to list files on disk",
+            "schema": Schema(
+                {Literal("path", description="Relative path in the POSIX format. For example, 'foo/bar'"): str}
+            ),
+        }
+    )
+    def list_files_from_disk(self, params: dict) -> TextArtifact | ErrorArtifact:
+        path = params["values"]["path"].lstrip("/")
+        full_path = Path(os.path.join(self.workdir, path))
+
+        if os.path.exists(full_path):
+            entries = os.listdir(full_path)
+
+            return TextArtifact("\n".join([e for e in entries]))
+        else:
+            return ErrorArtifact("Path not found")
+
+    @activity(
+        config={
             "description": "Can be used to load files from disk",
             "schema": Schema(
                 {
                     Literal(
                         "paths",
-                        description="Paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
+                        description="Relative paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
                     ): []
                 }
             ),
@@ -71,6 +89,7 @@ class FileManager(BaseTool):
         artifacts = []
 
         for path in params["values"]["paths"]:
+            path = path.lstrip("/")
             full_path = Path(os.path.join(self.workdir, path))
             extension = path.split(".")[-1]
             loader = self.loaders.get(extension) or self.default_loader
@@ -92,7 +111,7 @@ class FileManager(BaseTool):
                 {
                     Literal(
                         "dir_name",
-                        description="Destination directory name on disk in the POSIX format. For example, 'foo/bar'",
+                        description="Relative destination path name on disk in the POSIX format. For example, 'foo/bar'",
                     ): str,
                     Literal("file_name", description="Destination file name. For example, 'baz.txt'"): str,
                     "memory_name": str,
@@ -146,7 +165,7 @@ class FileManager(BaseTool):
     )
     def save_content_to_file(self, params: dict) -> ErrorArtifact | InfoArtifact:
         content = params["values"]["content"]
-        new_path = params["values"]["path"]
+        new_path = params["values"]["path"].lstrip("/")
         full_path = os.path.join(self.workdir, new_path)
 
         try:
