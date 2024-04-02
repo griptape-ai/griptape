@@ -24,14 +24,15 @@ class TestToolTask:
 
         agent.add_task(task)
 
-        assert task.run().to_text() == "MockTool output: ack foobar"
+        assert task.run().name == "MockTool output"
+        assert task.run().value == "ack foobar"
 
     def test_run_with_memory(self, agent):
         task = ToolTask(tool=MockTool())
 
         agent.add_task(task)
 
-        assert task.run().to_text().startswith('MockTool output: Output of "MockTool.test" was stored in memory')
+        assert task.run().to_text().startswith('Output of "MockTool.test" was stored in memory')
 
     def test_meta_memory(self):
         memory = defaults.text_task_memory("TestMemory")
