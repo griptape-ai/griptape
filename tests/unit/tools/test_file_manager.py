@@ -15,6 +15,15 @@ class TestFileManager:
         with pytest.raises(ValueError):
             FileManager(workdir="foo")
 
+    def test_list_files_from_disk(self):
+        result = FileManager(
+            input_memory=[defaults.text_task_memory("Memory1")], workdir=os.path.abspath(os.path.dirname(__file__))
+        ).list_files_from_disk({"values": {"path": "../../resources"}})
+
+        assert isinstance(result, TextArtifact)
+        assert result.value.startswith("bitcoin.pdf")
+        assert result.value.endswith("small.png")
+
     def test_load_files_from_disk(self):
         result = FileManager(
             input_memory=[defaults.text_task_memory("Memory1")], workdir=os.path.abspath(os.path.dirname(__file__))
