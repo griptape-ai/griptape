@@ -10,6 +10,133 @@ from tests.utils import defaults
 
 
 class TestToolTask:
+    TARGET_TOOLS_SCHEMA = {
+        "description": "JSON schema for an array of actions.",
+        "type": "array",
+        "items": {
+            "anyOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
+                        "path": {"description": "test description: foo", "const": "test"},
+                        "input": {
+                            "type": "object",
+                            "properties": {
+                                "values": {
+                                    "description": "Test input",
+                                    "type": "object",
+                                    "properties": {"test": {"type": "string"}},
+                                    "required": ["test"],
+                                    "additionalProperties": False,
+                                }
+                            },
+                            "required": ["values"],
+                            "additionalProperties": False,
+                        },
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "input", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
+                        "path": {"description": "test description: foo", "const": "test_error"},
+                        "input": {
+                            "type": "object",
+                            "properties": {
+                                "values": {
+                                    "description": "Test input",
+                                    "type": "object",
+                                    "properties": {"test": {"type": "string"}},
+                                    "required": ["test"],
+                                    "additionalProperties": False,
+                                }
+                            },
+                            "required": ["values"],
+                            "additionalProperties": False,
+                        },
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "input", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
+                        "path": {"description": "test description", "const": "test_list_output"},
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
+                        "path": {"description": "test description", "const": "test_no_schema"},
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
+                        "path": {"description": "test description: foo", "const": "test_str_output"},
+                        "input": {
+                            "type": "object",
+                            "properties": {
+                                "values": {
+                                    "description": "Test input",
+                                    "type": "object",
+                                    "properties": {"test": {"type": "string"}},
+                                    "required": ["test"],
+                                    "additionalProperties": False,
+                                }
+                            },
+                            "required": ["values"],
+                            "additionalProperties": False,
+                        },
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "input", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
+                        "path": {"description": "test description", "const": "test_without_default_memory"},
+                        "input": {
+                            "type": "object",
+                            "properties": {
+                                "values": {
+                                    "description": "Test input",
+                                    "type": "object",
+                                    "properties": {"test": {"type": "string"}},
+                                    "required": ["test"],
+                                    "additionalProperties": False,
+                                }
+                            },
+                            "required": ["values"],
+                            "additionalProperties": False,
+                        },
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "input", "tag"],
+                    "additionalProperties": False,
+                },
+            ]
+        },
+        "$id": "Actions Schema",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+    }
+
     @pytest.fixture
     def agent(self):
         output_dict = {"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
@@ -57,4 +184,4 @@ class TestToolTask:
 
         Agent().add_task(task)
 
-        assert isinstance(task.actions_schema().json_schema("Actions Schema"), dict)
+        assert task.actions_schema().json_schema("Actions Schema") == self.TARGET_TOOLS_SCHEMA
