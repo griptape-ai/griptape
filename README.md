@@ -1,4 +1,4 @@
-![Griptape](https://assets-global.website-files.com/65d658559223871198e78bca/65e4fd64fb258c6d9bd8c276_griptape-Chunck_beige.svg)
+![Griptape](https://assets-global.website-files.com/65d658559223871198e78bca/65fb8d85c1ab3c9b858ab18a_Griptape%20logo%20dark.svg)
 
 [![PyPI Version](https://img.shields.io/pypi/v/griptape.svg)](https://pypi.python.org/pypi/griptape)
 [![Tests](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml)
@@ -29,7 +29,7 @@ Tools provide capabilities for LLMs to interact with data and services. Griptape
 
 - **Conversation** 💬: Enables LLMs to retain and retrieve information across interactions.
 - **Task** 🗃️: Keeps large or sensitive Task outputs off the prompt that is sent to the LLM.
-- **Meta** 📊: Allows for the inclusion of additional metadata in interactions.
+- **Meta** 📊: Enables passing in additional metadata to the LLM, enhancing the context and relevance of the interaction.
 
 ### Drivers 🚗
 
@@ -38,7 +38,7 @@ Drivers facilitate interactions with external resources and services:
 - **Prompt and Embedding** 📄➡️🔢: Generates vector embeddings from textual inputs.
 - **Vector Store** 💾: Manages the storage and retrieval of embeddings.
 - **Image Generation** 🎨: Creates images from text descriptions.
-- **Image Query** 🔎🖼️: Queries images from text quries.
+- **Image Query** 🔎🖼️: Queries images from text queries.
 - **SQL** 💼: Interacts with SQL databases.
 - **Web Scraper** 🌐📜: Extracts information from web pages.
 
@@ -46,19 +46,19 @@ Drivers facilitate interactions with external resources and services:
 
 Engines wrap Drivers and provide use-case-specific functionality:
 
-- **Query** 📊: Executes data queries.
-- **Extraction** 🛠️: Extracts data in JSON or CSV formats from unstructured text.
+- **Query** 📊: Executes Retrieval Augmented Generation (RAG) queries.
+- **Extraction** 🛠️: Extracts JSON or CSV data from unstructured text.
 - **Summary** 📝: Generates summaries from textual content.
 - **Image Generation** 🖼️: Generates images from textual descriptions.
 - **Image Query** 🔎🖼️: Queries images based on textual prompts.
 
 ### Additional Components 📦
 
-- **Rulesets** 📐: Guides LLM behavior with minimal prompt engineering.
-- **Loaders** 🔄: Imports textual data from various sources.
-- **Artifacts** 🏺: Supports the exchange of various data types among components.
+- **Rulesets** 📐: Steers LLM behavior with minimal prompt engineering.
+- **Loaders** 🔄: Loads data from various sources.
+- **Artifacts** 🏺: Allows for passing data of different types between Griptape components.
 - **Chunkers** ✂️: Segments texts into manageable pieces for diverse text types.
-- **Tokenizers** 🔢: Encodes and decodes text into tokens for LLM processing.
+- **Tokenizers** 🔢: Counts the number of tokens in a text as to not exceed LLM token limits.
 
 ## Documentation
 
