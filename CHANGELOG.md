@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Added `FileManager.list_files_from_disk`
+
 ### Changed
 - Improved RAG performance in `VectorQueryEngine`.
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
