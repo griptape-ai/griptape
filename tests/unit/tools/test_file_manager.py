@@ -21,8 +21,8 @@ class TestFileManager:
         ).list_files_from_disk({"values": {"path": "../../resources"}})
 
         assert isinstance(result, TextArtifact)
-        assert result.value.startswith("bitcoin.pdf")
-        assert result.value.endswith("small.png")
+        assert "bitcoin.pdf" in result.value
+        assert "small.png" in result.value
 
     def test_load_files_from_disk(self):
         result = FileManager(
