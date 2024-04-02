@@ -71,7 +71,7 @@ class TestToolkitSubtask:
     def test_init_from_prompt_1(self):
         valid_input = (
             "Thought: need to test\n"
-            'Actions: [{"output_label": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]\n'
+            'Actions: [{"tag": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
@@ -82,7 +82,7 @@ class TestToolkitSubtask:
         subtask = task.add_subtask(ActionsSubtask(valid_input))
 
         assert subtask.thought == "need to test"
-        assert subtask.actions[0].output_label == "foo"
+        assert subtask.actions[0].tag == "foo"
         assert subtask.actions[0].name == "Tool1"
         assert subtask.actions[0].path == "test"
         assert subtask.actions[0].input == {"values": {"test": "value"}}
@@ -104,12 +104,10 @@ class TestToolkitSubtask:
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1",
-            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2",
-            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)
@@ -130,12 +128,10 @@ class TestToolkitSubtask:
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1",
-            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2",
-            actions=[ActionsSubtask.Action(output_label="foo", name="test", path="test", input={"values": {"f": "b"}})],
+            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)
@@ -209,4 +205,4 @@ class TestToolkitSubtask:
 
         Agent().add_task(task)
 
-        assert isinstance(task.actions_schema(), dict)
+        assert isinstance(task.actions_schema().json_schema("Actions Schema"), dict)

@@ -89,7 +89,7 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_actions": [{"output_label": "foo", "name": "qux", "path": "foopath", "input": {"value": "quux"}}],
+            "subtask_actions": [{"tag": "foo", "name": "qux", "path": "foopath", "input": {"value": "quux"}}],
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -103,7 +103,7 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_actions[0]["output_label"] == "foo"
+        assert event.subtask_actions[0]["tag"] == "foo"
         assert event.subtask_actions[0]["name"] == "qux"
         assert event.subtask_actions[0]["path"] == "foopath"
         assert event.subtask_actions[0]["input"] is not None
@@ -142,7 +142,7 @@ class TestBaseEvent:
             "task_output": {"type": "TextArtifact", "value": "bar"},
             "subtask_parent_task_id": "foo",
             "subtask_thought": "bar",
-            "subtask_actions": [{"output_label": "foo", "name": "qux", "path": "foopath", "input": {"value": "quux"}}],
+            "subtask_actions": [{"tag": "foo", "name": "qux", "path": "foopath", "input": {"value": "quux"}}],
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -156,7 +156,7 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
-        assert event.subtask_actions[0]["output_label"] == "foo"
+        assert event.subtask_actions[0]["tag"] == "foo"
         assert event.subtask_actions[0]["name"] == "qux"
         assert event.subtask_actions[0]["path"] == "foopath"
         assert event.subtask_actions[0]["input"] is not None
