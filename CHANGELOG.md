@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
-- Added `FileManager.list_files_from_disk`
+- `list_files_from_disk` activity to `FileManager` Tool.
 
 ### Changed
 - Improved RAG performance in `VectorQueryEngine`.
