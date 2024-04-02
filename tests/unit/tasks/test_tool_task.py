@@ -24,7 +24,7 @@ class TestToolTask:
 
         agent.add_task(task)
 
-        assert task.run().name == "MockTool output: ack foobar"
+        assert task.run().name == "MockTool output"
         assert task.run().value == "ack foobar"
 
     def test_run_with_memory(self, agent):
