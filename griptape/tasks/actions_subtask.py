@@ -2,9 +2,9 @@ from __future__ import annotations
 import json
 import re
 from typing import Optional, TYPE_CHECKING, Callable
+
+import schema
 from attr import define, field
-from jsonschema.exceptions import ValidationError
-from jsonschema.validators import validate
 from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class ActionsSubtask(BaseTextInputTask):
     @define(kw_only=True)
     class Action:
-        output_label: str = field()
+        tag: str = field()
         name: str = field()
         path: Optional[str] = field(default=None)
         input: dict = field()
@@ -116,7 +116,7 @@ class ActionsSubtask(BaseTextInputTask):
 
     def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
         results = utils.execute_futures_dict(
-            {a.output_label: self.futures_executor.submit(self.execute_action, a) for a in actions}
+            {a.tag: self.futures_executor.submit(self.execute_action, a) for a in actions}
         )
 
         return [r for r in results.values()]
@@ -130,7 +130,7 @@ class ActionsSubtask(BaseTextInputTask):
         else:
             output = ErrorArtifact("action name not found")
 
-        return action.output_label, output
+        return action.tag, output
 
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
@@ -155,8 +155,8 @@ class ActionsSubtask(BaseTextInputTask):
         for action in self.actions:
             json_dict = {}
 
-            if action.output_label:
-                json_dict["output_label"] = action.output_label
+            if action.tag:
+                json_dict["tag"] = action.tag
 
             if action.name:
                 json_dict["name"] = action.name
@@ -206,11 +206,11 @@ class ActionsSubtask(BaseTextInputTask):
                 actions_list: list = json.loads(data, strict=False)
 
                 if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-                    validate(instance=actions_list, schema=self.origin_task.actions_schema())
+                    self.origin_task.actions_schema().validate(actions_list)
 
                 for action_object in actions_list:
                     # Load action name; throw exception if the key is not present
-                    action_output_label = action_object["output_label"]
+                    action_tag = action_object["tag"]
 
                     # Load action name; throw exception if the key is not present
                     action_name = action_object["name"]
@@ -237,11 +237,7 @@ class ActionsSubtask(BaseTextInputTask):
                         )
 
                     new_action = ActionsSubtask.Action(
-                        output_label=action_output_label,
-                        name=action_name,
-                        path=action_path,
-                        input=action_input,
-                        tool=tool,
+                        tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool
                     )
 
                     if new_action.tool:
@@ -254,7 +250,7 @@ class ActionsSubtask(BaseTextInputTask):
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
                 self.actions.append(self.__error_to_action(f"syntax error: {e}"))
-            except ValidationError as e:
+            except schema.SchemaError as e:
                 self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
                 self.actions.append(self.__error_to_action(f"Action JSON validation error: {e}"))
@@ -266,7 +262,7 @@ class ActionsSubtask(BaseTextInputTask):
             self.output = TextArtifact(answer_matches[-1])
 
     def __error_to_action(self, error: str) -> Action:
-        return ActionsSubtask.Action(output_label="error", name="error", input={"error": error})
+        return ActionsSubtask.Action(tag="error", name="error", input={"error": error})
 
     def __validate_action(self, action: Action) -> None:
         try:
@@ -281,8 +277,8 @@ class ActionsSubtask(BaseTextInputTask):
                 raise Exception("Activity not found.")
 
             if activity_schema:
-                validate(instance=action.input, schema=activity_schema)
-        except ValidationError as e:
+                activity_schema.validate(action.input)
+        except schema.SchemaError as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 
             self.actions.append(self.__error_to_action(f"Activity input JSON validation error: {e}"))
