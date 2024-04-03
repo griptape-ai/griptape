@@ -3,6 +3,7 @@ from .extraction.csv_extraction_engine import CsvExtractionEngine
 from .extraction.json_extraction_engine import JsonExtractionEngine
 from .query.base_query_engine import BaseQueryEngine
 from .query.vector_query_engine import VectorQueryEngine
+from .query.citation_vector_query_engine import CitationVectorQueryEngine
 from .summary.base_summary_engine import BaseSummaryEngine
 from .summary.prompt_summary_engine import PromptSummaryEngine
 from .image.base_image_generation_engine import BaseImageGenerationEngine
@@ -15,6 +16,7 @@ from .image_query.image_query_engine import ImageQueryEngine
 __all__ = [
     "BaseQueryEngine",
     "VectorQueryEngine",
+    "CitationVectorQueryEngine",
     "BaseSummaryEngine",
     "PromptSummaryEngine",
     "BaseExtractionEngine",

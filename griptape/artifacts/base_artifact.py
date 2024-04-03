@@ -1,6 +1,8 @@
 from __future__ import annotations
+
+from .meta.base_meta import BaseMeta
 from griptape.mixins import SerializableMixin
-from typing import Any
+from typing import Any, Optional
 import json
 import uuid
 from abc import ABC, abstractmethod
@@ -13,6 +15,7 @@ class BaseArtifact(SerializableMixin, ABC):
     name: str = field(
         default=Factory(lambda self: self.id, takes_self=True), kw_only=True, metadata={"serializable": True}
     )
+    meta: Optional[BaseMeta] = field(default=None, kw_only=True, metadata={"serializable": True})
     value: Any = field()
 
     @classmethod
