@@ -93,8 +93,6 @@ class ActionsSubtask(BaseTextInputTask):
         self.structure.logger.info(f"Subtask {self.id}\n{self.input.to_text()}")
 
     def run(self) -> BaseArtifact:
-        format_output: Callable[[tuple[str, BaseArtifact]], str] = lambda o: f"{o[0]} output: {o[1].to_text()}"
-
         try:
             if any(a.name == "error" for a in self.actions):
                 errors = [a.input["error"] for a in self.actions if a.name == "error"]
@@ -103,7 +101,7 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 results = self.execute_actions(self.actions)
 
-                self.output = ListArtifact([TextArtifact(format_output(r)) for r in results])
+                self.output = ListArtifact([TextArtifact(name=f"{r[0]} output", value=r[1].to_text()) for r in results])
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
@@ -207,6 +205,9 @@ class ActionsSubtask(BaseTextInputTask):
 
                 if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
                     self.origin_task.actions_schema().validate(actions_list)
+
+                if not actions_list:
+                    raise schema.SchemaError("Array item count 0 is less than minimum count of 1.")
 
                 for action_object in actions_list:
                     # Load action name; throw exception if the key is not present
