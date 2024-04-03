@@ -89,15 +89,12 @@ class CitationVectorQueryEngine(BaseQueryEngine):
         source_artifacts = []
         for source in sources:
             if isinstance(source.meta, DerivedArtifactMeta):
-                # We want to sort the original sources as much as possible. If this is a derived artifact,
-                # then we should recursively get the source artifacts which it was derived from. This is
-                # important when for example, a derived artifact cites multiple other artifacts, since the
-                # the newest artifact we are returning as a result of `query` may only reference one of them.
+                # We want to cite the original sources. If this is a derived artifact, then we should
+                # recursively get the source artifacts which it was derived from. This is important when
+                # for example, a derived artifact cites multiple other artifacts, since the newest
+                # artifact we are returning as a result of `query` may only reference one of them.
                 source_artifacts.extend(self._flatten_derived_artifacts(source.meta.sources).value)
             else:
-                # The original source may or may not have the `SourceMeta` metadata. If it doesn't, then the
-                # resulting TextArtifact will cite the original text artifact, it just won't have any kind of
-                # reference to where it came from (e.g. url, etc).
                 source_artifacts.append(source)
         return ListArtifact(source_artifacts)
 
