@@ -1,13 +1,7 @@
 import pytest
 import redis
-from griptape.memory.structure import ConversationMemory
 from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
-from griptape.tasks import PromptTask
-from griptape.structures import Pipeline
 from griptape.drivers.memory.conversation.redis_conversation_memory_driver import RedisConversationMemoryDriver
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from unittest.mock import MagicMock
-import json
 
 TEST_CONVERSATION = '{"type": "ConversationMemory", "runs": [{"type": "Run", "id": "729ca6be5d79433d9762eb06dfd677e2", "input": "Hi There, Hello", "output": "Hello! How can I assist you today?"}], "max_runs": 2}'
 CONVERSATION_ID = "117151897f344ff684b553d0655d8f39"
@@ -21,8 +15,7 @@ class TestRedisConversationMemoryDriver:
     @pytest.fixture(autouse=True)
     def mock_redis(self, mocker):
         mocker.patch.object(redis.StrictRedis, "hset", return_value=None)
-        # mocker.patch.object(redis.StrictRedis, "hgetall", return_value=fake_hgetall_response)
-        mocker.patch.object(redis.StrictRedis, "keys", return_value=[b"torab"])
+        mocker.patch.object(redis.StrictRedis, "keys", return_value=[b"test"])
         mocker.patch.object(redis.StrictRedis, "hget", return_value=TEST_CONVERSATION)
 
         fake_redisearch = mocker.MagicMock()
