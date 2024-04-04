@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.24.2] - 2024-04-04
+
+- Fixed FileManager.load_files_from_disk schema.
+
 ## [0.24.1] - 2024-03-28
 
 ### Fixed 
