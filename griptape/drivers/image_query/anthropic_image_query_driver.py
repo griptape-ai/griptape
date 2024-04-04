@@ -15,7 +15,7 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         client: Custom `Anthropic` client.
     """
 
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
     client: Any = field(
         default=Factory(

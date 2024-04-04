@@ -18,7 +18,7 @@ class GoogleEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "models/embedding-001"
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     task_type: str = field(default="retrieval_document", kw_only=True, metadata={"serializable": True})
     title: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 

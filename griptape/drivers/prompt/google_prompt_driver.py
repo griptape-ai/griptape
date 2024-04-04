@@ -24,7 +24,7 @@ class GooglePromptDriver(BasePromptDriver):
         top_k: Optional value for top_k.
     """
 
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
     model_client: Any = field(default=Factory(lambda self: self._default_model_client(), takes_self=True), kw_only=True)
     tokenizer: BaseTokenizer = field(
