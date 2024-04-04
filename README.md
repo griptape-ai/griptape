@@ -41,6 +41,7 @@ Drivers facilitate interactions with external resources and services:
 - 🔎 **Image Query Drivers** query images from text queries.
 - 💼 **SQL Drivers** interact with SQL databases.
 - 🌐 **Web Scraper Drivers** extract information from web pages.
+- 🧠 **Conversation Memory Drivers** manage the storage and retrieval of conversational data.
 
 ### 🚂 Engines
 
@@ -100,42 +101,42 @@ agent.run("https://griptape.ai", "griptape.txt")
 
 And here is the output:
 ```
-ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
-Input: Load https://griptape.ai, summarize it, and store it in a file called griptape.txt.
-Subtask db6a3e7cb2f549128c358149d340f91c
-Thought: First, I need to load the content of the website using the WebScraper action. Then, I will use the TaskMemoryClient action to
-summarize the content. Finally, I will save the summarized content to a file using the FileManager action.
-Actions: [
-  {
-    "name": "WebScraper",
-    "path": "get_content",
-    "input": {
-      "values": {
-        "url": "https://griptape.ai"
-      }
-    },
-    "tag": "load_website_content"
-  }
-]
-Subtask db6a3e7cb2f549128c358149d340f91c
-Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-"752b38bb86da4baabdbd9f444eb4a0d1"
-Subtask c3edba87ebf845d4b85e3a791f8fde8d
-Thought: Now that the website content is loaded into memory, I need to summarize it using the TaskMemoryClient action.
-Actions: [{"tag": "summarize_content", "name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory",
-"artifact_namespace": "752b38bb86da4baabdbd9f444eb4a0d1"}}}]
-Subtask c3edba87ebf845d4b85e3a791f8fde8d
-Response: Output of "TaskMemoryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-"c4f131c201f147dcab07be3925b46294"
-Subtask 06fe01ca64a744b38a8c08eb152aaacb
-Thought: Now that the content has been summarized and stored in memory, I need to save this summarized content to a file named 'griptape.txt'
-using the FileManager action.
-Actions: [{"tag": "save_summarized_content", "name": "FileManager", "path": "save_memory_artifacts_to_disk", "input": {"values": {"dir_name":
-".", "file_name": "griptape.txt", "memory_name": "TaskMemory", "artifact_namespace": "c4f131c201f147dcab07be3925b46294"}}}]
-Subtask 06fe01ca64a744b38a8c08eb152aaacb
-Response: saved successfully
-ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
-Output: The summarized content of the website https://griptape.ai has been successfully saved to a file named 'griptape.txt'.
+[04/02/24 13:51:09] INFO     ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
+                             Input: Load https://griptape.ai, summarize it, and store it in a file called griptape.txt.
+[04/02/24 13:51:15] INFO     Subtask db6a3e7cb2f549128c358149d340f91c
+                             Thought: First, I need to load the content of the website using the WebScraper action. Then, I will use the TaskMemoryClient action to
+                             summarize the content. Finally, I will save the summarized content to a file using the FileManager action.
+                             Actions: [
+                               {
+                                 "name": "WebScraper",
+                                 "path": "get_content",
+                                 "input": {
+                                   "values": {
+                                     "url": "https://griptape.ai"
+                                   }
+                                 },
+                                 "tag": "load_website_content"
+                               }
+                             ]
+[04/02/24 13:51:16] INFO     Subtask db6a3e7cb2f549128c358149d340f91c
+                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "752b38bb86da4baabdbd9f444eb4a0d1"
+[04/02/24 13:51:19] INFO     Subtask c3edba87ebf845d4b85e3a791f8fde8d
+                             Thought: Now that the website content is loaded into memory, I need to summarize it using the TaskMemoryClient action.
+                             Actions: [{"tag": "summarize_content", "name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory",
+                             "artifact_namespace": "752b38bb86da4baabdbd9f444eb4a0d1"}}}]
+[04/02/24 13:51:25] INFO     Subtask c3edba87ebf845d4b85e3a791f8fde8d
+                             Response: Output of "TaskMemoryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "c4f131c201f147dcab07be3925b46294"
+[04/02/24 13:51:33] INFO     Subtask 06fe01ca64a744b38a8c08eb152aaacb
+                             Thought: Now that the content has been summarized and stored in memory, I need to save this summarized content to a file named 'griptape.txt'
+                             using the FileManager action.
+                             Actions: [{"tag": "save_summarized_content", "name": "FileManager", "path": "save_memory_artifacts_to_disk", "input": {"values": {"dir_name":
+                             ".", "file_name": "griptape.txt", "memory_name": "TaskMemory", "artifact_namespace": "c4f131c201f147dcab07be3925b46294"}}}]
+                    INFO     Subtask 06fe01ca64a744b38a8c08eb152aaacb
+                             Response: saved successfully
+[04/02/24 13:51:35] INFO     ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
+                             Output: The summarized content of the website https://griptape.ai has been successfully saved to a file named 'griptape.txt'.
 ```
 
 During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Task Memory**, queried it to answer the original question, and finally saved the answer to a file.
