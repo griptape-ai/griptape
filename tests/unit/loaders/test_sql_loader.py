@@ -1,6 +1,5 @@
 import pytest
 from sqlalchemy.pool import StaticPool
-from griptape import utils
 from griptape.drivers import SqlDriver
 from griptape.loaders import SqlLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -48,8 +47,8 @@ class TestSqlLoader:
         artifacts = loader.load_collection(["SELECT * FROM test_table LIMIT 1;", "SELECT * FROM test_table LIMIT 2;"])
 
         assert list(artifacts.keys()) == [
-            utils.str_to_hash("SELECT * FROM test_table LIMIT 1;"),
-            utils.str_to_hash("SELECT * FROM test_table LIMIT 2;"),
+            loader.to_key("SELECT * FROM test_table LIMIT 1;"),
+            loader.to_key("SELECT * FROM test_table LIMIT 2;"),
         ]
 
         assert [a.value for artifact_list in artifacts.values() for a in artifact_list] == [

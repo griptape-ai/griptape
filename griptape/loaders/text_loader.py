@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional
+from io import StringIO, TextIOBase
+from typing import IO, Any, Optional, cast
+from collections.abc import Sequence
 
 from attr import field, define, Factory
 from pathlib import Path
 
-from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import TextChunker
 from griptape.drivers import BaseEmbeddingDriver
@@ -33,13 +34,23 @@ class TextLoader(BaseTextLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load(self, source: str | Path, *args, **kwargs) -> list[TextArtifact]:
-        return self._text_to_artifacts(source)
+    def load(self, source: bytes | str | IO | Path, *args, **kwargs) -> list[TextArtifact]:
+        with self._stream_from_source(source) as stream:
+            return self._text_to_artifacts(stream.read())
 
-    def load_collection(self, sources: list[str | Path], *args, **kwargs) -> dict[str, list[TextArtifact]]:
-        return utils.execute_futures_dict(
-            {
-                utils.str_to_hash(str(source)): self.futures_executor.submit(self._text_to_artifacts, source)
-                for source in sources
-            }
-        )
+    def load_collection(
+        self, sources: Sequence[bytes | str | IO | Path], *args, **kwargs
+    ) -> dict[str, list[TextArtifact]]:
+        return cast(Any, super().load_collection(sources, *args, **kwargs))
+
+    def _stream_from_source(self, source: bytes | str | IO | Path) -> IO:
+        if isinstance(source, bytes):
+            return StringIO(source.decode())
+        elif isinstance(source, str):
+            return StringIO(source)
+        elif issubclass(type(source), TextIOBase):
+            return cast(IO, source)
+        elif isinstance(source, Path):
+            return open(source, encoding=self.encoding)
+        else:
+            raise ValueError(f"Unsupported source type: {type(source)}")

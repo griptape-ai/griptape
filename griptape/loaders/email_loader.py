@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional, cast
+from collections.abc import Sequence
 import logging
 import imaplib
 
 from attr import astuple, define, field
 
-from griptape.utils import execute_futures_dict, import_optional_dependency, str_to_hash
+from griptape.utils import import_optional_dependency
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.loaders import BaseLoader
 
@@ -34,19 +35,8 @@ class EmailLoader(BaseLoader):
     password: str = field(kw_only=True)
 
     def load(self, source: EmailQuery, *args, **kwargs) -> ListArtifact | ErrorArtifact:
-        return self._retrieve_email(source)
-
-    def load_collection(self, sources: list[EmailQuery], *args, **kwargs) -> dict[str, ListArtifact | ErrorArtifact]:
-        return execute_futures_dict(
-            {
-                str_to_hash(str(source)): self.futures_executor.submit(self._retrieve_email, source)
-                for source in set(sources)
-            }
-        )
-
-    def _retrieve_email(self, query: EmailQuery) -> ListArtifact | ErrorArtifact:
         mailparser = import_optional_dependency("mailparser")
-        label, key, search_criteria, max_count = astuple(query)
+        label, key, search_criteria, max_count = astuple(source)
 
         artifacts = []
         try:
@@ -88,3 +78,8 @@ class EmailLoader(BaseLoader):
 
     def _count_messages(self, message_numbers: bytes):
         return len(list(filter(None, message_numbers.decode().split(" "))))
+
+    def load_collection(
+        self, sources: Sequence[EmailQuery], *args, **kwargs
+    ) -> dict[str, ListArtifact | ErrorArtifact]:
+        return cast(Any, super().load_collection(sources, *args, **kwargs))

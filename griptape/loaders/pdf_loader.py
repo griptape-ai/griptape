@@ -1,13 +1,14 @@
 from __future__ import annotations
+from io import BufferedIOBase, BytesIO, RawIOBase
 
 from attr import define, field, Factory
-from typing import IO, Optional
+from typing import IO, Any, Optional, cast
 from collections.abc import Sequence
 
 from pathlib import Path
 
 from griptape.loaders import BaseTextLoader
-from griptape.utils import str_to_hash, execute_futures_dict, import_optional_dependency
+from griptape.utils import import_optional_dependency
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import PdfChunker
 
@@ -18,25 +19,27 @@ class PdfLoader(BaseTextLoader):
         default=Factory(lambda self: PdfChunker(tokenizer=self.tokenizer, max_tokens=self.max_tokens), takes_self=True),
         kw_only=True,
     )
+    encoding: str = field(default=None, kw_only=True)
 
-    def load(self, source: str | IO | Path, password: Optional[str] = None, *args, **kwargs) -> list[TextArtifact]:
-        return self._load_pdf(source, password)
+    def load(self, source: bytes | IO | Path, password: Optional[str] = None, *args, **kwargs) -> list[TextArtifact]:
+        PdfReader = import_optional_dependency("pypdf").PdfReader
+        with self._stream_from_source(source) as stream:
+            reader = PdfReader(stream, strict=True, password=password)
+            return self._text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))
+
+    def _stream_from_source(self, source: bytes | IO | Path) -> IO:
+        if isinstance(source, bytes):
+            return BytesIO(source)
+        elif isinstance(source, str):
+            return open(source, "rb")
+        elif isinstance(source, (RawIOBase, BufferedIOBase)):
+            return cast(IO, source)
+        elif isinstance(source, Path):
+            return open(source, "rb")
+        else:
+            raise ValueError(f"Unsupported source type: {type(source)}")
 
     def load_collection(
-        self, sources: Sequence[str | IO | Path], password: Optional[str] = None, *args, **kwargs
+        self, sources: Sequence[bytes | str | IO | Path], *args, **kwargs
     ) -> dict[str, list[TextArtifact]]:
-        return execute_futures_dict(
-            {
-                str_to_hash(s.decode())
-                if isinstance(s, bytes)
-                else str_to_hash(str(s)): self.futures_executor.submit(self._load_pdf, s, password)
-                for s in sources
-            }
-        )
-
-    def _load_pdf(self, stream: str | IO | Path, password: Optional[str]) -> list[TextArtifact]:
-        PdfReader = import_optional_dependency("pypdf").PdfReader
-
-        reader = PdfReader(stream, strict=True, password=password)
-
-        return self._text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))
+        return cast(Any, super().load_collection(sources, *args, **kwargs))

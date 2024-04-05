@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Any, Optional, cast
+from collections.abc import Sequence
 
 from attr import define, field
 
-from griptape import utils
 from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseSqlDriver, BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
@@ -14,15 +14,7 @@ class SqlLoader(BaseLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
 
     def load(self, source: str, *args, **kwargs) -> list[CsvRowArtifact]:
-        return self._load_query(source)
-
-    def load_collection(self, sources: list[str], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
-        return utils.execute_futures_dict(
-            {utils.str_to_hash(source): self.futures_executor.submit(self._load_query, source) for source in sources}
-        )
-
-    def _load_query(self, query: str) -> list[CsvRowArtifact]:
-        rows = self.sql_driver.execute_query(query)
+        rows = self.sql_driver.execute_query(source)
         artifacts = []
 
         if rows:
@@ -38,3 +30,6 @@ class SqlLoader(BaseLoader):
             artifacts.append(chunk)
 
         return artifacts
+
+    def load_collection(self, sources: Sequence[str], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
+        return cast(Any, super().load_collection(sources, *args, **kwargs))
