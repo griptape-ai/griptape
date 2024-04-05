@@ -10,9 +10,7 @@ if TYPE_CHECKING:
 
 @define
 class BaseEventListenerDriver(ABC):
-    futures_executor: futures.Executor = field(
-        default=Factory(lambda: futures.ThreadPoolExecutor(max_workers=1)), kw_only=True
-    )
+    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
     def publish_event(self, event: BaseEvent) -> None:
         self.futures_executor.submit(self.try_publish_event, event)

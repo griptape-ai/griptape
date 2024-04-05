@@ -89,7 +89,7 @@ from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDri
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
 from .event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
-from .event_listener.amazon_iot_event_listener_driver import AmazonIotEventListenerDriver
+from .event_listener.aws_iot_event_listener_driver import AwsIotEventListenerDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -169,5 +169,5 @@ __all__ = [
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
-    "AmazonIotEventListenerDriver",
+    "AwsIotEventListenerDriver",
 ]
