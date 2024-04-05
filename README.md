@@ -7,7 +7,8 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
-Griptape is a modular Python framework for building AI-powered applications that connect securely to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
+Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
+
 
 ## 🛠️ Core Components
 
@@ -19,7 +20,7 @@ Griptape is a modular Python framework for building AI-powered applications that
 
 ### 📝 Tasks
 
-Tasks are the core building-block within Structures, enabling interaction with Engines, Tools, and other Griptape components.
+Tasks are the core building blocks within Structures, enabling interaction with Engines, Tools, and other Griptape components.
 
 ### 🔧 Tools
 
@@ -59,7 +60,7 @@ Engines wrap Drivers and provide use-case-specific functionality:
 - 🔄 **Loaders** load data from various sources.
 - 🏺 **Artifacts** allow for passing data of different types between Griptape components.
 - ✂️ **Chunkers** segment texts into manageable pieces for diverse text types.
-- 🔢 **Tokenizers**  count the number of tokens in a text as to not exceed LLM token limits.
+- 🔢 **Tokenizers**  count the number of tokens in a text to not exceed LLM token limits.
 
 ## Documentation
 
@@ -82,7 +83,7 @@ pip install "griptape[all]" -U
 
 Second, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses three tools and moves the data around in short-term memory.
+With Griptape, you can create Structures, such as Agents, Pipelines, and Workflows, composed of different types of Tasks. Let's build a simple creative Agent that dynamically uses three tools and moves the data around in Task Memory.
 
 ```python
 from griptape.structures import Agent
