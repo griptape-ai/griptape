@@ -17,7 +17,7 @@ Griptape is a modular Python framework for building AI-powered applications that
 - 🔄 **Pipelines** organize a sequence of Tasks so that the output from one Task may flow into the next.
 - 🌐 **Workflows** configure Tasks to operate in parallel.
 
-### Tasks 📝
+### 📝 Tasks
 
 Tasks are the core building-block within Structures, enabling interaction with Engines, Tools, and other Griptape components.
 
