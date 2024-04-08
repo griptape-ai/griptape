@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+import os
 import requests
 
 from urllib.parse import urljoin
@@ -16,8 +18,9 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
+    run_id: str = field(default=os.getenv("GT_CLOUD_RUN_ID", uuid.uuid4().hex), kw_only=True)
 
     def try_publish_event(self, event: BaseEvent) -> None:
         url = urljoin(self.base_url.strip("/"), "/api/events")
 
-        requests.post(url=url, json=event.to_dict(), headers=self.headers)
+        requests.post(url=url, json={"run_id": self.run_id, "event": event.to_dict()}, headers=self.headers)

@@ -2,6 +2,7 @@ import os
 
 
 def mock_aws_credentials():
+    os.environ["MOTO_ALLOW_NONEXISTENT_REGION"] = "True"
     os.environ["AWS_DEFAULT_REGION"] = "testing"
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"

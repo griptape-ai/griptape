@@ -89,6 +89,9 @@ drivers-embedding-google = ["google-generativeai"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]
 
+drivers-event-listener-amazon-sqs = ["boto3"]
+drivers-event-listener-amazon-iot = ["boto3"]
+
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]
@@ -134,7 +137,7 @@ pytest-mock = "*"
 mongomock = "*"
 
 twine = ">=4"
-moto = {extras = ["dynamodb"], version = "^4.1.8"}
+moto = {extras = ["dynamodb", "iotdata", "sqs"], version = "^4.2.13"}
 pytest-xdist = "^3.3.1"
 pytest-cov = "^4.1.0"
 pytest-env = "^1.1.1"
