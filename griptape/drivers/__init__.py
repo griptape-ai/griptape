@@ -89,7 +89,7 @@ from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDri
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
 from .event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
-from .event_listener.aws_iot_event_listener_driver import AwsIotEventListenerDriver
+from .event_listener.aws_iot_core_event_listener_driver import AwsIotCoreEventListenerDriver
 from .event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
 from .event_listener.local_event_listener_driver import LocalEventListenerDriver
 
@@ -171,7 +171,7 @@ __all__ = [
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
-    "AwsIotEventListenerDriver",
+    "AwsIotCoreEventListenerDriver",
     "GriptapeCloudEventListenerDriver",
     "LocalEventListenerDriver",
 ]

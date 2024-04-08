@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @define
-class AwsIotEventListenerDriver(BaseEventListenerDriver):
+class AwsIotCoreEventListenerDriver(BaseEventListenerDriver):
     iot_endpoint: str = field(kw_only=True)
     topic: str = field(kw_only=True)
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)

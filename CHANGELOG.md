@@ -8,15 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `list_files_from_disk` activity to `FileManager` Tool.
+- Support for Drivers in `EventListener`.
+- `AmazonSqsEventListenerDriver` for sending events to an Amazon SQS queue.
+- `AwsIotCoreEventListenerDriver` for sending events to a topic on AWS IoT Core.
+- `GriptapeCloudEventListenerDriver` for sending events to Griptape Cloud.
+- `WebhookEventListenerDriver` for sending events to a webhook.
+- `LocalEventListenerDriver` for sending events to a callback function.
+
 
 ### Changed
-- Improved RAG performance in `VectorQueryEngine`.
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
 - **BREAKING**: Remove `FileLoader`.
 - **BREAKING**: `CsvLoader` no longer accepts `str` file paths as a source. It will now accept the content of the CSV file as a `str` or `bytes` object.
 - **BREAKING**: `PdfLoader` no longer accepts `str` file content, `Path` file paths or `IO` objects as sources. Instead, it will only accept the content of the PDF file as a `bytes` object.
 - **BREAKING**: `TextLoader` no longer accepts `Path` file paths as a source. It will now accept the content of the text file as a `str` or `bytes` object.
 - **BREAKING**: `FileManager.default_loader` is now `None` by default.
+- **BREAKING**: Replaced `EventListener.handler` with `EventListener.driver` and `LocalEventListenerDriver`.
+- Improved RAG performance in `VectorQueryEngine`.
 
 ## [0.24.2] - 2024-04-04
 

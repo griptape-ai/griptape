@@ -2,19 +2,19 @@ from pytest import fixture
 from moto import mock_iotdata
 import boto3
 from tests.mocks.mock_event import MockEvent
-from griptape.drivers.event_listener.aws_iot_event_listener_driver import AwsIotEventListenerDriver
+from griptape.drivers.event_listener.aws_iot_core_event_listener_driver import AwsIotCoreEventListenerDriver
 from tests.utils.aws import mock_aws_credentials
 
 
 @mock_iotdata
-class TestAwsIotEventListenerDriver:
+class TestAwsIotCoreEventListenerDriver:
     @fixture()
     def run_before_and_after_tests(self):
         mock_aws_credentials()
 
     @fixture()
     def driver(self):
-        return AwsIotEventListenerDriver(
+        return AwsIotCoreEventListenerDriver(
             iot_endpoint="foo bar", topic="fizz buzz", session=boto3.Session(region_name="us-east-1")
         )
 
