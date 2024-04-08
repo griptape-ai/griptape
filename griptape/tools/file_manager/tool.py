@@ -80,7 +80,7 @@ class FileManager(BaseTool):
                     Literal(
                         "paths",
                         description="Relative paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
-                    ): []
+                    ): list
                 }
             ),
         }
