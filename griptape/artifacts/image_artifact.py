@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-import base64
-
-from attr import define, field, Factory
+from attr import define, field
 
 from griptape.artifacts import BaseMediaArtifact
 
 
 @define
 class ImageArtifact(BaseMediaArtifact):
-    """ImageArtifact is a type of BaseMediaArtifact that represents an image.
+    """ImageArtifact is a type of BaseMediaArtifact representing an image.
 
     Attributes:
         value: Raw bytes representing the image.
@@ -25,7 +23,3 @@ class ImageArtifact(BaseMediaArtifact):
     artifact_type: str = "image"
     width: int = field(kw_only=True, metadata={"serializable": True})
     height: int = field(kw_only=True, metadata={"serializable": True})
-
-    @property
-    def base64(self) -> str:
-        return base64.b64encode(self.value).decode("utf-8")
