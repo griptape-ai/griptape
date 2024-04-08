@@ -4,9 +4,13 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestCsvLoader:
-    @pytest.fixture
-    def loader(self):
-        return CsvLoader(embedding_driver=MockEmbeddingDriver())
+    @pytest.fixture(params=["ascii", "utf-8", None])
+    def loader(self, request):
+        encoding = request.param
+        if encoding is None:
+            return CsvLoader(embedding_driver=MockEmbeddingDriver())
+        else:
+            return CsvLoader(embedding_driver=MockEmbeddingDriver(), encoding=encoding)
 
     @pytest.fixture
     def loader_with_pipe_delimiter(self):

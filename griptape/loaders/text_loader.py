@@ -45,7 +45,7 @@ class TextLoader(BaseTextLoader):
 
     def _stream_from_source(self, source: bytes | str | IO | Path) -> IO:
         if isinstance(source, bytes):
-            return StringIO(source.decode())
+            return StringIO(source.decode(encoding=self.encoding))
         elif isinstance(source, str):
             return StringIO(source)
         elif issubclass(type(source), TextIOBase):

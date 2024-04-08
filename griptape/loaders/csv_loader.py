@@ -1,6 +1,6 @@
 from __future__ import annotations
 import csv
-from io import IOBase, StringIO
+from io import StringIO, TextIOBase
 from pathlib import Path
 from typing import IO, Optional, cast
 from collections.abc import Sequence
@@ -16,6 +16,7 @@ from griptape.loaders import BaseLoader
 class CsvLoader(BaseLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     delimiter: str = field(default=",", kw_only=True)
+    encoding: str = field(default="utf-8", kw_only=True)
 
     def load(self, source: bytes | str | IO | Path, *args, **kwargs) -> list[CsvRowArtifact]:
         artifacts = []
@@ -35,13 +36,13 @@ class CsvLoader(BaseLoader):
 
     def _stream_from_source(self, source: bytes | str | IO | Path) -> IO:
         if isinstance(source, bytes):
-            return StringIO(source.decode())
+            return StringIO(source.decode(encoding=self.encoding))
         elif isinstance(source, str):
             return StringIO(source)
-        elif isinstance(source, IOBase):
+        elif isinstance(source, TextIOBase):
             return cast(IO, source)
         elif isinstance(source, Path):
-            return open(source, encoding="utf-8")
+            return open(source, encoding=self.encoding)
         else:
             raise ValueError(f"Unsupported source type: {type(source)}")
 

@@ -11,7 +11,11 @@ MAX_TOKENS = 50
 class TestTextLoader:
     @pytest.fixture(params=["ascii", "utf-8", None])
     def loader(self, request):
-        return TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver(), encoding=request.param)
+        encoding = request.param
+        if encoding is None:
+            return TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
+        else:
+            return TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver(), encoding=encoding)
 
     @pytest.fixture(
         params=[

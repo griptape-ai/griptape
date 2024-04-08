@@ -30,8 +30,6 @@ class PdfLoader(BaseTextLoader):
     def _stream_from_source(self, source: bytes | IO | Path) -> IO:
         if isinstance(source, bytes):
             return BytesIO(source)
-        elif isinstance(source, str):
-            return open(source, "rb")
         elif isinstance(source, (RawIOBase, BufferedIOBase)):
             return cast(IO, source)
         elif isinstance(source, Path):
