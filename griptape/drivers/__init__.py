@@ -90,6 +90,7 @@ from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
 from .event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
 from .event_listener.aws_iot_event_listener_driver import AwsIotEventListenerDriver
+from .event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -170,4 +171,5 @@ __all__ = [
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
     "AwsIotEventListenerDriver",
+    "GriptapeCloudEventListenerDriver",
 ]

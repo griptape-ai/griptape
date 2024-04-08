@@ -1,0 +1,23 @@
+from __future__ import annotations
+
+import requests
+
+from urllib.parse import urljoin
+from attr import define, field, Factory
+
+from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
+from griptape.events.base_event import BaseEvent
+
+
+@define
+class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
+    base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
+    api_key: str = field(kw_only=True)
+    headers: dict = field(
+        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
+    )
+
+    def try_publish_event(self, event: BaseEvent) -> None:
+        url = urljoin(self.base_url.strip("/"), "/api/events")
+
+        requests.post(url=url, json=event.to_dict(), headers=self.headers)
