@@ -53,7 +53,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
 
         return ImageArtifact(
             value=image_data,
-            mime_type="image/png",
+            format="png",
             width=self.image_width,
             height=self.image_height,
             model=self.model,
@@ -75,7 +75,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
 
         return ImageArtifact(
             value=image_data,
-            mime_type="image/png",
+            format="png",
             width=self.image_width,
             height=self.image_height,
             model=self.model,

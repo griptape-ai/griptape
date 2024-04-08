@@ -15,7 +15,7 @@ class TestImageQueryTask:
 
     @pytest.fixture
     def image_artifact(self):
-        return ImageArtifact(value=b"some image data", mime_type="image/png", width=512, height=512)
+        return ImageArtifact(value=b"some image data", format="png", width=512, height=512)
 
     def test_text_inputs(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
         task = ImageQueryTask((text_artifact.value, [image_artifact, image_artifact]))

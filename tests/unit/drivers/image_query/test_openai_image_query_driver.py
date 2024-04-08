@@ -19,7 +19,7 @@ class TestOpenAiVisionImageQueryDriver:
         driver = OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview")
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
-        test_image = ImageArtifact(value=test_binary_data, width=100, height=100)
+        test_image = ImageArtifact(value=test_binary_data, width=100, height=100, format="png")
         text_artifact = driver.try_query(test_prompt_string, [test_image])
 
         messages = self._expected_messages(test_prompt_string, test_image.base64)
@@ -32,7 +32,7 @@ class TestOpenAiVisionImageQueryDriver:
         driver = OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview", max_tokens=1024)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
-        test_image = ImageArtifact(value=test_binary_data, width=100, height=100)
+        test_image = ImageArtifact(value=test_binary_data, width=100, height=100, format="png")
         driver.try_query(test_prompt_string, [test_image])
 
         messages = self._expected_messages(test_prompt_string, test_image.base64)
@@ -44,7 +44,7 @@ class TestOpenAiVisionImageQueryDriver:
         driver = OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview")
 
         with pytest.raises(Exception):
-            driver.try_query("Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)])
+            driver.try_query("Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100, format="png")])
 
     def _expected_messages(self, expected_prompt_string, expected_binary_data):
         return {

@@ -37,7 +37,9 @@ class TestAmazonBedrockImageGenerationDriver:
 
     def test_init_requires_image_generation_model_driver(self, session):
         with pytest.raises(TypeError):
-            AmazonBedrockImageGenerationDriver(session=session, model="stability.stable-diffusion-xl-v1")
+            AmazonBedrockImageGenerationDriver(
+                session=session, model="stability.stable-diffusion-xl-v1"
+            )  # pyright: ignore
 
     def test_try_text_to_image(self, driver):
         driver.bedrock_client.invoke_model.return_value = {
@@ -56,6 +58,7 @@ class TestAmazonBedrockImageGenerationDriver:
         image_artifact = driver.try_text_to_image(prompts=["test prompt"], negative_prompts=["test negative prompt"])
 
         assert image_artifact.value == b"image data"
+        assert image_artifact.format == "png"
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512

@@ -16,7 +16,7 @@ class TestImageArtifactFileOutputMixin:
         assert Test().output_dir is None
 
     def test_output_file(self):
-        artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, mime_type="image/png")
+        artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, format="png")
 
         class Test(ImageArtifactFileOutputMixin):
             def run(self):
@@ -31,7 +31,7 @@ class TestImageArtifactFileOutputMixin:
         assert os.path.exists(outfile)
 
     def test_output_dir(self):
-        artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, mime_type="image/png")
+        artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, format="png")
 
         class Test(ImageArtifactFileOutputMixin):
             def run(self):
