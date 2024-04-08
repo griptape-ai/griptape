@@ -5190,6 +5190,8 @@ drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-google = ["google-generativeai"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
+drivers-event-listener-amazon-iot = ["boto3"]
+drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
 drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
@@ -5217,4 +5219,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "5c7db04187769610f3e00d52e460a133dc1684f6b8e193b7af9e3996c599a552"
+content-hash = "7b1203869463a403ae5ecbf8b3b267a919d6ef1baff302a28084e18c70e52205"
