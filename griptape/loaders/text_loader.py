@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import StringIO, TextIOBase
-from typing import IO, Any, Optional, cast
+from typing import IO, Optional, cast
 from collections.abc import Sequence
 
 from attr import field, define, Factory
@@ -41,7 +41,7 @@ class TextLoader(BaseTextLoader):
     def load_collection(
         self, sources: Sequence[bytes | str | IO | Path], *args, **kwargs
     ) -> dict[str, list[TextArtifact]]:
-        return cast(Any, super().load_collection(sources, *args, **kwargs))
+        return cast(dict[str, list[TextArtifact]], super().load_collection(sources, *args, **kwargs))
 
     def _stream_from_source(self, source: bytes | str | IO | Path) -> IO:
         if isinstance(source, bytes):

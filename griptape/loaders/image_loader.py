@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from io import BufferedIOBase, BytesIO, RawIOBase
 from pathlib import Path
-from typing import IO, Any, Optional, TYPE_CHECKING, cast
+from typing import IO, Optional, TYPE_CHECKING, cast
 from collections.abc import Sequence
 
 from attr import define, field
@@ -76,4 +76,4 @@ class ImageLoader(BaseLoader):
         return self.FORMAT_TO_MIME_TYPE[image_format.lower()]
 
     def load_collection(self, sources: Sequence[bytes | IO | Path], *args, **kwargs) -> dict[str, ImageArtifact]:
-        return cast(Any, super().load_collection(sources, *args, **kwargs))
+        return cast(dict[str, ImageArtifact], super().load_collection(sources, *args, **kwargs))

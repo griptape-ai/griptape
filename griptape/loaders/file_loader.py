@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Optional, cast
+from typing import Optional, Union, cast
 from collections.abc import Sequence
 
 from pathlib import Path
@@ -32,4 +32,7 @@ class FileLoader(BaseLoader):
     def load_collection(
         self, sources: Sequence[str | Path], *args, **kwargs
     ) -> dict[str, TextArtifact | BlobArtifact | ErrorArtifact]:
-        return cast(Any, super().load_collection(sources, *args, **kwargs))
+        return cast(
+            dict[str, Union[TextArtifact, BlobArtifact, ErrorArtifact]],
+            super().load_collection(sources, *args, **kwargs),
+        )

@@ -2,7 +2,7 @@ from __future__ import annotations
 from io import BufferedIOBase, BytesIO, RawIOBase
 
 from attr import define, field, Factory
-from typing import IO, Any, Optional, cast
+from typing import IO, Optional, cast
 from collections.abc import Sequence
 
 from pathlib import Path
@@ -42,4 +42,4 @@ class PdfLoader(BaseTextLoader):
     def load_collection(
         self, sources: Sequence[bytes | str | IO | Path], *args, **kwargs
     ) -> dict[str, list[TextArtifact]]:
-        return cast(Any, super().load_collection(sources, *args, **kwargs))
+        return cast(dict[str, list[TextArtifact]], super().load_collection(sources, *args, **kwargs))

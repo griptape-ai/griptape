@@ -2,7 +2,7 @@ from __future__ import annotations
 import csv
 from io import IOBase, StringIO
 from pathlib import Path
-from typing import IO, Any, Optional, cast
+from typing import IO, Optional, cast
 from collections.abc import Sequence
 
 from attr import define, field
@@ -48,4 +48,4 @@ class CsvLoader(BaseLoader):
     def load_collection(
         self, sources: Sequence[bytes | str | IO | Path], *args, **kwargs
     ) -> dict[str, list[CsvRowArtifact]]:
-        return cast(Any, super().load_collection(sources, *args, **kwargs))
+        return cast(dict[str, list[CsvRowArtifact]], super().load_collection(sources, *args, **kwargs))

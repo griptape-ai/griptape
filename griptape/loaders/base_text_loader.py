@@ -34,7 +34,7 @@ class BaseTextLoader(BaseLoader, ABC):
     encoding: str = field(default="utf-8", kw_only=True)
 
     def load_collection(self, sources: Sequence[Any], *args, **kwargs) -> dict[str, list[TextArtifact]]:
-        return cast(Any, super().load_collection(sources, *args, **kwargs))
+        return cast(dict[str, list[TextArtifact]], super().load_collection(sources, *args, **kwargs))
 
     def _text_to_artifacts(self, text: str) -> list[TextArtifact]:
         artifacts = []

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, cast
+from typing import Optional, Union, cast
 from collections.abc import Sequence
 import logging
 import imaplib
@@ -82,4 +82,4 @@ class EmailLoader(BaseLoader):
     def load_collection(
         self, sources: Sequence[EmailQuery], *args, **kwargs
     ) -> dict[str, ListArtifact | ErrorArtifact]:
-        return cast(Any, super().load_collection(sources, *args, **kwargs))
+        return cast(dict[str, Union[ListArtifact, ErrorArtifact]], super().load_collection(sources, *args, **kwargs))
