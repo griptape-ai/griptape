@@ -13,8 +13,9 @@ import base64
 
 
 @define
-class BaseMediaArtifact(BlobArtifact, ABC):
-    """BaseMediaArtifact is a type of BlobArtifact that represents media (image, audio, video, etc.).
+class MediaArtifact(BlobArtifact):
+    """MediaArtifact is a type of BlobArtifact that represents media (image, audio, video, etc.)
+    and can be extended to support a specific media type.
 
     Attributes:
         value: Raw bytes representing media data.
@@ -39,15 +40,15 @@ class BaseMediaArtifact(BlobArtifact, ABC):
     def mime_type(self) -> str:
         return f"{self.artifact_type}/{self.format}"
 
-    def make_name(self) -> str:
-        entropy = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
-        fmt_time = time.strftime("%y%m%d%H%M%S", time.localtime())
-
-        return f"{self.artifact_type}_artifact_{fmt_time}_{entropy}.{self.format}"
-
     @property
     def base64(self) -> str:
         return base64.b64encode(self.value).decode("utf-8")
 
     def to_text(self) -> str:
         return f"Media, type: {self.mime_type}, size: {len(self.value)} bytes"
+
+    def make_name(self) -> str:
+        entropy = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        fmt_time = time.strftime("%y%m%d%H%M%S", time.localtime())
+
+        return f"{self.artifact_type}_artifact_{fmt_time}_{entropy}.{self.format}"

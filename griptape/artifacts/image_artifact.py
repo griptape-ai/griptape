@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from attr import define, field
 
-from griptape.artifacts import BaseMediaArtifact
+from griptape.artifacts import MediaArtifact
 
 
 @define
-class ImageArtifact(BaseMediaArtifact):
-    """ImageArtifact is a type of BaseMediaArtifact representing an image.
+class ImageArtifact(MediaArtifact):
+    """ImageArtifact is a type of MediaArtifact representing an image.
 
     Attributes:
         value: Raw bytes representing the image.

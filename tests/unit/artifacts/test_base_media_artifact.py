@@ -2,12 +2,12 @@ import pytest
 
 from attr import define
 
-from griptape.artifacts import BaseMediaArtifact
+from griptape.artifacts import MediaArtifact
 
 
-class TestBaseMediaArtifact:
+class TestMediaArtifact:
     @define
-    class ImaginaryMediaArtifact(BaseMediaArtifact):
+    class ImaginaryMediaArtifact(MediaArtifact):
         artifact_type: str = "imagination"
 
     @pytest.fixture
