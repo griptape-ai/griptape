@@ -5,7 +5,8 @@ from pathlib import Path
 import pytest
 from griptape.artifacts import ErrorArtifact
 from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.loaders import FileLoader
+from griptape.loaders.pdf_loader import PdfLoader
+from griptape.loaders.text_loader import TextLoader
 from griptape.tools import FileManager
 from tests.utils import defaults
 
@@ -43,7 +44,7 @@ class TestFileManager:
 
     def test_load_files_from_disk_with_encoding_failure(self):
         result = FileManager(
-            workdir=os.path.abspath(os.path.dirname(__file__)), default_loader=FileLoader(encoding="utf-8"), loaders={}
+            workdir=os.path.abspath(os.path.dirname(__file__)), default_loader=TextLoader(encoding="utf-8"), loaders={}
         ).load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
 
         assert isinstance(result.value[0], ErrorArtifact)
@@ -122,7 +123,7 @@ class TestFileManager:
             assert result.value == "saved successfully"
 
             result = FileManager(
-                workdir=temp_dir, default_loader=FileLoader(encoding="ascii"), loaders={}
+                workdir=temp_dir, default_loader=TextLoader(encoding="ascii"), loaders={}
             ).load_files_from_disk({"values": {"paths": [os.path.join("test", "foobar.txt")]}})
 
             assert isinstance(result, ListArtifact)

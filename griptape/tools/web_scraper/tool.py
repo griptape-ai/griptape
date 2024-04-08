@@ -21,6 +21,10 @@ class WebScraper(BaseTool):
         url = params["values"]["url"]
 
         try:
-            return ListArtifact(self.web_loader.load(url))
+            result = self.web_loader.load(url)
+            if isinstance(result, ErrorArtifact):
+                return result
+            else:
+                return ListArtifact(result)
         except Exception as e:
             return ErrorArtifact("Error getting page content: " + str(e))

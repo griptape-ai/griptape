@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union, cast
+from collections.abc import Sequence
 
 from attr import field, define, Factory
-from pathlib import Path
 
-from griptape import utils
 from griptape.artifacts import TextArtifact
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.chunkers import TextChunker
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseTextLoader
@@ -33,13 +33,20 @@ class TextLoader(BaseTextLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load(self, source: str | Path, *args, **kwargs) -> list[TextArtifact]:
+    def load(self, source: bytes | str, *args, **kwargs) -> ErrorArtifact | list[TextArtifact]:
+        if isinstance(source, bytes):
+            try:
+                source = source.decode(encoding=self.encoding)
+            except UnicodeDecodeError:
+                return ErrorArtifact(f"Failed to decode bytes to string using encoding: {self.encoding}")
+        elif not isinstance(source, str):
+            return ErrorArtifact(f"Expected source to be bytes or string, got {type(source)}")
+
         return self._text_to_artifacts(source)
 
-    def load_collection(self, sources: list[str | Path], *args, **kwargs) -> dict[str, list[TextArtifact]]:
-        return utils.execute_futures_dict(
-            {
-                utils.str_to_hash(str(source)): self.futures_executor.submit(self._text_to_artifacts, source)
-                for source in sources
-            }
+    def load_collection(
+        self, sources: Sequence[bytes | str], *args, **kwargs
+    ) -> dict[str, ErrorArtifact | list[TextArtifact]]:
+        return cast(
+            dict[str, Union[ErrorArtifact, list[TextArtifact]]], super().load_collection(sources, *args, **kwargs)
         )
