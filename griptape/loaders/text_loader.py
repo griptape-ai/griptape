@@ -39,7 +39,7 @@ class TextLoader(BaseTextLoader):
                 source = source.decode(encoding=self.encoding)
             except UnicodeDecodeError:
                 return ErrorArtifact(f"Failed to decode bytes to string using encoding: {self.encoding}")
-        elif isinstance(source, bytearray) or isinstance(source, memoryview):
+        elif isinstance(source, (bytearray, memoryview)):
             return ErrorArtifact(f"Unsupported source type: {type(source)}")
 
         return self._text_to_artifacts(source)

@@ -97,10 +97,10 @@ class FileManager(BaseTool):
             with open(full_path, "rb") as file:
                 content = file.read()
 
-            if loader:
-                result = loader.load(content)
-            else:
+            if loader is None:
                 result = BlobArtifact(content)
+            else:
+                result = loader.load(content)
 
             if isinstance(result, list):
                 artifacts.extend(result)
