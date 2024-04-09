@@ -2,7 +2,6 @@ from __future__ import annotations
 import csv
 from io import StringIO
 from typing import Optional, Union, cast
-from collections.abc import Sequence
 
 from attr import define, field
 
@@ -41,7 +40,7 @@ class CsvLoader(BaseLoader):
         return artifacts
 
     def load_collection(
-        self, sources: Sequence[bytes | str], *args, **kwargs
+        self, sources: list[bytes | str], *args, **kwargs
     ) -> dict[str, ErrorArtifact | list[CsvRowArtifact]]:
         return cast(
             dict[str, Union[ErrorArtifact, list[CsvRowArtifact]]], super().load_collection(sources, *args, **kwargs)

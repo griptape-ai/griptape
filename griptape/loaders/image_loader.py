@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from io import BytesIO
 from typing import Optional, TYPE_CHECKING, cast
-from collections.abc import Sequence
 
 from attr import define, field
 
@@ -61,5 +60,5 @@ class ImageLoader(BaseLoader):
 
         return self.FORMAT_TO_MIME_TYPE[image_format.lower()]
 
-    def load_collection(self, sources: Sequence[bytes], *args, **kwargs) -> dict[str, ImageArtifact]:
+    def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, ImageArtifact]:
         return cast(dict[str, ImageArtifact], super().load_collection(sources, *args, **kwargs))

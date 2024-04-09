@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING, cast
-from collections.abc import Sequence
 
 from attr import define, field
 
@@ -33,7 +32,7 @@ class DataFrameLoader(BaseLoader):
 
         return artifacts
 
-    def load_collection(self, sources: Sequence[DataFrame], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
+    def load_collection(self, sources: list[DataFrame], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
         return cast(dict[str, list[CsvRowArtifact]], super().load_collection(sources, *args, **kwargs))
 
     def to_key(self, source: DataFrame, *args, **kwargs) -> str:

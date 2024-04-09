@@ -21,7 +21,7 @@ class BaseLoader(ABC):
         ...
 
     def load_collection(
-        self, sources: Sequence[Any], *args, **kwargs
+        self, sources: list[Any], *args, **kwargs
     ) -> Mapping[str, BaseArtifact | Sequence[BaseArtifact | Sequence[BaseArtifact]]]:
         # Create a dictionary before actually submitting the jobs to the executor
         # to avoid duplicate work.

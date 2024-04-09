@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Optional, Union, cast
-from collections.abc import Sequence
 
 from attr import field, define, Factory
 
@@ -45,7 +44,7 @@ class TextLoader(BaseTextLoader):
         return self._text_to_artifacts(source)
 
     def load_collection(
-        self, sources: Sequence[bytes | str], *args, **kwargs
+        self, sources: list[bytes | str], *args, **kwargs
     ) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
             dict[str, Union[ErrorArtifact, list[TextArtifact]]], super().load_collection(sources, *args, **kwargs)

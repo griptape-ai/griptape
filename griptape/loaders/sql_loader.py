@@ -1,5 +1,4 @@
 from typing import Optional, cast
-from collections.abc import Sequence
 
 from attr import define, field
 
@@ -31,5 +30,5 @@ class SqlLoader(BaseLoader):
 
         return artifacts
 
-    def load_collection(self, sources: Sequence[str], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
+    def load_collection(self, sources: list[str], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
         return cast(dict[str, list[CsvRowArtifact]], super().load_collection(sources, *args, **kwargs))

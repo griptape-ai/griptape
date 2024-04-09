@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Optional, Union, cast
-from collections.abc import Sequence
 import logging
 import imaplib
 
@@ -79,7 +78,5 @@ class EmailLoader(BaseLoader):
     def _count_messages(self, message_numbers: bytes):
         return len(list(filter(None, message_numbers.decode().split(" "))))
 
-    def load_collection(
-        self, sources: Sequence[EmailQuery], *args, **kwargs
-    ) -> dict[str, ListArtifact | ErrorArtifact]:
+    def load_collection(self, sources: list[EmailQuery], *args, **kwargs) -> dict[str, ListArtifact | ErrorArtifact]:
         return cast(dict[str, Union[ListArtifact, ErrorArtifact]], super().load_collection(sources, *args, **kwargs))

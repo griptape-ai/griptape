@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC
 from typing import Any, Optional, Union, cast
-from collections.abc import Sequence
 
 from attrs import define, field, Factory
 
@@ -34,7 +33,7 @@ class BaseTextLoader(BaseLoader, ABC):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load_collection(self, sources: Sequence[Any], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
+    def load_collection(self, sources: list[Any], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
             dict[str, Union[ErrorArtifact, list[TextArtifact]]], super().load_collection(sources, *args, **kwargs)
         )

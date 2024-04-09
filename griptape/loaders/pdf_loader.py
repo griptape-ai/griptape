@@ -3,7 +3,6 @@ from io import BytesIO
 
 from attr import define, field, Factory
 from typing import Optional, Union, cast
-from collections.abc import Sequence
 
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.loaders import BaseTextLoader
@@ -27,9 +26,7 @@ class PdfLoader(BaseTextLoader):
         reader = PdfReader(BytesIO(source), strict=True, password=password)
         return self._text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))
 
-    def load_collection(
-        self, sources: Sequence[bytes], *args, **kwargs
-    ) -> dict[str, ErrorArtifact | list[TextArtifact]]:
+    def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
             dict[str, Union[ErrorArtifact, list[TextArtifact]]], super().load_collection(sources, *args, **kwargs)
         )
