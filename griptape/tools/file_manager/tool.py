@@ -25,7 +25,7 @@ class FileManager(BaseTool):
     """
 
     workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
-    default_loader: BaseLoader = field(default=None, kw_only=True)
+    default_loader: Optional[BaseLoader] = field(default=None, kw_only=True)
     loaders: dict[str, BaseLoader] = field(
         default=Factory(
             lambda: {

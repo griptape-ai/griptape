@@ -1,6 +1,5 @@
 from concurrent import futures
-from typing import Callable, TypeVar
-from collections.abc import Sequence
+from typing import TypeVar
 
 T = TypeVar("T")
 

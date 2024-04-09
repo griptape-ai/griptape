@@ -25,8 +25,8 @@ class CsvLoader(BaseLoader):
                 source = source.decode(encoding=self.encoding)
             except UnicodeDecodeError:
                 return ErrorArtifact(f"Failed to decode bytes to string using encoding: {self.encoding}")
-        elif not isinstance(source, str):
-            return ErrorArtifact(f"Expected source to be bytes or string, got {type(source)}")
+        elif isinstance(source, Union[bytearray, memoryview]):
+            return ErrorArtifact(f"Unsupported source type: {type(source)}")
 
         reader = csv.DictReader(StringIO(source), delimiter=self.delimiter)
         chunks = [CsvRowArtifact(row) for row in reader]

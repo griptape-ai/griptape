@@ -39,8 +39,8 @@ class TextLoader(BaseTextLoader):
                 source = source.decode(encoding=self.encoding)
             except UnicodeDecodeError:
                 return ErrorArtifact(f"Failed to decode bytes to string using encoding: {self.encoding}")
-        elif not isinstance(source, str):
-            return ErrorArtifact(f"Expected source to be bytes or string, got {type(source)}")
+        elif isinstance(source, Union[bytearray, memoryview]):
+            return ErrorArtifact(f"Unsupported source type: {type(source)}")
 
         return self._text_to_artifacts(source)
 
