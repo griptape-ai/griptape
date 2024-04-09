@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import uuid
 import os
 import requests
 
@@ -18,9 +17,16 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
-    run_id: str = field(default=os.getenv("GT_CLOUD_RUN_ID", uuid.uuid4().hex), kw_only=True)
+    run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_RUN_ID")), kw_only=True)
+
+    @run_id.validator  # pyright: ignore
+    def validate_run_id(self, _, run_id: str):
+        if run_id is None:
+            raise ValueError(
+                "run_id must be set either in the constructor or as an environment variable (GT_CLOUD_RUN_ID)."
+            )
 
     def try_publish_event(self, event: BaseEvent) -> None:
-        url = urljoin(self.base_url.strip("/"), "/api/events")
+        url = urljoin(self.base_url.strip("/"), f"/api/runs/{self.run_id}/events/")
 
-        requests.post(url=url, json={"run_id": self.run_id, "event": event.to_dict()}, headers=self.headers)
+        requests.post(url=url, json=event.to_dict(), headers=self.headers)

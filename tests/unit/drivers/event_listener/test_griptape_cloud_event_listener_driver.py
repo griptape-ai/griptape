@@ -1,5 +1,6 @@
 from unittest.mock import Mock
 from pytest import fixture
+import pytest
 from tests.mocks.mock_event import MockEvent
 from griptape.drivers.event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
 
@@ -26,7 +27,11 @@ class TestGriptapeCloudEventListenerDriver:
         driver.try_publish_event(event=event)
 
         mock_post.assert_called_once_with(
-            url="https://cloud.griptape.ai/api/events",
-            json={"run_id": driver.run_id, "event": event.to_dict()},
+            url=f"https://cloud.griptape.ai/api/runs/{driver.run_id}/events/",
+            json=event.to_dict(),
             headers={"Authorization": "Bearer foo bar"},
         )
+
+    def test_no_run_id(self):
+        with pytest.raises(ValueError):
+            GriptapeCloudEventListenerDriver(api_key="foo bar")
