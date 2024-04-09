@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
-
 import string
 import time
 import random
@@ -19,13 +17,14 @@ class MediaArtifact(BlobArtifact):
 
     Attributes:
         value: Raw bytes representing media data.
+        media_type: The type of media, like image, audio, or video.
+        format: The format of the media, like png, wav, or mp4.
         name: Artifact name, generated using creation time and a random string.
-        mime_type: The mime type of the image, like image/png or audio/wav.
         model: Optionally specify the model used to generate the media.
         prompt: Optionally specify the prompt used to generate the media.
     """
 
-    artifact_type: str = field(default="media", kw_only=True, metadata={"serializable": True})
+    media_type: str = field(default="media", kw_only=True, metadata={"serializable": True})
     format: str = field(kw_only=True, metadata={"serializable": True})
     model: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     prompt: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -38,7 +37,7 @@ class MediaArtifact(BlobArtifact):
 
     @property
     def mime_type(self) -> str:
-        return f"{self.artifact_type}/{self.format}"
+        return f"{self.media_type}/{self.format}"
 
     @property
     def base64(self) -> str:
@@ -51,4 +50,4 @@ class MediaArtifact(BlobArtifact):
         entropy = "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
         fmt_time = time.strftime("%y%m%d%H%M%S", time.localtime())
 
-        return f"{self.artifact_type}_artifact_{fmt_time}_{entropy}.{self.format}"
+        return f"{self.media_type}_artifact_{fmt_time}_{entropy}.{self.format}"

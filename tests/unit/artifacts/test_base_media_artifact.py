@@ -8,7 +8,7 @@ from griptape.artifacts import MediaArtifact
 class TestMediaArtifact:
     @define
     class ImaginaryMediaArtifact(MediaArtifact):
-        artifact_type: str = "imagination"
+        media_type: str = "imagination"
 
     @pytest.fixture
     def media_artifact(self):
