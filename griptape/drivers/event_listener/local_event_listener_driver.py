@@ -9,10 +9,10 @@ from griptape.events.base_event import BaseEvent
 
 @define
 class LocalEventListenerDriver(BaseEventListenerDriver):
-    handler: Callable[[dict], Any] = field(default=None, kw_only=True)
+    handler: Callable[[BaseEvent], Any] = field(default=None, kw_only=True)
 
     def publish_event(self, event: BaseEvent) -> None:
         self.try_publish_event(event)
 
     def try_publish_event(self, event: BaseEvent) -> None:
-        self.handler({"event": event.to_dict()})
+        self.handler(event)

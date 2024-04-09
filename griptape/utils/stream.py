@@ -4,6 +4,7 @@ from collections.abc import Iterator
 from threading import Thread
 from queue import Queue
 from griptape.artifacts.text_artifact import TextArtifact
+from griptape.drivers.event_listener.local_event_listener_driver import LocalEventListenerDriver
 from griptape.events.completion_chunk_event import CompletionChunkEvent
 from griptape.events.event_listener import EventListener
 from griptape.events.base_event import BaseEvent
@@ -57,7 +58,8 @@ class Stream:
             self._event_queue.put(event)
 
         stream_event_listener = EventListener(
-            handler=event_handler, event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
+            driver=LocalEventListenerDriver(handler=event_handler),
+            event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
         )
         self.structure.add_event_listener(stream_event_listener)
 

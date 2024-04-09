@@ -11,4 +11,4 @@ class TestLocalEventListenerDriver:
         event = MockEvent()
         driver = LocalEventListenerDriver(handler=mock)
         driver.try_publish_event(event=event)
-        mock.assert_called_once_with({"event": event.to_dict()})
+        mock.assert_called_once_with(event)
