@@ -4,9 +4,10 @@ import os
 from pathlib import Path
 from attr import define, field, Factory
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact, TextArtifact
+from griptape.artifacts.blob_artifact import BlobArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader, ImageLoader
+from griptape.loaders import BaseLoader, PdfLoader, CsvLoader, TextLoader, ImageLoader
 from schema import Schema, Literal
 from typing import Optional, Any
 
@@ -24,7 +25,7 @@ class FileManager(BaseTool):
     """
 
     workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
-    default_loader: BaseLoader = field(default=Factory(lambda: FileLoader()))
+    default_loader: Optional[BaseLoader] = field(default=None, kw_only=True)
     loaders: dict[str, BaseLoader] = field(
         default=Factory(
             lambda: {
@@ -93,7 +94,13 @@ class FileManager(BaseTool):
             full_path = Path(os.path.join(self.workdir, path))
             extension = path.split(".")[-1]
             loader = self.loaders.get(extension) or self.default_loader
-            result = loader.load(full_path)
+            with open(full_path, "rb") as file:
+                content = file.read()
+
+            if loader is None:
+                result = BlobArtifact(content)
+            else:
+                result = loader.load(content)
 
             if isinstance(result, list):
                 artifacts.extend(result)

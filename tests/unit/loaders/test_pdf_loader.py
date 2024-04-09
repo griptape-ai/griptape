@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+from typing import IO
 import pytest
 from griptape import utils
 from griptape.loaders import PdfLoader
@@ -12,31 +14,33 @@ class TestPdfLoader:
     def loader(self):
         return PdfLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
 
-    def test_load(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/bitcoin.pdf")
+    @pytest.fixture
+    def create_source(self, bytes_from_resource_path):
+        return bytes_from_resource_path
 
-        artifacts = loader.load(path)
+    def test_load(self, loader, create_source):
+        source = create_source("bitcoin.pdf")
+
+        artifacts = loader.load(source)
 
         assert len(artifacts) == 151
         assert artifacts[0].value.startswith("Bitcoin: A Peer-to-Peer")
         assert artifacts[-1].value.endswith('its applications," 1957.\n9')
-
         assert artifacts[0].embedding == [0, 1]
 
-    def test_load_collection(self, loader):
-        path1 = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/bitcoin.pdf")
-        path2 = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/bitcoin-2.pdf")
-        key1 = utils.str_to_hash(path1)
-        key2 = utils.str_to_hash(path2)
+    def test_load_collection(self, loader, create_source):
+        resource_paths = ["bitcoin.pdf", "bitcoin-2.pdf"]
+        sources = [create_source(resource_path) for resource_path in resource_paths]
 
-        artifacts = loader.load_collection([path1, path2])
+        collection = loader.load_collection(sources)
 
-        assert list(artifacts.keys()) == [key1, key2]
-        assert len(artifacts[key1]) == 151
-        assert artifacts[key1][0].value.startswith("Bitcoin: A Peer-to-Peer")
-        assert artifacts[key1][-1].value.endswith('its applications," 1957.\n9')
-        assert len(artifacts[key2]) == 151
-        assert artifacts[key2][0].value.startswith("Bitcoin: A Peer-to-Peer")
-        assert artifacts[key2][-1].value.endswith('its applications," 1957.\n9')
+        keys = {loader.to_key(source) for source in sources}
 
-        assert artifacts[key1][0].embedding == [0, 1]
+        assert collection.keys() == keys
+
+        for key in keys:
+            artifact = collection[key]
+            assert len(artifact) == 151
+            assert artifact[0].value.startswith("Bitcoin: A Peer-to-Peer")
+            assert artifact[-1].value.endswith('its applications," 1957.\n9')
+            assert artifact[0].embedding == [0, 1]

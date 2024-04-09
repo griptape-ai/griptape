@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, cast
 
 from attr import define, field
 
-from griptape.utils import execute_futures_dict, str_to_hash, import_optional_dependency
+from griptape.utils import import_optional_dependency
 from griptape.artifacts import ImageArtifact
 from griptape.loaders import BaseLoader
 
@@ -35,14 +35,6 @@ class ImageLoader(BaseLoader):
     }
 
     def load(self, source: bytes, *args, **kwargs) -> ImageArtifact:
-        return self._load(source)
-
-    def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, ImageArtifact]:
-        return execute_futures_dict(
-            {str_to_hash(str(source)): self.futures_executor.submit(self._load, source) for source in sources}
-        )
-
-    def _load(self, source: bytes) -> ImageArtifact:
         Image = import_optional_dependency("PIL.Image")
         image = Image.open(BytesIO(source))
 
@@ -67,3 +59,6 @@ class ImageLoader(BaseLoader):
             raise ValueError(f"Unsupported image format {image_format}")
 
         return self.FORMAT_TO_MIME_TYPE[image_format.lower()]
+
+    def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, ImageArtifact]:
+        return cast(dict[str, ImageArtifact], super().load_collection(sources, *args, **kwargs))
