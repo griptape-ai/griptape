@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseFileManagerDriver` to abstract file management operations.
 - `LocalFileManagerDriver` for managing files on the local file system.
 - Added optional `BaseLoader.encoding` field.
+- `BlobLoader` for loading arbitrary binary data as a `BlobArtifact`.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
