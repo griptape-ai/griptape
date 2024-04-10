@@ -1,6 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Optional
 from attr import Factory, define, field
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, InfoArtifact, ListArtifact
 import griptape.loaders as loaders
