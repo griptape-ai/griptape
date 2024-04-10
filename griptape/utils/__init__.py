@@ -12,6 +12,7 @@ from .dict_utils import remove_null_values_in_dict_recursively
 from .dict_utils import dict_merge
 from .hash import str_to_hash
 from .import_utils import import_optional_dependency
+from .import_utils import is_dependency_installed
 from .stream import Stream
 from .constants import Constants as constants
 from .load_artifact_from_memory import load_artifact_from_memory
@@ -32,6 +33,7 @@ __all__ = [
     "Chat",
     "str_to_hash",
     "import_optional_dependency",
+    "is_dependency_installed",
     "execute_futures_dict",
     "TokenCounter",
     "PromptStack",

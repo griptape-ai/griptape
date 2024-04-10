@@ -100,13 +100,15 @@ class BaseSchema(Schema):
         Args:
             attrs_cls: An attrs class.
         """
+        from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
 
         # These modules are required to avoid `NameError`s when resolving types.
         from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver, BasePromptModelDriver
         from griptape.structures import Structure
         from griptape.utils import PromptStack
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
-        import boto3
+
+        boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else {}
 
         attrs.resolve_types(
             attrs_cls,
