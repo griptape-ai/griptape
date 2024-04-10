@@ -16,7 +16,7 @@ class BaseFileManagerDriver(ABC):
         loaders: Dictionary of file extension specifc loaders to use for loading file contents into artifacts.
     """
 
-    default_loader: Optional[loaders.BaseLoader] = field(default=Factory(lambda: loaders.BlobLoader()), kw_only=True)
+    default_loader: loaders.BaseLoader = field(default=Factory(lambda: loaders.BlobLoader()), kw_only=True)
     loaders: dict[str, loaders.BaseLoader] = field(
         default=Factory(
             lambda: {
