@@ -251,11 +251,7 @@ class Structure(ABC):
 
     def publish_event(self, event: BaseEvent) -> None:
         for event_listener in self.event_listeners:
-            handler = event_listener.handler
-            event_types = event_listener.event_types
-
-            if event_types is None or type(event) in event_types:
-                handler(event)
+            event_listener.publish_event(event)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
