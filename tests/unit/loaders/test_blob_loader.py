@@ -4,7 +4,7 @@ from griptape.loaders import BlobLoader
 
 
 class TestTextLoader:
-    @pytest.fixture(params=["utf-8", None])
+    @pytest.fixture(params=["utf-8", "ascii", None])
     def loader(self, request):
         encoding = request.param
         kwargs = {"encoding": encoding} if encoding is not None else {}
@@ -20,12 +20,10 @@ class TestTextLoader:
         artifact = loader.load(source)
 
         assert isinstance(artifact, BlobArtifact)
-        assert artifact.encoding == loader.encoding
         if loader.encoding is None:
-            with pytest.raises(TypeError):
-                artifact.to_text()
             assert artifact.value.decode("utf-8").startswith("foobar foobar foobar")
         else:
+            assert artifact.encoding == loader.encoding
             assert artifact.to_text().startswith("foobar foobar foobar")
 
     def test_load_collection(self, loader, create_source):
@@ -41,10 +39,8 @@ class TestTextLoader:
         artifact = collection[key]
 
         assert isinstance(artifact, BlobArtifact)
-        assert artifact.encoding == loader.encoding
         if loader.encoding is None:
-            with pytest.raises(TypeError):
-                artifact.to_text()
             assert artifact.value.decode("utf-8").startswith("foobar foobar foobar")
         else:
+            assert artifact.encoding == loader.encoding
             assert artifact.to_text().startswith("foobar foobar foobar")
