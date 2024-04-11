@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LocalFileManagerDriver` for managing files on the local file system.
 - Added optional `BaseLoader.encoding` field.
 - `BlobLoader` for loading arbitrary binary data as a `BlobArtifact`.
+- `model` field to `StartPromptEvent` and `FinishPromptEvent`.
+- `input_task_input` and `input_task_output` fields to `StartStructureRunEvent`.
+- `output_task_input` and `output_task_output` fields to `FinishStructureRunEvent`.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.

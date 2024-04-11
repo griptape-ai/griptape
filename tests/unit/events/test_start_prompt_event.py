@@ -9,7 +9,7 @@ class TestStartPromptEvent:
         prompt_stack = PromptStack()
         prompt_stack.add_user_input("foo")
         prompt_stack.add_system_input("bar")
-        return StartPromptEvent(token_count=123, prompt_stack=prompt_stack, prompt="foo bar")
+        return StartPromptEvent(token_count=123, prompt_stack=prompt_stack, prompt="foo bar", model="foo bar")
 
     def test_to_dict(self, start_prompt_event):
         assert "timestamp" in start_prompt_event.to_dict()
@@ -21,3 +21,4 @@ class TestStartPromptEvent:
         assert start_prompt_event.to_dict()["prompt_stack"]["inputs"][1]["role"] == "system"
 
         assert start_prompt_event.to_dict()["prompt"] == "foo bar"
+        assert start_prompt_event.to_dict()["model"] == "foo bar"

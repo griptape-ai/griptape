@@ -257,10 +257,16 @@ class Structure(ABC):
         return {"args": self.execution_args, "structure": self}
 
     def before_run(self) -> None:
-        self.publish_event(StartStructureRunEvent())
+        self.publish_event(
+            StartStructureRunEvent(input_task_input=self.input_task.input, input_task_output=self.input_task.output)
+        )
 
     def after_run(self) -> None:
-        self.publish_event(FinishStructureRunEvent())
+        self.publish_event(
+            FinishStructureRunEvent(
+                output_task_input=self.output_task.input, output_task_output=self.output_task.output
+            )
+        )
 
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask:
