@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from concurrent import futures
-from typing import Any
+from typing import Any, Optional
 from collections.abc import Mapping, Sequence
 
 from attr import define, field, Factory
@@ -15,6 +15,7 @@ from griptape.utils.hash import bytes_to_hash, str_to_hash
 @define
 class BaseLoader(ABC):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
+    encoding: Optional[str] = field(default=None, kw_only=True)
 
     @abstractmethod
     def load(self, source: Any, *args, **kwargs) -> BaseArtifact | Sequence[BaseArtifact]:

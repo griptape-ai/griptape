@@ -14,7 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GriptapeCloudEventListenerDriver` for sending events to Griptape Cloud.
 - `WebhookEventListenerDriver` for sending events to a webhook.
 - `LocalEventListenerDriver` for sending events to a callback function.
-
+- `BaseFileManagerDriver` to abstract file management operations.
+- `LocalFileManagerDriver` for managing files on the local file system.
+- Added optional `BaseLoader.encoding` field.
+- `BlobLoader` for loading arbitrary binary data as a `BlobArtifact`.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
@@ -25,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `FileManager.default_loader` is now `None` by default.
 - **BREAKING**: Replaced `EventListener.handler` with `EventListener.driver` and `LocalEventListenerDriver`.
 - Improved RAG performance in `VectorQueryEngine`.
+- **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
 
 ## [0.24.2] - 2024-04-04
 

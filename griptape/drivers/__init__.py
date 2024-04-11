@@ -93,6 +93,9 @@ from .event_listener.aws_iot_core_event_listener_driver import AwsIotCoreEventLi
 from .event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
 from .event_listener.local_event_listener_driver import LocalEventListenerDriver
 
+from .file_manager.base_file_manager_driver import BaseFileManagerDriver
+from .file_manager.local_file_manager_driver import LocalFileManagerDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -174,4 +177,6 @@ __all__ = [
     "AwsIotCoreEventListenerDriver",
     "GriptapeCloudEventListenerDriver",
     "LocalEventListenerDriver",
+    "BaseFileManagerDriver",
+    "LocalFileManagerDriver",
 ]
