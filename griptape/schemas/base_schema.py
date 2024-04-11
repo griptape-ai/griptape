@@ -107,8 +107,9 @@ class BaseSchema(Schema):
         from griptape.structures import Structure
         from griptape.utils import PromptStack
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
+        from typing import Any
 
-        boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else {}
+        boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
 
         attrs.resolve_types(
             attrs_cls,
