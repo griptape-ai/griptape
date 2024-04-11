@@ -8,7 +8,7 @@ from tests.utils.aws import mock_aws_credentials
 
 @mock_iotdata
 class TestAwsIotCoreEventListenerDriver:
-    @fixture()
+    @fixture(autouse=True)
     def run_before_and_after_tests(self):
         mock_aws_credentials()
 
