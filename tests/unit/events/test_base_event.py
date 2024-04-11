@@ -33,6 +33,7 @@ class TestBaseEvent:
             "token_count": 10,
             "prompt_stack": {"inputs": [{"content": "foo", "role": "user"}, {"content": "bar", "role": "system"}]},
             "prompt": "foo bar",
+            "model": "foo bar",
         }
 
         event = BaseEvent.from_dict(dict_value)
@@ -45,9 +46,16 @@ class TestBaseEvent:
         assert event.prompt_stack.inputs[1].content == "bar"
         assert event.prompt_stack.inputs[1].role == "system"
         assert event.prompt == "foo bar"
+        assert event.model == "foo bar"
 
     def test_finish_prompt_event_from_dict(self):
-        dict_value = {"type": "FinishPromptEvent", "timestamp": 123.0, "token_count": 10, "result": "foo bar"}
+        dict_value = {
+            "type": "FinishPromptEvent",
+            "timestamp": 123.0,
+            "token_count": 10,
+            "result": "foo bar",
+            "model": "foo bar",
+        }
 
         event = BaseEvent.from_dict(dict_value)
 
@@ -55,6 +63,7 @@ class TestBaseEvent:
         assert event.timestamp == 123
         assert event.token_count == 10
         assert event.result == "foo bar"
+        assert event.model == "foo bar"
 
     def test_start_task_event_from_dict(self):
         dict_value = {
@@ -103,6 +112,7 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
+        assert event.subtask_actions is not None
         assert event.subtask_actions[0]["tag"] == "foo"
         assert event.subtask_actions[0]["name"] == "qux"
         assert event.subtask_actions[0]["path"] == "foopath"
@@ -156,6 +166,7 @@ class TestBaseEvent:
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
         assert event.subtask_thought == "bar"
+        assert event.subtask_actions is not None
         assert event.subtask_actions[0]["tag"] == "foo"
         assert event.subtask_actions[0]["name"] == "qux"
         assert event.subtask_actions[0]["path"] == "foopath"
@@ -163,20 +174,36 @@ class TestBaseEvent:
         assert event.subtask_actions[0]["input"]["value"] == "quux"
 
     def test_start_structure_run_event_from_dict(self):
-        dict_value = {"type": "StartStructureRunEvent", "timestamp": 123.0}
+        dict_value = {
+            "type": "StartStructureRunEvent",
+            "timestamp": 123.0,
+            "input_task_input": {"type": "TextArtifact", "value": "foo"},
+            "input_task_output": {"type": "TextArtifact", "value": "bar"},
+        }
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, StartStructureRunEvent)
         assert event.timestamp == 123
+        assert isinstance(event.input_task_input, BaseArtifact)
+        assert event.input_task_input.value == "foo"
+        assert event.input_task_output.value == "bar"
 
     def test_finish_structure_run_event_from_dict(self):
-        dict_value = {"type": "FinishStructureRunEvent", "timestamp": 123.0}
+        dict_value = {
+            "type": "FinishStructureRunEvent",
+            "timestamp": 123.0,
+            "output_task_input": {"type": "TextArtifact", "value": "foo"},
+            "output_task_output": {"type": "TextArtifact", "value": "bar"},
+        }
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, FinishStructureRunEvent)
         assert event.timestamp == 123
+        assert isinstance(event.output_task_input, BaseArtifact)
+        assert event.output_task_input.value == "foo"
+        assert event.output_task_output.value == "bar"
 
     def test_completion_chunk_event_from_dict(self):
         dict_value = {"type": "CompletionChunkEvent", "timestamp": 123.0, "token": "foo"}

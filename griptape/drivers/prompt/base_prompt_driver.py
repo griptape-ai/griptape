@@ -57,6 +57,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         if self.structure:
             self.structure.publish_event(
                 StartPromptEvent(
+                    model=self.model,
                     token_count=self.token_count(prompt_stack),
                     prompt_stack=prompt_stack,
                     prompt=self.prompt_stack_to_string(prompt_stack),
@@ -66,7 +67,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def after_run(self, result: TextArtifact) -> None:
         if self.structure:
             self.structure.publish_event(
-                FinishPromptEvent(token_count=result.token_count(self.tokenizer), result=result.value)
+                FinishPromptEvent(model=self.model, token_count=result.token_count(self.tokenizer), result=result.value)
             )
 
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
