@@ -17,7 +17,7 @@ class TestVariationImageGenerationTask:
 
     @pytest.fixture
     def image_artifact(self):
-        return ImageArtifact(value=b"some image data", mime_type="image/png", width=512, height=512)
+        return ImageArtifact(value=b"some image data", format="png", width=512, height=512)
 
     def test_artifact_inputs(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
         input_tuple = (text_artifact, image_artifact)

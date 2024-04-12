@@ -44,7 +44,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         return ImageArtifact(
             prompt=", ".join(prompts),
             value=image_bytes,
-            mime_type="image/png",
+            format="png",
             width=self.image_width,
             height=self.image_height,
             model=self.model,
@@ -62,7 +62,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         return ImageArtifact(
             prompt=", ".join(prompts),
             value=image_bytes,
-            mime_type="image/png",
+            format="png",
             width=image.width,
             height=image.height,
             model=self.model,
@@ -84,7 +84,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         return ImageArtifact(
             prompt=", ".join(prompts),
             value=image_bytes,
-            mime_type="image/png",
+            format="png",
             width=image.width,
             height=image.height,
             model=self.model,
@@ -106,7 +106,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         return ImageArtifact(
             prompt=", ".join(prompts),
             value=image_bytes,
-            mime_type="image/png",
+            format="png",
             width=image.width,
             height=image.height,
             model=self.model,

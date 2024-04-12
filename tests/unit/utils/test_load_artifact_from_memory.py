@@ -17,7 +17,7 @@ class TestLoadImageArtifactFromMemory:
 
     @pytest.fixture
     def image_artifact(self):
-        return ImageArtifact(value=b"image", name="image", mime_type="image/png", height=32, width=32)
+        return ImageArtifact(value=b"image", name="image", format="png", height=32, width=32)
 
     def test_no_memory(self):
         with pytest.raises(ValueError):

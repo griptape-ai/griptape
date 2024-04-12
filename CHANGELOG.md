@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `input_task_input` and `input_task_output` fields to `StartStructureRunEvent`.
 - `output_task_input` and `output_task_output` fields to `FinishStructureRunEvent`.
 - `AmazonS3FileManagerDriver` for managing files on Amazon S3.
+- `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
@@ -33,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Replaced `EventListener.handler` with `EventListener.driver` and `LocalEventListenerDriver`.
 - Improved RAG performance in `VectorQueryEngine`.
 - **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
+- **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
 
 ## [0.24.2] - 2024-04-04
 

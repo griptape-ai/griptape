@@ -45,9 +45,7 @@ class ImageLoader(BaseLoader):
             image = Image.open(byte_stream)
             source = byte_stream.getvalue()
 
-        image_artifact = ImageArtifact(
-            source, mime_type=self._get_mime_type(image.format), width=image.width, height=image.height
-        )
+        image_artifact = ImageArtifact(source, format=image.format.lower(), width=image.width, height=image.height)
 
         return image_artifact
 

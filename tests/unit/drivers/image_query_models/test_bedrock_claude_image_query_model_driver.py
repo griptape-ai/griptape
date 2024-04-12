@@ -10,7 +10,7 @@ class TestBedrockClaudeImageQueryModelDriver:
     def test_image_query_request_parameters(self):
         model_driver = BedrockClaudeImageQueryModelDriver()
         params = model_driver.image_query_request_parameters(
-            "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)], 256
+            "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100, format="png")], 256
         )
 
         assert isinstance(params, dict)

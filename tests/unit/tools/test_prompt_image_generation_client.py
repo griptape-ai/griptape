@@ -23,7 +23,7 @@ class TestPromptImageGenerationClient:
 
     def test_generate_image(self, image_generator) -> None:
         image_generator.engine.run.return_value = Mock(
-            value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
+            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
         image_artifact = image_generator.generate_image(
@@ -37,7 +37,7 @@ class TestPromptImageGenerationClient:
         image_generator = PromptImageGenerationClient(engine=image_generation_engine, output_file=outfile)
 
         image_generator.engine.run.return_value = Mock(  # pyright: ignore
-            value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
+            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
         image_artifact = image_generator.generate_image(
