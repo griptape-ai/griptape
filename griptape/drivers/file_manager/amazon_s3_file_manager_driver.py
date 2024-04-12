@@ -43,6 +43,30 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
                 raise FileNotFoundError
         return files_and_dirs
 
+    def try_load_file(self, path: str) -> bytes:
+        botocore = import_optional_dependency("botocore")
+        full_key = self._to_full_key(path)
+
+        if self._is_a_directory(full_key):
+            raise IsADirectoryError
+
+        try:
+            response = self.s3_client.get_object(Bucket=self.bucket, Key=full_key)
+            return response["Body"].read()
+        except botocore.exceptions.ClientError as e:
+            if e.response["Error"]["Code"] in {"NoSuchKey", "404"}:
+                raise FileNotFoundError
+            else:
+                raise e
+        except Exception as e:
+            raise e
+
+    def try_save_file(self, path: str, value: bytes):
+        full_key = self._to_full_key(path)
+        if self._is_a_directory(full_key):
+            raise IsADirectoryError
+        self.s3_client.put_object(Bucket=self.bucket, Key=full_key, Body=value)
+
     def _to_full_key(self, path: str) -> str:
         path = path.lstrip("/")
         full_key = os.path.join(self.workdir, path)
@@ -83,30 +107,6 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
                 file = key[len(full_key) :]
                 files_and_dirs.append(file)
         return files_and_dirs
-
-    def try_load_file(self, path: str) -> bytes:
-        botocore = import_optional_dependency("botocore")
-        full_key = self._to_full_key(path)
-
-        if self._is_a_directory(full_key):
-            raise IsADirectoryError
-
-        try:
-            response = self.s3_client.get_object(Bucket=self.bucket, Key=full_key)
-            return response["Body"].read()
-        except botocore.exceptions.ClientError as e:
-            if e.response["Error"]["Code"] in {"NoSuchKey", "404"}:
-                raise FileNotFoundError
-            else:
-                raise e
-        except Exception as e:
-            raise e
-
-    def try_save_file(self, path: str, value: bytes):
-        full_key = self._to_full_key(path)
-        if self._is_a_directory(full_key):
-            raise IsADirectoryError
-        self.s3_client.put_object(Bucket=self.bucket, Key=full_key, Body=value)
 
     def _is_a_directory(self, full_key: str) -> bool:
         botocore = import_optional_dependency("botocore")
