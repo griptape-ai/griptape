@@ -49,6 +49,10 @@ class BaseFileManagerDriver(ABC):
         except Exception as e:
             return ErrorArtifact(f"Failed to list files: {str(e)}")
 
+    @abstractmethod
+    def try_list_files(self, path: str) -> list[str]:
+        ...
+
     def load_file(self, path: str) -> BaseArtifact:
         try:
             extension = path.split(".")[-1]
@@ -68,6 +72,10 @@ class BaseFileManagerDriver(ABC):
             return ErrorArtifact("Not a directory")
         except Exception as e:
             return ErrorArtifact(f"Failed to load file: {str(e)}")
+
+    @abstractmethod
+    def try_load_file(self, path: str) -> bytes:
+        ...
 
     def save_file(self, path: str, value: bytes | str) -> InfoArtifact | ErrorArtifact:
         try:
@@ -90,14 +98,6 @@ class BaseFileManagerDriver(ABC):
             return ErrorArtifact("Path is a directory")
         except Exception as e:
             return ErrorArtifact(f"Failed to save file: {str(e)}")
-
-    @abstractmethod
-    def try_list_files(self, path: str) -> list[str]:
-        ...
-
-    @abstractmethod
-    def try_load_file(self, path: str) -> bytes:
-        ...
 
     @abstractmethod
     def try_save_file(self, path: str, value: bytes):
