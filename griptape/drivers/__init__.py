@@ -95,6 +95,7 @@ from .event_listener.local_event_listener_driver import LocalEventListenerDriver
 
 from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
+from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -179,4 +180,5 @@ __all__ = [
     "LocalEventListenerDriver",
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
+    "AmazonS3FileManagerDriver",
 ]

@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `model` field to `StartPromptEvent` and `FinishPromptEvent`.
 - `input_task_input` and `input_task_output` fields to `StartStructureRunEvent`.
 - `output_task_input` and `output_task_output` fields to `FinishStructureRunEvent`.
+- `AmazonS3FileManagerDriver` for managing files on Amazon S3.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.

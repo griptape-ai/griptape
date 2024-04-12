@@ -68,6 +68,8 @@ class BaseFileManagerDriver(ABC):
             return ErrorArtifact("Path not found")
         except IsADirectoryError:
             return ErrorArtifact("Path is a directory")
+        except NotADirectoryError:
+            return ErrorArtifact("Not a directory")
         except Exception as e:
             return ErrorArtifact(f"Failed to load file: {str(e)}")
 
@@ -92,6 +94,8 @@ class BaseFileManagerDriver(ABC):
             self.try_save_file(path, value)
 
             return InfoArtifact("Successfully saved file")
+        except IsADirectoryError:
+            return ErrorArtifact("Path is a directory")
         except Exception as e:
             return ErrorArtifact(f"Failed to save file: {str(e)}")
 
