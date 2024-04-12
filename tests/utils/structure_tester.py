@@ -72,37 +72,37 @@ class StructureTester:
         ),
         "AZURE_CHAT_35_TURBO": TesterPromptDriverOption(
             prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
                 model="gpt-35-turbo",
                 azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
             ),
             enabled=True,
         ),
-        "AZURE_CHAT_35_TURBO_16k": TesterPromptDriverOption(
+        "AZURE_CHAT_35_TURBO_16K": TesterPromptDriverOption(
             prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
                 model="gpt-35-turbo-16k",
-                azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16k_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+                azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID"],
+                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
             ),
             enabled=True,
         ),
         "AZURE_CHAT_4": TesterPromptDriverOption(
             prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
                 model="gpt-4",
                 azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
             ),
             enabled=True,
         ),
-        "AZURE_CHAT_4_32k": TesterPromptDriverOption(
+        "AZURE_CHAT_4_32K": TesterPromptDriverOption(
             prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
                 model="gpt-4-32k",
-                azure_deployment=os.environ["AZURE_OPENAI_4_32k_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+                azure_deployment=os.environ["AZURE_OPENAI_4_32K_DEPLOYMENT_ID"],
+                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
             ),
             enabled=True,
         ),
@@ -216,7 +216,7 @@ class StructureTester:
             PROMPT_DRIVERS["OPENAI_CHAT_4"],
             PROMPT_DRIVERS["OPENAI_CHAT_4_1106_PREVIEW"],
             PROMPT_DRIVERS["AZURE_CHAT_4"],
-            PROMPT_DRIVERS["AZURE_CHAT_4_32k"],
+            PROMPT_DRIVERS["AZURE_CHAT_4_32K"],
             PROMPT_DRIVERS["ANTHROPIC_CLAUDE_3_OPUS"],
             PROMPT_DRIVERS["GOOGLE_GEMINI_PRO"],
         ]
@@ -274,10 +274,10 @@ class StructureTester:
                 ),
             ],
             prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY"],
+                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
                 model="gpt-4",
                 azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_API_BASE"],
+                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
                 response_format="json_object",
             ),
             tasks=[

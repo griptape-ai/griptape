@@ -1,0 +1,29 @@
+<div id="swagger-ui"></div>
+
+
+<script>
+window.onload = function() {
+  const ui = SwaggerUIBundle({
+    url: "{{ spec_url }}",
+    dom_id: '#swagger-ui',
+    deepLinking: true,
+    presets: [
+      SwaggerUIBundle.presets.apis,
+      SwaggerUIStandalonePreset
+    ],
+    plugins: [
+      SwaggerUIBundle.plugins.DownloadUrl
+    ],
+    layout: "StandaloneLayout"
+  })
+  window.ui = ui
+  let elem1 = document.getElementsByClassName("download-url-wrapper");
+  while(elem1.length > 0){
+    elem1[0].parentNode.removeChild(elem1[0]);
+  }
+  let elem2 = document.getElementsByClassName("topbar");
+  while(elem2.length > 0){
+    elem2[0].parentNode.removeChild(elem2[0]);
+  }
+}
+</script>

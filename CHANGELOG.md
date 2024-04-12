@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved RAG performance in `VectorQueryEngine`.
 - **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
 - **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
+- Moved [Griptape Docs](https://github.com/griptape-ai/griptape-docs) to this repository.
 
 ## [0.24.2] - 2024-04-04
 
