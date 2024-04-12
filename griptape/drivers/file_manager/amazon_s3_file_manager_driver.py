@@ -58,8 +58,6 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
                 raise FileNotFoundError
             else:
                 raise e
-        except Exception as e:
-            raise e
 
     def try_save_file(self, path: str, value: bytes):
         full_key = self._to_full_key(path)
@@ -120,4 +118,5 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
                 return len(self._list_files_and_dirs(full_key, max_items=1)) > 0
             else:
                 raise e
+
         return False
