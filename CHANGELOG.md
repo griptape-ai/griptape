@@ -1,3 +1,12 @@
+# WIP Changelog
+
+### Added
+- `RagEngine`
+- `RagContext`
+- RAG stages
+- RAG modules
+- `utils.execute_futures_list`
+
 # Changelog
 All notable changes to this project will be documented in this file.
 

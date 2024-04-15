@@ -12,5 +12,5 @@ class TestFutures:
             assert result["foo"] == "foo-bar"
             assert result["baz"] == "baz-bar"
 
-    def foobar(self, foo):
-        return f"{foo}-bar"
+    def test_execute_futures_dict(self):
+        assert False
