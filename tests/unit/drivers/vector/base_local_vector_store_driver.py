@@ -1,13 +1,13 @@
+from abc import ABC, abstractmethod
 import pytest
 from griptape.artifacts import TextArtifact, BaseArtifact
-from griptape.drivers import LocalVectorStoreDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestLocalVectorStoreDriver:
+class BaseLocalVectorStoreDriver(ABC):
     @pytest.fixture
+    @abstractmethod
     def driver(self):
-        return LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
+        ...
 
     def test_upsert(self, driver):
         namespace = driver.upsert_text_artifact(TextArtifact("foobar"))
@@ -16,6 +16,10 @@ class TestLocalVectorStoreDriver:
         assert list(driver.entries.keys())[0] == namespace
 
         driver.upsert_text_artifact(TextArtifact("foobar"))
+
+        assert len(driver.entries) == 1
+
+        driver.upsert_text_artifact(TextArtifact("foobar2"))
 
         assert len(driver.entries) == 2
 

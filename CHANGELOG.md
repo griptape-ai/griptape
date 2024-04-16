@@ -6,6 +6,10 @@
 - RAG stages
 - RAG modules
 - `utils.execute_futures_list`
+- `LocalVectorStoreDriver.persist_file`
+
+### Changed
+- All vector store driver now don't generate embeddings if the value to be stored didn't change.
 
 # Changelog
 All notable changes to this project will be documented in this file.

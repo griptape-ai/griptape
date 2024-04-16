@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
 from attr import define, field, Factory
-from typing import Optional
+from typing import Optional, Any
 from griptape import utils
 from griptape.mixins import SerializableMixin
 from griptape.artifacts import TextArtifact
@@ -29,6 +29,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         meta: Optional[dict] = None
         namespace: Optional[str] = None
 
+        @staticmethod
+        def from_dict(data: dict[str, Any]) -> BaseVectorStoreDriver.Entry:
+            return BaseVectorStoreDriver.Entry(**data)
+
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
@@ -44,22 +48,30 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         )
 
     def upsert_text_artifact(
-        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+            self,
+            artifact: TextArtifact,
+            namespace: Optional[str] = None,
+            meta: Optional[dict] = None,
+            vector_id: Optional[str] = None,
+            **kwargs
     ) -> str:
-        if not meta:
-            meta = {}
+        meta = meta if meta else {}
+        vector_id = vector_id if vector_id else utils.str_to_hash(str(artifact.value))
 
-        meta["artifact"] = artifact.to_json()
-
-        if artifact.embedding:
-            vector = artifact.embedding
+        if self.does_entry_exist(vector_id, namespace):
+            return vector_id
         else:
-            vector = artifact.generate_embedding(self.embedding_driver)
+            meta["artifact"] = artifact.to_json()
 
-        if isinstance(vector, list):
-            return self.upsert_vector(vector, vector_id=artifact.id, namespace=namespace, meta=meta, **kwargs)
-        else:
-            raise ValueError("Vector must be an instance of 'list'.")
+            if artifact.embedding:
+                vector = artifact.embedding
+            else:
+                vector = artifact.generate_embedding(self.embedding_driver)
+
+            if isinstance(vector, list):
+                return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
+            else:
+                raise ValueError("Vector must be an instance of 'list'.")
 
     def upsert_text(
         self,
@@ -69,13 +81,24 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        return self.upsert_vector(
-            self.embedding_driver.embed_string(string),
-            vector_id=vector_id,
-            namespace=namespace,
-            meta=meta if meta else {},
-            **kwargs,
-        )
+        vector_id = vector_id if vector_id else utils.str_to_hash(string)
+
+        if self.does_entry_exist(vector_id, namespace):
+            return vector_id
+        else:
+            return self.upsert_vector(
+                self.embedding_driver.embed_string(string),
+                vector_id=vector_id,
+                namespace=namespace,
+                meta=meta if meta else {},
+                **kwargs,
+            )
+
+    def does_entry_exist(self, vector_id: str, namespace: Optional[str] = None) -> bool:
+        if self.load_entry(vector_id, namespace):
+            return True
+        else:
+            return False
 
     @abstractmethod
     def delete_vector(self, vector_id: str) -> None:

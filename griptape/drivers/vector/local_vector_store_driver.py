@@ -1,4 +1,7 @@
-from typing import Optional, Callable
+import json
+import os
+from dataclasses import asdict
+from typing import Optional, Callable, TextIO
 from numpy import dot
 from numpy.linalg import norm
 from griptape import utils
@@ -6,10 +9,35 @@ from griptape.drivers import BaseVectorStoreDriver
 from attr import define, field
 
 
-@define
+@define(kw_only=True)
 class LocalVectorStoreDriver(BaseVectorStoreDriver):
-    entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict, kw_only=True)
-    relatedness_fn: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)), kw_only=True)
+    entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict)
+    persist_file: Optional[str] = field(default=None)
+    relatedness_fn: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)))
+
+    def __attrs_post_init__(self) -> None:
+        if self.persist_file:
+            directory = os.path.dirname(self.persist_file)
+
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
+
+            if not os.path.isfile(self.persist_file):
+                with open(self.persist_file, "w") as file:
+                    self.save_entries_to_file(file)
+
+            with open(self.persist_file, "r") as file:
+                self.entries = self.load_entries_from_file(file)
+
+    def save_entries_to_file(self, json_file: TextIO) -> None:
+        serialized_data = {k: asdict(v) for k, v in self.entries.items()}
+
+        json.dump(serialized_data, json_file)
+
+    def load_entries_from_file(self, json_file: TextIO) -> dict[str, BaseVectorStoreDriver.Entry]:
+        data = json.load(json_file)
+
+        return {k: BaseVectorStoreDriver.Entry.from_dict(v) for k, v in data.items()}
 
     def upsert_vector(
         self,
@@ -24,6 +52,11 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
             id=vector_id, vector=vector, meta=meta, namespace=namespace
         )
+
+        if self.persist_file:
+            # TODO: optimize as this is hugely inefficient but is okay for local development
+            with open(self.persist_file, "w") as file:
+                self.save_entries_to_file(file)
 
         return vector_id
 
