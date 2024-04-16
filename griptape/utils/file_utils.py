@@ -21,6 +21,7 @@ def load_files(paths: list[str], futures_executor: Optional[futures.ThreadPoolEx
 
     Args:
         paths: The paths to the files to load.
+        futures_executor: The executor to use for concurrent loading. If None, a new ThreadPoolExecutor will be created.
 
     Returns:
         A dictionary where the keys are a hash of the path and the values are the content of the files.
