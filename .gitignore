@@ -53,3 +53,7 @@ dist/**
 
 # asdf
 .tool-versions
+
+# mkdocs build output
+site
+reference
