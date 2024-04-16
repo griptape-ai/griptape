@@ -1,5 +1,6 @@
 import griptape.utils as utils
 from concurrent import futures
+from typing import Optional
 
 
 def load_file(path: str) -> bytes:
@@ -15,7 +16,7 @@ def load_file(path: str) -> bytes:
         return f.read()
 
 
-def load_files(paths: list[str]) -> dict[str, bytes]:
+def load_files(paths: list[str], futures_executor: Optional[futures.ThreadPoolExecutor] = None) -> dict[str, bytes]:
     """Load multiple files concurrently and return a dictionary of their content.
 
     Args:
@@ -25,7 +26,8 @@ def load_files(paths: list[str]) -> dict[str, bytes]:
         A dictionary where the keys are a hash of the path and the values are the content of the files.
     """
 
-    futures_executor = futures.ThreadPoolExecutor()
+    if futures_executor is None:
+        futures_executor = futures.ThreadPoolExecutor()
 
     return utils.execute_futures_dict(
         {utils.str_to_hash(str(path)): futures_executor.submit(load_file, path) for path in paths}
