@@ -1,12 +1,13 @@
 import json
 import os
+import threading
 from dataclasses import asdict
 from typing import Optional, Callable, TextIO
 from numpy import dot
 from numpy.linalg import norm
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
-from attr import define, field
+from attr import define, field, Factory
 
 
 @define(kw_only=True)
@@ -14,6 +15,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict)
     persist_file: Optional[str] = field(default=None)
     relatedness_fn: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)))
+    thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
 
     def __attrs_post_init__(self) -> None:
         if self.persist_file:
@@ -26,13 +28,17 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
                 with open(self.persist_file, "w") as file:
                     self.save_entries_to_file(file)
 
-            with open(self.persist_file, "r") as file:
-                self.entries = self.load_entries_from_file(file)
+            with open(self.persist_file, "r+") as file:
+                if os.path.getsize(self.persist_file) > 0:
+                    self.entries = self.load_entries_from_file(file)
+                else:
+                    self.save_entries_to_file(file)
 
     def save_entries_to_file(self, json_file: TextIO) -> None:
-        serialized_data = {k: asdict(v) for k, v in self.entries.items()}
+        with self.thread_lock:
+            serialized_data = {k: asdict(v) for k, v in self.entries.items()}
 
-        json.dump(serialized_data, json_file)
+            json.dump(serialized_data, json_file)
 
     def load_entries_from_file(self, json_file: TextIO) -> dict[str, BaseVectorStoreDriver.Entry]:
         data = json.load(json_file)
@@ -49,9 +55,10 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
 
-        self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
-            id=vector_id, vector=vector, meta=meta, namespace=namespace
-        )
+        with self.thread_lock:
+            self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
+                id=vector_id, vector=vector, meta=meta, namespace=namespace
+            )
 
         if self.persist_file:
             # TODO: optimize as this is hugely inefficient but is okay for local development
