@@ -31,7 +31,7 @@ dateparser = "^1.1.8"
 requests = "^2"
 
 # drivers
-cohere = { version = ">=4", optional = true }
+cohere = { version = ">=5", optional = true }
 anthropic = { version = "^0.20.0", optional = true }
 transformers = { version = "^4.30", optional = true }
 huggingface-hub = { version = ">=0.13", optional = true }
@@ -91,6 +91,8 @@ drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"
 
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
+
+drivers-rerank-cohere = ["cohere"]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]

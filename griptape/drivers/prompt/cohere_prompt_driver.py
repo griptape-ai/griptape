@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from cohere import Client
 
 
-@define
+@define(kw_only=True)
 class CoherePromptDriver(BasePromptDriver):
     """
     Attributes:
@@ -21,15 +21,12 @@ class CoherePromptDriver(BasePromptDriver):
         tokenizer: Custom `CohereTokenizer`.
     """
 
-    api_key: str = field(kw_only=True, metadata={"serializable": True})
-    model: str = field(kw_only=True, metadata={"serializable": True})
+    api_key: str = field(metadata={"serializable": True})
     client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
-        kw_only=True,
+        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True)
     )
     tokenizer: CohereTokenizer = field(
-        default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
-        kw_only=True,
+        default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True)
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:

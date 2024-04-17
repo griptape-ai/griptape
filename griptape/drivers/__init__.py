@@ -97,6 +97,9 @@ from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
 
+from .rerank.base_rerank_driver import BaseRerankDriver
+from .rerank.cohere_rerank_driver import CohereRerankDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -181,4 +184,6 @@ __all__ = [
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
+    "BaseRerankDriver",
+    "CohereRerankDriver"
 ]

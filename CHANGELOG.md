@@ -7,6 +7,8 @@
 - RAG modules
 - `utils.execute_futures_list`
 - `LocalVectorStoreDriver.persist_file`
+- `QueryResult.to_artifact`
+- `CohereRerankDriver`
 
 ### Changed
 - All vector store driver now don't generate embeddings if the value to be stored didn't change.

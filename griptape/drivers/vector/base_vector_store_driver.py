@@ -6,7 +6,7 @@ from attr import define, field, Factory
 from typing import Optional, Any
 from griptape import utils
 from griptape.mixins import SerializableMixin
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact
 from griptape.drivers import BaseEmbeddingDriver
 
 
@@ -21,6 +21,12 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         score: float
         meta: Optional[dict] = None
         namespace: Optional[str] = None
+
+        def to_artifact(self) -> Optional[BaseArtifact]:
+            try:
+                return BaseArtifact.from_json(self.meta["artifact"])
+            except:
+                return None
 
     @dataclass
     class Entry:
