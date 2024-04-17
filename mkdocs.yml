@@ -1,0 +1,153 @@
+site_name: Griptape Docs
+hooks:
+  - docs/plugins/swagger_ui_plugin.py
+plugins:
+  - glightbox
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["griptape"]
+          options:
+            show_if_no_docstring: true
+            heading_level: 3
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+copyright: "&copy; Griptape, Inc."
+extra_css:
+  - assets/css/extra.css
+  - assets/css/code_select.css
+  - assets/css/mkdocstrings.css
+  - assets/css/swagger-ui.css
+extra_javascript:
+  - assets/scripts/swagger-ui-bundle.js
+  - assets/scripts/swagger-ui-standalone-preset.js
+extra:
+  analytics:
+    provider: google
+    property: G-QM8EDPSCB6
+  social:
+    - icon: fontawesome/solid/house
+      link: https://www.griptape.ai
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/gnWRz88eym
+    - icon: fontawesome/brands/github
+      link: https://github.com/griptape-ai/griptape/
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/griptape/
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/img/griptape-mark-square-light.svg
+  palette:
+    scheme: slate
+    primary: black
+    accent: deep orange
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - announce.dismiss
+    - toc.follow
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - admonition
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed
+  - tables
+  - def_list
+  - footnotes
+nav:
+  - Home:
+      - Overview: "index.md"
+      - Contributing: "contributing.md"
+  - Framework:
+      - Overview: "griptape-framework/index.md"
+      - Structures:
+          - Agents: "griptape-framework/structures/agents.md"
+          - Pipelines: "griptape-framework/structures/pipelines.md"
+          - Workflows: "griptape-framework/structures/workflows.md"
+          - Tasks: "griptape-framework/structures/tasks.md"
+          - Task Memory: "griptape-framework/structures/task-memory.md"
+          - Conversation Memory: "griptape-framework/structures/conversation-memory.md"
+          - Rulesets: "griptape-framework/structures/rulesets.md"
+          - Config: "griptape-framework/structures/config.md"
+      - Tools:
+          - Overview: "griptape-framework/tools/index.md"
+          - Building Custom Tools: "griptape-tools/custom-tools/index.md"
+      - Engines:
+          - Query Engines: "griptape-framework/engines/query-engines.md"
+          - Extraction Engines: "griptape-framework/engines/extraction-engines.md"
+          - Summary Engines: "griptape-framework/engines/summary-engines.md"
+          - Image Generation Engines: "griptape-framework/engines/image-generation-engines.md"
+          - Image Query Engines: "griptape-framework/engines/image-query-engines.md"
+      - Drivers:
+          - Prompt Drivers: "griptape-framework/drivers/prompt-drivers.md"
+          - Embedding Drivers: "griptape-framework/drivers/embedding-drivers.md"
+          - Vector Store Drivers: "griptape-framework/drivers/vector-store-drivers.md"
+          - Image Generation Drivers: "griptape-framework/drivers/image-generation-drivers.md"
+          - SQL Drivers: "griptape-framework/drivers/sql-drivers.md"
+          - Image Query Drivers: "griptape-framework/drivers/image-query-drivers.md"
+          - Web Scraper Drivers: "griptape-framework/drivers/web-scraper-drivers.md"
+      - Data:
+          - Overview: "griptape-framework/data/index.md"
+          - Artifacts: "griptape-framework/data/artifacts.md"
+          - Chunkers: "griptape-framework/data/chunkers.md"
+          - Loaders: "griptape-framework/data/loaders.md"
+      - Misc:
+          - Events: "griptape-framework/misc/events.md"
+          - Tokenizers: "griptape-framework/misc/tokenizers.md"
+  - Tools:
+      - Overview: "griptape-tools/index.md"
+      - Official Tools:
+          - AwsIamClient: "griptape-tools/official-tools/aws-iam-client.md"
+          - AwsS3Client: "griptape-tools/official-tools/aws-s3-client.md"
+          - Calculator: "griptape-tools/official-tools/calculator.md"
+          - Computer: "griptape-tools/official-tools/computer.md"
+          - DateTime: "griptape-tools/official-tools/date-time.md"
+          - EmailClient: "griptape-tools/official-tools/email-client.md"
+          - FileManager: "griptape-tools/official-tools/file-manager.md"
+          - GoogleCalendarClient: "griptape-tools/official-tools/google-cal-client.md"
+          - GoogleGmailClient: "griptape-tools/official-tools/google-gmail-client.md"
+          - GoogleDriveClient: "griptape-tools/official-tools/google-drive-client.md"
+          - GoogleDocsClient: "griptape-tools/official-tools/google-docs-client.md"
+          - OpenWeatherClient: "griptape-tools/official-tools/openweather-client.md"
+          - RestApiClient: "griptape-tools/official-tools/rest-api-client.md"
+          - SqlClient: "griptape-tools/official-tools/sql-client.md"
+          - TaskMemoryClient: "griptape-tools/official-tools/task-memory-client.md"
+          - VectorStoreClient: "griptape-tools/official-tools/vector-store-client.md"
+          - WebScraper: "griptape-tools/official-tools/web-scraper.md"
+          - WebSearch: "griptape-tools/official-tools/web-search.md"
+          - PromptImageGenerationClient: "griptape-tools/official-tools/prompt-image-generation-client.md"
+          - VariationImageGenerationClient: "griptape-tools/official-tools/variation-image-generation-client.md"
+          - InpaintingImageGenerationClient: "griptape-tools/official-tools/inpainting-image-generation-client.md"
+          - OutpaintingImageGenerationClient: "griptape-tools/official-tools/outpainting-image-generation-client.md"
+          - ImageQueryClient: "griptape-tools/official-tools/image-query-client.md"
+      - Custom Tools:
+          - Building Custom Tools: "griptape-tools/custom-tools/index.md"
+  - Recipes:
+      - Overview: "examples/index.md"
+      - Agents:
+          - Talk to Redshift: "examples/talk-to-redshift.md"
+          - Talk to a Webpage: "examples/talk-to-a-webpage.md"
+          - Talk to a PDF: "examples/talk-to-a-pdf.md"
+          - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
+      - Data:
+          - Load and Query Pinecone: "examples/load-and-query-pinecone.md"
+          - Load and Query Marqo: "examples/load-query-and-chat-marqo.md"
+          - Query a Webpage: "examples/query-webpage.md"
+  - Reference Guide: "reference/"
+  - Trade School: "https://learn.griptape.ai"

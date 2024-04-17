@@ -35,3 +35,7 @@ runs:
           source .venv/bin/activate
           echo PATH=$PATH >> $GITHUB_ENV
         shell: bash
+
+      - name: Install playwright
+        run: playwright install --with-deps
+        shell: bash

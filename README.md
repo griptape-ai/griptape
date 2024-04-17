@@ -146,7 +146,7 @@ The important thing to note here is that no matter how big the webpage is it can
 
 All Tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `TaskMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
-[Check out our docs](https://docs.griptape.ai/latest/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
+[Check out our docs](https://docs.griptape.ai/latest/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
 ## Versioning
 
@@ -176,7 +176,7 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 3. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
 
-4. **Documentation:** Every pull request must include a corresponding pull request in the [docs repository](https://github.com/griptape-ai/griptape-docs) or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
+4. **Documentation:** Every pull request must include updates to documentation or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
 
 5. **Code Style:** Griptape uses [Black](https://github.com/ambv/black) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
 
