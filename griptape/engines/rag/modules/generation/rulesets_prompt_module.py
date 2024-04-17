@@ -6,7 +6,7 @@ from griptape.utils import J2
 
 
 @define
-class RulesetPromptModule(BaseGenerationModule):
+class RulesetsPromptModule(BaseGenerationModule):
     rulesets: list[Ruleset] = field(kw_only=True)
 
     def generate(self, context: RagContext) -> RagContext:
