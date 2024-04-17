@@ -8,7 +8,7 @@ This code implements the idea of a generic "Session" that represents a Conversat
 
 ```python
 import os
-import sys
+import argparse
 
 import boto3
 from griptape.drivers import (
@@ -17,8 +17,13 @@ from griptape.drivers import (
 from griptape.structures import Agent
 from griptape.memory.structure import ConversationMemory
 
-input = sys.argv[1]
-session_id = sys.argv[2]
+parser = argparse.ArgumentParser()
+parser.add_argument("input", type=str, help="The input to be passed to the Structure.")
+parser.add_argument("session_id", type=str, nargs="?", default="default-session-id", help="The session identifier.")
+args = parser.parse_args()
+
+input = args.input
+session_id = args.session_id
 
 structure = Agent(
     conversation_memory=ConversationMemory(
@@ -27,10 +32,10 @@ structure = Agent(
                 aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
                 aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
             ),
-            table_name="conversation-memory", # The name of the DynamoDB table.
-            partition_key="session-id", # The name of the partition key.
-            partition_key_value=session_id, # The value of the partition key.
-            value_attribute_key="value", # The key in the DynamoDB item that stores the memory value.
+            table_name="conversation-memory",  # The name of the DynamoDB table
+            partition_key="session-id",  # The name of the partition key
+            partition_key_value=session_id,  # The value of the partition key
+            value_attribute_key="value",  # The key in the DynamoDB item that stores the memory value
         )
     )
 )
