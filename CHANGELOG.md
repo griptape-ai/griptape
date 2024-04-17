@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `output_task_input` and `output_task_output` fields to `FinishStructureRunEvent`.
 - `AmazonS3FileManagerDriver` for managing files on Amazon S3.
 - `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
-- Added optional `exception` field to `ErrorArtifact`.
+- Optional `exception` field to `ErrorArtifact`.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
