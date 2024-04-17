@@ -1,15 +1,11 @@
 name: Docs Integration Tests
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-    branches: [ "main", "dev" ]
-    paths:
-      - "docs/**"
+  issue_comment:
+    types: [created]
 jobs:
   test:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/deploy')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
