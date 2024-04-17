@@ -1,4 +1,4 @@
-from .base_retriever import BaseRetriever
+from .base_retrieval_module import BaseRetriever
 
 __all__ = [
     "BaseRetriever"

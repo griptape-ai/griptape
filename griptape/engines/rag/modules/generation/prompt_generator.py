@@ -1,14 +1,14 @@
-from typing import Callable, Optional
+from typing import Callable
 from attr import define, field, Factory
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseGenerator
+from griptape.engines.rag.modules import BaseGenerationModule
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.utils import PromptStack, J2
 
 
 @define(kw_only=True)
-class PromptGenerator(BaseGenerator):
+class PromptGenerator(BaseGenerationModule):
     answer_token_offset: int = field(default=400, kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
@@ -20,8 +20,8 @@ class PromptGenerator(BaseGenerator):
 
     def generate(self, context: RagContext) -> RagContext:
         query = context.query
-        before_text_query = []
-        after_text_query = []
+        before_query = context.before_query
+        after_query = context.after_query
         text_artifact_chunks = context.text_chunks
 
         if query and text_artifact_chunks:
@@ -32,7 +32,7 @@ class PromptGenerator(BaseGenerator):
             for artifact in text_artifact_chunks:
                 text_chunks.append(artifact.value)
 
-                system_prompt = self.generate_system_template(text_chunks, before_text_query, after_text_query)
+                system_prompt = self.generate_system_template(text_chunks, before_query, after_query)
                 message_token_count = self.prompt_driver.token_count(
                     self.generate_prompt_stack(system_prompt, query)
                 )
@@ -40,7 +40,7 @@ class PromptGenerator(BaseGenerator):
                 if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
                     text_chunks.pop()
 
-                    system_prompt = self.generate_system_template(text_chunks, before_text_query, after_text_query)
+                    system_prompt = self.generate_system_template(text_chunks, before_query, after_query)
 
                     break
 

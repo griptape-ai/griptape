@@ -4,7 +4,7 @@ from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)
-class BaseGenerator(ABC):
+class BaseGenerationModule(ABC):
     @abstractmethod
     def generate(self, context: RagContext) -> RagContext:
         ...

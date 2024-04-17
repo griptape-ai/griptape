@@ -1,18 +1,19 @@
-from .base_module import BaseModule
-from .query.base_query_processor import BaseQueryProcessor
-from .retrieval.base_retriever import BaseRetriever
+from .query.base_query_module import BaseQueryModule
+from .retrieval.base_retrieval_module import BaseRetriever
 from .retrieval.text_retriever import TextRetriever
-from .generation.base_generator import BaseGenerator
+from .generation.base_generation_module import BaseGenerationModule
 from .generation.prompt_generator import PromptGenerator
+from .generation.ruleset_prompt_module import RulesetPromptModule
+from .generation.metadata_prompt_module import MetadataPromptModule
 
 __all__ = [
-    "BaseModule",
-
-    "BaseQueryProcessor",
+    "BaseQueryModule",
 
     "BaseRetriever",
     "TextRetriever",
 
-    "BaseGenerator",
+    "BaseGenerationModule",
     "PromptGenerator",
+    "RulesetPromptModule",
+    "MetadataPromptModule"
 ]
