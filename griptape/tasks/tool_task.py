@@ -68,7 +68,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
                 else:
                     self.output = InfoArtifact("No tool output")
             except Exception as e:
-                self.output = ErrorArtifact(f"Error processing tool input: {e}")
+                self.output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
             return self.output
         else:
             return ErrorArtifact("No action found in prompt output.")
