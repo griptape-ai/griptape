@@ -146,6 +146,7 @@ nav:
           - Talk to a Webpage: "examples/talk-to-a-webpage.md"
           - Talk to a PDF: "examples/talk-to-a-pdf.md"
           - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
+          - Chat Sessions with Amazon DynamoDB: "examples/amazon-dynamodb-sessions.md"
       - Data:
           - Load and Query Pinecone: "examples/load-and-query-pinecone.md"
           - Load and Query Marqo: "examples/load-query-and-chat-marqo.md"
