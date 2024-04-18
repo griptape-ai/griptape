@@ -13,19 +13,23 @@ from griptape.engines.rag.stages import BaseStage
 class RetrievalStage(BaseStage):
     retrieval_modules: list[BaseRetrievalModule] = field()
     rerank_module: Optional[BaseRerankModule] = field(default=None)
+    max_chunks: Optional[int] = field(default=None)
 
     def run(self, context: RagContext) -> RagContext:
         logging.info(f"RetrievalStage: running {len(self.retrieval_modules)} retrieval modules in parallel")
 
-        futures_results = utils.execute_futures_list(
+        results = utils.execute_futures_list(
             [self.futures_executor.submit(r.run, context) for r in self.retrieval_modules]
         )
 
-        context.text_chunks = list(itertools.chain.from_iterable(futures_results))
+        context.text_chunks = list(itertools.chain.from_iterable(results))
 
         if self.rerank_module:
             logging.info(f"RetrievalStage: running rerank module")
 
             context.text_chunks = self.rerank_module.run(context)
+
+        if self.max_chunks:
+            context.text_chunks = context.text_chunks[0:self.max_chunks]
 
         return context
