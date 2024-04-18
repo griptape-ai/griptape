@@ -1,6 +1,7 @@
 from .base_module import BaseModule
 from .query.base_query_module import BaseQueryModule
 from .retrieval.base_retrieval_module import BaseRetrievalModule
+from .retrieval.base_rerank_module import BaseRerankModule
 from .retrieval.text_retriever import TextRetriever
 from .generation.base_generation_module import BaseGenerationModule
 from .generation.prompt_generator import PromptGenerator
@@ -12,6 +13,7 @@ __all__ = [
     "BaseQueryModule",
 
     "BaseRetrievalModule",
+    "BaseRerankModule",
     "TextRetriever",
 
     "BaseGenerationModule",

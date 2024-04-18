@@ -1,12 +1,10 @@
-from attr import define, field
-from griptape.drivers import BaseRerankDriver
+from attr import define
+from griptape.artifacts import BaseArtifact
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseRetrievalModule
+from griptape.engines.rag.modules import BaseRerankModule
 
 
 @define(kw_only=True)
-class TextReranker(BaseRetrievalModule):
-    rerank_driver: BaseRerankDriver = field()
-
-    def run(self, context: RagContext) -> RagContext:
-        ...
+class TextReranker(BaseRerankModule):
+    def run(self, context: RagContext) -> list[BaseArtifact]:
+        return self.rerank_driver.run(context.initial_query, context.text_chunks)

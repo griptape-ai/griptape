@@ -1,4 +1,5 @@
 import itertools
+import logging
 from attr import define, field
 from griptape import utils
 from griptape.engines.rag import RagContext
@@ -11,6 +12,8 @@ class QueryStage(BaseStage):
     query_modules: list[BaseQueryModule] = field()
 
     def run(self, context: RagContext) -> RagContext:
+        logging.info(f"QueryStage: running {len(self.query_modules)} query modules in parallel")
+
         result = utils.execute_futures_list(
             [self.futures_executor.submit(r.run, context) for r in self.query_modules]
         )

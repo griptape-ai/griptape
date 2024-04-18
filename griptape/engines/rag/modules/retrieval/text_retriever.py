@@ -18,10 +18,12 @@ class TextRetriever(BaseRetrievalModule):
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
 
     def run(self, context: RagContext) -> list[TextArtifact]:
+        all_queries = [context.initial_query] + context.expanded_queries
+
         results = utils.execute_futures_list(
             [self.futures_executor.submit(
-                self.vector_store_driver.query, q, self.top_n, self.namespace, False
-            ) for q in context.all_queries]
+                self.vector_store_driver.query, query, self.top_n, self.namespace, False
+            ) for query in all_queries]
         )
 
         return [
