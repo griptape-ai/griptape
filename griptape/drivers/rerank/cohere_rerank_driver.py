@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseRerankDriver
@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class CohereRerankDriver(BaseRerankDriver):
     model: str = field(default="rerank-english-v3.0", metadata={"serializable": True})
+    top_n: Optional[int] = field(default=None)
 
     api_key: str = field(metadata={"serializable": True})
     client: Client = field(
@@ -23,7 +24,8 @@ class CohereRerankDriver(BaseRerankDriver):
             model=self.model,
             query=query,
             documents=[a.value for a in artifacts],
-            return_documents=True
+            return_documents=True,
+            top_n=self.top_n
         )
 
         return [TextArtifact(r.document.text) for r in response.results]

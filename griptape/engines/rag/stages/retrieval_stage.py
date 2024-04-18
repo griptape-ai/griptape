@@ -22,7 +22,15 @@ class RetrievalStage(BaseStage):
             [self.futures_executor.submit(r.run, context) for r in self.retrieval_modules]
         )
 
+        # flatten the list of lists
         context.text_chunks = list(itertools.chain.from_iterable(results))
+
+        # deduplicate the list
+        chunks_before_dedup = len(context.text_chunks)
+        context.text_chunks = list({c.value: c for c in context.text_chunks}.values())
+        chunks_after_dedup = len(context.text_chunks)
+
+        logging.info(f"RetrievalStage: deduplicated {chunks_before_dedup - chunks_after_dedup} chunks")
 
         if self.rerank_module:
             logging.info(f"RetrievalStage: running rerank module")
