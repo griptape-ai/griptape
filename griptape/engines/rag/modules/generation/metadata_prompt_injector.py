@@ -5,10 +5,10 @@ from griptape.utils import J2
 
 
 @define
-class MetadataPromptModule(BaseGenerationModule):
+class MetadataPromptInjector(BaseGenerationModule):
     metadata: str = field(kw_only=True)
 
-    def generate(self, context: RagContext) -> RagContext:
+    def run(self, context: RagContext) -> RagContext:
         context.before_query.append(
             J2("data/modules/metadata/system.j2").render(metadata=self.metadata)
         )

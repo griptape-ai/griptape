@@ -6,10 +6,10 @@ from griptape.utils import J2
 
 
 @define
-class RulesetsPromptModule(BaseGenerationModule):
+class RulesetsPromptInjector(BaseGenerationModule):
     rulesets: list[Ruleset] = field(kw_only=True)
 
-    def generate(self, context: RagContext) -> RagContext:
+    def run(self, context: RagContext) -> RagContext:
         context.before_query.append(
             J2("rulesets/rulesets.j2").render(rulesets=self.rulesets)
         )

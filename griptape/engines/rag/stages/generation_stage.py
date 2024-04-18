@@ -10,6 +10,6 @@ class GenerationStage(BaseStage):
 
     def run(self, context: RagContext) -> RagContext:
         for generator in self.generators:
-            context = generator.generate(context)
+            context = generator.run(context)
 
         return context

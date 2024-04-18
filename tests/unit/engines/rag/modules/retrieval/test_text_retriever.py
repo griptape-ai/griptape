@@ -1,3 +1,3 @@
 class TestTextRetriever:
-    def test_retrieve(self):
+    def test_run(self):
         assert False

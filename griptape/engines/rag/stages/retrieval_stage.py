@@ -14,7 +14,7 @@ class RetrievalStage(BaseStage):
 
     def run(self, context: RagContext) -> RagContext:
         result = utils.execute_futures_list(
-            [self.futures_executor.submit(r.retrieve, context.query) for r in self.text_retrievers]
+            [self.futures_executor.submit(r.run, context.query) for r in self.text_retrievers]
         )
 
         context.text_chunks = list(itertools.chain.from_iterable(result))

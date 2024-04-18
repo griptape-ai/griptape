@@ -6,5 +6,5 @@ from griptape.artifacts import BaseArtifact
 @define(kw_only=True)
 class BaseRetriever(ABC):
     @abstractmethod
-    def retrieve(self, query: str) -> list[BaseArtifact]:
+    def run(self, query: str) -> list[BaseArtifact]:
         ...

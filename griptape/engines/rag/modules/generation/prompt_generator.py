@@ -18,7 +18,7 @@ class PromptGenerator(BaseGenerationModule):
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
     )
 
-    def generate(self, context: RagContext) -> RagContext:
+    def run(self, context: RagContext) -> RagContext:
         query = context.query
         before_query = context.before_query
         after_query = context.after_query

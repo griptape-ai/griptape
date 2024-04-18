@@ -3,8 +3,8 @@ from .retrieval.base_retrieval_module import BaseRetriever
 from .retrieval.text_retriever import TextRetriever
 from .generation.base_generation_module import BaseGenerationModule
 from .generation.prompt_generator import PromptGenerator
-from .generation.rulesets_prompt_module import RulesetsPromptModule
-from .generation.metadata_prompt_module import MetadataPromptModule
+from .generation.rulesets_prompt_injector import RulesetsPromptInjector
+from .generation.metadata_prompt_injector import MetadataPromptInjector
 
 __all__ = [
     "BaseQueryModule",
@@ -14,6 +14,6 @@ __all__ = [
 
     "BaseGenerationModule",
     "PromptGenerator",
-    "RulesetsPromptModule",
-    "MetadataPromptModule"
+    "RulesetsPromptInjector",
+    "MetadataPromptInjector"
 ]
