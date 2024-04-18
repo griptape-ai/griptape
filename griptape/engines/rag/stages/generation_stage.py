@@ -6,10 +6,10 @@ from griptape.engines.rag.stages import BaseStage
 
 @define(kw_only=True)
 class GenerationStage(BaseStage):
-    generators: list[BaseGenerationModule] = field()
+    generator_modules: list[BaseGenerationModule] = field()
 
     def run(self, context: RagContext) -> RagContext:
-        for generator in self.generators:
+        for generator in self.generator_modules:
             context = generator.run(context)
 
         return context

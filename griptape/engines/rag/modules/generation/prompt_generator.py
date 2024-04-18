@@ -19,7 +19,7 @@ class PromptGenerator(BaseGenerationModule):
     )
 
     def run(self, context: RagContext) -> RagContext:
-        query = context.query
+        query = context.initial_query
         before_query = context.before_query
         after_query = context.after_query
         text_artifact_chunks = context.text_chunks

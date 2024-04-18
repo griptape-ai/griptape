@@ -1,5 +1,5 @@
-from .base_retrieval_module import BaseRetriever
+from .base_retrieval_module import BaseRetrievalModule
 
 __all__ = [
-    "BaseRetriever"
+    "BaseRetrievalModule"
 ]

@@ -13,7 +13,7 @@ class RagEngine:
     def process_query(self, query: str) -> RagContext:
         return self.process(
             RagContext(
-                query=query
+                initial_query=query
             )
         )
 
