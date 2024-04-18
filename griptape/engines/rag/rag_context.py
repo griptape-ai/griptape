@@ -6,7 +6,7 @@ from griptape.artifacts import TextArtifact
 @define(kw_only=True)
 class RagContext:
     initial_query: str = field()
-    expanded_queries: list[str] = field(factory=list)
+    alternative_queries: list[str] = field(factory=list)
     before_query: list[str] = field(factory=list)
     after_query: list[str] = field(factory=list)
     text_chunks: list[TextArtifact] = field(factory=list)

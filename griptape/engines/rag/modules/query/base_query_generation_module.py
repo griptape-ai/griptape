@@ -5,7 +5,7 @@ from griptape.engines.rag.modules import BaseModule
 
 
 @define(kw_only=True)
-class BaseQueryModule(BaseModule, ABC):
+class BaseQueryGenerationModule(BaseModule, ABC):
     @abstractmethod
     def run(self, context: RagContext) -> list[str]:
         ...

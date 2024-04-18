@@ -3,21 +3,21 @@ import logging
 from attr import define, field
 from griptape import utils
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseQueryModule
+from griptape.engines.rag.modules import BaseQueryGenerationModule
 from griptape.engines.rag.stages import BaseStage
 
 
 @define(kw_only=True)
 class QueryStage(BaseStage):
-    query_modules: list[BaseQueryModule] = field()
+    query_generation_modules: list[BaseQueryGenerationModule] = field()
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info(f"QueryStage: running {len(self.query_modules)} query modules in parallel")
+        logging.info(f"QueryStage: running {len(self.query_generation_modules)} query generation modules in parallel")
 
-        result = utils.execute_futures_list(
-            [self.futures_executor.submit(r.run, context) for r in self.query_modules]
+        results = utils.execute_futures_list(
+            [self.futures_executor.submit(r.run, context) for r in self.query_generation_modules]
         )
 
-        context.expanded_queries = list(itertools.chain.from_iterable(result))
+        context.alternative_queries = list(itertools.chain.from_iterable(results))
 
         return context

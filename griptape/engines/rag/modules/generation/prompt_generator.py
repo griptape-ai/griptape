@@ -4,7 +4,7 @@ from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseGenerationModule
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.utils import PromptStack, J2
+from griptape.utils import J2
 
 
 @define(kw_only=True)
@@ -34,7 +34,7 @@ class PromptGenerator(BaseGenerationModule):
 
                 system_prompt = self.generate_system_template(text_chunks, before_query, after_query)
                 message_token_count = self.prompt_driver.token_count(
-                    self.generate_prompt_stack(system_prompt, query)
+                    self.generate_query_prompt_stack(system_prompt, query)
                 )
 
                 if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
@@ -45,18 +45,10 @@ class PromptGenerator(BaseGenerationModule):
                     break
 
             context.output = self.prompt_driver.run(
-                self.generate_prompt_stack(system_prompt, query)
+                self.generate_query_prompt_stack(system_prompt, query)
             ).value
 
         return context
-
-    def generate_prompt_stack(self, system_prompt: str, query: str) -> PromptStack:
-        return PromptStack(
-            inputs=[
-                PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
-                PromptStack.Input(query, role=PromptStack.USER_ROLE)
-            ]
-        )
 
     def default_system_template_generator(
             self, text_chunks: list[str], before_system_prompt: list, after_system_prompt: list

@@ -23,7 +23,6 @@ class CohereRerankDriver(BaseRerankDriver):
             model=self.model,
             query=query,
             documents=[a.value for a in artifacts],
-            top_n=5,
             return_documents=True
         )
 
