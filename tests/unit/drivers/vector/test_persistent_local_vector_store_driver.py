@@ -26,6 +26,4 @@ class TestPersistentLocalVectorStoreDriver(BaseLocalVectorStoreDriver):
 
         new_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver(), persist_file=persist_file)
 
-        assert BaseArtifact.from_json(
-            new_driver.query("persistent foobar")[0].meta["artifact"]
-        ).value == "persistent foobar"
+        assert new_driver.query("persistent foobar")[0].to_artifact().value == "persistent foobar"

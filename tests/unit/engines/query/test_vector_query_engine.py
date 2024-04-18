@@ -30,7 +30,7 @@ class TestVectorQueryEngine:
     def test_upsert_text_artifact(self, engine):
         engine.upsert_text_artifact(TextArtifact("foobar"), namespace="test")
 
-        assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[0].meta["artifact"]).value == "foobar"
+        assert engine.vector_store_driver.load_entries()[0].to_artifact().value == "foobar"
 
     def test_prompt_creation(self, engine):
         system_message = engine.system_template_generator.render(
@@ -48,8 +48,8 @@ class TestVectorQueryEngine:
     def test_upsert_text_artifacts(self, engine):
         engine.upsert_text_artifacts(artifacts=[TextArtifact("foobar1"), TextArtifact("foobar2")], namespace="test")
 
-        assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[0].meta["artifact"]).value == "foobar1"
-        assert BaseArtifact.from_json(engine.vector_store_driver.load_entries()[1].meta["artifact"]).value == "foobar2"
+        assert engine.vector_store_driver.load_entries()[0].to_artifact().value == "foobar1"
+        assert engine.vector_store_driver.load_entries()[1].to_artifact().value == "foobar2"
 
     def test_load_artifacts(self, engine):
         engine.upsert_text_artifacts(artifacts=[TextArtifact("foobar1"), TextArtifact("foobar2")], namespace="test")

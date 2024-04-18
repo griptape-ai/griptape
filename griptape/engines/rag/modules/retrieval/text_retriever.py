@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact
 from griptape.engines.rag.modules.retrieval import BaseRetriever
 
 if TYPE_CHECKING:
@@ -19,6 +19,6 @@ class TextRetriever(BaseRetriever):
 
         return [
             artifact
-            for artifact in [BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta]
+            for artifact in [r.to_artifact() for r in result]
             if isinstance(artifact, TextArtifact)
         ]

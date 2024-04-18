@@ -41,7 +41,7 @@ results = vector_store_driver.query(
     namespace="griptape"
 )
 
-values = [BaseArtifact.from_json(r.meta["artifact"]).value for r in results]
+values = [r.to_artifact().value for r in results]
 
 print("\n\n".join(values))
 

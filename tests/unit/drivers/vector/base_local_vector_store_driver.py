@@ -30,8 +30,8 @@ class BaseLocalVectorStoreDriver(ABC):
         bar_entries = driver.load_entries("bar")
 
         assert len(driver.entries) == 2
-        assert BaseArtifact.from_json(foo_entries[0].meta["artifact"]).value == "foo"
-        assert BaseArtifact.from_json(bar_entries[0].meta["artifact"]).value == "bar"
+        assert foo_entries[0].to_artifact().value == "foo"
+        assert bar_entries[0].to_artifact().value == "bar"
 
     def test_query(self, driver):
         vector_id = driver.upsert_text_artifact(TextArtifact("foobar"), namespace="test-namespace")
@@ -41,7 +41,7 @@ class BaseLocalVectorStoreDriver(ABC):
         assert len(driver.query("foobar", namespace="test-namespace")) == 1
         assert driver.query("foobar")[0].vector == []
         assert driver.query("foobar", include_vectors=True)[0].vector == [0, 1]
-        assert BaseArtifact.from_json(driver.query("foobar")[0].meta["artifact"]).value == "foobar"
+        assert driver.query("foobar")[0].to_artifact().value == "foobar"
         assert driver.query("foobar")[0].id == vector_id
 
     def test_load_entry(self, driver):

@@ -33,7 +33,7 @@ class VectorQueryEngine(BaseQueryEngine):
         result = self.vector_store_driver.query(query, top_n, namespace, filter=filter)
         artifacts = [
             artifact
-            for artifact in [BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta]
+            for artifact in [r.to_artifact() for r in result]
             if isinstance(artifact, TextArtifact)
         ]
         text_segments = []
@@ -84,6 +84,6 @@ class VectorQueryEngine(BaseQueryEngine):
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         result = self.vector_store_driver.load_entries(namespace)
-        artifacts = [BaseArtifact.from_json(r.meta["artifact"]) for r in result if r.meta and r.meta.get("artifact")]
+        artifacts = [r.meta["artifact"].to_artifact() for r in result]
 
         return ListArtifact([a for a in artifacts if isinstance(a, TextArtifact)])
