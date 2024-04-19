@@ -27,7 +27,7 @@ class TestGriptapeCloudEventListenerDriver:
         driver.try_publish_event(event=event)
 
         mock_post.assert_called_once_with(
-            url=f"https://cloud.griptape.ai/api/runs/{driver.run_id}/events",
+            url=f"https://cloud.griptape.ai/api/structure-runs/{driver.run_id}/events",
             json=event.to_dict(),
             headers={"Authorization": "Bearer foo bar"},
         )
