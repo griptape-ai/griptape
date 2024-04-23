@@ -98,6 +98,7 @@ from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
 
 from .audio_generation.base_audio_generation_driver import BaseAudioGenerationDriver
+from .audio_generation.dummy_audio_generation_driver import DummyAudioGenerationDriver
 from .audio_generation.elevenlabs_audio_generation_driver import ElevenLabsAudioGenerationDriver
 
 __all__ = [
@@ -185,5 +186,6 @@ __all__ = [
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
     "BaseAudioGenerationDriver",
+    "DummyAudioGenerationDriver",
     "ElevenLabsAudioGenerationDriver",
 ]

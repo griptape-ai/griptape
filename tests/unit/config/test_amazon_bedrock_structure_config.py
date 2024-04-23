@@ -33,6 +33,7 @@ class TestAmazonBedrockStructureConfig:
                     "seed": None,
                     "type": "AmazonBedrockImageGenerationDriver",
                 },
+                "audio_generation_driver": {"type": "DummyAudioGenerationDriver"},
                 "image_query_driver": {
                     "type": "AmazonBedrockImageQueryDriver",
                     "model": "anthropic.claude-3-sonnet-20240229-v1:0",

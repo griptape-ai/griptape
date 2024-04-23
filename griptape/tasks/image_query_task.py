@@ -4,7 +4,7 @@ from typing import Callable
 
 from attr import define, field
 
-from griptape.artifacts import MediaArtifact, TextArtifact
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.engines import ImageQueryEngine
 from griptape.tasks import BaseTask
 from griptape.utils import J2
@@ -23,12 +23,12 @@ class ImageQueryTask(BaseTask):
     """
 
     _image_query_engine: ImageQueryEngine = field(default=None, kw_only=True, alias="image_query_engine")
-    _input: tuple[str, list[MediaArtifact]] | tuple[TextArtifact, list[MediaArtifact]] | Callable[
-        [BaseTask], tuple[TextArtifact, list[MediaArtifact]]
+    _input: tuple[str, list[ImageArtifact]] | tuple[TextArtifact, list[ImageArtifact]] | Callable[
+        [BaseTask], tuple[TextArtifact, list[ImageArtifact]]
     ] = field(default=None, alias="input")
 
     @property
-    def input(self) -> tuple[TextArtifact, list[MediaArtifact]]:
+    def input(self) -> tuple[TextArtifact, list[ImageArtifact]]:
         if isinstance(self._input, tuple):
             if isinstance(self._input[0], TextArtifact):
                 query_text = self._input[0]
@@ -47,8 +47,8 @@ class ImageQueryTask(BaseTask):
     @input.setter
     def input(
         self,
-        value: tuple[TextArtifact, list[MediaArtifact]]
-        | Callable[[BaseTask], tuple[TextArtifact, list[MediaArtifact]]],
+        value: tuple[TextArtifact, list[ImageArtifact]]
+        | Callable[[BaseTask], tuple[TextArtifact, list[ImageArtifact]]],
     ) -> None:
         self._input = value
 

@@ -46,6 +46,7 @@ class TestOpenAiStructureConfig:
                     "style": None,
                     "type": "OpenAiImageGenerationDriver",
                 },
+                "audio_generation_driver": {"type": "DummyAudioGenerationDriver"},
                 "image_query_driver": {
                     "api_version": None,
                     "base_url": None,

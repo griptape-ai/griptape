@@ -5,7 +5,7 @@ from typing import Callable
 from attr import define, field
 
 from griptape.engines import VariationImageGenerationEngine
-from griptape.artifacts import MediaArtifact, TextArtifact
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
@@ -29,12 +29,12 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
     _image_generation_engine: VariationImageGenerationEngine = field(
         default=None, kw_only=True, alias="image_generation_engine"
     )
-    _input: tuple[str | TextArtifact, MediaArtifact] | Callable[[BaseTask], tuple[TextArtifact, MediaArtifact]] = field(
+    _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact]] = field(
         default=None
     )
 
     @property
-    def input(self) -> tuple[TextArtifact, MediaArtifact]:
+    def input(self) -> tuple[TextArtifact, ImageArtifact]:
         if isinstance(self._input, tuple):
             if isinstance(self._input[0], TextArtifact):
                 input_text = self._input[0]
@@ -48,7 +48,7 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
             raise ValueError("Input must be a tuple of (text, image) or a callable that returns such a tuple.")
 
     @input.setter
-    def input(self, value: tuple[TextArtifact, MediaArtifact]) -> None:
+    def input(self, value: tuple[TextArtifact, ImageArtifact]) -> None:
         self._input = value
 
     @property
@@ -66,7 +66,7 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
     def image_generation_engine(self, value: VariationImageGenerationEngine) -> None:
         self._image_generation_engine = value
 
-    def run(self) -> MediaArtifact:
+    def run(self) -> ImageArtifact:
         prompt_artifact = self.input[0]
         image_artifact = self.input[1]
 
