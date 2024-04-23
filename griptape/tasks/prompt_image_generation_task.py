@@ -5,7 +5,7 @@ from typing import Callable
 from attr import define, field, Factory
 
 from griptape.engines import PromptImageGenerationEngine
-from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.artifacts import MediaArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
@@ -60,7 +60,7 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
     def image_generation_engine(self, value: PromptImageGenerationEngine) -> None:
         self._image_generation_engine = value
 
-    def run(self) -> ImageArtifact:
+    def run(self) -> MediaArtifact:
         image_artifact = self.image_generation_engine.run(
             prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
         )
