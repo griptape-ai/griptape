@@ -12,7 +12,18 @@ from griptape.events.base_event import BaseEvent
 
 @define
 class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
-    base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
+    """Driver for publishing events to Griptape Cloud.
+
+    Attributes:
+        base_url: The base URL of Griptape Cloud. Defaults to the GT_CLOUD_BASE_URL environment variable.
+        api_key: The API key to authenticate with Griptape Cloud.
+        headers: The headers to use when making requests to Griptape Cloud. Defaults to include the Authorization header.
+        run_id: The ID of the Structure Run to publish events to. Defaults to the GT_CLOUD_RUN_ID environment variable.
+    """
+
+    base_url: str = field(
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")), kw_only=True
+    )
     api_key: str = field(kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
