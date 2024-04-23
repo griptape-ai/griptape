@@ -37,4 +37,6 @@ __all__ = [
     "FinishImageGenerationEvent",
     "StartImageQueryEvent",
     "FinishImageQueryEvent",
+    "StartAudioGenerationEvent",
+    "FinishAudioGenerationEvent",
 ]
