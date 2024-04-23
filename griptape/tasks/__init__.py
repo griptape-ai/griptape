@@ -16,6 +16,8 @@ from .inpainting_image_generation_task import InpaintingImageGenerationTask
 from .outpainting_image_generation_task import OutpaintingImageGenerationTask
 from .variation_image_generation_task import VariationImageGenerationTask
 from .image_query_task import ImageQueryTask
+from .base_audio_generation_task import BaseAudioGenerationTask
+from .audio_generation_task import AudioGenerationTask
 
 __all__ = [
     "BaseTask",
@@ -36,4 +38,6 @@ __all__ = [
     "InpaintingImageGenerationTask",
     "OutpaintingImageGenerationTask",
     "ImageQueryTask",
+    "BaseAudioGenerationTask",
+    "AudioGenerationTask",
 ]
