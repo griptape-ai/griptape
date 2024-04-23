@@ -7,7 +7,6 @@ from attr import define, field, Factory
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers.audio_generation.base_audio_generation_driver import BaseAudioGenerationDriver
 from elevenlabs.client import ElevenLabs
-from elevenlabs import play
 
 
 @define
@@ -25,8 +24,6 @@ class ElevenLabsAudioGenerationDriver(BaseAudioGenerationDriver):
         audio = self.client.generate(
             text=". ".join(prompts), voice=self.voice, model=self.model, output_format=self.output_format
         )
-
-        play(audio)
 
         content = b""
         for chunk in audio:
