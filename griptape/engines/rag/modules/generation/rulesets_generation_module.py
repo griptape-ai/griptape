@@ -1,12 +1,12 @@
 from attr import define, field
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseGenerationModule
+from griptape.engines.rag.modules import BaseBeforeGenerationModule
 from griptape.rules import Ruleset
 from griptape.utils import J2
 
 
 @define
-class RulesetsGenerationModule(BaseGenerationModule):
+class RulesetsGenerationModule(BaseBeforeGenerationModule):
     rulesets: list[Ruleset] = field(kw_only=True)
 
     def run(self, context: RagContext) -> RagContext:

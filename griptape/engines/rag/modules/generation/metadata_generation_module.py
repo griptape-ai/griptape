@@ -1,11 +1,11 @@
 from attr import define, field
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseGenerationModule
+from griptape.engines.rag.modules import BaseBeforeGenerationModule
 from griptape.utils import J2
 
 
 @define
-class MetadataGenerationModule(BaseGenerationModule):
+class MetadataGenerationModule(BaseBeforeGenerationModule):
     metadata: str = field(kw_only=True)
 
     def run(self, context: RagContext) -> RagContext:
