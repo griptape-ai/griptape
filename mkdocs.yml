@@ -102,6 +102,7 @@ nav:
           - SQL Drivers: "griptape-framework/drivers/sql-drivers.md"
           - Image Query Drivers: "griptape-framework/drivers/image-query-drivers.md"
           - Web Scraper Drivers: "griptape-framework/drivers/web-scraper-drivers.md"
+          - Conversation Memory Drivers: "griptape-framework/drivers/conversation-memory-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
@@ -145,6 +146,7 @@ nav:
           - Talk to a Webpage: "examples/talk-to-a-webpage.md"
           - Talk to a PDF: "examples/talk-to-a-pdf.md"
           - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
+          - Chat Sessions with Amazon DynamoDB: "examples/amazon-dynamodb-sessions.md"
       - Data:
           - Load and Query Pinecone: "examples/load-and-query-pinecone.md"
           - Load and Query Marqo: "examples/load-query-and-chat-marqo.md"
