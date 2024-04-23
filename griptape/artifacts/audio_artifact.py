@@ -19,5 +19,3 @@ class AudioArtifact(MediaArtifact):
     """
 
     media_type: str = "audio"
-    width: int = field(kw_only=True, metadata={"serializable": True})
-    height: int = field(kw_only=True, metadata={"serializable": True})
