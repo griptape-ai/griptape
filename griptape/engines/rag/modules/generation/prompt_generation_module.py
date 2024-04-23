@@ -8,7 +8,7 @@ from griptape.utils import J2
 
 
 @define(kw_only=True)
-class PromptGenerator(BaseGenerationModule):
+class PromptGenerationModule(BaseGenerationModule):
     answer_token_offset: int = field(default=400, kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),

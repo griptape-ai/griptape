@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @define
-class TextRetriever(BaseRetrievalModule):
+class TextRetrievalModule(BaseRetrievalModule):
     namespace: Optional[str] = field(default=None, kw_only=True)
     top_n: Optional[int] = field(default=None, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
