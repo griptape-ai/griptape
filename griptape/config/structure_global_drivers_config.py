@@ -14,7 +14,9 @@ from griptape.drivers import (
     DummyPromptDriver,
     DummyImageQueryDriver,
     BaseImageQueryDriver,
+    BaseAudioGenerationDriver,
 )
+from griptape.drivers.audio_generation.dummy_audio_generation_driver import DummyAudioGenerationDriver
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 
@@ -37,4 +39,7 @@ class StructureGlobalDriversConfig(SerializableMixin):
     )
     conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
         default=None, kw_only=True, metadata={"serializable": True}
+    )
+    audio_generation_driver: BaseAudioGenerationDriver = field(
+        default=Factory(lambda: DummyAudioGenerationDriver()), kw_only=True, metadata={"serializable": True}
     )
