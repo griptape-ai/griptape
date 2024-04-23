@@ -11,11 +11,7 @@ class RagEngine:
     generation_stage: Optional[GenerationStage] = field(default=None)
 
     def process_query(self, query: str) -> RagContext:
-        return self.process(
-            RagContext(
-                initial_query=query
-            )
-        )
+        return self.process(RagContext(initial_query=query))
 
     def process(self, context: RagContext) -> RagContext:
         if self.query_stage:

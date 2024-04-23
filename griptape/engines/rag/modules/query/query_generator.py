@@ -19,16 +19,15 @@ class QueryGenerator(BaseQueryGenerationModule):
         system_prompt = self.generate_system_template(context.initial_query)
 
         results = utils.execute_futures_list(
-            [self.futures_executor.submit(
-                self.prompt_driver.run, self.generate_query_prompt_stack(system_prompt, "Alternative query: ")
-            ) for _ in range(self.query_count)]
+            [
+                self.futures_executor.submit(
+                    self.prompt_driver.run, self.generate_query_prompt_stack(system_prompt, "Alternative query: ")
+                )
+                for _ in range(self.query_count)
+            ]
         )
 
         return [r.value for r in results]
 
-    def default_system_template_generator(
-            self, initial_query: str
-    ) -> str:
-        return J2("engines/rag/modules/query_generator/system.j2").render(
-            initial_query=initial_query
-        )
+    def default_system_template_generator(self, initial_query: str) -> str:
+        return J2("engines/rag/modules/query_generator/system.j2").render(initial_query=initial_query)

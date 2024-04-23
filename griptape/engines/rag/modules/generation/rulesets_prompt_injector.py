@@ -10,8 +10,6 @@ class RulesetsPromptInjector(BaseGenerationModule):
     rulesets: list[Ruleset] = field(kw_only=True)
 
     def run(self, context: RagContext) -> RagContext:
-        context.before_query.append(
-            J2("rulesets/rulesets.j2").render(rulesets=self.rulesets)
-        )
+        context.before_query.append(J2("rulesets/rulesets.j2").render(rulesets=self.rulesets))
 
         return context

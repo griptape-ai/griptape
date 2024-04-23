@@ -54,12 +54,12 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         )
 
     def upsert_text_artifact(
-            self,
-            artifact: TextArtifact,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            vector_id: Optional[str] = None,
-            **kwargs
+        self,
+        artifact: TextArtifact,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        vector_id: Optional[str] = None,
+        **kwargs,
     ) -> str:
         meta = meta if meta else {}
         vector_id = vector_id if vector_id else utils.str_to_hash(str(artifact.value))

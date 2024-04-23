@@ -21,9 +21,10 @@ class TextRetriever(BaseRetrievalModule):
         all_queries = [context.initial_query] + context.alternative_queries
 
         results = utils.execute_futures_list(
-            [self.futures_executor.submit(
-                self.vector_store_driver.query, query, self.top_n, self.namespace, False
-            ) for query in all_queries]
+            [
+                self.futures_executor.submit(self.vector_store_driver.query, query, self.top_n, self.namespace, False)
+                for query in all_queries
+            ]
         )
 
         return [

@@ -44,17 +44,15 @@ class PromptGenerator(BaseGenerationModule):
 
                     break
 
-            context.output = self.prompt_driver.run(
-                self.generate_query_prompt_stack(system_prompt, query)
-            ).value
+            context.output = self.prompt_driver.run(self.generate_query_prompt_stack(system_prompt, query)).value
 
         return context
 
     def default_system_template_generator(
-            self, text_chunks: list[str], before_system_prompt: list, after_system_prompt: list
+        self, text_chunks: list[str], before_system_prompt: list, after_system_prompt: list
     ) -> str:
         return J2("engines/rag/modules/prompt_generator/system.j2").render(
             text_chunks=text_chunks,
             before_system_prompt="\n\n".join(before_system_prompt),
-            after_system_prompt="\n\n".join(after_system_prompt)
+            after_system_prompt="\n\n".join(after_system_prompt),
         )

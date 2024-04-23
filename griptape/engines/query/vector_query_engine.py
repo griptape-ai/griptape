@@ -31,11 +31,7 @@ class VectorQueryEngine(BaseQueryEngine):
     ) -> TextArtifact:
         tokenizer = self.prompt_driver.tokenizer
         result = self.vector_store_driver.query(query, top_n, namespace, filter=filter)
-        artifacts = [
-            artifact
-            for artifact in [r.to_artifact() for r in result]
-            if isinstance(artifact, TextArtifact)
-        ]
+        artifacts = [artifact for artifact in [r.to_artifact() for r in result] if isinstance(artifact, TextArtifact)]
         text_segments = []
         user_message = ""
         system_message = ""

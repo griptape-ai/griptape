@@ -35,9 +35,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     prompt_stack_to_string: Callable[[PromptStack], str] = field(
         default=Factory(lambda self: self.default_prompt_stack_to_string_converter, takes_self=True)
     )
-    ignored_exception_types: tuple[type[Exception], ...] = field(
-        default=Factory(lambda: (ImportError, ValueError))
-    )
+    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, metadata={"serializable": True})

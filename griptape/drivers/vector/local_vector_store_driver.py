@@ -106,8 +106,8 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
                 for r in result
             ]
 
-    def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):
-        return vector_id if namespace is None else f"{namespace}-{vector_id}"
-
     def delete_vector(self, vector_id: str):
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
+
+    def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):
+        return vector_id if namespace is None else f"{namespace}-{vector_id}"

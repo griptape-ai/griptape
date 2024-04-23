@@ -13,13 +13,11 @@ __all__ = [
     "BaseModule",
     "BaseQueryGenerationModule",
     "QueryGenerator",
-
     "BaseRetrievalModule",
     "BaseRerankModule",
     "TextRetriever",
-
     "BaseGenerationModule",
     "PromptGenerator",
     "RulesetsPromptInjector",
-    "MetadataPromptInjector"
+    "MetadataPromptInjector",
 ]

@@ -13,6 +13,6 @@ class BaseModule(ABC):
         return PromptStack(
             inputs=[
                 PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
-                PromptStack.Input(query, role=PromptStack.USER_ROLE)
+                PromptStack.Input(query, role=PromptStack.USER_ROLE),
             ]
         )

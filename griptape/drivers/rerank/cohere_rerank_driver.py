@@ -25,7 +25,7 @@ class CohereRerankDriver(BaseRerankDriver):
             query=query,
             documents=[a.value for a in artifacts],
             return_documents=True,
-            top_n=self.top_n
+            top_n=self.top_n,
         )
 
         return [TextArtifact(r.document.text) for r in response.results]

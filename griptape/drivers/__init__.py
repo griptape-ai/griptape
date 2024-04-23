@@ -185,5 +185,5 @@ __all__ = [
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
     "BaseRerankDriver",
-    "CohereRerankDriver"
+    "CohereRerankDriver",
 ]
