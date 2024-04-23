@@ -19,10 +19,17 @@ class ElevenLabsAudioGenerationDriver(BaseAudioGenerationDriver):
         metadata={"serializable": True},
     )
     voice: str = field(kw_only=True, metadata={"serializable": True})
+    output_format: str = field(default="mp3_44100_128", kw_only=True, metadata={"serializable": True})
 
     def try_text_to_audio(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> AudioArtifact:
-        audio = self.client.generate(text=prompts[0], voice="Rachel", model="eleven_multilingual_v2")
+        audio = self.client.generate(
+            text=". ".join(prompts), voice=self.voice, model=self.model, output_format=self.output_format
+        )
 
         play(audio)
 
-        return AudioArtifact(value=audio, format="wav", width=0, height=0)
+        content = b""
+        for chunk in audio:
+            content += chunk
+
+        return AudioArtifact(value=content, format="mpeg")
