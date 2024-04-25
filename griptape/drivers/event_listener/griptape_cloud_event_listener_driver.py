@@ -18,7 +18,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         base_url: The base URL of Griptape Cloud. Defaults to the GT_CLOUD_BASE_URL environment variable.
         api_key: The API key to authenticate with Griptape Cloud.
         headers: The headers to use when making requests to Griptape Cloud. Defaults to include the Authorization header.
-        run_id: The ID of the Structure Run to publish events to. Defaults to the GT_CLOUD_RUN_ID environment variable.
+        run_id: The ID of the Structure Run to publish events to. Defaults to the GT_CLOUD_STRUCTURE_RUN_ID environment variable.
     """
 
     base_url: str = field(
@@ -28,13 +28,13 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
-    run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_RUN_ID")), kw_only=True)
+    run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
 
     @run_id.validator  # pyright: ignore
     def validate_run_id(self, _, run_id: str):
         if run_id is None:
             raise ValueError(
-                "run_id must be set either in the constructor or as an environment variable (GT_CLOUD_RUN_ID)."
+                "run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
             )
 
     def try_publish_event(self, event: BaseEvent) -> None:
