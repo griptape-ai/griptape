@@ -22,12 +22,12 @@ class TestGriptapeCloudEventListenerDriver:
     def driver(self):
         os.environ["GT_CLOUD_BASE_URL"] = "https://cloud123.griptape.ai"
 
-        return GriptapeCloudEventListenerDriver(api_key="foo bar", run_id="bar baz")
+        return GriptapeCloudEventListenerDriver(api_key="foo bar", structure_run_id="bar baz")
 
     def test_init(self, driver):
         assert driver
         assert driver.api_key == "foo bar"
-        assert driver.run_id == "bar baz"
+        assert driver.structure_run_id == "bar baz"
 
     def test_try_publish_event(self, mock_post, driver):
         event = MockEvent()
@@ -39,6 +39,6 @@ class TestGriptapeCloudEventListenerDriver:
             headers={"Authorization": "Bearer foo bar"},
         )
 
-    def test_no_run_id(self):
+    def test_no_structure_run_id(self):
         with pytest.raises(ValueError):
             GriptapeCloudEventListenerDriver(api_key="foo bar")
