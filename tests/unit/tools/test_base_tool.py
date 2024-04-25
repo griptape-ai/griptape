@@ -133,11 +133,13 @@ class TestBaseTool:
 
     def test_off_prompt(self, tool):
         assert (
-            ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()]).tools[0].output_memory
+            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()])
+            .tools[0]
+            .output_memory
         )
 
         assert (
-            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=False)])
+            ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=True)])
             .tools[0]
             .output_memory
         )

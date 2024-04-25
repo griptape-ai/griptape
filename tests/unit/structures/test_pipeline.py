@@ -67,7 +67,17 @@ class TestPipeline:
     def test_with_default_task_memory(self):
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(ToolkitTask(tools=[MockTool(off_prompt=False)]))
+
+        assert isinstance(pipeline.tasks[0], ToolkitTask)
+        assert pipeline.tasks[0].tools[0].input_memory is not None
+        assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.task_memory
+        assert pipeline.tasks[0].tools[0].output_memory is None
+
+    def test_with_task_memory(self):
+        pipeline = Pipeline()
+
+        pipeline.add_task(ToolkitTask(tools=[MockTool(off_prompt=True)]))
 
         assert isinstance(pipeline.tasks[0], ToolkitTask)
         assert pipeline.tasks[0].task_memory == pipeline.task_memory

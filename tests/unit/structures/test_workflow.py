@@ -69,6 +69,16 @@ class TestWorkflow:
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is not None
         assert workflow.tasks[0].tools[0].input_memory[0] == workflow.task_memory
+        assert workflow.tasks[0].tools[0].output_memory is None
+
+    def test_with_task_memory(self):
+        workflow = Workflow()
+
+        workflow.add_task(ToolkitTask(tools=[MockTool(off_prompt=True)]))
+
+        assert isinstance(workflow.tasks[0], ToolkitTask)
+        assert workflow.tasks[0].tools[0].input_memory is not None
+        assert workflow.tasks[0].tools[0].input_memory[0] == workflow.task_memory
         assert workflow.tasks[0].tools[0].output_memory is not None
         assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.task_memory
 
@@ -108,7 +118,7 @@ class TestWorkflow:
 
         workflow = Workflow(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
-        workflow + [first_task, second_task, third_task]
+        workflow + [first_task, second_task, third_task]  # pyright: ignore
 
         assert workflow.conversation_memory is not None
         assert len(workflow.conversation_memory.runs) == 0
@@ -142,7 +152,7 @@ class TestWorkflow:
 
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + first_task
+        workflow + first_task  # pyright: ignore
         workflow.add_task(second_task)
 
         assert len(workflow.tasks) == 2
@@ -161,7 +171,7 @@ class TestWorkflow:
 
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + [first_task, second_task]
+        workflow + [first_task, second_task]  # pyright: ignore
 
         assert len(workflow.tasks) == 2
         assert first_task in workflow.tasks
@@ -177,7 +187,7 @@ class TestWorkflow:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
         workflow = Workflow(prompt_driver=MockPromptDriver())
-        workflow + [task1, task2]
+        workflow + [task1, task2]  # pyright: ignore
 
         assert task1.state == BaseTask.State.PENDING
         assert task2.state == BaseTask.State.PENDING
@@ -306,7 +316,6 @@ class TestWorkflow:
         movie_info_2 = PromptTask(id="movie_info_2")
         movie_info_3 = PromptTask(id="movie_info_3")
         compare_movies = PromptTask(id="compare_movies")
-        prepare_email_task = PromptTask(id="prepare_email_task")
         send_email_task = PromptTask(id="send_email_task")
         save_to_disk = PromptTask(id="save_to_disk")
         publish_website = PromptTask(id="publish_website")
@@ -357,8 +366,8 @@ class TestWorkflow:
         task4 = PromptTask("prompt4")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + task1
-        workflow + task4
+        workflow + task1  # pyright: ignore
+        workflow + task4  # pyright: ignore
         workflow.insert_tasks(task1, [task2, task3], task4)
 
         assert task4 == workflow.output_task
@@ -370,8 +379,8 @@ class TestWorkflow:
         task4 = PromptTask("prompt4", id="task4")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + task1
-        workflow + task4
+        workflow + task1  # pyright: ignore
+        workflow + task4  # pyright: ignore
         workflow.insert_tasks(task1, [task2, task3], task4)
 
         graph = workflow.to_graph()
@@ -387,8 +396,8 @@ class TestWorkflow:
         task4 = PromptTask("prompt4", id="task4")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + task1
-        workflow + task4
+        workflow + task1  # pyright: ignore
+        workflow + task4  # pyright: ignore
         workflow.insert_tasks(task1, [task2, task3], task4)
 
         ordered_tasks = workflow.order_tasks()
@@ -404,9 +413,9 @@ class TestWorkflow:
         child = PromptTask("child")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + parent
-        workflow + task
-        workflow + child
+        workflow + parent  # pyright: ignore
+        workflow + task  # pyright: ignore
+        workflow + child  # pyright: ignore
 
         context = workflow.context(task)
 
