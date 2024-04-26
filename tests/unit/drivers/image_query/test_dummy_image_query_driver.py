@@ -15,4 +15,4 @@ class TestDummyImageQueryDriver:
 
     def test_try_query(self, image_query_driver):
         with pytest.raises(DummyException):
-            image_query_driver.try_query("Prompt", [ImageArtifact(value=b"", width=100, height=100)])
+            image_query_driver.try_query("Prompt", [ImageArtifact(value=b"", width=100, height=100, format="png")])

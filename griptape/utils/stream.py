@@ -53,11 +53,14 @@ class Stream:
         t.join()
 
     def _run_structure(self, *args):
+        from griptape.drivers import LocalEventListenerDriver
+
         def event_handler(event: BaseEvent):
             self._event_queue.put(event)
 
         stream_event_listener = EventListener(
-            event_handler, event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
+            driver=LocalEventListenerDriver(handler=event_handler),
+            event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
         )
         self.structure.add_event_listener(stream_event_listener)
 

@@ -105,7 +105,7 @@ class ActionsSubtask(BaseTextInputTask):
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
-            self.output = ErrorArtifact(str(e))
+            self.output = ErrorArtifact(str(e), exception=e)
         finally:
             if self.output is not None:
                 return self.output

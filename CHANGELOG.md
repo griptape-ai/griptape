@@ -8,17 +8,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `list_files_from_disk` activity to `FileManager` Tool.
+- Support for Drivers in `EventListener`.
+- `AmazonSqsEventListenerDriver` for sending events to an Amazon SQS queue.
+- `AwsIotCoreEventListenerDriver` for sending events to a topic on AWS IoT Core.
+- `GriptapeCloudEventListenerDriver` for sending events to Griptape Cloud.
+- `WebhookEventListenerDriver` for sending events to a webhook.
+- `LocalEventListenerDriver` for sending events to a callback function.
+- `BaseFileManagerDriver` to abstract file management operations.
+- `LocalFileManagerDriver` for managing files on the local file system.
+- Added optional `BaseLoader.encoding` field.
+- `BlobLoader` for loading arbitrary binary data as a `BlobArtifact`.
+- `model` field to `StartPromptEvent` and `FinishPromptEvent`.
+- `input_task_input` and `input_task_output` fields to `StartStructureRunEvent`.
+- `output_task_input` and `output_task_output` fields to `FinishStructureRunEvent`.
+- `AmazonS3FileManagerDriver` for managing files on Amazon S3.
+- `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
+- Optional `exception` field to `ErrorArtifact`.
 
 ### Changed
-- Improved RAG performance in `VectorQueryEngine`.
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
+- **BREAKING**: Remove `FileLoader`.
+- **BREAKING**: `CsvLoader` no longer accepts `str` file paths as a source. It will now accept the content of the CSV file as a `str` or `bytes` object.
+- **BREAKING**: `PdfLoader` no longer accepts `str` file content, `Path` file paths or `IO` objects as sources. Instead, it will only accept the content of the PDF file as a `bytes` object.
+- **BREAKING**: `TextLoader` no longer accepts `Path` file paths as a source. It will now accept the content of the text file as a `str` or `bytes` object.
+- **BREAKING**: `FileManager.default_loader` is now `None` by default.
+- **BREAKING**: Replaced `EventListener.handler` with `EventListener.driver` and `LocalEventListenerDriver`.
+- Improved RAG performance in `VectorQueryEngine`.
+- **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
+- **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
+- Moved [Griptape Docs](https://github.com/griptape-ai/griptape-docs) to this repository.
+
+### Fixed
+- Type hint for parameter `azure_ad_token_provider` on Azure OpenAI drivers to `Optional[Callable[[], str]]`.
+- Missing parameters `azure_ad_token` and `azure_ad_token_provider` on the default client for `AzureOpenAiCompletionPromptDriver`.
+
+## [0.24.2] - 2024-04-04
+
+- Fixed FileManager.load_files_from_disk schema.
 
 ## [0.24.1] - 2024-03-28
 
 ### Fixed 
+
 - Fixed boto3 type-checking stub dependency.
 
 ### Changed
+
 - Use `schema` instead of `jsonschema` for JSON validation.
 
 ## [0.24.0] - 2024-03-27

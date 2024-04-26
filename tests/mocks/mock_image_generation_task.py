@@ -17,4 +17,4 @@ class MockImageGenerationTask(BaseImageGenerationTask):
         self._input = TextArtifact(value)
 
     def run(self) -> ImageArtifact:
-        return ImageArtifact(value=b"image data", mime_type="image/png", width=512, height=512)
+        return ImageArtifact(value=b"image data", format="png", width=512, height=512)

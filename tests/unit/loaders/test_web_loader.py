@@ -1,5 +1,4 @@
 import pytest
-from griptape import utils
 from griptape.loaders import WebLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -29,8 +28,8 @@ class TestWebLoader:
         )
 
         assert list(artifacts.keys()) == [
-            utils.str_to_hash("https://github.com/griptape-ai/griptape"),
-            utils.str_to_hash("https://github.com/griptape-ai/griptape-docs"),
+            loader.to_key("https://github.com/griptape-ai/griptape"),
+            loader.to_key("https://github.com/griptape-ai/griptape-docs"),
         ]
         assert "foobar" in [a.value for artifact_list in artifacts.values() for a in artifact_list][0].lower()
 

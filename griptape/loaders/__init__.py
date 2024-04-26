@@ -6,9 +6,9 @@ from .web_loader import WebLoader
 from .sql_loader import SqlLoader
 from .csv_loader import CsvLoader
 from .dataframe_loader import DataFrameLoader
-from .file_loader import FileLoader
 from .email_loader import EmailLoader
 from .image_loader import ImageLoader
+from .blob_loader import BlobLoader
 
 
 __all__ = [
@@ -20,7 +20,7 @@ __all__ = [
     "SqlLoader",
     "CsvLoader",
     "DataFrameLoader",
-    "FileLoader",
     "EmailLoader",
     "ImageLoader",
+    "BlobLoader",
 ]

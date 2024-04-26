@@ -11,3 +11,6 @@ class TestErrorArtifact:
 
     def test_to_dict(self):
         assert ErrorArtifact("foobar").to_dict()["value"] == "foobar"
+
+    def test_exception_instance(self):
+        assert isinstance(ErrorArtifact("foobar", exception=Exception("foobar")).exception, Exception)

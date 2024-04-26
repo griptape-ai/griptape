@@ -17,7 +17,7 @@ class TestVariationImageGenerationClient:
     @pytest.fixture
     def image_loader(self) -> Mock:
         loader = Mock()
-        loader.load.return_value = ImageArtifact(value=b"image_data", mime_type="image/png", width=512, height=512)
+        loader.load.return_value = ImageArtifact(value=b"image_data", format="png", width=512, height=512)
 
         return loader
 
@@ -33,7 +33,7 @@ class TestVariationImageGenerationClient:
 
     def test_image_variation(self, image_generator) -> None:
         image_generator.engine.run.return_value = Mock(
-            value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
+            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
         image_artifact = image_generator.image_variation_from_file(
@@ -55,7 +55,7 @@ class TestVariationImageGenerationClient:
         )
 
         image_generator.engine.run.return_value = Mock(  # pyright: ignore
-            value=b"image data", mime_type="image/png", width=512, height=512, model="test model", prompt="test prompt"
+            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
         image_artifact = image_generator.image_variation_from_file(
