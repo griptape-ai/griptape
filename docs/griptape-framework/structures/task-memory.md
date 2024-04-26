@@ -313,8 +313,8 @@ As seen in the previous example, certain Tools are designed to read directly fro
 
 Today, these include:
 
-- [TaskMemoryClient](../griptape-tools/official-tools/task-memory-client.md)
-- [FileManager](../griptape-tools/official-tools/file-manager.md)
-- [AwsS3Client](../griptape-tools/official-tools/aws-s3-client.md)
-- [GoogleDriveClient](../griptape-tools/official-tools/google-drive-client.md)
-- [GoogleDocsClient](../griptape-tools/official-tools/google-docs-client.md)
+- [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md)
+- [FileManager](../../griptape-tools/official-tools/file-manager.md)
+- [AwsS3Client](../../griptape-tools/official-tools/aws-s3-client.md)
+- [GoogleDriveClient](../../griptape-tools/official-tools/google-drive-client.md)
+- [GoogleDocsClient](../../griptape-tools/official-tools/google-docs-client.md)
