@@ -84,7 +84,7 @@ nav:
           - Pipelines: "griptape-framework/structures/pipelines.md"
           - Workflows: "griptape-framework/structures/workflows.md"
           - Tasks: "griptape-framework/structures/tasks.md"
-          - Task Memory: "griptape-framework/structures/task-memory.md"
+          - Task Memory and Off Prompt: "griptape-framework/structures/task-memory.md"
           - Conversation Memory: "griptape-framework/structures/conversation-memory.md"
           - Rulesets: "griptape-framework/structures/rulesets.md"
           - Config: "griptape-framework/structures/config.md"
