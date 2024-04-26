@@ -118,7 +118,7 @@ class TestWorkflow:
 
         workflow = Workflow(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
-        workflow + [first_task, second_task, third_task]  # pyright: ignore
+        workflow + [first_task, second_task, third_task]
 
         assert workflow.conversation_memory is not None
         assert len(workflow.conversation_memory.runs) == 0
@@ -152,7 +152,7 @@ class TestWorkflow:
 
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + first_task  # pyright: ignore
+        workflow + first_task
         workflow.add_task(second_task)
 
         assert len(workflow.tasks) == 2
@@ -171,7 +171,7 @@ class TestWorkflow:
 
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + [first_task, second_task]  # pyright: ignore
+        workflow + [first_task, second_task]
 
         assert len(workflow.tasks) == 2
         assert first_task in workflow.tasks
@@ -187,7 +187,7 @@ class TestWorkflow:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
         workflow = Workflow(prompt_driver=MockPromptDriver())
-        workflow + [task1, task2]  # pyright: ignore
+        workflow + [task1, task2]
 
         assert task1.state == BaseTask.State.PENDING
         assert task2.state == BaseTask.State.PENDING
@@ -366,8 +366,8 @@ class TestWorkflow:
         task4 = PromptTask("prompt4")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + task1  # pyright: ignore
-        workflow + task4  # pyright: ignore
+        workflow + task1
+        workflow + task4
         workflow.insert_tasks(task1, [task2, task3], task4)
 
         assert task4 == workflow.output_task
@@ -379,8 +379,8 @@ class TestWorkflow:
         task4 = PromptTask("prompt4", id="task4")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + task1  # pyright: ignore
-        workflow + task4  # pyright: ignore
+        workflow + task1
+        workflow + task4
         workflow.insert_tasks(task1, [task2, task3], task4)
 
         graph = workflow.to_graph()
@@ -396,8 +396,8 @@ class TestWorkflow:
         task4 = PromptTask("prompt4", id="task4")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + task1  # pyright: ignore
-        workflow + task4  # pyright: ignore
+        workflow + task1
+        workflow + task4
         workflow.insert_tasks(task1, [task2, task3], task4)
 
         ordered_tasks = workflow.order_tasks()
@@ -413,9 +413,9 @@ class TestWorkflow:
         child = PromptTask("child")
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + parent  # pyright: ignore
-        workflow + task  # pyright: ignore
-        workflow + child  # pyright: ignore
+        workflow + parent
+        workflow + task
+        workflow + child
 
         context = workflow.context(task)
 
