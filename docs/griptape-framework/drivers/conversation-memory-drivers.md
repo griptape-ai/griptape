@@ -45,3 +45,33 @@ agent = Agent(conversation_memory=ConversationMemory(driver=dynamodb_driver))
 agent.run("My name is Jeff.")
 agent.run("What is my name?")
 ```
+
+
+### Redis Conversation Memory Driver
+
+!!! info
+    This driver requires the `drivers-memory-conversation-redis` [extra](../index.md#extras).
+
+The [RedisConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/redis_conversation_memory_driver.md) allows you to persist Conversation Memory in [Redis](https://redis.io/).
+
+```python
+import os
+import uuid
+from griptape.drivers import RedisConversationMemoryDriver
+from griptape.memory.structure import ConversationMemory
+from griptape.structures import Agent
+
+conversation_id = uuid.uuid4().hex
+redis_conversation_driver = RedisConversationMemoryDriver(
+    host="127.0.0.1",
+    port=6379,
+    password='',
+    index='griptape_converstaion',
+    conversation_id = conversation_id
+)
+
+agent = Agent(conversation_memory=ConversationMemory(driver=redis_conversation_driver))
+
+agent.run("My name is Jeff.")
+agent.run("What is my name?")
+```

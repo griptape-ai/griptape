@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- `RedisConversationMemoryDriver` to save conversation memory in redis.
+
 ### Changed
 - Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
 
