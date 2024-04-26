@@ -1,15 +1,11 @@
 name: Docs Integration Tests
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-    branches: [ "main", "dev" ]
-    paths:
-      - "docs/**"
+  pull_request_review:
+    types: [submitted]
 jobs:
   test:
+    if: github.event.review.state == 'APPROVED'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
