@@ -6,14 +6,14 @@ You can specify a local working directory and environment variables during tool 
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import Computer, TaskMemoryClient
+from griptape.tools import Computer
 
 # Initialize the Computer tool
-computer = Computer()
+computer = Computer(off_prompt=False)
 
 # Create an agent with the Computer tool
 agent = Agent(
-    tools=[computer, TaskMemoryClient(off_prompt=False)]
+    tools=[computer]
 )
 
 # Create a file using the shell command

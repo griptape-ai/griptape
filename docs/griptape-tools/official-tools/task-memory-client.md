@@ -7,5 +7,5 @@ from griptape.structures import Agent
 from griptape.tools import WebScraper, TaskMemoryClient
 
 
-Agent(tools=[WebScraper(), TaskMemoryClient(off_prompt=False)])
+Agent(tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)])
 ```

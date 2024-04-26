@@ -17,6 +17,7 @@ class TestFileManager:
         return FileManager(
             input_memory=[defaults.text_task_memory("Memory1")],
             file_manager_driver=LocalFileManagerDriver(workdir=os.path.abspath(os.path.dirname(__file__))),
+            off_prompt=False,
         )
 
     @pytest.fixture
@@ -50,7 +51,8 @@ class TestFileManager:
                 default_loader=TextLoader(encoding="utf-8"),
                 loaders={},
                 workdir=os.path.abspath(os.path.dirname(__file__)),
-            )
+            ),
+            off_prompt=False,
         )
 
         result = file_manager.load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
@@ -63,7 +65,9 @@ class TestFileManager:
 
         memory.store_artifact("foobar", artifact)
 
-        file_manager = FileManager(input_memory=[memory], file_manager_driver=LocalFileManagerDriver(workdir=temp_dir))
+        file_manager = FileManager(
+            input_memory=[memory], file_manager_driver=LocalFileManagerDriver(workdir=temp_dir), off_prompt=False
+        )
         result = file_manager.save_memory_artifacts_to_disk(
             {
                 "values": {
@@ -86,7 +90,9 @@ class TestFileManager:
         for a in artifacts:
             memory.store_artifact("foobar", a)
 
-        file_manager = FileManager(input_memory=[memory], file_manager_driver=LocalFileManagerDriver(workdir=temp_dir))
+        file_manager = FileManager(
+            input_memory=[memory], file_manager_driver=LocalFileManagerDriver(workdir=temp_dir), off_prompt=False
+        )
         result = file_manager.save_memory_artifacts_to_disk(
             {
                 "values": {
@@ -103,7 +109,7 @@ class TestFileManager:
         assert result.value == "Successfully saved memory artifacts to disk"
 
     def test_save_content_to_file(self, temp_dir):
-        file_manager = FileManager(file_manager_driver=LocalFileManagerDriver(workdir=temp_dir))
+        file_manager = FileManager(file_manager_driver=LocalFileManagerDriver(workdir=temp_dir), off_prompt=False)
         result = file_manager.save_content_to_file(
             {"values": {"path": os.path.join("test", "foobar.txt"), "content": "foobar"}}
         )
@@ -113,7 +119,8 @@ class TestFileManager:
 
     def test_save_content_to_file_with_encoding(self, temp_dir):
         file_manager = FileManager(
-            file_manager_driver=LocalFileManagerDriver(default_loader=TextLoader(encoding="utf-8"), workdir=temp_dir)
+            file_manager_driver=LocalFileManagerDriver(default_loader=TextLoader(encoding="utf-8"), workdir=temp_dir),
+            off_prompt=False,
         )
         result = file_manager.save_content_to_file(
             {"values": {"path": os.path.join("test", "foobar.txt"), "content": "foobar"}}
@@ -124,7 +131,8 @@ class TestFileManager:
 
     def test_save_and_load_content_to_file_with_encoding(self, temp_dir):
         file_manager = FileManager(
-            file_manager_driver=LocalFileManagerDriver(loaders={"txt": TextLoader(encoding="ascii")}, workdir=temp_dir)
+            file_manager_driver=LocalFileManagerDriver(loaders={"txt": TextLoader(encoding="ascii")}, workdir=temp_dir),
+            off_prompt=False,
         )
         result = file_manager.save_content_to_file(
             {"values": {"path": os.path.join("test", "foobar.txt"), "content": "foobar"}}
@@ -136,7 +144,8 @@ class TestFileManager:
         file_manager = FileManager(
             file_manager_driver=LocalFileManagerDriver(
                 default_loader=TextLoader(encoding="ascii"), loaders={}, workdir=temp_dir
-            )
+            ),
+            off_prompt=False,
         )
         result = file_manager.load_files_from_disk({"values": {"paths": [os.path.join("test", "foobar.txt")]}})
 

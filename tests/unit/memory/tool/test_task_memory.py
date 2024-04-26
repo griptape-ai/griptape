@@ -48,7 +48,7 @@ class TestTaskMemory:
 
         subtask.structure = Agent()
 
-        output = memory.process_output(MockTool().test, subtask, artifact)
+        output = memory.process_output(MockTool(off_prompt=False).test, subtask, artifact)
 
         entries = subtask.structure.meta_memory.entries
 
@@ -64,24 +64,26 @@ class TestTaskMemory:
 
     def test_process_output_with_many_artifacts(self, memory):
         assert (
-            memory.process_output(MockTool().test, ActionsSubtask(), ListArtifact([TextArtifact("foo")]))
+            memory.process_output(
+                MockTool(off_prompt=False).test, ActionsSubtask(), ListArtifact([TextArtifact("foo")])
+            )
             .to_text()
             .startswith('Output of "MockTool.test" was stored in memory')
         )
 
     def test_load_artifacts_for_text_artifact(self, memory):
-        memory.process_output(MockTool().test, ActionsSubtask(), TextArtifact("foo", name="test"))
+        memory.process_output(MockTool(off_prompt=False).test, ActionsSubtask(), TextArtifact("foo", name="test"))
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_blob_artifact(self, memory):
-        memory.process_output(MockTool().test, ActionsSubtask(), BlobArtifact(b"foo", name="test"))
+        memory.process_output(MockTool(off_prompt=False).test, ActionsSubtask(), BlobArtifact(b"foo", name="test"))
 
         assert len(memory.load_artifacts("test")) == 1
 
     def test_load_artifacts_for_text_list_artifact(self, memory):
         memory.process_output(
-            MockTool().test,
+            MockTool(off_prompt=False).test,
             ActionsSubtask(),
             ListArtifact([TextArtifact("foo", name="test1"), TextArtifact("foo", name="test2")], name="test"),
         )
@@ -90,7 +92,7 @@ class TestTaskMemory:
 
     def test_load_artifacts_for_blob_list_artifact(self, memory):
         memory.process_output(
-            MockTool().test,
+            MockTool(off_prompt=False).test,
             ActionsSubtask(),
             ListArtifact([BlobArtifact(b"foo", name="test1"), BlobArtifact(b"foo", name="test2")], name="test"),
         )

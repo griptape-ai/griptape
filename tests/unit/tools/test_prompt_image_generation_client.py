@@ -15,11 +15,13 @@ class TestPromptImageGenerationClient:
 
     @pytest.fixture
     def image_generator(self, image_generation_engine) -> PromptImageGenerationClient:
-        return PromptImageGenerationClient(engine=image_generation_engine)
+        return PromptImageGenerationClient(engine=image_generation_engine, off_prompt=False)
 
     def test_validate_output_configs(self, image_generation_engine) -> None:
         with pytest.raises(ValueError):
-            PromptImageGenerationClient(engine=image_generation_engine, output_dir="test", output_file="test")
+            PromptImageGenerationClient(
+                engine=image_generation_engine, output_dir="test", output_file="test", off_prompt=False
+            )
 
     def test_generate_image(self, image_generator) -> None:
         image_generator.engine.run.return_value = Mock(
@@ -34,7 +36,9 @@ class TestPromptImageGenerationClient:
 
     def test_generate_image_with_outfile(self, image_generation_engine) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
-        image_generator = PromptImageGenerationClient(engine=image_generation_engine, output_file=outfile)
+        image_generator = PromptImageGenerationClient(
+            engine=image_generation_engine, output_file=outfile, off_prompt=False
+        )
 
         image_generator.engine.run.return_value = Mock(  # pyright: ignore
             value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"

@@ -6,7 +6,7 @@ class TestGoogleDocsClient:
     def mock_docs_client(self):
         from griptape.tools import GoogleDocsClient
 
-        return GoogleDocsClient(owner_email="tony@griptape.ai", service_account_credentials={})
+        return GoogleDocsClient(owner_email="tony@griptape.ai", service_account_credentials={}, off_prompt=False)
 
     def test_append_text(self, mock_docs_client):
         params = {"file_path": "test_folder/test_document", "text": "Appending this text"}

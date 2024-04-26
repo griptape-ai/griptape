@@ -6,7 +6,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestActivityMixin:
     @pytest.fixture
     def tool(self):
-        return MockTool(test_field="hello", test_int=5)
+        return MockTool(test_field="hello", test_int=5, off_prompt=False)
 
     def test_activity_name(self, tool):
         assert tool.activity_name(tool.test) == "test"
@@ -26,7 +26,7 @@ class TestActivityMixin:
         assert tool.activity_schema(tool.test_no_schema) is None
 
     def test_find_activity(self):
-        tool = MockTool(test_field="hello", test_int=5, allowlist=["test"])
+        tool = MockTool(test_field="hello", test_int=5, allowlist=["test"], off_prompt=False)
         assert tool.find_activity("test") == tool.test
         assert tool.find_activity("test_str_output") is None
 
@@ -36,25 +36,25 @@ class TestActivityMixin:
 
     def test_allowlist_and_denylist_validation(self):
         with pytest.raises(ValueError):
-            MockTool(test_field="hello", test_int=5, allowlist=[], denylist=[])
+            MockTool(test_field="hello", test_int=5, allowlist=[], denylist=[], off_prompt=False)
 
     def test_allowlist(self):
-        tool = MockTool(test_field="hello", test_int=5, allowlist=["test"])
+        tool = MockTool(test_field="hello", test_int=5, allowlist=["test"], off_prompt=False)
 
         assert len(tool.activities()) == 1
 
     def test_denylist(self):
-        tool = MockTool(test_field="hello", test_int=5, denylist=["test"])
+        tool = MockTool(test_field="hello", test_int=5, denylist=["test"], off_prompt=False)
 
         assert len(tool.activities()) == 5
 
     def test_invalid_allowlist(self):
         with pytest.raises(ValueError):
-            MockTool(test_field="hello", test_int=5, allowlist=["test_foo"])
+            MockTool(test_field="hello", test_int=5, allowlist=["test_foo"], off_prompt=False)
 
     def test_invalid_denylist(self):
         with pytest.raises(ValueError):
-            MockTool(test_field="hello", test_int=5, denylist=["test_foo"])
+            MockTool(test_field="hello", test_int=5, denylist=["test_foo"], off_prompt=False)
 
     def test_disable_activities(self, tool):
         assert len(tool.activities()) > 0

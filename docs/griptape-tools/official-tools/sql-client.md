@@ -8,7 +8,7 @@ import boto3
 from griptape.drivers import AmazonRedshiftSqlDriver
 from griptape.loaders import SqlLoader
 from griptape.structures import Agent
-from griptape.tools import SqlClient, TaskMemoryClient
+from griptape.tools import SqlClient
 
 
 session = boto3.Session()
@@ -25,11 +25,12 @@ sql_tool = SqlClient(
     sql_loader=sql_loader,
     table_name="people",
     table_description="contains information about tech industry professionals",
-    engine_name="redshift"
+    engine_name="redshift",
+    off_prompt=False
 )
 
 agent = Agent(
-    tools=[sql_tool, TaskMemoryClient(off_prompt=False)]
+    tools=[sql_tool]
 )
 agent.run("SELECT * FROM people;")
 ```

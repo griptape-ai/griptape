@@ -17,7 +17,7 @@ driver = OpenAiImageGenerationDriver(
 engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
+    PromptImageGenerationClient(engine=engine, off_prompt=False),
 ])
 
 agent.run("Generate a watercolor painting of a dog riding a skateboard")
@@ -52,7 +52,7 @@ driver = AmazonBedrockImageGenerationDriver(
 engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
+    PromptImageGenerationClient(engine=engine, off_prompt=False),
 ])
 
 agent.run("Generate an image of a dog riding a skateboard")
@@ -81,7 +81,7 @@ driver = AmazonBedrockImageGenerationDriver(
 engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
+    PromptImageGenerationClient(engine=engine, off_prompt=False),
 ])
 
 agent.run("Generate a watercolor painting of a dog riding a skateboard")
@@ -109,7 +109,7 @@ driver = AzureOpenAiImageGenerationDriver(
 engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
+    PromptImageGenerationClient(engine=engine, off_prompt=False),
 ])
 
 agent.run("Generate a watercolor painting of a dog riding a skateboard")
@@ -141,7 +141,7 @@ driver = LeonardoImageGenerationDriver(
 engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
+    PromptImageGenerationClient(engine=engine, off_prompt=False),
 ])
 
 agent.run("Generate a watercolor painting of a dog riding a skateboard")
@@ -167,7 +167,7 @@ driver = OpenAiImageGenerationDriver(
 engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
+    PromptImageGenerationClient(engine=engine, off_prompt=False),
 ])
 
 agent.run("Generate a watercolor painting of a dog riding a skateboard")

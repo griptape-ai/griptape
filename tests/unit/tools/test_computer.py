@@ -6,7 +6,7 @@ from griptape.tools import Computer
 class TestComputer:
     @pytest.fixture
     def computer(self):
-        return Computer(docker_client=make_fake_client(), install_dependencies_on_init=False)
+        return Computer(docker_client=make_fake_client(), install_dependencies_on_init=False, off_prompt=False)
 
     def test_execute_code(self, computer):
         assert computer.execute_code({"values": {"code": "print(1)", "filename": "foo.py"}}).value == "hello world"

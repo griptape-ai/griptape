@@ -129,11 +129,11 @@ class TestBaseTool:
 
     @pytest.fixture
     def tool(self):
-        return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"})
+        return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"}, off_prompt=False)
 
     def test_off_prompt(self, tool):
         assert (
-            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()])
+            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=False)])
             .tools[0]
             .output_memory
         )
@@ -161,12 +161,12 @@ class TestBaseTool:
         assert tool.abs_dir_path == os.path.dirname(tool.abs_file_path)
 
     def test_name(self):
-        assert MockTool().name == "MockTool"
-        assert MockTool(name="FooBar").name == "FooBar"
+        assert MockTool(off_prompt=False).name == "MockTool"
+        assert MockTool(name="FooBar", off_prompt=False).name == "FooBar"
 
     def test_class_name(self):
-        assert MockTool().class_name == "MockTool"
-        assert MockTool(name="FooBar").class_name == "MockTool"
+        assert MockTool(off_prompt=False).class_name == "MockTool"
+        assert MockTool(name="FooBar", off_prompt=False).class_name == "MockTool"
 
     def test_validate(self, tool):
         assert tool.validate()
@@ -181,7 +181,8 @@ class TestBaseTool:
 
     def test_memory(self):
         tool = MockTool(
-            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]}
+            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},
+            off_prompt=False,
         )
 
         assert tool.output_memory is not None
@@ -190,34 +191,39 @@ class TestBaseTool:
     def test_memory_validation(self):
         with pytest.raises(ValueError):
             MockTool(
-                output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory1")]}
+                output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory1")]},
+                off_prompt=False,
             )
 
         with pytest.raises(ValueError):
-            MockTool(output_memory={"output_memory": [defaults.text_task_memory("Memory1")]})
+            MockTool(output_memory={"output_memory": [defaults.text_task_memory("Memory1")]}, off_prompt=False)
 
         assert MockTool(
             output_memory={
                 "test": [defaults.text_task_memory("Memory1")],
                 "test_str_output": [defaults.text_task_memory("Memory1")],
-            }
+            },
+            off_prompt=False,
         )
 
     def test_find_input_memory(self):
-        assert MockTool().find_input_memory("foo") is None
-        assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
+        assert MockTool(off_prompt=False).find_input_memory("foo") is None
+        assert (
+            MockTool(input_memory=[defaults.text_task_memory("foo")], off_prompt=False).find_input_memory("foo")
+            is not None
+        )
 
     def test_execute(self, tool):
         action = ActionsSubtask.Action(input={}, name="", tag="")
         assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):
-        tool = MockTool()
+        tool = MockTool(off_prompt=False)
 
         assert tool.schema() == self.TARGET_TOOL_SCHEMA
 
     def test_activity_schemas(self, tool):
-        tool = MockTool()
+        tool = MockTool(off_prompt=False)
 
         full_schema = Schema(Or(*tool.activity_schemas()), description=f"{tool.name} action schema.")
 

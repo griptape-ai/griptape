@@ -23,12 +23,18 @@ class TestVariationImageGenerationClient:
 
     @pytest.fixture
     def image_generator(self, image_generation_engine, image_loader) -> VariationImageGenerationClient:
-        return VariationImageGenerationClient(engine=image_generation_engine, image_loader=image_loader)
+        return VariationImageGenerationClient(
+            engine=image_generation_engine, image_loader=image_loader, off_prompt=False
+        )
 
     def test_validate_output_configs(self, image_generation_engine, image_loader) -> None:
         with pytest.raises(ValueError):
             VariationImageGenerationClient(
-                engine=image_generation_engine, output_dir="test", output_file="test", image_loader=image_loader
+                engine=image_generation_engine,
+                output_dir="test",
+                output_file="test",
+                image_loader=image_loader,
+                off_prompt=False,
             )
 
     def test_image_variation(self, image_generator) -> None:
@@ -51,7 +57,7 @@ class TestVariationImageGenerationClient:
     def test_image_variation_with_outfile(self, image_generation_engine, image_loader) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
         image_generator = VariationImageGenerationClient(
-            engine=image_generation_engine, output_file=outfile, image_loader=image_loader
+            engine=image_generation_engine, output_file=outfile, image_loader=image_loader, off_prompt=False
         )
 
         image_generator.engine.run.return_value = Mock(  # pyright: ignore

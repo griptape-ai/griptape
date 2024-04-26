@@ -7,7 +7,7 @@ from griptape.structures import Agent
 from griptape.tools import FileManager
 
 # Initialize the FileManager tool with the current directory as its base
-file_manager_tool = FileManager()
+file_manager_tool = FileManager(off_prompt=False)
 
 # Add the tool to the Agent
 agent = Agent(

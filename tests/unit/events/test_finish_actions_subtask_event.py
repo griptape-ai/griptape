@@ -15,7 +15,7 @@ class TestFinishActionsSubtaskEvent:
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
-        task = ToolkitTask(tools=[MockTool()])
+        task = ToolkitTask(tools=[MockTool(off_prompt=False)])
         agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
         subtask = ActionsSubtask(valid_input)

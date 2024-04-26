@@ -56,7 +56,7 @@ mongo_driver = AzureMongoDbVectorStoreDriver(
 
 loader = Agent(
     tools=[
-        WebScraper()
+        WebScraper(off_prompt=True),
     ],
     config=StructureConfig(
         prompt_driver=azure_prompt_driver,

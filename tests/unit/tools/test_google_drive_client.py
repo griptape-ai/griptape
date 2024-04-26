@@ -5,9 +5,9 @@ from griptape.artifacts import ErrorArtifact
 class TestGoogleDriveClient:
     def test_list_files(self):
         value = {"folder_path": "root"}  # This can be any folder path you want to test
-        result = GoogleDriveClient(owner_email="tony@griptape.ai", service_account_credentials={}).list_files(
-            {"values": value}
-        )
+        result = GoogleDriveClient(
+            owner_email="tony@griptape.ai", service_account_credentials={}, off_prompt=False
+        ).list_files({"values": value})
 
         assert isinstance(result, ErrorArtifact)
         assert "error listing files due to malformed credentials" in result.value
@@ -15,7 +15,7 @@ class TestGoogleDriveClient:
     def test_save_content_to_drive(self):
         value = {"path": "/path/to/your/file.txt", "content": "Sample content for the file."}
         result = GoogleDriveClient(
-            owner_email="tony@griptape.ai", service_account_credentials={}
+            owner_email="tony@griptape.ai", service_account_credentials={}, off_prompt=False
         ).save_content_to_drive({"values": value})
 
         assert isinstance(result, ErrorArtifact)
@@ -23,9 +23,9 @@ class TestGoogleDriveClient:
 
     def test_download_files(self):
         value = {"file_paths": ["example_folder/example_file.txt"]}
-        result = GoogleDriveClient(owner_email="tony@griptape.ai", service_account_credentials={}).download_files(
-            {"values": value}
-        )
+        result = GoogleDriveClient(
+            owner_email="tony@griptape.ai", service_account_credentials={}, off_prompt=False
+        ).download_files({"values": value})
 
         assert isinstance(result, ErrorArtifact)
 
@@ -33,9 +33,9 @@ class TestGoogleDriveClient:
 
     def test_search_files(self):
         value = {"search_mode": "name", "file_name": "search_file_name.txt"}
-        result = GoogleDriveClient(owner_email="tony@griptape.ai", service_account_credentials={}).search_files(
-            {"values": value}
-        )
+        result = GoogleDriveClient(
+            owner_email="tony@griptape.ai", service_account_credentials={}, off_prompt=False
+        ).search_files({"values": value})
 
         assert isinstance(result, ErrorArtifact)
 
@@ -43,9 +43,9 @@ class TestGoogleDriveClient:
 
     def test_share_file(self):
         value = {"file_path": "/path/to/your/file.txt", "email_address": "sample_email@example.com", "role": "reader"}
-        result = GoogleDriveClient(owner_email="tony@griptape.ai", service_account_credentials={}).share_file(
-            {"values": value}
-        )
+        result = GoogleDriveClient(
+            owner_email="tony@griptape.ai", service_account_credentials={}, off_prompt=False
+        ).share_file({"values": value})
 
         assert isinstance(result, ErrorArtifact)
 

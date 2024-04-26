@@ -64,7 +64,7 @@ class TestPipeline:
             pipeline = Pipeline()
             pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_task_memory(self):
+    def test_with_no_task_memory(self):
         pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool(off_prompt=False)]))
@@ -90,7 +90,7 @@ class TestPipeline:
         embedding_driver = MockEmbeddingDriver()
         pipeline = Pipeline(embedding_driver=embedding_driver)
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(ToolkitTask(tools=[MockTool(off_prompt=False)]))
 
         storage = list(pipeline.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
@@ -98,18 +98,18 @@ class TestPipeline:
 
         assert memory_embedding_driver == embedding_driver
 
-    def test_with_default_task_memory_and_empty_tool_output_memory(self):
+    def test_with_task_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
+        pipeline.add_task(ToolkitTask(tools=[MockTool(output_memory={}, off_prompt=True)]))
 
         assert isinstance(pipeline.tasks[0], ToolkitTask)
         assert pipeline.tasks[0].tools[0].output_memory == {}
 
-    def test_without_default_task_memory(self):
+    def test_without_task_memory(self):
         pipeline = Pipeline(task_memory=None)
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(ToolkitTask(tools=[MockTool(off_prompt=False)]))
 
         assert isinstance(pipeline.tasks[0], ToolkitTask)
         assert pipeline.tasks[0].tools[0].input_memory is None

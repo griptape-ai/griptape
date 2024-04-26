@@ -147,7 +147,7 @@ class TestToolTask:
         )
 
     def test_run_without_memory(self, agent):
-        task = ToolTask(tool=MockTool())
+        task = ToolTask(tool=MockTool(off_prompt=False))
 
         agent.add_task(task)
 
@@ -168,7 +168,7 @@ class TestToolTask:
 
         subtask.structure = agent
 
-        memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        memory.process_output(MockTool(off_prompt=False).test, subtask, TextArtifact("foo"))
 
         task = ToolTask(tool=MockTool(off_prompt=False))
 
@@ -179,7 +179,7 @@ class TestToolTask:
         assert "You have access to additional contextual information" in system_template
 
     def test_actions_schema(self):
-        tool = MockTool()
+        tool = MockTool(off_prompt=False)
         task = ToolTask("test", tool=tool)
 
         Agent().add_task(task)

@@ -23,11 +23,15 @@ class TestInpaintingImageGenerationClient:
 
     @pytest.fixture
     def image_generator(self, image_generation_engine, image_loader) -> InpaintingImageGenerationClient:
-        return InpaintingImageGenerationClient(engine=image_generation_engine, image_loader=image_loader)
+        return InpaintingImageGenerationClient(
+            engine=image_generation_engine, image_loader=image_loader, off_prompt=False
+        )
 
     def test_validate_output_configs(self, image_generation_engine) -> None:
         with pytest.raises(ValueError):
-            InpaintingImageGenerationClient(engine=image_generation_engine, output_dir="test", output_file="test")
+            InpaintingImageGenerationClient(
+                engine=image_generation_engine, output_dir="test", output_file="test", off_prompt=False
+            )
 
     def test_image_inpainting(self, image_generator) -> None:
         image_generator.engine.run.return_value = Mock(
@@ -50,7 +54,7 @@ class TestInpaintingImageGenerationClient:
     def test_image_inpainting_with_outfile(self, image_generation_engine, image_loader) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
         image_generator = InpaintingImageGenerationClient(
-            engine=image_generation_engine, output_file=outfile, image_loader=image_loader
+            engine=image_generation_engine, output_file=outfile, image_loader=image_loader, off_prompt=False
         )
 
         image_generator.engine.run.return_value = Mock(  # pyright: ignore

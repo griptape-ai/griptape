@@ -151,7 +151,7 @@ pipeline.add_tasks(
     ToolkitTask(
         "{{ args[0] }}",
         # Add tools for web scraping, and file management
-        tools=[WebScraper(), FileManager(), TaskMemoryClient(off_prompt=False)]
+        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), TaskMemoryClient(off_prompt=False)]
     ),
     # Augment `input` from the previous task.
     PromptTask(

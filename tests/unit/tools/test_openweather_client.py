@@ -6,7 +6,7 @@ from griptape.tools import OpenWeatherClient
 
 @pytest.fixture
 def client():
-    return OpenWeatherClient(api_key="YOUR_API_KEY")
+    return OpenWeatherClient(api_key="YOUR_API_KEY", off_prompt=False)
 
 
 class MockResponse:

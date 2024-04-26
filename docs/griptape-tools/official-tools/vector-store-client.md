@@ -24,7 +24,8 @@ engine.upsert_text_artifacts(
 vector_db = VectorStoreClient(
     description="This DB has information about the Griptape Python framework",
     query_engine=engine,
-    namespace="griptape"
+    namespace="griptape",
+    off_prompt=True
 )
 
 agent = Agent(

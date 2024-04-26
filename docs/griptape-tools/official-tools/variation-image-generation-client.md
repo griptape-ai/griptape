@@ -28,6 +28,7 @@ engine = VariationImageGenerationEngine(
 # Create a tool configured to use the engine.
 tool = VariationImageGenerationClient(
     engine=engine,
+    off_prompt=False
 )
 
 # Create an agent and provide the tool to it.
@@ -56,11 +57,13 @@ driver = AmazonBedrockImageGenerationDriver(
 # Create an prompt image generation engine configured to use the driver.
 prompt_engine = PromptImageGenerationEngine(
     image_generation_driver=driver,
+    off_prompt=False
 )
 
 # Create a prompt image generation client configured to use the engine.
 prompt_tool = PromptImageGenerationClient(
     engine=prompt_engine,
+    off_prompt=False
 )
 
 # Create an variation image generation engine configured to use the driver.

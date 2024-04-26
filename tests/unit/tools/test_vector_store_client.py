@@ -21,6 +21,7 @@ class TestVectorStoreClient:
                 prompt_driver=MockPromptDriver(mock_output="foobar"),
                 vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver()),
             ),
+            off_prompt=False,
         )
 
         assert tool.search({"values": {"query": "test"}}).value == "foobar"

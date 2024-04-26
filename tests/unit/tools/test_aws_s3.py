@@ -12,30 +12,35 @@ class TestAwsS3Client:
     def test_get_bucket_acl(self):
         value = {"bucket_name": "bucket_test"}
         assert (
-            "error getting bucket acl" in AwsS3Client(session=boto3.Session()).get_bucket_acl({"values": value}).value
+            "error getting bucket acl"
+            in AwsS3Client(session=boto3.Session(), off_prompt=False).get_bucket_acl({"values": value}).value
         )
 
     def test_get_bucket_policy(self):
         value = {"bucket_name": "bucket_test"}
         assert (
             "error getting bucket policy"
-            in AwsS3Client(session=boto3.Session()).get_bucket_policy({"values": value}).value
+            in AwsS3Client(session=boto3.Session(), off_prompt=False).get_bucket_policy({"values": value}).value
         )
 
     def test_get_object_acl(self):
         value = {"bucket_name": "bucket_test", "object_key": "key_test"}
         assert (
-            "error getting object acl" in AwsS3Client(session=boto3.Session()).get_object_acl({"values": value}).value
+            "error getting object acl"
+            in AwsS3Client(session=boto3.Session(), off_prompt=False).get_object_acl({"values": value}).value
         )
 
     def test_list_s3_buckets(self):
-        assert "error listing s3 buckets" in AwsS3Client(session=boto3.Session()).list_s3_buckets({}).value
+        assert (
+            "error listing s3 buckets"
+            in AwsS3Client(session=boto3.Session(), off_prompt=False).list_s3_buckets({}).value
+        )
 
     def test_list_objects(self):
         value = {"bucket_name": "bucket_test"}
         assert (
             "error listing objects in bucket"
-            in AwsS3Client(session=boto3.Session()).list_objects({"values": value}).value
+            in AwsS3Client(session=boto3.Session(), off_prompt=False).list_objects({"values": value}).value
         )
 
     def test_upload_memory_artifacts_to_s3(self):
@@ -47,7 +52,9 @@ class TestAwsS3Client:
         }
         assert (
             "memory not found"
-            in AwsS3Client(session=boto3.Session()).upload_memory_artifacts_to_s3({"values": value}).value
+            in AwsS3Client(session=boto3.Session(), off_prompt=False)
+            .upload_memory_artifacts_to_s3({"values": value})
+            .value
         )
 
     def test_upload_content_to_s3(self):
@@ -55,7 +62,7 @@ class TestAwsS3Client:
 
         assert (
             "error uploading objects"
-            in AwsS3Client(session=boto3.Session()).upload_content_to_s3({"values": value}).value
+            in AwsS3Client(session=boto3.Session(), off_prompt=False).upload_content_to_s3({"values": value}).value
         )
 
     def test_download_objects(self):
@@ -63,5 +70,5 @@ class TestAwsS3Client:
 
         assert (
             "error downloading objects"
-            in AwsS3Client(session=boto3.Session()).download_objects({"values": value}).value
+            in AwsS3Client(session=boto3.Session(), off_prompt=False).download_objects({"values": value}).value
         )

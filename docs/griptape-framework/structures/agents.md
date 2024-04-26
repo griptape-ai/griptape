@@ -16,7 +16,7 @@ from griptape.structures import Agent
 
 agent = Agent(
     input_template="Calculate the following: {{ args[0] }}",
-    tools=[Calculator()]
+    tools=[Calculator(off_prompt=False)]
 )
 
 agent.run("what's 123^312?")

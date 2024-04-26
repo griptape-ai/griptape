@@ -22,7 +22,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestEventListener:
     @pytest.fixture
     def pipeline(self):
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)])
 
         pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)

@@ -24,6 +24,7 @@ engine = PromptImageGenerationEngine(
 # Create a tool configured to use the engine.
 tool = PromptImageGenerationClient(
     engine=engine,
+    off_prompt=False
 )
 
 # Create an agent and provide the tool to it.

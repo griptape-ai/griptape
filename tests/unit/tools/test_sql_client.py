@@ -20,7 +20,9 @@ class TestSqlClient:
 
     def test_execute_query(self, driver):
         with sqlite3.connect(":memory:"):
-            client = SqlClient(sql_loader=SqlLoader(sql_driver=driver), table_name="test_table", engine_name="sqlite")
+            client = SqlClient(
+                sql_loader=SqlLoader(sql_driver=driver), table_name="test_table", engine_name="sqlite", off_prompt=False
+            )
             result = client.execute_query({"values": {"sql_query": "SELECT * from test_table;"}})
 
             assert len(result.value) == 1
@@ -32,6 +34,7 @@ class TestSqlClient:
             table_name="test_table",
             table_description="foobar",
             engine_name="sqlite",
+            off_prompt=False,
         )
         description = client.activity_description(client.execute_query)
 

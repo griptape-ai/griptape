@@ -16,7 +16,7 @@ class TestGriptapeCloudKnowledgeBaseClient:
         mocker.patch("requests.get", return_value=mock_response)
 
         return GriptapeCloudKnowledgeBaseClient(
-            base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
+            base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1", off_prompt=False
         )
 
     def test_query(self, client):
