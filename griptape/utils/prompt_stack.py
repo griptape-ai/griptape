@@ -66,7 +66,7 @@ class PromptStack(SerializableMixin):
 
         if memory.autoprune and hasattr(memory, "structure"):
             should_prune = True
-            prompt_driver = memory.structure.config.global_drivers.prompt_driver
+            prompt_driver = memory.structure.config.prompt_driver
             temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can

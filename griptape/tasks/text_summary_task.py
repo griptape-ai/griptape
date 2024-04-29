@@ -17,9 +17,7 @@ class TextSummaryTask(BaseTextInputTask):
     def summary_engine(self) -> Optional[BaseSummaryEngine]:
         if self._summary_engine is None:
             if self.structure is not None:
-                self._summary_engine = PromptSummaryEngine(
-                    prompt_driver=self.structure.config.global_drivers.prompt_driver
-                )
+                self._summary_engine = PromptSummaryEngine(prompt_driver=self.structure.config.prompt_driver)
             else:
                 raise ValueError("Summary Engine is not set.")
         return self._summary_engine

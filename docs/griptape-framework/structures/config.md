@@ -122,7 +122,7 @@ from griptape.config import AmazonBedrockStructureConfig
 from griptape.drivers import AmazonBedrockCohereEmbeddingDriver
 
 custom_config = AmazonBedrockStructureConfig()
-custom_config.global_drivers.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
+custom_config.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
 custom_config.merge_config(
     {
         "task_memory": {
