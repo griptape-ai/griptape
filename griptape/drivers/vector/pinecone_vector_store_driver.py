@@ -17,8 +17,9 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     index: pinecone.Index = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        pinecone = import_optional_dependency("pinecone")
-        pinecone.init(api_key=self.api_key, environment=self.environment, project_name=self.project_name)
+        pinecone = import_optional_dependency("pinecone").Pinecone(
+            api_key=self.api_key, environment=self.environment, project_name=self.project_name
+        )
 
         self.index = pinecone.Index(self.index_name)
 
@@ -34,7 +35,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         params: dict[str, Any] = {"namespace": namespace} | kwargs
 
-        self.index.upsert([(vector_id, vector, meta)], **params)
+        self.index.upsert(vectors=[(vector_id, vector, meta)], **params)
 
         return vector_id
 
@@ -57,7 +58,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         # https://community.pinecone.io/t/is-there-a-way-to-query-all-the-vectors-and-or-metadata-from-a-namespace/797/5
 
         results = self.index.query(
-            self.embedding_driver.embed_string(""), top_k=10000, include_metadata=True, namespace=namespace
+            vector=self.embedding_driver.embed_string(""), top_k=10000, include_metadata=True, namespace=namespace
         )
 
         return [
@@ -86,7 +87,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             "include_metadata": include_metadata,
         } | kwargs
 
-        results = self.index.query(vector, **params)
+        results = self.index.query(vector=vector, **params)
 
         return [
             BaseVectorStoreDriver.QueryResult(
