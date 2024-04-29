@@ -74,6 +74,9 @@ nav:
   - Home:
       - Overview: "index.md"
       - Contributing: "contributing.md"
+  - Cloud:
+      - Cloud API:
+          - API Reference: "griptape-cloud/api/api-reference.md"
   - Framework:
       - Overview: "griptape-framework/index.md"
       - Structures:
