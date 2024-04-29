@@ -1,1 +1,1 @@
-# Content overriden by Swagger Plugin
+# Content overridden by Swagger Plugin
