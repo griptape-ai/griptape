@@ -122,13 +122,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ImageQueryTask` and `ImageQueryEngine`.
 
 ### Fixed 
-- `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1.
+- `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1 (`stability.stable-diffusion-xl-v1`).
 - `BedrockStableDiffusionImageGenerationModelDriver` correctly handles the CONTENT_FILTERED response case.
 
 ### Changed
 - **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field.
 - **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`.
 - **BREAKING**: `ImageLoader().load()` now accepts image bytes instead of a file path.
+- **BREAKING**: Request parameters for `BedrockStableDiffusionImageGenerationModelDriver` have been updated for `stability.stable-diffusion-xl-v1`. Use this over the now deprecated `stability.stable-diffusion-xl-v0`.
 - Deprecated `Structure.prompt_driver` in favor of `Structure.config.global_drivers.prompt_driver`.
 - Deprecated `Structure.embedding_driver` in favor of `Structure.config.global_drivers.embedding_driver`.
 - Deprecated `Structure.stream` in favor of `Structure.config.global_drivers.prompt_driver.stream`.
