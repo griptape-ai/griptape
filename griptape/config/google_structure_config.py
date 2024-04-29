@@ -1,48 +1,20 @@
-from attrs import Factory, define, field
+from attrs import define, field, Factory
 
-from griptape.config import (
-    BaseStructureConfig,
-    StructureGlobalDriversConfig,
-    StructureTaskMemoryConfig,
-    StructureTaskMemoryExtractionEngineConfig,
-    StructureTaskMemoryExtractionEngineCsvConfig,
-    StructureTaskMemoryExtractionEngineJsonConfig,
-    StructureTaskMemoryQueryEngineConfig,
-    StructureTaskMemorySummaryEngineConfig,
-)
-from griptape.drivers import LocalVectorStoreDriver, GooglePromptDriver, GoogleEmbeddingDriver
+from griptape.config import StructureConfig
+from griptape.drivers import GoogleEmbeddingDriver, GooglePromptDriver, LocalVectorStoreDriver
 
 
 @define
-class GoogleStructureConfig(BaseStructureConfig):
-    global_drivers: StructureGlobalDriversConfig = field(
-        default=Factory(
-            lambda: StructureGlobalDriversConfig(
-                prompt_driver=GooglePromptDriver(model="gemini-pro"),
-                embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001"),
-                vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001")
-                ),
-            )
-        ),
-        kw_only=True,
-        metadata={"serializable": True},
+class GoogleStructureConfig(StructureConfig):
+    prompt_driver: GooglePromptDriver = field(
+        default=Factory(lambda: GooglePromptDriver(model="gemini-pro")), metadata={"serializable": True}
     )
-    task_memory: StructureTaskMemoryConfig = field(
+    embedding_driver: GoogleEmbeddingDriver = field(
+        default=Factory(lambda: GoogleEmbeddingDriver(model="models/embedding-001")), metadata={"serializable": True}
+    )
+    vector_store_driver: LocalVectorStoreDriver = field(
         default=Factory(
-            lambda self: StructureTaskMemoryConfig(
-                query_engine=StructureTaskMemoryQueryEngineConfig(
-                    prompt_driver=self.global_drivers.prompt_driver,
-                    vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.global_drivers.embedding_driver),
-                ),
-                extraction_engine=StructureTaskMemoryExtractionEngineConfig(
-                    csv=StructureTaskMemoryExtractionEngineCsvConfig(prompt_driver=self.global_drivers.prompt_driver),
-                    json=StructureTaskMemoryExtractionEngineJsonConfig(prompt_driver=self.global_drivers.prompt_driver),
-                ),
-                summary_engine=StructureTaskMemorySummaryEngineConfig(prompt_driver=self.global_drivers.prompt_driver),
-            ),
-            takes_self=True,
+            lambda: LocalVectorStoreDriver(embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001"))
         ),
-        kw_only=True,
         metadata={"serializable": True},
     )

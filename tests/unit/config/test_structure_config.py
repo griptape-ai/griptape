@@ -10,63 +10,14 @@ class TestStructureConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "StructureConfig",
-            "global_drivers": {
-                "type": "StructureGlobalDriversConfig",
-                "prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False},
-                "conversation_memory_driver": None,
+            "prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False},
+            "conversation_memory_driver": None,
+            "embedding_driver": {"type": "DummyEmbeddingDriver"},
+            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
+            "image_query_driver": {"type": "DummyImageQueryDriver"},
+            "vector_store_driver": {
                 "embedding_driver": {"type": "DummyEmbeddingDriver"},
-                "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-                "image_query_driver": {"type": "DummyImageQueryDriver"},
-                "vector_store_driver": {
-                    "embedding_driver": {"type": "DummyEmbeddingDriver"},
-                    "type": "DummyVectorStoreDriver",
-                },
-            },
-            "task_memory": {
-                "type": "StructureTaskMemoryConfig",
-                "query_engine": {
-                    "type": "StructureTaskMemoryQueryEngineConfig",
-                    "prompt_driver": {
-                        "type": "DummyPromptDriver",
-                        "stream": False,
-                        "temperature": 0.1,
-                        "max_tokens": None,
-                    },
-                    "vector_store_driver": {
-                        "type": "LocalVectorStoreDriver",
-                        "embedding_driver": {"type": "DummyEmbeddingDriver"},
-                    },
-                },
-                "extraction_engine": {
-                    "type": "StructureTaskMemoryExtractionEngineConfig",
-                    "csv": {
-                        "type": "StructureTaskMemoryExtractionEngineCsvConfig",
-                        "prompt_driver": {
-                            "type": "DummyPromptDriver",
-                            "temperature": 0.1,
-                            "max_tokens": None,
-                            "stream": False,
-                        },
-                    },
-                    "json": {
-                        "type": "StructureTaskMemoryExtractionEngineJsonConfig",
-                        "prompt_driver": {
-                            "type": "DummyPromptDriver",
-                            "temperature": 0.1,
-                            "max_tokens": None,
-                            "stream": False,
-                        },
-                    },
-                },
-                "summary_engine": {
-                    "type": "StructureTaskMemorySummaryEngineConfig",
-                    "prompt_driver": {
-                        "type": "DummyPromptDriver",
-                        "temperature": 0.1,
-                        "max_tokens": None,
-                        "stream": False,
-                    },
-                },
+                "type": "DummyVectorStoreDriver",
             },
         }
 
@@ -78,19 +29,11 @@ class TestStructureConfig:
             config.merge_config(
                 {
                     "type": "StructureConfig",
-                    "task_memory": {
-                        "extraction_engine": {
-                            "type": "StructureTaskMemoryExtractionEngineConfig",
-                            "csv": {
-                                "type": "StructureTaskMemoryExtractionEngineCsvConfig",
-                                "prompt_driver": {
-                                    "type": "DummyPromptDriver",
-                                    "temperature": 0.1,
-                                    "max_tokens": None,
-                                    "stream": False,
-                                },
-                            },
-                        }
+                    "prompt_driver": {
+                        "type": "DummyPromptDriver",
+                        "temperature": 0.1,
+                        "max_tokens": None,
+                        "stream": False,
                     },
                 }
             ).to_dict()
@@ -99,12 +42,12 @@ class TestStructureConfig:
 
     def test_changed_merge_config(self, config):
         config = config.merge_config(
-            {"task_memory": {"extraction_engine": {"csv": {"prompt_driver": {"stream": True}}}}}
+            {"prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False}}
         )
 
-        assert config.task_memory.extraction_engine.csv.prompt_driver.stream is True
+        assert config.prompt_driver.temperature == 0.1
 
     def test_dot_update(self, config):
-        config.task_memory.extraction_engine.csv.prompt_driver.stream = True
+        config.prompt_driver.max_tokens = 10
 
-        assert config.task_memory.extraction_engine.csv.prompt_driver.stream is True
+        assert config.prompt_driver.max_tokens == 10

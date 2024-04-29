@@ -164,7 +164,7 @@ from griptape.tools import WebScraper
 
 
 pipeline = Pipeline()
-pipeline.config.global_drivers.prompt_driver.stream = True
+pipeline.config.prompt_driver.stream = True
 pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.", tools=[WebScraper()]))
 
 for artifact in Stream(pipeline).run():
