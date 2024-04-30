@@ -21,7 +21,7 @@ class TestGriptapeCloudStructureRunClient:
         assert isinstance(client.execute_structure_run({"values": {"args": ["foo bar"]}}), TextArtifact)
 
     def test_get_structure_description(self, client):
-        assert client._get_structure_description() == "fizz buzz"
+        assert client.description == "fizz buzz"
 
         client.description = "foo bar"
-        assert client._get_structure_description() == "foo bar"
+        assert client.description == "foo bar"
