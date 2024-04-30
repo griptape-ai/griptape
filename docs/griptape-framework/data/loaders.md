@@ -13,17 +13,24 @@ Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) 
 
 ```python
 from griptape.loaders import PdfLoader
+from griptape.utils import load_files, load_file
 import urllib.request
 
 urllib.request.urlretrieve("https://arxiv.org/pdf/1706.03762.pdf", "attention.pdf")
 
+# Load a single PDF file
 with open("attention.pdf", "rb") as f:
     PdfLoader().load(f.read())
+# You can also use the load_file utility function
+PdfLoader().load(load_file("attention.pdf"))
 
 urllib.request.urlretrieve("https://arxiv.org/pdf/1706.03762.pdf", "CoT.pdf")
 
+# Load multiple PDF files
 with open("attention.pdf", "rb") as attention, open("CoT.pdf", "rb") as cot:
     PdfLoader().load_collection([attention.read(), cot.read()])
+# You can also use the load_files utility function
+PdfLoader().load_collection(list(load_files(["attention.pdf", "CoT.pdf"]).values()))
 ```
 
 ## Sql Loader
@@ -53,12 +60,19 @@ Can be used to load CSV files into [CsvRowArtifact](../../reference/griptape/art
 
 ```python
 from griptape.loaders import CsvLoader
+from griptape.utils import load_file, load_files
 
+# Load a single CSV file
 with open("tests/resources/cities.csv", "r") as f:
     CsvLoader().load(f.read())
+# You can also use the load_file utility function
+CsvLoader().load(load_file("tests/resources/cities.csv"))
 
+# Load multiple CSV files
 with open("tests/resources/cities.csv", "r") as cities, open("tests/resources/addresses.csv", "r") as addresses:
     CsvLoader().load_collection([cities.read(), addresses.read()])
+# You can also use the load_files utility function
+CsvLoader().load_collection(list(load_files(["tests/resources/cities.csv", "tests/resources/addresses.csv"]).values()))
 ```
 
 
@@ -140,19 +154,32 @@ The Image Loader is used to load an image as an [ImageArtifact](./artifacts.md#i
 
 ```python
 from griptape.loaders import ImageLoader
+from griptape.utils import load_file
 
+# Load an image from disk
 with open("tests/resources/mountain.png", "rb") as f:
     disk_image_artifact = ImageLoader().load(f.read())
+# You can also use the load_file utility function
+ImageLoader().load(load_file("tests/resources/mountain.png"))
 ```
 
 By default, the Image Loader will load images in their native format, but not all models work on all formats. To normalize the format of Artifacts returned by the Loader, set the `format` field.
 
 ```python
 from griptape.loaders import ImageLoader
+from griptape.utils import load_files, load_file
 
-# Image data in artifact will be in BMP format.
+# Load a single image in BMP format
 with open("tests/resources/mountain.png", "rb") as f:
     image_artifact_jpeg = ImageLoader(format="bmp").load(f.read())
+# You can also use the load_file utility function
+ImageLoader(format="bmp").load(load_file("tests/resources/mountain.png"))
+
+# Load multiple images in BMP format
+with open("tests/resources/mountain.png", "rb") as mountain, open("tests/resources/cow.png", "rb") as cow:
+    ImageLoader().load_collection([mountain.read(), cow.read()])
+# You can also use the load_files utility function
+ImageLoader().load_collection(list(load_files(["tests/resources/mountain.png", "tests/resources/cow.png"]).values()))
 ```
 
 
