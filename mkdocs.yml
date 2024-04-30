@@ -128,6 +128,7 @@ nav:
           - GoogleGmailClient: "griptape-tools/official-tools/google-gmail-client.md"
           - GoogleDriveClient: "griptape-tools/official-tools/google-drive-client.md"
           - GoogleDocsClient: "griptape-tools/official-tools/google-docs-client.md"
+          - GriptapeCloudStructureRunClient: "griptape-tools/official-tools/griptape-cloud-structure-run-client.md"
           - OpenWeatherClient: "griptape-tools/official-tools/openweather-client.md"
           - RestApiClient: "griptape-tools/official-tools/rest-api-client.md"
           - SqlClient: "griptape-tools/official-tools/sql-client.md"

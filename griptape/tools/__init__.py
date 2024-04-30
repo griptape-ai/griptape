@@ -24,6 +24,7 @@ from .variation_image_generation_client.tool import VariationImageGenerationClie
 from .inpainting_image_generation_client.tool import InpaintingImageGenerationClient
 from .outpainting_image_generation_client.tool import OutpaintingImageGenerationClient
 from .griptape_cloud_knowledge_base_client.tool import GriptapeCloudKnowledgeBaseClient
+from .griptape_cloud_structure_run_client.tool import GriptapeCloudStructureRunClient
 from .image_query_client.tool import ImageQueryClient
 
 __all__ = [
