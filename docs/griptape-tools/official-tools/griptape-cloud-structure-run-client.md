@@ -8,12 +8,13 @@ from griptape.structures import Agent
 import os
 
 api_key = os.environ["GRIPTAPE_CLOUD_API_KEY"]
+structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
 
 # Create the GriptapeCloudStructureRunClient tool
 structure_run_tool = GriptapeCloudStructureRunClient(
     description="Danish Baker Agent - Structure to invoke with natural language queries about Danish pastries",
     api_key=api_key,
-    structure_id="15071570-94a6-493b-8011-62547ebe7fd2",
+    structure_id=structure_id,
     off_prompt=False,
 )
 
