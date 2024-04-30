@@ -34,9 +34,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `TextLoader` no longer accepts `Path` file paths as a source. It will now accept the content of the text file as a `str` or `bytes` object.
 - **BREAKING**: `FileManager.default_loader` is now `None` by default.
 - **BREAKING**: Replaced `EventListener.handler` with `EventListener.driver` and `LocalEventListenerDriver`.
-- Improved RAG performance in `VectorQueryEngine`.
+- **BREAKING** Bumped `pinecone` from `^2` to `^3`.
 - **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
 - **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
+- Improved RAG performance in `VectorQueryEngine`.
 - Moved [Griptape Docs](https://github.com/griptape-ai/griptape-docs) to this repository.
 
 ### Fixed
