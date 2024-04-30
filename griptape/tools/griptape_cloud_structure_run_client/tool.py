@@ -22,6 +22,25 @@ class GriptapeCloudStructureRunClient(BaseGriptapeCloudClient):
     structure_run_wait_time_interval: int = field(default=2, kw_only=True)
     structure_run_max_wait_time_attempts: int = field(default=20, kw_only=True)
 
+    @property
+    def description(self) -> str:
+        if self._description is None:
+            from requests import get
+
+            url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/")
+
+            response = get(url, headers=self.headers).json()
+            if "description" in response:
+                self._description = response["description"]
+            else:
+                raise ValueError(f'Error getting Structure description: {response["message"]}')
+
+        return self._description
+
+    @description.setter
+    def description(self, value: str) -> None:
+        self._description = value
+
     @activity(
         config={
             "description": "Can be used to execute a Run of a Structure with the following description: {{ _self.description }}",
@@ -49,15 +68,15 @@ class GriptapeCloudStructureRunClient(BaseGriptapeCloudClient):
         url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{structure_run_id}")
 
         result = self._get_structure_run_result_attempt(url)
-        status = result.get("status")
+        status = result["status"]
 
         wait_attempts = 0
-        while status in ["QUEUED", "RUNNING"] and wait_attempts < self.structure_run_max_wait_time_attempts:
+        while status in ("QUEUED", "RUNNING") and wait_attempts < self.structure_run_max_wait_time_attempts:
             # wait
             time.sleep(self.structure_run_wait_time_interval)
             wait_attempts += 1
             result = self._get_structure_run_result_attempt(url)
-            status = result.get("status")
+            status = result["status"]
 
         if wait_attempts >= self.structure_run_max_wait_time_attempts:
             return ErrorArtifact(
@@ -78,22 +97,3 @@ class GriptapeCloudStructureRunClient(BaseGriptapeCloudClient):
         response: Response = get(structure_run_url, headers=self.headers)
         response.raise_for_status()
         return response.json()
-
-    @property
-    def description(self) -> str:
-        if self._description is None:
-            from requests import get
-
-            url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/")
-
-            response = get(url, headers=self.headers).json()
-            if "description" in response:
-                self._description = response["description"]
-            else:
-                raise ValueError(f'Error getting Structure description: {response["message"]}')
-
-        return self._description
-
-    @description.setter
-    def description(self, value: str) -> None:
-        self._description = value
