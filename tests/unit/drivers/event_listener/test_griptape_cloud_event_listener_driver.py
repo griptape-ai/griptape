@@ -31,7 +31,7 @@ class TestGriptapeCloudEventListenerDriver:
 
     def test_try_publish_event(self, mock_post, driver):
         event = MockEvent()
-        driver.try_publish_event(event=event)
+        driver.try_publish_event(event.to_dict())
 
         mock_post.assert_called_once_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",

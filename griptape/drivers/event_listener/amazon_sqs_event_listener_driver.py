@@ -18,4 +18,4 @@ class AmazonSqsEventListenerDriver(BaseEventListenerDriver):
     sqs_client: Any = field(default=Factory(lambda self: self.session.client("sqs"), takes_self=True))
 
     def try_publish_event(self, event_payload: dict) -> None:
-        self.sqs_client.send_message(QueueUrl=self.queue_url, MessageBody=event_payload)
+        self.sqs_client.send_message(QueueUrl=self.queue_url, MessageBody=str(event_payload))

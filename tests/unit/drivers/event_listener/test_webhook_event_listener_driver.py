@@ -18,8 +18,8 @@ class TestWebhookEventListenerDriver:
     def test_try_publish_event(self, mock_post):
         driver = WebhookEventListenerDriver(webhook_url="foo bar", headers={"Authorization": "Bearer foo bar"})
         event = MockEvent()
-        driver.try_publish_event(event=event)
+        driver.try_publish_event(event.to_dict())
 
         mock_post.assert_called_once_with(
-            url="foo bar", json={"event": event.to_dict()}, headers={"Authorization": "Bearer foo bar"}
+            url="foo bar", json=event.to_dict(), headers={"Authorization": "Bearer foo bar"}
         )

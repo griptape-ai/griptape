@@ -28,4 +28,4 @@ class TestAmazonSqsEventListenerDriver:
         assert driver
 
     def test_try_publish_event(self, driver):
-        driver.try_publish_event(event=MockEvent())
+        driver.try_publish_event(MockEvent().to_dict())
