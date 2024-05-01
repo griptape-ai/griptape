@@ -91,7 +91,6 @@ from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListe
 from .event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
 from .event_listener.aws_iot_core_event_listener_driver import AwsIotCoreEventListenerDriver
 from .event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
-from .event_listener.local_event_listener_driver import LocalEventListenerDriver
 
 from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
@@ -177,7 +176,6 @@ __all__ = [
     "WebhookEventListenerDriver",
     "AwsIotCoreEventListenerDriver",
     "GriptapeCloudEventListenerDriver",
-    "LocalEventListenerDriver",
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
