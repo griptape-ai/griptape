@@ -18,7 +18,6 @@ from griptape.events import (
     FinishPromptEvent,
     EventListener,
 )
-from griptape.drivers import LocalEventListenerDriver
 
 
 def handler(event: BaseEvent):
@@ -28,6 +27,7 @@ def handler(event: BaseEvent):
 agent = Agent(
     event_listeners=[
         EventListener(
+            handler,
             event_types=[
                 StartTaskEvent,
                 FinishTaskEvent,
@@ -36,7 +36,6 @@ agent = Agent(
                 StartPromptEvent,
                 FinishPromptEvent,
             ],
-            driver=LocalEventListenerDriver(handler=handler),
         )
     ]
 )
@@ -65,7 +64,6 @@ Or listen to all events:
 ```python
 from griptape.structures import Agent
 from griptape.events import BaseEvent, EventListener
-from griptape.drivers import LocalEventListenerDriver
 
 
 def handler1(event: BaseEvent):
@@ -78,8 +76,8 @@ def handler2(event: BaseEvent):
 
 agent = Agent(
     event_listeners=[
-        EventListener(driver=LocalEventListenerDriver(handler=handler1)),
-        EventListener(driver=LocalEventListenerDriver(handler=handler1)),
+        EventListener(handler1),
+        EventListener(handler2),
     ]
 )
 
@@ -131,13 +129,12 @@ from griptape.events import CompletionChunkEvent, EventListener
 from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
 from griptape.tools import WebScraper, TaskMemoryClient
-from griptape.drivers import LocalEventListenerDriver
 
 
 pipeline = Pipeline(
     event_listeners=[
         EventListener(
-            driver=LocalEventListenerDriver(handler=lambda e: print(e.token, end="", flush=True)),
+            lambda e: print(e.token, end="", flush=True),
             event_types=[CompletionChunkEvent],
         )
     ]
@@ -180,7 +177,6 @@ To count tokens, you can use Event Listeners and the [TokenCounter](../../refere
 from griptape import utils
 from griptape.events import BaseEvent, StartPromptEvent, FinishPromptEvent, EventListener
 from griptape.structures import Agent
-from griptape.drivers import LocalEventListenerDriver
 
 
 token_counter = utils.TokenCounter()
@@ -194,7 +190,7 @@ def count_tokens(e: BaseEvent):
 agent = Agent(
     event_listeners=[
         EventListener(
-            driver=LocalEventListenerDriver(handler=lambda e: count_tokens(e)),
+            handler=lambda e: count_tokens(e),
             event_types=[StartPromptEvent, FinishPromptEvent],
         )
     ]
@@ -238,7 +234,6 @@ You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_
 ```python
 from griptape.structures import Agent
 from griptape.events import BaseEvent, StartPromptEvent, EventListener
-from griptape.drivers import LocalEventListenerDriver
 
 
 def handler(event: BaseEvent):
@@ -251,7 +246,7 @@ def handler(event: BaseEvent):
 
 
 agent = Agent(
-    event_listeners=[EventListener(driver=LocalEventListenerDriver(handler=handler), event_types=[StartPromptEvent])]
+    event_listeners=[EventListener(handler=handler), event_types=[StartPromptEvent])]
 )
 
 agent.run("Write me a poem.")
