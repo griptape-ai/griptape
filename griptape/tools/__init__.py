@@ -54,5 +54,6 @@ __all__ = [
     "InpaintingImageGenerationClient",
     "OutpaintingImageGenerationClient",
     "GriptapeCloudKnowledgeBaseClient",
+    "GriptapeCloudStructureRunClient",
     "ImageQueryClient",
 ]
