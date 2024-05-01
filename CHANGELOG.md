@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AwsIotCoreEventListenerDriver` for sending events to a topic on AWS IoT Core.
 - `GriptapeCloudEventListenerDriver` for sending events to Griptape Cloud.
 - `WebhookEventListenerDriver` for sending events to a webhook.
-- `LocalEventListenerDriver` for sending events to a callback function.
 - `BaseFileManagerDriver` to abstract file management operations.
 - `LocalFileManagerDriver` for managing files on the local file system.
 - Added optional `BaseLoader.encoding` field.
