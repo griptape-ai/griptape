@@ -36,7 +36,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
             )
 
-    def try_publish_event(self, event_payload: dict) -> None:
+    def try_publish_event_payload(self, event_payload: dict) -> None:
         url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events")
 
         requests.post(url=url, json=event_payload, headers=self.headers)

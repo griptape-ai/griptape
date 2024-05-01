@@ -11,10 +11,10 @@ class BaseEventListenerDriver(ABC):
 
     def publish_event(self, event: BaseEvent | dict) -> None:
         if isinstance(event, dict):
-            self.futures_executor.submit(self.try_publish_event, event)
+            self.futures_executor.submit(self.try_publish_event_payload, event)
         else:
-            self.futures_executor.submit(self.try_publish_event, event.to_dict())
+            self.futures_executor.submit(self.try_publish_event_payload, event.to_dict())
 
     @abstractmethod
-    def try_publish_event(self, event_payload: dict) -> None:
+    def try_publish_event_payload(self, event_payload: dict) -> None:
         ...

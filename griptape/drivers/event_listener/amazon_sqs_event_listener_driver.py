@@ -17,5 +17,5 @@ class AmazonSqsEventListenerDriver(BaseEventListenerDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     sqs_client: Any = field(default=Factory(lambda self: self.session.client("sqs"), takes_self=True))
 
-    def try_publish_event(self, event_payload: dict) -> None:
+    def try_publish_event_payload(self, event_payload: dict) -> None:
         self.sqs_client.send_message(QueueUrl=self.queue_url, MessageBody=str(event_payload))

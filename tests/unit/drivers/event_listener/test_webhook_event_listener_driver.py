@@ -15,10 +15,10 @@ class TestWebhookEventListenerDriver:
     def test_init(self):
         assert WebhookEventListenerDriver(webhook_url="")
 
-    def test_try_publish_event(self, mock_post):
+    def test_try_publish_event_payload(self, mock_post):
         driver = WebhookEventListenerDriver(webhook_url="foo bar", headers={"Authorization": "Bearer foo bar"})
         event = MockEvent()
-        driver.try_publish_event(event.to_dict())
+        driver.try_publish_event_payload(event.to_dict())
 
         mock_post.assert_called_once_with(
             url="foo bar", json=event.to_dict(), headers={"Authorization": "Bearer foo bar"}

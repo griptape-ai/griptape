@@ -105,7 +105,7 @@ class TestEventListener:
 
     def test_publish_event(self):
         mock_event_listener_driver = Mock()
-        mock_event_listener_driver.try_publish_event.return_value = None
+        mock_event_listener_driver.try_publish_event_payload.return_value = None
 
         def event_handler(_: BaseEvent):
             return None
