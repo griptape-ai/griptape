@@ -667,3 +667,130 @@ pipeline.add_task(
 
 pipeline.run("Describe the weather in the image")
 ```
+
+## Structure Run Task
+The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) executes another Structure with a given input.
+This Task is useful for orchestrating multiple specialized Structures in a single run.
+
+```python
+import os
+
+from griptape.rules import Rule, Ruleset
+from griptape.structures import Agent, Pipeline
+from griptape.tasks import StructureRunTask
+from griptape.tools import (
+    TaskMemoryClient,
+    WebScraper,
+    WebSearch,
+)
+
+researcher = Agent(
+    tools=[
+        WebSearch(
+            google_api_key=os.environ["GOOGLE_API_KEY"],
+            google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+            off_prompt=False,
+        ),
+        WebScraper(
+            off_prompt=True,
+        ),
+        TaskMemoryClient(off_prompt=False),
+    ],
+    rulesets=[
+        Ruleset(
+            name="Role",
+            rules=[
+                Rule(
+                    value="Senior Research Analyst",
+                )
+            ],
+        ),
+        Ruleset(
+            name="Goal",
+            rules=[
+                Rule(
+                    value="Uncover cutting-edge developments in AI and data science",
+                )
+            ],
+        ),
+        Ruleset(
+            name="Backstory",
+            rules=[
+                Rule(
+                    value="""You work at a leading tech think tank.,
+                    Your expertise lies in identifying emerging trends.
+                    You have a knack for dissecting complex data and presenting actionable insights."""
+                )
+            ],
+        ),
+        Ruleset(
+            name="Expected Output",
+            rules=[
+                Rule(
+                    value="Full analysis report in bullet points",
+                )
+            ],
+        ),
+    ],
+)
+
+writer = Agent(
+    rulesets=[
+        Ruleset(
+            name="Role",
+            rules=[
+                Rule(
+                    value="Tech Content Strategist",
+                )
+            ],
+        ),
+        Ruleset(
+            name="Goal",
+            rules=[
+                Rule(
+                    value="Craft compelling content on tech advancements",
+                )
+            ],
+        ),
+        Ruleset(
+            name="Backstory",
+            rules=[
+                Rule(
+                    value="""You are a renowned Content Strategist, known for your insightful and engaging articles.
+                    You transform complex concepts into compelling narratives."""
+                )
+            ],
+        ),
+        Ruleset(
+            name="Expected Output",
+            rules=[
+                Rule(
+                    value="Full blog post of at least 4 paragraphs",
+                )
+            ],
+        ),
+    ],
+)
+
+crew = Pipeline(
+    tasks=[
+        StructureRunTask(
+            """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
+            Identify key trends, breakthrough technologies, and potential industry impacts.""",
+            structure_to_run=researcher,
+        ),
+        StructureRunTask(
+            """Using insights provided, develop an engaging blog
+            post that highlights the most significant AI advancements.
+            Your post should be informative yet accessible, catering to a tech-savvy audience.
+            Make it sound cool, avoid complex words so it doesn't sound like AI.
+
+            Insights:
+            {{parent_output}}""",
+            structure_to_run=writer,
+        ),
+    ],
+)
+
+crew.run()
+```

@@ -16,6 +16,7 @@ from .inpainting_image_generation_task import InpaintingImageGenerationTask
 from .outpainting_image_generation_task import OutpaintingImageGenerationTask
 from .variation_image_generation_task import VariationImageGenerationTask
 from .image_query_task import ImageQueryTask
+from .structure_run_task import StructureRunTask
 
 __all__ = [
     "BaseTask",
@@ -36,4 +37,5 @@ __all__ = [
     "InpaintingImageGenerationTask",
     "OutpaintingImageGenerationTask",
     "ImageQueryTask",
+    "StructureRunTask",
 ]
