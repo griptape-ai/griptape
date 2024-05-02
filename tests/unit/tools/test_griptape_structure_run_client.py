@@ -10,7 +10,7 @@ class TestGriptapeStructureRunClient:
         driver = MockPromptDriver()
         agent = Agent(prompt_driver=driver)
 
-        return GriptapeStructureRunClient(structure=agent, description="fizz buzz")
+        return GriptapeStructureRunClient(target_structure=agent, description="fizz buzz")
 
     def test_run_structure(self, client):
         assert client.run_structure({"values": {"args": "foo bar"}}).value == "mock output"

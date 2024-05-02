@@ -15,15 +15,15 @@ class StructureRunTask(BaseTextInputTask):
     """Task to run a Structure.
 
     Attributes:
-        structure_to_run: Structure to run.
+        target_structure: Structure to run.
     """
 
-    structure_to_run: Structure = field(kw_only=True)
+    target_structure: Structure = field(kw_only=True)
 
     def run(self) -> BaseArtifact:
-        self.structure_to_run.run(self.input)
+        self.target_structure.run(self.input)
 
-        if self.structure_to_run.output_task.output is not None:
-            return self.structure_to_run.output_task.output
+        if self.target_structure.output_task.output is not None:
+            return self.target_structure.output_task.output
         else:
             return ErrorArtifact("Structure did not produce any output.")

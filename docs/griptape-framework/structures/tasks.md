@@ -777,7 +777,7 @@ team = Pipeline(
         StructureRunTask(
             """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
             Identify key trends, breakthrough technologies, and potential industry impacts.""",
-            structure_to_run=researcher,
+            target_structure=researcher,
         ),
         StructureRunTask(
             """Using insights provided, develop an engaging blog
@@ -787,7 +787,7 @@ team = Pipeline(
 
             Insights:
             {{parent_output}}""",
-            structure_to_run=writer,
+            target_structure=writer,
         ),
     ],
 )

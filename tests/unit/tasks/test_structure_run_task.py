@@ -9,7 +9,7 @@ class TestStructureRunTask:
         agent = Agent(prompt_driver=MockPromptDriver(mock_output="agent mock output"))
         pipeline = Pipeline(prompt_driver=MockPromptDriver(mock_output="pipeline mock output"))
 
-        task = StructureRunTask(structure_to_run=agent)
+        task = StructureRunTask(target_structure=agent)
 
         pipeline.add_task(task)
 

@@ -21,7 +21,7 @@ class GriptapeStructureRunClient(BaseTool):
     """
 
     description: str = field(kw_only=True)
-    structure: Structure = field(kw_only=True)
+    target_structure: Structure = field(kw_only=True)
 
     @activity(
         config={
@@ -32,9 +32,9 @@ class GriptapeStructureRunClient(BaseTool):
     def run_structure(self, params: dict) -> BaseArtifact:
         args: str = params["values"]["args"]
 
-        self.structure.run(args)
+        self.target_structure.run(args)
 
-        if self.structure.output_task.output is not None:
-            return self.structure.output_task.output
+        if self.target_structure.output_task.output is not None:
+            return self.target_structure.output_task.output
         else:
             return ErrorArtifact("Structure did not produce any output.")

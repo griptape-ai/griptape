@@ -142,7 +142,7 @@ if __name__ == "__main__":
             """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
                 Identify key trends, breakthrough technologies, and potential industry impacts.""",
             id="research",
-            structure_to_run=build_researcher(),
+            target_structure=build_researcher(),
         ),
     )
     end_task = team.add_task(NoOpTask())
@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
                 Insights:
                 {{ parent_outputs["research"] }}""",
-                structure_to_run=build_writer(
+                target_structure=build_writer(
                     role=writer["role"],
                     goal=writer["goal"],
                     backstory=writer["backstory"],
