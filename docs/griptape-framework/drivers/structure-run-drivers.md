@@ -4,6 +4,8 @@ When combined with the [StructureRunTask](../../reference/griptape/tasks/structu
 
 ## Local Structure Run Driver
 
+The [LocalStructureRunDriver](../../reference/griptape/drivers/structure-run/local-structure-run-driver.md) is used to run Griptape Structures in the same runtime environment as the code that is running the Structure.
+
 ```python
 from griptape.drivers import LocalStructureRunDriver
 from griptape.rules import Rule
@@ -47,11 +49,15 @@ joke_coordinator.run("Tell me a joke")
 
 ## Griptape Cloud Structure Run Driver
 
+The [GriptapeCloudStructureRunDriver](../../reference/griptape/drivers/structure-run/griptape-cloud-structure-run-driver.md)  is used to run Griptape Structures in the Griptape Cloud.
+
+
 ```python
 import os
 
 from griptape.drivers import GriptapeCloudStructureRunDriver, LocalStructureRunDriver
 from griptape.structures import Pipeline, Agent
+from griptape.rules import Rule
 from griptape.tasks import StructureRunTask
 
 base_url = os.environ["GRIPTAPE_CLOUD_BASE_URL"]
@@ -62,8 +68,19 @@ structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
 pipeline = Pipeline(
     tasks=[
         StructureRunTask(
-            "Think of a question related to RAG.",
-            driver=LocalStructureRunDriver(structure=Agent()),
+            "Think of a question related to Retrieval Augmented Generation.",
+            driver=LocalStructureRunDriver(
+                structure=Agent(
+                    rules=[
+                        Rule(
+                            value="You are an expert in Retrieval Augmented Generation.",
+                        ),
+                        Rule(
+                            value="Only output your answer, no other information.",
+                        ),
+                    ]
+                )
+            ),
         ),
         StructureRunTask(
             "{{ parent_output }}",

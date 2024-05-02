@@ -29,6 +29,6 @@ class StructureRunClient(BaseTool):
         }
     )
     def run_structure(self, params: dict) -> BaseArtifact:
-        args: str = params["values"]["args"]
+        args: list[str] = params["values"]["args"]
 
         return self.driver.run(*[TextArtifact(arg) for arg in args])
