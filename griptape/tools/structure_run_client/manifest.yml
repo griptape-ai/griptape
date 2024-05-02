@@ -1,5 +1,5 @@
 version: "v1"
-name: Griptape Structure Run Client
-description: Tool for running a Griptape Structure.
+name: Structure Run Client
+description: Tool for running a Structure.
 contact_email: hello@griptape.ai
 legal_info_url: https://www.griptape.ai/legal

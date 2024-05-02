@@ -21,17 +21,17 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
     structure_run_wait_time_interval: int = field(default=2, kw_only=True)
     structure_run_max_wait_time_attempts: int = field(default=20, kw_only=True)
 
-    def run(self, *args) -> BaseArtifact:
+    def try_run(self, *args: BaseArtifact) -> BaseArtifact:
         from requests import HTTPError, Response, exceptions, post
 
         url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/runs")
 
         try:
-            response: Response = post(url, json={"args": list(args)}, headers=self.headers)
+            response: Response = post(url, json={"args": [arg.value for arg in args]}, headers=self.headers)
             response.raise_for_status()
             response_json = response.json()
-            return self._get_structure_run_result(response_json["structure_run_id"])
 
+            return self._get_structure_run_result(response_json["structure_run_id"])
         except (exceptions.RequestException, HTTPError) as err:
             return ErrorArtifact(str(err))
 
@@ -58,7 +58,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
             return ErrorArtifact(result)
 
         if "output" in result:
-            return TextArtifact(result["output"])
+            return TextArtifact.from_dict(result["output"])
         else:
             return InfoArtifact("No output found in response")
 

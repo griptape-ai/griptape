@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class LocalStructureRunDriver(BaseStructureRunDriver):
     structure: Structure = field(kw_only=True)
 
-    def run(self, *args) -> BaseArtifact:
+    def try_run(self, *args) -> BaseArtifact:
         self.structure.run(*args)
 
         if self.structure.output_task.output is not None:

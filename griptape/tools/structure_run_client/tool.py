@@ -3,14 +3,14 @@ from __future__ import annotations
 from attr import define, field
 from schema import Literal, Schema
 
-from griptape.artifacts import BaseArtifact
-from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
+from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.drivers import BaseStructureRunDriver
 from griptape.tools.base_tool import BaseTool
 from griptape.utils.decorators import activity
 
 
 @define
-class GriptapeStructureRunClient(BaseTool):
+class StructureRunClient(BaseTool):
     """
     Attributes:
         description: A description of what the Structure does.
@@ -23,10 +23,12 @@ class GriptapeStructureRunClient(BaseTool):
     @activity(
         config={
             "description": "Can be used to run a Griptape Structure with the following description: {{ self.description }}",
-            "schema": Schema({Literal("args", description="Arguments to pass to the Structure Run."): str}),
+            "schema": Schema(
+                {Literal("args", description="A list of string arguments to submit to the Structure Run"): list}
+            ),
         }
     )
     def run_structure(self, params: dict) -> BaseArtifact:
         args: str = params["values"]["args"]
 
-        return self.driver.run(args)
+        return self.driver.run(*[TextArtifact(arg) for arg in args])
