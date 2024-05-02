@@ -772,7 +772,7 @@ writer = Agent(
     ],
 )
 
-crew = Pipeline(
+team = Pipeline(
     tasks=[
         StructureRunTask(
             """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
@@ -792,5 +792,5 @@ crew = Pipeline(
     ],
 )
 
-crew.run()
+team.run()
 ```
