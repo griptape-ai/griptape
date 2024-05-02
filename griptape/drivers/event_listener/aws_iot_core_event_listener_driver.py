@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING, Any
 
 from attr import Factory, define, field
@@ -19,4 +20,4 @@ class AwsIotCoreEventListenerDriver(BaseEventListenerDriver):
     iotdata_client: Any = field(default=Factory(lambda self: self.session.client("iot-data"), takes_self=True))
 
     def try_publish_event_payload(self, event_payload: dict) -> None:
-        self.iotdata_client.publish(topic=self.topic, payload=str(event_payload))
+        self.iotdata_client.publish(topic=self.topic, payload=json.dumps(event_payload))

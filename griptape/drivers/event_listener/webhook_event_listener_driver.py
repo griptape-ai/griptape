@@ -13,4 +13,5 @@ class WebhookEventListenerDriver(BaseEventListenerDriver):
     headers: dict = field(default=None, kw_only=True)
 
     def try_publish_event_payload(self, event_payload: dict) -> None:
-        requests.post(url=self.webhook_url, json=event_payload, headers=self.headers)
+        response = requests.post(url=self.webhook_url, json=event_payload, headers=self.headers)
+        response.raise_for_status()

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING, Any
 
 from attr import Factory, define, field
@@ -18,4 +19,4 @@ class AmazonSqsEventListenerDriver(BaseEventListenerDriver):
     sqs_client: Any = field(default=Factory(lambda self: self.session.client("sqs"), takes_self=True))
 
     def try_publish_event_payload(self, event_payload: dict) -> None:
-        self.sqs_client.send_message(QueueUrl=self.queue_url, MessageBody=str(event_payload))
+        self.sqs_client.send_message(QueueUrl=self.queue_url, MessageBody=json.dumps(event_payload))
