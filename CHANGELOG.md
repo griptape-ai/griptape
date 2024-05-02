@@ -23,9 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonS3FileManagerDriver` for managing files on Amazon S3.
 - `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
 - Optional `exception` field to `ErrorArtifact`.
-- `GriptapeCloudStructureRunClient` Tool for invoking Griptape Cloud Structure Run APIs.
-- `GriptapeStructureRunClient` for running Structures from within a `ToolTask` or `ToolkitTask`.
+- `StructureRunClient` for running other Griptapes via a Tool.
 - `StructureRunTask` for running Structures as a Task from within another Structure.
+- `GriptapeCloudStructureRunDriver` for running Structures in the Griptape Cloud.
+- `LocalStructureRunDriver` for running Structures in the same runtime environment as the code that is running the Structure.
+- Default `run_fn` to `CodeExecutionTask`, making it a suitable no-op Task.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
