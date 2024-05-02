@@ -38,36 +38,36 @@ def build_researcher():
         ],
         rulesets=[
             Ruleset(
-                name="Role",
+                name="Position",
                 rules=[
                     Rule(
-                        value="Senior Research Analyst",
+                        value="Lead Research Analyst",
                     )
                 ],
             ),
             Ruleset(
-                name="Goal",
+                name="Objective",
                 rules=[
                     Rule(
-                        value="Uncover cutting-edge developments in AI and data science",
+                        value="Discover innovative advancements in artificial intelligence and data analytics",
                     )
                 ],
             ),
             Ruleset(
-                name="Backstory",
+                name="Background",
                 rules=[
                     Rule(
-                        value="""You work at a leading tech think tank.,
-                        Your expertise lies in identifying emerging trends.
-                        You have a knack for dissecting complex data and presenting actionable insights."""
+                        value="""You are part of a prominent technology research institute.
+                        Your speciality is spotting new trends.
+                        You excel at analyzing intricate data and delivering practical insights."""
                     )
                 ],
             ),
             Ruleset(
-                name="Expected Output",
+                name="Desired Outcome",
                 rules=[
                     Rule(
-                        value="Full analysis report in bullet points",
+                        value="Comprehensive analysis report in list format",
                     )
                 ],
             ),
@@ -97,7 +97,7 @@ def build_writer(role: str, goal: str, backstory: str):
         ],
         rulesets=[
             Ruleset(
-                name="Role",
+                name="Position",
                 rules=[
                     Rule(
                         value=role,
@@ -105,7 +105,7 @@ def build_writer(role: str, goal: str, backstory: str):
                 ],
             ),
             Ruleset(
-                name="Goal",
+                name="Objective",
                 rules=[
                     Rule(
                         value=goal,
@@ -117,7 +117,7 @@ def build_writer(role: str, goal: str, backstory: str):
                 rules=[Rule(value=backstory)],
             ),
             Ruleset(
-                name="Expected Output",
+                name="Desired Outcome",
                 rules=[
                     Rule(
                         value="Full blog post of at least 4 paragraphs",
@@ -135,9 +135,9 @@ if __name__ == "__main__":
     with open(f"{Path(__file__).parent}/writers.json", "r") as f:
         writers = json.loads(f.read())
 
-    # Build the crew
-    crew = Workflow()
-    research_task = crew.add_task(
+    # Build the team
+    team = Workflow()
+    research_task = team.add_task(
         StructureRunTask(
             """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
                 Identify key trends, breakthrough technologies, and potential industry impacts.""",
@@ -145,8 +145,8 @@ if __name__ == "__main__":
             structure_to_run=build_researcher(),
         ),
     )
-    end_task = crew.add_task(NoOpTask())
-    crew.insert_tasks(
+    end_task = team.add_task(NoOpTask())
+    team.insert_tasks(
         research_task,
         [
             StructureRunTask(
@@ -168,7 +168,7 @@ if __name__ == "__main__":
         end_task,
     )
 
-    crew.run()
+    team.run()
 ```
 
 Save this JSON data as `writers.json` in the same directory as the script:

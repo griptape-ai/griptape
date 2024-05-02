@@ -698,7 +698,7 @@ researcher = Agent(
     ],
     rulesets=[
         Ruleset(
-            name="Role",
+            name="Position",
             rules=[
                 Rule(
                     value="Senior Research Analyst",
@@ -706,7 +706,7 @@ researcher = Agent(
             ],
         ),
         Ruleset(
-            name="Goal",
+            name="Objective",
             rules=[
                 Rule(
                     value="Uncover cutting-edge developments in AI and data science",
@@ -714,7 +714,7 @@ researcher = Agent(
             ],
         ),
         Ruleset(
-            name="Backstory",
+            name="Background",
             rules=[
                 Rule(
                     value="""You work at a leading tech think tank.,
@@ -724,7 +724,7 @@ researcher = Agent(
             ],
         ),
         Ruleset(
-            name="Expected Output",
+            name="Desired Outcome",
             rules=[
                 Rule(
                     value="Full analysis report in bullet points",
@@ -737,7 +737,7 @@ researcher = Agent(
 writer = Agent(
     rulesets=[
         Ruleset(
-            name="Role",
+            name="Position",
             rules=[
                 Rule(
                     value="Tech Content Strategist",
@@ -745,7 +745,7 @@ writer = Agent(
             ],
         ),
         Ruleset(
-            name="Goal",
+            name="Objective",
             rules=[
                 Rule(
                     value="Craft compelling content on tech advancements",
@@ -762,7 +762,7 @@ writer = Agent(
             ],
         ),
         Ruleset(
-            name="Expected Output",
+            name="Desired Outcome",
             rules=[
                 Rule(
                     value="Full blog post of at least 4 paragraphs",
