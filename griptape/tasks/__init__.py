@@ -1,5 +1,6 @@
 from .base_task import BaseTask
 from .base_text_input_task import BaseTextInputTask
+from .base_multi_text_input_task import BaseMultiTextInputTask
 from .prompt_task import PromptTask
 from .actions_subtask import ActionsSubtask
 from .toolkit_task import ToolkitTask
@@ -21,6 +22,7 @@ from .structure_run_task import StructureRunTask
 __all__ = [
     "BaseTask",
     "BaseTextInputTask",
+    "BaseMultiTextInputTask",
     "PromptTask",
     "ActionsSubtask",
     "ToolkitTask",
