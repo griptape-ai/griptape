@@ -1,6 +1,6 @@
 ## Overview
-Structure Run Drivers are used to run Griptape Strucures hosted in other runtime environments.
-When combined with the [StructureRunTask](../../reference/griptape/tasks/structure_run_task.md) or [GriptapeStructureRunClient](../../reference/griptape/tools/griptape_structure_run_client.md) you can run Structures in any runtime environment.
+Structure Run Drivers can be used to run Griptape Structures in a variety of runtime environments.
+When combined with the [StructureRunTask](../../reference/griptape/tasks/structure_run_task.md) or [GriptapeStructureRunClient](../../reference/griptape/tools/griptape_structure_run_client.md) you can create complex, multi-agent pipelines that span multiple runtime environments.
 
 ## Local Structure Run Driver
 
