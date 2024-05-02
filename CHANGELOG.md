@@ -24,8 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
 - Optional `exception` field to `ErrorArtifact`.
 - `GriptapeCloudStructureRunClient` Tool for invoking Griptape Cloud Structure Run APIs.
-- `GriptapeStructureRunClient` Tool for through a Tool.
-- `StructureRunTask` for running Structures as a Task.
+- `GriptapeStructureRunClient` for running Structures from within a `ToolTask` or `ToolkitTask`.
+- `StructureRunTask` for running Structures as a Task from within another Structure.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
