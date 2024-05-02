@@ -1,7 +1,7 @@
 In this example we implement a multi-agent Workflow we have a single "Researcher" Agent that conducts research on a topic, and then fans out to multiple "Writer" Agents to write blog posts based on the research.
 
 By splitting up our workloads across multiple Structures, we can parallelize the work and leverage the strengths of each Agent. The Researcher can focus on gathering data and insights, while the Writers can focus on crafting engaging narratives.
-Additionally, this opens us up to the possibility of having each Agent run on a separate machine or container, allowing us to scale our Workflow as needed. 
+Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run on a separate machine, allowing us to scale our Workflow as needed.
 
 
 ```python
