@@ -39,4 +39,5 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     def try_publish_event_payload(self, event_payload: dict) -> None:
         url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events")
 
-        requests.post(url=url, json=event_payload, headers=self.headers)
+        response = requests.post(url=url, json=event_payload, headers=self.headers)
+        response.raise_for_status()
