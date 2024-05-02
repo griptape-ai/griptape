@@ -1,3 +1,4 @@
+import pytest
 from griptape.tasks import StructureRunTask
 from griptape.structures import Agent
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -5,11 +6,16 @@ from griptape.drivers import LocalStructureRunDriver
 from griptape.structures import Pipeline
 
 
-class TestStructureRunTask:
-    def test_run(self):
+class TestLocalStructureRunDriver:
+    @pytest.fixture
+    def driver(self):
         agent = Agent(prompt_driver=MockPromptDriver(mock_output="agent mock output"))
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(mock_output="pipeline mock output"))
         driver = LocalStructureRunDriver(structure=agent)
+
+        return driver
+
+    def test_run(self, driver):
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(mock_output="pipeline mock output"))
 
         task = StructureRunTask(driver=driver)
 

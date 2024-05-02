@@ -1,62 +1,33 @@
 from __future__ import annotations
+
 import time
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import urljoin
-from schema import Schema, Literal
-from attr import define, field
-from griptape.tools.base_griptape_cloud_client import BaseGriptapeCloudClient
-from griptape.utils.decorators import activity
-from griptape.artifacts import InfoArtifact, TextArtifact, ErrorArtifact
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
+from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
 
 
 @define
-class GriptapeCloudStructureRunClient(BaseGriptapeCloudClient):
-    """
-    Attributes:
-        description: LLM-friendly structure description.
-        structure_id: ID of the Griptape Cloud Structure.
-    """
-
-    _description: Optional[str] = field(default=None, kw_only=True)
+class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
+    base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
+    api_key: str = field(kw_only=True)
+    headers: dict = field(
+        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
+    )
     structure_id: str = field(kw_only=True)
     structure_run_wait_time_interval: int = field(default=2, kw_only=True)
     structure_run_max_wait_time_attempts: int = field(default=20, kw_only=True)
 
-    @property
-    def description(self) -> str:
-        if self._description is None:
-            from requests import get
+    def run(self, *args) -> BaseArtifact:
+        from requests import HTTPError, Response, exceptions, post
 
-            url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/")
-
-            response = get(url, headers=self.headers).json()
-            if "description" in response:
-                self._description = response["description"]
-            else:
-                raise ValueError(f'Error getting Structure description: {response["message"]}')
-
-        return self._description
-
-    @description.setter
-    def description(self, value: str) -> None:
-        self._description = value
-
-    @activity(
-        config={
-            "description": "Can be used to execute a Run of a Structure with the following description: {{ _self.description }}",
-            "schema": Schema(
-                {Literal("args", description="A list of string arguments to submit to the Structure Run"): list}
-            ),
-        }
-    )
-    def execute_structure_run(self, params: dict) -> InfoArtifact | TextArtifact | ErrorArtifact:
-        from requests import post, exceptions, HTTPError, Response
-
-        args: list[str] = params["values"]["args"]
         url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/runs")
 
         try:
-            response: Response = post(url, json={"args": args}, headers=self.headers)
+            response: Response = post(url, json={"args": list(args)}, headers=self.headers)
             response.raise_for_status()
             response_json = response.json()
             return self._get_structure_run_result(response_json["structure_run_id"])
@@ -96,4 +67,5 @@ class GriptapeCloudStructureRunClient(BaseGriptapeCloudClient):
 
         response: Response = get(structure_run_url, headers=self.headers)
         response.raise_for_status()
+
         return response.json()

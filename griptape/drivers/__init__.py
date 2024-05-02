@@ -96,6 +96,9 @@ from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
 
+from .structure_run.griptape_cloud_structure_run_driver import GriptapeCloudStructureRunDriver
+from .structure_run.local_structure_run_driver import LocalStructureRunDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -179,4 +182,6 @@ __all__ = [
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
+    "GriptapeCloudStructureRunDriver",
+    "LocalStructureRunDriver",
 ]
