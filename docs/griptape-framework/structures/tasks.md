@@ -670,7 +670,7 @@ pipeline.run("Describe the weather in the image")
 
 ## Structure Run Task
 The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) executes another Structure with a given input.
-This Task is useful for orchestrating multiple specialized Structures in a single run.
+This Task is useful for orchestrating multiple specialized Structures in a single run. Note that the input to the Task is a tuple of arguments that will be passed to the Structure.
 
 ```python
 import os
@@ -678,6 +678,7 @@ import os
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
+from griptape.drivers import LocalStructureRunDriver
 from griptape.tools import (
     TaskMemoryClient,
     WebScraper,
@@ -735,6 +736,7 @@ researcher = Agent(
 )
 
 writer = Agent(
+    input_template="Instructions: {{args[0]}}\nContext: {{args[1]}}",
     rulesets=[
         Ruleset(
             name="Position",
@@ -772,25 +774,32 @@ writer = Agent(
     ],
 )
 
-team = Pipeline(
+crew = Pipeline(
     tasks=[
         StructureRunTask(
-            """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
+            (
+                """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
             Identify key trends, breakthrough technologies, and potential industry impacts.""",
-            target_structure=researcher,
+            ),
+            driver=LocalStructureRunDriver(
+                structure=researcher,
+            ),
         ),
         StructureRunTask(
-            """Using insights provided, develop an engaging blog
+            (
+                """Using insights provided, develop an engaging blog
             post that highlights the most significant AI advancements.
             Your post should be informative yet accessible, catering to a tech-savvy audience.
             Make it sound cool, avoid complex words so it doesn't sound like AI.
-
-            Insights:
-            {{parent_output}}""",
-            target_structure=writer,
+            """,
+                "{{parent_output}}",
+            ),
+            driver=LocalStructureRunDriver(
+                structure=writer,
+            ),
         ),
     ],
 )
 
-team.run()
+crew.run()
 ```
