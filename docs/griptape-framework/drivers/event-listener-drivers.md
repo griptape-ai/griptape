@@ -5,11 +5,27 @@ Event Listener Drivers are used to send Griptape [Events](../misc/events.md) to 
 You can instantiate Drivers and pass them to Event Listeners in your Structure:
 
 ```python
+
 ```
 
 Or use them independently:
 
 ```python
+import os
+from griptape.drivers import GriptapeCloudEventListenerDriver
+from griptape.events import FinishStructureRunEvent
+from griptape.artifacts import TextArtifact
+
+event_driver = GriptapeCloudEventListenerDriver(
+    api_key=os.environ["GRIPTAPE_CLOUD_API_KEY"]
+)
+
+done_event = FinishStructureRunEvent(
+    output_task_input=TextArtifact("Just started!"),
+    output_task_output=TextArtifact("All done!"),
+)
+
+event_driver.publish_event(done_event)
 ```
 
 ## Event Listener Drivers
