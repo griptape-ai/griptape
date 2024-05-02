@@ -12,7 +12,7 @@ structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
 
 # Create the GriptapeCloudStructureRunClient tool
 structure_run_tool = GriptapeCloudStructureRunClient(
-    description="Danish Baker Agent - Structure to invoke with natural language queries about Danish pastries",
+    description="RAG Expert Agent - Structure to invoke with natural language queries about the topic of Retrieval Augmented Generation",
     api_key=api_key,
     structure_id=structure_id,
     off_prompt=False,
@@ -23,17 +23,17 @@ agent = Agent(
     tools=[structure_run_tool]
 )
 
-# Task: Ask the Griptape Cloud Hosted Structure about new Danish pastries
+# Task: Ask the Griptape Cloud Hosted Structure about modular RAG
 agent.run(
-    "What are the new pastries?"
+    "what is modular RAG?"
 )
 ```
 ```
-[04/29/24 20:46:14] INFO     ToolkitTask 3b3f31a123584f05be9bcb02a58dddb6                                                                    
-                             Input: what are the new pastries?                                                                               
-[04/29/24 20:46:23] INFO     Subtask 2740dcd92bdf4b159dc7a7fb132c98f3                                                                        
-                             Thought: To find out about new pastries, I need to use the Danish Baker Agent Structure. I will execute a run of
-                             this Structure with the query "what are the new pastries".                                                      
+[05/02/24 11:36:16] INFO     ToolkitTask 0d99b986140a42c0828215cbc42156e8                                                                    
+                             Input: what is modular RAG?                                                                                     
+[05/02/24 11:36:24] INFO     Subtask b498fb971198476a83ba1a555ff4fb98                                                                        
+                             Thought: To provide an explanation of what modular RAG (Retrieval Augmented Generation) is, I will use the      
+                             GriptapeCloudStructureRunClient to execute a Structure Run that can provide information on this topic.          
                                                                                                                                              
                              Actions: [                                                                                                      
                                {                                                                                                             
@@ -41,24 +41,28 @@ agent.run(
                                  "path": "execute_structure_run",                                                                            
                                  "input": {                                                                                                  
                                    "values": {                                                                                               
-                                     "args": ["what are the new pastries"]                                                                   
+                                     "args": ["What is modular RAG?"]                                                                        
                                    }                                                                                                         
                                  },                                                                                                          
-                                 "tag": "query_new_pastries"                                                                                 
+                                 "tag": "modular_rag_info"                                                                                   
                                }                                                                                                             
                              ]                                                                                                               
-[04/29/24 20:47:01] INFO     Subtask 2740dcd92bdf4b159dc7a7fb132c98f3                                                                        
-                             Response: {'id': '4a329cbd09ad42e0bd265e9ba4690400', 'name': '4a329cbd09ad42e0bd265e9ba4690400', 'type':        
-                             'TextArtifact', 'value': 'Ah, my friend, I am glad you asked! We have been busy in the bakery, kneading dough   
-                             and sprinkling sugar. Our new pastries include the "Copenhagen Cream Puff", a delightful puff pastry filled with
-                             sweet cream and dusted with powdered sugar. We also have the "Danish Delight", a buttery croissant filled with  
-                             raspberry jam and topped with a drizzle of white chocolate. And let\'s not forget the "Nordic Nutella Twist", a 
-                             flaky pastry twisted with Nutella and sprinkled with chopped hazelnuts. I promise, each bite will transport you 
-                             to a cozy Danish bakery!'}                                                                                      
-[04/29/24 20:47:07] INFO     ToolkitTask 3b3f31a123584f05be9bcb02a58dddb6                                                                    
-                             Output: The new pastries include the "Copenhagen Cream Puff," which is a puff pastry filled with sweet cream and
-                             dusted with powdered sugar; the "Danish Delight," a buttery croissant filled with raspberry jam and topped with 
-                             white chocolate; and the "Nordic Nutella Twist," a flaky pastry twisted with Nutella and sprinkled with chopped 
-                             hazelnuts.                                                                                                      
-Assistant: The new pastries include the "Copenhagen Cream Puff," which is a puff pastry filled with sweet cream and dusted with powdered sugar; the "Danish Delight," a buttery croissant filled with raspberry jam and topped with white chocolate; and the "Nordic Nutella Twist," a flaky pastry twisted with Nutella and sprinkled with chopped hazelnuts.
+[05/02/24 11:37:28] INFO     Subtask b498fb971198476a83ba1a555ff4fb98                                                                        
+                             Response: {'id': 'ea96fc6f92f9417880938ff59273be59', 'name': 'ea96fc6f92f9417880938ff59273be59', 'type':        
+                             'TextArtifact', 'value': "Modular RAG is an advanced architecture that builds upon the foundational principles  
+                             of Advanced and Naive RAG paradigms. It offers enhanced adaptability and versatility by incorporating diverse   
+                             strategies to improve its components. Modular RAG introduces additional specialized components like the Search  
+                             module for direct searches across various data sources, the RAG-Fusion module for expanding user queries into   
+                             diverse perspectives, and the Memory module to guide retrieval using the LLM's memory. This approach supports   
+                             both sequential processing and integrated end-to-end training across its components, illustrating progression   
+                             and refinement within the RAG family."}                                                                         
+[05/02/24 11:37:40] INFO     ToolkitTask 0d99b986140a42c0828215cbc42156e8                                                                    
+                             Output: Modular RAG is an advanced architecture that builds upon the foundational principles of Advanced and    
+                             Naive RAG paradigms. It offers enhanced adaptability and versatility by incorporating diverse strategies to     
+                             improve its components. Modular RAG introduces additional specialized components like the Search module for     
+                             direct searches across various data sources, the RAG-Fusion module for expanding user queries into diverse      
+                             perspectives, and the Memory module to guide retrieval using the LLM's memory. This approach supports both      
+                             sequential processing and integrated end-to-end training across its components, illustrating progression and    
+                             refinement within the RAG family.                                                                               
+Assistant: Modular RAG is an advanced architecture that builds upon the foundational principles of Advanced and Naive RAG paradigms. It offers enhanced adaptability and versatility by incorporating diverse strategies to improve its components. Modular RAG introduces additional specialized components like the Search module for direct searches across various data sources, the RAG-Fusion module for expanding user queries into diverse perspectives, and the Memory module to guide retrieval using the LLM's memory. This approach supports both sequential processing and integrated end-to-end training across its components, illustrating progression and refinement within the RAG family.
 ```
