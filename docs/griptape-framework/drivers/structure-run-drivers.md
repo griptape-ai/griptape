@@ -49,7 +49,7 @@ joke_coordinator.run("Tell me a joke")
 
 ## Griptape Cloud Structure Run Driver
 
-The [GriptapeCloudStructureRunDriver](../../reference/griptape/drivers/structure-run/griptape-cloud-structure-run-driver.md)  is used to run Griptape Structures in the Griptape Cloud.
+The [GriptapeCloudStructureRunDriver](../../reference/griptape/drivers/structure-run/griptape-cloud-structure-run-driver.md) is used to run Griptape Structures in the Griptape Cloud.
 
 
 ```python
