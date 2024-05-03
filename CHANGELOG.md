@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AwsIotCoreEventListenerDriver` for sending events to a topic on AWS IoT Core.
 - `GriptapeCloudEventListenerDriver` for sending events to Griptape Cloud.
 - `WebhookEventListenerDriver` for sending events to a webhook.
-- `LocalEventListenerDriver` for sending events to a callback function.
 - `BaseFileManagerDriver` to abstract file management operations.
 - `LocalFileManagerDriver` for managing files on the local file system.
 - Added optional `BaseLoader.encoding` field.
@@ -33,12 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `PdfLoader` no longer accepts `str` file content, `Path` file paths or `IO` objects as sources. Instead, it will only accept the content of the PDF file as a `bytes` object.
 - **BREAKING**: `TextLoader` no longer accepts `Path` file paths as a source. It will now accept the content of the text file as a `str` or `bytes` object.
 - **BREAKING**: `FileManager.default_loader` is now `None` by default.
-- **BREAKING**: Replaced `EventListener.handler` with `EventListener.driver` and `LocalEventListenerDriver`.
 - **BREAKING** Bumped `pinecone` from `^2` to `^3`.
 - **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
 - **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
 - Improved RAG performance in `VectorQueryEngine`.
 - Moved [Griptape Docs](https://github.com/griptape-ai/griptape-docs) to this repository.
+- Updated `EventListener.handler`'s behavior so that the return value will be passed to the `EventListenerDriver.try_publish_event_payload`'s `event_payload` parameter.
 
 ### Fixed
 - Type hint for parameter `azure_ad_token_provider` on Azure OpenAI drivers to `Optional[Callable[[], str]]`.

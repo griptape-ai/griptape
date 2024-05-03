@@ -258,13 +258,17 @@ class Structure(ABC):
 
     def before_run(self) -> None:
         self.publish_event(
-            StartStructureRunEvent(input_task_input=self.input_task.input, input_task_output=self.input_task.output)
+            StartStructureRunEvent(
+                structure_id=self.id, input_task_input=self.input_task.input, input_task_output=self.input_task.output
+            )
         )
 
     def after_run(self) -> None:
         self.publish_event(
             FinishStructureRunEvent(
-                output_task_input=self.output_task.input, output_task_output=self.output_task.output
+                structure_id=self.id,
+                output_task_input=self.output_task.input,
+                output_task_output=self.output_task.output,
             )
         )
 
