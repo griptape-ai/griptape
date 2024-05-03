@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonS3FileManagerDriver` for managing files on Amazon S3.
 - `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
 - Optional `exception` field to `ErrorArtifact`.
-- `StructureRunClient` for running other Griptapes via a Tool.
+- `StructureRunClient` for running other Structures via a Tool.
 - `StructureRunTask` for running Structures as a Task from within another Structure.
 - `GriptapeCloudStructureRunDriver` for running Structures in the Griptape Cloud.
 - `LocalStructureRunDriver` for running Structures in the same runtime environment as the code that is running the Structure.

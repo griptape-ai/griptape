@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact
 from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
 
 if TYPE_CHECKING:
@@ -20,4 +20,4 @@ class LocalStructureRunDriver(BaseStructureRunDriver):
         if self.structure.output_task.output is not None:
             return self.structure.output_task.output
         else:
-            return ErrorArtifact("Structure did not produce any output.")
+            return InfoArtifact("No output found in response")

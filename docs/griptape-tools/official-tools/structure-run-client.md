@@ -14,7 +14,6 @@ base_url = os.environ["GRIPTAPE_CLOUD_BASE_URL"]
 api_key = os.environ["GRIPTAPE_CLOUD_API_KEY"]
 structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
 
-# Create the GriptapeCloudStructureRunClient tool
 structure_run_tool = StructureRunClient(
     description="RAG Expert Agent - Structure to invoke with natural language queries about the topic of Retrieval Augmented Generation",
     driver=GriptapeCloudStructureRunDriver(
@@ -25,7 +24,7 @@ structure_run_tool = StructureRunClient(
     off_prompt=False,
 )
 
-# Set up an agent using the GriptapeCloudStructureRunClient tool
+# Set up an agent using the StructureRunClient tool
 agent = Agent(tools=[structure_run_tool])
 
 # Task: Ask the Griptape Cloud Hosted Structure about modular RAG

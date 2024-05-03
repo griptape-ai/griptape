@@ -1,11 +1,10 @@
-In this example we implement a multi-agent Workflow we have a single "Researcher" Agent that conducts research on a topic, and then fans out to multiple "Writer" Agents to write blog posts based on the research.
+In this example we implement a multi-agent Workflow. We have a single "Researcher" Agent that conducts research on a topic, and then fans out to multiple "Writer" Agents to write blog posts based on the research.
 
 By splitting up our workloads across multiple Structures, we can parallelize the work and leverage the strengths of each Agent. The Researcher can focus on gathering data and insights, while the Writers can focus on crafting engaging narratives.
-Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run on a separate machine, allowing us to scale our Workflow as needed.
+Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run on a separate machine, allowing us to scale our Workflow as needed 🤯.
 
 
 ```python
-import json
 import os
 from pathlib import Path
 
@@ -19,6 +18,19 @@ from griptape.tools import (
     WebScraper,
     WebSearch,
 )
+
+WRITERS = [
+    {
+        "role": "Travel Adventure Blogger",
+        "goal": "Inspire wanderlust with stories of hidden gems and exotic locales",
+        "backstory": "With a passport full of stamps, you bring distant cultures and breathtaking scenes to life through vivid storytelling and personal anecdotes."
+    },
+    {
+        "role": "Lifestyle Freelance Writer",
+        "goal": "Share practical advice on living a balanced and stylish life",
+        "backstory": "From the latest trends in home decor to tips for wellness, your articles help readers create a life that feels both aspirational and attainable."
+    }
+]
 
 
 def build_researcher():
@@ -91,7 +103,7 @@ def build_writer(role: str, goal: str, backstory: str):
             EventListener(
                 event_types=[FinishStructureRunEvent],
                 driver=WebhookEventListenerDriver(
-                    webhook_url=os.environ["ZAPIER_WEBHOOK_URL"],
+                    webhook_url=os.environ["WEBHOOK_URL"],
                 ),
             )
         ],
@@ -131,10 +143,6 @@ def build_writer(role: str, goal: str, backstory: str):
 
 
 if __name__ == "__main__":
-    # load up the list of writers
-    with open(f"{Path(__file__).parent}/writers.json", "r") as f:
-        writers = json.loads(f.read())
-
     # Build the team
     team = Workflow()
     research_task = team.add_task(
@@ -163,71 +171,10 @@ if __name__ == "__main__":
                     backstory=writer["backstory"],
                 ),
             )
-            for writer in writers
+            for writer in WRITERS
         ],
         end_task,
     )
 
     team.run()
-```
-
-Save this JSON data as `writers.json` in the same directory as the script:
-```json
-[
-    {
-        "role": "Tech Content Strategist",
-        "goal": "Craft compelling content on tech advancements",
-        "backstory": "You are a renowned Content Strategist, known for your insightful and engaging articles. You transform complex concepts into compelling narratives."
-    },
-    {
-        "role": "Travel Adventure Blogger",
-        "goal": "Inspire wanderlust with stories of hidden gems and exotic locales",
-        "backstory": "With a passport full of stamps, you bring distant cultures and breathtaking scenes to life through vivid storytelling and personal anecdotes."
-    },
-    {
-        "role": "Lifestyle Freelance Writer",
-        "goal": "Share practical advice on living a balanced and stylish life",
-        "backstory": "From the latest trends in home decor to tips for wellness, your articles help readers create a life that feels both aspirational and attainable."
-    },
-    {
-        "role": "Sports Analyst",
-        "goal": "Deliver in-depth analyses and predictions for upcoming games",
-        "backstory": "As a former athlete with a deep understanding of various sports, you provide fans with expert insights and game breakdowns."
-    },
-    {
-        "role": "Financial Advisor Columnist",
-        "goal": "Educate readers on smart financial strategies and market trends",
-        "backstory": "With years of experience in finance, you distill complex financial concepts into easy-to-understand advice for everyday investors."
-    },
-    {
-        "role": "Science Fiction Writer",
-        "goal": "Explore futuristic scenarios and expand the boundaries of imagination",
-        "backstory": "Your mind is a crucible of futuristic visions and speculative ideas, crafting narratives that question the fabric of reality and possible futures."
-    },
-    {
-        "role": "Health and Wellness Coach",
-        "goal": "Promote healthy living through evidence-based practices",
-        "backstory": "Combining your expertise in nutrition and fitness with a passion for helping others, you write to inspire and guide readers toward a healthier lifestyle."
-    },
-    {
-        "role": "Political Correspondent",
-        "goal": "Provide sharp analysis and comprehensive coverage of political events",
-        "backstory": "With a knack for understanding and interpreting political maneuvers, you provide readers with insightful commentary on the current political landscape."
-    },
-    {
-        "role": "Culinary Critic",
-        "goal": "Review new restaurants and uncover the best culinary experiences",
-        "backstory": "Your palate is your guide as you traverse the world of flavors, sharing your culinary discoveries and restaurant reviews with food enthusiasts."
-    },
-    {
-        "role": "Environmental Activist Writer",
-        "goal": "Raise awareness about environmental issues and advocate for sustainable practices",
-        "backstory": "As someone deeply committed to the environment, your writings aim to inspire action and change in how people interact with the planet."
-    },
-    {
-        "role": "Historical Biographer",
-        "goal": "Illuminate the lives of historical figures with detailed and engaging biographies",
-        "backstory": "You delve deep into the past to bring the stories of historical figures to life, connecting their experiences to contemporary lessons."
-    }
-]
 ```

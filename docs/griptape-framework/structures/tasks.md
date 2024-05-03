@@ -774,7 +774,7 @@ writer = Agent(
     ],
 )
 
-crew = Pipeline(
+team = Pipeline(
     tasks=[
         StructureRunTask(
             (
@@ -801,5 +801,5 @@ crew = Pipeline(
     ],
 )
 
-crew.run()
+team.run()
 ```
