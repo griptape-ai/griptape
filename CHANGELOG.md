@@ -27,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `StructureRunTask` for running Structures as a Task from within another Structure.
 - `GriptapeCloudStructureRunDriver` for running Structures in the Griptape Cloud.
 - `LocalStructureRunDriver` for running Structures in the same runtime environment as the code that is running the Structure.
-- Default `run_fn` to `CodeExecutionTask`, making it a suitable no-op Task.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
