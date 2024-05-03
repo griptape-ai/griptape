@@ -20,6 +20,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
     structure_id: str = field(kw_only=True)
     structure_run_wait_time_interval: int = field(default=2, kw_only=True)
     structure_run_max_wait_time_attempts: int = field(default=20, kw_only=True)
+    async_run: bool = field(default=False, kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact:
         from requests import HTTPError, Response, exceptions, post
@@ -31,7 +32,10 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
             response.raise_for_status()
             response_json = response.json()
 
-            return self._get_structure_run_result(response_json["structure_run_id"])
+            if self.async_run:
+                return InfoArtifact("Run started successfully")
+            else:
+                return self._get_structure_run_result(response_json["structure_run_id"])
         except (exceptions.RequestException, HTTPError) as err:
             return ErrorArtifact(str(err))
 

@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, InfoArtifact
 
 
 class TestGriptapeCloudStructureRunDriver:
@@ -27,3 +27,9 @@ class TestGriptapeCloudStructureRunDriver:
         result = driver.run(TextArtifact("foo bar"))
         assert isinstance(result, TextArtifact)
         assert result.value == "foo bar"
+
+    def test_async_run(self, driver):
+        driver.async_run = True
+        result = driver.run(TextArtifact("foo bar"))
+        assert isinstance(result, InfoArtifact)
+        assert result.value == "Run started successfully"
