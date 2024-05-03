@@ -247,7 +247,7 @@ def handler(event: BaseEvent):
 
 
 agent = Agent(
-    event_listeners=[EventListener(handler=handler), event_types=[StartPromptEvent])]
+    event_listeners=[EventListener(handler=handler, event_types=[StartPromptEvent])]
 )
 
 agent.run("Write me a poem.")
