@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
 - Improved RAG performance in `VectorQueryEngine`.
 - Moved [Griptape Docs](https://github.com/griptape-ai/griptape-docs) to this repository.
-- The return value of `EventListener.handler` will be passed to the `EventListenerDriver.try_publish_event_payload`'s' `event_payload` parameter.
+- Updated `EventListener.handler`'s behavior so that the return value will be passed to the `EventListenerDriver.try_publish_event_payload`'s `event_payload` parameter.
 
 ### Fixed
 - Type hint for parameter `azure_ad_token_provider` on Azure OpenAI drivers to `Optional[Callable[[], str]]`.

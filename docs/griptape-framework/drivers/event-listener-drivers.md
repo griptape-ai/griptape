@@ -22,7 +22,7 @@ agent = Agent(
     ],
     event_listeners=[
         EventListener(
-            handler=lambda event: {  # You can use the handler to transform the event payload before sending it to the Driver
+            handler=lambda event: {  # You can optionally use the handler to transform the event payload before sending it to the Driver
                 "event": event.to_dict(),
             },
             driver=AmazonSqsEventListenerDriver(
@@ -64,7 +64,7 @@ event_driver.publish_event(done_event)
 
 ## Event Listener Drivers
 
-Griptape offers the following Event Listener Drivers for forwarding Gritpape Events.
+Griptape offers the following Event Listener Drivers for forwarding Griptape Events.
 
 ### Amazon SQS Event Listener Driver
 
