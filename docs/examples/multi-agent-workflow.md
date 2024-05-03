@@ -12,7 +12,7 @@ from griptape.drivers import WebhookEventListenerDriver
 from griptape.events import EventListener, FinishStructureRunEvent
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Workflow
-from griptape.tasks import NoOpTask, StructureRunTask
+from griptape.tasks import PromptTask, StructureRunTask
 from griptape.tools import (
     TaskMemoryClient,
     WebScraper,
@@ -153,7 +153,11 @@ if __name__ == "__main__":
             target_structure=build_researcher(),
         ),
     )
-    end_task = team.add_task(NoOpTask())
+    end_task = team.add_task(
+        PromptTask(
+            'State "All Done!"',
+        )
+    )
     team.insert_tasks(
         research_task,
         [
