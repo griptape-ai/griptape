@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from attrs import define, field
 
@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 @define
 class LocalStructureRunDriver(BaseStructureRunDriver):
-    structure: Structure = field(kw_only=True)
+    structure_factory: Callable[[], Structure] = field(kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact:
-        self.structure.run(*[arg.value for arg in args])
+        structure_factory = self.structure_factory().run(*[arg.value for arg in args])
 
-        if self.structure.output_task.output is not None:
-            return self.structure.output_task.output
+        if structure_factory.output_task.output is not None:
+            return structure_factory.output_task.output
         else:
             return InfoArtifact("No output found in response")

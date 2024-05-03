@@ -11,7 +11,9 @@ class TestStructureRunClient:
         driver = MockPromptDriver()
         agent = Agent(prompt_driver=driver)
 
-        return StructureRunClient(description="foo bar", driver=LocalStructureRunDriver(structure=agent))
+        return StructureRunClient(
+            description="foo bar", driver=LocalStructureRunDriver(structure_factory=lambda: agent)
+        )
 
     def test_run_structure(self, client):
         assert client.run_structure({"values": {"args": "foo bar"}}).value == "mock output"

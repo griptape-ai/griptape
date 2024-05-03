@@ -10,7 +10,7 @@ class TestLocalStructureRunDriver:
     @pytest.fixture
     def driver(self):
         agent = Agent(prompt_driver=MockPromptDriver(mock_output="agent mock output"))
-        driver = LocalStructureRunDriver(structure=agent)
+        driver = LocalStructureRunDriver(structure_factory=lambda: agent)
 
         return driver
 

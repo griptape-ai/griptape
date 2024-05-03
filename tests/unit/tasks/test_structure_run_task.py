@@ -9,7 +9,7 @@ class TestStructureRunTask:
     def test_run(self):
         agent = Agent(prompt_driver=MockPromptDriver(mock_output="agent mock output"))
         pipeline = Pipeline(prompt_driver=MockPromptDriver(mock_output="pipeline mock output"))
-        driver = LocalStructureRunDriver(structure=agent)
+        driver = LocalStructureRunDriver(structure_factory=lambda: agent)
 
         task = StructureRunTask(driver=driver)
 
