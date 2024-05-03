@@ -97,6 +97,7 @@ jobs:
       WEBHOOK_URL: ${{ secrets.INTEG_WEBHOOK_URL }}
       AMAZON_SQS_QUEUE_URL: ${{ secrets.INTEG_AMAZON_SQS_QUEUE_URL }}
       GT_CLOUD_STRUCTURE_RUN_ID: ${{ secrets.INTEG_GT_CLOUD_STRUCTURE_RUN_ID }}
+      AWS_IOT_CORE_ENDPOINT: ${{ secrets.INTEG_AWS_IOT_CORE_ENDPOINT }}
       AWS_IOT_CORE_TOPIC: ${{ secrets.INTEG_AWS_IOT_CORE_TOPIC }}
     services:
       postgres:
