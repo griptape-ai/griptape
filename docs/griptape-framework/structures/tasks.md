@@ -782,7 +782,7 @@ team = Pipeline(
             Identify key trends, breakthrough technologies, and potential industry impacts.""",
             ),
             driver=LocalStructureRunDriver(
-                structure_factory=lambda: researcher,
+                structure_factory_fn=lambda: researcher,
             ),
         ),
         StructureRunTask(
@@ -795,7 +795,7 @@ team = Pipeline(
                 "{{parent_output}}",
             ),
             driver=LocalStructureRunDriver(
-                structure_factory=lambda: writer,
+                structure_factory_fn=lambda: writer,
             ),
         ),
     ],

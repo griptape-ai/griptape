@@ -32,13 +32,13 @@ joke_coordinator = Pipeline(
     tasks=[
         StructureRunTask(
             driver=LocalStructureRunDriver(
-                structure_factory=lambda: joke_teller,
+                structure_factory_fn=lambda: joke_teller,
             ),
         ),
         StructureRunTask(
             "Rewrite this joke: {{ parent_output }}",
             driver=LocalStructureRunDriver(
-                structure_factory=lambda: joke_rewriter,
+                structure_factory_fn=lambda: joke_rewriter,
             ),
         ),
     ]

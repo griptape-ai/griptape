@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 @define
 class LocalStructureRunDriver(BaseStructureRunDriver):
-    structure_factory: Callable[[], Structure] = field(kw_only=True)
+    structure_factory_fn: Callable[[], Structure] = field(kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact:
-        structure_factory = self.structure_factory().run(*[arg.value for arg in args])
+        structure_factory_fn = self.structure_factory_fn().run(*[arg.value for arg in args])
 
-        if structure_factory.output_task.output is not None:
-            return structure_factory.output_task.output
+        if structure_factory_fn.output_task.output is not None:
+            return structure_factory_fn.output_task.output
         else:
             return InfoArtifact("No output found in response")
