@@ -23,7 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonS3FileManagerDriver` for managing files on Amazon S3.
 - `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
 - Optional `exception` field to `ErrorArtifact`.
-- `GriptapeCloudStructureRunClient` tool for invoking Griptape Cloud Structure Run APIs.
+- `StructureRunClient` for running other Structures via a Tool.
+- `StructureRunTask` for running Structures as a Task from within another Structure.
+- `GriptapeCloudStructureRunDriver` for running Structures in Griptape Cloud.
+- `LocalStructureRunDriver` for running Structures in the same run-time environment as the code that is running the Structure.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
@@ -34,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `FileManager.default_loader` is now `None` by default.
 - **BREAKING** Bumped `pinecone` from `^2` to `^3`.
 - **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
-- **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
+- **BREAKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
 - Improved RAG performance in `VectorQueryEngine`.
 - Moved [Griptape Docs](https://github.com/griptape-ai/griptape-docs) to this repository.
 - Updated `EventListener.handler`'s behavior so that the return value will be passed to the `EventListenerDriver.try_publish_event_payload`'s `event_payload` parameter.

@@ -1,5 +1,0 @@
-version: "v1"
-name: Griptape Cloud Structure Run Client
-description: Tool for using the Griptape Cloud Structure Run API.
-contact_email: hello@griptape.ai
-legal_info_url: https://www.griptape.ai/legal
