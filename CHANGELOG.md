@@ -154,7 +154,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.22.2] - 2024-01-18
 
 ### Fixed
-- `ToolkitTask`'s user subtask prompt occassionally causing a loop with Chain of Thought.
+- `ToolkitTask`'s user subtask prompt occasionally causing a loop with Chain of Thought.
 
 ### Security
 - Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]
