@@ -1,8 +1,11 @@
+import os
 from unittest.mock import Mock
-from pytest import fixture
+
 import pytest
-from tests.mocks.mock_event import MockEvent
+from pytest import fixture
+
 from griptape.drivers.event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
+from tests.mocks.mock_event import MockEvent
 
 
 class TestGriptapeCloudEventListenerDriver:
@@ -17,21 +20,25 @@ class TestGriptapeCloudEventListenerDriver:
 
     @fixture()
     def driver(self):
-        return GriptapeCloudEventListenerDriver(api_key="foo bar", run_id="baz")
+        os.environ["GT_CLOUD_BASE_URL"] = "https://cloud123.griptape.ai"
+
+        return GriptapeCloudEventListenerDriver(api_key="foo bar", structure_run_id="bar baz")
 
     def test_init(self, driver):
         assert driver
+        assert driver.api_key == "foo bar"
+        assert driver.structure_run_id == "bar baz"
 
-    def test_try_publish_event(self, mock_post, driver):
+    def test_try_publish_event_payload(self, mock_post, driver):
         event = MockEvent()
-        driver.try_publish_event(event=event)
+        driver.try_publish_event_payload(event.to_dict())
 
         mock_post.assert_called_once_with(
-            url=f"https://cloud.griptape.ai/api/structure-runs/{driver.run_id}/events",
+            url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
             json=event.to_dict(),
             headers={"Authorization": "Bearer foo bar"},
         )
 
-    def test_no_run_id(self):
+    def test_no_structure_run_id(self):
         with pytest.raises(ValueError):
             GriptapeCloudEventListenerDriver(api_key="foo bar")
