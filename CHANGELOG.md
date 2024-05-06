@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.25.0] - 2024-05-06
+
 ### Added
 - `list_files_from_disk` activity to `FileManager` Tool.
 - Support for Drivers in `EventListener`.
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WebhookEventListenerDriver` for sending events to a webhook.
 - `BaseFileManagerDriver` to abstract file management operations.
 - `LocalFileManagerDriver` for managing files on the local file system.
-- Added optional `BaseLoader.encoding` field.
+- Optional `BaseLoader.encoding` field.
 - `BlobLoader` for loading arbitrary binary data as a `BlobArtifact`.
 - `model` field to `StartPromptEvent` and `FinishPromptEvent`.
 - `input_task_input` and `input_task_output` fields to `StartStructureRunEvent`.
