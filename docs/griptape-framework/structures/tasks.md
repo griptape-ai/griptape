@@ -356,12 +356,13 @@ To query text, use the [TextQueryTask](../../reference/griptape/tasks/text_query
 This Task takes a [Query Engine](../../griptape-framework/engines/query-engines.md), and a set of arguments specific to the engine.
 
 ```python
-from griptape.drivers import OpenAiChatPromptDriver
 from griptape.structures import Agent
-from griptape.tasks import TextQueryTask
+from griptape.tasks import RagTask
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
-from griptape.engines import VectorQueryEngine
 from griptape.artifacts import TextArtifact
+from griptape.engines.rag import RagEngine
+from griptape.engines.rag.modules import TextRetrievalModule, PromptGenerationModule
+from griptape.engines.rag.stages import RetrievalStage, GenerationStage
 
 # Initialize Embedding Driver and Vector Store Driver
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
@@ -370,20 +371,27 @@ artifact = TextArtifact(
     "Griptape builds AI-powered applications that connect securely to your enterprise data and APIs."
     "Griptape Agents provide incredible power and flexibility when working with large language models."
 )
-
-# Create a VectorQueryEngine using the LocalVectorStoreDriver
-vector_query_engine = VectorQueryEngine(
-    vector_store_driver=vector_store_driver,
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo")
-)
-vector_query_engine.upsert_text_artifact(artifact=artifact)
+vector_store_driver.upsert_text_artifact(artifact=artifact, namespace="griptape")
 
 # Instantiate the agent and add TextQueryTask with the VectorQueryEngine
 agent = Agent()
 agent.add_task(
-    TextQueryTask(
+    RagTask(
         "Respond to the users following query: {{ args[0] }}",
-        query_engine=vector_query_engine,
+        rag_engine=RagEngine(
+            retrieval_stage=RetrievalStage(
+                retrieval_modules=[
+                    TextRetrievalModule(
+                        namespace="griptape",
+                        vector_store_driver=vector_store_driver,
+                        top_n=20
+                    )
+                ]
+            ),
+            generation_stage=GenerationStage(
+                generation_module=PromptGenerationModule()
+            )
+        ),
     )
 )
 

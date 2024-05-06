@@ -10,4 +10,4 @@ class RagContext:
     before_query: list[str] = field(factory=list)
     after_query: list[str] = field(factory=list)
     text_chunks: list[TextArtifact] = field(factory=list)
-    output: Optional[str] = field(default=None)
+    output: Optional[TextArtifact] = field(default=None)

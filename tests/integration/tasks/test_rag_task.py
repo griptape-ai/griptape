@@ -2,7 +2,7 @@ from tests.utils.structure_tester import StructureTester
 import pytest
 
 
-class TestTextQueryTask:
+class TestRagTask:
     @pytest.fixture(
         autouse=True,
         params=StructureTester.TEXT_SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
@@ -10,7 +10,7 @@ class TestTextQueryTask:
     )
     def structure_tester(self, request):
         from griptape.structures import Agent
-        from griptape.tasks import TextQueryTask
+        from griptape.tasks import RagTask
         from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
         from griptape.engines import VectorQueryEngine
         from griptape.artifacts import TextArtifact
@@ -24,7 +24,7 @@ class TestTextQueryTask:
 
         agent = Agent(prompt_driver=request.param)
         agent.add_task(
-            TextQueryTask("Respond to the users following query: {{ args[0] }}", query_engine=vector_query_engine)
+            RagTask("Respond to the users following query: {{ args[0] }}", query_engine=vector_query_engine)
         )
 
         return StructureTester(agent)

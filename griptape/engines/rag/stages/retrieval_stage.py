@@ -27,7 +27,7 @@ class RetrievalStage(BaseStage):
 
         # deduplicate the list
         chunks_before_dedup = len(context.text_chunks)
-        context.text_chunks = list({c.value: c for c in context.text_chunks}.values())
+        context.text_chunks = list({str(c.value): c for c in context.text_chunks}.values())
         chunks_after_dedup = len(context.text_chunks)
 
         logging.info(
@@ -41,6 +41,6 @@ class RetrievalStage(BaseStage):
             context.text_chunks = self.rerank_module.run(context)
 
         if self.max_chunks:
-            context.text_chunks = context.text_chunks[0 : self.max_chunks]
+            context.text_chunks = context.text_chunks[0:self.max_chunks]
 
         return context

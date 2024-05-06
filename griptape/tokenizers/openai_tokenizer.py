@@ -9,7 +9,7 @@ from typing import Optional
 @define()
 class OpenAiTokenizer(BaseTokenizer):
     DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "gpt-3.5-turbo-instruct"
-    DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
+    DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo-0125"
     DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
@@ -21,8 +21,8 @@ class OpenAiTokenizer(BaseTokenizer):
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
-        "gpt-3.5-turbo-16k": 16384,
-        "gpt-3.5-turbo": 4096,
+        "gpt-3.5-turbo-0613": 4096,
+        "gpt-3.5-turbo": 16384,
         "gpt-35-turbo-16k": 16384,
         "gpt-35-turbo": 4096,
         "text-embedding-ada-002": 8191,
@@ -79,8 +79,11 @@ class OpenAiTokenizer(BaseTokenizer):
                 encoding = tiktoken.get_encoding("cl100k_base")
 
             if model in {
-                "gpt-3.5-turbo-0613",
-                "gpt-3.5-turbo-16k-0613",
+                "gpt-3.5-turbo-0125",
+                "gpt-3.5-turbo-1106",
+                "gpt-3.5-turbo-0613",  # legacy
+                "gpt-3.5-turbo-16k",  # legacy
+                "gpt-3.5-turbo-16k-0613",  # legacy
                 "gpt-4-0314",
                 "gpt-4-32k-0314",
                 "gpt-4-0613",
@@ -94,8 +97,8 @@ class OpenAiTokenizer(BaseTokenizer):
                 # if there's a name, the role is omitted
                 tokens_per_name = -1
             elif "gpt-3.5-turbo" in model or "gpt-35-turbo" in model:
-                logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
-                return self.count_tokens(text, model="gpt-3.5-turbo-0613")
+                logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0125.")
+                return self.count_tokens(text, model="gpt-3.5-turbo-0125")
             elif "gpt-4" in model:
                 logging.info("gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
                 return self.count_tokens(text, model="gpt-4-0613")

@@ -5,7 +5,7 @@ from .actions_subtask import ActionsSubtask
 from .toolkit_task import ToolkitTask
 from .text_summary_task import TextSummaryTask
 from .tool_task import ToolTask
-from .text_query_task import TextQueryTask
+from .rag_task import RagTask
 from .extraction_task import ExtractionTask
 from .csv_extraction_task import CsvExtractionTask
 from .json_extraction_task import JsonExtractionTask
@@ -25,7 +25,7 @@ __all__ = [
     "ToolkitTask",
     "TextSummaryTask",
     "ToolTask",
-    "TextQueryTask",
+    "RagTask",
     "ExtractionTask",
     "CsvExtractionTask",
     "JsonExtractionTask",

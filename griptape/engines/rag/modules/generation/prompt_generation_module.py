@@ -24,7 +24,7 @@ class PromptGenerationModule(BaseGenerationModule):
         after_query = context.after_query
         text_artifact_chunks = context.text_chunks
 
-        if query and text_artifact_chunks:
+        if query:
             tokenizer = self.prompt_driver.tokenizer
             text_chunks = []
             system_prompt = ""
@@ -44,7 +44,7 @@ class PromptGenerationModule(BaseGenerationModule):
 
                     break
 
-            context.output = self.prompt_driver.run(self.generate_query_prompt_stack(system_prompt, query)).value
+            context.output = self.prompt_driver.run(self.generate_query_prompt_stack(system_prompt, query))
 
         return context
 
