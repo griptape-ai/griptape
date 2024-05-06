@@ -36,7 +36,7 @@ joke_coordinator = Pipeline(
             ),
         ),
         StructureRunTask(
-            "Rewrite this joke: {{ parent_output }}",
+            ("Rewrite this joke: {{ parent_output }}",),
             driver=LocalStructureRunDriver(
                 structure_factory_fn=lambda: joke_rewriter,
             ),
@@ -68,9 +68,9 @@ structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
 pipeline = Pipeline(
     tasks=[
         StructureRunTask(
-            "Think of a question related to Retrieval Augmented Generation.",
+            ("Think of a question related to Retrieval Augmented Generation.",),
             driver=LocalStructureRunDriver(
-                structure=Agent(
+                structure_factory_fn=lambda: Agent(
                     rules=[
                         Rule(
                             value="You are an expert in Retrieval Augmented Generation.",
@@ -83,7 +83,7 @@ pipeline = Pipeline(
             ),
         ),
         StructureRunTask(
-            "{{ parent_output }}",
+            ("{{ parent_output }}",),
             driver=GriptapeCloudStructureRunDriver(
                 base_url=base_url,
                 api_key=api_key,

@@ -6,9 +6,8 @@ Additionally, this architecture opens us up to using services such as [Griptape 
 
 ```python
 import os
-from pathlib import Path
 
-from griptape.drivers import WebhookEventListenerDriver
+from griptape.drivers import WebhookEventListenerDriver, LocalStructureRunDriver
 from griptape.events import EventListener, FinishStructureRunEvent
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Workflow
@@ -23,13 +22,13 @@ WRITERS = [
     {
         "role": "Travel Adventure Blogger",
         "goal": "Inspire wanderlust with stories of hidden gems and exotic locales",
-        "backstory": "With a passport full of stamps, you bring distant cultures and breathtaking scenes to life through vivid storytelling and personal anecdotes."
+        "backstory": "With a passport full of stamps, you bring distant cultures and breathtaking scenes to life through vivid storytelling and personal anecdotes.",
     },
     {
         "role": "Lifestyle Freelance Writer",
         "goal": "Share practical advice on living a balanced and stylish life",
-        "backstory": "From the latest trends in home decor to tips for wellness, your articles help readers create a life that feels both aspirational and attainable."
-    }
+        "backstory": "From the latest trends in home decor to tips for wellness, your articles help readers create a life that feels both aspirational and attainable.",
+    },
 ]
 
 
@@ -147,10 +146,14 @@ if __name__ == "__main__":
     team = Workflow()
     research_task = team.add_task(
         StructureRunTask(
-            """Conduct a comprehensive analysis of the latest advancements in AI in 2024.
-                Identify key trends, breakthrough technologies, and potential industry impacts.""",
+            (
+                """Perform a detailed examination of the newest developments in AI as of 2024.
+                Pinpoint major trends, breakthroughs, and their implications for various industries.""",
+            ),
             id="research",
-            target_structure=build_researcher(),
+            driver=LocalStructureRunDriver(
+                structure_factory_fn=build_researcher,
+            ),
         ),
     )
     end_task = team.add_task(
@@ -162,17 +165,21 @@ if __name__ == "__main__":
         research_task,
         [
             StructureRunTask(
-                """Using insights provided, develop an engaging blog
+                (
+                    """Using insights provided, develop an engaging blog
                 post that highlights the most significant AI advancements.
                 Your post should be informative yet accessible, catering to a tech-savvy audience.
                 Make it sound cool, avoid complex words so it doesn't sound like AI.
 
                 Insights:
                 {{ parent_outputs["research"] }}""",
-                target_structure=build_writer(
-                    role=writer["role"],
-                    goal=writer["goal"],
-                    backstory=writer["backstory"],
+                ),
+                driver=LocalStructureRunDriver(
+                    structure_factory_fn=lambda: build_writer(
+                        role=writer["role"],
+                        goal=writer["goal"],
+                        backstory=writer["backstory"],
+                    )
                 ),
             )
             for writer in WRITERS

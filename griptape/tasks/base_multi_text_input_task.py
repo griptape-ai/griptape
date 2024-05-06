@@ -13,8 +13,10 @@ from griptape.utils import J2
 
 @define
 class BaseMultiTextInputTask(RuleMixin, BaseTask, ABC):
+    DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
+
     _input: tuple[str, ...] | tuple[TextArtifact, ...] | tuple[Callable[[BaseTask], TextArtifact], ...] = field(
-        default=Factory(tuple), alias="input"
+        default=Factory(lambda self: (self.DEFAULT_INPUT_TEMPLATE,), takes_self=True), alias="input"
     )
 
     @property
