@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.25.0] - 2024-05-06
+
 ### Added
 - `list_files_from_disk` activity to `FileManager` Tool.
 - Support for Drivers in `EventListener`.
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WebhookEventListenerDriver` for sending events to a webhook.
 - `BaseFileManagerDriver` to abstract file management operations.
 - `LocalFileManagerDriver` for managing files on the local file system.
-- Added optional `BaseLoader.encoding` field.
+- Optional `BaseLoader.encoding` field.
 - `BlobLoader` for loading arbitrary binary data as a `BlobArtifact`.
 - `model` field to `StartPromptEvent` and `FinishPromptEvent`.
 - `input_task_input` and `input_task_output` fields to `StartStructureRunEvent`.
@@ -152,7 +154,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.22.2] - 2024-01-18
 
 ### Fixed
-- `ToolkitTask`'s user subtask prompt occassionally causing a loop with Chain of Thought.
+- `ToolkitTask`'s user subtask prompt occasionally causing a loop with Chain of Thought.
 
 ### Security
 - Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]
