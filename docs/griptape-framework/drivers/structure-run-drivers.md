@@ -12,33 +12,39 @@ from griptape.rules import Rule
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 
-joke_teller = Agent(
-    rules=[
-        Rule(
-            value="You are very funny.",
-        )
-    ],
-)
+def build_joke_teller():
+    joke_teller = Agent(
+        rules=[
+            Rule(
+                value="You are very funny.",
+            )
+        ],
+    )
 
-joke_rewriter = Agent(
-    rules=[
-        Rule(
-            value="You are the editor of a joke book. But you only speak in riddles",
-        )
-    ],
-)
+    return joke_teller
+
+def build_joke_rewriter():
+    joke_rewriter = Agent(
+        rules=[
+            Rule(
+                value="You are the editor of a joke book. But you only speak in riddles",
+            )
+        ],
+    )
+
+    return joke_rewriter
 
 joke_coordinator = Pipeline(
     tasks=[
         StructureRunTask(
             driver=LocalStructureRunDriver(
-                structure_factory_fn=lambda: joke_teller,
+                structure_factory_fn=build_joke_teller,
             ),
         ),
         StructureRunTask(
             ("Rewrite this joke: {{ parent_output }}",),
             driver=LocalStructureRunDriver(
-                structure_factory_fn=lambda: joke_rewriter,
+                structure_factory_fn=build_joke_rewriter,
             ),
         ),
     ]
