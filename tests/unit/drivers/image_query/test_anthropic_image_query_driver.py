@@ -26,7 +26,7 @@ class TestAnthropicImageQueryDriver:
         test_binary_data = b"test-data"
 
         text_artifact = driver.try_query(
-            test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)]
+            test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100, format="png")]
         )
 
         expected_message = self._expected_message(test_binary_data, "image/png", test_prompt_string)
@@ -43,7 +43,7 @@ class TestAnthropicImageQueryDriver:
         test_binary_data = b"test-data"
 
         text_artifact = driver.try_query(
-            test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)]
+            test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100, format="png")]
         )
 
         expected_message = self._expected_message(test_binary_data, "image/png", test_prompt_string)
@@ -59,16 +59,18 @@ class TestAnthropicImageQueryDriver:
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
         with pytest.raises(TypeError):
-            driver.try_query(test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100)])
+            driver.try_query(
+                test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100, format="png")]
+            )
 
     def test_try_query_wrong_media_type(self, mock_client):
         driver = AnthropicImageQueryDriver(model="test-model")
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
 
-        # we expect this to pass Griptape code as the model will error approriately
+        # we expect this to pass Griptape code as the model will error appropriately
         text_artifact = driver.try_query(
-            test_prompt_string, [ImageArtifact(value=test_binary_data, mime_type="image/exr", width=100, height=100)]
+            test_prompt_string, [ImageArtifact(value=test_binary_data, width=100, height=100, format="exr")]
         )
 
         expected_message = self._expected_message(test_binary_data, "image/exr", test_prompt_string)

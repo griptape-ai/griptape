@@ -36,7 +36,7 @@ class TestAmazonBedrockImageQueryDriver:
         image_query_driver.bedrock_client.invoke_model.return_value = {"body": io.BytesIO(b"""{"content": []}""")}
 
         text_artifact = image_query_driver.try_query(
-            "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)]
+            "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100, format="png")]
         )
 
         assert text_artifact.value == "content"
@@ -45,4 +45,6 @@ class TestAmazonBedrockImageQueryDriver:
         image_query_driver.bedrock_client.invoke_model.return_value = {"body": io.BytesIO(b"")}
 
         with pytest.raises(ValueError):
-            image_query_driver.try_query("Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100)])
+            image_query_driver.try_query(
+                "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100, format="png")]
+            )

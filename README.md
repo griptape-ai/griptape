@@ -1,4 +1,4 @@
-# griptape
+![Griptape](https://assets-global.website-files.com/65d658559223871198e78bca/65fb8d85c1ab3c9b858ab18a_Griptape%20logo%20dark.svg)
 
 [![PyPI Version](https://img.shields.io/pypi/v/griptape.svg)](https://pypi.python.org/pypi/griptape)
 [![Tests](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml)
@@ -7,15 +7,61 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
-**Griptape** is a modular Python framework for building AI-powered applications that connect securely to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
+Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
 
-**Build AI Apps**: Easily compose apps in Python with modular structures and ready-made tools. Use built-in drivers to connect to whichever LLMs and data stores you choose.
 
-**Control Data Access**: Connect securely to data sources with granular access controls, ensuring LLMs stay focused on the information that matters.
+## 🛠️ Core Components
 
-**Scale With Your Workload**: Easily deploy and run apps in the cloud, where your data lives. Process data ahead of time or vectorize it on the fly.
+### 🏗️ Structures
 
-Using Griptape, you can securely integrate with your internal data stores and APIs. You get to control what data goes into the prompt, and what the LLM is allowed to do with it. 
+- 🤖 **Agents** consist of a single Task.
+- 🔄 **Pipelines** organize a sequence of Tasks so that the output from one Task may flow into the next.
+- 🌐 **Workflows** configure Tasks to operate in parallel.
+
+### 📝 Tasks
+
+Tasks are the core building blocks within Structures, enabling interaction with Engines, Tools, and other Griptape components.
+
+### 🔧 Tools
+
+Tools provide capabilities for LLMs to interact with data and services. Griptape includes a variety of built-in Tools, and makes it easy to create custom Tools.
+
+### 🧠 Memory
+
+- 💬 **Conversation Memory** enables LLMs to retain and retrieve information across interactions.
+- 🗃️ **Task Memory** keeps large or sensitive Task outputs off the prompt that is sent to the LLM.
+- 📊 **Meta Memory** enables passing in additional metadata to the LLM, enhancing the context and relevance of the interaction.
+
+### 🚗 Drivers
+
+Drivers facilitate interactions with external resources and services:
+
+- 🗣️ **Prompt Drivers** manage textual interactions with LLMs.
+- 🔢 **Embedding Drivers** generate vector embeddings from textual inputs.
+- 💾 **Vector Store Drivers** manage the storage and retrieval of embeddings.
+- 🎨 **Image Generation Drivers** create images from text descriptions.
+- 🔎 **Image Query Drivers** query images from text queries.
+- 💼 **SQL Drivers** interact with SQL databases.
+- 🌐 **Web Scraper Drivers** extract information from web pages.
+- 🧠 **Conversation Memory Drivers** manage the storage and retrieval of conversational data.
+
+### 🚂 Engines
+
+Engines wrap Drivers and provide use-case-specific functionality:
+
+- 📊 **Query Engines** execute Retrieval Augmented Generation (RAG) queries.
+- 🛠️ **Extraction Engines** extract JSON or CSV data from unstructured text.
+- 📝 **Summary Engines** generate summaries from textual content.
+- 🖼️ **Image Generation Engines** generate images from textual descriptions.
+- 🔎 **Image Query Engines** query images based on textual prompts.
+
+### 📦 Additional Components
+
+- 📐 **Rulesets** steer LLM behavior with minimal prompt engineering.
+- 🔄 **Loaders** load data from various sources.
+- 🏺 **Artifacts** allow for passing data of different types between Griptape components.
+- ✂️ **Chunkers** segment texts into manageable pieces for diverse text types.
+- 🔢 **Tokenizers**  count the number of tokens in a text to not exceed LLM token limits.
 
 ## Documentation
 
@@ -38,7 +84,7 @@ pip install "griptape[all]" -U
 
 Second, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api) to execute LLM prompts.
 
-With Griptape, you can create *structures*, such as `Agents`, `Pipelines`, and `Workflows`, that are composed of different types of tasks. Let's build a simple creative agent that dynamically uses three tools and moves the data around in short-term memory.
+With Griptape, you can create Structures, such as Agents, Pipelines, and Workflows, composed of different types of Tasks. Let's build a simple creative Agent that dynamically uses three tools and moves the data around in Task Memory.
 
 ```python
 from griptape.structures import Agent
@@ -57,59 +103,51 @@ agent.run("https://griptape.ai", "griptape.txt")
 
 And here is the output:
 ```
-[11/02/23 15:28:24] INFO     ToolkitTask 72b89a905be84245a0563b206795ac73       
-                             Input: Load https://griptape.ai, summarize it, and 
-                             store it in a file called griptape.txt.            
-[11/02/23 15:28:37] INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
-                             Thought: First, I need to use the WebScraper action to
-                             load the content of the webpage.                   
-                                                                                
-                             Actions: {"actions": [{"name": "WebScraper", "path":            
-                             "get_content", "input": {"values": {"url":         
-                             "https://griptape.ai"}}}]}                           
-                    INFO     Subtask f2cd3cfecaeb4001a0d3eccad32c2d07           
-                             Response: Output of "WebScraper.get_content" was   
-                             stored in memory with memory_name "TaskMemory" and 
-                             artifact_namespace                                 
-                             "c497d83c1d134db694b9994596016320"                 
-[11/02/23 15:28:50] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
-                             Thought: Now that the webpage content is stored in 
-                             memory, I need to use the TaskMemoryClient action  
-                             to summarize the content.                          
-                             Actions: {"actions": [{"name": "TaskMemoryClient", "path":   
-                             "summarize", "input": {"values": {"memory_name":   
-                             "TaskMemory", "artifact_namespace":                
-                             "c497d83c1d134db694b9994596016320"}}}]}              
-[11/02/23 15:29:06] INFO     Subtask 0096dac0f0524636be197e06a37f8aa0           
-                             Response: Output of "TaskMemoryClient.summarize"
-                             was stored in memory with memory_name "TaskMemory" 
-                             and artifact_namespace                             
-                             "77584322d33d40e992da9767d02a9018"                 
-[11/02/23 15:29:25] INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
-                             Thought: Now that the summary is stored in memory, 
-                             I need to use the FileManager action to save the      
-                             summary to a file named griptape.txt.              
-                             Actions: {"actions": [{"name": "FileManager", "path":           
-                             "save_memory_artifacts_to_disk", "input":          
-                             {"values": {"dir_name": ".", "file_name":          
-                             "griptape.txt", "memory_name": "TaskMemory",       
-                             "artifact_namespace":                              
-                             "77584322d33d40e992da9767d02a9018"}}}]}              
-                    INFO     Subtask 7cc3d96500ce4efdac085c07c7370822           
-                             Response: saved successfully                       
-[11/02/23 15:29:30] INFO     ToolkitTask 72b89a905be84245a0563b206795ac73       
-                             Output: The summary of the webpage                 
-                             https://griptape.ai has been successfully stored in
-                             a file named griptape.txt.
+[04/02/24 13:51:09] INFO     ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
+                             Input: Load https://griptape.ai, summarize it, and store it in a file called griptape.txt.
+[04/02/24 13:51:15] INFO     Subtask db6a3e7cb2f549128c358149d340f91c
+                             Thought: First, I need to load the content of the website using the WebScraper action. Then, I will use the TaskMemoryClient action to
+                             summarize the content. Finally, I will save the summarized content to a file using the FileManager action.
+                             Actions: [
+                               {
+                                 "name": "WebScraper",
+                                 "path": "get_content",
+                                 "input": {
+                                   "values": {
+                                     "url": "https://griptape.ai"
+                                   }
+                                 },
+                                 "tag": "load_website_content"
+                               }
+                             ]
+[04/02/24 13:51:16] INFO     Subtask db6a3e7cb2f549128c358149d340f91c
+                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "752b38bb86da4baabdbd9f444eb4a0d1"
+[04/02/24 13:51:19] INFO     Subtask c3edba87ebf845d4b85e3a791f8fde8d
+                             Thought: Now that the website content is loaded into memory, I need to summarize it using the TaskMemoryClient action.
+                             Actions: [{"tag": "summarize_content", "name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory",
+                             "artifact_namespace": "752b38bb86da4baabdbd9f444eb4a0d1"}}}]
+[04/02/24 13:51:25] INFO     Subtask c3edba87ebf845d4b85e3a791f8fde8d
+                             Response: Output of "TaskMemoryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "c4f131c201f147dcab07be3925b46294"
+[04/02/24 13:51:33] INFO     Subtask 06fe01ca64a744b38a8c08eb152aaacb
+                             Thought: Now that the content has been summarized and stored in memory, I need to save this summarized content to a file named 'griptape.txt'
+                             using the FileManager action.
+                             Actions: [{"tag": "save_summarized_content", "name": "FileManager", "path": "save_memory_artifacts_to_disk", "input": {"values": {"dir_name":
+                             ".", "file_name": "griptape.txt", "memory_name": "TaskMemory", "artifact_namespace": "c4f131c201f147dcab07be3925b46294"}}}]
+                    INFO     Subtask 06fe01ca64a744b38a8c08eb152aaacb
+                             Response: saved successfully
+[04/02/24 13:51:35] INFO     ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
+                             Output: The summarized content of the website https://griptape.ai has been successfully saved to a file named 'griptape.txt'.
 ```
 
-During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Tool Memory**, queried it to answer the original question, and finally saved the answer to a file.
+During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Task Memory**, queried it to answer the original question, and finally saved the answer to a file.
 
 The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
 
-All tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `TaskMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other tools.
+All Tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `TaskMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
-[Check out our docs](https://docs.griptape.ai/latest/griptape-framework/structures/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
+[Check out our docs](https://docs.griptape.ai/latest/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
 ## Versioning
 
@@ -125,9 +163,9 @@ If you have identified a bug, want to propose a new feature, or have a question,
 
 ### New Griptape Tools
 
-Griptape's extensibility allows anyone to develop and distribute tools independently. With rare exceptions for tools providing broadly applicable functionality, new Griptape tools should be managed as their own projects and not submitted to the core framework. Pull requests for new tools (unless addressing an [existing issue](https://github.com/griptape-ai/griptape/issues)) will be closed.
+Griptape's extensibility allows anyone to develop and distribute tools independently. With rare exceptions for Tools providing broadly applicable functionality, new Griptape Tools should be managed as their own projects and not submitted to the core framework. Pull requests for new tools (unless addressing an [existing issue](https://github.com/griptape-ai/griptape/issues)) will be closed.
 
-The [Griptape Tool Template](https://github.com/griptape-ai/tool-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new tools. In the Template, select **Use this template** then **Create a new repository** to begin a new tool project.
+The [Griptape Tool Template](https://github.com/griptape-ai/tool-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new Tools. In the Template, select **Use this template** then **Create a new repository** to begin a new Tool project.
 
 ### Submitting Pull Requests
 
@@ -139,7 +177,7 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 3. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
 
-4. **Documentation:** Every pull request must include a corresponding pull request in the [docs repository](https://github.com/griptape-ai/griptape-docs) or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
+4. **Documentation:** Every pull request must include updates to documentation or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
 
 5. **Code Style:** Griptape uses [Black](https://github.com/ambv/black) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
 

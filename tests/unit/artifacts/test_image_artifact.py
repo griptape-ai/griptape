@@ -7,20 +7,20 @@ class TestImageArtifact:
     def image_artifact(self):
         return ImageArtifact(
             value=b"some binary png image data",
-            mime_type="image/png",
+            format="png",
             width=512,
             height=512,
             model="openai/dalle2",
             prompt="a cute cat",
         )
 
-    def test_to_text(self, image_artifact):
-        assert image_artifact.to_text() == "Image, dimensions: 512x512, type: image/png, size: 26 bytes"
+    def test_to_text(self, image_artifact: ImageArtifact):
+        assert image_artifact.to_text() == "Media, type: image/png, size: 26 bytes"
 
-    def test_to_dict(self, image_artifact):
+    def test_to_dict(self, image_artifact: ImageArtifact):
         image_dict = image_artifact.to_dict()
 
-        assert image_dict["mime_type"] == "image/png"
+        assert image_dict["format"] == "png"
         assert image_dict["width"] == 512
         assert image_dict["height"] == 512
         assert image_dict["model"] == "openai/dalle2"
@@ -35,6 +35,7 @@ class TestImageArtifact:
 
         assert deserialized_artifact.value == b"some binary png image data"
         assert deserialized_artifact.mime_type == "image/png"
+        assert deserialized_artifact.format == "png"
         assert deserialized_artifact.width == 512
         assert deserialized_artifact.height == 512
         assert deserialized_artifact.model == "openai/dalle2"

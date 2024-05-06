@@ -1,58 +1,35 @@
 from __future__ import annotations
-
-import logging
 import os
-from pathlib import Path
 from attr import define, field, Factory
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BaseArtifact
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.drivers import BaseFileManagerDriver, LocalFileManagerDriver
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import FileLoader, BaseLoader, PdfLoader, CsvLoader, TextLoader, ImageLoader
 from schema import Schema, Literal
-from typing import Optional, Any
 
 
 @define
 class FileManager(BaseTool):
     """
-    FileManager is a tool that can be used to load and save files.
+    FileManager is a tool that can be used to list, load, and save files.
 
     Attributes:
-        workdir: The absolute directory to load files from and save files to.
-        loaders: Dictionary of file extensions and matching loaders to use when loading files in load_files_from_disk.
-        default_loader: The loader to use when loading files in load_files_from_disk without any matching loader in `loaders`.
-        save_file_encoding: The encoding to use when saving files to disk.
+        file_manager_driver: File Manager Driver to use to list, load, and save files.
     """
 
-    workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
-    default_loader: BaseLoader = field(default=Factory(lambda: FileLoader()))
-    loaders: dict[str, BaseLoader] = field(
-        default=Factory(
-            lambda: {
-                "pdf": PdfLoader(),
-                "csv": CsvLoader(),
-                "txt": TextLoader(),
-                "html": TextLoader(),
-                "json": TextLoader(),
-                "yaml": TextLoader(),
-                "xml": TextLoader(),
-                "png": ImageLoader(),
-                "jpg": ImageLoader(),
-                "jpeg": ImageLoader(),
-                "webp": ImageLoader(),
-                "gif": ImageLoader(),
-                "bmp": ImageLoader(),
-                "tiff": ImageLoader(),
-            }
-        ),
-        kw_only=True,
-    )
-    save_file_encoding: Optional[str] = field(default=None, kw_only=True)
+    file_manager_driver: BaseFileManagerDriver = field(default=Factory(lambda: LocalFileManagerDriver()), kw_only=True)
 
-    @workdir.validator  # pyright: ignore
-    def validate_workdir(self, _, workdir: str) -> None:
-        if not Path(workdir).is_absolute():
-            raise ValueError("workdir has to be absolute absolute")
+    @activity(
+        config={
+            "description": "Can be used to list files on disk",
+            "schema": Schema(
+                {Literal("path", description="Relative path in the POSIX format. For example, 'foo/bar'"): str}
+            ),
+        }
+    )
+    def list_files_from_disk(self, params: dict) -> TextArtifact | ErrorArtifact:
+        path = params["values"]["path"]
+        return self.file_manager_driver.list_files(path)
 
     @activity(
         config={
@@ -61,28 +38,22 @@ class FileManager(BaseTool):
                 {
                     Literal(
                         "paths",
-                        description="Paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
+                        description="Relative paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
                     ): list
                 }
             ),
         }
     )
     def load_files_from_disk(self, params: dict) -> ListArtifact | ErrorArtifact:
+        paths = params["values"]["paths"]
         artifacts = []
 
-        for path in params["values"]["paths"]:
-            full_path = Path(os.path.join(self.workdir, path))
-            extension = path.split(".")[-1]
-            loader = self.loaders.get(extension) or self.default_loader
-            result = loader.load(full_path)
-
-            if isinstance(result, list):
-                artifacts.extend(result)
-            elif isinstance(result, BaseArtifact):
-                artifacts.append(result)
+        for path in paths:
+            artifact = self.file_manager_driver.load_file(path)
+            if isinstance(artifact, ListArtifact):
+                artifacts.extend(artifact.value)
             else:
-                logging.warning(f"Unknown loader return type for file {path}")
-
+                artifacts.append(artifact)
         return ListArtifact(artifacts)
 
     @activity(
@@ -92,7 +63,7 @@ class FileManager(BaseTool):
                 {
                     Literal(
                         "dir_name",
-                        description="Destination directory name on disk in the POSIX format. For example, 'foo/bar'",
+                        description="Relative destination path name on disk in the POSIX format. For example, 'foo/bar'",
                     ): str,
                     Literal("file_name", description="Destination file name. For example, 'baz.txt'"): str,
                     "memory_name": str,
@@ -102,33 +73,29 @@ class FileManager(BaseTool):
         }
     )
     def save_memory_artifacts_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
-        memory = self.find_input_memory(params["values"]["memory_name"])
-        artifact_namespace = params["values"]["artifact_namespace"]
         dir_name = params["values"]["dir_name"]
         file_name = params["values"]["file_name"]
+        memory_name = params["values"]["memory_name"]
+        artifact_namespace = params["values"]["artifact_namespace"]
 
-        if memory:
-            list_artifact = memory.load_artifacts(artifact_namespace)
+        memory = self.find_input_memory(params["values"]["memory_name"])
+        if not memory:
+            return ErrorArtifact(f"Failed to save memory artifacts to disk - memory named '{memory_name}' not found")
 
-            if len(list_artifact) == 0:
-                return ErrorArtifact("no artifacts found")
-            elif len(list_artifact) == 1:
-                try:
-                    self._save_to_disk(os.path.join(self.workdir, dir_name, file_name), list_artifact.value[0].value)
+        list_artifact = memory.load_artifacts(artifact_namespace)
 
-                    return InfoArtifact("saved successfully")
-                except Exception as e:
-                    return ErrorArtifact(f"error writing file to disk: {e}")
-            else:
-                try:
-                    for a in list_artifact.value:
-                        self._save_to_disk(os.path.join(self.workdir, dir_name, f"{a.name}-{file_name}"), a.to_text())
+        if len(list_artifact) == 0:
+            return ErrorArtifact(
+                f"Failed to save memory artifacts to disk - memory named '{memory_name}' does not contain any artifacts"
+            )
 
-                    return InfoArtifact("saved successfully")
-                except Exception as e:
-                    return ErrorArtifact(f"error writing file to disk: {e}")
-        else:
-            return ErrorArtifact("memory not found")
+        for artifact in list_artifact.value:
+            formatted_file_name = f"{artifact.name}-{file_name}" if len(list_artifact) > 1 else file_name
+            result = self.file_manager_driver.save_file(os.path.join(dir_name, formatted_file_name), artifact.value)
+            if isinstance(result, ErrorArtifact):
+                return result
+
+        return InfoArtifact("Successfully saved memory artifacts to disk")
 
     @activity(
         config={
@@ -145,25 +112,6 @@ class FileManager(BaseTool):
         }
     )
     def save_content_to_file(self, params: dict) -> ErrorArtifact | InfoArtifact:
+        path = params["values"]["path"]
         content = params["values"]["content"]
-        new_path = params["values"]["path"]
-        full_path = os.path.join(self.workdir, new_path)
-
-        try:
-            self._save_to_disk(full_path, content)
-
-            return InfoArtifact("saved successfully")
-        except Exception as e:
-            return ErrorArtifact(f"error writing file to disk: {e}")
-
-    def _save_to_disk(self, path: str, value: Any) -> None:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-
-        with open(path, "wb") as file:
-            if isinstance(value, str):
-                if self.save_file_encoding:
-                    file.write(value.encode(self.save_file_encoding))
-                else:
-                    file.write(value.encode())
-            else:
-                file.write(value)
+        return self.file_manager_driver.save_file(path, content)

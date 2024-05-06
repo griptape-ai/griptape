@@ -6,7 +6,7 @@ from attr import define, field
 from schema import Schema
 
 from griptape import utils
-from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact
+from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact, ListArtifact
 from griptape.tasks import PromptTask, ActionsSubtask
 from griptape.tools import BaseTool
 from griptape.utils import J2
@@ -63,12 +63,12 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
                 subtask.run()
                 subtask.after_run()
 
-                if subtask.output:
-                    self.output = subtask.output
+                if isinstance(subtask.output, ListArtifact):
+                    self.output = subtask.output[0]
                 else:
                     self.output = InfoArtifact("No tool output")
             except Exception as e:
-                self.output = ErrorArtifact(f"Error processing tool input: {e}")
+                self.output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
             return self.output
         else:
             return ErrorArtifact("No action found in prompt output.")

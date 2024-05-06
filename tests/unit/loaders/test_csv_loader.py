@@ -1,64 +1,60 @@
-import os
 import pytest
-from griptape import utils
 from griptape.loaders.csv_loader import CsvLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestCsvLoader:
+    @pytest.fixture(params=["ascii", "utf-8", None])
+    def loader(self, request):
+        encoding = request.param
+        if encoding is None:
+            return CsvLoader(embedding_driver=MockEmbeddingDriver())
+        else:
+            return CsvLoader(embedding_driver=MockEmbeddingDriver(), encoding=encoding)
+
     @pytest.fixture
-    def loaders(self):
-        return (
-            CsvLoader(embedding_driver=MockEmbeddingDriver()),
-            CsvLoader(embedding_driver=MockEmbeddingDriver(), delimiter="|"),
-        )
+    def loader_with_pipe_delimiter(self):
+        return CsvLoader(embedding_driver=MockEmbeddingDriver(), delimiter="|")
 
-    def test_load_with_path(self, loaders):
-        (loader, loader_pipe) = loaders
-        # test loading a file delimited by comma
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test-1.csv")
+    @pytest.fixture(params=["bytes_from_resource_path", "str_from_resource_path"])
+    def create_source(self, request):
+        return request.getfixturevalue(request.param)
 
-        artifacts = loader.load(path)
+    def test_load(self, loader, create_source):
+        source = create_source("test-1.csv")
 
-        assert len(artifacts) == 10
-        first_artifact = artifacts[0].value
-        assert first_artifact["Foo"] == "foo1"
-        assert first_artifact["Bar"] == "bar1"
-
-        # test loading a file delimited by pipe
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test-pipe.csv")
-
-        artifacts = loader_pipe.load(path)
+        artifacts = loader.load(source)
 
         assert len(artifacts) == 10
-        first_artifact = artifacts[0].value
-        assert first_artifact["Bar"] == "foo1"
-        assert first_artifact["Foo"] == "bar1"
+        first_artifact = artifacts[0]
+        assert first_artifact.value["Foo"] == "foo1"
+        assert first_artifact.value["Bar"] == "bar1"
+        assert first_artifact.embedding == [0, 1]
 
-        assert artifacts[0].embedding == [0, 1]
+    def test_load_delimiter(self, loader_with_pipe_delimiter, create_source):
+        source = create_source("test-pipe.csv")
 
-    def test_load_collection_with_path(self, loaders):
-        loader = loaders[0]
+        artifacts = loader_with_pipe_delimiter.load(source)
 
-        path1 = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test-1.csv")
-        path2 = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/test-2.csv")
-        collection = loader.load_collection([path1, path2])
-
-        key1 = utils.str_to_hash(str(path1))
-        key2 = utils.str_to_hash(str(path2))
-
-        assert list(collection.keys()) == [key1, key2]
-
-        artifacts = collection[key1]
         assert len(artifacts) == 10
-        first_artifact = artifacts[0].value
-        assert first_artifact["Foo"] == "foo1"
-        assert first_artifact["Bar"] == "bar1"
+        first_artifact = artifacts[0]
+        assert first_artifact.value["Foo"] == "bar1"
+        assert first_artifact.value["Bar"] == "foo1"
+        assert first_artifact.embedding == [0, 1]
 
-        artifacts = collection[key2]
-        assert len(artifacts) == 10
-        first_artifact = artifacts[0].value
-        assert first_artifact["Bar"] == "bar1"
-        assert first_artifact["Foo"] == "foo1"
+    def test_load_collection(self, loader, create_source):
+        resource_paths = ["test-1.csv", "test-2.csv"]
+        sources = [create_source(resource_path) for resource_path in resource_paths]
 
-        assert artifacts[0].embedding == [0, 1]
+        collection = loader.load_collection(sources)
+
+        keys = {loader.to_key(source) for source in sources}
+        assert collection.keys() == keys
+
+        for key in keys:
+            artifacts = collection[key]
+            assert len(artifacts) == 10
+            first_artifact = artifacts[0]
+            assert first_artifact.value["Foo"] == "foo1"
+            assert first_artifact.value["Bar"] == "bar1"
+            assert first_artifact.embedding == [0, 1]

@@ -34,7 +34,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
     client: openai.OpenAI = field(
         default=Factory(
@@ -130,7 +130,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
 
         return ImageArtifact(
             value=image_data,
-            mime_type="image/png",
+            format="png",
             width=image_dimensions[0],
             height=image_dimensions[1],
             model=self.model,

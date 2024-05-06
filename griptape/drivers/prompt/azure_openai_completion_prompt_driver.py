@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Callable, Optional
 from attr import define, field, Factory
 from griptape.drivers import OpenAiCompletionPromptDriver
 import openai
@@ -19,7 +19,9 @@ class AzureOpenAiCompletionPromptDriver(OpenAiCompletionPromptDriver):
     azure_deployment: str = field(kw_only=True, metadata={"serializable": True})
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
     azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    azure_ad_token_provider: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
+    azure_ad_token_provider: Optional[Callable[[], str]] = field(
+        kw_only=True, default=None, metadata={"serializable": False}
+    )
     api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
     client: openai.AzureOpenAI = field(
         default=Factory(
@@ -29,6 +31,8 @@ class AzureOpenAiCompletionPromptDriver(OpenAiCompletionPromptDriver):
                 api_version=self.api_version,
                 azure_endpoint=self.azure_endpoint,
                 azure_deployment=self.azure_deployment,
+                azure_ad_token=self.azure_ad_token,
+                azure_ad_token_provider=self.azure_ad_token_provider,
             ),
             takes_self=True,
         )

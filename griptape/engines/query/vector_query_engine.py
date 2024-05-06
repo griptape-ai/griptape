@@ -5,7 +5,7 @@ from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
-from griptape.rules import Ruleset
+from griptape.rules import Ruleset, Rule
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver
@@ -16,7 +16,8 @@ class VectorQueryEngine(BaseQueryEngine):
     answer_token_offset: int = field(default=400, kw_only=True)
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
     prompt_driver: BasePromptDriver = field(kw_only=True)
-    template_generator: J2 = field(default=Factory(lambda: J2("engines/query/vector_query.j2")), kw_only=True)
+    user_template_generator: J2 = field(default=Factory(lambda: J2("engines/query/user.j2")), kw_only=True)
+    system_template_generator: J2 = field(default=Factory(lambda: J2("engines/query/system.j2")), kw_only=True)
 
     def query(
         self,
@@ -36,34 +37,46 @@ class VectorQueryEngine(BaseQueryEngine):
             if isinstance(artifact, TextArtifact)
         ]
         text_segments = []
-        message = ""
+        user_message = ""
+        system_message = ""
 
         for artifact in artifacts:
             text_segments.append(artifact.value)
-
-            message = self.template_generator.render(
-                metadata=metadata,
-                query=query,
-                text_segments=text_segments,
+            system_message = self.system_template_generator.render(
                 rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
+                metadata=metadata,
+                text_segments=text_segments,
             )
+            user_message = self.user_template_generator.render(query=query)
+
             message_token_count = self.prompt_driver.token_count(
-                PromptStack(inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)])
+                PromptStack(
+                    inputs=[
+                        PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
+                        PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
+                    ]
+                )
             )
 
             if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
                 text_segments.pop()
 
-                message = self.template_generator.render(
-                    metadata=metadata,
-                    query=query,
-                    text_segments=text_segments,
+                system_message = self.system_template_generator.render(
                     rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
+                    metadata=metadata,
+                    text_segments=text_segments,
                 )
 
                 break
 
-        return self.prompt_driver.run(PromptStack(inputs=[PromptStack.Input(message, role=PromptStack.USER_ROLE)]))
+        return self.prompt_driver.run(
+            PromptStack(
+                inputs=[
+                    PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
+                    PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
+                ]
+            )
+        )
 
     def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         result = self.vector_store_driver.upsert_text_artifact(artifact, namespace=namespace)

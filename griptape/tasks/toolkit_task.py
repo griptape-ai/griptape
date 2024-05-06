@@ -87,10 +87,13 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
+        schema = self.actions_schema().json_schema("Actions Schema")
+        schema["minItems"] = 1  # The `schema` library doesn't support `minItems` so we must add it manually.
+
         return J2("tasks/toolkit_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
-            actions_schema=utils.minify_json(json.dumps(self.actions_schema().json_schema("Actions Schema"))),
+            actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
         )

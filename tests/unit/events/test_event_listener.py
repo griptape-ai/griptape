@@ -1,5 +1,6 @@
 from unittest.mock import Mock
 import pytest
+from griptape.events.base_event import BaseEvent
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.events import (
@@ -16,6 +17,7 @@ from griptape.events import (
 )
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
+from tests.mocks.mock_event import MockEvent
 
 
 class TestEventListener:
@@ -100,3 +102,29 @@ class TestEventListener:
         pipeline.remove_event_listener(event_listener_4)
         pipeline.remove_event_listener(event_listener_5)
         assert len(pipeline.event_listeners) == 0
+
+    def test_publish_event(self):
+        mock_event_listener_driver = Mock()
+        mock_event_listener_driver.try_publish_event_payload.return_value = None
+
+        def event_handler(_: BaseEvent):
+            return None
+
+        mock_event = MockEvent()
+        event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener.publish_event(mock_event)
+
+        mock_event_listener_driver.publish_event.assert_called_once_with(mock_event)
+
+    def test_publish_transformed_event(self):
+        mock_event_listener_driver = Mock()
+        mock_event_listener_driver.publish_event.return_value = None
+
+        def event_handler(event: BaseEvent):
+            return {"event": event.to_dict()}
+
+        mock_event = MockEvent()
+        event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener.publish_event(mock_event)
+
+        mock_event_listener_driver.publish_event.assert_called_once_with({"event": mock_event.to_dict()})

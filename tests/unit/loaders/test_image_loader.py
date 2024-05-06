@@ -1,8 +1,4 @@
-import os
-from io import BytesIO
-
 import pytest
-from PIL import Image
 
 from griptape.artifacts import ImageArtifact
 from griptape.loaders import ImageLoader
@@ -13,14 +9,44 @@ class TestImageLoader:
     def loader(self):
         return ImageLoader()
 
-    def test_init(self, loader):
-        assert loader
+    @pytest.fixture
+    def png_loader(self):
+        return ImageLoader(format="png")
 
-    def test_load_png(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/small.png")
+    @pytest.fixture
+    def create_source(self, bytes_from_resource_path):
+        return bytes_from_resource_path
 
-        with open(path, "rb") as file:
-            artifact = loader.load(file.read())
+    @pytest.mark.parametrize(
+        "resource_path,suffix,mime_type",
+        [
+            ("small.png", ".png", "image/png"),
+            ("small.jpg", ".jpeg", "image/jpeg"),
+            ("small.webp", ".webp", "image/webp"),
+            ("small.bmp", ".bmp", "image/bmp"),
+            ("small.gif", ".gif", "image/gif"),
+            ("small.tiff", ".tiff", "image/tiff"),
+        ],
+    )
+    def test_load(self, resource_path, suffix, mime_type, loader, create_source):
+        source = create_source(resource_path)
+
+        artifact = loader.load(source)
+
+        assert isinstance(artifact, ImageArtifact)
+        assert artifact.name.endswith(suffix)
+        assert artifact.height == 32
+        assert artifact.width == 32
+        assert artifact.mime_type == mime_type
+        assert len(artifact.value) > 0
+
+    @pytest.mark.parametrize(
+        "resource_path", ["small.png", "small.jpg", "small.webp", "small.bmp", "small.gif", "small.tiff"]
+    )
+    def test_load_normalize(self, resource_path, png_loader, create_source):
+        source = create_source(resource_path)
+
+        artifact = png_loader.load(source)
 
         assert isinstance(artifact, ImageArtifact)
         assert artifact.name.endswith(".png")
@@ -29,84 +55,21 @@ class TestImageLoader:
         assert artifact.mime_type == "image/png"
         assert len(artifact.value) > 0
 
-    def test_load_jpg(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/small.jpg")
+    def test_load_collection(self, create_source, png_loader):
+        resource_paths = ["small.png", "small.jpg"]
+        sources = [create_source(resource_path) for resource_path in resource_paths]
 
-        with open(path, "rb") as file:
-            artifact = loader.load(file.read())
+        collection = png_loader.load_collection(sources)
 
-        assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(".jpeg")
-        assert artifact.height == 32
-        assert artifact.width == 32
-        assert artifact.mime_type == "image/jpeg"
-        assert len(artifact.value) > 0
+        keys = {png_loader.to_key(source) for source in sources}
 
-    def test_load_webp(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/small.webp")
+        assert collection.keys() == keys
 
-        with open(path, "rb") as file:
-            artifact = loader.load(file.read())
-
-        assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(".webp")
-        assert artifact.height == 32
-        assert artifact.width == 32
-        assert artifact.mime_type == "image/webp"
-        assert len(artifact.value) > 0
-
-    def test_load_bmp(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/small.bmp")
-
-        with open(path, "rb") as file:
-            artifact = loader.load(file.read())
-
-        assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(".bmp")
-        assert artifact.height == 32
-        assert artifact.width == 32
-        assert artifact.mime_type == "image/bmp"
-        assert len(artifact.value) > 0
-
-    def test_load_gif(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/small.gif")
-
-        with open(path, "rb") as file:
-            artifact = loader.load(file.read())
-
-        assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(".gif")
-        assert artifact.height == 32
-        assert artifact.width == 32
-        assert artifact.mime_type == "image/gif"
-        assert len(artifact.value) > 0
-
-    def test_load_tiff(self, loader):
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/small.tiff")
-
-        with open(path, "rb") as file:
-            artifact = loader.load(file.read())
-
-        assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(".tiff")
-        assert artifact.height == 32
-        assert artifact.width == 32
-        assert artifact.mime_type == "image/tiff"
-        assert len(artifact.value) > 0
-
-    def test_normalize_format(self):
-        loader = ImageLoader(format="png")
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../resources/small.jpg")
-
-        with open(path, "rb") as file:
-            artifact = loader.load(file.read())
-
-        image = Image.open(BytesIO(artifact.value))
-
-        assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(".png")
-        assert artifact.height == 32
-        assert artifact.width == 32
-        assert artifact.mime_type == "image/png"
-        assert len(artifact.value) > 0
-        assert image.format == "PNG"
+        for key in keys:
+            artifact = collection[key]
+            assert isinstance(artifact, ImageArtifact)
+            assert artifact.name.endswith(".png")
+            assert artifact.height == 32
+            assert artifact.width == 32
+            assert artifact.mime_type == "image/png"
+            assert len(artifact.value) > 0

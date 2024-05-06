@@ -20,7 +20,7 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "voyage-large-2"
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     client: Any = field(
         default=Factory(
             lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key), takes_self=True
