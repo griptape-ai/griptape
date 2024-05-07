@@ -107,6 +107,7 @@ nav:
           - Web Scraper Drivers: "griptape-framework/drivers/web-scraper-drivers.md"
           - Conversation Memory Drivers: "griptape-framework/drivers/conversation-memory-drivers.md"
           - Event Listener Drivers: "griptape-framework/drivers/event-listener-drivers.md"
+          - Structure Run Drivers: "griptape-framework/drivers/structure-run-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
