@@ -264,6 +264,8 @@ class Structure(ABC):
         )
 
     def after_run(self) -> None:
+        for event_listener in self.event_listeners:
+            event_listener.flush_events()
         self.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,

@@ -23,3 +23,7 @@ class EventListener:
                     self.driver.publish_event(event_payload)
                 else:
                     self.driver.publish_event(event)
+
+    def flush_events(self) -> None:
+        if self.driver is not None:
+            self.driver.flush_events()

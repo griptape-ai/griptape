@@ -25,6 +25,11 @@ class BaseEventListenerDriver(ABC):
     def publish_event(self, event: BaseEvent | dict) -> None:
         self.futures_executor.submit(self._safe_try_publish_event, event)
 
+    def flush_events(self) -> None:
+        if self.batched and self._batch:
+            self.try_publish_event_payload_batch(self._batch)
+            self._batch = []
+
     @abstractmethod
     def try_publish_event_payload(self, event_payload: dict) -> None:
         ...
