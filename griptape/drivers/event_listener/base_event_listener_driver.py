@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import time
 from abc import ABC, abstractmethod
 from concurrent import futures
 from logging import Logger
@@ -17,10 +16,12 @@ class BaseEventListenerDriver(ABC):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
     batched: bool = field(default=False, kw_only=True)
     batch_size: int = field(default=10, kw_only=True)
-    batch_timeout: float = field(default=1, kw_only=True)
 
     _batch: list[dict] = field(default=Factory(list), kw_only=True)
-    _last_batch_time: float = field(default=0, kw_only=True)
+
+    @property
+    def batch(self) -> list[dict]:
+        return self._batch
 
     def publish_event(self, event: BaseEvent | dict, flush: bool = False) -> None:
         self.futures_executor.submit(self._safe_try_publish_event, event, flush)
@@ -39,10 +40,7 @@ class BaseEventListenerDriver(ABC):
 
             if self.batched:
                 self._batch.append(event_payload)
-                now = time.time()
-                if len(self._batch) >= self.batch_size or now - self._last_batch_time >= self.batch_timeout or flush:
-                    self.try_publish_event_payload_batch(self._batch)
-                    self._last_batch_time = now
+                if len(self._batch) >= self.batch_size or flush:
                     self._batch = []
                 return
             else:
