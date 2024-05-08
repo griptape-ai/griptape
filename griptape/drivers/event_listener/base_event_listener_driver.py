@@ -22,13 +22,8 @@ class BaseEventListenerDriver(ABC):
     _batch: list[dict] = field(default=Factory(list), kw_only=True)
     _last_batch_time: float = field(default=0, kw_only=True)
 
-    def publish_event(self, event: BaseEvent | dict) -> None:
-        self.futures_executor.submit(self._safe_try_publish_event, event)
-
-    def flush_events(self) -> None:
-        if self.batched and self._batch:
-            self.try_publish_event_payload_batch(self._batch)
-            self._batch = []
+    def publish_event(self, event: BaseEvent | dict, flush: bool = False) -> None:
+        self.futures_executor.submit(self._safe_try_publish_event, event, flush)
 
     @abstractmethod
     def try_publish_event_payload(self, event_payload: dict) -> None:
@@ -38,14 +33,14 @@ class BaseEventListenerDriver(ABC):
     def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
         ...
 
-    def _safe_try_publish_event(self, event: BaseEvent | dict) -> None:
+    def _safe_try_publish_event(self, event: BaseEvent | dict, flush: bool) -> None:
         try:
             event_payload = event if isinstance(event, dict) else event.to_dict()
 
             if self.batched:
                 self._batch.append(event_payload)
                 now = time.time()
-                if len(self._batch) >= self.batch_size or now - self._last_batch_time >= self.batch_timeout:
+                if len(self._batch) >= self.batch_size or now - self._last_batch_time >= self.batch_timeout or flush:
                     self.try_publish_event_payload_batch(self._batch)
                     self._last_batch_time = now
                     self._batch = []

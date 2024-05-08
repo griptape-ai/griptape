@@ -249,9 +249,9 @@ class Structure(ABC):
         else:
             raise ValueError("Event Listener not found.")
 
-    def publish_event(self, event: BaseEvent) -> None:
+    def publish_event(self, event: BaseEvent, flush: bool = False) -> None:
         for event_listener in self.event_listeners:
-            event_listener.publish_event(event)
+            event_listener.publish_event(event, flush)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
@@ -264,14 +264,13 @@ class Structure(ABC):
         )
 
     def after_run(self) -> None:
-        for event_listener in self.event_listeners:
-            event_listener.flush_events()
         self.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,
                 output_task_input=self.output_task.input,
                 output_task_output=self.output_task.output,
-            )
+            ),
+            flush=True,
         )
 
     @abstractmethod
