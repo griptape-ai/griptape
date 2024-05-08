@@ -40,7 +40,8 @@ class BaseEventListenerDriver(ABC):
 
             if self.batched:
                 self._batch.append(event_payload)
-                if len(self._batch) >= self.batch_size or flush:
+                if len(self.batch) >= self.batch_size or flush:
+                    self.try_publish_event_payload_batch(self.batch)
                     self._batch = []
                 return
             else:

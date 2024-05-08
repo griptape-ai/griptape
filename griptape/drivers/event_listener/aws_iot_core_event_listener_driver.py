@@ -23,5 +23,4 @@ class AwsIotCoreEventListenerDriver(BaseEventListenerDriver):
         self.iotdata_client.publish(topic=self.topic, payload=json.dumps(event_payload))
 
     def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
-        for event_payload in event_payload_batch:
-            self.iotdata_client.publish(topic=self.topic, payload=json.dumps(event_payload))
+        self.iotdata_client.publish(topic=self.topic, payload=json.dumps(event_payload_batch))
