@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 from attr import define, field, Factory
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
-from griptape.events.base_event import BaseEvent
 
 
 @define
@@ -37,7 +36,8 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
             )
 
-    def try_publish_event(self, event: BaseEvent) -> None:
+    def try_publish_event_payload(self, event_payload: dict) -> None:
         url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events")
 
-        requests.post(url=url, json=event.to_dict(), headers=self.headers)
+        response = requests.post(url=url, json=event_payload, headers=self.headers)
+        response.raise_for_status()

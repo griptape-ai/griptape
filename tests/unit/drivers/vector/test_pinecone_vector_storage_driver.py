@@ -18,10 +18,10 @@ class TestPineconeVectorStorageDriver:
             "namespace": "foobar",
         }
 
-        mocker.patch("pinecone.init", return_value=None)
-        mocker.patch("pinecone.Index.upsert", return_value=None)
-        mocker.patch("pinecone.Index.query", return_value=fake_query_response)
-        mocker.patch("pinecone.create_index", return_value=None)
+        mock_client = mocker.patch("pinecone.Pinecone")
+        mock_client().Index().upsert.return_value = None
+        mock_client().Index().query.return_value = fake_query_response
+        mock_client().create_index.return_value = None
 
     @pytest.fixture
     def driver(self):

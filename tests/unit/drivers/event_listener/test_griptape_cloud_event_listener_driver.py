@@ -29,9 +29,9 @@ class TestGriptapeCloudEventListenerDriver:
         assert driver.api_key == "foo bar"
         assert driver.structure_run_id == "bar baz"
 
-    def test_try_publish_event(self, mock_post, driver):
+    def test_try_publish_event_payload(self, mock_post, driver):
         event = MockEvent()
-        driver.try_publish_event(event=event)
+        driver.try_publish_event_payload(event.to_dict())
 
         mock_post.assert_called_once_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",

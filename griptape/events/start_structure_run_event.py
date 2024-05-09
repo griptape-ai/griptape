@@ -9,6 +9,7 @@ from griptape.events.base_event import BaseEvent
 
 @define
 class StartStructureRunEvent(BaseEvent):
+    structure_id: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     input_task_input: Union[
         BaseArtifact, tuple[BaseArtifact, ...], tuple[BaseArtifact, Sequence[BaseArtifact]]
     ] = field(kw_only=True, metadata={"serializable": True})

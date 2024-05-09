@@ -5,7 +5,6 @@ import requests
 from attr import define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
-from griptape.events.base_event import BaseEvent
 
 
 @define
@@ -13,5 +12,6 @@ class WebhookEventListenerDriver(BaseEventListenerDriver):
     webhook_url: str = field(kw_only=True)
     headers: dict = field(default=None, kw_only=True)
 
-    def try_publish_event(self, event: BaseEvent) -> None:
-        requests.post(url=self.webhook_url, json={"event": event.to_dict()}, headers=self.headers)
+    def try_publish_event_payload(self, event_payload: dict) -> None:
+        response = requests.post(url=self.webhook_url, json=event_payload, headers=self.headers)
+        response.raise_for_status()

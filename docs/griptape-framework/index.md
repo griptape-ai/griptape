@@ -22,7 +22,7 @@ By default, Griptape uses [OpenAI Completions API](https://platform.openai.com/d
 Install **griptape**:
 
 ```
-pip install griptape[all] -U
+pip install "griptape[all]" -U
 ```
 
 ### Using Poetry
@@ -36,7 +36,7 @@ poetry new griptape-quickstart
 Change your working directory to the new `griptape-quickstart` directory created by Poetry and add the the `griptape` dependency. 
 
 ```
-poetry add griptape[all]
+poetry add "griptape[all]"
 ```
 
 ### Extras
@@ -56,7 +56,7 @@ poetry add griptape
 
 To install specific extras (e.g., drivers for [AnthropicPromptDriver](./drivers/prompt-drivers.md#anthropic) and [PineconeVectorStoreDriver](./drivers/vector-store-drivers.md#pinecone)):
 ```
-poetry add griptape[drivers-prompt-anthropic,drivers-vector-pinecone]
+poetry add "griptape[drivers-prompt-anthropic,drivers-vector-pinecone]"
 ```
 
 For a comprehensive list of extras, please refer to the `[tool.poetry.extras]` section of Griptape's [pyproject.toml](https://github.com/griptape-ai/griptape/blob/main/pyproject.toml).
