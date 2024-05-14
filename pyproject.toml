@@ -51,13 +51,13 @@ playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
 markdownify = {version = "^0.11.6", optional = true}
 voyageai = {version = "^0.2.1", optional = true}
+elevenlabs = {version = "^1.1.2", optional = true}
 
 # loaders
 pandas = {version = "^1.3", optional = true}
 pypdf = {version = "^3.9", optional = true}
 pillow = {version = "^10.2.0", optional = true}
 mail-parser = {version = "^3.15.0", optional = true}
-elevenlabs = "^1.1.2"
 
 [tool.poetry.extras]
 drivers-prompt-cohere = ["cohere"]
@@ -121,6 +121,7 @@ all = [
     "beautifulsoup4",
     "markdownify",
     "voyageai",
+    "elevenlabs",
 
     # loaders
     "pandas",

@@ -97,9 +97,9 @@ from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
 
-from .audio_generation.base_audio_generation_driver import BaseAudioGenerationDriver
-from .audio_generation.dummy_audio_generation_driver import DummyAudioGenerationDriver
-from .audio_generation.elevenlabs_audio_generation_driver import ElevenLabsAudioGenerationDriver
+from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
+from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
+from .text_to_speech.elevenlabs_text_to_speech_driver import ElevenLabsTextToSpeechDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -185,7 +185,7 @@ __all__ = [
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
-    "BaseAudioGenerationDriver",
-    "DummyAudioGenerationDriver",
-    "ElevenLabsAudioGenerationDriver",
+    "BaseTextToSpeechDriver",
+    "DummyTextToSpeechDriver",
+    "ElevenLabsTextToSpeechDriver",
 ]

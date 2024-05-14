@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseAudioGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
+class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
     structure: Optional[Structure] = field(default=None, kw_only=True)
 

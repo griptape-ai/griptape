@@ -17,7 +17,6 @@ from .stream import Stream
 from .constants import Constants as constants
 from .load_artifact_from_memory import load_artifact_from_memory
 from .deprecation import deprecation_warn
-from .play_audio import play_audio
 
 
 def minify_json(value: str) -> str:

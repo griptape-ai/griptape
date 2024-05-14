@@ -5,12 +5,14 @@ from typing import TYPE_CHECKING, Optional, Any
 from attr import define, field, Factory
 
 from griptape.artifacts.audio_artifact import AudioArtifact
-from griptape.drivers.audio_generation.base_audio_generation_driver import BaseAudioGenerationDriver
-from elevenlabs.client import ElevenLabs
+from griptape.drivers import BaseTextToSpeechDriver
+
+if TYPE_CHECKING:
+    from elevenlabs.client import ElevenLabs
 
 
 @define
-class ElevenLabsAudioGenerationDriver(BaseAudioGenerationDriver):
+class ElevenLabsTextToSpeechDriver(BaseTextToSpeechDriver):
     api_key: str = field(kw_only=True, metadata={"serializable": True})
     client: Any = field(
         default=Factory(lambda self: ElevenLabs(api_key=self.api_key), takes_self=True),
@@ -29,4 +31,8 @@ class ElevenLabsAudioGenerationDriver(BaseAudioGenerationDriver):
         for chunk in audio:
             content += chunk
 
-        return AudioArtifact(value=content, format="mpeg")
+        # All ElevenLabs audio format strings have the following structure:
+        # {format}_{sample_rate}_{bitrate}
+        artifact_format = self.output_format.split("_")[0]
+
+        return AudioArtifact(value=content, format=artifact_format)

@@ -7,11 +7,11 @@ from attr import define, field
 from typing import Optional
 
 if TYPE_CHECKING:
-    from griptape.artifacts import MediaArtifact
+    from griptape.artifacts import BlobArtifact
 
 
 @define(slots=False)
-class MediaArtifactFileOutputMixin:
+class BlobArtifactFileOutputMixin:
     output_dir: Optional[str] = field(default=None, kw_only=True)
     output_file: Optional[str] = field(default=None, kw_only=True)
 
@@ -31,7 +31,7 @@ class MediaArtifactFileOutputMixin:
         if self.output_dir:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    def _write_to_file(self, artifact: MediaArtifact) -> None:
+    def _write_to_file(self, artifact: BlobArtifact) -> None:
         if self.output_file:
             outfile = self.output_file
         elif self.output_dir:

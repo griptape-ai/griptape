@@ -6,14 +6,14 @@ from attrs import define, field
 from schema import Schema, Literal
 
 from griptape.artifacts import ErrorArtifact, AudioArtifact
-from griptape.engines import TextToAudioGenerationEngine
+from griptape.engines import TextToSpeechEngine
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.mixins import MediaArtifactFileOutputMixin
+from griptape.mixins import BlobArtifactFileOutputMixin
 
 
 @define
-class TextToSpeechClient(MediaArtifactFileOutputMixin, BaseTool):
+class TextToSpeechClient(BlobArtifactFileOutputMixin, BaseTool):
     """A tool that can be used to generate speech from input text.
 
     Attributes:
@@ -22,7 +22,7 @@ class TextToSpeechClient(MediaArtifactFileOutputMixin, BaseTool):
         output_file: If provided, the generated audio will be written to disk as output_file.
     """
 
-    engine: TextToAudioGenerationEngine = field(kw_only=True)
+    engine: TextToSpeechEngine = field(kw_only=True)
 
     @activity(
         config={

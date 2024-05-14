@@ -3,13 +3,13 @@ from .exponential_backoff_mixin import ExponentialBackoffMixin
 from .actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from .rule_mixin import RuleMixin
 from .serializable_mixin import SerializableMixin
-from .media_artifact_file_output_mixin import MediaArtifactFileOutputMixin
+from .media_artifact_file_output_mixin import BlobArtifactFileOutputMixin
 
 __all__ = [
     "ActivityMixin",
     "ExponentialBackoffMixin",
     "ActionsSubtaskOriginMixin",
     "RuleMixin",
-    "MediaArtifactFileOutputMixin",
+    "BlobArtifactFileOutputMixin",
     "SerializableMixin",
 ]

@@ -11,8 +11,7 @@ from .image.variation_image_generation_engine import VariationImageGenerationEng
 from .image.inpainting_image_generation_engine import InpaintingImageGenerationEngine
 from .image.outpainting_image_generation_engine import OutpaintingImageGenerationEngine
 from .image_query.image_query_engine import ImageQueryEngine
-from .audio.base_audio_generation_engine import BaseAudioGenerationEngine
-from .audio.text_to_audio_generation_engine import TextToAudioGenerationEngine
+from .audio.text_to_speech_engine import TextToSpeechEngine
 
 __all__ = [
     "BaseQueryEngine",
@@ -28,6 +27,5 @@ __all__ = [
     "InpaintingImageGenerationEngine",
     "OutpaintingImageGenerationEngine",
     "ImageQueryEngine",
-    "BaseAudioGenerationEngine",
-    "TextToAudioGenerationEngine",
+    "TextToSpeechEngine",
 ]
