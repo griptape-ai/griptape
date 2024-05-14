@@ -10,7 +10,7 @@ from typing import Optional
 class OpenAiTokenizer(BaseTokenizer):
     DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "gpt-3.5-turbo-instruct"
     DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
-    DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
+    DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4o"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
     DEFAULT_MAX_OUTPUT_TOKENS = 4096
@@ -18,6 +18,7 @@ class OpenAiTokenizer(BaseTokenizer):
 
     # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "gpt-4o": 128000,
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
