@@ -10,7 +10,7 @@ from typing import Optional
 class OpenAiTokenizer(BaseTokenizer):
     DEFAULT_OPENAI_GPT_3_COMPLETION_MODEL = "gpt-3.5-turbo-instruct"
     DEFAULT_OPENAI_GPT_3_CHAT_MODEL = "gpt-3.5-turbo"
-    DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4"
+    DEFAULT_OPENAI_GPT_4_MODEL = "gpt-4o"
     DEFAULT_ENCODING = "cl100k_base"
     DEFAULT_MAX_TOKENS = 2049
     DEFAULT_MAX_OUTPUT_TOKENS = 4096
@@ -18,6 +18,7 @@ class OpenAiTokenizer(BaseTokenizer):
 
     # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "gpt-4o": 128000,
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
@@ -85,6 +86,7 @@ class OpenAiTokenizer(BaseTokenizer):
                 "gpt-4-32k-0314",
                 "gpt-4-0613",
                 "gpt-4-32k-0613",
+                "gpt-4o-2024-05-13",
             }:
                 tokens_per_message = 3
                 tokens_per_name = 1
@@ -96,6 +98,9 @@ class OpenAiTokenizer(BaseTokenizer):
             elif "gpt-3.5-turbo" in model or "gpt-35-turbo" in model:
                 logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
                 return self.count_tokens(text, model="gpt-3.5-turbo-0613")
+            elif "gpt-4o" in model:
+                logging.info("gpt-4o may update over time. Returning num tokens assuming gpt-4o-2024-05-13.")
+                return self.count_tokens(text, model="gpt-4o-2024-05-13")
             elif "gpt-4" in model:
                 logging.info("gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
                 return self.count_tokens(text, model="gpt-4-0613")

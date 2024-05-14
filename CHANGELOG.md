@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
+
 ## [0.25.1] - 2024-05-09
 ### Added
 - Optional event batching on Event Listener Drivers.
