@@ -19,7 +19,7 @@ class TestOpenAiStructureConfig:
                 "prompt_driver": {
                     "type": "OpenAiChatPromptDriver",
                     "base_url": None,
-                    "model": "gpt-4",
+                    "model": "gpt-4o",
                     "organization": None,
                     "response_format": None,
                     "seed": None,
@@ -72,7 +72,7 @@ class TestOpenAiStructureConfig:
                     "prompt_driver": {
                         "base_url": None,
                         "type": "OpenAiChatPromptDriver",
-                        "model": "gpt-4",
+                        "model": "gpt-4o",
                         "organization": None,
                         "response_format": None,
                         "seed": None,
@@ -98,7 +98,7 @@ class TestOpenAiStructureConfig:
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
                             "base_url": None,
-                            "model": "gpt-4",
+                            "model": "gpt-4o",
                             "organization": None,
                             "response_format": None,
                             "seed": None,
@@ -113,7 +113,7 @@ class TestOpenAiStructureConfig:
                         "prompt_driver": {
                             "type": "OpenAiChatPromptDriver",
                             "base_url": None,
-                            "model": "gpt-4",
+                            "model": "gpt-4o",
                             "organization": None,
                             "response_format": None,
                             "seed": None,
@@ -129,7 +129,7 @@ class TestOpenAiStructureConfig:
                     "prompt_driver": {
                         "type": "OpenAiChatPromptDriver",
                         "base_url": None,
-                        "model": "gpt-4",
+                        "model": "gpt-4o",
                         "organization": None,
                         "response_format": None,
                         "seed": None,
