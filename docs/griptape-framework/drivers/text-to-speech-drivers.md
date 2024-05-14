@@ -1,8 +1,8 @@
 ## Overview
 
-[Text to Speech Drivers](../../reference/griptape/drivers/text_to_speech/index.md) are used by [Text To Speech Engines](../engines/audio/text-to-speech-engine.md) to build and execute API calls to audio generation models.
+[Text to Speech Drivers](../../reference/griptape/drivers/text_to_speech/index.md) are used by [Text To Speech Engines](../engines/audio-engines.md) to build and execute API calls to audio generation models.
 
-Provide a Driver when building an [Engine](../engines/audio-generation-engines.md), then pass it to a [Tool](../tools/index.md) for use by an [Agent](../structures/agents.md):
+Provide a Driver when building an [Engine](../engines/audio-engines.md), then pass it to a [Tool](../tools/index.md) for use by an [Agent](../structures/agents.md):
 
 ### Eleven Labs
 
