@@ -91,7 +91,6 @@ from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListe
 from .event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
 from .event_listener.aws_iot_core_event_listener_driver import AwsIotCoreEventListenerDriver
 from .event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
-from .event_listener.local_event_listener_driver import LocalEventListenerDriver
 
 from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
@@ -100,6 +99,10 @@ from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDrive
 from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
 from .text_to_speech.elevenlabs_text_to_speech_driver import ElevenLabsTextToSpeechDriver
+
+from .structure_run.base_structure_run_driver import BaseStructureRunDriver
+from .structure_run.griptape_cloud_structure_run_driver import GriptapeCloudStructureRunDriver
+from .structure_run.local_structure_run_driver import LocalStructureRunDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -181,11 +184,13 @@ __all__ = [
     "WebhookEventListenerDriver",
     "AwsIotCoreEventListenerDriver",
     "GriptapeCloudEventListenerDriver",
-    "LocalEventListenerDriver",
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
     "BaseTextToSpeechDriver",
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",
+    "BaseStructureRunDriver",
+    "GriptapeCloudStructureRunDriver",
+    "LocalStructureRunDriver",
 ]

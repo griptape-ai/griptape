@@ -1,5 +1,6 @@
 from .base_task import BaseTask
 from .base_text_input_task import BaseTextInputTask
+from .base_multi_text_input_task import BaseMultiTextInputTask
 from .prompt_task import PromptTask
 from .actions_subtask import ActionsSubtask
 from .toolkit_task import ToolkitTask
@@ -18,10 +19,12 @@ from .variation_image_generation_task import VariationImageGenerationTask
 from .image_query_task import ImageQueryTask
 from .base_audio_generation_task import BaseAudioGenerationTask
 from .text_to_speech_task import TextToSpeechTask
+from .structure_run_task import StructureRunTask
 
 __all__ = [
     "BaseTask",
     "BaseTextInputTask",
+    "BaseMultiTextInputTask",
     "PromptTask",
     "ActionsSubtask",
     "ToolkitTask",
@@ -40,4 +43,5 @@ __all__ = [
     "ImageQueryTask",
     "BaseAudioGenerationTask",
     "TextToSpeechTask",
+    "StructureRunTask",
 ]

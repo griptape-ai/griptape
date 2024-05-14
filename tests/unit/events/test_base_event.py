@@ -177,6 +177,7 @@ class TestBaseEvent:
         dict_value = {
             "type": "StartStructureRunEvent",
             "timestamp": 123.0,
+            "structure_id": "foo",
             "input_task_input": {"type": "TextArtifact", "value": "foo"},
             "input_task_output": {"type": "TextArtifact", "value": "bar"},
         }
@@ -193,6 +194,7 @@ class TestBaseEvent:
         dict_value = {
             "type": "FinishStructureRunEvent",
             "timestamp": 123.0,
+            "structure_id": "foo",
             "output_task_input": {"type": "TextArtifact", "value": "foo"},
             "output_task_output": {"type": "TextArtifact", "value": "bar"},
         }

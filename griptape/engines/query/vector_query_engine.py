@@ -61,7 +61,11 @@ class VectorQueryEngine(BaseQueryEngine):
             if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
                 text_segments.pop()
 
-                user_message = self.user_template_generator.render(query=query, text_segments=text_segments)
+                system_message = self.system_template_generator.render(
+                    rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
+                    metadata=metadata,
+                    text_segments=text_segments,
+                )
 
                 break
 

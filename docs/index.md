@@ -6,6 +6,10 @@ Welcome to Griptape Docs! This documentation is organized into the following sec
 
 Griptape Topic Guides discuss key topics at a high level and provide useful background information and explanation.
 
+### Griptape Cloud
+
+[Griptape Cloud](griptape-cloud/api/api-reference.md) provides an overview of the APIs available in the managed cloud service. 
+
 ### Griptape Framework
 
 [Griptape Framework](griptape-framework/index.md) provides an overview of the key topics within Griptape, and how you can get started building agents.
