@@ -20,3 +20,11 @@ class AmazonSqsEventListenerDriver(BaseEventListenerDriver):
 
     def try_publish_event_payload(self, event_payload: dict) -> None:
         self.sqs_client.send_message(QueueUrl=self.queue_url, MessageBody=json.dumps(event_payload))
+
+    def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
+        entries = [
+            {"Id": str(event_payload["id"]), "MessageBody": json.dumps(event_payload)}
+            for event_payload in event_payload_batch
+        ]
+
+        self.sqs_client.send_message_batch(QueueUrl=self.queue_url, Entries=entries)
