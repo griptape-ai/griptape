@@ -206,9 +206,6 @@ class ActionsSubtask(BaseTextInputTask):
                 if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
                     self.origin_task.actions_schema().validate(actions_list)
 
-                if not actions_list:
-                    raise schema.SchemaError("Array item count 0 is less than minimum count of 1.")
-
                 for action_object in actions_list:
                     # Load action name; throw exception if the key is not present
                     action_tag = action_object["tag"]
