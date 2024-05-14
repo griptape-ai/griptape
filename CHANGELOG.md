@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.25.1] - 2024-05-09
+### Added
+- Optional event batching on Event Listener Drivers.
+- `id` field to all events.
+
+### Changed
+- Default behavior of Event Listener Drivers to batch events.
+
 ## [0.25.0] - 2024-05-06
 
 ### Added
