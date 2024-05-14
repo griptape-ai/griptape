@@ -27,7 +27,7 @@ class TestAnthropicStructureConfig:
                     "top_k": 250,
                 },
                 "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-                "audio_generation_driver": {"type": "DummyAudioGenerationDriver"},
+                "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
                 "image_query_driver": {
                     "type": "AnthropicImageQueryDriver",
                     "model": "claude-3-opus-20240229",

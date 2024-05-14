@@ -40,6 +40,6 @@ class StructureGlobalDriversConfig(SerializableMixin):
     conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
         default=None, kw_only=True, metadata={"serializable": True}
     )
-    audio_generation_driver: BaseTextToSpeechDriver = field(
+    text_to_speech_driver: BaseTextToSpeechDriver = field(
         default=Factory(lambda: DummyTextToSpeechDriver()), kw_only=True, metadata={"serializable": True}
     )
