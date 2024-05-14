@@ -182,7 +182,7 @@ files = [
 name = "asttokens"
 version = "2.4.1"
 description = "Annotate AST trees with source code positions"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "asttokens-2.4.1-py2.py3-none-any.whl", hash = "sha256:051ed49c3dcae8913ea7cd08e46a606dba30b79993209636c4875bc1d637bc24"},
@@ -1193,7 +1193,7 @@ langdetect = ["langdetect"]
 name = "decorator"
 version = "5.1.1"
 description = "Decorators for Humans"
-optional = false
+optional = true
 python-versions = ">=3.5"
 files = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
@@ -1278,7 +1278,7 @@ files = [
 name = "elevenlabs"
 version = "1.1.2"
 description = ""
-optional = false
+optional = true
 python-versions = "<4.0,>=3.8"
 files = [
     {file = "elevenlabs-1.1.2-py3-none-any.whl", hash = "sha256:c10742b7175c8b9cd089c7d8c515637449a22e069e4b963993ef2f1bb2fe61db"},
@@ -1325,7 +1325,7 @@ testing = ["hatch", "pre-commit", "pytest", "tox"]
 name = "executing"
 version = "2.0.1"
 description = "Get the currently executing AST node of a frame, and other information"
-optional = false
+optional = true
 python-versions = ">=3.5"
 files = [
     {file = "executing-2.0.1-py2.py3-none-any.whl", hash = "sha256:eac49ca94516ccc753f9fb5ce82603156e590b27525a8bc32cce8ae302eb61bc"},
@@ -1993,7 +1993,7 @@ files = [
 name = "ipython"
 version = "8.18.1"
 description = "IPython: Productive Interactive Computing"
-optional = false
+optional = true
 python-versions = ">=3.9"
 files = [
     {file = "ipython-8.18.1-py3-none-any.whl", hash = "sha256:e8267419d72d81955ec1177f8a29aaa90ac80ad647499201119e2f05e99aa397"},
@@ -2048,7 +2048,7 @@ testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)",
 name = "jedi"
 version = "0.19.1"
 description = "An autocompletion tool for Python that can be used for text editors."
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "jedi-0.19.1-py2.py3-none-any.whl", hash = "sha256:e983c654fe5c02867aef4cdfce5a2fbb4a50adc0af145f70504238f18ef5e7e0"},
@@ -2473,7 +2473,7 @@ marshmallow = ">=2.0.0"
 name = "matplotlib-inline"
 version = "0.1.7"
 description = "Inline Matplotlib backend for Jupyter"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "matplotlib_inline-0.1.7-py3-none-any.whl", hash = "sha256:df192d39a4ff8f21b1895d72e6a13f5fcc5099f00fa84384e0ea28c2cc0653ca"},
@@ -3133,7 +3133,7 @@ test = ["hypothesis (>=5.5.3)", "pytest (>=6.0)", "pytest-xdist (>=1.31)"]
 name = "parso"
 version = "0.8.4"
 description = "A Python Parser"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "parso-0.8.4-py2.py3-none-any.whl", hash = "sha256:a418670a20291dacd2dddc80c377c5c3791378ee1e8d12bffc35420643d43f18"},
@@ -3159,7 +3159,7 @@ files = [
 name = "pexpect"
 version = "4.9.0"
 description = "Pexpect allows easy control of interactive console applications."
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "pexpect-4.9.0-py2.py3-none-any.whl", hash = "sha256:7236d1e080e4936be2dc3e326cec0af72acf9212a7e1d060210e70a47e253523"},
@@ -3387,7 +3387,7 @@ virtualenv = ">=20.10.0"
 name = "prompt-toolkit"
 version = "3.0.43"
 description = "Library for building powerful interactive command lines in Python"
-optional = false
+optional = true
 python-versions = ">=3.7.0"
 files = [
     {file = "prompt_toolkit-3.0.43-py3-none-any.whl", hash = "sha256:a11a29cb3bf0a28a387fe5122cdb649816a957cd9261dcedf8c9f1fef33eacf6"},
@@ -3467,6 +3467,7 @@ files = [
     {file = "psycopg2_binary-2.9.9-cp311-cp311-win32.whl", hash = "sha256:dc4926288b2a3e9fd7b50dc6a1909a13bbdadfc67d93f3374d984e56f885579d"},
     {file = "psycopg2_binary-2.9.9-cp311-cp311-win_amd64.whl", hash = "sha256:b76bedd166805480ab069612119ea636f5ab8f8771e640ae103e05a4aae3e417"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:8532fd6e6e2dc57bcb3bc90b079c60de896d2128c5d9d6f24a63875a95a088cf"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:b0605eaed3eb239e87df0d5e3c6489daae3f7388d455d0c0b4df899519c6a38d"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8f8544b092a29a6ddd72f3556a9fcf249ec412e10ad28be6a0c0d948924f2212"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:2d423c8d8a3c82d08fe8af900ad5b613ce3632a1249fd6a223941d0735fce493"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:2e5afae772c00980525f6d6ecf7cbca55676296b580c0e6abb407f15f3706996"},
@@ -3475,6 +3476,8 @@ files = [
     {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:cb16c65dcb648d0a43a2521f2f0a2300f40639f6f8c1ecbc662141e4e3e1ee07"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_ppc64le.whl", hash = "sha256:911dda9c487075abd54e644ccdf5e5c16773470a6a5d3826fda76699410066fb"},
     {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:57fede879f08d23c85140a360c6a77709113efd1c993923c59fde17aa27599fe"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-win32.whl", hash = "sha256:64cf30263844fa208851ebb13b0732ce674d8ec6a0c86a4e160495d299ba3c93"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-win_amd64.whl", hash = "sha256:81ff62668af011f9a48787564ab7eded4e9fb17a4a6a74af5ffa6a457400d2ab"},
     {file = "psycopg2_binary-2.9.9-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:2293b001e319ab0d869d660a704942c9e2cce19745262a8aba2115ef41a0a42a"},
     {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:03ef7df18daf2c4c07e2695e8cfd5ee7f748a1d54d802330985a78d2a5a6dca9"},
     {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0a602ea5aff39bb9fac6308e9c9d82b9a35c2bf288e184a816002c9fae930b77"},
@@ -3516,7 +3519,7 @@ files = [
 name = "ptyprocess"
 version = "0.7.0"
 description = "Run a subprocess in a pseudo terminal"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"},
@@ -3527,7 +3530,7 @@ files = [
 name = "pure-eval"
 version = "0.2.2"
 description = "Safely evaluate AST nodes without side effects"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "pure_eval-0.2.2-py3-none-any.whl", hash = "sha256:01eaab343580944bc56080ebe0a674b39ec44a945e6d09ba7db3cb8cec289350"},
@@ -4869,7 +4872,7 @@ SQLAlchemy = ">=0.9.2,<2.0.0"
 name = "stack-data"
 version = "0.6.3"
 description = "Extract data from python stack frames and tracebacks for informative displays"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "stack_data-0.6.3-py3-none-any.whl", hash = "sha256:d5558e0c25a4cb0853cddad3d77da9891a08cb85dd9f9f91b9f8cd66e511e695"},
@@ -5168,7 +5171,7 @@ gui = ["Gooey (>=1.0.1)"]
 name = "traitlets"
 version = "5.14.3"
 description = "Traitlets Python configuration system"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "traitlets-5.14.3-py3-none-any.whl", hash = "sha256:b74e89e397b1ed28cc831db7aea759ba6640cb3de13090ca145426688ff1ac4f"},
@@ -5429,7 +5432,7 @@ watchmedo = ["PyYAML (>=3.10)"]
 name = "wcwidth"
 version = "0.2.13"
 description = "Measures the displayed width of unicode strings in a terminal"
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "wcwidth-0.2.13-py2.py3-none-any.whl", hash = "sha256:3da69048e4540d84af32131829ff948f1e022c1c6bdb8d6102117aac784f6859"},
@@ -5456,7 +5459,7 @@ test = ["websockets"]
 name = "websockets"
 version = "12.0"
 description = "An implementation of the WebSocket Protocol (RFC 6455 & 7692)"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "websockets-12.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:d554236b2a2006e0ce16315c16eaa0d628dab009c33b63ea03f41c6107958374"},
@@ -5680,7 +5683,7 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [extras]
-all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "google-generativeai", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "trafilatura", "transformers", "voyageai"]
+all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "elevenlabs", "google-generativeai", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "trafilatura", "transformers", "voyageai"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-google = ["google-generativeai"]
@@ -5715,4 +5718,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "7aa1485db323176c7b372efd3483d060c469d18fdf0c6ed172bb3a82d4ab238b"
+content-hash = "6edf03951ce3e4384abc687b986e5c8dc347471d709ecc6a95fb30be38550840"
