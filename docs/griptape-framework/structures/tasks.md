@@ -807,3 +807,11 @@ team = Pipeline(
 
 team.run()
 ```
+
+## Text to Speech Task
+
+
+
+## Audio Transcription Task 
+
+

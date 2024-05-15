@@ -19,6 +19,9 @@ from .finish_image_query_event import FinishImageQueryEvent
 from .base_text_to_speech_event import BaseTextToSpeechEvent
 from .start_text_to_speech_event import StartTextToSpeechEvent
 from .finish_text_to_speech_event import FinishTextToSpeechEvent
+from .base_audio_transcription_event import BaseAudioTranscriptionEvent
+from .start_audio_transcription_event import StartAudioTranscriptionEvent
+from .finish_audio_transcription_event import FinishAudioTranscriptionEvent
 
 __all__ = [
     "BaseEvent",
@@ -42,4 +45,7 @@ __all__ = [
     "BaseTextToSpeechEvent",
     "StartTextToSpeechEvent",
     "FinishTextToSpeechEvent",
+    "BaseAudioTranscriptionEvent",
+    "StartAudioTranscriptionEvent",
+    "FinishAudioTranscriptionEvent",
 ]

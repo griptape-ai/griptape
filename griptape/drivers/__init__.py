@@ -107,6 +107,9 @@ from .structure_run.base_structure_run_driver import BaseStructureRunDriver
 from .structure_run.griptape_cloud_structure_run_driver import GriptapeCloudStructureRunDriver
 from .structure_run.local_structure_run_driver import LocalStructureRunDriver
 
+from .audio_transcription.base_audio_transcription_driver import BaseAudioTranscriptionDriver
+from .audio_transcription.openai_audio_transcription_driver import OpenAiAudioTranscriptionDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -199,4 +202,6 @@ __all__ = [
     "BaseStructureRunDriver",
     "GriptapeCloudStructureRunDriver",
     "LocalStructureRunDriver",
+    "BaseAudioTranscriptionDriver",
+    "OpenAiAudioTranscriptionDriver",
 ]
