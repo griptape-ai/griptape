@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.25.1] - 2024-05-15
+
+### Fixed
+- Honor `namespace` in `RedisVectorStoreDriver.query()`.
+- Correctly set the `meta`, `score`, and `vector` fields of query result returned from `RedisVectorStoreDriver.query()`.
+- Standardize behavior between omitted and empty actions list when initializing `ActionsSubtask`.
+
+### Added
+- Optional event batching on Event Listener Drivers.
+- `id` field to all events.
+
+### Changed
+- Default behavior of Event Listener Drivers to batch events.
+- Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
+
 ## [0.25.0] - 2024-05-06
 
 ### Added
