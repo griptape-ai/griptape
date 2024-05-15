@@ -6,6 +6,14 @@ repos:
       args: [--py39-plus, --keep-runtime-typing]
 - repo: local
   hooks:
+  - id: ruff
+    name: Ruff
+    entry: poetry run ruff check
+    args: [--fix]
+    language: system
+    types: [python]
+- repo: local
+  hooks:
   - id: black
     name: Black
     entry: poetry run black
@@ -16,13 +24,5 @@ repos:
   - id: pyright
     name: Pyright
     entry: poetry run pyright
-    language: system
-    types: [python]
-- repo: local
-  hooks:
-  - id: ruff
-    name: Ruff
-    entry: poetry run ruff check
-    args: [--fix]
     language: system
     types: [python]
