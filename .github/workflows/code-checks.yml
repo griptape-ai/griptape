@@ -45,4 +45,4 @@ jobs:
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run linter
-        run: poetry run ruff griptape/
+        run: poetry run ruff check griptape/
