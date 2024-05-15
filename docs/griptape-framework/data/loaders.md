@@ -199,3 +199,6 @@ loader.load(EmailLoader.EmailQuery(label="INBOX"))
 
 loader.load_collection([EmailLoader.EmailQuery(label="INBOX"), EmailLoader.EmailQuery(label="SENT")])
 ```
+
+## Audio Loader 
+
