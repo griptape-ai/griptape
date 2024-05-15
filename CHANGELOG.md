@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
 
+### Fixed
+- Honor `namespace` in `RedisVectorStoreDriver.query()`.
+- Correctly set the `meta`, `score`, and `vector` fields of query result returned from `RedisVectorStoreDriver.query()`.
+
 ## [0.25.1] - 2024-05-09
 ### Added
 - Optional event batching on Event Listener Drivers.
@@ -58,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Type hint for parameter `azure_ad_token_provider` on Azure OpenAI drivers to `Optional[Callable[[], str]]`.
 - Missing parameters `azure_ad_token` and `azure_ad_token_provider` on the default client for `AzureOpenAiCompletionPromptDriver`.
+- Standardize behavior between omitted and empty actions list when initializing `ActionsSubtask`.
 
 ## [0.24.2] - 2024-04-04
 
