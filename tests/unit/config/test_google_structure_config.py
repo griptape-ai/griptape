@@ -26,6 +26,7 @@ class TestGoogleStructureConfig:
                     "top_k": None,
                 },
                 "image_generation_driver": {"type": "DummyImageGenerationDriver"},
+                "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
                 "image_query_driver": {"type": "DummyImageQueryDriver"},
                 "embedding_driver": {
                     "type": "GoogleEmbeddingDriver",

@@ -16,6 +16,7 @@ class TestStructureConfig:
                 "conversation_memory_driver": None,
                 "embedding_driver": {"type": "DummyEmbeddingDriver"},
                 "image_generation_driver": {"type": "DummyImageGenerationDriver"},
+                "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
                 "image_query_driver": {"type": "DummyImageQueryDriver"},
                 "vector_store_driver": {
                     "embedding_driver": {"type": "DummyEmbeddingDriver"},
