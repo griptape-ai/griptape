@@ -99,6 +99,7 @@ from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDrive
 from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
 from .text_to_speech.elevenlabs_text_to_speech_driver import ElevenLabsTextToSpeechDriver
+from .text_to_speech.openai_text_to_speech_driver import OpenAiTextToSpeechDriver
 
 from .structure_run.base_structure_run_driver import BaseStructureRunDriver
 from .structure_run.griptape_cloud_structure_run_driver import GriptapeCloudStructureRunDriver
@@ -190,6 +191,7 @@ __all__ = [
     "BaseTextToSpeechDriver",
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",
+    "OpenAiTextToSpeechDriver",
     "BaseStructureRunDriver",
     "GriptapeCloudStructureRunDriver",
     "LocalStructureRunDriver",
