@@ -1,15 +1,11 @@
 from collections.abc import Iterator
-from os import environ
 
-from griptape.utils import PromptStack
+from attr import Factory, define, field
 
-environ["TRANSFORMERS_VERBOSITY"] = "error"
-
-from attr import define, field, Factory
-from griptape.utils import import_optional_dependency
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
+from griptape.utils import PromptStack, import_optional_dependency
 
 
 @define

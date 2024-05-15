@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any
 from abc import ABC, abstractmethod
 from attr import define
-from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact, InfoArtifact, BlobArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact, InfoArtifact
 
 
 @define

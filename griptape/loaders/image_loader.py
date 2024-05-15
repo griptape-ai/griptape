@@ -10,7 +10,7 @@ from griptape.artifacts import ImageArtifact
 from griptape.loaders import BaseLoader
 
 if TYPE_CHECKING:
-    import PIL.Image as Image
+    pass
 
 
 @define
