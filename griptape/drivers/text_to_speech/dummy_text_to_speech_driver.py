@@ -9,5 +9,5 @@ from griptape.exceptions import DummyException
 class DummyTextToSpeechDriver(BaseTextToSpeechDriver):
     model: str = field(init=False)
 
-    def try_text_to_audio(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> AudioArtifact:
+    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         raise DummyException(__class__.__name__, "try_text_to_audio")

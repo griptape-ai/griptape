@@ -6,5 +6,5 @@ from griptape.events.base_media_generation_event import BaseMediaGenerationEvent
 
 
 @define
-class BaseAudioGenerationEvent(BaseMediaGenerationEvent, ABC):
+class BaseTextToSpeechEvent(BaseMediaGenerationEvent, ABC):
     ...

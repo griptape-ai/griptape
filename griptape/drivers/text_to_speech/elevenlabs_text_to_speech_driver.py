@@ -26,7 +26,7 @@ class ElevenLabsTextToSpeechDriver(BaseTextToSpeechDriver):
     voice: str = field(kw_only=True, metadata={"serializable": True})
     output_format: str = field(default="mp3_44100_128", kw_only=True, metadata={"serializable": True})
 
-    def try_text_to_audio(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> AudioArtifact:
+    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         audio = self.client.generate(
             text=". ".join(prompts), voice=self.voice, model=self.model, output_format=self.output_format
         )
