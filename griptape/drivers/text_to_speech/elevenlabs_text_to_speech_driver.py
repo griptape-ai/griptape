@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Any
+from typing import TYPE_CHECKING, Any
 
 from attr import define, field, Factory
 
@@ -9,7 +9,7 @@ from griptape.drivers import BaseTextToSpeechDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from elevenlabs.client import ElevenLabs
+    pass
 
 
 @define
