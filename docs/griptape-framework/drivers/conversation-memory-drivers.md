@@ -63,10 +63,10 @@ from griptape.structures import Agent
 
 conversation_id = uuid.uuid4().hex
 redis_conversation_driver = RedisConversationMemoryDriver(
-    host="127.0.0.1",
-    port=6379,
-    password='',
-    index='griptape_converstaion',
+    host=os.environ["REDIS_HOST"],
+    port=os.environ["REDIS_PORT"],
+    password=os.environ["REDIS_PASSWORD"],
+    index=os.environ["REDIS_INDEX"],
     conversation_id = conversation_id
 )
 
