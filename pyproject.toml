@@ -94,7 +94,6 @@ drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
 
-
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]
