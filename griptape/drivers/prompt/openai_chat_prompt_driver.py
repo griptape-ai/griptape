@@ -1,15 +1,18 @@
 from __future__ import annotations
-from typing import Optional, Any, Literal
+
 from collections.abc import Iterator
+from datetime import datetime, timedelta
+from typing import Any, Literal, Optional
+
+import dateparser
 import openai
-from attr import define, field, Factory
-from griptape.artifacts import TextArtifact, ActionsArtifact
+from attr import Factory, define, field
+
+from griptape.artifacts import ActionsArtifact, TextArtifact
+from griptape.drivers import BasePromptDriver
+from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.tools.base_tool import BaseTool
 from griptape.utils import PromptStack
-from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
-import dateparser
-from datetime import datetime, timedelta
 
 
 @define
@@ -86,15 +89,20 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             if message.finish_reason == "tools_call":
                 tool_calls = message.tool_calls
                 actions = [
-                    # TODO: need to add path
                     ActionsArtifact.Action(
-                        tag=tool_call.id, name=tool_call.function.name, input=tool_call.function.arguments
+                        tag=tool_call.id,
+                        name=tool_call.function.name,
+                        input=tool_call.function.arguments
+                        # TODO: need to add path
                     )
                     for tool_call in tool_calls
                 ]
 
                 return ActionsArtifact(value=message_content, actions=actions)
             else:
+                # TODO: How do we avoid the final answer of a tools_call going to ActionsSubtask?
+                # The LLM will not be following our CoT so there will be no final "Answer:".
+                # Maybe we keep this as part of the system prompt.
                 return TextArtifact(value=message_content)
         else:
             raise Exception("Completion with more than one choice is not supported yet.")

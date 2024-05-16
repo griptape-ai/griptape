@@ -182,11 +182,12 @@ class ActionsSubtask(BaseTextInputTask):
 
         return parent
 
-    def __init_from_input(self, value: TextArtifact) -> None:
-        if isinstance(value, ActionsArtifact):
-            self.actions = value.actions
+    def __init_from_input(self, input: TextArtifact) -> None:
+        if isinstance(input, ActionsArtifact):
+            self.thought = input.value  # TODO: Not sure about this, need to see what openai comes back with
+            self.actions = input.actions
         else:
-            prompt = value.to_text()
+            prompt = input.to_text()
             thought_matches = re.findall(self.THOUGHT_PATTERN, prompt, re.MULTILINE)
             actions_matches = re.findall(self.ACTIONS_PATTERN, prompt, re.DOTALL)
             answer_matches = re.findall(self.ANSWER_PATTERN, prompt, re.MULTILINE)
