@@ -6,6 +6,7 @@ from typing import Optional, TYPE_CHECKING, Callable
 import schema
 from attr import define, field
 from griptape import utils
+from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTextInputTask, BaseTask
@@ -14,26 +15,17 @@ from griptape.events import StartActionsSubtaskEvent, FinishActionsSubtaskEvent
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
-    from griptape.tools import BaseTool
 
 
 @define
 class ActionsSubtask(BaseTextInputTask):
-    @define(kw_only=True)
-    class Action:
-        tag: str = field()
-        name: str = field()
-        path: Optional[str] = field(default=None)
-        input: dict = field()
-        tool: Optional[BaseTool] = field(default=None)
-
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    actions: list[Action] = field(factory=list, kw_only=True)
+    actions: list[ActionsArtifact.Action] = field(factory=list, kw_only=True)
 
     _input: Optional[str | TextArtifact | Callable[[BaseTask], TextArtifact]] = field(default=None)
     _memory: Optional[TaskMemory] = None
@@ -75,7 +67,7 @@ class ActionsSubtask(BaseTextInputTask):
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
-        self.__init_from_prompt(self.input.to_text())
+        self.__init_from_input(self.input)
 
     def before_run(self) -> None:
         self.structure.publish_event(
@@ -112,14 +104,14 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 return ErrorArtifact("no tool output")
 
-    def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
+    def execute_actions(self, actions: list[ActionsArtifact.Action]) -> list[tuple[str, BaseArtifact]]:
         results = utils.execute_futures_dict(
             {a.tag: self.futures_executor.submit(self.execute_action, a) for a in actions}
         )
 
         return [r for r in results.values()]
 
-    def execute_action(self, action: Action) -> tuple[str, BaseArtifact]:
+    def execute_action(self, action: ActionsArtifact.Action) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
                 output = action.tool.execute(getattr(action.tool, action.path), self, action)
@@ -190,19 +182,23 @@ class ActionsSubtask(BaseTextInputTask):
 
         return parent
 
-    def __init_from_prompt(self, value: str) -> None:
-        thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
-        actions_matches = re.findall(self.ACTIONS_PATTERN, value, re.DOTALL)
-        answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
+    def __init_from_input(self, value: TextArtifact) -> None:
+        if isinstance(value, ActionsArtifact):
+            self.actions = value.actions
+        else:
+            prompt = value.to_text()
+            thought_matches = re.findall(self.THOUGHT_PATTERN, prompt, re.MULTILINE)
+            actions_matches = re.findall(self.ACTIONS_PATTERN, prompt, re.DOTALL)
+            answer_matches = re.findall(self.ANSWER_PATTERN, prompt, re.MULTILINE)
 
-        if self.thought is None and len(thought_matches) > 0:
-            self.thought = thought_matches[-1]
+            if self.thought is None and len(thought_matches) > 0:
+                self.thought = thought_matches[-1]
 
-        self.__parse_actions(actions_matches)
+            self.__parse_actions(actions_matches)
 
-        # If there are no actions to take but an answer is provided, set the answer as the output.
-        if len(self.actions) == 0 and self.output is None and len(answer_matches) > 0:
-            self.output = TextArtifact(answer_matches[-1])
+            # If there are no actions to take but an answer is provided, set the answer as the output.
+            if len(self.actions) == 0 and self.output is None and len(answer_matches) > 0:
+                self.output = TextArtifact(answer_matches[-1])
 
     def __parse_actions(self, actions_matches: list[str]) -> None:
         if len(actions_matches) == 0:
@@ -243,7 +239,7 @@ class ActionsSubtask(BaseTextInputTask):
                         "ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
                     )
 
-                new_action = ActionsSubtask.Action(
+                new_action = ActionsArtifact.Action(
                     tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool
                 )
 
@@ -266,10 +262,10 @@ class ActionsSubtask(BaseTextInputTask):
 
             self.actions.append(self.__error_to_action(f"Action input parsing error: {e}"))
 
-    def __error_to_action(self, error: str) -> Action:
-        return ActionsSubtask.Action(tag="error", name="error", input={"error": error})
+    def __error_to_action(self, error: str) -> ActionsArtifact.Action:
+        return ActionsArtifact.Action(tag="error", name="error", input={"error": error})
 
-    def __validate_action(self, action: Action) -> None:
+    def __validate_action(self, action: ActionsArtifact.Action) -> None:
         try:
             if action.path is not None:
                 activity = getattr(action.tool, action.path)

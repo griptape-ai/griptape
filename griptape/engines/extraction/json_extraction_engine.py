@@ -59,7 +59,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(
-                        PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
+                        PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.Role.USER_ROLE)])
                     ).value
                 )
             )
@@ -76,7 +76,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(
-                        PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)])
+                        PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.Role.USER_ROLE)])
                     ).value
                 )
             )

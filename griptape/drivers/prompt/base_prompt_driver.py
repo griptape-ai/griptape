@@ -1,14 +1,17 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable
 from collections.abc import Iterator
-from attr import define, field, Factory
-from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
-from griptape.mixins.serializable_mixin import SerializableMixin
-from griptape.utils import PromptStack
-from griptape.mixins import ExponentialBackoffMixin
-from griptape.tokenizers import BaseTokenizer
+from typing import TYPE_CHECKING, Callable, Optional
+
+from attr import Factory, define, field
+
 from griptape.artifacts import TextArtifact
+from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
+from griptape.mixins import ExponentialBackoffMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.tokenizers import BaseTokenizer
+from griptape.utils import PromptStack
 
 if TYPE_CHECKING:
     from griptape.structures import Structure

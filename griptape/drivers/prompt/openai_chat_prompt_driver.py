@@ -3,7 +3,8 @@ from typing import Optional, Any, Literal
 from collections.abc import Iterator
 import openai
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, ActionsArtifact
+from griptape.tools.base_tool import BaseTool
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
@@ -79,13 +80,29 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         parsed_result = result.parse()
 
         if len(parsed_result.choices) == 1:
-            return TextArtifact(value=parsed_result.choices[0].message.content.strip())
+            message = parsed_result.choices[0].message
+            message_content = message.content.strip()
+
+            if message.finish_reason == "tools_call":
+                tool_calls = message.tool_calls
+                actions = [
+                    # TODO: need to add path
+                    ActionsArtifact.Action(
+                        tag=tool_call.id, name=tool_call.function.name, input=tool_call.function.arguments
+                    )
+                    for tool_call in tool_calls
+                ]
+
+                return ActionsArtifact(value=message_content, actions=actions)
+            else:
+                return TextArtifact(value=message_content)
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
+        # TODO: function calling with streaming
         for chunk in result:
             if len(chunk.choices) == 1:
                 delta = chunk.choices[0].delta
@@ -113,6 +130,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
             "seed": self.seed,
+            "tools": self.__to_openai_tools(prompt_stack.tools),
         }
 
         if self.response_format == "json_object":
@@ -136,6 +154,20 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return "assistant"
         else:
             return "user"
+
+    def __to_openai_tools(self, tools: list[BaseTool]) -> list[dict]:
+        return [
+            {
+                "function": {
+                    "name": tool.activity_name(activity),
+                    "description": tool.activity_description(activity),
+                    "parameters": tool.activity_schema(activity),
+                },
+                "type": "function",
+            }
+            for tool in tools
+            for activity in tool.activities()
+        ]
 
     def _extract_ratelimit_metadata(self, response):
         # The OpenAI SDK's requestssession variable is global, so this hook will fire for all API requests.

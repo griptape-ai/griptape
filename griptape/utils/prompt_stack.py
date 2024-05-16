@@ -1,8 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attr import define, field
+from enum import Enum
+
 
 from griptape.mixins import SerializableMixin
+from griptape.tools.base_tool import BaseTool
 
 if TYPE_CHECKING:
     from griptape.memory.structure import BaseConversationMemory
@@ -10,46 +13,60 @@ if TYPE_CHECKING:
 
 @define
 class PromptStack(SerializableMixin):
-    GENERIC_ROLE = "generic"
-    USER_ROLE = "user"
-    ASSISTANT_ROLE = "assistant"
-    SYSTEM_ROLE = "system"
+    class Role(Enum):
+        GENERIC_ROLE = "generic"
+        USER_ROLE = "user"
+        ASSISTANT_ROLE = "assistant"
+        SYSTEM_ROLE = "system"
+        TOOL_ROLE = "tool"
 
     @define
     class Input(SerializableMixin):
         content: str = field(metadata={"serializable": True})
-        role: str = field(metadata={"serializable": True})
+        role: PromptStack.Role = field(metadata={"serializable": True})
 
         def is_generic(self) -> bool:
-            return self.role == PromptStack.GENERIC_ROLE
+            return self.role == PromptStack.Role.GENERIC_ROLE
 
         def is_system(self) -> bool:
-            return self.role == PromptStack.SYSTEM_ROLE
+            return self.role == PromptStack.Role.SYSTEM_ROLE
 
         def is_user(self) -> bool:
-            return self.role == PromptStack.USER_ROLE
+            return self.role == PromptStack.Role.USER_ROLE
 
         def is_assistant(self) -> bool:
-            return self.role == PromptStack.ASSISTANT_ROLE
+            return self.role == PromptStack.Role.ASSISTANT_ROLE
+
+        def is_tool(self) -> bool:
+            return self.role == PromptStack.Role.TOOL_ROLE
 
     inputs: list[Input] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    tools: list[BaseTool] = field(factory=list, kw_only=True)
 
-    def add_input(self, content: str, role: str) -> Input:
+    def add_input(self, content: str, role: PromptStack.Role) -> Input:
         self.inputs.append(self.Input(content=content, role=role))
 
         return self.inputs[-1]
 
     def add_generic_input(self, content: str) -> Input:
-        return self.add_input(content, self.GENERIC_ROLE)
+        return self.add_input(content, PromptStack.Role.GENERIC_ROLE)
 
     def add_system_input(self, content: str) -> Input:
-        return self.add_input(content, self.SYSTEM_ROLE)
+        return self.add_input(content, PromptStack.Role.SYSTEM_ROLE)
 
     def add_user_input(self, content: str) -> Input:
-        return self.add_input(content, self.USER_ROLE)
+        return self.add_input(content, PromptStack.Role.USER_ROLE)
 
     def add_assistant_input(self, content: str) -> Input:
-        return self.add_input(content, self.ASSISTANT_ROLE)
+        return self.add_input(content, PromptStack.Role.ASSISTANT_ROLE)
+
+    def add_tool_input(self, content: str) -> Input:
+        return self.add_input(content, PromptStack.Role.TOOL_ROLE)
+
+    def add_tool(self, tool: BaseTool) -> BaseTool:
+        self.tools.append(tool)
+
+        return self.tools[-1]
 
     def add_conversation_memory(self, memory: BaseConversationMemory, index: Optional[int] = None) -> list[Input]:
         """Add the Conversation Memory runs to the Prompt Stack.
