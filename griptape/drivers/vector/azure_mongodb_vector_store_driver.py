@@ -1,10 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 from attr import define
 from griptape.drivers import BaseVectorStoreDriver, MongoDbAtlasVectorStoreDriver
-
-if TYPE_CHECKING:
-    pass
 
 
 @define
