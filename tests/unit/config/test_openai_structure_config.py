@@ -17,7 +17,7 @@ class TestOpenAiStructureConfig:
             "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
                 "base_url": None,
-                "model": "gpt-4",
+                "model": "gpt-4o",
                 "organization": None,
                 "response_format": None,
                 "seed": None,
@@ -27,6 +27,7 @@ class TestOpenAiStructureConfig:
                 "user": "",
             },
             "conversation_memory_driver": None,
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",

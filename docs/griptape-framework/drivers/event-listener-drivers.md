@@ -134,10 +134,8 @@ agent = Agent(
         )
     ],
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=OpenAiChatPromptDriver(
-                model="gpt-3.5-turbo", temperature=0.7
-            ),
+        prompt_driver=OpenAiChatPromptDriver(
+            model="gpt-3.5-turbo", temperature=0.7
         )
     ),
     event_listeners=[

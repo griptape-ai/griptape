@@ -51,6 +51,7 @@ class TestAmazonBedrockStructureConfig:
                 "type": "LocalVectorStoreDriver",
             },
             "type": "AmazonBedrockStructureConfig",
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
         }
 
     def test_from_dict(self, config):
