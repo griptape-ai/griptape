@@ -137,7 +137,7 @@ class Structure(ABC):
             config = StructureConfig()
 
             if self.prompt_driver is None:
-                prompt_driver = OpenAiChatPromptDriver(model="gpt-4")
+                prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
             else:
                 prompt_driver = self.prompt_driver
 

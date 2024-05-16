@@ -182,7 +182,7 @@ from griptape.config import (
 agent = Agent(
     tools=[WebScraper(), TaskMemoryClient(off_prompt=False)],
     config=StructureConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
         embedding_driver=VoyageAiEmbeddingDriver(),
     ),
 )
