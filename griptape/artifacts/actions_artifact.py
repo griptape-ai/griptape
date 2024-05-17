@@ -28,14 +28,27 @@ class ActionsArtifact(TextArtifact):
         tag: str = field(metadata={"serializable": True})
         name: str = field(metadata={"serializable": True})
         path: Optional[str] = field(default=None, metadata={"serializable": True})
-        input: dict = field(
-            converter=str_to_dict_converter, default=Factory(lambda: "{}"), metadata={"serializable": True}
-        )
+        input: dict = field(default={}, metadata={"serializable": True})
         tool: Optional[BaseTool] = field(default=None, metadata={"serializable": False})
         output: Optional[BaseArtifact] = field(default=None, metadata={"serializable": False})
 
-        def to_dict(self):
-            return {"tag": self.tag, "name": self.name, "path": self.path, "input": self.input}
+        _partial_input: str = field(default="", metadata={"serializable": False}, alias="partial_input")
+
+        def to_dict(self) -> dict:
+            try:
+                input = json.loads(self._partial_input)
+            except json.JSONDecodeError:
+                input = self._partial_input
+
+            return {"tag": self.tag, "name": self.name, "path": self.path, "input": input}
+
+        def __add__(self, other: ActionsArtifact.Action) -> ActionsArtifact.Action:
+            return ActionsArtifact.Action(
+                tag=self.tag + other.tag,
+                name=self.name + other.name,
+                path=(self.path or "") + (other.path or ""),
+                partial_input=self._partial_input + other._partial_input,
+            )
 
     actions: list[Action] = field(default=Factory(list), metadata={"serializable": True}, kw_only=True)
     value: str = field(
@@ -46,4 +59,14 @@ class ActionsArtifact(TextArtifact):
     )
 
     def __add__(self, other: BaseArtifact) -> ActionsArtifact:
-        return ActionsArtifact(self.value + other.value, actions=self.actions)
+        if isinstance(other, ActionsArtifact):
+            # When streaming we receive the actions in chunks, so we need to merge them
+            added_actions = []
+            for action, other_action in zip(self.actions, other.actions):
+                if action.tag != other_action.tag:
+                    raise ValueError("Cannot add ActionsArtifacts with different tags")
+                added_actions.append(action + other_action)
+
+            return ActionsArtifact(self.value + other.value, actions=added_actions)
+        else:
+            return ActionsArtifact(self.value + other.value, actions=self.actions)

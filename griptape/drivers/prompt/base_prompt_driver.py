@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Callable, Optional
@@ -7,6 +8,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 from attr import Factory, define, field
 
 from griptape.artifacts import TextArtifact
+from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
@@ -80,11 +82,26 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                 if self.stream:
                     tokens = []
+                    tool_calls = {}
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
+                        if isinstance(chunk, ActionsArtifact):
+                            for index, action in enumerate(chunk.actions):
+                                if index in tool_calls:
+                                    tool_calls[index] += action
+                                else:
+                                    tool_calls[index] = action
+
+                        elif isinstance(chunk, TextArtifact):
+                            tokens.append(chunk.value)
                         self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
-                        tokens.append(chunk.value)
-                    result = TextArtifact(value="".join(tokens).strip())
+
+                    if tool_calls:
+                        for tool_call in tool_calls.values():
+                            tool_call.input = json.loads(tool_call._partial_input)
+                        result = ActionsArtifact(actions=list(tool_calls.values()))
+                    else:
+                        result = TextArtifact(value="".join(tokens).strip())
                 else:
                     result = self.try_run(prompt_stack)
                     result.value = result.value.strip()

@@ -86,23 +86,23 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         parsed_result = result.parse()
 
         if len(parsed_result.choices) == 1:
-            message = parsed_result.choices[0].message
-            tool_calls = message.tool_calls
+            delta = parsed_result.choices[0].delta
+            tool_calls = delta.tool_calls
 
             if tool_calls:
                 actions = [
                     ActionsArtifact.Action(
                         tag=tool_call.id,
                         name=tool_call.function.name.split("-")[0],
-                        input=tool_call.function.arguments,
                         path=tool_call.function.name.split("-")[1],
+                        input=tool_call.function.arguments,
                     )
                     for tool_call in tool_calls
                 ]
 
                 return ActionsArtifact(actions=actions)
             else:
-                message_content = message.content.strip()
+                message_content = delta.content.strip()
                 # TODO: How do we avoid the final answer of a tools_call going to ActionsSubtask?
                 # The LLM will not be following our CoT so there will be no final "Answer:".
                 # Maybe we keep this as part of the system prompt.
@@ -113,17 +113,40 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
-        # TODO: function calling with streaming
         for chunk in result:
             if len(chunk.choices) == 1:
                 delta = chunk.choices[0].delta
+                tool_call_deltas = delta.tool_calls
+
+                if tool_call_deltas:
+                    actions = []
+
+                    value = ""
+                    for tool_call_delta in tool_call_deltas:
+                        id = ""
+                        name, path = "", ""
+                        arguments = ""
+
+                        # Either the delta has an id and name, or a function with arguments.
+                        if tool_call_delta.id is not None:
+                            id = tool_call_delta.id
+                            function_name = tool_call_delta.function.name
+                            name, path = function_name.split("-")
+                            value += f"{name}-{path}"
+                        elif tool_call_delta.function.arguments is not None:
+                            arguments = tool_call_delta.function.arguments
+                            value += arguments
+
+                        action = ActionsArtifact.Action(tag=id, name=name, path=path, partial_input=arguments)
+                        actions.append(action)
+
+                    yield ActionsArtifact(value=value, actions=actions)
+                else:
+                    content_delta = delta.content or ""
+
+                    yield TextArtifact(value=content_delta)
             else:
                 raise Exception("Completion with more than one choice is not supported yet.")
-
-            if delta.content is not None:
-                delta_content = delta.content
-
-                yield TextArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         if isinstance(self.tokenizer, OpenAiTokenizer):
