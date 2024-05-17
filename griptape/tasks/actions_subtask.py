@@ -19,10 +19,12 @@ if TYPE_CHECKING:
 
 @define
 class ActionsSubtask(BaseTextInputTask):
-    ACTION_PATTERN = r"(?s)Action:[^{]*({.*})"
+    ACTION_PATTERN = r"(?s)[^{]*({.*})"
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
+
+    single_action: bool = field(default=False, kw_only=True)
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
@@ -94,6 +96,8 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 results = self.execute_actions(self.actions)
 
+                for r in results:
+                    print(r[0])
                 self.output = ListArtifact([TextArtifact(name=f"{r[0]} output", value=r[1].to_text()) for r in results])
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
@@ -123,7 +127,10 @@ class ActionsSubtask(BaseTextInputTask):
 
         action.output = output
 
-        return action.tag, output
+        if self.single_action:
+            return action.name, output
+        else:
+            return action.tag, output
 
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
@@ -196,18 +203,15 @@ class ActionsSubtask(BaseTextInputTask):
             actions_matches = re.findall(self.ACTIONS_PATTERN, prompt, re.DOTALL)
             answer_matches = re.findall(self.ANSWER_PATTERN, prompt, re.MULTILINE)
 
-            # ToolkitTask can have multiple actions
-            if actions_matches:
-                if self.thought is None and thought_matches:
-                    self.thought = thought_matches[-1]
-
-                self.__parse_action_matches(actions_matches)
-
-            # ToolTask can have only one action
-            else:
+            if self.single_action:
                 action_matches = re.findall(self.ACTION_PATTERN, prompt, re.DOTALL)
 
                 self.actions = self.__parse_action_matches(action_matches)
+            else:
+                if self.thought is None and thought_matches:
+                    self.thought = thought_matches[-1]
+
+                self.actions = self.__parse_action_matches(actions_matches)
 
             # If there are no actions to take but an answer is provided, set the answer as the output.
             if len(self.actions) == 0 and self.output is None and len(answer_matches) > 0:
@@ -218,13 +222,19 @@ class ActionsSubtask(BaseTextInputTask):
             return []
 
         data = actions_matches[-1]
-        action_data: list | dict = json.loads(data, strict=False)
 
-        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-            self.origin_task.actions_schema().validate(action_data)
+        try:
+            action_data: list | dict = json.loads(data, strict=False)
+        except Exception as e:
+            self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
+
+            return [self.__error_to_action(f"Action input parsing error: {e}")]
 
         if isinstance(action_data, dict):
             action_data = [action_data]
+
+        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
+            self.origin_task.actions_schema().validate(action_data)
 
         actions = self.__process_actions([self.__parse_action_object(action_object) for action_object in action_data])
 
@@ -252,6 +262,7 @@ class ActionsSubtask(BaseTextInputTask):
                 action_input = {}
 
             action = ActionsArtifact.Action(tag=action_tag, name=action_name, path=action_path, input=action_input)
+
             return self.__process_action(action)
         except SyntaxError as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
@@ -261,10 +272,6 @@ class ActionsSubtask(BaseTextInputTask):
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
             return self.__error_to_action(f"Action JSON validation error: {e}")
-        except Exception as e:
-            self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
-
-            return self.__error_to_action(f"Action input parsing error: {e}")
 
     def __process_actions(self, actions: list[ActionsArtifact.Action]) -> list[ActionsArtifact.Action]:
         return [self.__process_action(action) for action in actions]

@@ -65,7 +65,9 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         return self._actions_schema_for_tools([self.tool])
 
     def run(self) -> BaseArtifact:
-        subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack)))
+        subtask = self.add_subtask(
+            ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack), single_action=True)
+        )
 
         try:
             subtask.before_run()

@@ -107,6 +107,7 @@ class BaseSchema(Schema):
         from griptape.structures import Structure
         from griptape.utils import PromptStack
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
+        from griptape.tools.base_tool import BaseTool
         from typing import Any
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
@@ -121,6 +122,7 @@ class BaseSchema(Schema):
                 "BasePromptDriver": BasePromptDriver,
                 "BaseTokenizer": BaseTokenizer,
                 "BasePromptModelDriver": BasePromptModelDriver,
+                "BaseTool": BaseTool,
                 "boto3": boto3,
             },
         )

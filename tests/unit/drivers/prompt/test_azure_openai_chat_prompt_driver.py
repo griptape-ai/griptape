@@ -10,6 +10,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.with_raw_response.create
         mock_choice = Mock()
         mock_choice.message.content = "model-output"
+        mock_choice.message.tool_calls = None
         mock_chat_create.return_value.headers = {}
         mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
         return mock_chat_create
@@ -20,6 +21,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chunk = Mock()
         mock_choice = Mock()
         mock_choice.delta.content = "model-output"
+        mock_choice.delta.tool_calls = None
         mock_chunk.choices = [mock_choice]
         mock_chat_create.return_value = iter([mock_chunk])
         return mock_chat_create

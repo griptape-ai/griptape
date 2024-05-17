@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Optional, Any
 from attr import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -23,13 +24,15 @@ def str_to_dict_converter(data: Any):
 @define
 class ActionsArtifact(TextArtifact):
     @define(kw_only=True)
-    class Action:
-        tag: str = field()
-        name: str = field()
-        path: Optional[str] = field(default=None)
-        input: dict = field(converter=str_to_dict_converter, default=Factory(lambda: "{}"))
-        tool: Optional[BaseTool] = field(default=None)
-        output: Optional[BaseArtifact] = field(default=None)
+    class Action(SerializableMixin):
+        tag: str = field(metadata={"serializable": True})
+        name: str = field(metadata={"serializable": True})
+        path: Optional[str] = field(default=None, metadata={"serializable": True})
+        input: dict = field(
+            converter=str_to_dict_converter, default=Factory(lambda: "{}"), metadata={"serializable": True}
+        )
+        tool: Optional[BaseTool] = field(default=None, metadata={"serializable": False})
+        output: Optional[BaseArtifact] = field(default=None, metadata={"serializable": False})
 
         def to_dict(self):
             return {"tag": self.tag, "name": self.name, "path": self.path, "input": self.input}

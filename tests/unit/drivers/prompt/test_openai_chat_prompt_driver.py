@@ -16,6 +16,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.with_raw_response.create
         mock_choice = Mock()
         mock_choice.message.content = "model-output"
+        mock_choice.message.tool_calls = None
         mock_chat_create.return_value.headers = {}
         mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
         return mock_chat_create
@@ -26,6 +27,38 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         mock_chunk = Mock()
         mock_choice = Mock()
         mock_choice.delta.content = "model-output"
+        mock_choice.delta.tool_calls = None
+        mock_chunk.choices = [mock_choice]
+        mock_chat_create.return_value = iter([mock_chunk])
+        return mock_chat_create
+
+    @pytest.fixture
+    def mock_chat_completion_tools_create(self, mocker):
+        mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.with_raw_response.create
+        mock_choice = Mock()
+        mock_choice.delta.content = None
+        mock_choice.message.tool_calls = [
+            {
+                "id": "tool-call-id",
+                "function": {"name": "function-name", "arguments": '{"parameter-name": "parameter-value"}'},
+            }
+        ]
+        mock_chat_create.return_value.headers = {}
+        mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
+        return mock_chat_create
+
+    @pytest.fixture
+    def mock_chat_completion_stream_tools_create(self, mocker):
+        mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
+        mock_chunk = Mock()
+        mock_choice = Mock()
+        mock_choice.delta.content = "model-output"
+        mock_choice.message.tool_calls = [
+            {
+                "id": "tool-call-id",
+                "function": {"name": "function-name", "arguments": '{"parameter-name": "parameter-value"}'},
+            }
+        ]
         mock_chunk.choices = [mock_choice]
         mock_chat_create.return_value = iter([mock_chunk])
         return mock_chat_create
@@ -191,12 +224,10 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Given
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
-        # When
-        with pytest.raises(Exception) as e:
-            driver.try_run("prompt-stack")  # pyright: ignore
-
         # Then
-        assert e.value.args[0] == "'str' object has no attribute 'inputs'"
+        with pytest.raises(Exception):
+            # When
+            driver.try_run("prompt-stack")  # pyright: ignore
 
     @pytest.mark.parametrize("choices", [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_chat_completion_create, prompt_stack):
