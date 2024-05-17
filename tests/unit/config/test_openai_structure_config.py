@@ -46,6 +46,7 @@ class TestOpenAiStructureConfig:
                     "style": None,
                     "type": "OpenAiImageGenerationDriver",
                 },
+                "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
                 "image_query_driver": {
                     "api_version": None,
                     "base_url": None,

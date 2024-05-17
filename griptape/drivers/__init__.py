@@ -16,6 +16,7 @@ from .prompt.dummy_prompt_driver import DummyPromptDriver
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
 from .memory.conversation.amazon_dynamodb_conversation_memory_driver import AmazonDynamoDbConversationMemoryDriver
+from .memory.conversation.redis_conversation_memory_driver import RedisConversationMemoryDriver
 
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
@@ -96,6 +97,11 @@ from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
 
+from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
+from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
+from .text_to_speech.elevenlabs_text_to_speech_driver import ElevenLabsTextToSpeechDriver
+from .text_to_speech.openai_text_to_speech_driver import OpenAiTextToSpeechDriver
+
 from .structure_run.base_structure_run_driver import BaseStructureRunDriver
 from .structure_run.griptape_cloud_structure_run_driver import GriptapeCloudStructureRunDriver
 from .structure_run.local_structure_run_driver import LocalStructureRunDriver
@@ -118,6 +124,7 @@ __all__ = [
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
+    "RedisConversationMemoryDriver",
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
@@ -183,6 +190,10 @@ __all__ = [
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
+    "BaseTextToSpeechDriver",
+    "DummyTextToSpeechDriver",
+    "ElevenLabsTextToSpeechDriver",
+    "OpenAiTextToSpeechDriver",
     "BaseStructureRunDriver",
     "GriptapeCloudStructureRunDriver",
     "LocalStructureRunDriver",

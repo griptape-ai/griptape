@@ -7,11 +7,11 @@ from griptape.artifacts import ErrorArtifact, ImageArtifact
 from griptape.engines import PromptImageGenerationEngine
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.mixins import ImageArtifactFileOutputMixin
+from griptape.mixins import BlobArtifactFileOutputMixin
 
 
 @define
-class PromptImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
+class PromptImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
     """A tool that can be used to generate an image from a text prompt.
 
     Attributes:

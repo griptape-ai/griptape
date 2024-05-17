@@ -17,6 +17,8 @@ from .inpainting_image_generation_task import InpaintingImageGenerationTask
 from .outpainting_image_generation_task import OutpaintingImageGenerationTask
 from .variation_image_generation_task import VariationImageGenerationTask
 from .image_query_task import ImageQueryTask
+from .base_audio_generation_task import BaseAudioGenerationTask
+from .text_to_speech_task import TextToSpeechTask
 from .structure_run_task import StructureRunTask
 
 __all__ = [
@@ -39,5 +41,7 @@ __all__ = [
     "InpaintingImageGenerationTask",
     "OutpaintingImageGenerationTask",
     "ImageQueryTask",
+    "BaseAudioGenerationTask",
+    "TextToSpeechTask",
     "StructureRunTask",
 ]
