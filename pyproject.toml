@@ -72,6 +72,7 @@ drivers-sql-snowflake = ["snowflake-sqlalchemy", "snowflake", "snowflake-connect
 drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
 
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
+drivers-memory-conversation-redis = ["redis"]
 
 drivers-vector-marqo = ["marqo"]
 drivers-vector-pinecone = ["pinecone-client"]
