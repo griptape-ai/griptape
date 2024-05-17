@@ -19,7 +19,7 @@ jobs:
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run formatter
-        run: poetry run black --check .
+        run: poetry run ruff format --check .
   type-check:
     runs-on: ubuntu-latest
     strategy:
