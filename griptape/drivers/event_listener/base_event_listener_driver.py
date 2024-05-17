@@ -27,12 +27,10 @@ class BaseEventListenerDriver(ABC):
         self.futures_executor.submit(self._safe_try_publish_event, event, flush)
 
     @abstractmethod
-    def try_publish_event_payload(self, event_payload: dict) -> None:
-        ...
+    def try_publish_event_payload(self, event_payload: dict) -> None: ...
 
     @abstractmethod
-    def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
-        ...
+    def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None: ...
 
     def _safe_try_publish_event(self, event: BaseEvent | dict, flush: bool) -> None:
         try:

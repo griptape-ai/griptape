@@ -6,5 +6,4 @@ from griptape.mixins import SerializableMixin
 
 
 @define
-class BaseMetaEntry(SerializableMixin, ABC):
-    ...
+class BaseMetaEntry(SerializableMixin, ABC): ...

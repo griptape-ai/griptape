@@ -5,5 +5,4 @@ from griptape.artifacts import TextArtifact
 
 class BaseWebScraperDriver(ABC):
     @abstractmethod
-    def scrape_url(self, url: str) -> TextArtifact:
-        ...
+    def scrape_url(self, url: str) -> TextArtifact: ...

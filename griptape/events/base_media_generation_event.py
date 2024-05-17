@@ -5,5 +5,4 @@ from .base_event import BaseEvent
 
 
 @define
-class BaseMediaGenerationEvent(BaseEvent, ABC):
-    ...
+class BaseMediaGenerationEvent(BaseEvent, ABC): ...

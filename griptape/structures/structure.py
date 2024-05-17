@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 import logging
 import uuid
 from abc import ABC, abstractmethod
@@ -274,8 +273,7 @@ class Structure(ABC):
         )
 
     @abstractmethod
-    def add_task(self, task: BaseTask) -> BaseTask:
-        ...
+    def add_task(self, task: BaseTask) -> BaseTask: ...
 
     def run(self, *args) -> Structure:
         self.before_run()
@@ -287,5 +285,4 @@ class Structure(ABC):
         return result
 
     @abstractmethod
-    def try_run(self, *args) -> Structure:
-        ...
+    def try_run(self, *args) -> Structure: ...

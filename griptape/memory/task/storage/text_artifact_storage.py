@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any
+from typing import TYPE_CHECKING, Any
 from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.memory.task.storage import BaseArtifactStorage

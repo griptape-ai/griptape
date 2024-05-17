@@ -8,7 +8,7 @@ from griptape.utils.decorators import activity
 
 @define
 class TaskMemoryClient(BaseTool):
-    off_prompt: bool = field(kw_only=True)
+    off_prompt: bool = field(kw_only=True)  # pyright: ignore[reportGeneralTypeIssues]
 
     @activity(
         config={

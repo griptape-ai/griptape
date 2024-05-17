@@ -1,4 +1,3 @@
-from typing import Optional
 from attrs import define, field
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver

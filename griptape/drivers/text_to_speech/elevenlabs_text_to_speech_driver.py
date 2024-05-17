@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Any
+from typing import Any
 
 from attr import define, field, Factory
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver
 from griptape.utils import import_optional_dependency
-
-if TYPE_CHECKING:
-    from elevenlabs.client import ElevenLabs
 
 
 @define

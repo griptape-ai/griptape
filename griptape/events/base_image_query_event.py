@@ -6,5 +6,4 @@ from griptape.events import BaseEvent
 
 
 @define
-class BaseImageQueryEvent(BaseEvent, ABC):
-    ...
+class BaseImageQueryEvent(BaseEvent, ABC): ...

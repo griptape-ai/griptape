@@ -29,9 +29,10 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
     _image_generation_engine: OutpaintingImageGenerationEngine = field(
         default=None, kw_only=True, alias="image_generation_engine"
     )
-    _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
-        [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
-    ] = field(default=None)
+    _input: (
+        tuple[str | TextArtifact, ImageArtifact, ImageArtifact]
+        | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]]
+    ) = field(default=None)
 
     @property
     def input(self) -> tuple[TextArtifact, ImageArtifact, ImageArtifact]:
