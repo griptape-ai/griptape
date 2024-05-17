@@ -227,7 +227,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Then
         with pytest.raises(Exception):
             # When
-            driver.try_run("prompt-stack")  # pyright: ignore
+            driver.try_run("prompt-stack")  # pyright: ignore[reportArgumentType]
 
     @pytest.mark.parametrize("choices", [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_chat_completion_create, prompt_stack):

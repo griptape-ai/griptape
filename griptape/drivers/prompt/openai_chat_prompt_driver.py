@@ -88,7 +88,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         if len(parsed_result.choices) == 1:
             message = parsed_result.choices[0].message
             tool_calls = message.tool_calls
-            print(tool_calls)
 
             if tool_calls:
                 actions = [
