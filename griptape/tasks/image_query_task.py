@@ -23,9 +23,11 @@ class ImageQueryTask(BaseTask):
     """
 
     _image_query_engine: ImageQueryEngine = field(default=None, kw_only=True, alias="image_query_engine")
-    _input: tuple[str, list[ImageArtifact]] | tuple[TextArtifact, list[ImageArtifact]] | Callable[
-        [BaseTask], tuple[TextArtifact, list[ImageArtifact]]
-    ] = field(default=None, alias="input")
+    _input: (
+        tuple[str, list[ImageArtifact]]
+        | tuple[TextArtifact, list[ImageArtifact]]
+        | Callable[[BaseTask], tuple[TextArtifact, list[ImageArtifact]]]
+    ) = field(default=None, alias="input")
 
     @property
     def input(self) -> tuple[TextArtifact, list[ImageArtifact]]:

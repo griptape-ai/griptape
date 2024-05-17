@@ -40,5 +40,4 @@ class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             raise Exception("Failed to run text to audio generation")
 
     @abstractmethod
-    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
-        ...
+    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact: ...

@@ -47,7 +47,8 @@ class CoherePromptDriver(BasePromptDriver):
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         result = self.client.generate(
-            **self._base_params(prompt_stack), stream=True  # pyright: ignore[reportCallIssue]
+            **self._base_params(prompt_stack),
+            stream=True,  # pyright: ignore[reportCallIssue]
         )
 
         for chunk in result:

@@ -11,5 +11,6 @@ class BaseSummaryEngine(ABC):
         return self.summarize_artifacts(ListArtifact([TextArtifact(text)]), rulesets=rulesets).value
 
     @abstractmethod
-    def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
-        ...
+    def summarize_artifacts(
+        self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None
+    ) -> TextArtifact: ...

@@ -6,5 +6,4 @@ from .base_text_to_speech_event import BaseTextToSpeechEvent
 
 
 @define
-class FinishTextToSpeechEvent(BaseTextToSpeechEvent):
-    ...
+class FinishTextToSpeechEvent(BaseTextToSpeechEvent): ...

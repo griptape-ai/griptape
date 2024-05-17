@@ -9,5 +9,4 @@ from griptape.tasks import BaseTask
 
 
 @define
-class BaseAudioGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
-    ...
+class BaseAudioGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, ABC): ...

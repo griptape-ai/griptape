@@ -213,7 +213,8 @@ class GoogleDriveClient(BaseGoogleClient):
                         description="File search mode. Use 'name' to search in file name or "
                         "'content' to search in file content",
                     ): Or(
-                        "name", "content"  # pyright: ignore [reportArgumentType]
+                        "name",  # pyright: ignore [reportArgumentType]
+                        "content",  # pyright: ignore [reportArgumentType]
                     ),
                     Literal(
                         "search_query",
@@ -288,7 +289,9 @@ class GoogleDriveClient(BaseGoogleClient):
                         default="reader",
                         description="The role to give to the user, e.g., 'reader', 'writer', or 'commenter'",
                     ): Or(
-                        "reader", "writer", "commenter"  # pyright: ignore [reportArgumentType]
+                        "reader",  # pyright: ignore [reportArgumentType]
+                        "writer",  # pyright: ignore [reportArgumentType]
+                        "commenter",  # pyright: ignore [reportArgumentType]
                     ),
                 }
             ),
