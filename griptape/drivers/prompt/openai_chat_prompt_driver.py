@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Iterator
 from datetime import datetime, timedelta
-from typing import Any, Literal, Optional
+from typing import Any, Literal, Optional, TYPE_CHECKING
 
 import dateparser
 import openai
@@ -11,8 +12,10 @@ from attr import Factory, define, field
 from griptape.artifacts import ActionsArtifact, TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
-from griptape.tools.base_tool import BaseTool
 from griptape.utils import PromptStack
+
+if TYPE_CHECKING:
+    from griptape.tools import BaseTool
 
 
 @define
@@ -84,22 +87,22 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if len(parsed_result.choices) == 1:
             message = parsed_result.choices[0].message
-            message_content = message.content.strip()
+            tool_calls = message.tool_calls
 
-            if message.finish_reason == "tools_call":
-                tool_calls = message.tool_calls
+            if tool_calls:
                 actions = [
                     ActionsArtifact.Action(
                         tag=tool_call.id,
-                        name=tool_call.function.name,
-                        input=tool_call.function.arguments
-                        # TODO: need to add path
+                        name=tool_call.function.name.split("-")[0],
+                        input=tool_call.function.arguments,
+                        path=tool_call.function.name.split("-")[1],
                     )
                     for tool_call in tool_calls
                 ]
 
-                return ActionsArtifact(value=message_content, actions=actions)
+                return ActionsArtifact(actions=actions)
             else:
+                message_content = message.content.strip()
                 # TODO: How do we avoid the final answer of a tools_call going to ActionsSubtask?
                 # The LLM will not be following our CoT so there will be no final "Answer:".
                 # Maybe we keep this as part of the system prompt.
@@ -129,7 +132,31 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack))
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
-        return [{"role": self.__to_openai_role(i), "content": i.content} for i in prompt_stack.inputs]
+        return [
+            {
+                "role": self.__to_openai_role(i),
+                "content": i.content,
+                "tool_call_id": i.tool_call_id,
+                **(
+                    {
+                        "tool_calls": [
+                            {
+                                "id": tool_call.tag,
+                                "function": {
+                                    "name": f"{tool_call.name}-{tool_call.path}",
+                                    "arguments": json.dumps(tool_call.input),
+                                },
+                                "type": "function",
+                            }
+                            for tool_call in i.tool_calls
+                        ]
+                    }
+                    if i.tool_calls
+                    else {}
+                ),
+            }
+            for i in prompt_stack.inputs
+        ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -138,7 +165,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
             "seed": self.seed,
-            "tools": self.__to_openai_tools(prompt_stack.tools),
+            **({"tools": self.__to_openai_tools(prompt_stack.tools)} if prompt_stack.tools else {}),
+            **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
         }
 
         if self.response_format == "json_object":
@@ -147,9 +175,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             prompt_stack.add_system_input("Provide your response as a valid JSON object.")
 
         messages = self._prompt_stack_to_messages(prompt_stack)
-
-        if self.max_tokens is not None:
-            params["max_tokens"] = self.max_tokens
 
         params["messages"] = messages
 
@@ -160,6 +185,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return "system"
         elif prompt_input.is_assistant():
             return "assistant"
+        elif prompt_input.is_tool_call():
+            return "assistant"
+        elif prompt_input.is_tool_result():
+            return "tool"
         else:
             return "user"
 
@@ -167,9 +196,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         return [
             {
                 "function": {
-                    "name": tool.activity_name(activity),
+                    "name": f"{tool.name}-{tool.activity_name(activity)}",
                     "description": tool.activity_description(activity),
-                    "parameters": tool.activity_schema(activity),
+                    "parameters": tool.activity_schema(activity).json_schema("Action Schema"),
                 },
                 "type": "function",
             }

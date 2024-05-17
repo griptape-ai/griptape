@@ -10,7 +10,7 @@ from abc import ABC
 from typing import Optional
 import yaml
 from attr import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact, ActionsArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -107,18 +107,18 @@ class BaseTool(ActivityMixin, ABC):
             for activity in self.activities()
         ]
 
-    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> BaseArtifact:
+    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionsArtifact.Action) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask, action)
         output = self.run(activity, subtask, action, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, action, output)
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> Optional[dict]:
+    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionsArtifact.Action) -> Optional[dict]:
         return action.input
 
     def run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: Optional[dict]
+        self, activity: Callable, subtask: ActionsSubtask, action: ActionsArtifact.Action, value: Optional[dict]
     ) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -132,7 +132,7 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: BaseArtifact
+        self, activity: Callable, subtask: ActionsSubtask, action: ActionsArtifact.Action, value: BaseArtifact
     ) -> BaseArtifact:
         if value:
             if self.output_memory:

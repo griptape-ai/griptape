@@ -116,6 +116,10 @@ class OpenAiTokenizer(BaseTokenizer):
             for message in text:
                 num_tokens += tokens_per_message
                 for key, value in message.items():
+                    if key == "tool_calls" or key == "tool_call_id":
+                        continue  # TODO: Figure out how to count tool calls
+                    if isinstance(value, list):
+                        continue
                     num_tokens += len(encoding.encode(value))
                     if key == "name":
                         num_tokens += tokens_per_name

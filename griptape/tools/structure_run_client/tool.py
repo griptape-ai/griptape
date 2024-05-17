@@ -24,7 +24,7 @@ class StructureRunClient(BaseTool):
         config={
             "description": "Can be used to run a Griptape Structure with the following description: {{ self.description }}",
             "schema": Schema(
-                {Literal("args", description="A list of string arguments to submit to the Structure Run"): list}
+                {Literal("args", description="A list of string arguments to submit to the Structure Run"): [str]}
             ),
         }
     )

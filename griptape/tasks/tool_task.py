@@ -1,5 +1,4 @@
 from __future__ import annotations
-import re
 import json
 from typing import Optional, TYPE_CHECKING
 from attr import define, field
@@ -9,7 +8,7 @@ from griptape import utils
 from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact, ListArtifact
 from griptape.tasks import PromptTask, ActionsSubtask
 from griptape.tools import BaseTool
-from griptape.utils import J2
+from griptape.utils import J2, PromptStack
 from griptape.mixins import ActionsSubtaskOriginMixin
 
 if TYPE_CHECKING:
@@ -24,6 +23,24 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+
+    @property
+    def prompt_stack(self) -> PromptStack:
+        stack = PromptStack(tools=[self.tool])
+        memory = self.structure.conversation_memory
+
+        stack.add_system_input(self.generate_system_template(self))
+
+        stack.add_user_input(self.input.to_text())
+
+        if self.output:
+            stack.add_assistant_input(self.output.to_text())
+
+        if memory:
+            # inserting at index 1 to place memory right after system prompt
+            stack.add_conversation_memory(memory, 1)
+
+        return stack
 
     def __attrs_post_init__(self) -> None:
         if self.task_memory is not None:
@@ -48,30 +65,20 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         return self._actions_schema_for_tools([self.tool])
 
     def run(self) -> BaseArtifact:
-        prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
-        action_matches = re.findall(self.ACTION_PATTERN, prompt_output, re.DOTALL)
+        subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack)))
 
-        if action_matches:
-            try:
-                data = action_matches[-1]
-                action_dict = json.loads(data)
-                action_dict["tag"] = self.tool.name
-                subtask_input = J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict))
-                subtask = self.add_subtask(ActionsSubtask(subtask_input))
+        try:
+            subtask.before_run()
+            subtask.run()
+            subtask.after_run()
 
-                subtask.before_run()
-                subtask.run()
-                subtask.after_run()
-
-                if isinstance(subtask.output, ListArtifact):
-                    self.output = subtask.output[0]
-                else:
-                    self.output = InfoArtifact("No tool output")
-            except Exception as e:
-                self.output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
-            return self.output
-        else:
-            return ErrorArtifact("No action found in prompt output.")
+            if isinstance(subtask.output, ListArtifact):
+                self.output = subtask.output[0]
+            else:
+                self.output = InfoArtifact("No tool output")
+        except Exception as e:
+            self.output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
+        return self.output
 
     def find_tool(self, tool_name: str) -> BaseTool:
         if self.tool.name == tool_name:

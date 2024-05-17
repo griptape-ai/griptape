@@ -1,67 +1,83 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
+
 from attr import define, field
-from enum import Enum
 
-
+from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.mixins import SerializableMixin
-from griptape.tools.base_tool import BaseTool
 
 if TYPE_CHECKING:
     from griptape.memory.structure import BaseConversationMemory
+    from griptape.tools.base_tool import BaseTool
 
 
 @define
 class PromptStack(SerializableMixin):
-    class Role(Enum):
-        GENERIC_ROLE = "generic"
-        USER_ROLE = "user"
-        ASSISTANT_ROLE = "assistant"
-        SYSTEM_ROLE = "system"
-        TOOL_ROLE = "tool"
+    GENERIC_ROLE = "generic"
+    USER_ROLE = "user"
+    ASSISTANT_ROLE = "assistant"
+    SYSTEM_ROLE = "system"
+    TOOL_CALL_ROLE = "tool_call"
+    TOOL_RESULT_ROLE = "tool_result"
 
     @define
     class Input(SerializableMixin):
         content: str = field(metadata={"serializable": True})
-        role: PromptStack.Role = field(metadata={"serializable": True})
+        role: str = field(metadata={"serializable": True})
+        tool_calls: list[ActionsArtifact.Action] = field(factory=list, metadata={"serializable": True})
+        tool_call_id: Optional[str] = field(default=None, metadata={"serializable": True})
 
         def is_generic(self) -> bool:
-            return self.role == PromptStack.Role.GENERIC_ROLE
+            return self.role == PromptStack.GENERIC_ROLE
 
         def is_system(self) -> bool:
-            return self.role == PromptStack.Role.SYSTEM_ROLE
+            return self.role == PromptStack.SYSTEM_ROLE
 
         def is_user(self) -> bool:
-            return self.role == PromptStack.Role.USER_ROLE
+            return self.role == PromptStack.USER_ROLE
 
         def is_assistant(self) -> bool:
-            return self.role == PromptStack.Role.ASSISTANT_ROLE
+            return self.role == PromptStack.ASSISTANT_ROLE
 
-        def is_tool(self) -> bool:
-            return self.role == PromptStack.Role.TOOL_ROLE
+        def is_tool_call(self) -> bool:
+            return self.role == PromptStack.TOOL_CALL_ROLE
+
+        def is_tool_result(self) -> bool:
+            return self.role == PromptStack.TOOL_RESULT_ROLE
 
     inputs: list[Input] = field(factory=list, kw_only=True, metadata={"serializable": True})
     tools: list[BaseTool] = field(factory=list, kw_only=True)
 
-    def add_input(self, content: str, role: PromptStack.Role) -> Input:
+    def add_input(self, content: str, role: str) -> Input:
         self.inputs.append(self.Input(content=content, role=role))
 
         return self.inputs[-1]
 
     def add_generic_input(self, content: str) -> Input:
-        return self.add_input(content, PromptStack.Role.GENERIC_ROLE)
+        return self.add_input(content, PromptStack.GENERIC_ROLE)
 
     def add_system_input(self, content: str) -> Input:
-        return self.add_input(content, PromptStack.Role.SYSTEM_ROLE)
+        return self.add_input(content, PromptStack.SYSTEM_ROLE)
 
     def add_user_input(self, content: str) -> Input:
-        return self.add_input(content, PromptStack.Role.USER_ROLE)
+        return self.add_input(content, PromptStack.USER_ROLE)
 
     def add_assistant_input(self, content: str) -> Input:
-        return self.add_input(content, PromptStack.Role.ASSISTANT_ROLE)
+        return self.add_input(content, PromptStack.ASSISTANT_ROLE)
 
-    def add_tool_input(self, content: str) -> Input:
-        return self.add_input(content, PromptStack.Role.TOOL_ROLE)
+    def add_tool_call_input(self, input: ActionsArtifact) -> Input:
+        self.inputs.append(self.Input(content=input.value, role=PromptStack.TOOL_CALL_ROLE, tool_calls=input.actions))
+
+        return self.inputs[-1]
+
+    def add_tool_result_input(self, input: ActionsArtifact) -> Input:
+        for action in input.actions:
+            self.inputs.append(
+                self.Input(content=action.output.to_text(), role=PromptStack.TOOL_RESULT_ROLE, tool_call_id=action.tag)
+            )
+
+        return self.inputs[-1]
 
     def add_tool(self, tool: BaseTool) -> BaseTool:
         self.tools.append(tool)

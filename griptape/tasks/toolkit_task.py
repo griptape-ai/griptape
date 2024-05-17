@@ -6,6 +6,7 @@ from schema import Schema
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ErrorArtifact
+from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
@@ -58,7 +59,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        stack = PromptStack()
+        stack = PromptStack(tools=self.tools)
         memory = self.structure.conversation_memory
 
         stack.add_system_input(self.generate_system_template(self))
@@ -69,8 +70,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_input(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_assistant_input(self.generate_assistant_subtask_template(s))
-                stack.add_user_input(self.generate_user_subtask_template(s))
+                stack.add_tool_call_input(ActionsArtifact(s.input.to_text(), actions=s.actions))
+                stack.add_tool_result_input(ActionsArtifact(s.output.to_text(), actions=s.actions))
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
@@ -126,7 +127,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         self.subtasks.clear()
 
-        subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
+        subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack)))
 
         while True:
             if subtask.output is None:
@@ -140,9 +141,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                     subtask.run()
                     subtask.after_run()
 
-                    subtask = self.add_subtask(
-                        ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text())
-                    )
+                    subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack)))
             else:
                 break
 

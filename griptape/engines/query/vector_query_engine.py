@@ -52,8 +52,8 @@ class VectorQueryEngine(BaseQueryEngine):
             message_token_count = self.prompt_driver.token_count(
                 PromptStack(
                     inputs=[
-                        PromptStack.Input(system_message, role=PromptStack.Role.SYSTEM_ROLE),
-                        PromptStack.Input(user_message, role=PromptStack.Role.USER_ROLE),
+                        PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
+                        PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
                     ]
                 )
             )
@@ -72,8 +72,8 @@ class VectorQueryEngine(BaseQueryEngine):
         return self.prompt_driver.run(
             PromptStack(
                 inputs=[
-                    PromptStack.Input(system_message, role=PromptStack.Role.SYSTEM_ROLE),
-                    PromptStack.Input(user_message, role=PromptStack.Role.USER_ROLE),
+                    PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
+                    PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
                 ]
             )
         )

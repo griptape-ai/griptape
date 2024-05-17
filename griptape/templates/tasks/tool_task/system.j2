@@ -1,6 +1,10 @@
-When appropriate, respond to requests by using the following Action Schema. Your response should be a plain JSON object that successfully validates against the schema. The schema is provided below. If you can't use the Action Schema, say "I don't know how to respond."
+You can choose to either answer to the user's request, or execute an action.
 
-Action Schema: {{ action_schema }}
+If you choose to answer the user's request, you must respond with the following format:
+Answer: <final answer>
+
+If you choose to execute an action, you must respond with the following format:
+Action: <JSON object that MUST follow this schema: {{ actions_schema }}>
 
 {% if meta_memory %}
 
