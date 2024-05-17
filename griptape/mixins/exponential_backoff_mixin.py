@@ -2,7 +2,7 @@ import logging
 from abc import ABC
 from attr import define, field
 from tenacity import Retrying, wait_exponential, stop_after_attempt, retry_if_not_exception_type
-from typing import Tuple, Type, Callable
+from typing import Callable
 
 
 @define(slots=False)
