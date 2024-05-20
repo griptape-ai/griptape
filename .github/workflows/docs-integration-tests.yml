@@ -7,6 +7,7 @@ on:
     branches:
       - main
       - dev
+      - integ_tests
 jobs:
   test:
     if: github.event.review.state == 'APPROVED' || github.event_name == 'push'
