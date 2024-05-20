@@ -14,8 +14,27 @@ if TYPE_CHECKING:
 
 @define
 class ActionsArtifact(TextArtifact):
+    """An Artifact that represents a list of Actions.
+    Can be used with Prompt Drivers that support native function calling.
+
+    Attributes:
+        actions: The list of actions.
+        value: The value of the artifact.
+    """
+
     @define(kw_only=True)
     class Action(SerializableMixin):
+        """Represents an instance of an LLM taking an action to use a Tool.
+
+        Attributes:
+            tag: The tag (unique identifier) of the action.
+            name: The name (Tool name) of the action.
+            path: The path (Tool activity name) of the action.
+            input: The input (Tool params) of the action.
+            tool: The tool used in the action.
+            output: The output of the action execution.
+        """
+
         tag: str = field(metadata={"serializable": True})
         name: str = field(metadata={"serializable": True})
         path: Optional[str] = field(default=None, metadata={"serializable": True})

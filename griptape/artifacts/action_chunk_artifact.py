@@ -10,6 +10,18 @@ from griptape.mixins import SerializableMixin
 
 @define
 class ActionChunkArtifact(TextArtifact, SerializableMixin):
+    """An Artifact that represents a chunk of an Action.
+    Can be used when streaming with Prompt Drivers that support native function calling.
+
+    Attributes:
+        tag: The tag of the action.
+        name: The name of the action.
+        path: The path of the action.
+        partial_input: The partial input of the action.
+        index: The index of the action.
+
+    """
+
     tag: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     path: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
