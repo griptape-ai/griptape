@@ -118,7 +118,7 @@ The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_liste
 ```python
 import os
 
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriver
 from griptape.events import (
     EventListener,

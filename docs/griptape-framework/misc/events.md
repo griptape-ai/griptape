@@ -130,15 +130,20 @@ from griptape.events import CompletionChunkEvent, EventListener
 from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
 from griptape.tools import WebScraper, TaskMemoryClient
+from griptape.config import OpenAiStructureConfig
+from griptape.drivers import OpenAiChatPromptDriver
 
 
 pipeline = Pipeline(
+    config=OpenAiStructureConfig(
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
+    ),
     event_listeners=[
         EventListener(
             lambda e: print(e.token, end="", flush=True),
             event_types=[CompletionChunkEvent],
         )
-    ]
+    ],
 )
 
 pipeline.add_tasks(
