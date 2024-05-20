@@ -23,6 +23,15 @@ class PromptStack(SerializableMixin):
 
     @define
     class Input(SerializableMixin):
+        """Represents an input to the Prompt Stack.
+
+        Attributes:
+            content: The content of the input.
+            role: The role of the input.
+            tool_calls: The tool calls associated with the input.
+            tool_call_id: The id of the tool call associated with the input.
+        """
+
         content: str = field(metadata={"serializable": True})
         role: str = field(metadata={"serializable": True})
         tool_calls: list[ActionsArtifact.Action] = field(factory=list, metadata={"serializable": True})
