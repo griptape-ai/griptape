@@ -86,6 +86,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
                         if isinstance(chunk, ActionsArtifact):
+                            # TODO: use index from delta
                             for index, action in enumerate(chunk.actions):
                                 if index in tool_calls:
                                     tool_calls[index] += action

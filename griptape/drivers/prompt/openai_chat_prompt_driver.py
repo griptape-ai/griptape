@@ -123,6 +123,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
                     value = ""
                     for tool_call_delta in tool_call_deltas:
+                        # TODO: handle tool_call_delta.index
                         id = ""
                         name, path = "", ""
                         arguments = ""
