@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import openai
-from attr import field, Factory, define
 from typing import Callable, Optional
 
-from griptape.drivers import OpenAiImageGenerationDriver
+from attr import define, field, Factory
+import openai
+from griptape.drivers.image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
 
 
 @define
-class AzureOpenAiImageGenerationDriver(OpenAiImageGenerationDriver):
-    """Driver for Azure-hosted OpenAI image generation API.
+class AzureOpenAiVisionImageQueryDriver(OpenAiVisionImageQueryDriver):
+    """Driver for Azure-hosted OpenAI image query API.
 
     Attributes:
         azure_deployment: An Azure OpenAi deployment id.
