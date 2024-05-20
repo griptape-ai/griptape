@@ -22,8 +22,8 @@ class TestAzureOpenAiStructureConfig:
             "prompt_driver": {
                 "type": "AzureOpenAiChatPromptDriver",
                 "base_url": None,
-                "model": "gpt-4o",
-                "azure_deployment": "gpt-4o",
+                "model": "gpt-4",
+                "azure_deployment": "gpt-4",
                 "azure_endpoint": "http://localhost:8080",
                 "api_version": "2023-05-15",
                 "organization": None,
@@ -90,7 +90,7 @@ class TestAzureOpenAiStructureConfig:
         # serialize and deserialize the config
         new_config = config.merge_config(
             {
-                "prompt_driver": {"azure_deployment": "new-test-gpt-4o"},
+                "prompt_driver": {"azure_deployment": "new-test-gpt-4"},
                 "embedding_driver": {"model": "new-text-embedding-3-small"},
             }
         ).to_dict()
