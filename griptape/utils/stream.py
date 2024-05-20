@@ -4,6 +4,7 @@ from collections.abc import Iterator
 from threading import Thread
 from queue import Queue
 from griptape.artifacts.text_artifact import TextArtifact
+from griptape.events.action_chunk_event import ActionChunkEvent
 from griptape.events.completion_chunk_event import CompletionChunkEvent
 from griptape.events.event_listener import EventListener
 from griptape.events.base_event import BaseEvent
@@ -50,6 +51,11 @@ class Stream:
                 yield TextArtifact(value="\n")
             elif isinstance(event, CompletionChunkEvent):
                 yield TextArtifact(value=event.token)
+            elif isinstance(event, ActionChunkEvent):
+                if event.name is not None:
+                    yield TextArtifact(value=f"\n{event.name}.{event.path} ({event.tag})")
+                elif event.partial_input is not None:
+                    yield TextArtifact(value=event.partial_input)
         t.join()
 
     def _run_structure(self, *args):
@@ -57,7 +63,8 @@ class Stream:
             self._event_queue.put(event)
 
         stream_event_listener = EventListener(
-            handler=event_handler, event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
+            handler=event_handler,
+            event_types=[CompletionChunkEvent, ActionChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
         )
         self.structure.add_event_listener(stream_event_listener)
 

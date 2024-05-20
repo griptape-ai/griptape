@@ -9,6 +9,7 @@ from .media_artifact import MediaArtifact
 from .image_artifact import ImageArtifact
 from .audio_artifact import AudioArtifact
 from .actions_artifact import ActionsArtifact
+from .action_chunk_artifact import ActionChunkArtifact
 
 
 __all__ = [
@@ -23,4 +24,5 @@ __all__ = [
     "ImageArtifact",
     "AudioArtifact",
     "ActionsArtifact",
+    "ActionChunkArtifact",
 ]

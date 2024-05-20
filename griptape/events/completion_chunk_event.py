@@ -1,8 +1,9 @@
 from attr import field
 from attrs import define
-from griptape.events.base_event import BaseEvent
+
+from griptape.events import BaseChunkEvent
 
 
 @define
-class CompletionChunkEvent(BaseEvent):
+class CompletionChunkEvent(BaseChunkEvent):
     token: str = field(kw_only=True, metadata={"serializable": True})

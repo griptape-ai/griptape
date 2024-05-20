@@ -8,8 +8,10 @@ from typing import TYPE_CHECKING, Callable, Optional
 from attr import Factory, define, field
 
 from griptape.artifacts import TextArtifact
+from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
+from griptape.events.action_chunk_event import ActionChunkEvent
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.tokenizers import BaseTokenizer
@@ -81,28 +83,36 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 self.before_run(prompt_stack)
 
                 if self.stream:
-                    tokens = []
-                    tool_calls = {}
+                    text_chunks = []
+                    actions_chunks = {}
+
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
-                        if isinstance(chunk, ActionsArtifact):
-                            # TODO: use index from delta
-                            for index, action in enumerate(chunk.actions):
-                                if index in tool_calls:
-                                    tool_calls[index] += action
-                                else:
-                                    tool_calls[index] = action
-
+                        if isinstance(chunk, ActionChunkArtifact):
+                            if chunk.index in actions_chunks:
+                                actions_chunks[chunk.index] += chunk
+                            else:
+                                actions_chunks[chunk.index] = chunk
+                            self.structure.publish_event(
+                                ActionChunkEvent(
+                                    tag=chunk.tag, name=chunk.name, path=chunk.path, partial_input=chunk.partial_input
+                                )
+                            )
                         elif isinstance(chunk, TextArtifact):
-                            tokens.append(chunk.value)
-                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
+                            text_chunks.append(chunk.value)
+                            self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
 
-                    if tool_calls:
-                        for tool_call in tool_calls.values():
-                            tool_call.input = json.loads(tool_call._partial_input)
-                        result = ActionsArtifact(actions=list(tool_calls.values()))
+                    value = "".join(text_chunks).strip()
+                    if actions_chunks:
+                        actions = [
+                            ActionsArtifact.Action(
+                                tag=chunk.tag, name=chunk.name, path=chunk.path, input=json.loads(chunk.partial_input)
+                            )
+                            for chunk in actions_chunks.values()
+                        ]
+                        result = ActionsArtifact(value=value, actions=actions)
                     else:
-                        result = TextArtifact(value="".join(tokens).strip())
+                        result = TextArtifact(value=value)
                 else:
                     result = self.try_run(prompt_stack)
                     result.value = result.value.strip()

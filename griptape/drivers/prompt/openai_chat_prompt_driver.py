@@ -10,6 +10,7 @@ import openai
 from attr import Factory, define, field
 
 from griptape.artifacts import ActionsArtifact, TextArtifact
+from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.utils import PromptStack
@@ -119,29 +120,26 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 tool_call_deltas = delta.tool_calls
 
                 if tool_call_deltas:
-                    actions = []
+                    if len(tool_call_deltas) == 1:
+                        tool_call_delta = tool_call_deltas[0]
 
-                    value = ""
-                    for tool_call_delta in tool_call_deltas:
-                        # TODO: handle tool_call_delta.index
-                        id = ""
-                        name, path = "", ""
-                        arguments = ""
-
-                        # Either the delta has an id and name, or a function with arguments.
                         if tool_call_delta.id is not None:
-                            id = tool_call_delta.id
-                            function_name = tool_call_delta.function.name
-                            name, path = function_name.split("-")
-                            value += f"{name}-{path}"
-                        elif tool_call_delta.function.arguments is not None:
-                            arguments = tool_call_delta.function.arguments
-                            value += arguments
+                            name, path = tool_call_delta.function.name.split("-")
+                            value = f"{name}-{path}"
+                        else:
+                            name, path = None, None
+                            value = tool_call_delta.function.arguments
 
-                        action = ActionsArtifact.Action(tag=id, name=name, path=path, partial_input=arguments)
-                        actions.append(action)
-
-                    yield ActionsArtifact(value=value, actions=actions)
+                        yield ActionChunkArtifact(
+                            value=value,
+                            index=tool_call_delta.index,
+                            tag=tool_call_delta.id,
+                            name=name,
+                            path=path,
+                            partial_input=tool_call_delta.function.arguments,
+                        )
+                    else:
+                        raise Exception("Streaming completion with more than one tool call delta is not supported yet.")
                 else:
                     content_delta = delta.content or ""
 
