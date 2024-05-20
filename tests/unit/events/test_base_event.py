@@ -215,6 +215,24 @@ class TestBaseEvent:
         assert isinstance(event, CompletionChunkEvent)
         assert event.token == "foo"
 
+    def test_action_chunk_event_from_dict(self):
+        dict_value = {
+            "type": "ActionChunkEvent",
+            "timestamp": 123.0,
+            "tag": "foo",
+            "name": "bar",
+            "path": "baz",
+            "partial_input": "qux",
+        }
+
+        event = BaseEvent.from_dict(dict_value)
+
+        assert event.timestamp == 123
+        assert event.tag == "foo"
+        assert event.name == "bar"
+        assert event.path == "baz"
+        assert event.partial_input == "qux"
+
     def test_unsupported_from_dict(self):
         dict_value = {"type": "foo", "value": "foobar"}
         with pytest.raises(ValueError):

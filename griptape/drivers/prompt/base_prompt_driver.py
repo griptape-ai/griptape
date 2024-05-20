@@ -84,15 +84,15 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                 if self.stream:
                     text_chunks = []
-                    actions_chunks = {}
+                    action_chunks = {}
 
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
                         if isinstance(chunk, ActionChunkArtifact):
-                            if chunk.index in actions_chunks:
-                                actions_chunks[chunk.index] += chunk
+                            if chunk.index in action_chunks:
+                                action_chunks[chunk.index] += chunk
                             else:
-                                actions_chunks[chunk.index] = chunk
+                                action_chunks[chunk.index] = chunk
                             self.structure.publish_event(
                                 ActionChunkEvent(
                                     tag=chunk.tag, name=chunk.name, path=chunk.path, partial_input=chunk.partial_input
@@ -103,12 +103,12 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                             self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
 
                     value = "".join(text_chunks).strip()
-                    if actions_chunks:
+                    if action_chunks:
                         actions = [
                             ActionsArtifact.Action(
                                 tag=chunk.tag, name=chunk.name, path=chunk.path, input=json.loads(chunk.partial_input)
                             )
-                            for chunk in actions_chunks.values()
+                            for chunk in action_chunks.values()
                         ]
                         result = ActionsArtifact(value=value, actions=actions)
                     else:
