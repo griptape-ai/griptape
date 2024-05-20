@@ -19,4 +19,8 @@ jobs:
       - name: Init environment 
         uses: ./.github/actions/init-environment 
       - name: Run unit tests
-        run: pytest -n auto tests/unit
+        run: pytest -n auto --cov-report=term-missing:skip-covered --cov=griptape tests/unit | tee pytest-coverage.txt
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+          pytest-coverage-path: ./pytest-coverage.txt
