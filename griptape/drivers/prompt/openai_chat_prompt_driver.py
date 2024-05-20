@@ -33,6 +33,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         response_format: An optional OpenAi Chat Completion response format. Currently only supports `json_object` which will enable OpenAi's JSON mode.
         seed: An optional OpenAi Chat Completion seed.
         ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
+        function_calling: Whether to use native function calling. Defaults to `True`.
         _ratelimit_request_limit: The maximum number of requests allowed in the current rate limit window.
         _ratelimit_requests_remaining: The number of requests remaining in the current rate limit window.
         _ratelimit_requests_reset_at: The time at which the current rate limit window resets.
@@ -72,6 +73,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    function_calling: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _ratelimit_request_limit: Optional[int] = field(init=False, default=None)
     _ratelimit_requests_remaining: Optional[int] = field(init=False, default=None)
     _ratelimit_requests_reset_at: Optional[datetime] = field(init=False, default=None)
@@ -187,7 +189,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
             "seed": self.seed,
-            **({"tools": self.__to_openai_tools(prompt_stack.tools)} if prompt_stack.tools else {}),
+            **(
+                {"tools": self.__to_openai_tools(prompt_stack.tools)}
+                if prompt_stack.tools and self.function_calling
+                else {}
+            ),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
         }
 
