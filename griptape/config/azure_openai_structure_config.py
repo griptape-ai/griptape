@@ -37,6 +37,7 @@ class AzureOpenAiStructureConfig(StructureConfig):
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
         kw_only=True, default=None, metadata={"serializable": False}
     )
+    api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda self: AzureOpenAiChatPromptDriver(
