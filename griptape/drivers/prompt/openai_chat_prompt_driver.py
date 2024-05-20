@@ -87,8 +87,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         parsed_result = result.parse()
 
         if len(parsed_result.choices) == 1:
-            delta = parsed_result.choices[0].delta
-            tool_calls = delta.tool_calls
+            message = parsed_result.choices[0].message
+            tool_calls = message.tool_calls
 
             if tool_calls:
                 actions = [
@@ -103,7 +103,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
                 return ActionsArtifact(actions=actions)
             else:
-                message_content = delta.content.strip()
+                message_content = message.content.strip()
                 # TODO: How do we avoid the final answer of a tools_call going to ActionsSubtask?
                 # The LLM will not be following our CoT so there will be no final "Answer:".
                 # Maybe we keep this as part of the system prompt.

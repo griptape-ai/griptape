@@ -36,7 +36,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     def mock_chat_completion_tools_create(self, mocker):
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.with_raw_response.create
         mock_choice = Mock()
-        mock_choice.delta.content = None
+        mock_choice.message.content = None
         mock_choice.message.tool_calls = [
             {
                 "id": "tool-call-id",
@@ -53,7 +53,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         mock_chunk = Mock()
         mock_choice = Mock()
         mock_choice.delta.content = "model-output"
-        mock_choice.message.tool_calls = [
+        mock_choice.delta.tool_calls = [
             {
                 "id": "tool-call-id",
                 "function": {"name": "function-name", "arguments": '{"parameter-name": "parameter-value"}'},
