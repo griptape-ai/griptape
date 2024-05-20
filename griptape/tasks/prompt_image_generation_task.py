@@ -50,7 +50,7 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
         if self._image_generation_engine is None:
             if self.structure is not None:
                 self._image_generation_engine = PromptImageGenerationEngine(
-                    image_generation_driver=self.structure.config.global_drivers.image_generation_driver
+                    image_generation_driver=self.structure.config.image_generation_driver
                 )
             else:
                 raise ValueError("Image Generation Engine is not set.")

@@ -15,7 +15,7 @@ from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtracti
 from griptape.memory import TaskMemory 
 from griptape.artifacts import TextArtifact
 from griptape.memory.task.storage import TextArtifactStorage
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 
 AZURE_OPENAI_ENDPOINT_1 = os.environ["AZURE_OPENAI_ENDPOINT_1"]
@@ -59,11 +59,9 @@ loader = Agent(
         WebScraper()
     ],
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=azure_prompt_driver,
-            vector_store_driver=mongo_driver,
-            embedding_driver=azure_embedding_driver
-        )
+        prompt_driver=azure_prompt_driver,
+        vector_store_driver=mongo_driver,
+        embedding_driver=azure_embedding_driver
     ),
 )
 asker = Agent(

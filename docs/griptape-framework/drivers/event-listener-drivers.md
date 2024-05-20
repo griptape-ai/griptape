@@ -118,7 +118,7 @@ The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_liste
 ```python
 import os
 
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriver
 from griptape.events import (
     EventListener,
@@ -134,10 +134,8 @@ agent = Agent(
         )
     ],
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=OpenAiChatPromptDriver(
-                model="gpt-3.5-turbo", temperature=0.7
-            ),
+        prompt_driver=OpenAiChatPromptDriver(
+            model="gpt-3.5-turbo", temperature=0.7
         )
     ),
     event_listeners=[

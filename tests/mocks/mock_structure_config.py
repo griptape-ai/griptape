@@ -1,15 +1,5 @@
 from attrs import define, field, Factory
-from griptape.drivers import LocalVectorStoreDriver
-from griptape.config import (
-    BaseStructureConfig,
-    StructureGlobalDriversConfig,
-    StructureTaskMemoryConfig,
-    StructureTaskMemoryQueryEngineConfig,
-    StructureTaskMemoryExtractionEngineConfig,
-    StructureTaskMemorySummaryEngineConfig,
-    StructureTaskMemoryExtractionEngineJsonConfig,
-    StructureTaskMemoryExtractionEngineCsvConfig,
-)
+from griptape.config import StructureConfig
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
 from tests.mocks.mock_image_query_driver import MockImageQueryDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -17,41 +7,16 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 @define
-class MockStructureConfig(BaseStructureConfig):
-    global_drivers: StructureGlobalDriversConfig = field(
-        default=Factory(
-            lambda: StructureGlobalDriversConfig(
-                prompt_driver=MockPromptDriver(),
-                image_generation_driver=MockImageGenerationDriver(model="dall-e-2"),
-                image_query_driver=MockImageQueryDriver(model="gpt-4-vision-preview"),
-                embedding_driver=MockEmbeddingDriver(model="text-embedding-3-small"),
-            )
-        ),
-        kw_only=True,
-        metadata={"serializable": True},
+class MockStructureConfig(StructureConfig):
+    prompt_driver: MockPromptDriver = field(
+        default=Factory(lambda: MockPromptDriver()), metadata={"serializable": True}
     )
-    task_memory: StructureTaskMemoryConfig = field(
-        default=Factory(
-            lambda: StructureTaskMemoryConfig(
-                query_engine=StructureTaskMemoryQueryEngineConfig(
-                    prompt_driver=MockPromptDriver(model="gpt-3.5-turbo"),
-                    vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=MockEmbeddingDriver(model="text-embedding-3-small")
-                    ),
-                ),
-                extraction_engine=StructureTaskMemoryExtractionEngineConfig(
-                    csv=StructureTaskMemoryExtractionEngineCsvConfig(
-                        prompt_driver=MockPromptDriver(model="gpt-3.5-turbo")
-                    ),
-                    json=StructureTaskMemoryExtractionEngineJsonConfig(
-                        prompt_driver=MockPromptDriver(model="gpt-3.5-turbo")
-                    ),
-                ),
-                summary_engine=StructureTaskMemorySummaryEngineConfig(
-                    prompt_driver=MockPromptDriver(model="gpt-3.5-turbo")
-                ),
-            )
-        ),
-        kw_only=True,
-        metadata={"serializable": True},
+    image_generation_driver: MockImageGenerationDriver = field(
+        default=Factory(lambda: MockImageGenerationDriver(model="dall-e-2")), metadata={"serializable": True}
+    )
+    image_query_driver: MockImageQueryDriver = field(
+        default=Factory(lambda: MockImageQueryDriver(model="gpt-4-vision-preview")), metadata={"serializable": True}
+    )
+    embedding_driver: MockEmbeddingDriver = field(
+        default=Factory(lambda: MockEmbeddingDriver(model="text-embedding-3-small")), metadata={"serializable": True}
     )

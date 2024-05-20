@@ -62,6 +62,9 @@ class StructureTester:
         "OPENAI_CHAT_4": TesterPromptDriverOption(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]), enabled=True
         ),
+        "OPENAI_CHAT_4o": TesterPromptDriverOption(
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", api_key=os.environ["OPENAI_API_KEY"]), enabled=True
+        ),
         "OPENAI_CHAT_4_1106_PREVIEW": TesterPromptDriverOption(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]),
             enabled=True,
@@ -275,7 +278,7 @@ class StructureTester:
             ],
             prompt_driver=AzureOpenAiChatPromptDriver(
                 api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
-                model="gpt-4",
+                model="gpt-4o",
                 azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
                 azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
                 response_format="json_object",
