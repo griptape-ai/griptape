@@ -9,7 +9,7 @@ import openai
 class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     """
     Attributes:
-        azure_deployment: An Azure OpenAi deployment id.
+        azure_deployment: An optional Azure OpenAi deployment id. Defaults to the model name.
         azure_endpoint: An Azure OpenAi endpoint.
         azure_ad_token: An optional Azure Active Directory token.
         azure_ad_token_provider: An optional Azure Active Directory token provider.
