@@ -81,6 +81,7 @@ from .image_query.base_multi_model_image_query_driver import BaseMultiModelImage
 from .image_query.dummy_image_query_driver import DummyImageQueryDriver
 from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
 from .image_query.anthropic_image_query_driver import AnthropicImageQueryDriver
+from .image_query.azure_openai_vision_image_query_driver import AzureOpenAiVisionImageQueryDriver
 from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQueryDriver
 
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
@@ -175,6 +176,7 @@ __all__ = [
     "BedrockClaudeImageQueryModelDriver",
     "BaseImageQueryDriver",
     "OpenAiVisionImageQueryDriver",
+    "AzureOpenAiVisionImageQueryDriver",
     "DummyImageQueryDriver",
     "AnthropicImageQueryDriver",
     "BaseMultiModelImageQueryDriver",

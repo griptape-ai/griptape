@@ -1,13 +1,16 @@
-from attr import define, field, Factory
+from __future__ import annotations
+
 from typing import Callable, Optional
-from griptape.utils import PromptStack
-from griptape.drivers import OpenAiChatPromptDriver
+
+from attr import define, field, Factory
 import openai
+from griptape.drivers.image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
 
 
 @define
-class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
-    """
+class AzureOpenAiVisionImageQueryDriver(OpenAiVisionImageQueryDriver):
+    """Driver for Azure-hosted OpenAI image query API.
+
     Attributes:
         azure_deployment: An optional Azure OpenAi deployment id. Defaults to the model name.
         azure_endpoint: An Azure OpenAi endpoint.
@@ -25,7 +28,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
         kw_only=True, default=None, metadata={"serializable": False}
     )
-    api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
+    api_version: str = field(default="2024-02-01", kw_only=True, metadata={"serializable": True})
     client: openai.AzureOpenAI = field(
         default=Factory(
             lambda self: openai.AzureOpenAI(
@@ -40,10 +43,3 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
             takes_self=True,
         )
     )
-
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
-        params = super()._base_params(prompt_stack)
-        # TODO: Add `seed` parameter once Azure supports it.
-        del params["seed"]
-
-        return params

@@ -22,6 +22,28 @@ agent = Agent(
 agent = Agent() # This is equivalent to the above
 ```
 
+#### Azure OpenAI
+
+The [Azure OpenAI Structure Config](../../reference/griptape/config/azure_openai_structure_config.md) provides default Drivers for Azure's OpenAI APIs.
+
+
+```python
+import os
+from griptape.structures import Agent
+from griptape.config import AzureOpenAiStructureConfig
+
+agent = Agent(
+    config=AzureOpenAiStructureConfig(
+        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
+        api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
+    ).merge_config({
+        "image_query_driver": {
+            "azure_deployment": "gpt-4-vision-preview",
+        },
+    }),
+)
+```
+
 #### Amazon Bedrock
 The [Amazon Bedrock Structure Config](../../reference/griptape/config/amazon_bedrock_structure_config.md) provides default Drivers for Amazon Bedrock's APIs.
 
@@ -112,7 +134,11 @@ serialized_config = custom_config.to_json()
 deserialized_config = AmazonBedrockStructureConfig.from_json(serialized_config)
 
 agent = Agent(
-    config=deserialized_config,
+    config=deserialized_config.merge_config({
+        "prompt_driver" : {
+            "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+        },
+    }),
 )
 ```
 

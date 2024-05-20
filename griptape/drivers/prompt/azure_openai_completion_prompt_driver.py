@@ -8,7 +8,7 @@ import openai
 class AzureOpenAiCompletionPromptDriver(OpenAiCompletionPromptDriver):
     """
     Attributes:
-        azure_deployment: An Azure OpenAi deployment id.
+        azure_deployment: An optional Azure OpenAi deployment id. Defaults to the model name.
         azure_endpoint: An Azure OpenAi endpoint.
         azure_ad_token: An optional Azure Active Directory token.
         azure_ad_token_provider: An optional Azure Active Directory token provider.
@@ -16,9 +16,11 @@ class AzureOpenAiCompletionPromptDriver(OpenAiCompletionPromptDriver):
         client: An `openai.AzureOpenAI` client.
     """
 
-    azure_deployment: str = field(kw_only=True, metadata={"serializable": True})
+    azure_deployment: str = field(
+        kw_only=True, default=Factory(lambda self: self.model, takes_self=True), metadata={"serializable": True}
+    )
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
-    azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
+    azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
         kw_only=True, default=None, metadata={"serializable": False}
     )
