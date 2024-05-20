@@ -1,9 +1,13 @@
 from __future__ import annotations
+
+import json
 import logging
-from attr import define
-import tiktoken
-from griptape.tokenizers import BaseTokenizer
 from typing import Optional
+
+import tiktoken
+from attr import define
+
+from griptape.tokenizers import BaseTokenizer
 
 
 @define()
@@ -116,8 +120,10 @@ class OpenAiTokenizer(BaseTokenizer):
             for message in text:
                 num_tokens += tokens_per_message
                 for key, value in message.items():
-                    if key == "tool_calls" or key == "tool_call_id":
-                        continue  # TODO: Figure out how to count tool calls
+                    # tool_calls is a list of dicts. Don't have a precise answer on how to calculate tool calls.
+                    # See: https://github.com/openai/openai-cookbook/issues/916
+                    if key == "tool_calls":
+                        value = json.dumps(value)
                     num_tokens += len(encoding.encode(value))
                     if key == "name":
                         num_tokens += tokens_per_name
