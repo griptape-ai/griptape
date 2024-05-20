@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
+- `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
+
+### Changed
+- Default the value of `azure_deployment` on all Azure Drivers to the model the Driver is using.
+- Field `azure_ad_token` on all Azure Drivers is no longer serializable.
+
 ## [0.25.1] - 2024-05-15
 
 ### Fixed
