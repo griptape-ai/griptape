@@ -29,7 +29,6 @@ class PromptStack(SerializableMixin):
             content: The content of the input.
             role: The role of the input.
             tool_calls: The tool calls associated with the input.
-            tool_call_id: The id of the tool call associated with the input.
         """
 
         content: str = field(metadata={"serializable": True})
