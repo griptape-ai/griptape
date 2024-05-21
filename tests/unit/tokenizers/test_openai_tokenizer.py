@@ -35,21 +35,28 @@ class TestOpenAiTokenizer:
     @pytest.mark.parametrize(
         "tokenizer,expected",
         [
-            ("gpt-4-1106", 19),
-            ("gpt-4-32k", 19),
-            ("gpt-4", 19),
-            ("gpt-3.5-turbo-0301", 21),
-            ("gpt-3.5-turbo-16k", 19),
-            ("gpt-3.5-turbo", 19),
-            ("gpt-35-turbo-16k", 19),
-            ("gpt-35-turbo", 19),
+            ("gpt-4-1106", 31),
+            ("gpt-4-32k", 31),
+            ("gpt-4", 31),
+            ("gpt-3.5-turbo-0301", 33),
+            ("gpt-3.5-turbo-16k", 31),
+            ("gpt-3.5-turbo", 31),
+            ("gpt-35-turbo-16k", 31),
+            ("gpt-35-turbo", 31),
         ],
         indirect=["tokenizer"],
     )
     def test_token_count_for_messages(self, tokenizer, expected):
         assert (
             tokenizer.count_tokens(
-                [{"role": "system", "content": "foobar baz"}, {"role": "user", "content": "how foobar am I?"}]
+                [
+                    {"role": "system", "content": "foobar baz"},
+                    {
+                        "role": "user",
+                        "content": "how foobar am I?",
+                        "tool_calls": {"tool": "tool", "activity": "activity"},
+                    },
+                ]
             )
             == expected
         )
