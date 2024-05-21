@@ -1,5 +1,7 @@
 import pytest
 from griptape.utils import PromptStack
+from griptape.artifacts.actions_artifact import ActionsArtifact
+from griptape.artifacts.text_artifact import TextArtifact
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 from griptape.structures.agent import Agent
@@ -43,6 +45,44 @@ class TestPromptStack:
 
         assert prompt_stack.inputs[0].role == "assistant"
         assert prompt_stack.inputs[0].content == "foo"
+
+    def test_add_tool_call(self, prompt_stack):
+        prompt_stack.add_tool_call_input(
+            "foo",
+            actions=[
+                ActionsArtifact.Action(tag="foo", name="bar", path="baz", input={"values": {"test": "test input"}})
+            ],
+        )
+
+        assert prompt_stack.inputs[0].role == "tool_call"
+        assert prompt_stack.inputs[0].content == "foo"
+        assert prompt_stack.inputs[0].tool_calls[0].tag == "foo"
+        assert prompt_stack.inputs[0].tool_calls[0].name == "bar"
+        assert prompt_stack.inputs[0].tool_calls[0].path == "baz"
+        assert prompt_stack.inputs[0].tool_calls[0].input == {"values": {"test": "test input"}}
+        assert prompt_stack.inputs[0].tool_calls[0].output is None
+
+    def test_add_tool_result(self, prompt_stack):
+        prompt_stack.add_tool_result_input(
+            "foo",
+            actions=[
+                ActionsArtifact.Action(
+                    tag="foo",
+                    name="bar",
+                    path="baz",
+                    input={"values": {"test": "test input"}},
+                    output=TextArtifact("test output"),
+                )
+            ],
+        )
+
+        assert prompt_stack.inputs[0].role == "tool_result"
+        assert prompt_stack.inputs[0].content == "foo"
+        assert prompt_stack.inputs[0].tool_calls[0].tag == "foo"
+        assert prompt_stack.inputs[0].tool_calls[0].name == "bar"
+        assert prompt_stack.inputs[0].tool_calls[0].path == "baz"
+        assert prompt_stack.inputs[0].tool_calls[0].input == {"values": {"test": "test input"}}
+        assert prompt_stack.inputs[0].tool_calls[0].output.value == "test output"
 
     def test_add_conversation_memory_autopruing_disabled(self):
         agent = Agent(prompt_driver=MockPromptDriver())

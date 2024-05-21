@@ -6,7 +6,6 @@ from schema import Schema
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ErrorArtifact
-from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
@@ -70,8 +69,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_input(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_tool_call_input(ActionsArtifact(s.input.to_text(), actions=s.actions))
-                stack.add_tool_result_input(ActionsArtifact(s.output.to_text(), actions=s.actions))
+                stack.add_tool_call_input(s.input.to_text(), actions=s.actions)
+                stack.add_tool_result_input(s.output.to_text(), actions=s.actions)
 
         if memory:
             # inserting at index 1 to place memory right after system prompt

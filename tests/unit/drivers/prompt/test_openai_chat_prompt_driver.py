@@ -100,29 +100,27 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         prompt_stack.add_tool_call_input(
-            ActionsArtifact(
-                actions=[
-                    ActionsArtifact.Action(
-                        tag="tool-call-id",
-                        name="ToolName",
-                        path="ActivityName",
-                        input={"parameter-name": "parameter-value"},
-                    )
-                ]
-            )
+            content="foo",
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                )
+            ],
         )
         prompt_stack.add_tool_result_input(
-            ActionsArtifact(
-                actions=[
-                    ActionsArtifact.Action(
-                        tag="tool-call-id",
-                        name="ToolName",
-                        path="ActivityName",
-                        input={"parameter-name": "parameter-value"},
-                        output=TextArtifact("tool-output"),
-                    )
-                ]
-            )
+            content="bar",
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                    output=TextArtifact("tool-output"),
+                )
+            ],
         )
 
         return prompt_stack
