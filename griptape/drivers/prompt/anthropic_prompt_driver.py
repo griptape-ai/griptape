@@ -5,6 +5,7 @@ from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.artifacts import ActionsArtifact
+from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
 
@@ -58,11 +59,28 @@ class AnthropicPromptDriver(BasePromptDriver):
             return TextArtifact(value=text)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        response = self.client.beta.messages.create(**self._base_params(prompt_stack), stream=True)
+        response = self.client.beta.tools.messages.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in response:
-            if chunk.type == "content_block_delta":
-                yield TextArtifact(value=chunk.delta.text)
+            if chunk.type == "content_block_start":
+                content_block = chunk.content_block
+                content_block_type = content_block.type
+
+                if content_block_type == "text":
+                    yield TextArtifact(value=chunk.content_block.text)
+                elif content_block_type == "tool_use":
+                    name, path = content_block.name.split("-")
+                    yield ActionChunkArtifact(
+                        value=f"{name}-{path}", index=chunk.index, tag=content_block.id, name=name, path=path
+                    )
+            elif chunk.type == "content_block_delta":
+                delta = chunk.delta
+                delta_type = delta.type
+
+                if delta_type == "text_delta":
+                    yield TextArtifact(value=delta.text)
+                elif delta_type == "input_json_delta":
+                    yield ActionChunkArtifact(value="asdf", index=chunk.index, partial_input=delta.partial_json)
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> dict:
         messages = [
@@ -77,7 +95,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             return {"messages": messages, "system": system.content}
 
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
+    def _base_params(self, prompt_stack: PromptStack) -> dict[str, Any]:
         return {
             "model": self.model,
             "temperature": self.temperature,
