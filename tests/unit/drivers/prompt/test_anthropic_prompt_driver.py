@@ -9,8 +9,9 @@ class TestAnthropicPromptDriver:
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
         mock_content = Mock()
+        mock_content.type = "text"
         mock_content.text = "model-output"
-        mock_client.return_value.messages.create.return_value.content = [mock_content]
+        mock_client.return_value.beta.tools.messages.create.return_value.content = [mock_content]
         mock_client.return_value.count_tokens.return_value = 5
 
         return mock_client
@@ -20,8 +21,9 @@ class TestAnthropicPromptDriver:
         mock_stream_client = mocker.patch("anthropic.Anthropic")
         mock_chunk = Mock()
         mock_chunk.type = "content_block_delta"
+        mock_chunk.delta.type = "text_delta"
         mock_chunk.delta.text = "model-output"
-        mock_stream_client.return_value.messages.create.return_value = iter([mock_chunk])
+        mock_stream_client.return_value.beta.tools.messages.create.return_value = iter([mock_chunk])
         mock_stream_client.return_value.count_tokens.return_value = 5
 
         return mock_stream_client
@@ -61,7 +63,7 @@ class TestAnthropicPromptDriver:
         text_artifact = driver.try_run(prompt_stack)
 
         # Then
-        mock_client.return_value.messages.create.assert_called_once_with(
+        mock_client.return_value.beta.tools.messages.create.assert_called_once_with(
             messages=expected_messages,
             stop_sequences=["<|Response|>"],
             model=driver.model,
@@ -69,6 +71,7 @@ class TestAnthropicPromptDriver:
             temperature=0.1,
             top_p=0.999,
             top_k=250,
+            tool_choice={"type": "auto"},
             **{"system": "system-input"} if system_enabled else {},
         )
         assert text_artifact.value == "model-output"
@@ -104,7 +107,7 @@ class TestAnthropicPromptDriver:
         text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-        mock_stream_client.return_value.messages.create.assert_called_once_with(
+        mock_stream_client.return_value.beta.tools.messages.create.assert_called_once_with(
             messages=expected_messages,
             stop_sequences=["<|Response|>"],
             model=driver.model,
@@ -113,6 +116,7 @@ class TestAnthropicPromptDriver:
             stream=True,
             top_p=0.999,
             top_k=250,
+            tool_choice={"type": "auto"},
             **{"system": "system-input"} if system_enabled else {},
         )
         assert text_artifact.value == "model-output"
