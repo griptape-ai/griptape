@@ -192,7 +192,7 @@ class ActionsSubtask(BaseTextInputTask):
 
     def __init_from_input(self, input: TextArtifact) -> None:
         if isinstance(input, ActionsArtifact):
-            self.thought = input.value  # TODO: Not sure about this, need to see what openai comes back with
+            self.thought = input.value
 
             self.actions = self.__process_actions(input.actions)
         else:

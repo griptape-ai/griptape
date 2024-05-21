@@ -52,3 +52,6 @@ class ActionsArtifact(TextArtifact):
         ),
         metadata={"serializable": True},
     )
+
+    def to_text(self) -> str:
+        return f"{self.value}\n{json.dumps([action.to_dict() for action in self.actions], indent=2)}"

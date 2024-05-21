@@ -98,7 +98,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         tag=tool_call.id,
                         name=tool_call.function.name.split("-")[0],
                         path=tool_call.function.name.split("-")[1],
-                        input=tool_call.function.arguments,
+                        input=json.loads(tool_call.function.arguments),
                     )
                     for tool_call in tool_calls
                 ]
@@ -156,31 +156,39 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack))
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
-        return [
-            {
-                "role": self.__to_openai_role(i),
-                "content": i.content,
-                **({"tool_call_id": i.tool_call_id} if i.tool_call_id else {}),
-                **(
+        messages = []
+
+        for i in prompt_stack.inputs:
+            # Each Tool result requires a separate message
+            if i.is_tool_result():
+                tool_result_messages = [
                     {
-                        "tool_calls": [
-                            {
-                                "id": tool_call.tag,
-                                "function": {
-                                    "name": f"{tool_call.name}-{tool_call.path}",
-                                    "arguments": json.dumps(tool_call.input),
-                                },
-                                "type": "function",
-                            }
-                            for tool_call in i.tool_calls
-                        ]
+                        "tool_call_id": tool_call.tag,
+                        "role": self.__to_openai_role(i),
+                        "name": f"{tool_call.name}-{tool_call.path}",
+                        "content": tool_call.output.to_text(),
                     }
-                    if i.tool_calls
-                    else {}
-                ),
-            }
-            for i in prompt_stack.inputs
-        ]
+                    for tool_call in i.tool_calls
+                ]
+                messages.extend(tool_result_messages)
+            else:
+                message: dict[str, Any] = {"role": self.__to_openai_role(i), "content": i.content}
+
+                if i.is_tool_call():
+                    message["tool_calls"] = [
+                        {
+                            "id": tool_call.tag,
+                            "function": {
+                                "name": f"{tool_call.name}-{tool_call.path}",
+                                "arguments": json.dumps(tool_call.input),
+                            },
+                            "type": "function",
+                        }
+                        for tool_call in i.tool_calls
+                    ]
+                messages.append(message)
+
+        return messages
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {

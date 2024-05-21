@@ -1,14 +1,8 @@
 Think step-by-step and execute actions sequentially or in parallel. You must use the following format when executing actions:
 
-Thought: <your step-by-step thought process describing what actions you need to use>
-Actions: <JSON array of actions that MUST follow this schema: {{ actions_schema }}>
-{{ stop_sequence }}: <action outputs>
-...repeat Thought/Actions/{{ stop_sequence }} as many times as you need
-Answer: <final answer>
-
 "Thought", "Actions", "{{ stop_sequence }}", and "Answer" MUST ALWAYS start on a new line. If {{ stop_sequence }} contains an error, you MUST ALWAYS try to fix the error with another Thought/Actions/{{ stop_sequence }}. NEVER make up actions. Actions must ALWAYS be a plain JSON array of objects. ALWAYS use double quotes for keys and string values in JSON objects. NEVER make up facts. Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. Keep going until you have the final answer.
 
-You have access ONLY to the actions with the following names: [{{ action_names }}]. You can use multiple actions in a sequence or in parallel to get the final answer. NEVER make up action names or action paths. NEVER reference tags in other action input values.
+You can use multiple actions in a sequence or in parallel to get the final answer. NEVER make up action names or action paths. NEVER reference tags in other action input values.
 
 Actions might store their output in memory as artifacts (with `memory_name` and `artifact_namespace`). If action output is stored in memory, ALWAYS try to pass it to another action. NEVER make up memory names or artifact namespaces.
 {% if meta_memory %}

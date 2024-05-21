@@ -35,7 +35,6 @@ class PromptStack(SerializableMixin):
         content: str = field(metadata={"serializable": True})
         role: str = field(metadata={"serializable": True})
         tool_calls: list[ActionsArtifact.Action] = field(factory=list, metadata={"serializable": True})
-        tool_call_id: Optional[str] = field(default=None, metadata={"serializable": True})
 
         def is_generic(self) -> bool:
             return self.role == PromptStack.GENERIC_ROLE
@@ -81,10 +80,7 @@ class PromptStack(SerializableMixin):
         return self.inputs[-1]
 
     def add_tool_result_input(self, input: ActionsArtifact) -> Input:
-        for action in input.actions:
-            self.inputs.append(
-                self.Input(content=action.output.to_text(), role=PromptStack.TOOL_RESULT_ROLE, tool_call_id=action.tag)
-            )
+        self.inputs.append(self.Input(content=input.value, role=PromptStack.TOOL_RESULT_ROLE, tool_calls=input.actions))
 
         return self.inputs[-1]
 
