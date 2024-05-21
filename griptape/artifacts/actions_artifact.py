@@ -46,12 +46,13 @@ class ActionsArtifact(TextArtifact):
             return {"tag": self.tag, "name": self.name, "path": self.path, "input": self.input}
 
     actions: list[Action] = field(default=Factory(list), metadata={"serializable": True}, kw_only=True)
-    value: str = field(
-        default=Factory(
-            lambda self: json.dumps([action.to_dict() for action in self.actions], indent=2), takes_self=True
-        ),
-        metadata={"serializable": True},
-    )
+    value: Optional[str] = field(default=None, metadata={"serializable": True})
 
     def to_text(self) -> str:
-        return f"{self.value}\n{json.dumps([action.to_dict() for action in self.actions], indent=2)}"
+        text = ""
+        if self.value is not None:
+            text += f"{self.value}\n"
+        if self.actions:
+            text += f"{json.dumps([action.to_dict() for action in self.actions], indent=2)}"
+
+        return text

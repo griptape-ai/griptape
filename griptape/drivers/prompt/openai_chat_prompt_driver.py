@@ -8,12 +8,14 @@ from typing import Any, Literal, Optional, TYPE_CHECKING
 import dateparser
 import openai
 from attr import Factory, define, field
+from schema import Schema
 
 from griptape.artifacts import ActionsArtifact, TextArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.utils import PromptStack
+from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -90,7 +92,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if len(parsed_result.choices) == 1:
             message = parsed_result.choices[0].message
-            tool_calls = message.tool_calls
+            tool_calls: list[ChatCompletionMessageToolCall] = message.tool_calls
 
             if tool_calls:
                 actions = [
@@ -216,32 +218,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return params
 
-    def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
-        if prompt_input.is_system():
-            return "system"
-        elif prompt_input.is_assistant():
-            return "assistant"
-        elif prompt_input.is_tool_call():
-            return "assistant"
-        elif prompt_input.is_tool_result():
-            return "tool"
-        else:
-            return "user"
-
-    def __to_openai_tools(self, tools: list[BaseTool]) -> list[dict]:
-        return [
-            {
-                "function": {
-                    "name": f"{tool.name}-{tool.activity_name(activity)}",
-                    "description": tool.activity_description(activity),
-                    "parameters": tool.activity_schema(activity).json_schema("Action Schema"),
-                },
-                "type": "function",
-            }
-            for tool in tools
-            for activity in tool.activities()
-        ]
-
     def _extract_ratelimit_metadata(self, response):
         # The OpenAI SDK's requestssession variable is global, so this hook will fire for all API requests.
         # The following headers are not reliably returned in every API call, so we check for the presence of the
@@ -271,3 +247,27 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         self._ratelimit_requests_remaining = response.headers.get("x-ratelimit-remaining-requests")
         self._ratelimit_token_limit = response.headers.get("x-ratelimit-limit-tokens")
         self._ratelimit_tokens_remaining = response.headers.get("x-ratelimit-remaining-tokens")
+
+    def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
+        if prompt_input.is_system():
+            return "system"
+        elif prompt_input.is_assistant() or prompt_input.is_tool_call():
+            return "assistant"
+        elif prompt_input.is_tool_result():
+            return "tool"
+        else:
+            return "user"
+
+    def __to_openai_tools(self, tools: list[BaseTool]) -> list[dict]:
+        return [
+            {
+                "function": {
+                    "name": f"{tool.name}-{tool.activity_name(activity)}",
+                    "description": tool.activity_description(activity),
+                    "parameters": (tool.activity_schema(activity) or Schema({})).json_schema("Action Schema"),
+                },
+                "type": "function",
+            }
+            for tool in tools
+            for activity in tool.activities()
+        ]

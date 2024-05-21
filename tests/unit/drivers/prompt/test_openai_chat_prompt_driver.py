@@ -1,12 +1,20 @@
 import datetime
 
+import json
+from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall
 from transformers import AutoTokenizer
 
+from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
+from griptape.artifacts.actions_artifact import ActionsArtifact
+from griptape.artifacts.text_artifact import TextArtifact
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
 from griptape.utils import PromptStack
 from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
+from tests.mocks.mock_tool.tool import MockTool
+from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall, Function
+from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCallFunction
 import pytest
 
 
@@ -38,10 +46,11 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         mock_choice = Mock()
         mock_choice.message.content = None
         mock_choice.message.tool_calls = [
-            {
-                "id": "tool-call-id",
-                "function": {"name": "function-name", "arguments": '{"parameter-name": "parameter-value"}'},
-            }
+            ChatCompletionMessageToolCall(
+                type="function",
+                id="tool-call-id",
+                function=Function(name="ToolName-ActivityName", arguments='{"parameter-name": "parameter-value"}'),
+            )
         ]
         mock_chat_create.return_value.headers = {}
         mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
@@ -50,17 +59,26 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def mock_chat_completion_stream_tools_create(self, mocker):
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
-        mock_chunk = Mock()
-        mock_choice = Mock()
-        mock_choice.delta.content = "model-output"
-        mock_choice.delta.tool_calls = [
-            {
-                "id": "tool-call-id",
-                "function": {"name": "function-name", "arguments": '{"parameter-name": "parameter-value"}'},
-            }
+        mock_chunk_1 = Mock()
+        mock_choice_1 = Mock()
+        mock_choice_1.delta.content = "model-output"
+        mock_choice_1.delta.tool_calls = [
+            ChoiceDeltaToolCall(
+                index=0, id="tool-call-id", function=ChoiceDeltaToolCallFunction(name="ToolName-ActivityName")
+            )
         ]
-        mock_chunk.choices = [mock_choice]
-        mock_chat_create.return_value = iter([mock_chunk])
+        mock_chunk_1.choices = [mock_choice_1]
+
+        mock_chunk_2 = Mock()
+        mock_choice_2 = Mock()
+        mock_choice_2.delta.content = "model-output"
+        mock_choice_2.delta.tool_calls = [
+            ChoiceDeltaToolCall(
+                index=0, function=ChoiceDeltaToolCallFunction(arguments='{"parameter-name": "parameter-value"}')
+            )
+        ]
+        mock_chunk_2.choices = [mock_choice_2]
+        mock_chat_create.return_value = iter([mock_chunk_1, mock_chunk_2])
         return mock_chat_create
 
     @pytest.fixture
@@ -70,6 +88,43 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
+
+        return prompt_stack
+
+    @pytest.fixture
+    def prompt_stack_with_tools(self):
+        prompt_stack = PromptStack()
+        prompt_stack.tools = [MockTool()]
+        prompt_stack.add_generic_input("generic-input")
+        prompt_stack.add_system_input("system-input")
+        prompt_stack.add_user_input("user-input")
+        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_tool_call_input(
+            ActionsArtifact(
+                actions=[
+                    ActionsArtifact.Action(
+                        tag="tool-call-id",
+                        name="ToolName",
+                        path="ActivityName",
+                        input={"parameter-name": "parameter-value"},
+                    )
+                ]
+            )
+        )
+        prompt_stack.add_tool_result_input(
+            ActionsArtifact(
+                actions=[
+                    ActionsArtifact.Action(
+                        tag="tool-call-id",
+                        name="ToolName",
+                        path="ActivityName",
+                        input={"parameter-name": "parameter-value"},
+                        output=TextArtifact("tool-output"),
+                    )
+                ]
+            )
+        )
+
         return prompt_stack
 
     @pytest.fixture
@@ -79,6 +134,30 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
+        ]
+
+    @pytest.fixture
+    def messages_with_tools(self):
+        return [
+            {"role": "user", "content": "generic-input"},
+            {"role": "system", "content": "system-input"},
+            {"role": "user", "content": "user-input"},
+            {"role": "assistant", "content": "assistant-input"},
+            {
+                "content": None,
+                "role": "assistant",
+                "tool_calls": [
+                    {
+                        "function": {
+                            "arguments": '{"parameter-name": "parameter-value"}',
+                            "name": "ToolName-ActivityName",
+                        },
+                        "id": "tool-call-id",
+                        "type": "function",
+                    }
+                ],
+            },
+            {"content": "tool-output", "name": "ToolName-ActivityName", "role": "tool", "tool_call_id": "tool-call-id"},
         ]
 
 
@@ -116,6 +195,127 @@ class OpenAiApiResponseWithHeaders:
 
 
 class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
+    TOOLS_SCHEMA = [
+        {
+            "function": {
+                "name": "MockTool-test",
+                "description": "test description: foo",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "values": {
+                            "type": "object",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "additionalProperties": False,
+                        }
+                    },
+                    "required": ["values"],
+                    "additionalProperties": False,
+                    "$id": "Action Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
+                "name": "MockTool-test_error",
+                "description": "test description: foo",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "values": {
+                            "type": "object",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "additionalProperties": False,
+                        }
+                    },
+                    "required": ["values"],
+                    "additionalProperties": False,
+                    "$id": "Action Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
+                "name": "MockTool-test_list_output",
+                "description": "test description",
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                    "additionalProperties": False,
+                    "$id": "Action Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
+                "name": "MockTool-test_no_schema",
+                "description": "test description",
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                    "additionalProperties": False,
+                    "$id": "Action Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
+                "name": "MockTool-test_str_output",
+                "description": "test description: foo",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "values": {
+                            "type": "object",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "additionalProperties": False,
+                        }
+                    },
+                    "required": ["values"],
+                    "additionalProperties": False,
+                    "$id": "Action Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
+                "name": "MockTool-test_without_default_memory",
+                "description": "test description",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "values": {
+                            "type": "object",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "additionalProperties": False,
+                        }
+                    },
+                    "required": ["values"],
+                    "additionalProperties": False,
+                    "$id": "Action Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
+        },
+    ]
+
     def test_init(self):
         assert OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL)
 
@@ -137,26 +337,41 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
         assert text_artifact.value == "model-output"
 
-    def test_try_run_response_format(self, mock_chat_completion_create, prompt_stack, messages):
+    def test_try_run_with_tools(self, mock_chat_completion_tools_create, prompt_stack_with_tools, messages_with_tools):
         # Given
-        driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, response_format="json_object"
-        )
+        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        actions_artifact = driver.try_run(prompt_stack_with_tools)
 
         # Then
-        mock_chat_completion_create.assert_called_once_with(
+        mock_chat_completion_tools_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
+            messages=messages_with_tools,
+            tools=self.TOOLS_SCHEMA,
             seed=driver.seed,
-            response_format={"type": "json_object"},
         )
-        assert text_artifact.value == "model-output"
+        assert isinstance(actions_artifact, ActionsArtifact)
+        assert actions_artifact.actions == [
+            ActionsArtifact.Action(
+                tag="tool-call-id", name="ToolName", path="ActivityName", input={"parameter-name": "parameter-value"}
+            )
+        ]
+        assert actions_artifact.value is None
+        assert actions_artifact.to_text() == json.dumps(
+            [
+                {
+                    "tag": "tool-call-id",
+                    "name": "ToolName",
+                    "path": "ActivityName",
+                    "input": {"parameter-name": "parameter-value"},
+                }
+            ],
+            indent=2,
+        )
 
     def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
         # Given
@@ -174,6 +389,75 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream=True,
             messages=messages,
             seed=driver.seed,
+        )
+        assert text_artifact.value == "model-output"
+
+    def test_try_stream_run_with_tools(
+        self, mock_chat_completion_stream_tools_create, prompt_stack_with_tools, messages_with_tools
+    ):
+        # Given
+        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
+
+        # When
+        action_chunk_artifact = next(driver.try_stream(prompt_stack_with_tools))
+
+        # Then
+        mock_chat_completion_stream_tools_create.assert_called_with(
+            model=driver.model,
+            temperature=driver.temperature,
+            stop=driver.tokenizer.stop_sequences,
+            user=driver.user,
+            stream=True,
+            messages=messages_with_tools,
+            tools=self.TOOLS_SCHEMA,
+            seed=driver.seed,
+        )
+        assert isinstance(action_chunk_artifact, ActionChunkArtifact)
+        assert action_chunk_artifact.tag == "tool-call-id"
+        assert action_chunk_artifact.name == "ToolName"
+        assert action_chunk_artifact.path == "ActivityName"
+        assert action_chunk_artifact.index == 0
+        assert action_chunk_artifact.partial_input is None
+
+        # When
+        action_chunk_artifact = next(driver.try_stream(prompt_stack_with_tools))
+
+        # Then
+        mock_chat_completion_stream_tools_create.assert_called_with(
+            model=driver.model,
+            temperature=driver.temperature,
+            stop=driver.tokenizer.stop_sequences,
+            user=driver.user,
+            stream=True,
+            messages=messages_with_tools,
+            tools=self.TOOLS_SCHEMA,
+            seed=driver.seed,
+        )
+        assert isinstance(action_chunk_artifact, ActionChunkArtifact)
+        assert action_chunk_artifact.tag is None
+        assert action_chunk_artifact.name is None
+        assert action_chunk_artifact.path is None
+        assert action_chunk_artifact.index == 0
+        assert action_chunk_artifact.partial_input == '{"parameter-name": "parameter-value"}'
+
+    def test_try_run_with_response_format(self, mock_chat_completion_create, prompt_stack, messages):
+        # Given
+        driver = OpenAiChatPromptDriver(
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, response_format="json_object"
+        )
+
+        # When
+        text_artifact = driver.try_run(prompt_stack)
+
+        # Then
+        mock_chat_completion_create.assert_called_once_with(
+            model=driver.model,
+            temperature=driver.temperature,
+            stop=driver.tokenizer.stop_sequences,
+            user=driver.user,
+            messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
+            seed=driver.seed,
+            response_format={"type": "json_object"},
         )
         assert text_artifact.value == "model-output"
 
