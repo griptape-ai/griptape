@@ -810,8 +810,52 @@ team.run()
 
 ## Text to Speech Task
 
+This Task enables Structures to synthesize speech from text using [Text to Speech Engines](../../reference/griptape/engines/audio/text_to_speech_engine.md) and [Text to Speech Drivers](../../reference/griptape/drivers/text_to_speech/index.md).
 
+```python
+import os
+
+from griptape.drivers import ElevenLabsTextToSpeechDriver
+from griptape.engines import TextToSpeechEngine
+from griptape.tasks import TextToSpeechTask
+from griptape.structures import Pipeline
+
+
+driver = ElevenLabsTextToSpeechDriver(
+    api_key=os.getenv("ELEVEN_LABS_API_KEY"),
+    model="eleven_multilingual_v2",
+    voice="Matilda",
+)
+
+task = TextToSpeechTask(
+    text_to_speech_engine=TextToSpeechEngine(
+        text_to_speech_driver=driver,
+    ),
+)
+
+Pipeline(tasks=[task]).run("Generate audio from this text: 'Hello, world!'")
+```
 
 ## Audio Transcription Task 
 
+This Task enables Structures to transcribe speech from text using [Audio Transcription Engines](../../reference/griptape/engines/audio/audio_transcription_engines.md) and [Audio Transcription Drivers](../../reference/griptape/drivers/audio_transcription/index.md).
 
+```python
+from griptape.drivers import OpenAiAudioTranscriptionDriver
+from griptape.engines import AudioTranscriptionEngine
+from griptape.tasks import AudioTranscriptionTask
+from griptape.structures import Agent
+
+
+driver = OpenAiAudioTranscriptionDriver(
+    model="whisper-1"
+)
+
+task = AudioTranscriptionTask(
+    audio_transcription_engine=AudioTranscriptionEngine(
+        audio_transcription_driver=driver,
+    ),
+)
+
+Agent(tasks=[task]).run("Transcribe the following audio file: /Users/andrew/code/griptape/tests/resources/sentences2.wav")
+```

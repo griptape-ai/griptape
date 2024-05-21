@@ -12,6 +12,10 @@ from griptape.drivers import (
     OpenAiEmbeddingDriver,
     OpenAiImageGenerationDriver,
     OpenAiVisionImageQueryDriver,
+    BaseTextToSpeechDriver,
+    OpenAiTextToSpeechDriver,
+    BaseAudioTranscriptionDriver,
+    OpenAiAudioTranscriptionDriver,
 )
 
 
@@ -39,6 +43,14 @@ class OpenAiStructureConfig(StructureConfig):
         default=Factory(
             lambda: LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small"))
         ),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    text_to_speech_driver: BaseTextToSpeechDriver = field(
+        default=Factory(lambda: OpenAiTextToSpeechDriver(model="tts")), kw_only=True, metadata={"serializable": True}
+    )
+    audio_transcription_driver: BaseAudioTranscriptionDriver = field(
+        default=Factory(lambda: OpenAiAudioTranscriptionDriver(model="whisper-1")),
         kw_only=True,
         metadata={"serializable": True},
     )

@@ -57,7 +57,6 @@ class TestAzureOpenAiStructureConfig:
                 "style": None,
                 "type": "AzureOpenAiImageGenerationDriver",
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "image_query_driver": {
                 "base_url": None,
                 "image_quality": "auto",
@@ -81,6 +80,8 @@ class TestAzureOpenAiStructureConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
 
     def test_from_dict(self, config: AzureOpenAiStructureConfig):
