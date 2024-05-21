@@ -105,13 +105,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                     value = "".join(text_chunks).strip()
                     if action_chunks:
-                        actions = [
-                            ActionsArtifact.Action(
-                                tag=chunk.tag, name=chunk.name, path=chunk.path, input=json.loads(chunk.partial_input)
-                            )
-                            for chunk in action_chunks.values()
-                        ]
-                        result = ActionsArtifact(value=value, actions=actions)
+                        result = ActionsArtifact(
+                            value=value, actions=self.__build_actions_from_chunks(list(action_chunks.values()))
+                        )
                     else:
                         result = TextArtifact(value=value)
                 else:
@@ -144,3 +140,24 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     @abstractmethod
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]: ...
+
+    def __build_actions_from_chunks(self, action_chunks: list[ActionChunkArtifact]) -> list[ActionsArtifact.Action]:
+        actions = []
+
+        for chunk in action_chunks:
+            if chunk.partial_input is None:
+                raise ValueError("ActionChunkArtifact is missing partial_input field.")
+            if chunk.tag is None:
+                raise ValueError("ActionChunkArtifact is missing tag field.")
+            if chunk.name is None:
+                raise ValueError("ActionChunkArtifact is missing name field.")
+
+            try:
+                input = json.loads(chunk.partial_input)
+            except json.JSONDecodeError:
+                raise ValueError(f"Failed to decode JSON input: {chunk.partial_input}")
+
+            action = ActionsArtifact.Action(tag=chunk.tag, name=chunk.name, path=chunk.path, input=input)
+            actions.append(action)
+
+        return actions

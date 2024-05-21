@@ -249,9 +249,7 @@ class TestAmazonS3FileManagerDriver:
         artifact = driver.save_file(path, "foobar")
 
         # loop over the files in the bucket and print them
-        response = s3_client.list_objects_v2(Bucket=bucket)
-        for obj in response.get("Contents", []):
-            print(obj.get("Key"))
+        s3_client.list_objects_v2(Bucket=bucket)
 
         assert isinstance(artifact, ErrorArtifact)
         assert artifact.value == expected

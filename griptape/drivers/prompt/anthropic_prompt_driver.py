@@ -36,6 +36,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     )
     top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
+    function_calling: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         response = self.client.beta.tools.messages.create(**self._base_params(prompt_stack))

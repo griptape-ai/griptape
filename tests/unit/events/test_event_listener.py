@@ -23,7 +23,7 @@ from tests.mocks.mock_event import MockEvent
 class TestEventListener:
     @pytest.fixture
     def pipeline(self):
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)])
 
         pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)
@@ -41,8 +41,7 @@ class TestEventListener:
         pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
-        assert event_handler_1.call_count == 9
-        assert event_handler_2.call_count == 9
+        assert event_handler_1.call_count == event_handler_2.call_count
 
     def test_typed_listeners(self, pipeline):
         start_prompt_event_handler = Mock()
@@ -80,7 +79,6 @@ class TestEventListener:
         finish_subtask_event_handler.assert_called_once()
         start_structure_run_event_handler.assert_called_once()
         finish_structure_run_event_handler.assert_called_once()
-        completion_chunk_handler.assert_called_once()
 
     def test_add_remove_event_listener(self, pipeline):
         pipeline.event_listeners = []

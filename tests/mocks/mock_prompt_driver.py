@@ -1,11 +1,15 @@
 from __future__ import annotations
+
+import json
 from collections.abc import Iterator
+
 from attr import define, field
-from griptape.utils import PromptStack
+
+from griptape.artifacts import ActionsArtifact, TextArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
-from griptape.artifacts import TextArtifact, ActionsArtifact
+from griptape.utils import PromptStack
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 
@@ -14,42 +18,51 @@ class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
     mock_output: str = field(default="mock output", kw_only=True)
-    mock_tool_input: str = field(default="mock input", kw_only=True)
+    mock_thought: str = field(default="mock thought", kw_only=True)
+    mock_tool_input: str = field(default='{"values": {"test": "mock tool input"}}', kw_only=True)
+    emulate_cot: bool = field(default=False, kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        if prompt_stack.tools:
-            actions = [
-                ActionsArtifact.Action(
-                    tag=f"{tool.activity_name(activity)}-id",
-                    name=tool.name,
-                    path=tool.activity_name(activity),
-                    input={"values": self.mock_tool_input},
-                )
-                for tool in prompt_stack.tools
-                for activity in tool.activities()
-            ]
+        if self.emulate_cot:
+            if prompt_stack.tools and prompt_stack.inputs and prompt_stack.inputs[-1].role == PromptStack.USER_ROLE:
+                actions = [
+                    ActionsArtifact.Action(
+                        tag=f"{tool.activity_name(activity)}-id",
+                        name=tool.name,
+                        path=tool.activity_name(activity),
+                        input=json.loads(self.mock_tool_input),
+                        output=TextArtifact(value=self.mock_output),
+                    )
+                    for tool in prompt_stack.tools
+                    for activity in tool.activities()
+                ]
 
-            return ActionsArtifact(value=self.mock_output, actions=actions)
+                return ActionsArtifact(value=self.mock_thought, actions=actions)
+            else:
+                return TextArtifact(value=f"Answer: {self.mock_output}")
         else:
             return TextArtifact(value=self.mock_output)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]:
-        if prompt_stack.tools:
-            actions = [
-                ActionsArtifact.Action(
-                    tag=f"{tool.activity_name(activity)}-id",
-                    name=tool.name,
-                    path=tool.activity_name(activity),
-                    input={"values": self.mock_tool_input},
-                )
-                for tool in prompt_stack.tools
-                for activity in tool.activities()
-            ]
+        if self.emulate_cot:
+            if prompt_stack.tools and prompt_stack.inputs and prompt_stack.inputs[-1].role == PromptStack.USER_ROLE:
+                actions = [
+                    ActionsArtifact.Action(
+                        tag=f"{tool.activity_name(activity)}-id",
+                        name=tool.name,
+                        path=tool.activity_name(activity),
+                        input=json.loads(self.mock_tool_input),
+                        output=TextArtifact(value=self.mock_output),
+                    )
+                    for tool in prompt_stack.tools
+                    for activity in tool.activities()
+                ]
 
-            for index, action in enumerate(actions):
-                yield ActionChunkArtifact(
-                    value=self.mock_output, tag=action.tag, name=action.name, path=action.path, index=index
-                )
-                yield ActionChunkArtifact(value=self.mock_output, index=index, partial_input=self.mock_tool_input)
+                yield TextArtifact(value=self.mock_thought)
+                for index, action in enumerate(actions):
+                    yield ActionChunkArtifact("", tag=action.tag, name=action.name, path=action.path, index=index)
+                    yield ActionChunkArtifact("", index=index, partial_input=self.mock_tool_input)
+            else:
+                yield TextArtifact(value=f"Answer: {self.mock_output}")
         else:
             yield TextArtifact(value=self.mock_output)

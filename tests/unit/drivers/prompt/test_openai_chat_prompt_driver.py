@@ -100,7 +100,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         prompt_stack.add_tool_call_input(
-            content="foo",
+            content=None,
             actions=[
                 ActionsArtifact.Action(
                     tag="tool-call-id",
@@ -111,7 +111,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             ],
         )
         prompt_stack.add_tool_result_input(
-            content="bar",
+            content=None,
             actions=[
                 ActionsArtifact.Action(
                     tag="tool-call-id",

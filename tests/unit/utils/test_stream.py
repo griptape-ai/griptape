@@ -13,7 +13,10 @@ class TestStream:
 
     @pytest.fixture()
     def agent_with_tools(self, request):
-        return Agent(prompt_driver=MockPromptDriver(stream=True), tools=[MockTool(allowlist=["test"])])
+        return Agent(
+            prompt_driver=MockPromptDriver(stream=True, emulate_cot=True),
+            tools=[MockTool(allowlist=["test"], off_prompt=False)],
+        )
 
     def test_stream_disabled(self, agent):
         agent = Agent(prompt_driver=MockPromptDriver(stream=False))
@@ -27,11 +30,10 @@ class TestStream:
         assert chat_stream.structure == agent
         chat_stream_run = chat_stream.run()
         assert isinstance(chat_stream_run, Iterator)
-        chat_stream_artifact = next(chat_stream_run)
-        assert chat_stream_artifact.value == "mock output"
+        assert next(chat_stream_run).value == "mock output"
+        assert next(chat_stream_run).value == "\n"
 
         with pytest.raises(StopIteration):
-            next(chat_stream_run)
             next(chat_stream_run)
 
     def test_stream_run_with_tools(self, agent_with_tools):
@@ -40,11 +42,13 @@ class TestStream:
         assert chat_stream.structure == agent_with_tools
         chat_stream_run = chat_stream.run()
         assert isinstance(chat_stream_run, Iterator)
-        chat_stream_artifact = next(chat_stream_run)
-        assert chat_stream_artifact.value == "\nMockTool.test (test-id)"
-        chat_stream_artifact = next(chat_stream_run)
-        assert chat_stream_artifact.value == "mock input"
+
+        assert next(chat_stream_run).value == "mock thought"
+        assert next(chat_stream_run).value == "\nMockTool.test (test-id)"
+        assert next(chat_stream_run).value == '{"values": {"test": "mock tool input"}}'
+        assert next(chat_stream_run).value == "\n"
+        assert next(chat_stream_run).value == "Answer: mock output"
+        assert next(chat_stream_run).value == "\n"
 
         with pytest.raises(StopIteration):
-            next(chat_stream_run)
             next(chat_stream_run)

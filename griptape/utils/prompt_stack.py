@@ -73,15 +73,13 @@ class PromptStack(SerializableMixin):
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, PromptStack.ASSISTANT_ROLE)
 
-    # TODO: content should be optional
-    def add_tool_call_input(self, content: str, actions: list[ActionsArtifact.Action]) -> Input:
-        self.inputs.append(self.Input(content=content, role=PromptStack.TOOL_CALL_ROLE, tool_calls=actions))
+    def add_tool_call_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
+        self.inputs.append(self.Input(content=content or "", role=PromptStack.TOOL_CALL_ROLE, tool_calls=actions))
 
         return self.inputs[-1]
 
-    # TODO: content should be optional
-    def add_tool_result_input(self, content: str, actions: list[ActionsArtifact.Action]) -> Input:
-        self.inputs.append(self.Input(content=content, role=PromptStack.TOOL_RESULT_ROLE, tool_calls=actions))
+    def add_tool_result_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
+        self.inputs.append(self.Input(content=content or "", role=PromptStack.TOOL_RESULT_ROLE, tool_calls=actions))
 
         return self.inputs[-1]
 

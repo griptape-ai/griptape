@@ -1,10 +1,17 @@
-from griptape.events import FinishPromptEvent, StartPromptEvent
-from griptape.utils import PromptStack
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
+import json
+
+import pytest
+
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.tasks import PromptTask
+from griptape.artifacts.actions_artifact import ActionsArtifact
+from griptape.events import FinishPromptEvent, StartPromptEvent
 from griptape.structures import Pipeline
+from griptape.structures.agent import Agent
+from griptape.tasks import PromptTask
+from griptape.utils import PromptStack
+from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestBasePromptDriver:
@@ -38,6 +45,58 @@ class TestBasePromptDriver:
 
     def test_run(self):
         assert isinstance(MockPromptDriver().run(PromptStack(inputs=[])), TextArtifact)
+
+    def test_run_with_tools(self):
+        output = MockPromptDriver(emulate_cot=True).run(
+            PromptStack(
+                inputs=[PromptStack.Input("test", role=PromptStack.USER_ROLE)], tools=[MockTool(allowlist=["test"])]
+            )
+        )
+
+        assert isinstance(output, ActionsArtifact)
+        assert output.value == "mock thought"
+        assert output.actions[0].tag == "test-id"
+        assert output.actions[0].name == "MockTool"
+        assert output.actions[0].path == "test"
+        assert output.actions[0].input == {"values": {"test": "mock tool input"}}
+
+        # Mock Prompt Driver simulates CoT by using an Action if the last input is from the user, otherwise return the answer.
+        output = MockPromptDriver().run(PromptStack())
+        assert isinstance(output, TextArtifact)
+        assert output.value == "mock output"
+
+    def test_run_stream(self):
+        output = MockPromptDriver(stream=True, structure=Agent()).run(PromptStack(inputs=[]))
+
+        assert isinstance(output, TextArtifact)
+        assert output.value == "mock output"
+
+    def test_run_stream_with_tools(self):
+        output = MockPromptDriver(stream=True, emulate_cot=True, structure=Agent()).run(
+            PromptStack(
+                inputs=[PromptStack.Input("test", role=PromptStack.USER_ROLE)], tools=[MockTool(allowlist=["test"])]
+            )
+        )
+
+        assert isinstance(output, ActionsArtifact)
+        assert output.value == "mock thought"
+        assert output.actions[0].tag == "test-id"
+        assert output.actions[0].name == "MockTool"
+        assert output.actions[0].path == "test"
+        assert output.actions[0].input == {"values": {"test": "mock tool input"}}
+
+        # Mock Prompt Driver simulates CoT by using an Action if the last input is from the user, otherwise return the answer.
+        output = MockPromptDriver(stream=True, structure=Agent()).run(PromptStack())
+        assert isinstance(output, TextArtifact)
+        assert output.value == "mock output"
+
+    def test_run_stream_with_bad_tool_input(self):
+        with pytest.raises(json.JSONDecodeError):
+            MockPromptDriver(stream=True, emulate_cot=True, structure=Agent(), mock_tool_input='{"values":,}').run(
+                PromptStack(
+                    inputs=[PromptStack.Input("test", role=PromptStack.USER_ROLE)], tools=[MockTool(allowlist=["test"])]
+                )
+            )
 
     def test_token_count(self):
         assert (
