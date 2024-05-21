@@ -30,7 +30,7 @@ engine.run(
 
 ### Audio Transcription Engine
 
-The [Audio Transcription Engine](../../reference/griptape/engine/audio/audio_transcription_engine.md) facilitates transcribing speech from audio inputs.
+The [Audio Transcription Engine](../../reference/griptape/engines/audio/audio_transcription_engine.md) facilitates transcribing speech from audio inputs.
 
 ```python
 from griptape.drivers import OpenAiAudioTranscriptionDriver
