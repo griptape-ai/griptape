@@ -6,7 +6,7 @@ from attrs import define, field, Factory
 from schema import Schema, Literal
 
 from griptape.artifacts import ErrorArtifact, AudioArtifact, TextArtifact
-from griptape.drivers import BaseAudioTranscriptionDriver
+from griptape.engines import AudioTranscriptionEngine
 from griptape.loaders.audio_loader import AudioLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
@@ -17,7 +17,7 @@ from griptape.utils.decorators import activity
 class TranscriptionClient(BaseTool):
     """A tool that can be used to generate transcriptions from input audio."""
 
-    driver: BaseAudioTranscriptionDriver = field(kw_only=True)
+    engine: AudioTranscriptionEngine = field(kw_only=True)
     audio_loader: AudioLoader = field(default=Factory(lambda: AudioLoader()), kw_only=True)
 
     @activity(
@@ -32,7 +32,7 @@ class TranscriptionClient(BaseTool):
         with open(audio_path, "rb") as f:
             audio_artifact = self.audio_loader.load(f.read())
 
-        return self.driver.run_transcription(audio_artifact)
+        return self.engine.run(audio_artifact)
 
     @activity(
         config={
@@ -52,4 +52,4 @@ class TranscriptionClient(BaseTool):
             AudioArtifact, load_artifact_from_memory(memory, artifact_namespace, artifact_name, AudioArtifact)
         )
 
-        return self.driver.run_transcription(audio_artifact)
+        return self.engine.run(audio_artifact)

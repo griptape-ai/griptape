@@ -24,16 +24,20 @@ class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
         )
     )
 
-    def try_transcription(
-        self, audio: AudioArtifact, prompts: Optional[list[str]] = None, negative_prompts: Optional[list[str]] = None
-    ) -> TextArtifact:
+    def try_transcription(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
         additional_params = {}
 
         if prompts is not None:
             additional_params["prompt"] = ", ".join(prompts)
 
         transcription = self.client.audio.transcriptions.create(
-            model=self.model, file=("a.m4a", io.BytesIO(audio.value)), response_format="json", **additional_params
+            # Even though we're not actually providing a file to the client, the API still requires that we send a file
+            # name. We set the file name to use the same format as the audio file so that the API can reject
+            # it if the format is unsupported.
+            model=self.model,
+            file=(f"a.{audio.format}", io.BytesIO(audio.value)),
+            response_format="json",
+            **additional_params,
         )
 
         return TextArtifact(value=transcription.text)
