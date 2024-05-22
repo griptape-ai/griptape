@@ -242,6 +242,15 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
 - text2text-generation
 - text-generation
 
+!!! warning
+    Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by
+    [Hugging Face serverless inference](https://huggingface.co/docs/api-inference/en/index) will not work with this driver.
+    Due to the limitations of Hugging Face serverless inference, only models that are than 10GB are supported.
+
+!!! info
+    The `prompt_stack_to_string_converter` function is intended to convert a `PromptStack` to model specific input. You
+    should consult the model's documentation to determine the correct format.
+
 Let's recreate the [Falcon-7B-Instruct](https://huggingface.co/tiiuae/falcon-7b-instruct) example using Griptape:
 
 ```python
@@ -358,7 +367,7 @@ def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
 agent = Agent(
     config=StructureConfig(
         prompt_driver=HuggingFacePipelinePromptDriver(
-            model="tiiuae/falcon-7b-instruct",
+            model="TinyLlama/TinyLlama-1.1B-Chat-v0.6",
             prompt_stack_to_string=prompt_stack_to_string_converter,
         )
     ),
