@@ -184,10 +184,16 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 ### Tools
 
-Install dev dependencies with Poetry:
+Install dev dependencies via Make:
 
 ```shell
-poetry install --all-extras --with dev --with test
+make install
+```
+
+Or install by calling Poetry directly:
+
+```shell
+poetry install --all-extras --with dev --with test --with docs
 ```
 
 Configure pre-commit to ensure that your code is formatted correctly and passes all checks:
