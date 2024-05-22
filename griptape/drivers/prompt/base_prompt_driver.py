@@ -35,6 +35,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         model: The model name.
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
+        use_native_tools: Whether to use LLM's native function calling capabilities. Must be supported by the model.
     """
 
     temperature: float = field(default=0.1, kw_only=True, metadata={"serializable": True})
