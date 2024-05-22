@@ -241,6 +241,17 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         prompt_stack.add_tool_call_input(
+            content="Thinking",
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                )
+            ],
+        )
+        prompt_stack.add_tool_call_input(
             content=None,
             actions=[
                 ActionsArtifact.Action(
@@ -266,6 +277,18 @@ class TestAnthropicPromptDriver:
         expected_messages = [
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
+            {
+                "content": [
+                    {"text": "Thinking", "type": "text"},
+                    {
+                        "id": "tool-call-id",
+                        "input": {"parameter-name": "parameter-value"},
+                        "name": "ToolName-ActivityName",
+                        "type": "tool_use",
+                    },
+                ],
+                "role": "assistant",
+            },
             {
                 "content": [
                     {
@@ -382,6 +405,17 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         prompt_stack.add_tool_call_input(
+            content="Thinking",
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                )
+            ],
+        )
+        prompt_stack.add_tool_call_input(
             content=None,
             actions=[
                 ActionsArtifact.Action(
@@ -408,6 +442,18 @@ class TestAnthropicPromptDriver:
             {"role": "user", "content": "generic-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
+            {
+                "content": [
+                    {"text": "Thinking", "type": "text"},
+                    {
+                        "id": "tool-call-id",
+                        "input": {"parameter-name": "parameter-value"},
+                        "name": "ToolName-ActivityName",
+                        "type": "tool_use",
+                    },
+                ],
+                "role": "assistant",
+            },
             {
                 "content": [
                     {

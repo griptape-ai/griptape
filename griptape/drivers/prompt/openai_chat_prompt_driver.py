@@ -160,47 +160,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         messages = []
 
         for input in prompt_stack.inputs:
-            # Each Tool result requires a separate message
-            if input.is_tool_result():
-                actions_artifact = input.content
-
-                if isinstance(actions_artifact, ActionsArtifact):
-                    tool_result_messages = [
-                        {
-                            "tool_call_id": tool_call.tag,
-                            "role": self.__to_openai_role(input),
-                            "name": f"{tool_call.name}-{tool_call.path}",
-                            "content": tool_call.output.to_text(),
-                        }
-                        for tool_call in actions_artifact.actions
-                    ]
-                    messages.extend(tool_result_messages)
-                else:
-                    raise ValueError("PromptStack Input content must be an ActionsArtifact")
-
-            else:
-                if input.is_tool_call():
-                    actions_artifact = input.content
-
-                    if isinstance(actions_artifact, ActionsArtifact):
-                        tool_calls = [
-                            {
-                                "id": action.tag,
-                                "function": {
-                                    "name": f"{action.name}-{action.path}",
-                                    "arguments": json.dumps(action.input),
-                                },
-                                "type": "function",
-                            }
-                            for action in actions_artifact.actions
-                        ]
-                        message = {"role": self.__to_openai_role(input), "tool_calls": tool_calls}
-                    else:
-                        raise ValueError("PromptStack Input content must be an ActionsArtifact")
-                else:
-                    message = {"role": self.__to_openai_role(input), "content": input.content}
-
-                messages.append(message)
+            messages.extend(self.__to_openai_content(input))
 
         return messages
 
@@ -262,6 +222,45 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         self._ratelimit_requests_remaining = response.headers.get("x-ratelimit-remaining-requests")
         self._ratelimit_token_limit = response.headers.get("x-ratelimit-limit-tokens")
         self._ratelimit_tokens_remaining = response.headers.get("x-ratelimit-remaining-tokens")
+
+    def __to_openai_content(self, input: PromptStack.Input) -> list[dict]:
+        content = []
+
+        if input.is_tool_call():
+            actions_artifact = input.content
+
+            if isinstance(actions_artifact, ActionsArtifact):
+                tool_calls = [
+                    {
+                        "id": action.tag,
+                        "function": {"name": f"{action.name}-{action.path}", "arguments": json.dumps(action.input)},
+                        "type": "function",
+                    }
+                    for action in actions_artifact.actions
+                ]
+                content.append({"role": self.__to_openai_role(input), "tool_calls": tool_calls})
+            else:
+                raise ValueError("PromptStack Input content must be an ActionsArtifact")
+        elif input.is_tool_result():
+            actions_artifact = input.content
+
+            if isinstance(actions_artifact, ActionsArtifact):
+                tool_result_messages = [
+                    {
+                        "tool_call_id": tool_call.tag,
+                        "role": self.__to_openai_role(input),
+                        "name": f"{tool_call.name}-{tool_call.path}",
+                        "content": tool_call.output.to_text(),
+                    }
+                    for tool_call in actions_artifact.actions
+                ]
+                content.extend(tool_result_messages)
+            else:
+                raise ValueError("PromptStack Input content must be an ActionsArtifact")
+        else:
+            content.append({"role": self.__to_openai_role(input), "content": input.content})
+
+        return content
 
     def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
         if prompt_input.is_system():
