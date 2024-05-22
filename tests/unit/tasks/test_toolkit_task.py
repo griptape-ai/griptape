@@ -7,7 +7,6 @@ from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
-from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
 from tests.utils import defaults
 
 
@@ -159,7 +158,7 @@ class TestToolkitSubtask:
         output = """Answer: done"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 
@@ -168,6 +167,32 @@ class TestToolkitSubtask:
         assert len(task.tools) == 2
         assert len(task.subtasks) == 1
         assert result.output_task.output.to_text() == "done"
+        assert task.prompt_stack.inputs[0].is_system()
+        assert task.prompt_stack.inputs[1].is_user()
+        assert task.prompt_stack.inputs[2].is_assistant()
+
+    def test_run_with_function_calling(self):
+        output = """done"""
+
+        task = ToolkitTask(
+            "test",
+            tools=[
+                MockTool(allowlist=["test"], name="Tool1", off_prompt=False),
+                MockTool(allowlist=["test"], name="Tool2", off_prompt=False),
+            ],
+        )
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output, emulate_cot=True, function_calling=True))
+
+        agent.add_task(task)
+
+        result = agent.run()
+
+        assert len(task.tools) == 2
+        assert len(task.subtasks) == 2
+        assert result.output_task.output.to_text() == "done"
+        assert task.prompt_stack.inputs[0].is_system()
+        assert task.prompt_stack.inputs[1].is_user()
+        assert task.prompt_stack.inputs[2].is_assistant()
 
     def test_run_max_subtasks(self):
         valid_input = (
@@ -178,7 +203,7 @@ class TestToolkitSubtask:
         )
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=valid_input))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=valid_input))
 
         agent.add_task(task)
 
@@ -191,7 +216,7 @@ class TestToolkitSubtask:
         output = """foo bar"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 

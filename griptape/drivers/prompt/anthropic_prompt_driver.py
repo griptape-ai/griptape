@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Optional, Any, TYPE_CHECKING
 from collections.abc import Iterator
 from attr import define, field, Factory
+from schema import Schema
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.utils import PromptStack, import_optional_dependency
@@ -82,7 +83,9 @@ class AnthropicPromptDriver(BasePromptDriver):
                 if delta_type == "text_delta":
                     yield TextArtifact(value=delta.text)
                 elif delta_type == "input_json_delta":
-                    yield ActionChunkArtifact(value="asdf", index=chunk.index, partial_input=delta.partial_json)
+                    yield ActionChunkArtifact(
+                        value=delta.partial_json, index=chunk.index, partial_input=delta.partial_json
+                    )
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> dict:
         messages = [
@@ -127,7 +130,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             {
                 "name": f"{tool.name}-{tool.activity_name(activity)}",
                 "description": tool.activity_description(activity),
-                "input_schema": tool.activity_schema(activity).json_schema("Action Schema"),
+                "input_schema": (tool.activity_schema(activity) or Schema({})).json_schema("Input Schema"),
             }
             for tool in tools
             for activity in tool.activities()

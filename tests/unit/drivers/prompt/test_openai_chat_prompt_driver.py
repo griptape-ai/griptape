@@ -1,21 +1,20 @@
 import datetime
-
 import json
-from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall
+from unittest.mock import Mock
+
+import pytest
+from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall, ChoiceDeltaToolCallFunction
+from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall, Function
 from transformers import AutoTokenizer
 
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.drivers import OpenAiChatPromptDriver
+from griptape.tokenizers import OpenAiTokenizer
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
 from griptape.utils import PromptStack
-from griptape.tokenizers import OpenAiTokenizer
-from unittest.mock import Mock
 from tests.mocks.mock_tool.tool import MockTool
-from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall, Function
-from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCallFunction
-import pytest
 
 
 class TestOpenAiChatPromptDriverFixtureMixin:
@@ -59,26 +58,42 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def mock_chat_completion_stream_tools_create(self, mocker):
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
-        mock_chunk_1 = Mock()
-        mock_choice_1 = Mock()
-        mock_choice_1.delta.content = "model-output"
-        mock_choice_1.delta.tool_calls = [
-            ChoiceDeltaToolCall(
-                index=0, id="tool-call-id", function=ChoiceDeltaToolCallFunction(name="ToolName-ActivityName")
-            )
+        mock_chunks = [
+            Mock(
+                choices=[
+                    Mock(
+                        delta=Mock(
+                            content="model-output",
+                            tool_calls=[
+                                ChoiceDeltaToolCall(
+                                    index=0,
+                                    id="tool-call-id",
+                                    function=ChoiceDeltaToolCallFunction(name="ToolName-ActivityName"),
+                                )
+                            ],
+                        )
+                    )
+                ]
+            ),
+            Mock(
+                choices=[
+                    Mock(
+                        delta=Mock(
+                            content="model-output",
+                            tool_calls=[
+                                ChoiceDeltaToolCall(
+                                    index=0,
+                                    function=ChoiceDeltaToolCallFunction(
+                                        arguments='{"parameter-name": "parameter-value"}'
+                                    ),
+                                )
+                            ],
+                        )
+                    )
+                ]
+            ),
         ]
-        mock_chunk_1.choices = [mock_choice_1]
-
-        mock_chunk_2 = Mock()
-        mock_choice_2 = Mock()
-        mock_choice_2.delta.content = "model-output"
-        mock_choice_2.delta.tool_calls = [
-            ChoiceDeltaToolCall(
-                index=0, function=ChoiceDeltaToolCallFunction(arguments='{"parameter-name": "parameter-value"}')
-            )
-        ]
-        mock_chunk_2.choices = [mock_choice_2]
-        mock_chat_create.return_value = iter([mock_chunk_1, mock_chunk_2])
+        mock_chat_create.return_value = iter(mock_chunks)
         return mock_chat_create
 
     @pytest.fixture
@@ -208,7 +223,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                     "required": ["values"],
                     "additionalProperties": False,
-                    "$id": "Action Schema",
+                    "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                 },
             },
@@ -230,7 +245,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                     "required": ["values"],
                     "additionalProperties": False,
-                    "$id": "Action Schema",
+                    "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                 },
             },
@@ -245,7 +260,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     "properties": {},
                     "required": [],
                     "additionalProperties": False,
-                    "$id": "Action Schema",
+                    "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                 },
             },
@@ -260,7 +275,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     "properties": {},
                     "required": [],
                     "additionalProperties": False,
-                    "$id": "Action Schema",
+                    "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                 },
             },
@@ -282,7 +297,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                     "required": ["values"],
                     "additionalProperties": False,
-                    "$id": "Action Schema",
+                    "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                 },
             },
@@ -304,7 +319,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                     "required": ["values"],
                     "additionalProperties": False,
-                    "$id": "Action Schema",
+                    "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                 },
             },
@@ -393,9 +408,27 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     ):
         # Given
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
+        expected_chunks = [
+            ActionChunkArtifact(
+                value="ToolName-ActivityName",
+                tag="tool-call-id",
+                name="ToolName",
+                path="ActivityName",
+                index=0,
+                partial_input=None,
+            ),
+            ActionChunkArtifact(
+                value='{"parameter-name": "parameter-value"}',
+                tag=None,
+                name=None,
+                path=None,
+                index=0,
+                partial_input='{"parameter-name": "parameter-value"}',
+            ),
+        ]
 
         # When
-        action_chunk_artifact = next(driver.try_stream(prompt_stack_with_tools))
+        action_chunk_artifact = list(driver.try_stream(prompt_stack_with_tools))
 
         # Then
         mock_chat_completion_stream_tools_create.assert_called_with(
@@ -408,33 +441,17 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             tools=self.TOOLS_SCHEMA,
             seed=driver.seed,
         )
-        assert isinstance(action_chunk_artifact, ActionChunkArtifact)
-        assert action_chunk_artifact.tag == "tool-call-id"
-        assert action_chunk_artifact.name == "ToolName"
-        assert action_chunk_artifact.path == "ActivityName"
-        assert action_chunk_artifact.index == 0
-        assert action_chunk_artifact.partial_input is None
 
-        # When
-        action_chunk_artifact = next(driver.try_stream(prompt_stack_with_tools))
-
-        # Then
-        mock_chat_completion_stream_tools_create.assert_called_with(
-            model=driver.model,
-            temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
-            user=driver.user,
-            stream=True,
-            messages=messages_with_tools,
-            tools=self.TOOLS_SCHEMA,
-            seed=driver.seed,
-        )
-        assert isinstance(action_chunk_artifact, ActionChunkArtifact)
-        assert action_chunk_artifact.tag is None
-        assert action_chunk_artifact.name is None
-        assert action_chunk_artifact.path is None
-        assert action_chunk_artifact.index == 0
-        assert action_chunk_artifact.partial_input == '{"parameter-name": "parameter-value"}'
+        for chunk, expected_chunk in zip(action_chunk_artifact, expected_chunks):
+            if isinstance(chunk, ActionChunkArtifact):
+                assert chunk.value == expected_chunk.value
+                assert chunk.tag == expected_chunk.tag
+                assert chunk.name == expected_chunk.name
+                assert chunk.path == expected_chunk.path
+                assert chunk.index == expected_chunk.index
+                assert chunk.partial_input == expected_chunk.partial_input
+            else:
+                assert chunk.value == expected_chunk.value
 
     def test_try_run_with_response_format(self, mock_chat_completion_create, prompt_stack, messages):
         # Given

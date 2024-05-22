@@ -130,7 +130,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                             value = f"{name}-{path}"
                         else:
                             name, path = None, None
-                            value = tool_call_delta.function.arguments
+                            value = tool_call_delta.function.arguments or ""
 
                         yield ActionChunkArtifact(
                             value=value,
@@ -274,7 +274,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 "function": {
                     "name": f"{tool.name}-{tool.activity_name(activity)}",
                     "description": tool.activity_description(activity),
-                    "parameters": (tool.activity_schema(activity) or Schema({})).json_schema("Action Schema"),
+                    "parameters": (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema"),
                 },
                 "type": "function",
             }

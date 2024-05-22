@@ -69,8 +69,12 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_input(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_tool_call_input(s.thought, actions=s.actions)
-                stack.add_tool_result_input(s.actions)
+                if self.prompt_driver.function_calling:
+                    stack.add_tool_call_input(s.thought, actions=s.actions)
+                    stack.add_tool_result_input(s.actions)
+                else:
+                    stack.add_assistant_input(self.generate_assistant_subtask_template(s))
+                    stack.add_user_input(self.generate_user_subtask_template(s))
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
