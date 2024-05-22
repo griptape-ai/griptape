@@ -1,5 +1,4 @@
 from griptape.events import BaseEvent
 
 
-class BaseAudioTranscriptionEvent(BaseEvent):
-    ...
+class BaseAudioTranscriptionEvent(BaseEvent): ...

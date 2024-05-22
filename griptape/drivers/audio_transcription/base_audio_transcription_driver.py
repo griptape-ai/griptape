@@ -39,5 +39,4 @@ class BaseAudioTranscriptionDriver(SerializableMixin, ExponentialBackoffMixin, A
             raise Exception("Failed to run audio transcription")
 
     @abstractmethod
-    def try_transcription(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
-        ...
+    def try_transcription(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact: ...
