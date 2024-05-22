@@ -65,7 +65,7 @@ Griptape offers the following Prompt Drivers for interacting with LLMs.
 ### OpenAI Chat
 
 The [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) connects to the [OpenAI Chat](https://platform.openai.com/docs/guides/chat) API.
-When used with a [Toolkit Task](../structures/tasks.md#toolkit-task) or [Tool Task](../../structures/tasks.md#tool-task), it will use OpenAi's [function calling](https://platform.openai.com/docs/guides/function-calling) feature. This can be disabled by setting `use_native_tools=False`.
+When used with a [Toolkit Task](../structures/tasks.md#toolkit_task) or [Tool Task](../structures/tasks.md#tool_task), it will use OpenAi's [function calling](https://platform.openai.com/docs/guides/function-calling) feature. This can be disabled by setting `use_native_tools=False`.
 
 ```python
 import os
@@ -192,7 +192,7 @@ agent.run('What is the sentiment of this review? Review: "I really enjoyed this 
     This driver requires the `drivers-prompt-anthropic` [extra](../index.md#extras).
 
 The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_prompt_driver.md) connects to the Anthropic [Messages](https://docs.anthropic.com/claude/reference/messages_post) API.
-When used with a [Toolkit Task](../structures/tasks.md#toolkit-task) or [Tool Task](../../structures/tasks.md#tool-task), it will use Anthropics's [tool use](https://docs.anthropic.com/en/docs/tool-use) feature. This can be disabled by setting `use_native_tools=False`.
+When used with a [Toolkit Task](../structures/tasks.md#toolkit_task) or [Tool Task](../structures/tasks.md#tool_task), it will use Anthropics's [tool use](https://docs.anthropic.com/en/docs/tool-use) feature. This can be disabled by setting `use_native_tools=False`.
 
 ```python
 import os
