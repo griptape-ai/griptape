@@ -1,10 +1,12 @@
-You can choose to either answer to the user's request, or execute an action.
-
-If you choose to answer the user's request, you must respond with the following format:
-Answer: <final answer>
+You can execute an action or answer the user's request.
+{% if not use_native_tools %}
 
 If you choose to execute an action, you must respond with the following format:
 Action: <JSON object that MUST follow this schema: {{ actions_schema }}>
+
+{% endif %}
+You must use the following format when providing your final answer:
+Answer: <final answer>
 
 {% if meta_memory %}
 

@@ -35,7 +35,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         response_format: An optional OpenAi Chat Completion response format. Currently only supports `json_object` which will enable OpenAi's JSON mode.
         seed: An optional OpenAi Chat Completion seed.
         ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
-        function_calling: Whether to use native function calling. Defaults to `True`.
+        use_native_tools: Whether to use native function calling. Defaults to `True`.
         _ratelimit_request_limit: The maximum number of requests allowed in the current rate limit window.
         _ratelimit_requests_remaining: The number of requests remaining in the current rate limit window.
         _ratelimit_requests_reset_at: The time at which the current rate limit window resets.
@@ -75,7 +75,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
-    function_calling: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _ratelimit_request_limit: Optional[int] = field(init=False, default=None)
     _ratelimit_requests_remaining: Optional[int] = field(init=False, default=None)
     _ratelimit_requests_reset_at: Optional[datetime] = field(init=False, default=None)
@@ -201,8 +202,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
         return (
-            {"tools": self.__to_openai_tools(prompt_stack.tools)}
-            if prompt_stack.tools and self.function_calling
+            {"tools": self.__to_openai_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
+            if prompt_stack.tools and self.use_native_tools
             else {}
         )
 

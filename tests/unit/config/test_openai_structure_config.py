@@ -25,7 +25,7 @@ class TestOpenAiStructureConfig:
                 "max_tokens": None,
                 "stream": False,
                 "user": "",
-                "function_calling": True,
+                "use_native_tools": True,
             },
             "conversation_memory_driver": None,
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},

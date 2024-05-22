@@ -22,7 +22,7 @@ class TestGoogleStructureConfig:
                 "model": "gemini-pro",
                 "top_p": None,
                 "top_k": None,
-                "function_calling": False,
+                "use_native_tools": False,
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {"type": "DummyImageQueryDriver"},

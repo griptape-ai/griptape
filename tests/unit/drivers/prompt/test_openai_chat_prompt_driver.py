@@ -362,6 +362,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=messages_with_tools,
+            tool_choice="auto",
             tools=self.TOOLS_SCHEMA,
             seed=driver.seed,
         )
@@ -438,6 +439,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             stream=True,
             messages=messages_with_tools,
+            tool_choice="auto",
             tools=self.TOOLS_SCHEMA,
             seed=driver.seed,
         )

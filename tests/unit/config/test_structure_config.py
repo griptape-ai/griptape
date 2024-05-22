@@ -15,7 +15,7 @@ class TestStructureConfig:
                 "temperature": 0.1,
                 "max_tokens": None,
                 "stream": False,
-                "function_calling": False,
+                "use_native_tools": False,
             },
             "conversation_memory_driver": None,
             "embedding_driver": {"type": "DummyEmbeddingDriver"},

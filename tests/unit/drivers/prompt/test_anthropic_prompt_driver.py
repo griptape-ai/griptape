@@ -217,7 +217,6 @@ class TestAnthropicPromptDriver:
             temperature=0.1,
             top_p=0.999,
             top_k=250,
-            tool_choice={"type": "auto"},
             **{"system": "system-input"} if system_enabled else {},
         )
         assert text_artifact.value == "model-output"
@@ -321,7 +320,6 @@ class TestAnthropicPromptDriver:
             stream=True,
             top_p=0.999,
             top_k=250,
-            tool_choice={"type": "auto"},
             **{"system": "system-input"} if system_enabled else {},
         )
         assert text_artifact.value == "model-output"

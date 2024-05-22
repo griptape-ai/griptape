@@ -1,15 +1,17 @@
 from __future__ import annotations
-from typing import Optional, Any, TYPE_CHECKING
+
 from collections.abc import Iterator
-from attr import define, field, Factory
+from typing import TYPE_CHECKING, Any, Optional
+
+from attr import Factory, define, field
 from schema import Schema
-from griptape.artifacts import TextArtifact
-from griptape.artifacts.base_artifact import BaseArtifact
-from griptape.utils import PromptStack, import_optional_dependency
-from griptape.artifacts import ActionsArtifact
+
+from griptape.artifacts import ActionsArtifact, TextArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
+from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
+from griptape.utils import PromptStack, import_optional_dependency
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -38,7 +40,8 @@ class AnthropicPromptDriver(BasePromptDriver):
     )
     top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
-    function_calling: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         response = self.client.beta.tools.messages.create(**self._base_params(prompt_stack))
@@ -99,8 +102,8 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
         return (
-            {"tools": self.__to_anthropic_tools(prompt_stack.tools)}
-            if prompt_stack.tools and self.function_calling
+            {"tools": self.__to_anthropic_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
+            if prompt_stack.tools and self.use_native_tools
             else {}
         )
 
@@ -112,7 +115,6 @@ class AnthropicPromptDriver(BasePromptDriver):
             "max_tokens": self.max_output_tokens(self.prompt_stack_to_string(prompt_stack)),
             "top_p": self.top_p,
             "top_k": self.top_k,
-            "tool_choice": {"type": "auto"},
             **self._prompt_stack_to_tools(prompt_stack),
             **self._prompt_stack_to_messages(prompt_stack),
         }
@@ -143,28 +145,29 @@ class AnthropicPromptDriver(BasePromptDriver):
             if not isinstance(actions_artifact, ActionsArtifact):
                 raise ValueError("PromptStack Input content must be an ActionsArtifact")
 
-            return [
+            tool_results = [
                 {"type": "tool_result", "tool_use_id": action.tag, "content": action.output.to_text()}
                 for action in actions_artifact.actions
             ]
+
+            return tool_results
         elif input.is_tool_call():
             actions_artifact = input.content
 
             if not isinstance(actions_artifact, ActionsArtifact):
                 raise ValueError("PromptStack Input content must be an ActionsArtifact")
 
-            return [
-                {"type": "text", "text": actions_artifact.value},
-                *[
-                    {
-                        "type": "tool_use",
-                        "id": action.tag,
-                        "name": f"{action.name}-{action.path}",
-                        "input": action.input,
-                    }
-                    for action in actions_artifact.actions
-                ],
+            if actions_artifact.value:
+                thought = [{"type": "text", "text": actions_artifact.value}]
+            else:
+                thought = []
+
+            tool_uses = [
+                {"type": "tool_use", "id": action.tag, "name": f"{action.name}-{action.path}", "input": action.input}
+                for action in actions_artifact.actions
             ]
+
+            return [*thought, *tool_uses]
         else:
             if isinstance(input.content, BaseArtifact):
                 return input.content.to_text()

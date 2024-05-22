@@ -58,6 +58,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         return J2("tasks/tool_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=utils.minify_json(json.dumps(self.tool.schema())),
+            use_native_tools=not self.prompt_driver.use_native_tools,
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
         )
 

@@ -171,7 +171,7 @@ class TestToolkitSubtask:
         assert task.prompt_stack.inputs[1].is_user()
         assert task.prompt_stack.inputs[2].is_assistant()
 
-    def test_run_with_function_calling(self):
+    def test_run_with_use_native_tools(self):
         output = """done"""
 
         task = ToolkitTask(
@@ -181,7 +181,7 @@ class TestToolkitSubtask:
                 MockTool(allowlist=["test"], name="Tool2", off_prompt=False),
             ],
         )
-        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output, emulate_cot=True, function_calling=True))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output, emulate_cot=True, use_native_tools=True))
 
         agent.add_task(task)
 
