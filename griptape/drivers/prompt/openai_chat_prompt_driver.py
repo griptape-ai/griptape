@@ -108,9 +108,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 return ActionsArtifact(actions=actions)
             else:
                 message_content = message.content.strip()
-                # TODO: How do we avoid the final answer of a tools_call going to ActionsSubtask?
-                # The LLM will not be following our CoT so there will be no final "Answer:".
-                # Maybe we keep this as part of the system prompt.
+
                 return TextArtifact(value=message_content)
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
