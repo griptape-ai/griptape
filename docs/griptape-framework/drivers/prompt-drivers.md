@@ -242,6 +242,15 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
 - text2text-generation
 - text-generation
 
+!!! warning
+    Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by
+    [Hugging Face serverless inference](https://huggingface.co/docs/api-inference/en/index) will not work with this driver.
+    Due to the limitations of Hugging Face serverless inference, only models that are than 10GB are supported.
+
+!!! info
+    The `prompt_stack_to_string_converter` function is intended to convert a `PromptStack` to model specific input. You
+    should consult the model's documentation to determine the correct format.
+
 Let's recreate the [Falcon-7B-Instruct](https://huggingface.co/tiiuae/falcon-7b-instruct) example using Griptape:
 
 ```python
@@ -319,9 +328,9 @@ agent.run("Write the code for a snake game.")
 ### Hugging Face Pipeline
 
 !!! info
-    This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-huggingface-pipeline` [extra](../index.md#extras).
 
-The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally. It supports models with the following tasks:
+The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally. It supports models with the following tasks:
 
 - text2text-generation
 - text-generation
@@ -332,7 +341,7 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
 ```python
 import os
 from griptape.structures import Agent
-from griptape.drivers import HuggingFaceHubPromptDriver
+from griptape.drivers import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.utils import PromptStack
 from griptape.config import StructureConfig
@@ -357,9 +366,8 @@ def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
 
 agent = Agent(
     config=StructureConfig(
-        prompt_driver=HuggingFaceHubPromptDriver(
-            model="tiiuae/falcon-7b-instruct",
-            api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
+        prompt_driver=HuggingFacePipelinePromptDriver(
+            model="TinyLlama/TinyLlama-1.1B-Chat-v0.6",
             prompt_stack_to_string=prompt_stack_to_string_converter,
         )
     ),

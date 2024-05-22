@@ -52,6 +52,7 @@ beautifulsoup4 = {version = "^4.12.3", optional = true}
 markdownify = {version = "^0.11.6", optional = true}
 voyageai = {version = "^0.2.1", optional = true}
 elevenlabs = {version = "^1.1.2", optional = true}
+torch = {version = "^2.3.0", optional = true}
 
 # loaders
 pandas = {version = "^1.3", optional = true}
@@ -64,6 +65,7 @@ filetype = {version = "^1.2", optional = true}
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
+drivers-prompt-huggingface-pipeline = ["huggingface-hub", "transformers", "torch"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-google = ["google-generativeai"]
@@ -125,6 +127,7 @@ all = [
     "markdownify",
     "voyageai",
     "elevenlabs",
+    "torch",
 
     # loaders
     "pandas",
