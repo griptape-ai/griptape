@@ -1,6 +1,9 @@
 ## Overview
 
-Prompt Drivers are used by Griptape Structures to make API calls to the underlying LLMs. [OpenAi Chat](#openai-chat) is the default prompt driver used in all structures.
+Prompt Drivers are used by Griptape Structures to make API calls to the underlying LLMs.
+[OpenAi Chat](#openai-chat) is the default Prompt Driver used in all structures.
+
+The Drivers are responsible for converting the [PromptStack](../../reference/griptape/utils/prompt_stack.md) into a format that the LLM can understand and sending the request to the LLM.
 
 You can instantiate drivers and pass them to structures:
 
@@ -62,6 +65,7 @@ Griptape offers the following Prompt Drivers for interacting with LLMs.
 ### OpenAI Chat
 
 The [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) connects to the [OpenAI Chat](https://platform.openai.com/docs/guides/chat) API.
+When used with a [Toolkit Task](../structures/tasks.md#toolkit-task) or [Tool Task](../../structures/tasks.md#tool-task), it will use OpenAi's [function calling](https://platform.openai.com/docs/guides/function-calling) feature. This can be disabled by setting `use_native_tools=False`.
 
 ```python
 import os
@@ -188,6 +192,7 @@ agent.run('What is the sentiment of this review? Review: "I really enjoyed this 
     This driver requires the `drivers-prompt-anthropic` [extra](../index.md#extras).
 
 The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_prompt_driver.md) connects to the Anthropic [Messages](https://docs.anthropic.com/claude/reference/messages_post) API.
+When used with a [Toolkit Task](../structures/tasks.md#toolkit-task) or [Tool Task](../../structures/tasks.md#tool-task), it will use Anthropics's [tool use](https://docs.anthropic.com/en/docs/tool-use) feature. This can be disabled by setting `use_native_tools=False`.
 
 ```python
 import os

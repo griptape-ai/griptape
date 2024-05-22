@@ -91,7 +91,11 @@ agent.run("Write me a haiku")
 ## Toolkit Task
 
 To use [Griptape Tools](../../griptape-framework/tools/index.md), use a [Toolkit Task](../../reference/griptape/tasks/toolkit_task.md).
-This Task takes in one or more Tools which the LLM will decide to use through Chain of Thought (CoT) reasoning. Because this Task uses CoT, it is recommended to only use with very capable models.
+This Task takes in one or more Tools which the LLM can decide to use through Chain of Thought (CoT) reasoning.
+
+If the [Prompt Driver](../../griptape-framework/drivers/prompt-drivers.md) supports native function calling, the Toolkit Task will use this instead of Griptape's implementation.
+You can disable this behavior by setting the Prompt Driver's `use_native_tools` parameter to `False`.
+
 
 ```python
 from griptape.tasks import ToolkitTask
@@ -150,6 +154,9 @@ agent.run()
 
 Another way to use [Griptape Tools](../../griptape-framework/tools/index.md), is with a [Tool Task](../../reference/griptape/tasks/tool_task.md). 
 This Task takes in a single Tool which the LLM will use without Chain of Thought (CoT) reasoning. Because this Task does not use CoT, it is better suited for less capable models.
+
+If the [Prompt Driver](../../griptape-framework/drivers/prompt-drivers.md) supports native function calling, the Tool Task will use this instead of Griptape's implementation.
+You can disable this behavior by setting the Prompt Driver's `use_native_tools` parameter to `False`.
 
 ```python
 from griptape.structures import Agent
