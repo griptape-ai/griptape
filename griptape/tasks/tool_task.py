@@ -18,8 +18,6 @@ if TYPE_CHECKING:
 
 @define
 class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
-    ACTION_PATTERN = r"(?s)[^{]*({.*})"
-
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
@@ -58,7 +56,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         return J2("tasks/tool_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=utils.minify_json(json.dumps(self.tool.schema())),
-            use_native_tools=not self.prompt_driver.use_native_tools,
+            use_native_tools=self.prompt_driver.use_native_tools,
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
         )
 

@@ -30,7 +30,7 @@ class ActionsSubtask(BaseTextInputTask):
     thought: Optional[str] = field(default=None, kw_only=True)
     actions: list[ActionsArtifact.Action] = field(factory=list, kw_only=True)
 
-    _input: Optional[str | TextArtifact | Callable[[BaseTask], TextArtifact]] = field(default=None)
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=None)
     _memory: Optional[TaskMemory] = None
 
     @property
@@ -198,7 +198,6 @@ class ActionsSubtask(BaseTextInputTask):
         else:
             prompt = input.to_text()
             thought_matches = re.findall(self.THOUGHT_PATTERN, prompt, re.MULTILINE)
-            actions_matches = re.findall(self.ACTIONS_PATTERN, prompt, re.DOTALL)
             answer_matches = re.findall(self.ANSWER_PATTERN, prompt, re.MULTILINE)
 
             if self.single_action:
@@ -206,10 +205,12 @@ class ActionsSubtask(BaseTextInputTask):
 
                 self.actions = self.__parse_action_matches(action_matches)
             else:
-                if self.thought is None and thought_matches:
-                    self.thought = thought_matches[-1]
+                actions_matches = re.findall(self.ACTIONS_PATTERN, prompt, re.DOTALL)
 
                 self.actions = self.__parse_action_matches(actions_matches)
+
+            if self.thought is None and thought_matches:
+                self.thought = thought_matches[-1]
 
             # If there are no actions to take but an answer is provided, set the answer as the output.
             if len(self.actions) == 0 and self.output is None and len(answer_matches) > 0:
@@ -228,15 +229,24 @@ class ActionsSubtask(BaseTextInputTask):
 
             return [self.__error_to_action(f"Action input parsing error: {e}")]
 
-        if isinstance(action_data, dict):
-            action_data = [action_data]
+        if self.single_action and isinstance(action_data, dict):
+            action_data["tag"] = "Output"
+            actions_list = [action_data]
+        else:
+            actions_list = action_data
 
-        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-            self.origin_task.actions_schema().validate(action_data)
+        try:
+            if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
+                self.origin_task.actions_schema().validate(actions_list)
+        except schema.SchemaError as e:
+            self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid action JSON: {e}")
 
-        actions = self.__process_actions([self.__parse_action_object(action_object) for action_object in action_data])
+            return [self.__error_to_action(f"Action JSON validation error: {e}")]
 
-        return actions
+        actions = [self.__parse_action_object(action_object) for action_object in actions_list]
+        processed_actions = self.__process_actions(actions)
+
+        return processed_actions
 
     def __parse_action_object(self, action_object: dict) -> ActionsArtifact.Action:
         try:

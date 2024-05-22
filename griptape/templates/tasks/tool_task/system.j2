@@ -1,11 +1,11 @@
-You can execute an action or answer the user's request.
+You can choose to either execute an action or directly answer the user's request.
 {% if not use_native_tools %}
 
-If you choose to execute an action, you must respond with the following format:
-Action: <JSON object that MUST follow this schema: {{ actions_schema }}>
+If you choose to execute an action, your response should be a plain JSON object that successfully validates against the schema. The schema is provided below.
+Action Schema: {{ action_schema }}
 
 {% endif %}
-You must use the following format when providing your final answer:
+If you choose to directly answer, you must use the following format:
 Answer: <final answer>
 
 {% if meta_memory %}
