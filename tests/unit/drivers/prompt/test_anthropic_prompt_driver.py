@@ -1,12 +1,13 @@
 import json
+from unittest.mock import Mock
+
+import pytest
+
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.artifacts.actions_artifact import ActionsArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.drivers import AnthropicPromptDriver
 from griptape.utils import PromptStack
-from unittest.mock import Mock
-import pytest
-
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import MockTool
 
 
@@ -239,10 +240,47 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_tool_call_input(
+            content=None,
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                )
+            ],
+        )
+        prompt_stack.add_tool_result_input(
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                    output=TextArtifact("tool-output"),
+                )
+            ]
+        )
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         expected_messages = [
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
+            {
+                "content": [
+                    {
+                        "id": "tool-call-id",
+                        "input": {"parameter-name": "parameter-value"},
+                        "name": "ToolName-ActivityName",
+                        "type": "tool_use",
+                    }
+                ],
+                "role": "assistant",
+            },
+            {
+                "content": [{"content": "tool-output", "tool_use_id": "tool-call-id", "type": "tool_result"}],
+                "role": "user",
+            },
         ]
 
         # When
@@ -343,10 +381,48 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_tool_call_input(
+            content=None,
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                )
+            ],
+        )
+        prompt_stack.add_tool_result_input(
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                    output=TextArtifact("tool-output"),
+                )
+            ]
+        )
+
         expected_messages = [
             {"role": "user", "content": "generic-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
+            {
+                "content": [
+                    {
+                        "id": "tool-call-id",
+                        "input": {"parameter-name": "parameter-value"},
+                        "name": "ToolName-ActivityName",
+                        "type": "tool_use",
+                    }
+                ],
+                "role": "assistant",
+            },
+            {
+                "content": [{"content": "tool-output", "tool_use_id": "tool-call-id", "type": "tool_result"}],
+                "role": "user",
+            },
         ]
         driver = AnthropicPromptDriver(model=model, api_key="api-key", stream=True)
 

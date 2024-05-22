@@ -22,6 +22,11 @@ class TestPromptStack:
         assert prompt_stack.inputs[0].role == "role"
         assert prompt_stack.inputs[0].content == "foo"
 
+    def test_add_tool(self, prompt_stack):
+        prompt_stack.add_tool("foo")
+
+        assert prompt_stack.tools[0] == "foo"
+
     def test_add_generic_input(self, prompt_stack):
         prompt_stack.add_generic_input("foo")
 
@@ -46,7 +51,7 @@ class TestPromptStack:
         assert prompt_stack.inputs[0].role == "assistant"
         assert prompt_stack.inputs[0].content == "foo"
 
-    def test_add_tool_call(self, prompt_stack):
+    def test_add_tool_call_input(self, prompt_stack):
         prompt_stack.add_tool_call_input(
             "foo",
             actions=[
@@ -62,7 +67,7 @@ class TestPromptStack:
         assert prompt_stack.inputs[0].content.actions[0].input == {"values": {"test": "test input"}}
         assert prompt_stack.inputs[0].content.actions[0].output is None
 
-    def test_add_tool_result(self, prompt_stack):
+    def test_add_tool_result_input(self, prompt_stack):
         prompt_stack.add_tool_result_input(
             actions=[
                 ActionsArtifact.Action(

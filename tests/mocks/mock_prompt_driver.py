@@ -20,10 +20,9 @@ class MockPromptDriver(BasePromptDriver):
     mock_output: str = field(default="mock output", kw_only=True)
     mock_thought: str = field(default="mock thought", kw_only=True)
     mock_tool_input: str = field(default='{"values": {"test": "mock tool input"}}', kw_only=True)
-    emulate_cot: bool = field(default=False, kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        if self.emulate_cot:
+        if self.use_native_tools:
             if prompt_stack.tools and prompt_stack.inputs and prompt_stack.inputs[-1].role == PromptStack.USER_ROLE:
                 actions = [
                     ActionsArtifact.Action(
@@ -44,14 +43,13 @@ class MockPromptDriver(BasePromptDriver):
             return TextArtifact(value=self.mock_output)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]:
-        if self.emulate_cot:
+        if self.use_native_tools:
             if prompt_stack.tools and prompt_stack.inputs and prompt_stack.inputs[-1].role == PromptStack.USER_ROLE:
                 actions = [
                     ActionsArtifact.Action(
                         tag=f"{tool.activity_name(activity)}-id",
                         name=tool.name,
                         path=tool.activity_name(activity),
-                        input=json.loads(self.mock_tool_input),
                         output=TextArtifact(value=self.mock_output),
                     )
                     for tool in prompt_stack.tools

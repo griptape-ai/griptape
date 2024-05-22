@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from griptape.artifacts import ErrorArtifact, TextArtifact
@@ -47,7 +45,7 @@ class TestBasePromptDriver:
         assert isinstance(MockPromptDriver().run(PromptStack(inputs=[])), TextArtifact)
 
     def test_run_with_tools(self):
-        output = MockPromptDriver(emulate_cot=True).run(
+        output = MockPromptDriver(use_native_tools=True).run(
             PromptStack(
                 inputs=[PromptStack.Input("test", role=PromptStack.USER_ROLE)], tools=[MockTool(allowlist=["test"])]
             )
@@ -72,7 +70,7 @@ class TestBasePromptDriver:
         assert output.value == "mock output"
 
     def test_run_stream_with_tools(self):
-        output = MockPromptDriver(stream=True, emulate_cot=True, structure=Agent()).run(
+        output = MockPromptDriver(stream=True, use_native_tools=True, structure=Agent()).run(
             PromptStack(
                 inputs=[PromptStack.Input("test", role=PromptStack.USER_ROLE)], tools=[MockTool(allowlist=["test"])]
             )
@@ -91,8 +89,8 @@ class TestBasePromptDriver:
         assert output.value == "mock output"
 
     def test_run_stream_with_bad_tool_input(self):
-        with pytest.raises(json.JSONDecodeError):
-            MockPromptDriver(stream=True, emulate_cot=True, structure=Agent(), mock_tool_input='{"values":,}').run(
+        with pytest.raises(ValueError):
+            MockPromptDriver(stream=True, use_native_tools=True, structure=Agent(), mock_tool_input='{"values":,}').run(
                 PromptStack(
                     inputs=[PromptStack.Input("test", role=PromptStack.USER_ROLE)], tools=[MockTool(allowlist=["test"])]
                 )

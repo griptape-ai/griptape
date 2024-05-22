@@ -181,7 +181,7 @@ class TestToolkitSubtask:
                 MockTool(allowlist=["test"], name="Tool2", off_prompt=False),
             ],
         )
-        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output, emulate_cot=True, use_native_tools=True))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output, use_native_tools=True))
 
         agent.add_task(task)
 
