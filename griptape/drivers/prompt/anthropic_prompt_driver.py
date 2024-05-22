@@ -142,32 +142,38 @@ class AnthropicPromptDriver(BasePromptDriver):
         if input.is_tool_result():
             actions_artifact = input.content
 
-            if not isinstance(actions_artifact, ActionsArtifact):
+            if isinstance(actions_artifact, ActionsArtifact):
+                tool_results = [
+                    {"type": "tool_result", "tool_use_id": action.tag, "content": action.output.to_text()}
+                    for action in actions_artifact.actions
+                ]
+
+                return tool_results
+            else:
                 raise ValueError("PromptStack Input content must be an ActionsArtifact")
 
-            tool_results = [
-                {"type": "tool_result", "tool_use_id": action.tag, "content": action.output.to_text()}
-                for action in actions_artifact.actions
-            ]
-
-            return tool_results
         elif input.is_tool_call():
             actions_artifact = input.content
 
-            if not isinstance(actions_artifact, ActionsArtifact):
-                raise ValueError("PromptStack Input content must be an ActionsArtifact")
+            if isinstance(actions_artifact, ActionsArtifact):
+                if actions_artifact.value:
+                    thought = [{"type": "text", "text": actions_artifact.value}]
+                else:
+                    thought = []
 
-            if actions_artifact.value:
-                thought = [{"type": "text", "text": actions_artifact.value}]
+                tool_uses = [
+                    {
+                        "type": "tool_use",
+                        "id": action.tag,
+                        "name": f"{action.name}-{action.path}",
+                        "input": action.input,
+                    }
+                    for action in actions_artifact.actions
+                ]
+
+                return [*thought, *tool_uses]
             else:
-                thought = []
-
-            tool_uses = [
-                {"type": "tool_use", "id": action.tag, "name": f"{action.name}-{action.path}", "input": action.input}
-                for action in actions_artifact.actions
-            ]
-
-            return [*thought, *tool_uses]
+                raise ValueError("PromptStack Input content must be an ActionsArtifact")
         else:
             if isinstance(input.content, BaseArtifact):
                 return input.content.to_text()

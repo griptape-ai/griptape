@@ -164,35 +164,39 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             if input.is_tool_result():
                 actions_artifact = input.content
 
-                if not isinstance(actions_artifact, ActionsArtifact):
+                if isinstance(actions_artifact, ActionsArtifact):
+                    tool_result_messages = [
+                        {
+                            "tool_call_id": tool_call.tag,
+                            "role": self.__to_openai_role(input),
+                            "name": f"{tool_call.name}-{tool_call.path}",
+                            "content": tool_call.output.to_text(),
+                        }
+                        for tool_call in actions_artifact.actions
+                    ]
+                    messages.extend(tool_result_messages)
+                else:
                     raise ValueError("PromptStack Input content must be an ActionsArtifact")
 
-                tool_result_messages = [
-                    {
-                        "tool_call_id": tool_call.tag,
-                        "role": self.__to_openai_role(input),
-                        "name": f"{tool_call.name}-{tool_call.path}",
-                        "content": tool_call.output.to_text(),
-                    }
-                    for tool_call in actions_artifact.actions
-                ]
-                messages.extend(tool_result_messages)
             else:
                 if input.is_tool_call():
                     actions_artifact = input.content
 
-                    if not isinstance(actions_artifact, ActionsArtifact):
+                    if isinstance(actions_artifact, ActionsArtifact):
+                        tool_calls = [
+                            {
+                                "id": action.tag,
+                                "function": {
+                                    "name": f"{action.name}-{action.path}",
+                                    "arguments": json.dumps(action.input),
+                                },
+                                "type": "function",
+                            }
+                            for action in actions_artifact.actions
+                        ]
+                        message = {"role": self.__to_openai_role(input), "tool_calls": tool_calls}
+                    else:
                         raise ValueError("PromptStack Input content must be an ActionsArtifact")
-
-                    tool_calls = [
-                        {
-                            "id": action.tag,
-                            "function": {"name": f"{action.name}-{action.path}", "arguments": json.dumps(action.input)},
-                            "type": "function",
-                        }
-                        for action in actions_artifact.actions
-                    ]
-                    message = {"role": self.__to_openai_role(input), "tool_calls": tool_calls}
                 else:
                     message = {"role": self.__to_openai_role(input), "content": input.content}
 
