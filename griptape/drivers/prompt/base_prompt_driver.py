@@ -10,6 +10,7 @@ from attr import Factory, define, field
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.artifacts.actions_artifact import ActionsArtifact
+from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.events.action_chunk_event import ActionChunkEvent
 from griptape.mixins import ExponentialBackoffMixin
@@ -124,12 +125,16 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
+            content = i.content
+            if isinstance(content, list):
+                content = "\n".join([c.value or "" for c in content if isinstance(c, BaseArtifact)])
+
             if i.is_user():
-                prompt_lines.append(f"User: {i.content}")
+                prompt_lines.append(f"User: {content}")
             elif i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
+                prompt_lines.append(f"Assistant: {content}")
             else:
-                prompt_lines.append(i.content)
+                prompt_lines.append(content)
 
         prompt_lines.append("Assistant:")
 

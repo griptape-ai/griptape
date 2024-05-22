@@ -4,7 +4,8 @@ from typing import TYPE_CHECKING, Optional
 
 from attr import define, field
 
-from griptape.artifacts.actions_artifact import ActionsArtifact
+from griptape.artifacts import ActionsArtifact, BaseArtifact
+from griptape.artifacts.text_artifact import TextArtifact
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
@@ -31,9 +32,8 @@ class PromptStack(SerializableMixin):
             tool_calls: The tool calls associated with the input.
         """
 
-        content: str = field(metadata={"serializable": True})
+        content: str | list[BaseArtifact] = field(metadata={"serializable": True})
         role: str = field(metadata={"serializable": True})
-        tool_calls: list[ActionsArtifact.Action] = field(factory=list, metadata={"serializable": True})
 
         def is_generic(self) -> bool:
             return self.role == PromptStack.GENERIC_ROLE
@@ -73,13 +73,17 @@ class PromptStack(SerializableMixin):
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, PromptStack.ASSISTANT_ROLE)
 
-    def add_tool_call_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
-        self.inputs.append(self.Input(content=content or "", role=PromptStack.TOOL_CALL_ROLE, tool_calls=actions))
+    def add_tool_call_input(self, content: str, actions: list[ActionsArtifact.Action]) -> Input:
+        self.inputs.append(
+            self.Input(
+                content=[TextArtifact(content), ActionsArtifact(actions=actions)], role=PromptStack.TOOL_CALL_ROLE
+            )
+        )
 
         return self.inputs[-1]
 
-    def add_tool_result_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
-        self.inputs.append(self.Input(content=content or "", role=PromptStack.TOOL_RESULT_ROLE, tool_calls=actions))
+    def add_tool_result_input(self, actions: list[ActionsArtifact.Action]) -> Input:
+        self.inputs.append(self.Input(content=[ActionsArtifact(actions=actions)], role=PromptStack.TOOL_RESULT_ROLE))
 
         return self.inputs[-1]
 

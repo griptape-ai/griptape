@@ -91,10 +91,14 @@ class AnthropicPromptDriver(BasePromptDriver):
         ]
         system = next((i for i in prompt_stack.inputs if i.is_system()), None)
 
-        if system is None:
-            return {"messages": messages}
-        else:
-            return {"messages": messages, "system": system.content}
+        return {"messages": messages, **({"system": system.content} if system else {})}
+
+    def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
+        return (
+            {"tools": self.__to_anthropic_tools(prompt_stack.tools)}
+            if prompt_stack.tools and self.function_calling
+            else {}
+        )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict[str, Any]:
         return {
@@ -105,18 +109,14 @@ class AnthropicPromptDriver(BasePromptDriver):
             "top_p": self.top_p,
             "top_k": self.top_k,
             "tool_choice": {"type": "auto"},
-            **(
-                {"tools": self.__to_anthropic_tools(prompt_stack.tools)}
-                if prompt_stack.tools and self.function_calling
-                else {}
-            ),
+            **self._prompt_stack_to_tools(prompt_stack),
             **self._prompt_stack_to_messages(prompt_stack),
         }
 
     def __to_anthropic_role(self, prompt_input: PromptStack.Input) -> str:
         if prompt_input.is_system():
             return "system"
-        elif prompt_input.is_assistant():
+        elif prompt_input.is_assistant() or prompt_input.is_tool_call():
             return "assistant"
         else:
             return "user"
@@ -134,22 +134,37 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def __to_anthropic_content(self, input: PromptStack.Input) -> str | list[dict]:
         if input.is_tool_result():
+            (actions_artifact,) = input.content
+
+            if not isinstance(actions_artifact, ActionsArtifact):
+                raise ValueError("PromptStack Input content must be an ActionsArtifact")
+
             return [
-                {"type": "tool_result", "tool_use_id": tool_call.tag, "content": input.content}
-                for tool_call in input.tool_calls
+                {"type": "tool_result", "tool_use_id": action.tag, "content": action.output.to_text()}
+                for action in actions_artifact.actions
             ]
         elif input.is_tool_call():
+            text_artifact, actions_artifact = input.content
+
+            if not isinstance(text_artifact, TextArtifact):
+                raise ValueError("PromptStack Input content.0 must be a TextArtifact")
+            if not isinstance(actions_artifact, ActionsArtifact):
+                raise ValueError("PromptStack Input content.1 must be an ActionsArtifact")
+
             return [
-                {"type": "text", "text": input.content},
+                {"type": "text", "text": text_artifact.value},
                 *[
                     {
                         "type": "tool_use",
-                        "id": tool_call.tag,
-                        "name": f"{tool_call.name}-{tool_call.path}",
-                        "input": tool_call.input,
+                        "id": action.tag,
+                        "name": f"{action.name}-{action.path}",
+                        "input": action.input,
                     }
-                    for tool_call in input.tool_calls
+                    for action in actions_artifact.actions
                 ],
             ]
         else:
-            return input.content
+            if isinstance(input.content, str):
+                return input.content
+            else:
+                raise ValueError("PromptStack Input content must be a string")

@@ -70,7 +70,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         else:
             for s in self.subtasks:
                 stack.add_tool_call_input(s.input.to_text(), actions=s.actions)
-                stack.add_tool_result_input(s.output.to_text(), actions=s.actions)
+                stack.add_tool_result_input(s.actions)
 
         if memory:
             # inserting at index 1 to place memory right after system prompt

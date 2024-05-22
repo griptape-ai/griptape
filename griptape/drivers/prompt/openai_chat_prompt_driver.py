@@ -160,37 +160,59 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
         messages = []
 
-        for i in prompt_stack.inputs:
+        for input in prompt_stack.inputs:
             # Each Tool result requires a separate message
-            if i.is_tool_result():
+            if input.is_tool_result():
+                (actions_artifact,) = input.content
+
+                if not isinstance(actions_artifact, ActionsArtifact):
+                    raise ValueError("Tool result input must be an ActionsArtifact.")
+
                 tool_result_messages = [
                     {
                         "tool_call_id": tool_call.tag,
-                        "role": self.__to_openai_role(i),
+                        "role": self.__to_openai_role(input),
                         "name": f"{tool_call.name}-{tool_call.path}",
                         "content": tool_call.output.to_text(),
                     }
-                    for tool_call in i.tool_calls
+                    for tool_call in actions_artifact.actions
                 ]
                 messages.extend(tool_result_messages)
             else:
-                message: dict[str, Any] = {"role": self.__to_openai_role(i), "content": i.content}
+                if input.is_tool_call():
+                    text_artifact, actions_artifact = input.content
 
-                if i.is_tool_call():
-                    message["tool_calls"] = [
+                    if not isinstance(text_artifact, TextArtifact):
+                        raise ValueError("PromptStack Input content.0 must be a TextArtifact")
+                    if not isinstance(actions_artifact, ActionsArtifact):
+                        raise ValueError("PromptStack Input content.1 must be an ActionsArtifact")
+
+                    tool_calls = [
                         {
-                            "id": tool_call.tag,
-                            "function": {
-                                "name": f"{tool_call.name}-{tool_call.path}",
-                                "arguments": json.dumps(tool_call.input),
-                            },
+                            "id": action.tag,
+                            "function": {"name": f"{action.name}-{action.path}", "arguments": json.dumps(action.input)},
                             "type": "function",
                         }
-                        for tool_call in i.tool_calls
+                        for action in actions_artifact.actions
                     ]
+                    message = {
+                        "role": self.__to_openai_role(input),
+                        "content": text_artifact.value,
+                        "tool_calls": tool_calls,
+                    }
+                else:
+                    message = {"role": self.__to_openai_role(input), "content": input.content}
+
                 messages.append(message)
 
         return messages
+
+    def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
+        return (
+            {"tools": self.__to_openai_tools(prompt_stack.tools)}
+            if prompt_stack.tools and self.function_calling
+            else {}
+        )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -199,11 +221,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "stop": self.tokenizer.stop_sequences,
             "user": self.user,
             "seed": self.seed,
-            **(
-                {"tools": self.__to_openai_tools(prompt_stack.tools)}
-                if prompt_stack.tools and self.function_calling
-                else {}
-            ),
+            **self._prompt_stack_to_tools(prompt_stack),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
         }
 
