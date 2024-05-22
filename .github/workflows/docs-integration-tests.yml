@@ -1,15 +1,13 @@
 name: Docs Integration Tests
 
 on:
-  pull_request_review:
-    types: [submitted]
   push:
-    branches:
-      - main
-      - dev
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
 jobs:
   test:
-    if: github.event.review.state == 'APPROVED' || github.event_name == 'push'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -129,7 +127,6 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v44
-        if: github.event_name == 'pull_request_review'
         with:
           files: |
              **.md
