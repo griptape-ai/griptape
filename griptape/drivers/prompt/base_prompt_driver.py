@@ -126,8 +126,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
         for i in prompt_stack.inputs:
             content = i.content
-            if isinstance(content, list):
-                content = "\n".join([c.value or "" for c in content if isinstance(c, BaseArtifact)])
+            if isinstance(content, BaseArtifact):
+                content = content.to_text()
 
             if i.is_user():
                 prompt_lines.append(f"User: {content}")

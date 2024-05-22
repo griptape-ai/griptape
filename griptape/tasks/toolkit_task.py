@@ -69,7 +69,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_input(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_tool_call_input(s.input.to_text(), actions=s.actions)
+                stack.add_tool_call_input(s.thought, actions=s.actions)
                 stack.add_tool_result_input(s.actions)
 
         if memory:

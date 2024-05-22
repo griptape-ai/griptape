@@ -163,10 +163,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         for input in prompt_stack.inputs:
             # Each Tool result requires a separate message
             if input.is_tool_result():
-                (actions_artifact,) = input.content
+                actions_artifact = input.content
 
                 if not isinstance(actions_artifact, ActionsArtifact):
-                    raise ValueError("Tool result input must be an ActionsArtifact.")
+                    raise ValueError("PromptStack Input content must be an ActionsArtifact")
 
                 tool_result_messages = [
                     {
@@ -180,12 +180,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 messages.extend(tool_result_messages)
             else:
                 if input.is_tool_call():
-                    text_artifact, actions_artifact = input.content
+                    actions_artifact = input.content
 
-                    if not isinstance(text_artifact, TextArtifact):
-                        raise ValueError("PromptStack Input content.0 must be a TextArtifact")
                     if not isinstance(actions_artifact, ActionsArtifact):
-                        raise ValueError("PromptStack Input content.1 must be an ActionsArtifact")
+                        raise ValueError("PromptStack Input content must be an ActionsArtifact")
 
                     tool_calls = [
                         {
@@ -195,11 +193,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         }
                         for action in actions_artifact.actions
                     ]
-                    message = {
-                        "role": self.__to_openai_role(input),
-                        "content": text_artifact.value,
-                        "tool_calls": tool_calls,
-                    }
+                    message = {"role": self.__to_openai_role(input), "tool_calls": tool_calls}
                 else:
                     message = {"role": self.__to_openai_role(input), "content": input.content}
 

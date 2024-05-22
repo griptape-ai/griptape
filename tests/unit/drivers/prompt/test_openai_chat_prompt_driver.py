@@ -111,7 +111,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             ],
         )
         prompt_stack.add_tool_result_input(
-            content=None,
             actions=[
                 ActionsArtifact.Action(
                     tag="tool-call-id",
@@ -120,7 +119,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     input={"parameter-name": "parameter-value"},
                     output=TextArtifact("tool-output"),
                 )
-            ],
+            ]
         )
 
         return prompt_stack
@@ -142,7 +141,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
             {
-                "content": None,
                 "role": "assistant",
                 "tool_calls": [
                     {

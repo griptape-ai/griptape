@@ -3,6 +3,7 @@ from typing import Optional, Any, TYPE_CHECKING
 from collections.abc import Iterator
 from attr import define, field, Factory
 from griptape.artifacts import TextArtifact
+from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.artifacts import ActionsArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
@@ -134,7 +135,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def __to_anthropic_content(self, input: PromptStack.Input) -> str | list[dict]:
         if input.is_tool_result():
-            (actions_artifact,) = input.content
+            actions_artifact = input.content
 
             if not isinstance(actions_artifact, ActionsArtifact):
                 raise ValueError("PromptStack Input content must be an ActionsArtifact")
@@ -144,15 +145,13 @@ class AnthropicPromptDriver(BasePromptDriver):
                 for action in actions_artifact.actions
             ]
         elif input.is_tool_call():
-            text_artifact, actions_artifact = input.content
+            actions_artifact = input.content
 
-            if not isinstance(text_artifact, TextArtifact):
-                raise ValueError("PromptStack Input content.0 must be a TextArtifact")
             if not isinstance(actions_artifact, ActionsArtifact):
-                raise ValueError("PromptStack Input content.1 must be an ActionsArtifact")
+                raise ValueError("PromptStack Input content must be an ActionsArtifact")
 
             return [
-                {"type": "text", "text": text_artifact.value},
+                {"type": "text", "text": actions_artifact.value},
                 *[
                     {
                         "type": "tool_use",
@@ -164,7 +163,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                 ],
             ]
         else:
-            if isinstance(input.content, str):
-                return input.content
+            if isinstance(input.content, BaseArtifact):
+                return input.content.to_text()
             else:
-                raise ValueError("PromptStack Input content must be a string")
+                return input.content

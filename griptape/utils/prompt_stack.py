@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Union
 
 from attr import define, field
 
 from griptape.artifacts import ActionsArtifact, BaseArtifact
-from griptape.artifacts.text_artifact import TextArtifact
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
@@ -32,7 +31,7 @@ class PromptStack(SerializableMixin):
             tool_calls: The tool calls associated with the input.
         """
 
-        content: str | list[BaseArtifact] = field(metadata={"serializable": True})
+        content: Union[str, BaseArtifact] = field(metadata={"serializable": True})
         role: str = field(metadata={"serializable": True})
 
         def is_generic(self) -> bool:
@@ -73,17 +72,15 @@ class PromptStack(SerializableMixin):
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, PromptStack.ASSISTANT_ROLE)
 
-    def add_tool_call_input(self, content: str, actions: list[ActionsArtifact.Action]) -> Input:
+    def add_tool_call_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
         self.inputs.append(
-            self.Input(
-                content=[TextArtifact(content), ActionsArtifact(actions=actions)], role=PromptStack.TOOL_CALL_ROLE
-            )
+            self.Input(content=ActionsArtifact(value=content, actions=actions), role=PromptStack.TOOL_CALL_ROLE)
         )
 
         return self.inputs[-1]
 
     def add_tool_result_input(self, actions: list[ActionsArtifact.Action]) -> Input:
-        self.inputs.append(self.Input(content=[ActionsArtifact(actions=actions)], role=PromptStack.TOOL_RESULT_ROLE))
+        self.inputs.append(self.Input(content=ActionsArtifact(actions=actions), role=PromptStack.TOOL_RESULT_ROLE))
 
         return self.inputs[-1]
 

@@ -19,7 +19,7 @@ class ActionsArtifact(TextArtifact):
 
     Attributes:
         actions: The list of actions.
-        value: The value of the artifact.
+        value: Chain of thought text.
     """
 
     @define(kw_only=True)
