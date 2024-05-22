@@ -358,7 +358,7 @@ def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
 agent = Agent(
     config=StructureConfig(
         prompt_driver=HuggingFacePipelinePromptDriver(
-            model="tiiuae/falcon-7b-instruct", #og
+            model="TinyLlama/TinyLlama-1.1B-Chat-v0.6",
             prompt_stack_to_string=prompt_stack_to_string_converter,
         )
     ),
