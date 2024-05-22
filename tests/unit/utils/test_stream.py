@@ -14,7 +14,7 @@ class TestStream:
     @pytest.fixture()
     def agent_with_tools(self, request):
         return Agent(
-            prompt_driver=MockPromptDriver(stream=True, emulate_cot=True),
+            prompt_driver=MockPromptDriver(stream=True, emulate_cot=True, function_calling=True),
             tools=[MockTool(allowlist=["test"], off_prompt=False)],
         )
 

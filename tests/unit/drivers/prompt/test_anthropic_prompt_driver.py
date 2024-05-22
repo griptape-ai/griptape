@@ -161,10 +161,10 @@ class TestAnthropicPromptDriver:
         mock_stream_client = mocker.patch("anthropic.Anthropic")
 
         mock_chunks = [
-            Mock(type="content_block_start", content_block=Mock(type="text", text="")),
-            Mock(type="content_block_delta", delta=Mock(type="text_delta", text="thinking")),
+            Mock(type="content_block_start", index=0, content_block=Mock(type="text", text="")),
+            Mock(type="content_block_delta", index=0, delta=Mock(type="text_delta", text="thinking")),
             Mock(type="content_block_start", index=0, content_block=Mock(type="tool_use", id="tool-call-id")),
-            Mock(type="content_block_delta", index=0, delta=Mock(type="text_delta", text="tool-output")),
+            Mock(type="content_block_delta", index=0, delta=Mock(type="input_json_delta", partial_json="tool-output")),
         ]
         # Name is a special Mock attribute that needs to be set after creation
         mock_chunks[2].content_block.name = "ToolName-ActivityName"
@@ -225,12 +225,12 @@ class TestAnthropicPromptDriver:
     @pytest.mark.parametrize(
         "model",
         [
-            ("claude-instant-1.2")
-            # ("claude-2.1"),
-            # ("claude-2.0"),
-            # ("claude-3-opus"),
-            # ("claude-3-sonnet"),
-            # ("claude-3-haiku"),
+            ("claude-instant-1.2"),
+            ("claude-2.1"),
+            ("claude-2.0"),
+            ("claude-3-opus"),
+            ("claude-3-sonnet"),
+            ("claude-3-haiku"),
         ],
     )
     def test_try_run_with_tools(self, mock_client_with_tools, model):
