@@ -14,7 +14,7 @@ from griptape.tasks import BaseTask
 
 @define
 class AudioTranscriptionTask(RuleMixin, BaseTask, ABC):
-    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field(kw_only=True)
+    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field()
     _audio_transcription_engine: AudioTranscriptionEngine = field(
         default=None, kw_only=True, alias="audio_transcription_engine"
     )
