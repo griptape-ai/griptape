@@ -14,6 +14,7 @@ class BedrockJurassicTokenizer(SimpleTokenizer):
         "ai21": 2048,
     }
 
+    model: str = field(kw_only=True)
     characters_per_token: int = field(
         default=Factory(lambda self: self.DEFAULT_CHARACTERS_PER_TOKEN, takes_self=True), kw_only=True
     )
