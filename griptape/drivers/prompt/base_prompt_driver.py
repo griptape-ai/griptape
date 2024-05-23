@@ -86,34 +86,15 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 self.before_run(prompt_stack)
 
                 if self.stream:
-                    text_chunks = []
-                    action_chunks = {}
-
                     completion_chunks = self.try_stream(prompt_stack)
-                    for chunk in completion_chunks:
-                        if isinstance(chunk, ActionChunkArtifact):
-                            if chunk.index in action_chunks:
-                                action_chunks[chunk.index] += chunk
-                            else:
-                                action_chunks[chunk.index] = chunk
-                            self.structure.publish_event(
-                                ActionChunkEvent(
-                                    tag=chunk.tag, name=chunk.name, path=chunk.path, partial_input=chunk.partial_input
-                                )
-                            )
-                        elif isinstance(chunk, TextArtifact):
-                            text_chunks.append(chunk.value)
-                            self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
 
-                    value = "".join(text_chunks).strip()
-                    if action_chunks:
-                        result = ActionsArtifact(
-                            value=value, actions=self.__build_actions_from_chunks(list(action_chunks.values()))
-                        )
-                    else:
-                        result = TextArtifact(value=value)
+                    result = self.__assemble_chunks(completion_chunks)
                 else:
                     result = self.try_run(prompt_stack)
+
+                if result.value is None:
+                    result.value = ""
+                else:
                     result.value = result.value.strip()
 
                 self.after_run(result)
@@ -146,6 +127,33 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     @abstractmethod
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]: ...
+
+    def __assemble_chunks(self, completion_chunks: Iterator[TextArtifact]) -> TextArtifact:
+        text_chunks = []
+        action_chunks = {}
+
+        for chunk in completion_chunks:
+            if isinstance(chunk, ActionChunkArtifact):
+                if chunk.index in action_chunks:
+                    action_chunks[chunk.index] += chunk
+                else:
+                    action_chunks[chunk.index] = chunk
+                self.structure.publish_event(
+                    ActionChunkEvent(tag=chunk.tag, name=chunk.name, path=chunk.path, partial_input=chunk.partial_input)
+                )
+            elif isinstance(chunk, TextArtifact):
+                text_chunks.append(chunk.value)
+                self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
+
+        value = "".join(text_chunks).strip()
+        if action_chunks:
+            result = ActionsArtifact(
+                value=value, actions=self.__build_actions_from_chunks(list(action_chunks.values()))
+            )
+        else:
+            result = TextArtifact(value=value)
+
+        return result
 
     def __build_actions_from_chunks(self, action_chunks: list[ActionChunkArtifact]) -> list[ActionsArtifact.Action]:
         actions = []
