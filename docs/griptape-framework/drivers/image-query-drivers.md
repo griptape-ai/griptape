@@ -100,10 +100,10 @@ from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 
 driver = AzureOpenAiImageQueryDriver(
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
-    api_key=os.environ["AZURE_OPENAI_API_KEY_3"],
-    model="gpt-4",
-    azure_deployment="gpt-4-vision-preview",
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_2"],
+    api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
+    model="gpt-4o",
+    azure_deployment="gpt-4o",
     max_tokens=256,
 )
 
