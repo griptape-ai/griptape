@@ -7,7 +7,10 @@ from griptape.exceptions import DummyException
 
 @define
 class DummyImageGenerationDriver(BaseImageGenerationDriver):
-    model: str = field(init=False)
+    model: Optional[str] = field(init=False)
+
+    def __attrs_post_init__(self):
+        self.model = None
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         raise DummyException(__class__.__name__, "try_text_to_image")

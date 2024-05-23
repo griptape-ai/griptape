@@ -9,6 +9,5 @@ class BedrockTitanTokenizer(SimpleTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"amazon": 4096}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"amazon": 8000}
 
-    model: str = field(kw_only=True)
     characters_per_token: int = field(default=DEFAULT_CHARACTERS_PER_TOKEN, kw_only=True)
     stop_sequences: list[str] = field(default=Factory(lambda: ["User:"]), kw_only=True)

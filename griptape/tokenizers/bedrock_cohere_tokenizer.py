@@ -10,5 +10,4 @@ class BedrockCohereTokenizer(SimpleTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"cohere": 1024}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"cohere": 4096}
 
-    model: str = field(kw_only=True)
     characters_per_token: int = field(default=DEFAULT_CHARACTERS_PER_TOKEN, kw_only=True)
