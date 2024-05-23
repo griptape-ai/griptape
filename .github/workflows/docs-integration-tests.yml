@@ -7,6 +7,11 @@ on:
     branches:
       - main
       - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     if: github.event.review.state == 'APPROVED' || github.event_name == 'push'
