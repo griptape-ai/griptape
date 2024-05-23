@@ -239,7 +239,7 @@ agent = Agent(
     tools=[
         WebScraper(off_prompt=True),
         TaskMemoryClient(off_prompt=True, allowlist=["query"]),
-        FileManager(off_prompt=False), #
+        FileManager(off_prompt=True), # FileManager returns an InfoArtifact which will not be stored in Task Memory regardless of the off_prompt setting
     ],
 )
 
@@ -272,6 +272,20 @@ agent.run(
                              Output: The number of copies of Elden Ring sold has been successfully saved to the file "elden_ring_sales.txt" in the "sales_data" directory.
 ```
 
+## Tools That Can Read From Task Memory
+
+As seen in the previous example, certain Tools are designed to read directly from Task Memory. This means that you can use these Tools to interact with the data stored in Task Memory without needing to pass it through the LLM.
+
+Unless you're handing off data to another Tool capable of reading from Task Memory, you should most likely set `off_prompt` to `False` on these Tools otherwise you may end up [Task Memory Looping](#task-memory-looping).
+
+Today, these include:
+
+- [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md)
+- [FileManager](../../griptape-tools/official-tools/file-manager.md)
+- [AwsS3Client](../../griptape-tools/official-tools/aws-s3-client.md)
+- [GoogleDriveClient](../../griptape-tools/official-tools/google-drive-client.md)
+- [GoogleDocsClient](../../griptape-tools/official-tools/google-docs-client.md)
+
 ## Task Memory Considerations
 
 Task Memory is a powerful feature of Griptape, but with great power comes great responsibility. Here are some things to keep in mind when using Task Memory:
@@ -280,23 +294,6 @@ Task Memory is a powerful feature of Griptape, but with great power comes great 
 Griptape will only store Artifacts in Task Memory that have been explicitly defined in the `artifact_storages` parameter of the `TaskMemory` object. 
 If you try to store an Artifact that is not defined in `artifact_storages`, Griptape will raise an error. The exception to this is `InfoArtifact`s and `ErrorArtifact`s. Griptape will never store these Artifacts store in Task Memory.
 By default, Griptape will store `TextArtifact`'s, `BlobArtifact`'s in Task Memory. Additionally, Griptape will also store the elements of `ListArtifact`'s as long as they are of a supported Artifact type. 
-
-
-### Task Memory Looping
-An improper configuration of Tools can lead to the LLM using the Tools in a loop. For example, if you have a Tool that stores data in Task Memory and another Tool that queries that data from Task Memory ([Tools That Can Read From Task Memory](#tools-that-can-read-from-task-memory)), make sure that the query Tool does not store the data back in Task Memory.
-This can create a loop where the same data is stored and queried over and over again.
-
-```python
-from griptape.structures import Agent
-from griptape.tools import WebScraper
-
-agent = Agent(
-    tools=[
-        WebScraper(off_prompt=True) # This tool will store the data in Task Memory
-    ]
-)
-agent.run("According to this page https://en.wikipedia.org/wiki/Dark_forest_hypothesis, what is the Dark Forest Hypothesis?")
-```
 
 ### Not Providing a Task Memory Compatible Tool
 When using Task Memory, make sure that you have at least one Tool that can read from Task Memory. If you don't, the data stored in Task Memory will be inaccessible to the Agent and it may hallucinate Tool Activities.
@@ -314,6 +311,23 @@ agent = Agent(
 agent.run("According to this page https://en.wikipedia.org/wiki/San_Francisco, what is the population of San Francisco?")
 ```
 
+### Task Memory Looping
+An improper configuration of Tools can lead to the LLM using the Tools in a loop. For example, if you have a Tool that stores data in Task Memory and another Tool that queries that data from Task Memory ([Tools That Can Read From Task Memory](#tools-that-can-read-from-task-memory)), make sure that the query Tool does not store the data back in Task Memory.
+This can create a loop where the same data is stored and queried over and over again.
+
+```python
+from griptape.structures import Agent
+from griptape.tools import WebScraper
+
+agent = Agent(
+    tools=[
+        WebScraper(off_prompt=True), # This tool will store the data in Task Memory
+        TaskMemoryClient(off_prompt=True) # This tool will store the data back in Task Memory with no way to get it out
+    ]
+)
+agent.run("According to this page https://en.wikipedia.org/wiki/Dark_forest_hypothesis, what is the Dark Forest Hypothesis?")
+```
+
 ### Task Memory May Not Be Necessary
 Task Memory may not be necessary for all use cases. If the data returned by a Tool is not sensitive, not too large, and does not need to be acted upon by another Tool, you can set `off_prompt` to `False` and return the data directly to the LLM.
 
@@ -329,17 +343,3 @@ agent = Agent(
 agent.run("What is 10 ^ 3, 55 / 23, and 12345 * 0.5?")
 ```
 
-
-## Tools That Can Read From Task Memory
-
-As seen in the previous example, certain Tools are designed to read directly from Task Memory. This means that you can use these Tools to interact with the data stored in Task Memory without needing to pass it through the LLM.
-
-Unless you're handing off data to another Tool capable of reading from Task Memory, you should most likely set `off_prompt` to `False` on these Tools otherwise you may end up [Task Memory Looping](#task-memory-looping).
-
-Today, these include:
-
-- [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md)
-- [FileManager](../../griptape-tools/official-tools/file-manager.md)
-- [AwsS3Client](../../griptape-tools/official-tools/aws-s3-client.md)
-- [GoogleDriveClient](../../griptape-tools/official-tools/google-drive-client.md)
-- [GoogleDocsClient](../../griptape-tools/official-tools/google-docs-client.md)
