@@ -1,6 +1,7 @@
 import json
 import pytest
 from griptape.artifacts.actions_artifact import ActionsArtifact
+from griptape.artifacts.text_artifact import TextArtifact
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.structures import Agent
@@ -43,6 +44,8 @@ class TestActionsSubtask:
 
     def test_input(self):
         assert ActionsSubtask("{{ hello }}").input.value == "{{ hello }}"
+
+        assert ActionsSubtask(lambda self: TextArtifact("hello")).input.value == "hello"
 
         assert (
             ActionsSubtask(
