@@ -1,12 +1,13 @@
 ## Overview
 
-Task Memory is a powerful feature of Griptape that allows you to control where the data returned by Tools is stored. This is useful in the following scenarios:
-
+Task Memory is a powerful feature of Griptape that allows you to control where the data returned by [Tools](../tools/index.md) is stored. This is useful in the following scenarios:
 
 * **Security requirements**: many organizations don't want data to leave their cloud for regulatory and security reasons.
-* **Long textual content**: when textual content returned by Tools can't fit in the token limit, it's often useful to perform operations on it in a separate process, not in the main LLM.
+* **Long textual content**: when textual content returned by Tools can't fit in the token limit, it's often useful to perform actions on it as a separate operation, not through the main LLM.
 * **Non-textual content**: Tools can generate images, videos, PDFs, and other non-textual content that can be stored in Task Memory and acted upon later by other Tools.
 
+!!! tip
+    Running into issue with Task Memory? Check out the [Task Memory Considerations](#task-memory-considerations) section for some common pitfalls.
 
 ## Off Prompt
 
@@ -55,7 +56,6 @@ agent = Agent(
 agent.run("What is 10 raised to the power of 5?")
 ```
 
-
 ```
 [04/26/24 13:07:02] INFO     ToolkitTask ecbb788d9830491ab72a8a2bbef5fb0a
                              Input: What is the square root of 12345?
@@ -79,7 +79,9 @@ agent.run("What is 10 raised to the power of 5?")
 ...Output truncated for brevity...
 ```
 
-When we set `off_prompt` to `True`, the Agent does not function as expected, even generating an error. This is because the Calculator output is being stored in Task Memory but the Agent has no way to access it. To fix this, we need the `TaskMemoryClient`.
+When we set `off_prompt` to `True`, the Agent does not function as expected, even generating an error. This is because the Calculator output is being stored in Task Memory but the Agent has no way to access it. 
+To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `TaskMemoryClient`.
+This is an example of [not providing a Task Memory compatible Tool](#not-providing-a-task-memory-compatible-tool).
 
 ## Task Memory Client
 
@@ -88,10 +90,9 @@ The [TaskMemoryClient](../griptape-tools/official-tools/task-memory-client.md) i
 - `query`: Retrieve the content of an Artifact stored in Task Memory.
 - `summarize`: Summarize the content of an Artifact stored in Task Memory.
 
-
-
 Let's add `TaskMemoryClient` to the Agent and run the same task.
-Note that on the `TaskMemoryClient` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. If we had kept it as `True`, the results would have been stored back Task Memory which would've put us back to square one.
+Note that on the `TaskMemoryClient` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
+If we had kept it as `True`, the results would have been stored back Task Memory which would've put us back to square one. See [Task Memory Looping](#task-memory-looping) for more information on this scenario.
 
 ```python
 from griptape.structures import Agent
@@ -123,7 +124,8 @@ agent.run("What is the square root of 12345?")
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-While this fixed the problem, it took a handful more steps than when we just had `Calculator(off_prompt=False)`. Let's look at a more complex example where Task Memory shines.
+While this fixed the problem, it took a handful more steps than when we just had `Calculator(off_prompt=False)`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary.)
+Let's look at a more complex example where Task Memory shines.
 
 ## Large Data
 
@@ -149,6 +151,7 @@ When running this example, we get the following error:
 ```
 
 This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `TaskMemoryClient`.
+Note that we're setting `off_prompt` to `False` on the `TaskMemoryClient` so that the _queried_ content can be returned directly to the LLM.
 
 ```python
 from griptape.structures import Agent
@@ -236,7 +239,7 @@ agent = Agent(
     tools=[
         WebScraper(off_prompt=True),
         TaskMemoryClient(off_prompt=True, allowlist=["query"]),
-        FileManager(off_prompt=True),
+        FileManager(off_prompt=False), #
     ],
 )
 
@@ -279,19 +282,59 @@ By default, Griptape will store `TextArtifact`'s, `BlobArtifact`'s, and `ListArt
 
 This means that if your Tool returns an Artifact such as an `InfoArtifact` or `ErrorArtifact`, Griptape will not store it in Task Memory.
 
-### Loops
-An improper configuration of Tools can lead to the LLM using the Tools in a loop. For example, if you have a Tool that stores data in Task Memory and another Tool that queries that data, make sure that the query Tool does not store the data back in Task Memory.
+### Task Memory Looping
+An improper configuration of Tools can lead to the LLM using the Tools in a loop. For example, if you have a Tool that stores data in Task Memory and another Tool that queries that data from Task Memory ([Tools That Can Read From Task Memory](#tools-that-can-read-from-task-memory)), make sure that the query Tool does not store the data back in Task Memory.
 This can create a loop where the same data is stored and queried over and over again.
+
+```python
+from griptape.structures import Agent
+from griptape.tools import WebScraper
+
+agent = Agent(
+    tools=[
+        WebScraper(off_prompt=True) # This tool will store the data in Task Memory
+    ]
+)
+agent.run("According to this page https://en.wikipedia.org/wiki/Dark_forest_hypothesis, what is the Dark Forest Hypothesis?")
+```
 
 ### Not Providing a Task Memory Compatible Tool
 When using Task Memory, make sure that you have at least one Tool that can read from Task Memory. If you don't, the data stored in Task Memory will be inaccessible to the Agent and it may hallucinate Tool Activities.
 
+```python
+from griptape.structures import Agent
+from griptape.tools import WebScraper
+
+agent = Agent(
+    tools=[
+        WebScraper(off_prompt=True) # `off_prompt=True` will store the data in Task Memory
+        # Missing a Tool that can read from Task Memory
+    ]
+)
+agent.run("According to this page https://en.wikipedia.org/wiki/San_Francisco, what is the population of San Francisco?")
+```
+
 ### Task Memory May Not Be Necessary
 Task Memory may not be necessary for all use cases. If the data returned by a Tool is not sensitive, not too large, and does not need to be acted upon by another Tool, you can set `off_prompt` to `False` and return the data directly to the LLM.
 
-#### Tools That Use Task Memory
+```python
+from griptape.structures import Agent
+from griptape.tools import WebScraper
+
+agent = Agent(
+    tools=[
+        Calculator(off_prompt=False) # `off_prompt=False` will return the data directly to the LLM
+    ]
+)
+agent.run("What is 10 ^ 3, 55 / 23, and 12345 * 0.5?")
+```
+
+
+## Tools That Can Read From Task Memory
 
 As seen in the previous example, certain Tools are designed to read directly from Task Memory. This means that you can use these Tools to interact with the data stored in Task Memory without needing to pass it through the LLM.
+
+Unless you're handing off data to another Tool capable of reading from Task Memory, you should most likely set `off_prompt` to `False` on these Tools otherwise you may end up [Task Memory Looping](#task-memory-looping).
 
 Today, these include:
 
