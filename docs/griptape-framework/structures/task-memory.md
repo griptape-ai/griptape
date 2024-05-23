@@ -124,7 +124,7 @@ agent.run("What is the square root of 12345?")
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-While this fixed the problem, it took a handful more steps than when we just had `Calculator(off_prompt=False)`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary.)
+While this fixed the problem, it took a handful more steps than when we just had `Calculator(off_prompt=False)`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
 Let's look at a more complex example where Task Memory shines.
 
 ## Large Data
