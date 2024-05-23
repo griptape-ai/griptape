@@ -52,7 +52,7 @@ class TestOpenAiStructureConfig:
                 "max_tokens": 256,
                 "model": "gpt-4o",
                 "organization": None,
-                "type": "OpenAiVisionImageQueryDriver",
+                "type": "OpenAiImageQueryDriver",
             },
             "vector_store_driver": {
                 "embedding_driver": {

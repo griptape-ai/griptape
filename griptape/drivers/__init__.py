@@ -79,9 +79,9 @@ from .image_query_model.bedrock_claude_image_query_model_driver import BedrockCl
 from .image_query.base_image_query_driver import BaseImageQueryDriver
 from .image_query.base_multi_model_image_query_driver import BaseMultiModelImageQueryDriver
 from .image_query.dummy_image_query_driver import DummyImageQueryDriver
-from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
+from .image_query.openai_image_query_driver import OpenAiImageQueryDriver
 from .image_query.anthropic_image_query_driver import AnthropicImageQueryDriver
-from .image_query.azure_openai_vision_image_query_driver import AzureOpenAiVisionImageQueryDriver
+from .image_query.azure_openai_image_query_driver import AzureOpenAiImageQueryDriver
 from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQueryDriver
 
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
@@ -175,8 +175,8 @@ __all__ = [
     "BaseImageQueryModelDriver",
     "BedrockClaudeImageQueryModelDriver",
     "BaseImageQueryDriver",
-    "OpenAiVisionImageQueryDriver",
-    "AzureOpenAiVisionImageQueryDriver",
+    "OpenAiImageQueryDriver",
+    "AzureOpenAiImageQueryDriver",
     "DummyImageQueryDriver",
     "AnthropicImageQueryDriver",
     "BaseMultiModelImageQueryDriver",

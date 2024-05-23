@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import Mock
-from griptape.drivers import AzureOpenAiVisionImageQueryDriver
+from griptape.drivers import AzureOpenAiImageQueryDriver
 from griptape.artifacts import ImageArtifact
 
 
@@ -13,15 +13,13 @@ class TestAzureOpenAiVisionImageQueryDriver:
         return mock_chat_create
 
     def test_init(self):
-        assert AzureOpenAiVisionImageQueryDriver(
+        assert AzureOpenAiImageQueryDriver(
             azure_endpoint="test-endpoint", azure_deployment="test-deployment", model="gpt-4"
         )
-        assert (
-            AzureOpenAiVisionImageQueryDriver(azure_endpoint="test-endpoint", model="gpt-4").azure_deployment == "gpt-4"
-        )
+        assert AzureOpenAiImageQueryDriver(azure_endpoint="test-endpoint", model="gpt-4").azure_deployment == "gpt-4"
 
     def test_try_query_defaults(self, mock_completion_create):
-        driver = AzureOpenAiVisionImageQueryDriver(
+        driver = AzureOpenAiImageQueryDriver(
             azure_endpoint="test-endpoint", azure_deployment="test-deployment", model="gpt-4"
         )
         test_prompt_string = "Prompt String"
@@ -36,7 +34,7 @@ class TestAzureOpenAiVisionImageQueryDriver:
         assert text_artifact.value == "expected_output_text"
 
     def test_try_query_max_tokens(self, mock_completion_create):
-        driver = AzureOpenAiVisionImageQueryDriver(
+        driver = AzureOpenAiImageQueryDriver(
             azure_endpoint="test-endpoint", azure_deployment="test-deployment", model="gpt-4", max_tokens=1024
         )
         test_prompt_string = "Prompt String"
@@ -50,7 +48,7 @@ class TestAzureOpenAiVisionImageQueryDriver:
 
     def test_try_query_multiple_choices(self, mock_completion_create):
         mock_completion_create.return_value.choices.append(Mock(message=Mock(content="expected_output_text2")))
-        driver = AzureOpenAiVisionImageQueryDriver(
+        driver = AzureOpenAiImageQueryDriver(
             azure_endpoint="test-endpoint", azure_deployment="test-deployment", model="gpt-4"
         )
 

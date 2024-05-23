@@ -67,7 +67,7 @@ class TestAzureOpenAiStructureConfig:
                 "azure_deployment": "gpt-4",
                 "azure_endpoint": "http://localhost:8080",
                 "organization": None,
-                "type": "AzureOpenAiVisionImageQueryDriver",
+                "type": "AzureOpenAiImageQueryDriver",
             },
             "vector_store_driver": {
                 "embedding_driver": {

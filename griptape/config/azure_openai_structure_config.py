@@ -7,7 +7,7 @@ from griptape.drivers import (
     AzureOpenAiChatPromptDriver,
     AzureOpenAiEmbeddingDriver,
     AzureOpenAiImageGenerationDriver,
-    AzureOpenAiVisionImageQueryDriver,
+    AzureOpenAiImageQueryDriver,
     BasePromptDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
@@ -69,7 +69,7 @@ class AzureOpenAiStructureConfig(StructureConfig):
     )
     image_query_driver: BaseImageQueryDriver = field(
         default=Factory(
-            lambda self: AzureOpenAiVisionImageQueryDriver(
+            lambda self: AzureOpenAiImageQueryDriver(
                 model="gpt-4",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,

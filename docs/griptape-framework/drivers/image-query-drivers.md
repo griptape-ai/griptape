@@ -67,11 +67,11 @@ print(result)
 The [OpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/openai_vision_image_query_driver.md) is used to query images using the OpenAI Vision API. Here is an example of how to use it:
 
 ```python
-from griptape.drivers import OpenAiVisionImageQueryDriver
+from griptape.drivers import OpenAiImageQueryDriver
 from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 
-driver = OpenAiVisionImageQueryDriver(
+driver = OpenAiImageQueryDriver(
     model="gpt-4o",
     max_tokens=256,
 )
@@ -95,11 +95,11 @@ The [AzureOpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_q
 
 ```python
 import os
-from griptape.drivers import AzureOpenAiVisionImageQueryDriver
+from griptape.drivers import AzureOpenAiImageQueryDriver
 from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 
-driver = AzureOpenAiVisionImageQueryDriver(
+driver = AzureOpenAiImageQueryDriver(
     azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
     api_key=os.environ["AZURE_OPENAI_API_KEY_3"],
     model="gpt-4",
