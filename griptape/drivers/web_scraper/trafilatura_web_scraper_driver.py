@@ -1,6 +1,6 @@
 import json
 import logging
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseWebScraperDriver
 from griptape.utils import import_optional_dependency

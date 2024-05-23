@@ -11,7 +11,7 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
     OpenAiImageGenerationDriver,
-    OpenAiVisionImageQueryDriver,
+    OpenAiImageQueryDriver,
 )
 
 
@@ -26,9 +26,7 @@ class OpenAiStructureConfig(StructureConfig):
         metadata={"serializable": True},
     )
     image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview")),
-        kw_only=True,
-        metadata={"serializable": True},
+        default=Factory(lambda: OpenAiImageQueryDriver(model="gpt-4o")), kw_only=True, metadata={"serializable": True}
     )
     embedding_driver: BaseEmbeddingDriver = field(
         default=Factory(lambda: OpenAiEmbeddingDriver(model="text-embedding-3-small")),

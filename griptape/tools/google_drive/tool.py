@@ -3,7 +3,7 @@ import logging
 from typing import Any, Optional
 import schema
 from schema import Schema, Literal, Or
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient

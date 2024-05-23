@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from typing import Optional
 from griptape import utils
 from griptape.mixins import SerializableMixin

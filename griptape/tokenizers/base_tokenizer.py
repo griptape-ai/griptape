@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape import utils
 
 

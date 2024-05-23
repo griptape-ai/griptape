@@ -2,7 +2,7 @@ from __future__ import annotations
 import numpy as np
 from typing import Optional
 from abc import ABC, abstractmethod
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
@@ -20,11 +20,10 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
-    chunker: BaseChunker = field(init=False)
+    chunker: Optional[BaseChunker] = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        if self.tokenizer:
-            self.chunker = TextChunker(tokenizer=self.tokenizer)
+        self.chunker = TextChunker(tokenizer=self.tokenizer) if self.tokenizer else None
 
     def embed_text_artifact(self, artifact: TextArtifact) -> list[float]:
         return self.embed_string(artifact.to_text())

@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, Callable
 from collections.abc import Iterator
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
 from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import PromptStack

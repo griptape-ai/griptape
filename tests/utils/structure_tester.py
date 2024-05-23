@@ -1,6 +1,6 @@
 from __future__ import annotations
 import os
-from attr import field, define
+from attrs import field, define
 from schema import Schema, Literal
 import logging
 import json

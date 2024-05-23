@@ -1,6 +1,6 @@
 from __future__ import annotations
 import uuid
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from typing import Optional, TYPE_CHECKING
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import BaseConversationMemory

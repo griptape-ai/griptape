@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from attr import define, field
+from attrs import define, field
 
 from .base_text_to_speech_event import BaseTextToSpeechEvent
 

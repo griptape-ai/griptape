@@ -9,7 +9,7 @@ import os
 from abc import ABC
 from typing import Optional
 import yaml
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 

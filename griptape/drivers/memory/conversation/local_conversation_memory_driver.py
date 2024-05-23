@@ -1,5 +1,5 @@
 import os
-from attr import define, field
+from attrs import define, field
 from typing import Optional
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import BaseConversationMemory

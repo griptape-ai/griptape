@@ -9,7 +9,7 @@ from griptape.utils.prompt_stack import PromptStack
 
 @define
 class DummyPromptDriver(BasePromptDriver):
-    model: str = field(init=False)
+    model: None = field(init=False, default=None, kw_only=True)
     tokenizer: DummyTokenizer = field(default=Factory(lambda: DummyTokenizer()), kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:

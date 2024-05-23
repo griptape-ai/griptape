@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import Callable, Optional
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 import openai
-from griptape.drivers.image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
+from griptape.drivers.image_query.openai_image_query_driver import OpenAiImageQueryDriver
 
 
 @define
-class AzureOpenAiVisionImageQueryDriver(OpenAiVisionImageQueryDriver):
+class AzureOpenAiImageQueryDriver(OpenAiImageQueryDriver):
     """Driver for Azure-hosted OpenAI image query API.
 
     Attributes:

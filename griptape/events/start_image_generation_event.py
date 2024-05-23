@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional
-from attr import define, field
+from attrs import define, field
 
 from .base_image_generation_event import BaseImageGenerationEvent
 

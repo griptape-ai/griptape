@@ -1,5 +1,5 @@
 from typing import Callable, Optional
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.drivers import OpenAiCompletionPromptDriver
 import openai
 

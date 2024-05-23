@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define
+from attrs import define
 from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
 from griptape.tools import BaseTool
