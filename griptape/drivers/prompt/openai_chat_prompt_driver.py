@@ -7,7 +7,6 @@ from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
-from typing import Tuple, Type
 import dateparser
 from datetime import datetime, timedelta
 

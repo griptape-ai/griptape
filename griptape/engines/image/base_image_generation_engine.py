@@ -14,8 +14,7 @@ class BaseImageGenerationEngine(ABC):
     image_generation_driver: BaseImageGenerationDriver = field(kw_only=True)
 
     @abstractmethod
-    def run(self, prompts: list[str], *args, rulesets: Optional[list[Ruleset]], **kwargs) -> ImageArtifact:
-        ...
+    def run(self, prompts: list[str], *args, rulesets: Optional[list[Ruleset]], **kwargs) -> ImageArtifact: ...
 
     def _ruleset_to_prompts(self, prompts: Optional[list[str]], rulesets: Optional[list[Ruleset]]) -> list[str]:
         if not prompts:

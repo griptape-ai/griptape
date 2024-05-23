@@ -13,6 +13,7 @@ from griptape.drivers import (
     BaseImageQueryDriver,
     BasePromptDriver,
     BaseVectorStoreDriver,
+    BaseTextToSpeechDriver,
 )
 from griptape.utils import dict_merge
 
@@ -27,6 +28,7 @@ class BaseStructureConfig(BaseConfig, ABC):
     conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
         default=None, kw_only=True, metadata={"serializable": True}
     )
+    text_to_speech_driver: BaseTextToSpeechDriver = field(kw_only=True, metadata={"serializable": True})
 
     def merge_config(self, config: dict) -> BaseStructureConfig:
         base_config = self.to_dict()

@@ -120,7 +120,7 @@ pipeline = Pipeline(
     conversation_memory=ConversationMemory(),
     config = StructureConfig(
         prompt_driver=OpenAiChatPromptDriver(
-            model="gpt-4",
+            model="gpt-4o",
             temperature=0.1
         ),
     ),

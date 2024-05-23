@@ -78,8 +78,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         )
 
     @abstractmethod
-    def delete_vector(self, vector_id: str) -> None:
-        ...
+    def delete_vector(self, vector_id: str) -> None: ...
 
     @abstractmethod
     def upsert_vector(
@@ -89,16 +88,13 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         **kwargs,
-    ) -> str:
-        ...
+    ) -> str: ...
 
     @abstractmethod
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[Entry]:
-        ...
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[Entry]: ...
 
     @abstractmethod
-    def load_entries(self, namespace: Optional[str] = None) -> list[Entry]:
-        ...
+    def load_entries(self, namespace: Optional[str] = None) -> list[Entry]: ...
 
     @abstractmethod
     def query(
@@ -108,5 +104,4 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[QueryResult]:
-        ...
+    ) -> list[QueryResult]: ...

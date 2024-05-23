@@ -1,9 +1,8 @@
 from __future__ import annotations
 from attrs import define
 from abc import ABC
-from .base_event import BaseEvent
+from .base_media_generation_event import BaseMediaGenerationEvent
 
 
 @define
-class BaseImageGenerationEvent(BaseEvent, ABC):
-    ...
+class BaseImageGenerationEvent(BaseMediaGenerationEvent, ABC): ...

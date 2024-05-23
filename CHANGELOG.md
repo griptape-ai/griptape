@@ -7,16 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
+- `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
+
+### Changed
+- Default the value of `azure_deployment` on all Azure Drivers to the model the Driver is using.
+- Field `azure_ad_token` on all Azure Drivers is no longer serializable.
+
+## [0.25.1] - 2024-05-15
+
+### Fixed
+- Honor `namespace` in `RedisVectorStoreDriver.query()`.
+- Correctly set the `meta`, `score`, and `vector` fields of query result returned from `RedisVectorStoreDriver.query()`.
+- Standardize behavior between omitted and empty actions list when initializing `ActionsSubtask`.
+
+### Added
+- Optional event batching on Event Listener Drivers.
+- `id` field to all events.
+
+### Changed
+- Default behavior of Event Listener Drivers to batch events.
+- Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
+
+## [0.25.0] - 2024-05-06
+
+### Added
 - `list_files_from_disk` activity to `FileManager` Tool.
 - Support for Drivers in `EventListener`.
 - `AmazonSqsEventListenerDriver` for sending events to an Amazon SQS queue.
 - `AwsIotCoreEventListenerDriver` for sending events to a topic on AWS IoT Core.
 - `GriptapeCloudEventListenerDriver` for sending events to Griptape Cloud.
 - `WebhookEventListenerDriver` for sending events to a webhook.
-- `LocalEventListenerDriver` for sending events to a callback function.
 - `BaseFileManagerDriver` to abstract file management operations.
 - `LocalFileManagerDriver` for managing files on the local file system.
-- Added optional `BaseLoader.encoding` field.
+- Optional `BaseLoader.encoding` field.
 - `BlobLoader` for loading arbitrary binary data as a `BlobArtifact`.
 - `model` field to `StartPromptEvent` and `FinishPromptEvent`.
 - `input_task_input` and `input_task_output` fields to `StartStructureRunEvent`.
@@ -24,7 +48,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonS3FileManagerDriver` for managing files on Amazon S3.
 - `MediaArtifact` as a base class for `ImageArtifact` and future media Artifacts.
 - Optional `exception` field to `ErrorArtifact`.
-- `GriptapeCloudStructureRunClient` tool for invoking Griptape Cloud Structure Run APIs.
+- `StructureRunClient` for running other Structures via a Tool.
+- `StructureRunTask` for running Structures as a Task from within another Structure.
+- `GriptapeCloudStructureRunDriver` for running Structures in Griptape Cloud.
+- `LocalStructureRunDriver` for running Structures in the same run-time environment as the code that is running the Structure.
 
 ### Changed
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
@@ -33,13 +60,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `PdfLoader` no longer accepts `str` file content, `Path` file paths or `IO` objects as sources. Instead, it will only accept the content of the PDF file as a `bytes` object.
 - **BREAKING**: `TextLoader` no longer accepts `Path` file paths as a source. It will now accept the content of the text file as a `str` or `bytes` object.
 - **BREAKING**: `FileManager.default_loader` is now `None` by default.
-- **BREAKING**: Replaced `EventListener.handler` with `EventListener.driver` and `LocalEventListenerDriver`.
 - **BREAKING** Bumped `pinecone` from `^2` to `^3`.
 - **BREAKING**: Removed `workdir`, `loaders`, `default_loader`, and `save_file_encoding` fields from `FileManager` and added `file_manager_driver`.
-- **BREADKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
+- **BREAKING**: Removed `mime_type` field from `ImageArtifact`. `mime_type` is now a property constructed using the Artifact type and `format` field.
+- **BREAKING**: `off_prompt` no longer has a default on all Tools, making Task Memory something that must be explicitly opted into or out of.
 - Improved RAG performance in `VectorQueryEngine`.
 - Moved [Griptape Docs](https://github.com/griptape-ai/griptape-docs) to this repository.
-- **BREAKING**: `off_prompt` no longer has a default on all Tools, making Task Memory something that must be explicitly opted into or out of.
+- Updated `EventListener.handler`'s behavior so that the return value will be passed to the `EventListenerDriver.try_publish_event_payload`'s `event_payload` parameter.
 
 ### Fixed
 - Type hint for parameter `azure_ad_token_provider` on Azure OpenAI drivers to `Optional[Callable[[], str]]`.
@@ -151,7 +178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.22.2] - 2024-01-18
 
 ### Fixed
-- `ToolkitTask`'s user subtask prompt occassionally causing a loop with Chain of Thought.
+- `ToolkitTask`'s user subtask prompt occasionally causing a loop with Chain of Thought.
 
 ### Security
 - Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]

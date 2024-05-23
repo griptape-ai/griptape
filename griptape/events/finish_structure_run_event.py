@@ -9,7 +9,8 @@ from griptape.events.base_event import BaseEvent
 
 @define
 class FinishStructureRunEvent(BaseEvent):
-    output_task_input: Union[
-        BaseArtifact, tuple[BaseArtifact, ...], tuple[BaseArtifact, Sequence[BaseArtifact]]
-    ] = field(kw_only=True, metadata={"serializable": True})
+    structure_id: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
+    output_task_input: Union[BaseArtifact, tuple[BaseArtifact, ...], tuple[BaseArtifact, Sequence[BaseArtifact]]] = (
+        field(kw_only=True, metadata={"serializable": True})
+    )
     output_task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serializable": True})

@@ -44,6 +44,7 @@ class TestAnthropicStructureConfig:
                 },
             },
             "conversation_memory_driver": None,
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
         }
 
     def test_from_dict(self, config):

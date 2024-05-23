@@ -6,8 +6,12 @@ from griptape.drivers import (
     AmazonBedrockImageQueryDriver,
     AmazonBedrockPromptDriver,
     AmazonBedrockTitanEmbeddingDriver,
-    BedrockClaudePromptModelDriver,
+    BaseEmbeddingDriver,
+    BaseImageGenerationDriver,
+    BasePromptDriver,
+    BaseVectorStoreDriver,
     BedrockClaudeImageQueryModelDriver,
+    BedrockClaudePromptModelDriver,
     BedrockTitanImageGenerationModelDriver,
     LocalVectorStoreDriver,
 )
@@ -15,7 +19,7 @@ from griptape.drivers import (
 
 @define()
 class AmazonBedrockStructureConfig(StructureConfig):
-    prompt_driver: AmazonBedrockPromptDriver = field(
+    prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda: AmazonBedrockPromptDriver(
                 model="anthropic.claude-3-sonnet-20240229-v1:0",
@@ -25,7 +29,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
         ),
         metadata={"serializable": True},
     )
-    image_generation_driver: AmazonBedrockImageGenerationDriver = field(
+    image_generation_driver: BaseImageGenerationDriver = field(
         default=Factory(
             lambda: AmazonBedrockImageGenerationDriver(
                 model="amazon.titan-image-generator-v1",
@@ -34,7 +38,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
         ),
         metadata={"serializable": True},
     )
-    image_query_driver: AmazonBedrockImageQueryDriver = field(
+    image_query_driver: BaseImageGenerationDriver = field(
         default=Factory(
             lambda: AmazonBedrockImageQueryDriver(
                 model="anthropic.claude-3-sonnet-20240229-v1:0",
@@ -43,11 +47,11 @@ class AmazonBedrockStructureConfig(StructureConfig):
         ),
         metadata={"serializable": True},
     )
-    embedding_driver: AmazonBedrockTitanEmbeddingDriver = field(
+    embedding_driver: BaseEmbeddingDriver = field(
         default=Factory(lambda: AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1")),
         metadata={"serializable": True},
     )
-    vector_store_driver: LocalVectorStoreDriver = field(
+    vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(
             lambda: LocalVectorStoreDriver(
                 embedding_driver=AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1")

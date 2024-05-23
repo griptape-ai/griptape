@@ -44,5 +44,4 @@ class BaseArtifact(SerializableMixin, ABC):
         return len(self.value)
 
     @abstractmethod
-    def __add__(self, other: BaseArtifact) -> BaseArtifact:
-        ...
+    def __add__(self, other: BaseArtifact) -> BaseArtifact: ...

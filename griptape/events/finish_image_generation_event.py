@@ -6,5 +6,4 @@ from .base_image_generation_event import BaseImageGenerationEvent
 
 
 @define
-class FinishImageGenerationEvent(BaseImageGenerationEvent):
-    ...
+class FinishImageGenerationEvent(BaseImageGenerationEvent): ...

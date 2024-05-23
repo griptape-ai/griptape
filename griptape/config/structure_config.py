@@ -15,6 +15,8 @@ from griptape.drivers import (
     DummyPromptDriver,
     DummyImageQueryDriver,
     BaseImageQueryDriver,
+    BaseTextToSpeechDriver,
+    DummyTextToSpeechDriver,
 )
 
 
@@ -37,4 +39,7 @@ class StructureConfig(BaseStructureConfig):
     )
     conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
         default=None, kw_only=True, metadata={"serializable": True}
+    )
+    text_to_speech_driver: BaseTextToSpeechDriver = field(
+        default=Factory(lambda: DummyTextToSpeechDriver()), kw_only=True, metadata={"serializable": True}
     )

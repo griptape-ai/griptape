@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 import logging
 import uuid
 from abc import ABC, abstractmethod
@@ -12,14 +11,7 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
-from griptape.drivers import (
-    BaseEmbeddingDriver,
-    BasePromptDriver,
-    DummyPromptDriver,
-    DummyVectorStoreDriver,
-    OpenAiEmbeddingDriver,
-    OpenAiChatPromptDriver,
-)
+from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
 from griptape.events import BaseEvent, EventListener
@@ -145,7 +137,7 @@ class Structure(ABC):
             config = StructureConfig()
 
             if self.prompt_driver is None:
-                prompt_driver = OpenAiChatPromptDriver(model="gpt-4")
+                prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
             else:
                 prompt_driver = self.prompt_driver
 
@@ -210,28 +202,32 @@ class Structure(ABC):
         else:
             raise ValueError("Event Listener not found.")
 
-    def publish_event(self, event: BaseEvent) -> None:
+    def publish_event(self, event: BaseEvent, flush: bool = False) -> None:
         for event_listener in self.event_listeners:
-            event_listener.publish_event(event)
+            event_listener.publish_event(event, flush)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
 
     def before_run(self) -> None:
         self.publish_event(
-            StartStructureRunEvent(input_task_input=self.input_task.input, input_task_output=self.input_task.output)
+            StartStructureRunEvent(
+                structure_id=self.id, input_task_input=self.input_task.input, input_task_output=self.input_task.output
+            )
         )
 
     def after_run(self) -> None:
         self.publish_event(
             FinishStructureRunEvent(
-                output_task_input=self.output_task.input, output_task_output=self.output_task.output
-            )
+                structure_id=self.id,
+                output_task_input=self.output_task.input,
+                output_task_output=self.output_task.output,
+            ),
+            flush=True,
         )
 
     @abstractmethod
-    def add_task(self, task: BaseTask) -> BaseTask:
-        ...
+    def add_task(self, task: BaseTask) -> BaseTask: ...
 
     def run(self, *args) -> Structure:
         self.before_run()
@@ -243,5 +239,4 @@ class Structure(ABC):
         return result
 
     @abstractmethod
-    def try_run(self, *args) -> Structure:
-        ...
+    def try_run(self, *args) -> Structure: ...

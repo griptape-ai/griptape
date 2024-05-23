@@ -19,6 +19,7 @@ class TestStructureConfig:
                 "embedding_driver": {"type": "DummyEmbeddingDriver"},
                 "type": "DummyVectorStoreDriver",
             },
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
         }
 
     def test_from_dict(self, config):

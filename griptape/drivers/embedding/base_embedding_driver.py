@@ -41,8 +41,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             raise RuntimeError("Failed to embed string.")
 
     @abstractmethod
-    def try_embed_chunk(self, chunk: str) -> list[float]:
-        ...
+    def try_embed_chunk(self, chunk: str) -> list[float]: ...
 
     def _embed_long_string(self, string: str) -> list[float]:
         """Embeds a string that is too long to embed in one go.

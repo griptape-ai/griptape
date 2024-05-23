@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import abstractmethod
 from attr import define
 from typing import Optional
 

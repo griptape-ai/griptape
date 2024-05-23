@@ -28,6 +28,10 @@ class TestAzureOpenAiCompletionPromptDriver(TestOpenAiCompletionPromptDriverFixt
         assert AzureOpenAiCompletionPromptDriver(
             azure_endpoint="endpoint", azure_deployment="deployment", model="text-davinci-003"
         )
+        assert (
+            AzureOpenAiCompletionPromptDriver(azure_endpoint="endpoint", model="text-davinci-003").azure_deployment
+            == "text-davinci-003"
+        )
 
     def test_try_run(self, mock_completion_create, prompt_stack, prompt):
         # Given
