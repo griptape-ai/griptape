@@ -89,8 +89,8 @@ class ActionsSubtask(BaseTextInputTask):
 
     def run(self) -> BaseArtifact:
         try:
-            if any(a.name == "error" for a in self.actions):
-                errors = [a.input["error"] for a in self.actions if a.name == "error"]
+            if any(isinstance(a.output, ErrorArtifact) for a in self.actions):
+                errors = [a.output.value for a in self.actions if isinstance(a.output, ErrorArtifact)]
 
                 self.output = ErrorArtifact("\n\n".join(errors))
             else:
@@ -165,6 +165,9 @@ class ActionsSubtask(BaseTextInputTask):
             if action.input:
                 json_dict["input"] = action.input
 
+            if action.output:
+                json_dict["output"] = action.output.to_text()
+
             json_list.append(json_dict)
 
         return json_list
@@ -194,7 +197,7 @@ class ActionsSubtask(BaseTextInputTask):
         if isinstance(input, ActionsArtifact):
             self.thought = input.value
 
-            self.actions = self.__process_actions(input.actions)
+            self.actions = [self.__process_action(action) for action in input.actions]
         else:
             prompt = input.to_text()
             thought_matches = re.findall(self.THOUGHT_PATTERN, prompt, re.MULTILINE)
@@ -244,7 +247,7 @@ class ActionsSubtask(BaseTextInputTask):
             return [self.__error_to_action(f"Action JSON validation error: {e}")]
 
         actions = [self.__parse_action_object(action_object) for action_object in actions_list]
-        processed_actions = self.__process_actions(actions)
+        processed_actions = [self.__process_action(action) for action in actions]
 
         return processed_actions
 
@@ -271,7 +274,7 @@ class ActionsSubtask(BaseTextInputTask):
 
             action = ActionsArtifact.Action(tag=action_tag, name=action_name, path=action_path, input=action_input)
 
-            return self.__process_action(action)
+            return action
         except SyntaxError as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nSyntax error: {e}")
 
@@ -281,17 +284,15 @@ class ActionsSubtask(BaseTextInputTask):
 
             return self.__error_to_action(f"Action JSON validation error: {e}")
 
-    def __process_actions(self, actions: list[ActionsArtifact.Action]) -> list[ActionsArtifact.Action]:
-        return [self.__process_action(action) for action in actions]
-
     def __process_action(self, action: ActionsArtifact.Action) -> ActionsArtifact.Action:
+        """Process an Action by looking up the Tool and validating the input."""
         if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
             tool = self.origin_task.find_tool(action.name)
             new_action = ActionsArtifact.Action(
                 tag=action.tag, name=action.name, path=action.path, input=action.input, tool=tool
             )
 
-            if action.input:
+            if new_action.input:
                 new_action = self.__validate_action(new_action)
 
             return new_action
@@ -322,4 +323,4 @@ class ActionsSubtask(BaseTextInputTask):
             )
 
     def __error_to_action(self, error: str, tag: str = "error", name: str = "error") -> ActionsArtifact.Action:
-        return ActionsArtifact.Action(tag=tag, name=name, input={"error": error}, output=ErrorArtifact(error))
+        return ActionsArtifact.Action(tag=tag, name=name, output=ErrorArtifact(error))

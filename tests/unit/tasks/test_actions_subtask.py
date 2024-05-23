@@ -124,4 +124,4 @@ class TestActionsSubtask:
         json_dict = json.loads(subtask.actions_to_json())
 
         assert json_dict[0]["name"] == "error"
-        assert "Action input parsing error" in json_dict[0]["input"]["error"]
+        assert "Action input parsing error" in json_dict[0]["output"]
