@@ -41,7 +41,7 @@ class AzureOpenAiStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda self: AzureOpenAiChatPromptDriver(
-                model="gpt-4",
+                model="gpt-4o",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
                 azure_ad_token=self.azure_ad_token,
@@ -70,7 +70,7 @@ class AzureOpenAiStructureConfig(StructureConfig):
     image_query_driver: BaseImageQueryDriver = field(
         default=Factory(
             lambda self: AzureOpenAiImageQueryDriver(
-                model="gpt-4",
+                model="gpt-4o",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
                 azure_ad_token=self.azure_ad_token,
