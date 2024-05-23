@@ -1,5 +1,5 @@
 from griptape.events import FinishPromptEvent, StartPromptEvent
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
 from griptape.artifacts import ErrorArtifact, TextArtifact

@@ -4,7 +4,7 @@ import csv
 import io
 from attrs import field, Factory, define
 from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, ErrorArtifact
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.rules import Ruleset

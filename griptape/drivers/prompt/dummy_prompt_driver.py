@@ -4,7 +4,7 @@ from griptape.tokenizers import DummyTokenizer
 from griptape.drivers import BasePromptDriver
 from griptape.artifacts import TextArtifact
 from griptape.exceptions import DummyException
-from griptape.utils.prompt_stack import PromptStack
+from griptape.common import PromptStack
 
 
 @define

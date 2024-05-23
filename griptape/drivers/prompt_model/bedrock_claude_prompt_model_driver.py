@@ -3,7 +3,7 @@ from typing import Optional
 import json
 from attrs import define, field
 from griptape.artifacts import TextArtifact
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptModelDriver, AmazonBedrockPromptDriver
 from griptape.tokenizers import BedrockClaudeTokenizer
 

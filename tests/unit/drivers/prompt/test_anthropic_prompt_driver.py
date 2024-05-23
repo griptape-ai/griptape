@@ -1,5 +1,5 @@
 from griptape.drivers import AnthropicPromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from unittest.mock import Mock
 import pytest
 

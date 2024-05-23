@@ -1,10 +1,10 @@
 from collections.abc import Iterator
 from attrs import define
 
-from griptape.utils import PromptStack
+from griptape.artifacts import TextArtifact, TextChunkArtifact
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
-from griptape.artifacts import TextArtifact
+from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
 
 @define

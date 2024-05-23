@@ -1,5 +1,5 @@
 from griptape.drivers import HuggingFacePipelinePromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 import pytest
 
 

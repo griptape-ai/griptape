@@ -5,7 +5,7 @@ from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
 from griptape.mixins.serializable_mixin import SerializableMixin
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
 from griptape.artifacts import TextArtifact

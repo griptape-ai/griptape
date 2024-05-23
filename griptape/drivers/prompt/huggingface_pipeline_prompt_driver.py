@@ -3,9 +3,10 @@ from collections.abc import Iterator
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.utils import PromptStack, import_optional_dependency
+from griptape.utils import import_optional_dependency
 
 
 @define

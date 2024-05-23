@@ -1,5 +1,5 @@
 from griptape.drivers import CoherePromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from unittest.mock import Mock
 import pytest
 
@@ -67,4 +67,4 @@ class TestCoherePromptDriver:
             driver.try_run(prompt_stack)
 
         # Then
-        e.value.args[0] == "Completion with more than one choice is not supported yet."
+        assert e.value.args[0] == "Completion with more than one choice is not supported yet."

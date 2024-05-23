@@ -2,8 +2,7 @@ from unittest import mock
 import json
 import boto3
 import pytest
-from griptape.tokenizers import BedrockLlamaTokenizer
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockLlamaPromptModelDriver
 
 

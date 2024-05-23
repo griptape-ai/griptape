@@ -8,7 +8,8 @@ from attrs import Factory, define, field
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.utils import PromptStack, import_optional_dependency
+from griptape.common import PromptStack
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from huggingface_hub import InferenceClient

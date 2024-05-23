@@ -1,11 +1,14 @@
 from __future__ import annotations
 from typing import Optional, Any
 from collections.abc import Iterator
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
-from griptape.utils import PromptStack, import_optional_dependency
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
+from griptape.utils import import_optional_dependency
 
 
 @define

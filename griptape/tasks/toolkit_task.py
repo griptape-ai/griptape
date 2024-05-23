@@ -10,7 +10,7 @@ from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool

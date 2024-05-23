@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from attrs import define, field
 from griptape.artifacts import TextArtifact
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
 from griptape.mixins import SerializableMixin

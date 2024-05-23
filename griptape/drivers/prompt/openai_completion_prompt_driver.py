@@ -1,11 +1,13 @@
 from typing import Optional
+
+import openai
 from collections.abc import Iterator
-from attrs import define, field, Factory
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer
-import openai
 
 
 @define

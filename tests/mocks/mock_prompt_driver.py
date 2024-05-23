@@ -1,12 +1,14 @@
 from __future__ import annotations
+
 from collections.abc import Iterator
 from typing import Callable
+
 from attrs import define, field
-from griptape.utils import PromptStack
+
+from griptape.artifacts import TextArtifact, TextChunkArtifact
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
-from griptape.artifacts import TextArtifact
-from tests.mocks.mock_tokenizer import MockTokenizer
 
 
 @define

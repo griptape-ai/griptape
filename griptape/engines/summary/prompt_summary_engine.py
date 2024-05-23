@@ -2,7 +2,7 @@ from typing import Optional, cast
 from attrs import define, Factory, field
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2

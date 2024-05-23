@@ -3,7 +3,7 @@ from attrs import define, field, Factory
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
 from griptape.artifacts import TextArtifact
-from griptape.utils.prompt_stack import PromptStack
+from griptape.common.prompt_stack import PromptStack
 
 
 @define

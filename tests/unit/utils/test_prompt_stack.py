@@ -1,5 +1,5 @@
 import pytest
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 from griptape.structures.agent import Agent

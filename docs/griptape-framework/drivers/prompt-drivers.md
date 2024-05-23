@@ -28,7 +28,7 @@ agent.run("I loved the new Batman movie!")
 Or use them independently:
 
 ```python
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
 
 stack = PromptStack()
@@ -258,7 +258,7 @@ import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFaceHubPromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.config import StructureConfig
 
 
@@ -343,7 +343,7 @@ import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.config import StructureConfig
 
 

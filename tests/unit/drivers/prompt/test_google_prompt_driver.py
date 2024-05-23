@@ -1,6 +1,6 @@
 from google.generativeai.types import GenerationConfig
 from griptape.drivers import GooglePromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from unittest.mock import Mock
 from tests.mocks.mock_tokenizer import MockTokenizer
 import pytest

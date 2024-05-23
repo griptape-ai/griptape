@@ -2,7 +2,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
-from griptape.utils import J2, PromptStack
+from griptape.utils import J2
+from griptape.common import PromptStack
 from griptape.memory.structure import ConversationMemory
 
 if TYPE_CHECKING:

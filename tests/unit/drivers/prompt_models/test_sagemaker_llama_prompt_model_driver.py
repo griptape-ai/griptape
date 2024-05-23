@@ -1,6 +1,6 @@
 import boto3
 import pytest
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerLlamaPromptModelDriver
 
 

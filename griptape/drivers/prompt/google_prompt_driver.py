@@ -1,11 +1,15 @@
 from __future__ import annotations
+
 from collections.abc import Iterator
-from typing import TYPE_CHECKING, Optional, Any
-from attrs import define, field, Factory
-from griptape.utils import PromptStack, import_optional_dependency
+from typing import TYPE_CHECKING, Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import GoogleTokenizer, BaseTokenizer
+from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from google.generativeai import GenerativeModel

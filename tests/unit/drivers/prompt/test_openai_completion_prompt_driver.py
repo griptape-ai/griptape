@@ -1,5 +1,5 @@
 from griptape.drivers import OpenAiCompletionPromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from unittest.mock import ANY, Mock
 from griptape.tokenizers import OpenAiTokenizer
 import pytest

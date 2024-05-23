@@ -4,7 +4,7 @@ from transformers import AutoTokenizer
 
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
 import pytest

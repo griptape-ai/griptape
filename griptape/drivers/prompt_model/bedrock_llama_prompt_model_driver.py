@@ -4,7 +4,7 @@ import itertools as it
 from typing import Optional
 from attrs import define, field
 from griptape.artifacts import TextArtifact
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import BasePromptModelDriver
 from griptape.tokenizers import BedrockLlamaTokenizer
 from griptape.drivers import AmazonBedrockPromptDriver
