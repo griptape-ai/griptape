@@ -50,7 +50,7 @@ class TestOpenAiStructureConfig:
                 "base_url": None,
                 "image_quality": "auto",
                 "max_tokens": 256,
-                "model": "gpt-4-vision-preview",
+                "model": "gpt-4o",
                 "organization": None,
                 "type": "OpenAiVisionImageQueryDriver",
             },

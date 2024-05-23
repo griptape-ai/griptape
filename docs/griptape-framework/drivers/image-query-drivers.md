@@ -72,7 +72,7 @@ from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 
 driver = OpenAiVisionImageQueryDriver(
-    model="gpt-4-vision-preview",
+    model="gpt-4o",
     max_tokens=256,
 )
 

@@ -26,7 +26,7 @@ class OpenAiStructureConfig(StructureConfig):
         metadata={"serializable": True},
     )
     image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview")),
+        default=Factory(lambda: OpenAiVisionImageQueryDriver(model="gpt-4o")),
         kw_only=True,
         metadata={"serializable": True},
     )
