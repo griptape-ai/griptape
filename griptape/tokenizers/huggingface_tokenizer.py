@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from attr import define, field, Factory
 from griptape.tokenizers import BaseTokenizer
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 @define()
 class HuggingFaceTokenizer(BaseTokenizer):
     tokenizer: PreTrainedTokenizerBase = field(kw_only=True)
-    model: str = field(default=None, kw_only=True)
+    model: Optional[str] = field(default=None, kw_only=True)
     max_input_tokens: int = field(
         default=Factory(lambda self: self.tokenizer.model_max_length, takes_self=True), kw_only=True
     )
