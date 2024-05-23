@@ -15,11 +15,11 @@ class TestTextToSpeechClient:
 
     @pytest.fixture
     def text_to_speech_client(self, text_to_speech_engine) -> TextToSpeechClient:
-        return TextToSpeechClient(engine=text_to_speech_engine)
+        return TextToSpeechClient(engine=text_to_speech_engine, off_prompt=False)
 
     def test_validate_output_configs(self, text_to_speech_engine) -> None:
         with pytest.raises(ValueError):
-            TextToSpeechClient(engine=text_to_speech_engine, output_dir="test", output_file="test")
+            TextToSpeechClient(engine=text_to_speech_engine, output_dir="test", output_file="test", off_prompt=False)
 
     def test_text_to_speech(self, text_to_speech_client) -> None:
         text_to_speech_client.engine.run.return_value = Mock(value=b"audio data", format="mp3")
@@ -30,7 +30,7 @@ class TestTextToSpeechClient:
 
     def test_text_to_speech_with_outfile(self, text_to_speech_engine) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.mp3"
-        text_to_speech_client = TextToSpeechClient(engine=text_to_speech_engine, output_file=outfile)
+        text_to_speech_client = TextToSpeechClient(engine=text_to_speech_engine, output_file=outfile, off_prompt=False)
 
         text_to_speech_client.engine.run.return_value = Mock(value=b"audio data", format="mp3")  # pyright: ignore
 

@@ -12,7 +12,7 @@ class TestStructureRunClient:
         agent = Agent(prompt_driver=driver)
 
         return StructureRunClient(
-            description="foo bar", driver=LocalStructureRunDriver(structure_factory_fn=lambda: agent)
+            off_prompt=False, description="foo bar", driver=LocalStructureRunDriver(structure_factory_fn=lambda: agent)
         )
 
     def test_run_structure(self, client):

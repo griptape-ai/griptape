@@ -62,7 +62,7 @@ class TestActionsSubtask:
     def test_no_actions(self):
         valid_input = "Thought: need to test\n" "<|Response|>: test observation\n" "Answer: test output"
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = ToolkitTask(tools=[MockTool(off_prompt=False)])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -84,7 +84,7 @@ class TestActionsSubtask:
             "Thought: need to test\n" "Actions: [{,{]\n" "<|Response|>: test observation\n" "Answer: test output"
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = ToolkitTask(tools=[MockTool(off_prompt=False)])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(invalid_input))
         json_dict = json.loads(subtask.actions_to_json())
