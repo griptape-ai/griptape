@@ -12,6 +12,10 @@ publish: ## Push git tag and publish version to PyPI.
 	@poetry build
 	@poetry publish
 
+.PHONY: install
+install: ## Install all dependencies.
+	@poetry install --with dev --with test --with docs --all-extras
+
 .DEFAULT_GOAL := help
 .PHONY: help
 help: ## Print Makefile help text.

@@ -29,9 +29,10 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
     _image_generation_engine: OutpaintingImageGenerationEngine = field(
         default=None, kw_only=True, alias="image_generation_engine"
     )
-    _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[
-        [BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]
-    ] = field(default=None)
+    _input: (
+        tuple[str | TextArtifact, ImageArtifact, ImageArtifact]
+        | Callable[[BaseTask], tuple[TextArtifact, ImageArtifact, ImageArtifact]]
+    ) = field(default=None)
 
     @property
     def input(self) -> tuple[TextArtifact, ImageArtifact, ImageArtifact]:
@@ -56,7 +57,7 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
         if self._image_generation_engine is None:
             if self.structure is not None:
                 self._image_generation_engine = OutpaintingImageGenerationEngine(
-                    image_generation_driver=self.structure.config.global_drivers.image_generation_driver
+                    image_generation_driver=self.structure.config.image_generation_driver
                 )
             else:
                 raise ValueError("Image Generation Engine is not set.")

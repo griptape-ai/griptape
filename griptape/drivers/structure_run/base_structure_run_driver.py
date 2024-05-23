@@ -11,5 +11,4 @@ class BaseStructureRunDriver(ABC):
         return self.try_run(*args)
 
     @abstractmethod
-    def try_run(self, *args: BaseArtifact) -> BaseArtifact:
-        ...
+    def try_run(self, *args: BaseArtifact) -> BaseArtifact: ...

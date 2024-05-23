@@ -7,7 +7,7 @@ from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, Error
 from griptape.utils import PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
-from griptape.rules import Ruleset, rule
+from griptape.rules import Ruleset
 
 
 @define

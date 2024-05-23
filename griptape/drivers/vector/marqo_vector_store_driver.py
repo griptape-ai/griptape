@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List, Dict, Any, TYPE_CHECKING
+from typing import Optional, Any, TYPE_CHECKING
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact

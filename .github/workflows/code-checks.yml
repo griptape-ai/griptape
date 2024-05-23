@@ -12,20 +12,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.12"]
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run formatter
-        run: poetry run black --check .
+        run: poetry run ruff format --check .
   type-check:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.9" ]
+        python-version: [ "3.12" ]
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
@@ -33,3 +33,36 @@ jobs:
         uses: ./.github/actions/init-environment
       - name: Run type checker
         run: poetry run pyright griptape/
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.12" ]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run linter
+        run: poetry run ruff check griptape/
+  coverage:
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          python-version: ["3.12"]
+      steps:
+        - name: Checkout actions
+          uses: actions/checkout@v3
+        - name: Init environment 
+          uses: ./.github/actions/init-environment 
+        - name: Run unit tests
+          run: pytest -n auto --cov=griptape tests/unit
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v4
+          with:
+            flags: smart-tests
+            verbose: true
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

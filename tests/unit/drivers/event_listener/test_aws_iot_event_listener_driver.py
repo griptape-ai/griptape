@@ -23,3 +23,6 @@ class TestAwsIotCoreEventListenerDriver:
 
     def test_try_publish_event_payload(self, driver):
         driver.try_publish_event_payload(MockEvent().to_dict())
+
+    def test_try_publish_event_payload_batch(self, driver):
+        driver.try_publish_event_payload_batch([MockEvent().to_dict() for _ in range(3)])

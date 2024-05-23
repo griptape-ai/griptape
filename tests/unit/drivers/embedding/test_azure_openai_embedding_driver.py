@@ -23,6 +23,7 @@ class TestAzureOpenAiEmbeddingDriver:
 
     def test_init(self, driver):
         assert driver
+        assert AzureOpenAiEmbeddingDriver(azure_endpoint="foobar", model="gpt-4").azure_deployment == "gpt-4"
 
     def test_embed_chunk(self, driver):
         assert driver.try_embed_chunk("foobar") == [0, 1, 0]

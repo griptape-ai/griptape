@@ -1,5 +1,4 @@
 import uuid
-from logging import exception
 from typing import Optional, Any, cast
 from attr import define, field, Factory
 from dataclasses import dataclass

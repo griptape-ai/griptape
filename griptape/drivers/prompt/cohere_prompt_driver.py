@@ -43,7 +43,10 @@ class CoherePromptDriver(BasePromptDriver):
             raise Exception("model response is empty")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = self.client.generate(**self._base_params(prompt_stack), stream=True)
+        result = self.client.generate(
+            **self._base_params(prompt_stack),
+            stream=True,  # pyright: ignore[reportCallIssue]
+        )
 
         for chunk in result:
             yield TextArtifact(value=chunk.text)

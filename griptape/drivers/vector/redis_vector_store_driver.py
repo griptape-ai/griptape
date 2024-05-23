@@ -61,6 +61,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         mapping["vector"] = np.array(vector, dtype=np.float32).tobytes()
         mapping["vec_string"] = bytes_vector
 
+        if namespace:
+            mapping["namespace"] = namespace
+
         if meta:
             mapping["metadata"] = json.dumps(meta)
 
@@ -117,8 +120,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         vector = self.embedding_driver.embed_string(query)
 
+        filter_expression = f"(@namespace:{{{namespace}}})" if namespace else "*"
         query_expression = (
-            Query(f"*=>[KNN {count or 10} @vector $vector as score]")
+            Query(f"{filter_expression}=>[KNN {count or 10} @vector $vector as score]")
             .sort_by("score")
             .return_fields("id", "score", "metadata", "vec_string")
             .paging(0, count or 10)
@@ -131,15 +135,15 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_results = []
         for document in results:
-            metadata = getattr(document, "metadata", None)
+            metadata = json.loads(document.metadata) if hasattr(document, "metadata") else None
             namespace = document.id.split(":")[0] if ":" in document.id else None
             vector_id = document.id.split(":")[1] if ":" in document.id else document.id
-            vector_float_list = json.loads(document["vec_string"]) if include_vectors else None
+            vector_float_list = json.loads(document.vec_string) if include_vectors else None
             query_results.append(
                 BaseVectorStoreDriver.QueryResult(
                     id=vector_id,
                     vector=vector_float_list,
-                    score=float(document["score"]),
+                    score=float(document.score),
                     meta=metadata,
                     namespace=namespace,
                 )

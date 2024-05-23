@@ -23,9 +23,11 @@ class ImageQueryTask(BaseTask):
     """
 
     _image_query_engine: ImageQueryEngine = field(default=None, kw_only=True, alias="image_query_engine")
-    _input: tuple[str, list[ImageArtifact]] | tuple[TextArtifact, list[ImageArtifact]] | Callable[
-        [BaseTask], tuple[TextArtifact, list[ImageArtifact]]
-    ] = field(default=None, alias="input")
+    _input: (
+        tuple[str, list[ImageArtifact]]
+        | tuple[TextArtifact, list[ImageArtifact]]
+        | Callable[[BaseTask], tuple[TextArtifact, list[ImageArtifact]]]
+    ) = field(default=None, alias="input")
 
     @property
     def input(self) -> tuple[TextArtifact, list[ImageArtifact]]:
@@ -56,9 +58,7 @@ class ImageQueryTask(BaseTask):
     def image_query_engine(self) -> ImageQueryEngine:
         if self._image_query_engine is None:
             if self.structure is not None:
-                self._image_query_engine = ImageQueryEngine(
-                    image_query_driver=self.structure.config.global_drivers.image_query_driver
-                )
+                self._image_query_engine = ImageQueryEngine(image_query_driver=self.structure.config.image_query_driver)
             else:
                 raise ValueError("Image Query Engine is not set.")
         return self._image_query_engine

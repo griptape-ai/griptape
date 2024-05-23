@@ -16,6 +16,6 @@ class CohereTokenizer(BaseTokenizer):
 
     def count_tokens(self, text: str | list) -> int:
         if isinstance(text, str):
-            return len(self.client.tokenize(text=text).tokens)
+            return len(self.client.tokenize(text=text, model=self.model).tokens)
         else:
             raise ValueError("Text must be a string.")

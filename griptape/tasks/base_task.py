@@ -38,8 +38,7 @@ class BaseTask(ABC):
 
     @property
     @abstractmethod
-    def input(self) -> BaseArtifact | tuple[BaseArtifact, ...] | tuple[BaseArtifact, Sequence[BaseArtifact]]:
-        ...
+    def input(self) -> BaseArtifact | tuple[BaseArtifact, ...] | tuple[BaseArtifact, Sequence[BaseArtifact]]: ...
 
     @property
     def parents(self) -> list[BaseTask]:
@@ -128,8 +127,7 @@ class BaseTask(ABC):
         return self
 
     @abstractmethod
-    def run(self) -> BaseArtifact:
-        ...
+    def run(self) -> BaseArtifact: ...
 
     @property
     def full_context(self) -> dict[str, Any]:

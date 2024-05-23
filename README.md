@@ -4,7 +4,8 @@
 [![Tests](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml)
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io/)
 [![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![codecov](https://codecov.io/github/griptape-ai/griptape/graph/badge.svg?token=HUBqUpl3NB)](https://codecov.io/github/griptape-ai/griptape)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
 Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
@@ -179,14 +180,20 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 4. **Documentation:** Every pull request must include updates to documentation or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
 
-5. **Code Style:** Griptape uses [Black](https://github.com/ambv/black) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
+5. **Code Style:** Griptape uses [Ruff](https://github.com/astral-sh/ruff) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
 
 ### Tools
 
-Install dev dependencies with Poetry:
+Install dev dependencies via Make:
 
 ```shell
-poetry install --all-extras --with dev --with test
+make install
+```
+
+Or install by calling Poetry directly:
+
+```shell
+poetry install --all-extras --with dev --with test --with docs
 ```
 
 Configure pre-commit to ensure that your code is formatted correctly and passes all checks:

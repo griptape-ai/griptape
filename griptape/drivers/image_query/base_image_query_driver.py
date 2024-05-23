@@ -42,5 +42,4 @@ class BaseImageQueryDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             raise Exception("image query driver failed after all retry attempts")
 
     @abstractmethod
-    def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
-        ...
+    def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact: ...

@@ -16,6 +16,7 @@ from .prompt.dummy_prompt_driver import DummyPromptDriver
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
 from .memory.conversation.amazon_dynamodb_conversation_memory_driver import AmazonDynamoDbConversationMemoryDriver
+from .memory.conversation.redis_conversation_memory_driver import RedisConversationMemoryDriver
 
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
@@ -80,6 +81,7 @@ from .image_query.base_multi_model_image_query_driver import BaseMultiModelImage
 from .image_query.dummy_image_query_driver import DummyImageQueryDriver
 from .image_query.openai_vision_image_query_driver import OpenAiVisionImageQueryDriver
 from .image_query.anthropic_image_query_driver import AnthropicImageQueryDriver
+from .image_query.azure_openai_vision_image_query_driver import AzureOpenAiVisionImageQueryDriver
 from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQueryDriver
 
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
@@ -96,9 +98,13 @@ from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
 
-
 from .rerank.base_rerank_driver import BaseRerankDriver
 from .rerank.cohere_rerank_driver import CohereRerankDriver
+
+from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
+from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
+from .text_to_speech.elevenlabs_text_to_speech_driver import ElevenLabsTextToSpeechDriver
+from .text_to_speech.openai_text_to_speech_driver import OpenAiTextToSpeechDriver
 
 from .structure_run.base_structure_run_driver import BaseStructureRunDriver
 from .structure_run.griptape_cloud_structure_run_driver import GriptapeCloudStructureRunDriver
@@ -123,6 +129,7 @@ __all__ = [
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
+    "RedisConversationMemoryDriver",
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
@@ -173,6 +180,7 @@ __all__ = [
     "BedrockClaudeImageQueryModelDriver",
     "BaseImageQueryDriver",
     "OpenAiVisionImageQueryDriver",
+    "AzureOpenAiVisionImageQueryDriver",
     "DummyImageQueryDriver",
     "AnthropicImageQueryDriver",
     "BaseMultiModelImageQueryDriver",
@@ -190,6 +198,10 @@ __all__ = [
     "AmazonS3FileManagerDriver",
     "BaseRerankDriver",
     "CohereRerankDriver",
+    "BaseTextToSpeechDriver",
+    "DummyTextToSpeechDriver",
+    "ElevenLabsTextToSpeechDriver",
+    "OpenAiTextToSpeechDriver",
     "BaseStructureRunDriver",
     "GriptapeCloudStructureRunDriver",
     "LocalStructureRunDriver",

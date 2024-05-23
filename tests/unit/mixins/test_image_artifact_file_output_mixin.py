@@ -4,12 +4,12 @@ import tempfile
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.mixins import ImageArtifactFileOutputMixin
+from griptape.mixins import BlobArtifactFileOutputMixin
 
 
-class TestImageArtifactFileOutputMixin:
+class TestMediaArtifactFileOutputMixin:
     def test_no_output(self):
-        class Test(ImageArtifactFileOutputMixin):
+        class Test(BlobArtifactFileOutputMixin):
             pass
 
         assert Test().output_file is None
@@ -18,7 +18,7 @@ class TestImageArtifactFileOutputMixin:
     def test_output_file(self):
         artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, format="png")
 
-        class Test(ImageArtifactFileOutputMixin):
+        class Test(BlobArtifactFileOutputMixin):
             def run(self):
                 self._write_to_file(artifact)
 
@@ -33,7 +33,7 @@ class TestImageArtifactFileOutputMixin:
     def test_output_dir(self):
         artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, format="png")
 
-        class Test(ImageArtifactFileOutputMixin):
+        class Test(BlobArtifactFileOutputMixin):
             def run(self):
                 self._write_to_file(artifact)
 
@@ -46,7 +46,7 @@ class TestImageArtifactFileOutputMixin:
         assert os.path.exists(os.path.join(outdir, artifact.name))
 
     def test_output_file_and_dir(self):
-        class Test(ImageArtifactFileOutputMixin):
+        class Test(BlobArtifactFileOutputMixin):
             pass
 
         outfile = "test.txt"

@@ -5,7 +5,7 @@ from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.utils import PromptStack
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
-from griptape.rules import Ruleset, Rule
+from griptape.rules import Ruleset
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseVectorStoreDriver, BasePromptDriver

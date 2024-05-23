@@ -14,10 +14,8 @@ class TestJsonExtractionTask:
 
     def test_run(self, task):
         mock_config = MockStructureConfig()
-        assert isinstance(mock_config.global_drivers.prompt_driver, MockPromptDriver)
-        mock_config.global_drivers.prompt_driver.mock_output = (
-            '[{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]'
-        )
+        assert isinstance(mock_config.prompt_driver, MockPromptDriver)
+        mock_config.prompt_driver.mock_output = '[{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]'
         agent = Agent(config=mock_config)
 
         agent.add_task(task)
