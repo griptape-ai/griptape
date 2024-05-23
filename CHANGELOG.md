@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
 - `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
+- `AudioLoader` for loading audio files into `AudioArtifact`s.
+- `AudioTranscription` `Driver`, `Engine`, `Task`, and `Client` for transcribing audio files.
 
 ### Changed
 - Default the value of `azure_deployment` on all Azure Drivers to the model the Driver is using.
