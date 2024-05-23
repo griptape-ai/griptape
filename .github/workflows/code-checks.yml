@@ -19,7 +19,7 @@ jobs:
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run formatter
-        run: poetry run ruff format --check .
+        run: make check/format
   type-check:
     runs-on: ubuntu-latest
     strategy:
@@ -32,7 +32,7 @@ jobs:
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run type checker
-        run: poetry run pyright griptape/
+        run: make check/types
   lint:
     runs-on: ubuntu-latest
     strategy:
@@ -45,7 +45,7 @@ jobs:
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run linter
-        run: poetry run ruff check griptape/
+        run: make check/lint
   coverage:
       runs-on: ubuntu-latest
       strategy:
@@ -58,7 +58,7 @@ jobs:
         - name: Init environment 
           uses: ./.github/actions/init-environment 
         - name: Run unit tests
-          run: pytest -n auto --cov=griptape tests/unit
+          run: make test/unit/coverage
         - name: Upload coverage to Codecov
           uses: codecov/codecov-action@v4
           with:

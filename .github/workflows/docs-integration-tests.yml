@@ -142,6 +142,6 @@ jobs:
           done
       - name: Run integration tests
         if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
-        run: pytest -n auto tests/integration/test_code_blocks.py
+        run: make test/integration
         env:
           DOCS_ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files || '' }}
