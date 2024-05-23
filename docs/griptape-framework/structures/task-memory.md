@@ -277,10 +277,10 @@ agent.run(
 Task Memory is a powerful feature of Griptape, but with great power comes great responsibility. Here are some things to keep in mind when using Task Memory:
 
 ### Tool Return Types 
-Griptape will only store Artifacts in Task Memory that have been explicitly defined in the `artifact_storages` parameter of the `TaskMemory` object. If you try to store an Artifact that is not defined in `artifact_storages`, Griptape will raise an error. 
-By default, Griptape will store `TextArtifact`'s, `BlobArtifact`'s, and `ListArtifact`'s containing the former two types in Task Memory.
+Griptape will only store Artifacts in Task Memory that have been explicitly defined in the `artifact_storages` parameter of the `TaskMemory` object. 
+If you try to store an Artifact that is not defined in `artifact_storages`, Griptape will raise an error. The exception to this is `InfoArtifact`s and `ErrorArtifact`s. Griptape will never store these Artifacts store in Task Memory.
+By default, Griptape will store `TextArtifact`'s, `BlobArtifact`'s in Task Memory. Additionally, Griptape will also store the elements of `ListArtifact`'s as long as they are of a supported Artifact type. 
 
-This means that if your Tool returns an Artifact such as an `InfoArtifact` or `ErrorArtifact`, Griptape will not store it in Task Memory.
 
 ### Task Memory Looping
 An improper configuration of Tools can lead to the LLM using the Tools in a loop. For example, if you have a Tool that stores data in Task Memory and another Tool that queries that data from Task Memory ([Tools That Can Read From Task Memory](#tools-that-can-read-from-task-memory)), make sure that the query Tool does not store the data back in Task Memory.
