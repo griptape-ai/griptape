@@ -126,6 +126,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             ],
         )
         prompt_stack.add_tool_result_input(
+            content="Please continue",
             actions=[
                 ActionsArtifact.Action(
                     tag="tool-call-id",
@@ -134,7 +135,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     input={"parameter-name": "parameter-value"},
                     output=TextArtifact("tool-output"),
                 )
-            ]
+            ],
         )
 
         return prompt_stack
@@ -169,6 +170,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 ],
             },
             {"content": "tool-output", "name": "ToolName-ActivityName", "role": "tool", "tool_call_id": "tool-call-id"},
+            {"role": "user", "content": "Please continue"},
         ]
 
 

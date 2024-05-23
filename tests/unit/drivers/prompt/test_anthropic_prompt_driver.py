@@ -5,6 +5,7 @@ import pytest
 
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.artifacts.actions_artifact import ActionsArtifact
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.drivers import AnthropicPromptDriver
 from griptape.utils import PromptStack
@@ -263,6 +264,7 @@ class TestAnthropicPromptDriver:
             ],
         )
         prompt_stack.add_tool_result_input(
+            content="Please continue",
             actions=[
                 ActionsArtifact.Action(
                     tag="tool-call-id",
@@ -271,7 +273,19 @@ class TestAnthropicPromptDriver:
                     input={"parameter-name": "parameter-value"},
                     output=TextArtifact("tool-output"),
                 )
-            ]
+            ],
+        )
+        prompt_stack.add_tool_result_input(
+            content=None,
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                    output=ErrorArtifact("error"),
+                )
+            ],
         )
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         expected_messages = [
@@ -301,7 +315,16 @@ class TestAnthropicPromptDriver:
                 "role": "assistant",
             },
             {
-                "content": [{"content": "tool-output", "tool_use_id": "tool-call-id", "type": "tool_result"}],
+                "content": [
+                    {"content": "tool-output", "tool_use_id": "tool-call-id", "type": "tool_result", "is_error": False},
+                    {"text": "Please continue", "type": "text"},
+                ],
+                "role": "user",
+            },
+            {
+                "content": [
+                    {"content": "error", "tool_use_id": "tool-call-id", "type": "tool_result", "is_error": True}
+                ],
                 "role": "user",
             },
         ]
@@ -427,6 +450,7 @@ class TestAnthropicPromptDriver:
             ],
         )
         prompt_stack.add_tool_result_input(
+            content="Please continue",
             actions=[
                 ActionsArtifact.Action(
                     tag="tool-call-id",
@@ -435,7 +459,19 @@ class TestAnthropicPromptDriver:
                     input={"parameter-name": "parameter-value"},
                     output=TextArtifact("tool-output"),
                 )
-            ]
+            ],
+        )
+        prompt_stack.add_tool_result_input(
+            content=None,
+            actions=[
+                ActionsArtifact.Action(
+                    tag="tool-call-id",
+                    name="ToolName",
+                    path="ActivityName",
+                    input={"parameter-name": "parameter-value"},
+                    output=ErrorArtifact("error"),
+                )
+            ],
         )
 
         expected_messages = [
@@ -466,7 +502,16 @@ class TestAnthropicPromptDriver:
                 "role": "assistant",
             },
             {
-                "content": [{"content": "tool-output", "tool_use_id": "tool-call-id", "type": "tool_result"}],
+                "content": [
+                    {"content": "tool-output", "tool_use_id": "tool-call-id", "type": "tool_result", "is_error": False},
+                    {"text": "Please continue", "type": "text"},
+                ],
+                "role": "user",
+            },
+            {
+                "content": [
+                    {"content": "error", "tool_use_id": "tool-call-id", "type": "tool_result", "is_error": True}
+                ],
                 "role": "user",
             },
         ]

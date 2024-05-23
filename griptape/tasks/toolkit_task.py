@@ -71,7 +71,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             for s in self.subtasks:
                 if self.prompt_driver.use_native_tools:
                     stack.add_tool_call_input(s.thought, actions=s.actions)
-                    stack.add_tool_result_input(s.actions)
+                    stack.add_tool_result_input(self.generate_user_subtask_template(s), s.actions)
                 else:
                     stack.add_assistant_input(self.generate_assistant_subtask_template(s))
                     stack.add_user_input(self.generate_user_subtask_template(s))

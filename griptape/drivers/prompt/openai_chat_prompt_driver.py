@@ -255,6 +255,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     for tool_call in actions_artifact.actions
                 ]
                 content.extend(tool_result_messages)
+                if actions_artifact.value is not None:
+                    content.extend(
+                        self.__to_openai_content(
+                            PromptStack.Input(role=PromptStack.USER_ROLE, content=actions_artifact.value)
+                        )
+                    )
             else:
                 raise ValueError("PromptStack Input content must be an ActionsArtifact")
         else:

@@ -317,7 +317,9 @@ class ActionsSubtask(BaseTextInputTask):
         except schema.SchemaError as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nInvalid activity input JSON: {e}")
 
-            return self.__error_to_action(f"Activity input JSON validation error: {e}")
+            return self.__error_to_action(
+                f"Activity input JSON validation error: {e}", tag=action.tag, name=action.name
+            )
 
-    def __error_to_action(self, error: str) -> ActionsArtifact.Action:
-        return ActionsArtifact.Action(tag="error", name="error", input={"error": error})
+    def __error_to_action(self, error: str, tag: str = "error", name: str = "error") -> ActionsArtifact.Action:
+        return ActionsArtifact.Action(tag=tag, name=name, input={"error": error}, output=ErrorArtifact(error))

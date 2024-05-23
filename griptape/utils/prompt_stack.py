@@ -79,8 +79,10 @@ class PromptStack(SerializableMixin):
 
         return self.inputs[-1]
 
-    def add_tool_result_input(self, actions: list[ActionsArtifact.Action]) -> Input:
-        self.inputs.append(self.Input(content=ActionsArtifact(actions=actions), role=PromptStack.TOOL_RESULT_ROLE))
+    def add_tool_result_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
+        self.inputs.append(
+            self.Input(content=ActionsArtifact(value=content, actions=actions), role=PromptStack.TOOL_RESULT_ROLE)
+        )
 
         return self.inputs[-1]
 

@@ -69,6 +69,7 @@ class TestPromptStack:
 
     def test_add_tool_result_input(self, prompt_stack):
         prompt_stack.add_tool_result_input(
+            content="foo",
             actions=[
                 ActionsArtifact.Action(
                     tag="foo",
@@ -77,11 +78,11 @@ class TestPromptStack:
                     input={"values": {"test": "test input"}},
                     output=TextArtifact("test output"),
                 )
-            ]
+            ],
         )
 
         assert prompt_stack.inputs[0].role == "tool_result"
-        assert prompt_stack.inputs[0].content.value is None
+        assert prompt_stack.inputs[0].content.value == "foo"
         assert prompt_stack.inputs[0].content.actions[0].tag == "foo"
         assert prompt_stack.inputs[0].content.actions[0].name == "bar"
         assert prompt_stack.inputs[0].content.actions[0].path == "baz"

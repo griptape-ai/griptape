@@ -9,6 +9,7 @@ from schema import Schema
 from griptape.artifacts import ActionsArtifact, TextArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.artifacts.base_artifact import BaseArtifact
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
 from griptape.utils import PromptStack, import_optional_dependency
@@ -124,6 +125,8 @@ class AnthropicPromptDriver(BasePromptDriver):
             return "system"
         elif prompt_input.is_assistant() or prompt_input.is_tool_call():
             return "assistant"
+        elif prompt_input.is_tool_result():
+            return "user"
         else:
             return "user"
 
@@ -144,9 +147,16 @@ class AnthropicPromptDriver(BasePromptDriver):
 
             if isinstance(actions_artifact, ActionsArtifact):
                 tool_results = [
-                    {"type": "tool_result", "tool_use_id": action.tag, "content": action.output.to_text()}
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": action.tag,
+                        "content": action.output.to_text(),
+                        "is_error": isinstance(action.output, ErrorArtifact),
+                    }
                     for action in actions_artifact.actions
                 ]
+                if actions_artifact.value is not None:
+                    tool_results.append({"type": "text", "text": actions_artifact.value})
 
                 return tool_results
             else:
