@@ -12,11 +12,12 @@ from griptape.mixins import SerializableMixin
 class ActionChunkArtifact(BaseChunkArtifact, SerializableMixin):
     """An Artifact that represents a chunk of an Action.
     Can be used when streaming with Prompt Drivers that support native function calling.
+
     Attributes:
         tag: The tag of the action.
         name: The name of the action.
         path: The path of the action.
-        partial_input: The partial input of the action.
+        input: The partial input of the action.
         index: The index of the action.
     """
 

@@ -17,13 +17,13 @@ if TYPE_CHECKING:
 @define()
 class ActionArtifact(BaseArtifact, SerializableMixin):
     """Represents an instance of an LLM taking an action to use a Tool.
+
     Attributes:
         tag: The tag (unique identifier) of the action.
         name: The name (Tool name) of the action.
         path: The path (Tool activity name) of the action.
         input: The input (Tool params) of the action.
         tool: The tool used in the action.
-        output: The output of the action execution.
     """
 
     @define(kw_only=True)
