@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import ActionArtifact, ActionChunkArtifact
+from griptape.artifacts import ActionArtifact, ActionChunkArtifact, TextArtifact
 
 
 class TestActionArtifact:
@@ -10,6 +10,11 @@ class TestActionArtifact:
         with pytest.raises(NotImplementedError):
             action_artifact_1 += action_artifact_2
 
+    def test__str__(self):
+        action_artifact = ActionArtifact(value=ActionArtifact.Action(tag="foo", name="bar", path="baz", input={}))
+
+        assert str(action_artifact) == "bar baz {}"
+
     def test_from_chunks(self):
         chunks = [
             ActionChunkArtifact(ActionChunkArtifact.ActionChunk(tag="foo", name="bar", path="baz", input="{", index=1)),
@@ -19,6 +24,7 @@ class TestActionArtifact:
             ActionChunkArtifact(
                 ActionChunkArtifact.ActionChunk(tag="baz", name="qux", path="quux", input="}", index=1)
             ),
+            TextArtifact("foobar"),
         ]
 
         action_artifact = ActionArtifact.from_chunks(chunks)
