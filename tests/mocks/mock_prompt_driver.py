@@ -3,7 +3,7 @@ from attr import define, field
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 
@@ -16,5 +16,5 @@ class MockPromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         return TextArtifact(value=self.mock_output)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        yield TextArtifact(value=self.mock_output)
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
+        yield TextChunkArtifact(value=self.mock_output)

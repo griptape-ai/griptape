@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional, Any
 from collections.abc import Iterator
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer
@@ -37,12 +37,12 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         return TextArtifact(value=response.content[0].text)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
         response = self.client.messages.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in response:
             if chunk.type == "content_block_delta":
-                yield TextArtifact(value=chunk.delta.text)
+                yield TextChunkArtifact(value=chunk.delta.text)
 
     def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
         messages = [

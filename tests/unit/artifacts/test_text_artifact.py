@@ -1,6 +1,6 @@
 import json
 import pytest
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact, TextChunkArtifact
 from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -61,3 +61,8 @@ class TestTextArtifact:
 
         assert artifact.name == artifact.id
         assert TextArtifact("foo", name="bar").name == "bar"
+
+    def test_from_chunks(self):
+        chunks = [TextChunkArtifact("foo"), TextChunkArtifact("bar")]
+
+        assert TextArtifact.from_chunks(chunks).value == "foobar"

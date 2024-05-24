@@ -3,7 +3,7 @@ from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional, Any
 from attr import define, field, Factory
 from griptape.utils import PromptStack, import_optional_dependency
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import GoogleTokenizer, BaseTokenizer
 
@@ -51,7 +51,7 @@ class GooglePromptDriver(BasePromptDriver):
 
         return TextArtifact(value=response.text)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
         inputs = self._prompt_stack_to_model_input(prompt_stack)
@@ -68,7 +68,7 @@ class GooglePromptDriver(BasePromptDriver):
         )
 
         for chunk in response:
-            yield TextArtifact(value=chunk.text)
+            yield TextChunkArtifact(value=chunk.text)
 
     def _default_model_client(self) -> GenerativeModel:
         genai = import_optional_dependency("google.generativeai")

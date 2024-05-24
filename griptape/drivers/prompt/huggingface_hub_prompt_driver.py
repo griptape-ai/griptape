@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from attr import Factory, define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import PromptStack, import_optional_dependency
@@ -60,7 +60,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
         return TextArtifact(value=response)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
@@ -68,4 +68,4 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         )
 
         for token in response:
-            yield TextArtifact(value=token)
+            yield TextChunkArtifact(value=token)

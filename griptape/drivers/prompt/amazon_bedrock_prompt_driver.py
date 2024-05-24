@@ -3,7 +3,7 @@ import json
 from typing import TYPE_CHECKING, Any
 from collections.abc import Iterator
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from griptape.utils import import_optional_dependency
 from .base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 
@@ -36,7 +36,7 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
         model_input = self.prompt_model_driver.prompt_stack_to_model_input(prompt_stack)
         payload = {**self.prompt_model_driver.prompt_stack_to_model_params(prompt_stack)}
         if isinstance(model_input, dict):
@@ -50,6 +50,6 @@ class AmazonBedrockPromptDriver(BaseMultiModelPromptDriver):
         if response_body:
             for chunk in response["body"]:
                 chunk_bytes = chunk["chunk"]["bytes"]
-                yield self.prompt_model_driver.process_output(chunk_bytes)
+                yield TextChunkArtifact(value=self.prompt_model_driver.process_output(chunk_bytes).value)
         else:
             raise Exception("model response is empty")

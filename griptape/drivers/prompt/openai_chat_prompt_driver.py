@@ -3,7 +3,7 @@ from typing import Optional, Any, Literal
 from collections.abc import Iterator
 import openai
 from attr import define, field, Factory
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
@@ -83,7 +83,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
@@ -95,7 +95,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             if delta.content is not None:
                 delta_content = delta.content
 
-                yield TextArtifact(value=delta_content)
+                yield TextChunkArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         if isinstance(self.tokenizer, OpenAiTokenizer):

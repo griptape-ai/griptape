@@ -8,7 +8,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import PromptStack
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, BaseChunkArtifact
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -111,4 +111,4 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[BaseChunkArtifact]: ...

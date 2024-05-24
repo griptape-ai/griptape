@@ -2,7 +2,7 @@ from collections.abc import Iterator
 
 from attr import Factory, define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import PromptStack, import_optional_dependency
@@ -57,5 +57,5 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         else:
             raise Exception(f"only models with the following tasks are supported: {self.SUPPORTED_TASKS}")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
         raise NotImplementedError("streaming is not supported")
