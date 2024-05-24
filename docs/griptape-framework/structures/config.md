@@ -38,7 +38,7 @@ agent = Agent(
         api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
     ).merge_config({
         "image_query_driver": {
-            "azure_deployment": "gpt-4-vision-preview",
+            "azure_deployment": "gpt-4o",
         },
     }),
 )

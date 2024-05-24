@@ -13,8 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AudioTranscription` `Driver`, `Engine`, `Task`, and `Client` for transcribing audio files.
 
 ### Changed
+- **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
 - Default the value of `azure_deployment` on all Azure Drivers to the model the Driver is using.
 - Field `azure_ad_token` on all Azure Drivers is no longer serializable.
+- Default standard OpenAI and Azure OpenAI image query model to `gpt-4o`.
+- Error message to be more helpful when importing optional dependencies.
 
 ## [0.25.1] - 2024-05-15
 

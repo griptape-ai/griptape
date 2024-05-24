@@ -66,6 +66,9 @@ agent.run("List all email addresses on griptape.ai in a flat numbered markdown l
 
 ## Trafilatura Web Scraper Driver
 
+!!! info
+    This driver requires the `drivers-web-scraper-trafilatura` [extra](../index.md#extras).
+
 The [TrafilaturaWebScraperDriver](../../reference/griptape/drivers/web_scraper/trafilatura_web_scraper_driver.md) scrapes text from a webpage using the [Trafilatura](https://trafilatura.readthedocs.io) library.
 
 Example of using `TrafilaturaWebScraperDriver` directly:

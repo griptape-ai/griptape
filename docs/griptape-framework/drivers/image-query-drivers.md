@@ -64,15 +64,15 @@ print(result)
 !!! info
     While the `max_tokens` field is optional, it is recommended to set this to a value that corresponds to the desired response length. Without an explicit value, the model will default to very short responses. See [OpenAI's documentation](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them) for more information on how to relate token count to response length.
 
-The [OpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/openai_vision_image_query_driver.md) is used to query images using the OpenAI Vision API. Here is an example of how to use it:
+The [OpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/openai_image_query_driver.md) is used to query images using the OpenAI Vision API. Here is an example of how to use it:
 
 ```python
-from griptape.drivers import OpenAiVisionImageQueryDriver
+from griptape.drivers import OpenAiImageQueryDriver
 from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 
-driver = OpenAiVisionImageQueryDriver(
-    model="gpt-4-vision-preview",
+driver = OpenAiImageQueryDriver(
+    model="gpt-4o",
     max_tokens=256,
 )
 
@@ -91,19 +91,19 @@ engine.run("Describe the weather in the image", [image_artifact])
 !!! info
     In order to use the `gpt-4-vision-preview` model on Azure OpenAI, the `gpt-4` model must be deployed with the version set to `vision-preview`. More information can be found in the [Azure OpenAI documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/gpt-with-vision).
 
-The [AzureOpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/azure_openai_vision_image_query_driver.md) is used to query images using the Azure OpenAI Vision API. Here is an example of how to use it:
+The [AzureOpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/azure_openai_image_query_driver.md) is used to query images using the Azure OpenAI Vision API. Here is an example of how to use it:
 
 ```python
 import os
-from griptape.drivers import AzureOpenAiVisionImageQueryDriver
+from griptape.drivers import AzureOpenAiImageQueryDriver
 from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 
-driver = AzureOpenAiVisionImageQueryDriver(
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
-    api_key=os.environ["AZURE_OPENAI_API_KEY_3"],
-    model="gpt-4",
-    azure_deployment="gpt-4-vision-preview",
+driver = AzureOpenAiImageQueryDriver(
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_2"],
+    api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
+    model="gpt-4o",
+    azure_deployment="gpt-4o",
     max_tokens=256,
 )
 

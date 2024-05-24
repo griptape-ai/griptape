@@ -22,8 +22,8 @@ class TestAzureOpenAiStructureConfig:
             "prompt_driver": {
                 "type": "AzureOpenAiChatPromptDriver",
                 "base_url": None,
-                "model": "gpt-4",
-                "azure_deployment": "gpt-4",
+                "model": "gpt-4o",
+                "azure_deployment": "gpt-4o",
                 "azure_endpoint": "http://localhost:8080",
                 "api_version": "2023-05-15",
                 "organization": None,
@@ -61,12 +61,12 @@ class TestAzureOpenAiStructureConfig:
                 "base_url": None,
                 "image_quality": "auto",
                 "max_tokens": 256,
-                "model": "gpt-4",
+                "model": "gpt-4o",
                 "api_version": "2024-02-01",
-                "azure_deployment": "gpt-4",
+                "azure_deployment": "gpt-4o",
                 "azure_endpoint": "http://localhost:8080",
                 "organization": None,
-                "type": "AzureOpenAiVisionImageQueryDriver",
+                "type": "AzureOpenAiImageQueryDriver",
             },
             "vector_store_driver": {
                 "embedding_driver": {

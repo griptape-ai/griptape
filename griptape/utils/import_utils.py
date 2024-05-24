@@ -26,7 +26,10 @@ def import_optional_dependency(name: str) -> Optional[ModuleType]:
     package_name = INSTALL_MAPPING.get(name)
     install_name = package_name if package_name is not None else name
 
-    msg = f"Missing optional dependency: '{install_name}'. " f"Use poetry or pip to install '{install_name}'."
+    msg = (
+        f"Missing optional dependency: '{install_name}'. "
+        f"Please install the appropriate extra: https://docs.griptape.ai/stable/griptape-framework/#extras."
+    )
     try:
         module = import_module(name)
     except ImportError:

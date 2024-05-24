@@ -633,15 +633,14 @@ This Task accepts two inputs: a query (represented by either a string or a [Text
 
 ```python
 from griptape.engines import ImageQueryEngine
-from griptape.drivers import OpenAiVisionImageQueryDriver
+from griptape.drivers import OpenAiImageQueryDriver
 from griptape.tasks import ImageQueryTask
 from griptape.loaders import ImageLoader
 from griptape.structures import Pipeline
 
-
 # Create a driver configured to use OpenAI's GPT-4 Vision model.
-driver = OpenAiVisionImageQueryDriver(
-    model="gpt-4-vision-preview",
+driver = OpenAiImageQueryDriver(
+    model="gpt-4o",
     max_tokens=100,
 )
 
