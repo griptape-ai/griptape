@@ -29,7 +29,7 @@ class AudioTranscriptionTask(RuleMixin, BaseTask, ABC):
             raise ValueError("Input must be an AudioArtifact.")
 
     @input.setter
-    def input(self, value: AudioArtifact) -> None:
+    def input(self, value: AudioArtifact | Callable[[BaseTask], AudioArtifact]) -> None:
         self._input = value
 
     @property
