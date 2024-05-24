@@ -1,23 +1,36 @@
+import pytest
 from griptape.artifacts import ActionChunkArtifact, TextArtifact
 
 
 class TestActionChunkArtifact:
     def test___add__(self):
-        artifact_1 = ActionChunkArtifact("foo", tag="bar", name="baz", path="qux", partial_input="quux", index=1)
-        artifact_2 = ActionChunkArtifact("bar", tag="baz", name="qux", path="quux", partial_input="quuz", index=2)
+        artifact_1 = ActionChunkArtifact(
+            value=ActionChunkArtifact.ActionChunk(tag="foo", name="bar", path="baz", input="quux", index=1)
+        )
+        artifact_2 = ActionChunkArtifact(
+            value=ActionChunkArtifact.ActionChunk(tag="bar", name="baz", path="qux", input="quuz", index=1)
+        )
         added_artifact = artifact_1 + artifact_2
-        assert added_artifact.value == "foobar"
-        assert added_artifact.tag == "barbaz"
-        assert added_artifact.name == "bazqux"
-        assert added_artifact.path == "quxquux"
-        assert added_artifact.partial_input == "quuxquuz"
-        assert added_artifact.index == 1
 
-        artifact_3 = TextArtifact("baz")
-        added_artifact = artifact_1 + artifact_3
-        assert added_artifact.value == "foobaz"
-        assert added_artifact.tag == "bar"
-        assert added_artifact.name == "baz"
-        assert added_artifact.path == "qux"
-        assert added_artifact.partial_input == "quux"
-        assert added_artifact.index == 1
+        assert added_artifact.value == ActionChunkArtifact.ActionChunk(
+            tag="foobar", name="barbaz", path="bazqux", input="quuxquuz", index=1
+        )
+
+    def test__add__different_index(self):
+        artifact_1 = ActionChunkArtifact(
+            value=ActionChunkArtifact.ActionChunk(tag="foo", name="bar", path="baz", input="quux", index=1)
+        )
+        artifact_2 = ActionChunkArtifact(
+            value=ActionChunkArtifact.ActionChunk(tag="bar", name="baz", path="qux", input="quuz", index=2)
+        )
+
+        with pytest.raises(ValueError):
+            artifact_1 += artifact_2
+
+    def test___add__not_implemented(self):
+        artifact_1 = ActionChunkArtifact(
+            value=ActionChunkArtifact.ActionChunk(tag="foo", name="bar", path="baz", input="quux", index=1)
+        )
+
+        with pytest.raises(NotImplementedError):
+            artifact_1 += TextArtifact("foo")

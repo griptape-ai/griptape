@@ -145,7 +145,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 self.structure.publish_event(
                     ActionChunkEvent(tag=action.tag, name=action.name, path=action.path, partial_input=action.input)
                 )
-            elif isinstance(chunk, TextArtifact):
+            elif isinstance(chunk, TextChunkArtifact):
                 text_chunks.append(chunk.value)
                 self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
 

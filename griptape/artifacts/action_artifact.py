@@ -29,15 +29,28 @@ class ActionArtifact(BaseArtifact, SerializableMixin):
 
     @define(kw_only=True)
     class Action(SerializableMixin):
-        tag: str = field(metadata={"serializable": True})
-        name: str = field(metadata={"serializable": True})
-        path: Optional[str] = field(default=None, metadata={"serializable": True})
-        input: dict = field(default={}, metadata={"serializable": True})
-        tool: Optional[BaseTool] = field(default=None, metadata={"serializable": False})
-        output: Optional[BaseArtifact] = field(default=None, metadata={"serializable": False})
+        tag: str = field()
+        name: str = field()
+        path: Optional[str] = field(default=None)
+        input: dict = field(default={})
+        tool: Optional[BaseTool] = field(default=None)
+        output: Optional[BaseArtifact] = field(default=None)
 
         def __str__(self) -> str:
-            return f"{self.name} {self.path} {self.input} {self.output}"
+            value = f"{self.name} {self.path} {self.input}"
+            if self.output:
+                value += f" {self.output}"
+
+            return value
+
+        def to_dict(self) -> dict:
+            return {
+                "tag": self.tag,
+                "name": self.name,
+                "path": self.path,
+                "input": self.input,
+                **({"output": self.output.to_dict()} if self.output else {}),
+            }
 
     value: Action = field(metadata={"serializable": True})
 

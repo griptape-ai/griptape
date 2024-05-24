@@ -21,13 +21,13 @@ class ActionChunkArtifact(BaseChunkArtifact, SerializableMixin):
         index: The index of the action.
     """
 
-    @define()
+    @define(kw_only=True)
     class ActionChunk(SerializableMixin):
-        tag: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-        name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-        path: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-        input: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-        index: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+        tag: Optional[str] = field(default=None)
+        name: Optional[str] = field(default=None)
+        path: Optional[str] = field(default=None)
+        input: Optional[str] = field(default=None)
+        index: Optional[int] = field(default=None)
 
         def __add__(self, other: ActionChunkArtifact.ActionChunk) -> ActionChunkArtifact.ActionChunk:
             if self.index == other.index:

@@ -5,11 +5,11 @@ from collections.abc import Iterator
 
 from attr import define, field
 
-from griptape.artifacts import ActionsArtifact, TextArtifact, ActionArtifact
+from griptape.artifacts import ActionsArtifact, TextArtifact, ActionArtifact, TextChunkArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
-from griptape.artifacts import TextArtifact, TextChunkArtifact
+from griptape.utils import PromptStack
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 
@@ -42,7 +42,7 @@ class MockPromptDriver(BasePromptDriver):
         else:
             return TextArtifact(value=self.mock_output)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact | ActionChunkArtifact]:
         if self.use_native_tools:
             if prompt_stack.tools and prompt_stack.inputs and prompt_stack.inputs[-1].role == PromptStack.USER_ROLE:
                 actions = [
@@ -56,11 +56,17 @@ class MockPromptDriver(BasePromptDriver):
                     for activity in tool.activities()
                 ]
 
-                yield TextArtifact(value=self.mock_thought)
+                yield TextChunkArtifact(value=self.mock_thought)
                 for index, action in enumerate(actions):
-                    yield ActionChunkArtifact("", tag=action.tag, name=action.name, path=action.path, index=index)
-                    yield ActionChunkArtifact("", index=index, partial_input=self.mock_tool_input)
+                    yield ActionChunkArtifact(
+                        value=ActionChunkArtifact.ActionChunk(
+                            tag=action.tag, name=action.name, path=action.path, index=index
+                        )
+                    )
+                    yield ActionChunkArtifact(
+                        value=ActionChunkArtifact.ActionChunk(index=index, input=self.mock_tool_input)
+                    )
             else:
-                yield TextArtifact(value=f"Answer: {self.mock_output}")
+                yield TextChunkArtifact(value=f"Answer: {self.mock_output}")
         else:
-            yield TextArtifact(value=self.mock_output)
+            yield TextChunkArtifact(value=self.mock_output)
