@@ -4,12 +4,10 @@ import json
 from typing import TYPE_CHECKING, Optional
 
 from attr import Factory, define, field
-
-from griptape.artifacts import BaseArtifact, TextArtifact
-from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
-    from griptape.tools import BaseTool
+    from griptape.artifacts import ActionArtifact
 
 
 @define
@@ -22,30 +20,7 @@ class ActionsArtifact(TextArtifact):
         value: Optional text associated with the actions. Can represent the Chain of Thought associated with the action calls, or further instruction with the action results.
     """
 
-    @define(kw_only=True)
-    class Action(SerializableMixin):
-        """Represents an instance of an LLM taking an action to use a Tool.
-
-        Attributes:
-            tag: The tag (unique identifier) of the action.
-            name: The name (Tool name) of the action.
-            path: The path (Tool activity name) of the action.
-            input: The input (Tool params) of the action.
-            tool: The tool used in the action.
-            output: The output of the action execution.
-        """
-
-        tag: str = field(metadata={"serializable": True})
-        name: str = field(metadata={"serializable": True})
-        path: Optional[str] = field(default=None, metadata={"serializable": True})
-        input: dict = field(default={}, metadata={"serializable": True})
-        tool: Optional[BaseTool] = field(default=None, metadata={"serializable": False})
-        output: Optional[BaseArtifact] = field(default=None, metadata={"serializable": False})
-
-        def to_dict(self) -> dict:
-            return {"tag": self.tag, "name": self.name, "path": self.path, "input": self.input}
-
-    actions: list[Action] = field(default=Factory(list), metadata={"serializable": True}, kw_only=True)
+    actions: list[ActionArtifact.Action] = field(default=Factory(list), metadata={"serializable": True}, kw_only=True)
     value: Optional[str] = field(default=None, metadata={"serializable": True})
 
     def to_text(self) -> str:

@@ -7,6 +7,7 @@ from attr import Factory, define, field
 from schema import Schema
 
 from griptape.artifacts import ActionsArtifact, TextArtifact
+from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
@@ -52,11 +53,13 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         if tool_uses:
             actions = [
-                ActionsArtifact.Action(
-                    tag=tool_use.id,
-                    name=tool_use.name.split("-")[0],
-                    path=tool_use.name.split("-")[1],
-                    input=tool_use.input,
+                ActionArtifact.Action(
+                    ActionArtifact.Action(
+                        tag=tool_use.id,
+                        name=tool_use.name.split("-")[0],
+                        path=tool_use.name.split("-")[1],
+                        input=tool_use.input,
+                    )
                 )
                 for tool_use in tool_uses
             ]
@@ -65,7 +68,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             return TextArtifact(value=text)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]:
         response = self.client.beta.tools.messages.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in response:
@@ -78,7 +81,9 @@ class AnthropicPromptDriver(BasePromptDriver):
                 elif content_block_type == "tool_use":
                     name, path = content_block.name.split("-")
                     yield ActionChunkArtifact(
-                        value=f"{name}-{path}", index=chunk.index, tag=content_block.id, name=name, path=path
+                        value=ActionChunkArtifact.ActionChunk(
+                            index=chunk.index, tag=content_block.id, name=name, path=path
+                        )
                     )
             elif chunk.type == "content_block_delta":
                 delta = chunk.delta
@@ -88,7 +93,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                     yield TextArtifact(value=delta.text)
                 elif delta_type == "input_json_delta":
                     yield ActionChunkArtifact(
-                        value=delta.partial_json, index=chunk.index, partial_input=delta.partial_json
+                        value=ActionChunkArtifact.ActionChunk(index=chunk.index, input=delta.partial_json)
                     )
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> dict:

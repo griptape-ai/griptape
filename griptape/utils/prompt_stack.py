@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional, Union
 
 from attr import define, field
 
-from griptape.artifacts import ActionsArtifact, BaseArtifact
+from griptape.artifacts import ActionsArtifact, BaseArtifact, ActionArtifact
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
@@ -72,14 +72,14 @@ class PromptStack(SerializableMixin):
     def add_assistant_input(self, content: str) -> Input:
         return self.add_input(content, PromptStack.ASSISTANT_ROLE)
 
-    def add_tool_call_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
+    def add_tool_call_input(self, content: Optional[str], actions: list[ActionArtifact.Action]) -> Input:
         self.inputs.append(
             self.Input(content=ActionsArtifact(value=content, actions=actions), role=PromptStack.TOOL_CALL_ROLE)
         )
 
         return self.inputs[-1]
 
-    def add_tool_result_input(self, content: Optional[str], actions: list[ActionsArtifact.Action]) -> Input:
+    def add_tool_result_input(self, content: Optional[str], actions: list[ActionArtifact.Action]) -> Input:
         self.inputs.append(
             self.Input(content=ActionsArtifact(value=content, actions=actions), role=PromptStack.TOOL_RESULT_ROLE)
         )

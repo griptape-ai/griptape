@@ -3,10 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
-from griptape.artifacts.actions_artifact import ActionsArtifact
-from griptape.artifacts.error_artifact import ErrorArtifact
-from griptape.artifacts.text_artifact import TextArtifact
+from griptape.artifacts import ActionArtifact, ActionChunkArtifact, ActionsArtifact, ErrorArtifact, TextArtifact
 from griptape.drivers import AnthropicPromptDriver
 from griptape.utils import PromptStack
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import MockTool
@@ -244,7 +241,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_call_input(
             content="Thinking",
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -255,7 +252,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_call_input(
             content=None,
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -266,7 +263,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_result_input(
             content="Please continue",
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -278,7 +275,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_result_input(
             content=None,
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -347,7 +344,7 @@ class TestAnthropicPromptDriver:
         )
         assert isinstance(actions_artifact, ActionsArtifact)
         assert actions_artifact.actions == [
-            ActionsArtifact.Action(
+            ActionArtifact.Action(
                 tag="tool-call-id", name="ToolName", path="ActivityName", input={"values": {"test": "test input"}}
             )
         ]
@@ -430,7 +427,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_call_input(
             content="Thinking",
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -441,7 +438,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_call_input(
             content=None,
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -452,7 +449,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_result_input(
             content="Please continue",
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -464,7 +461,7 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_tool_result_input(
             content=None,
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -521,9 +518,9 @@ class TestAnthropicPromptDriver:
             TextArtifact(value=""),
             TextArtifact(value="thinking"),
             ActionChunkArtifact(
-                value="ToolName-ActivityName", index=0, tag="tool-call-id", name="ToolName", path="ActivityName"
+                value=ActionChunkArtifact.ActionChunk(index=0, tag="tool-call-id", name="ToolName", path="ActivityName")
             ),
-            ActionChunkArtifact(value="tool-output", index=0, partial_input="tool-output"),
+            ActionChunkArtifact(value=ActionChunkArtifact.ActionChunk(index=0, input="tool-output")),
         ]
         # When
         chunk_stream = list(driver.try_stream(prompt_stack))
@@ -546,11 +543,6 @@ class TestAnthropicPromptDriver:
         for chunk, expected_chunk in zip(chunk_stream, expected_chunks):
             if isinstance(chunk, ActionChunkArtifact):
                 assert chunk.value == expected_chunk.value
-                assert chunk.tag == expected_chunk.tag
-                assert chunk.name == expected_chunk.name
-                assert chunk.path == expected_chunk.path
-                assert chunk.partial_input == expected_chunk.partial_input
-                assert chunk.index == expected_chunk.index
             else:
                 assert chunk.value == expected_chunk.value
 

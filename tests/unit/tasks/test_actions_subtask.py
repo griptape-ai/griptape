@@ -1,10 +1,11 @@
 import json
+
 import pytest
-from griptape.artifacts.actions_artifact import ActionsArtifact
-from griptape.artifacts.text_artifact import TextArtifact
-from tests.mocks.mock_tool.tool import MockTool
-from griptape.tasks import ToolkitTask, ActionsSubtask
+
+from griptape.artifacts import ActionArtifact, ActionsArtifact, TextArtifact
 from griptape.structures import Agent
+from griptape.tasks import ActionsSubtask, ToolkitTask
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestActionsSubtask:
@@ -52,8 +53,8 @@ class TestActionsSubtask:
                 ActionsArtifact(
                     value="foo bar",
                     actions=[
-                        ActionsArtifact.Action(tag="foo", name="bar", path="baz", input={}),
-                        ActionsArtifact.Action(tag="baz", name="foo", path="bar", input={}),
+                        ActionArtifact.Action(tag="foo", name="bar", path="baz", input={}),
+                        ActionArtifact.Action(tag="baz", name="foo", path="bar", input={}),
                     ],
                 )
             ).input.value
@@ -70,7 +71,7 @@ class TestActionsSubtask:
                 "Answer: test output"
             ),
             ActionsArtifact(
-                value="foo bar", actions=[ActionsArtifact.Action(tag="foo", name="MockTool", path="test_no_schema")]
+                value="foo bar", actions=[ActionArtifact.Action(tag="foo", name="MockTool", path="test_no_schema")]
             ),
         ],
     )

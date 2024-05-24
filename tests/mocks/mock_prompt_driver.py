@@ -5,7 +5,7 @@ from collections.abc import Iterator
 
 from attr import define, field
 
-from griptape.artifacts import ActionsArtifact, TextArtifact
+from griptape.artifacts import ActionsArtifact, TextArtifact, ActionArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
@@ -25,7 +25,7 @@ class MockPromptDriver(BasePromptDriver):
         if self.use_native_tools:
             if prompt_stack.tools and prompt_stack.inputs and prompt_stack.inputs[-1].role == PromptStack.USER_ROLE:
                 actions = [
-                    ActionsArtifact.Action(
+                    ActionArtifact.Action(
                         tag=f"{tool.activity_name(activity)}-id",
                         name=tool.name,
                         path=tool.activity_name(activity),
@@ -46,7 +46,7 @@ class MockPromptDriver(BasePromptDriver):
         if self.use_native_tools:
             if prompt_stack.tools and prompt_stack.inputs and prompt_stack.inputs[-1].role == PromptStack.USER_ROLE:
                 actions = [
-                    ActionsArtifact.Action(
+                    ActionArtifact.Action(
                         tag=f"{tool.activity_name(activity)}-id",
                         name=tool.name,
                         path=tool.activity_name(activity),

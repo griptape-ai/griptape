@@ -11,6 +11,7 @@ from attr import Factory, define, field
 from schema import Schema
 
 from griptape.artifacts import ActionsArtifact, TextArtifact
+from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -97,7 +98,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
             if tool_calls:
                 actions = [
-                    ActionsArtifact.Action(
+                    ActionArtifact.Action(
                         tag=tool_call.id,
                         name=tool_call.function.name.split("-")[0],
                         path=tool_call.function.name.split("-")[1],
@@ -114,7 +115,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
@@ -128,18 +129,17 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
                         if tool_call_delta.id is not None:
                             name, path = tool_call_delta.function.name.split("-")
-                            value = f"{name}-{path}"
                         else:
                             name, path = None, None
-                            value = tool_call_delta.function.arguments or ""
 
                         yield ActionChunkArtifact(
-                            value=value,
-                            index=tool_call_delta.index,
-                            tag=tool_call_delta.id,
-                            name=name,
-                            path=path,
-                            partial_input=tool_call_delta.function.arguments,
+                            value=ActionChunkArtifact.ActionChunk(
+                                index=tool_call_delta.index,
+                                tag=tool_call_delta.id,
+                                name=name,
+                                path=path,
+                                input=tool_call_delta.function.arguments,
+                            )
                         )
                     else:
                         raise Exception("Streaming completion with more than one tool call delta is not supported yet.")

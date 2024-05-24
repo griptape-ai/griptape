@@ -4,7 +4,7 @@ import pytest
 import yaml
 from schema import SchemaMissingKeyError, Schema, Or
 from griptape.tasks import ActionsSubtask, ToolkitTask
-from griptape.artifacts import ActionsArtifact
+from griptape.artifacts import ActionArtifact
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -207,7 +207,7 @@ class TestBaseTool:
         assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
-        action = ActionsArtifact.Action(input={}, name="", tag="")
+        action = ActionArtifact.Action(input={}, name="", tag="")
         assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):

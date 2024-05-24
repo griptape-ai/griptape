@@ -7,9 +7,7 @@ from openai.types.chat.chat_completion_chunk import ChoiceDeltaToolCall, ChoiceD
 from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall, Function
 from transformers import AutoTokenizer
 
-from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
-from griptape.artifacts.actions_artifact import ActionsArtifact
-from griptape.artifacts.text_artifact import TextArtifact
+from griptape.artifacts import ActionArtifact, ActionChunkArtifact, ActionsArtifact, TextArtifact
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
@@ -117,7 +115,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_tool_call_input(
             content=None,
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -128,7 +126,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_tool_result_input(
             content="Please continue",
             actions=[
-                ActionsArtifact.Action(
+                ActionArtifact.Action(
                     tag="tool-call-id",
                     name="ToolName",
                     path="ActivityName",
@@ -370,7 +368,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
         assert isinstance(actions_artifact, ActionsArtifact)
         assert actions_artifact.actions == [
-            ActionsArtifact.Action(
+            ActionArtifact.Action(
                 tag="tool-call-id", name="ToolName", path="ActivityName", input={"parameter-name": "parameter-value"}
             )
         ]
@@ -413,20 +411,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True)
         expected_chunks = [
             ActionChunkArtifact(
-                value="ToolName-ActivityName",
-                tag="tool-call-id",
-                name="ToolName",
-                path="ActivityName",
-                index=0,
-                partial_input=None,
+                value=ActionChunkArtifact.ActionChunk(
+                    tag="tool-call-id", name="ToolName", path="ActivityName", index=0, input=None
+                )
             ),
             ActionChunkArtifact(
-                value='{"parameter-name": "parameter-value"}',
-                tag=None,
-                name=None,
-                path=None,
-                index=0,
-                partial_input='{"parameter-name": "parameter-value"}',
+                value=ActionChunkArtifact.ActionChunk(
+                    tag=None, name=None, path=None, index=0, input='{"parameter-name": "parameter-value"}'
+                )
             ),
         ]
 
@@ -449,11 +441,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         for chunk, expected_chunk in zip(action_chunk_artifact, expected_chunks):
             if isinstance(chunk, ActionChunkArtifact):
                 assert chunk.value == expected_chunk.value
-                assert chunk.tag == expected_chunk.tag
-                assert chunk.name == expected_chunk.name
-                assert chunk.path == expected_chunk.path
-                assert chunk.index == expected_chunk.index
-                assert chunk.partial_input == expected_chunk.partial_input
             else:
                 assert chunk.value == expected_chunk.value
 

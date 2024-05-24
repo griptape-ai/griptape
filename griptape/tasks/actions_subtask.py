@@ -1,4 +1,5 @@
 from __future__ import annotations
+from griptape.artifacts import ActionArtifact
 import json
 import re
 from typing import Optional, TYPE_CHECKING, Callable
@@ -28,7 +29,7 @@ class ActionsSubtask(BaseTextInputTask):
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    actions: list[ActionsArtifact.Action] = field(factory=list, kw_only=True)
+    actions: list[ActionArtifact.Action] = field(factory=list, kw_only=True)
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=None)
     _memory: Optional[TaskMemory] = None
@@ -107,14 +108,14 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 return ErrorArtifact("no tool output")
 
-    def execute_actions(self, actions: list[ActionsArtifact.Action]) -> list[tuple[str, BaseArtifact]]:
+    def execute_actions(self, actions: list[ActionArtifact.Action]) -> list[tuple[str, BaseArtifact]]:
         results: dict[str, tuple[str, BaseArtifact]] = utils.execute_futures_dict(
             {a.tag: self.futures_executor.submit(self.execute_action, a) for a in actions}
         )
 
         return [r for r in results.values()]
 
-    def execute_action(self, action: ActionsArtifact.Action) -> tuple[str, BaseArtifact]:
+    def execute_action(self, action: ActionArtifact.Action) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
                 output = action.tool.execute(getattr(action.tool, action.path), self, action)
@@ -219,7 +220,7 @@ class ActionsSubtask(BaseTextInputTask):
             if len(self.actions) == 0 and self.output is None and len(answer_matches) > 0:
                 self.output = TextArtifact(answer_matches[-1])
 
-    def __parse_action_matches(self, actions_matches: list[str]) -> list[ActionsArtifact.Action]:
+    def __parse_action_matches(self, actions_matches: list[str]) -> list[ActionArtifact.Action]:
         if not actions_matches:
             return []
 
@@ -251,7 +252,7 @@ class ActionsSubtask(BaseTextInputTask):
 
         return processed_actions
 
-    def __parse_action_object(self, action_object: dict) -> ActionsArtifact.Action:
+    def __parse_action_object(self, action_object: dict) -> ActionArtifact.Action:
         try:
             # Load action name; throw exception if the key is not present
             action_tag = action_object["tag"]
@@ -272,7 +273,7 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 action_input = {}
 
-            action = ActionsArtifact.Action(tag=action_tag, name=action_name, path=action_path, input=action_input)
+            action = ActionArtifact.Action(tag=action_tag, name=action_name, path=action_path, input=action_input)
 
             return action
         except SyntaxError as e:
@@ -284,11 +285,11 @@ class ActionsSubtask(BaseTextInputTask):
 
             return self.__error_to_action(f"Action JSON validation error: {e}")
 
-    def __process_action(self, action: ActionsArtifact.Action) -> ActionsArtifact.Action:
+    def __process_action(self, action: ActionArtifact.Action) -> ActionArtifact.Action:
         """Process an Action by looking up the Tool and validating the input."""
         if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
             tool = self.origin_task.find_tool(action.name)
-            new_action = ActionsArtifact.Action(
+            new_action = ActionArtifact.Action(
                 tag=action.tag, name=action.name, path=action.path, input=action.input, tool=tool
             )
 
@@ -299,7 +300,7 @@ class ActionsSubtask(BaseTextInputTask):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionsSubtaskOriginMixin.")
 
-    def __validate_action(self, action: ActionsArtifact.Action) -> ActionsArtifact.Action:
+    def __validate_action(self, action: ActionArtifact.Action) -> ActionArtifact.Action:
         try:
             if action.path is not None:
                 activity = getattr(action.tool, action.path)
@@ -322,5 +323,5 @@ class ActionsSubtask(BaseTextInputTask):
                 f"Activity input JSON validation error: {e}", tag=action.tag, name=action.name
             )
 
-    def __error_to_action(self, error: str, tag: str = "error", name: str = "error") -> ActionsArtifact.Action:
-        return ActionsArtifact.Action(tag=tag, name=name, output=ErrorArtifact(error))
+    def __error_to_action(self, error: str, tag: str = "error", name: str = "error") -> ActionArtifact.Action:
+        return ActionArtifact.Action(tag=tag, name=name, output=ErrorArtifact(error))

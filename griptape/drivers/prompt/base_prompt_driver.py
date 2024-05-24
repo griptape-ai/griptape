@@ -7,14 +7,9 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 from attr import Factory, define, field
 
-from griptape.artifacts import TextArtifact
-from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
-from griptape.artifacts.actions_artifact import ActionsArtifact
-from griptape.artifacts.base_artifact import BaseArtifact
-from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
-from griptape.events.action_chunk_event import ActionChunkEvent
-from griptape.mixins import ExponentialBackoffMixin
-from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.artifacts import ActionArtifact, ActionsArtifact, BaseArtifact, TextArtifact, ActionChunkArtifact
+from griptape.events import ActionChunkEvent, CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 from griptape.tokenizers import BaseTokenizer
 from griptape.utils import PromptStack
 
@@ -126,20 +121,22 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]: ...
 
-    def __assemble_chunks(self, completion_chunks: Iterator[TextArtifact]) -> TextArtifact:
+    def __assemble_chunks(self, completion_chunks: Iterator[TextArtifact | ActionChunkArtifact]) -> TextArtifact:
         text_chunks = []
         action_chunks = {}
 
         for chunk in completion_chunks:
             if isinstance(chunk, ActionChunkArtifact):
-                if chunk.index in action_chunks:
-                    action_chunks[chunk.index] += chunk
+                action = chunk.value
+                if action.index in action_chunks:
+                    action_chunks[action.index] += chunk
                 else:
-                    action_chunks[chunk.index] = chunk
+                    action_chunks[action.index] = chunk
+
                 self.structure.publish_event(
-                    ActionChunkEvent(tag=chunk.tag, name=chunk.name, path=chunk.path, partial_input=chunk.partial_input)
+                    ActionChunkEvent(tag=action.tag, name=action.name, path=action.path, partial_input=action.input)
                 )
             elif isinstance(chunk, TextArtifact):
                 text_chunks.append(chunk.value)
@@ -155,23 +152,26 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
         return result
 
-    def __build_actions_from_chunks(self, action_chunks: list[ActionChunkArtifact]) -> list[ActionsArtifact.Action]:
+    def __build_actions_from_chunks(self, action_chunks: list[ActionChunkArtifact]) -> list[ActionArtifact]:
         actions = []
 
         for chunk in action_chunks:
-            if chunk.partial_input is None:
+            action = chunk.value
+            if action.input is None:
                 raise ValueError("ActionChunkArtifact is missing partial_input field.")
-            if chunk.tag is None:
+            if action.tag is None:
                 raise ValueError("ActionChunkArtifact is missing tag field.")
-            if chunk.name is None:
+            if action.name is None:
                 raise ValueError("ActionChunkArtifact is missing name field.")
 
             try:
-                input = json.loads(chunk.partial_input)
+                input = json.loads(action.input)
             except json.JSONDecodeError:
-                raise ValueError(f"Failed to decode JSON input: {chunk.partial_input}")
+                raise ValueError(f"Failed to decode JSON input: {action.input}")
 
-            action = ActionsArtifact.Action(tag=chunk.tag, name=chunk.name, path=chunk.path, input=input)
+            action = ActionArtifact.Action(
+                value=ActionArtifact.Action(tag=action.tag, name=action.name, path=action.path, input=input)
+            )
             actions.append(action)
 
         return actions
