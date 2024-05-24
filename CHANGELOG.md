@@ -9,9 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
 - `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
+- `ActionArtifact` for storing Action calls.
+- `ActionChunkArtifact` for storing partial Action calls when streaming.
+- `TextChunkArtifact` for storing partial text when streaming.
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
+- **BREAKING**: Replaced `ActionsSubtask.Action` with `ActionArtifact.Action`.
+- **BREAKING**: Yield `TextChunkArtifact`s instead of `TextArtifact`s in the `Stream` util.
 - Default the value of `azure_deployment` on all Azure Drivers to the model the Driver is using.
 - Field `azure_ad_token` on all Azure Drivers is no longer serializable.
 - Default standard OpenAI and Azure OpenAI image query model to `gpt-4o`.
