@@ -3,6 +3,7 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError, Schema, Or
+from griptape.artifacts import ActionArtifact
 from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
@@ -171,10 +172,10 @@ class TestBaseTool:
 
     def test_invalid_config(self):
         try:
-            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool
+            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa
 
             assert False
-        except SchemaMissingKeyError as e:
+        except SchemaMissingKeyError:
             assert True
 
     def test_memory(self):
@@ -206,7 +207,7 @@ class TestBaseTool:
         assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
-        action = ActionsSubtask.Action(input={}, name="", tag="")
+        action = ActionArtifact.Action(input={}, name="", tag="")
         assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):

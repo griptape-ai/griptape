@@ -9,33 +9,24 @@ from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTextInputTask, BaseTask
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact, ActionArtifact
 from griptape.events import StartActionsSubtaskEvent, FinishActionsSubtaskEvent
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
-    from griptape.tools import BaseTool
 
 
 @define
 class ActionsSubtask(BaseTextInputTask):
-    @define(kw_only=True)
-    class Action:
-        tag: str = field()
-        name: str = field()
-        path: Optional[str] = field(default=None)
-        input: dict = field()
-        tool: Optional[BaseTool] = field(default=None)
-
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    actions: list[Action] = field(factory=list, kw_only=True)
+    actions: list[ActionArtifact.Action] = field(factory=list, kw_only=True)
 
-    _input: Optional[str | TextArtifact | Callable[[BaseTask], TextArtifact]] = field(default=None)
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=None)
     _memory: Optional[TaskMemory] = None
 
     @property
@@ -112,14 +103,14 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 return ErrorArtifact("no tool output")
 
-    def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
+    def execute_actions(self, actions: list[ActionArtifact.Action]) -> list[tuple[str, BaseArtifact]]:
         results = utils.execute_futures_dict(
             {a.tag: self.futures_executor.submit(self.execute_action, a) for a in actions}
         )
 
         return [r for r in results.values()]
 
-    def execute_action(self, action: Action) -> tuple[str, BaseArtifact]:
+    def execute_action(self, action: ActionArtifact.Action) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
                 output = action.tool.execute(getattr(action.tool, action.path), self, action)
@@ -243,7 +234,7 @@ class ActionsSubtask(BaseTextInputTask):
                         "ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
                     )
 
-                new_action = ActionsSubtask.Action(
+                new_action = ActionArtifact.Action(
                     tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool
                 )
 
@@ -266,10 +257,10 @@ class ActionsSubtask(BaseTextInputTask):
 
             self.actions.append(self.__error_to_action(f"Action input parsing error: {e}"))
 
-    def __error_to_action(self, error: str) -> Action:
-        return ActionsSubtask.Action(tag="error", name="error", input={"error": error})
+    def __error_to_action(self, error: str) -> ActionArtifact.Action:
+        return ActionArtifact.Action(tag="error", name="error", input={"error": error})
 
-    def __validate_action(self, action: Action) -> None:
+    def __validate_action(self, action: ActionArtifact.Action) -> None:
         try:
             if action.path is not None:
                 activity = getattr(action.tool, action.path)
