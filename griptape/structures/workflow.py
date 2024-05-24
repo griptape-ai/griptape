@@ -13,6 +13,28 @@ from griptape.memory.structure import Run
 class Workflow(Structure):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
+    def _init_tasks(self, *tasks: BaseTask | list[BaseTask]) -> list[BaseTask]:
+        task_batches = [task if isinstance(task, list) else [task] for task in list(tasks)]
+        if task_batches:
+            if len(task_batches[0]) != 1:
+                raise ValueError(
+                    "The first element in tasks must consist of a single task as a workflow can only have one input task."
+                )
+            if len(task_batches[-1]) != 1:
+                raise ValueError(
+                    "The last element in tasks must consist of a single task as a workflow can only have one output task."
+                )
+        parents = []
+        for task_batch in task_batches:
+            for task in task_batch:
+                task.preprocess(self)
+                for parent in parents:
+                    parent.child_ids.append(task.id)
+                    task.parent_ids.append(parent.id)
+                self.tasks.append(task)
+            parents = task_batch
+        return self.task_list
+
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
 
@@ -139,10 +161,10 @@ class Workflow(Structure):
     def to_graph(self) -> dict[str, set[str]]:
         graph: dict[str, set[str]] = {}
 
-        for key_task in self.tasks:
+        for key_task in self.task_list:
             graph[key_task.id] = set()
 
-            for value_task in self.tasks:
+            for value_task in self.task_list:
                 if key_task.id in value_task.child_ids:
                     graph[key_task.id].add(value_task.id)
 

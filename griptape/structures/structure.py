@@ -4,7 +4,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from attrs import Factory, define, field
 from rich.logging import RichHandler
@@ -42,7 +42,7 @@ class Structure(ABC):
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
-    tasks: list[BaseTask] = field(factory=list, kw_only=True)
+    tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
@@ -81,10 +81,19 @@ class Structure(ABC):
 
         tasks = self.tasks.copy()
         self.tasks.clear()
-        self.add_tasks(*tasks)
+        self._init_tasks(*tasks)
 
     def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
         return self.add_tasks(*other) if isinstance(other, list) else self + [other]
+
+    def _init_tasks(self, *tasks: BaseTask | list[BaseTask]) -> list[BaseTask]:
+        task_list = []
+        for task in tasks:
+            if isinstance(task, list):
+                task_list.extend(task)
+            else:
+                task_list.append(task)
+        return self.add_tasks(*task_list)
 
     @prompt_driver.validator  # pyright: ignore
     def validate_prompt_driver(self, attribute, value):
@@ -100,6 +109,13 @@ class Structure(ABC):
     def validate_stream(self, attribute, value):
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver.stream` instead.")
+
+    @property
+    def task_list(self) -> list[BaseTask]:
+        # Although `self.tasks` is a list of `BaseTask | list[BaseTask]`, we can safely cast it to `list[BaseTask]`
+        # because `__attrs_post_init__` and `_init_tasks` ensure that `self.tasks` is a converted to a flat list
+        # during initialization.
+        return cast(list[BaseTask], self.tasks)
 
     @property
     def execution_args(self) -> tuple:
@@ -121,15 +137,15 @@ class Structure(ABC):
 
     @property
     def input_task(self) -> Optional[BaseTask]:
-        return self.tasks[0] if self.tasks else None
+        return self.task_list[0] if self.task_list else None
 
     @property
     def output_task(self) -> Optional[BaseTask]:
-        return self.tasks[-1] if self.tasks else None
+        return self.task_list[-1] if self.task_list else None
 
     @property
     def finished_tasks(self) -> list[BaseTask]:
-        return [s for s in self.tasks if s.is_finished()]
+        return [s for s in self.task_list if s.is_finished()]
 
     @property
     def default_config(self) -> BaseStructureConfig:
@@ -176,13 +192,13 @@ class Structure(ABC):
         )
 
     def is_finished(self) -> bool:
-        return all(s.is_finished() for s in self.tasks)
+        return all(s.is_finished() for s in self.task_list)
 
     def is_executing(self) -> bool:
-        return any(s for s in self.tasks if s.is_executing())
+        return any(s for s in self.task_list if s.is_executing())
 
     def find_task(self, task_id: str) -> BaseTask:
-        for task in self.tasks:
+        for task in self.task_list:
             if task.id == task_id:
                 return task
         raise ValueError(f"Task with id {task_id} doesn't exist.")

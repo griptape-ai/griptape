@@ -45,7 +45,7 @@ class Pipeline(Structure):
     def try_run(self, *args) -> Pipeline:
         self._execution_args = args
 
-        [task.reset() for task in self.tasks]
+        [task.reset() for task in self.task_list]
 
         self.__run_from_task(self.input_task)
 

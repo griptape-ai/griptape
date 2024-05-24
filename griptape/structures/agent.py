@@ -30,7 +30,7 @@ class Agent(Structure):
 
     @property
     def task(self) -> BaseTask:
-        return self.tasks[0]
+        return self.task_list[0]
 
     def add_task(self, task: BaseTask) -> BaseTask:
         self.tasks.clear()

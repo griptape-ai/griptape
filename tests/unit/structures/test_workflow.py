@@ -1,3 +1,4 @@
+# pyright: reportUnusedExpression=false
 import pytest
 
 from griptape.memory.task.storage import TextArtifactStorage
@@ -19,6 +20,142 @@ class TestWorkflow:
         assert len(workflow.tasks) == 0
         assert workflow.rulesets[0].name == "TestRuleset"
         assert workflow.rulesets[0].rules[0].value == "test"
+
+    def test_init_tasks_single(self):
+        task = PromptTask("prompt", id="task")
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task])
+
+        assert workflow.tasks == [task]
+        assert workflow.output_task == task
+        assert task.structure == workflow
+        assert task.parents == []
+        assert task.children == []
+
+    def test_init_tasks_series(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        task3 = PromptTask("prompt3", id="task3")
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3])
+
+        assert workflow.tasks == [task1, task2, task3]
+        assert workflow.output_task == task3
+
+        assert task1.structure == workflow
+        assert task1.parents == []
+        assert task1.parent_ids == []
+        assert task1.children == [task2]
+        assert task1.child_ids == ["task2"]
+
+        assert task2.structure == workflow
+        assert task2.parents == [task1]
+        assert task2.parent_ids == ["task1"]
+        assert task2.children == [task3]
+        assert task2.child_ids == ["task3"]
+
+        assert task3.structure == workflow
+        assert task3.parents == [task2]
+        assert task3.parent_ids == ["task2"]
+        assert task3.children == []
+        assert task3.child_ids == []
+
+    def test_init_tasks_batches(self):
+        task1 = PromptTask("prompt1a", id="task1")
+        task2a = PromptTask("prompt2a", id="task2a")
+        task2b = PromptTask("prompt2b", id="task2b")
+        task3a = PromptTask("prompt3a", id="task3a")
+        task3b = PromptTask("prompt3b", id="task3b")
+        task4 = PromptTask("prompt4", id="task4")
+        workflow = Workflow(
+            prompt_driver=MockPromptDriver(), tasks=[[task1], [task2a, task2b], [task3a, task3b], [task4]]
+        )
+
+        assert workflow.tasks == [task1, task2a, task2b, task3a, task3b, task4]
+        assert workflow.output_task == task4
+
+        assert task1.structure == workflow
+        assert task1.parents == []
+        assert task1.parent_ids == []
+        assert task1.children == [task2a, task2b]
+        assert task1.child_ids == ["task2a", "task2b"]
+
+        for task2 in [task2a, task2b]:
+            assert task2.structure == workflow
+            assert task2.parents == [task1]
+            assert task2.parent_ids == ["task1"]
+            assert task2.children == [task3a, task3b]
+            assert task2.child_ids == ["task3a", "task3b"]
+
+        for task3 in [task3a, task3b]:
+            assert task3.structure == workflow
+            assert task3.parents == [task2a, task2b]
+            assert task3.parent_ids == ["task2a", "task2b"]
+            assert task3.children == [task4]
+            assert task3.child_ids == ["task4"]
+
+        assert task4.structure == workflow
+        assert task4.parents == [task3a, task3b]
+        assert task4.parent_ids == ["task3a", "task3b"]
+        assert task4.children == []
+
+    def test_init_tasks_mixed(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        task3a = PromptTask("prompt3a", id="task3a")
+        task3b = PromptTask("prompt3b", id="task3b")
+        task4 = PromptTask("prompt4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, [task3a, task3b], task4])
+
+        assert workflow.tasks == [task1, task2, task3a, task3b, task4]
+        assert workflow.output_task == task4
+
+        assert task1.structure == workflow
+        assert task1.parents == []
+        assert task1.parent_ids == []
+        assert task1.children == [task2]
+        assert task1.child_ids == ["task2"]
+
+        assert task2.structure == workflow
+        assert task2.parents == [task1]
+        assert task2.parent_ids == ["task1"]
+        assert task2.children == [task3a, task3b]
+        assert task2.child_ids == ["task3a", "task3b"]
+
+        for task3 in [task3a, task3b]:
+            assert task3.structure == workflow
+            assert task3.parents == [task2]
+            assert task3.parent_ids == ["task2"]
+            assert task3.children == [task4]
+            assert task3.child_ids == ["task4"]
+
+        assert task4.structure == workflow
+        assert task4.parents == [task3a, task3b]
+        assert task4.parent_ids == ["task3a", "task3b"]
+        assert task4.children == []
+
+    def test_init_tasks_raises_when_multiple_input_tasks(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+
+        with pytest.raises(ValueError) as e:
+            Workflow(prompt_driver=MockPromptDriver(), tasks=[[task1, task2]])
+
+        assert (
+            str(e.value)
+            == "The first element in tasks must consist of a single task as a workflow can only have one input task."
+        )
+
+    def test_init_tasks_raises_when_multiple_output_tasks(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        task3 = PromptTask("prompt3", id="task3")
+
+        with pytest.raises(ValueError) as e:
+            Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, [task2, task3]])
+
+        assert (
+            str(e.value)
+            == "The last element in tasks must consist of a single task as a workflow can only have one output task."
+        )
 
     def test_rulesets(self):
         workflow = Workflow(rulesets=[Ruleset("Foo", [Rule("foo test")])])
@@ -105,10 +242,11 @@ class TestWorkflow:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
+        tasks: list[BaseTask] = [first_task, second_task, third_task]
 
         workflow = Workflow(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
-        workflow + [first_task, second_task, third_task]
+        workflow + tasks
 
         assert workflow.conversation_memory is not None
         assert len(workflow.conversation_memory.runs) == 0
@@ -126,9 +264,10 @@ class TestWorkflow:
         workflow = Workflow(tasks=[first_task, second_task, third_task])
 
         assert len(workflow.tasks) == 3
-        assert workflow.tasks[0].id == "test1"
-        assert workflow.tasks[1].id == "test2"
-        assert workflow.tasks[2].id == "test3"
+        assert workflow.tasks == workflow.task_list
+        assert workflow.task_list[0].id == "test1"
+        assert workflow.task_list[1].id == "test2"
+        assert workflow.task_list[2].id == "test3"
         assert len(first_task.parents) == 0
         assert len(first_task.children) == 1
         assert len(second_task.parents) == 1
@@ -158,10 +297,11 @@ class TestWorkflow:
     def test_add_tasks(self):
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
+        tasks: list[BaseTask] = [first_task, second_task]
 
         workflow = Workflow(prompt_driver=MockPromptDriver())
 
-        workflow + [first_task, second_task]
+        workflow + tasks
 
         assert len(workflow.tasks) == 2
         assert first_task in workflow.tasks
@@ -176,8 +316,9 @@ class TestWorkflow:
     def test_run(self):
         task1 = PromptTask("test")
         task2 = PromptTask("test")
+        tasks: list[BaseTask] = [task1, task2]
         workflow = Workflow(prompt_driver=MockPromptDriver())
-        workflow + [task1, task2]
+        workflow + tasks
 
         assert task1.state == BaseTask.State.PENDING
         assert task2.state == BaseTask.State.PENDING
@@ -306,7 +447,6 @@ class TestWorkflow:
         movie_info_2 = PromptTask(id="movie_info_2")
         movie_info_3 = PromptTask(id="movie_info_3")
         compare_movies = PromptTask(id="compare_movies")
-        prepare_email_task = PromptTask(id="prepare_email_task")
         send_email_task = PromptTask(id="send_email_task")
         save_to_disk = PromptTask(id="save_to_disk")
         publish_website = PromptTask(id="publish_website")
