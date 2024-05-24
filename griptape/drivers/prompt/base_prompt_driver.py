@@ -7,7 +7,14 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 from attr import Factory, define, field
 
-from griptape.artifacts import ActionArtifact, ActionsArtifact, BaseArtifact, TextArtifact, ActionChunkArtifact
+from griptape.artifacts import (
+    ActionArtifact,
+    ActionsArtifact,
+    BaseArtifact,
+    TextArtifact,
+    ActionChunkArtifact,
+    TextChunkArtifact,
+)
 from griptape.events import ActionChunkEvent, CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 from griptape.tokenizers import BaseTokenizer
@@ -121,9 +128,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact | ActionChunkArtifact]: ...
 
-    def __assemble_chunks(self, completion_chunks: Iterator[TextArtifact | ActionChunkArtifact]) -> TextArtifact:
+    def __assemble_chunks(self, completion_chunks: Iterator[TextChunkArtifact | ActionChunkArtifact]) -> TextArtifact:
         text_chunks = []
         action_chunks = {}
 
@@ -152,7 +159,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
         return result
 
-    def __build_actions_from_chunks(self, action_chunks: list[ActionChunkArtifact]) -> list[ActionArtifact]:
+    def __build_actions_from_chunks(self, action_chunks: list[ActionChunkArtifact]) -> list[ActionArtifact.Action]:
         actions = []
 
         for chunk in action_chunks:
@@ -169,9 +176,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             except json.JSONDecodeError:
                 raise ValueError(f"Failed to decode JSON input: {action.input}")
 
-            action = ActionArtifact.Action(
-                value=ActionArtifact.Action(tag=action.tag, name=action.name, path=action.path, input=input)
-            )
+            action = ActionArtifact.Action(tag=action.tag, name=action.name, path=action.path, input=input)
             actions.append(action)
 
         return actions

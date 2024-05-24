@@ -1,10 +1,10 @@
-from typing import Iterator
+from collections.abc import Iterator
 from attr import define
 
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 
 
 @define
@@ -18,14 +18,14 @@ class MockFailingPromptDriver(BasePromptDriver):
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
-            raise Exception(f"failed attempt")
+            raise Exception("failed attempt")
         else:
             return TextArtifact("success")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact]:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
-            raise Exception(f"failed attempt")
+            raise Exception("failed attempt")
         else:
-            yield TextArtifact("success")
+            yield TextChunkArtifact("success")

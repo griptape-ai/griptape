@@ -107,18 +107,18 @@ class BaseTool(ActivityMixin, ABC):
             for activity in self.activities()
         ]
 
-    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact) -> BaseArtifact:
+    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact.Action) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask, action)
         output = self.run(activity, subtask, action, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, action, output)
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact) -> Optional[dict]:
+    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact.Action) -> Optional[dict]:
         return action.input
 
     def run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact, value: Optional[dict]
+        self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact.Action, value: Optional[dict]
     ) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -132,7 +132,7 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact, value: BaseArtifact
+        self, activity: Callable, subtask: ActionsSubtask, action: ActionArtifact.Action, value: BaseArtifact
     ) -> BaseArtifact:
         if value:
             if self.output_memory:

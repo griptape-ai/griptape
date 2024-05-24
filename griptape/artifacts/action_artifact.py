@@ -1,11 +1,16 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
+import json
+from typing import TYPE_CHECKING, Optional
+from collections.abc import Sequence
+
 from attrs import define, field
-from typing import Optional
+
+from griptape.artifacts import BaseArtifact, ActionChunkArtifact
 from griptape.mixins import SerializableMixin
-from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseChunkArtifact
     from griptape.tools import BaseTool
 
 
@@ -38,3 +43,26 @@ class ActionArtifact(BaseArtifact, SerializableMixin):
 
     def __add__(self, other: BaseArtifact) -> ActionArtifact:
         raise NotImplementedError
+
+    @classmethod
+    def from_chunks(cls, chunks: Sequence[BaseChunkArtifact]) -> ActionArtifact:
+        tag = ""
+        name = ""
+        path = ""
+        partial_input = ""
+
+        for chunk in chunks:
+            if isinstance(chunk, ActionChunkArtifact):
+                tag += chunk.value.tag or ""
+                name += chunk.value.name or ""
+                path += chunk.value.path or ""
+                partial_input += chunk.value.input or ""
+
+        try:
+            input = json.loads(partial_input)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Failed to decode JSON input: {partial_input}, {e}")
+
+        result = ActionArtifact.Action(tag=tag, name=name, path=path, input=input)
+
+        return cls(result)

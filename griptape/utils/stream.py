@@ -1,16 +1,21 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 from collections.abc import Iterator
-from threading import Thread
 from queue import Queue
-from griptape.artifacts.text_artifact import TextArtifact
-from griptape.events.action_chunk_event import ActionChunkEvent
-from griptape.events.completion_chunk_event import CompletionChunkEvent
-from griptape.events.event_listener import EventListener
-from griptape.events.base_event import BaseEvent
-from griptape.events.finish_structure_run_event import FinishStructureRunEvent
-from griptape.events.finish_prompt_event import FinishPromptEvent
-from attrs import field, define, Factory
+from threading import Thread
+from typing import TYPE_CHECKING
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import TextChunkArtifact
+from griptape.events import (
+    ActionChunkEvent,
+    BaseEvent,
+    CompletionChunkEvent,
+    EventListener,
+    FinishPromptEvent,
+    FinishStructureRunEvent,
+)
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -39,7 +44,7 @@ class Stream:
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
 
-    def run(self, *args) -> Iterator[TextArtifact]:
+    def run(self, *args) -> Iterator[TextChunkArtifact]:
         t = Thread(target=self._run_structure, args=args)
         t.start()
 
@@ -48,14 +53,14 @@ class Stream:
             if isinstance(event, FinishStructureRunEvent):
                 break
             elif isinstance(event, FinishPromptEvent):
-                yield TextArtifact(value="\n")
+                yield TextChunkArtifact(value="\n")
             elif isinstance(event, CompletionChunkEvent):
-                yield TextArtifact(value=event.token)
+                yield TextChunkArtifact(value=event.token)
             elif isinstance(event, ActionChunkEvent):
                 if event.name is not None:
-                    yield TextArtifact(value=f"\n{event.name}.{event.path} ({event.tag})")
+                    yield TextChunkArtifact(value=f"\n{event.name}.{event.path} ({event.tag})")
                 elif event.partial_input is not None:
-                    yield TextArtifact(value=event.partial_input)
+                    yield TextChunkArtifact(value=event.partial_input)
         t.join()
 
     def _run_structure(self, *args):

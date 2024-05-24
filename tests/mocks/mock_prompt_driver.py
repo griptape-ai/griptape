@@ -9,7 +9,7 @@ from griptape.artifacts import ActionsArtifact, TextArtifact, ActionArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
-from griptape.utils import PromptStack
+from griptape.artifacts import TextArtifact, TextChunkArtifact
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 

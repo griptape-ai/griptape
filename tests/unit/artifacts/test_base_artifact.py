@@ -67,3 +67,7 @@ class TestBaseArtifact:
         dict_value = {"type": "foo", "value": "foobar"}
         with pytest.raises(ValueError):
             BaseArtifact.from_dict(dict_value)
+
+    def test_unsupported_from_chunk(self):
+        with pytest.raises(NotImplementedError):
+            BaseArtifact.from_chunks([])

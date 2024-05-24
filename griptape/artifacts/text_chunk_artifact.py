@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 from attr import define, field
-from griptape.artifacts import BaseChunkArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, BaseChunkArtifact
 
 if TYPE_CHECKING:
     from griptape.tokenizers import BaseTokenizer

@@ -1,10 +1,17 @@
 from __future__ import annotations
-from griptape.mixins import SerializableMixin
-from typing import Any
+
 import json
 import uuid
 from abc import ABC, abstractmethod
-from attr import define, field, Factory
+from typing import TYPE_CHECKING, Any
+from collections.abc import Sequence
+
+from attr import Factory, define, field
+
+from griptape.mixins import SerializableMixin
+
+if TYPE_CHECKING:
+    from griptape.artifacts import BaseChunkArtifact
 
 
 @define()
@@ -45,3 +52,7 @@ class BaseArtifact(SerializableMixin, ABC):
 
     @abstractmethod
     def __add__(self, other: BaseArtifact) -> BaseArtifact: ...
+
+    @classmethod
+    def from_chunks(cls, chunks: Sequence[BaseChunkArtifact]) -> BaseArtifact:
+        raise NotImplementedError

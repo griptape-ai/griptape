@@ -10,7 +10,7 @@ import openai
 from attr import Factory, define, field
 from schema import Schema
 
-from griptape.artifacts import ActionsArtifact, TextArtifact
+from griptape.artifacts import ActionsArtifact, TextArtifact, TextChunkArtifact
 from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.action_chunk_artifact import ActionChunkArtifact
 from griptape.drivers import BasePromptDriver
@@ -115,7 +115,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact | ActionChunkArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextChunkArtifact | ActionChunkArtifact]:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
@@ -146,7 +146,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 else:
                     content_delta = delta.content or ""
 
-                    yield TextArtifact(value=content_delta)
+                    yield TextChunkArtifact(value=content_delta)
             else:
                 raise Exception("Completion with more than one choice is not supported yet.")
 

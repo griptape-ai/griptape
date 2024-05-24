@@ -53,7 +53,10 @@ class TestPromptStack:
 
     def test_add_tool_call_input(self, prompt_stack):
         prompt_stack.add_tool_call_input(
-            "foo", actions=[ActionArtifact.Action(tag="foo", name="bar", path="baz", input={"values": {"test": "test input"}})]
+            "foo",
+            actions=[
+                ActionArtifact.Action(tag="foo", name="bar", path="baz", input={"values": {"test": "test input"}})
+            ],
         )
 
         assert prompt_stack.inputs[0].role == "tool_call"

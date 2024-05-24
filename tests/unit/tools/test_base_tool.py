@@ -3,6 +3,7 @@ import os
 import pytest
 import yaml
 from schema import SchemaMissingKeyError, Schema, Or
+from griptape.artifacts import ActionArtifact
 from griptape.tasks import ActionsSubtask, ToolkitTask
 from griptape.artifacts import ActionArtifact
 from tests.mocks.mock_tool.tool import MockTool

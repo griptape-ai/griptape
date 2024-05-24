@@ -4,7 +4,7 @@ from typing import Optional
 
 from attr import define, field
 
-from griptape.artifacts import BaseChunkArtifact, BaseArtifact
+from griptape.artifacts import BaseArtifact, BaseChunkArtifact
 from griptape.mixins import SerializableMixin
 
 
@@ -17,9 +17,8 @@ class ActionChunkArtifact(BaseChunkArtifact, SerializableMixin):
         tag: The tag of the action.
         name: The name of the action.
         path: The path of the action.
-        partial_input: The partial input of the action.
+        input: The partial input of the action.
         index: The index of the action.
-
     """
 
     @define()
@@ -31,13 +30,16 @@ class ActionChunkArtifact(BaseChunkArtifact, SerializableMixin):
         index: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
         def __add__(self, other: ActionChunkArtifact.ActionChunk) -> ActionChunkArtifact.ActionChunk:
-            return ActionChunkArtifact.ActionChunk(
-                tag=(self.tag or "") + (other.tag or ""),
-                name=(self.name or "") + (other.name or ""),
-                path=(self.path or "") + (other.path or ""),
-                input=(self.input or "") + (other.input or ""),
-                index=self.index,
-            )
+            if self.index == other.index:
+                return ActionChunkArtifact.ActionChunk(
+                    tag=(self.tag or "") + (other.tag or ""),
+                    name=(self.name or "") + (other.name or ""),
+                    path=(self.path or "") + (other.path or ""),
+                    input=(self.input or "") + (other.input or ""),
+                    index=self.index,
+                )
+            else:
+                raise ValueError("Cannot add together actions with different indexes.")
 
     value: ActionChunk = field(metadata={"serializable": True})
 
