@@ -14,6 +14,7 @@ class TestOpenAiStructureConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "OpenAiStructureConfig",
+            "overrides": {},
             "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
                 "base_url": None,

@@ -15,6 +15,7 @@ class TestAnthropicStructureConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "AnthropicStructureConfig",
+            "overrides": {},
             "prompt_driver": {
                 "type": "AnthropicPromptDriver",
                 "temperature": 0.1,

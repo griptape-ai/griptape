@@ -18,24 +18,43 @@ from griptape.drivers import (
 @define
 class OpenAiStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-4o")), metadata={"serializable": True}, kw_only=True
+        default=Factory(
+            lambda self: self._factory(OpenAiChatPromptDriver, "prompt_driver", model="gpt-4o"), takes_self=True
+        ),
+        kw_only=True,
+        metadata={"serializable": True},
     )
     image_generation_driver: BaseImageGenerationDriver = field(
-        default=Factory(lambda: OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")),
+        default=Factory(
+            lambda self: self._factory(
+                OpenAiImageGenerationDriver, "image_generation_driver", model="dall-e-2", image_size="512x512"
+            ),
+            takes_self=True,
+        ),
         kw_only=True,
         metadata={"serializable": True},
     )
     image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: OpenAiImageQueryDriver(model="gpt-4o")), kw_only=True, metadata={"serializable": True}
+        default=Factory(
+            lambda self: self._factory(OpenAiImageQueryDriver, "image_query_driver", model="gpt-4o"), takes_self=True
+        ),
+        kw_only=True,
+        metadata={"serializable": True},
     )
     embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: OpenAiEmbeddingDriver(model="text-embedding-3-small")),
+        default=Factory(
+            lambda self: self._factory(OpenAiEmbeddingDriver, "embedding_driver", model="text-embedding-3-small"),
+            takes_self=True,
+        ),
         metadata={"serializable": True},
         kw_only=True,
     )
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(
-            lambda: LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small"))
+            lambda self: self._factory(
+                LocalVectorStoreDriver, "vector_store_driver", embedding_driver=self.embedding_driver
+            ),
+            takes_self=True,
         ),
         kw_only=True,
         metadata={"serializable": True},

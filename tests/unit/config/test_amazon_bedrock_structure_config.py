@@ -15,6 +15,7 @@ class TestAmazonBedrockStructureConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "conversation_memory_driver": None,
+            "overrides": {},
             "embedding_driver": {"model": "amazon.titan-embed-text-v1", "type": "AmazonBedrockTitanEmbeddingDriver"},
             "image_generation_driver": {
                 "image_generation_model_driver": {

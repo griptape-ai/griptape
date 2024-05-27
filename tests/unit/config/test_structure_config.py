@@ -1,20 +1,21 @@
 from pytest import fixture
-from griptape.config import StructureConfig
+from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestStructureConfig:
     @fixture
     def config(self):
-        return StructureConfig()
+        return MockStructureConfig()
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "StructureConfig",
-            "prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False},
+            "type": "MockStructureConfig",
+            "overrides": {},
+            "prompt_driver": {"type": "MockPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False},
             "conversation_memory_driver": None,
-            "embedding_driver": {"type": "DummyEmbeddingDriver"},
-            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {"type": "DummyImageQueryDriver"},
+            "embedding_driver": {"type": "MockEmbeddingDriver"},
+            "image_generation_driver": {"type": "MockImageGenerationDriver", "model": "dall-e-2"},
+            "image_query_driver": {"type": "MockImageQueryDriver", "max_tokens": 256},
             "vector_store_driver": {
                 "embedding_driver": {"type": "DummyEmbeddingDriver"},
                 "type": "DummyVectorStoreDriver",
@@ -22,28 +23,11 @@ class TestStructureConfig:
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
         }
 
-    def test_from_dict(self, config):
-        assert StructureConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
-
-    def test_unchanged_merge_config(self, config):
-        assert (
-            config.merge_config(
-                {
-                    "type": "StructureConfig",
-                    "prompt_driver": {
-                        "type": "DummyPromptDriver",
-                        "temperature": 0.1,
-                        "max_tokens": None,
-                        "stream": False,
-                    },
-                }
-            ).to_dict()
-            == config.to_dict()
-        )
-
     def test_changed_merge_config(self, config):
-        config = config.merge_config(
-            {"prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False}}
+        config = MockStructureConfig(
+            overrides={
+                "prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False}
+            }
         )
 
         assert config.prompt_driver.temperature == 0.1

@@ -40,7 +40,9 @@ class AzureOpenAiStructureConfig(StructureConfig):
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     prompt_driver: BasePromptDriver = field(
         default=Factory(
-            lambda self: AzureOpenAiChatPromptDriver(
+            lambda self: self._factory(
+                AzureOpenAiChatPromptDriver,
+                "prompt_driver",
                 model="gpt-4o",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
@@ -54,13 +56,14 @@ class AzureOpenAiStructureConfig(StructureConfig):
     )
     image_generation_driver: BaseImageGenerationDriver = field(
         default=Factory(
-            lambda self: AzureOpenAiImageGenerationDriver(
+            lambda self: self._factory(
+                AzureOpenAiImageGenerationDriver,
+                "image_generation_driver",
                 model="dall-e-2",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
                 azure_ad_token=self.azure_ad_token,
                 azure_ad_token_provider=self.azure_ad_token_provider,
-                image_size="512x512",
             ),
             takes_self=True,
         ),
@@ -69,7 +72,9 @@ class AzureOpenAiStructureConfig(StructureConfig):
     )
     image_query_driver: BaseImageQueryDriver = field(
         default=Factory(
-            lambda self: AzureOpenAiImageQueryDriver(
+            lambda self: self._factory(
+                AzureOpenAiImageQueryDriver,
+                "image_query_driver",
                 model="gpt-4o",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
@@ -83,7 +88,9 @@ class AzureOpenAiStructureConfig(StructureConfig):
     )
     embedding_driver: BaseEmbeddingDriver = field(
         default=Factory(
-            lambda self: AzureOpenAiEmbeddingDriver(
+            lambda self: self._factory(
+                AzureOpenAiEmbeddingDriver,
+                "embedding_driver",
                 model="text-embedding-3-small",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
@@ -96,7 +103,12 @@ class AzureOpenAiStructureConfig(StructureConfig):
         kw_only=True,
     )
     vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding_driver), takes_self=True),
+        default=Factory(
+            lambda self: self._factory(
+                LocalVectorStoreDriver, "vector_store_driver", embedding_driver=self.embedding_driver
+            ),
+            takes_self=True,
+        ),
         metadata={"serializable": True},
         kw_only=True,
     )

@@ -34,13 +34,14 @@ from griptape.config import AzureOpenAiStructureConfig
 
 agent = Agent(
     config=AzureOpenAiStructureConfig(
-        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
-        api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
-    ).merge_config({
-        "image_query_driver": {
-            "azure_deployment": "gpt-4o",
-        },
-    }),
+        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_2"],
+        api_key=os.environ["AZURE_OPENAI_API_KEY_2"]
+        overrides={
+            "prompt_driver": {
+                "azure_deployment": "gpt-4o",
+            },
+        }
+    ),
 )
 ```
 
@@ -118,10 +119,8 @@ from griptape.structures import Agent
 from griptape.config import AmazonBedrockStructureConfig
 from griptape.drivers import AmazonBedrockCohereEmbeddingDriver
 
-custom_config = AmazonBedrockStructureConfig()
-custom_config.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
-custom_config.merge_config(
-    {
+custom_config = AmazonBedrockStructureConfig(
+    overrides={
         "embedding_driver": {
             "base_url": None,
             "model": "text-embedding-3-small",
@@ -130,15 +129,11 @@ custom_config.merge_config(
         },
     }
 )
+custom_config.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
 serialized_config = custom_config.to_json()
-deserialized_config = AmazonBedrockStructureConfig.from_json(serialized_config)
 
 agent = Agent(
-    config=deserialized_config.merge_config({
-        "prompt_driver" : {
-            "model": "anthropic.claude-3-sonnet-20240229-v1:0",
-        },
-    }),
+    config=AmazonBedrockStructureConfig.from_json(serialized_config),
 )
 ```
 

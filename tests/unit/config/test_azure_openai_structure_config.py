@@ -19,6 +19,7 @@ class TestAzureOpenAiStructureConfig:
         assert config.to_dict() == {
             "type": "AzureOpenAiStructureConfig",
             "azure_endpoint": "http://localhost:8080",
+            "overrides": {},
             "prompt_driver": {
                 "type": "AzureOpenAiChatPromptDriver",
                 "base_url": None,
@@ -47,7 +48,7 @@ class TestAzureOpenAiStructureConfig:
             "image_generation_driver": {
                 "api_version": "2024-02-01",
                 "base_url": None,
-                "image_size": "512x512",
+                "image_size": "1024x1024",
                 "model": "dall-e-2",
                 "azure_deployment": "dall-e-2",
                 "azure_endpoint": "http://localhost:8080",
@@ -86,12 +87,8 @@ class TestAzureOpenAiStructureConfig:
     def test_from_dict(self, config: AzureOpenAiStructureConfig):
         assert AzureOpenAiStructureConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
 
-        # override values in the dict config
-        # serialize and deserialize the config
-        new_config = config.merge_config(
-            {
-                "prompt_driver": {"azure_deployment": "new-test-gpt-4"},
-                "embedding_driver": {"model": "new-text-embedding-3-small"},
-            }
-        ).to_dict()
-        assert AzureOpenAiStructureConfig.from_dict(new_config).to_dict() == new_config
+    def test_overrides(self, config):
+        new_config = AzureOpenAiStructureConfig(
+            azure_endpoint="localhost", overrides={"prompt_driver": {"model": "gpt-4"}}
+        )
+        assert new_config.prompt_driver.model == "gpt-4"

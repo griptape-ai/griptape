@@ -16,24 +16,36 @@ from griptape.drivers import (
 @define
 class AnthropicStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: AnthropicPromptDriver(model="claude-3-opus-20240229")),
+        default=Factory(
+            lambda self: self._factory(AnthropicPromptDriver, "prompt_driver", model="claude-3-opus-20240229"),
+            takes_self=True,
+        ),
         metadata={"serializable": True},
         kw_only=True,
     )
     embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: VoyageAiEmbeddingDriver(model="voyage-large-2")),
+        default=Factory(
+            lambda self: self._factory(VoyageAiEmbeddingDriver, "embedding_driver", model="voyage-large-2"),
+            takes_self=True,
+        ),
         metadata={"serializable": True},
         kw_only=True,
     )
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(
-            lambda: LocalVectorStoreDriver(embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2"))
+            lambda self: self._factory(
+                LocalVectorStoreDriver, "vector_store_driver", embedding_driver=self.embedding_driver
+            ),
+            takes_self=True,
         ),
         kw_only=True,
         metadata={"serializable": True},
     )
     image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: AnthropicImageQueryDriver(model="claude-3-opus-20240229")),
+        default=Factory(
+            lambda self: self._factory(AnthropicImageQueryDriver, "image_query_driver", model="claude-3-opus-20240229"),
+            takes_self=True,
+        ),
         kw_only=True,
         metadata={"serializable": True},
     )

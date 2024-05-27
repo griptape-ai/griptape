@@ -14,6 +14,7 @@ class TestGoogleStructureConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "GoogleStructureConfig",
+            "overrides": {},
             "prompt_driver": {
                 "type": "GooglePromptDriver",
                 "temperature": 0.1,
