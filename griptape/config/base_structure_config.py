@@ -30,5 +30,15 @@ class BaseStructureConfig(BaseConfig, ABC):
     text_to_speech_driver: BaseTextToSpeechDriver = field(kw_only=True, metadata={"serializable": True})
     overrides: dict = field(default={}, kw_only=True, metadata={"serializable": True})
 
-    def _factory(self, type: type, namespace: str, **params):
-        return type(**{**params, **self.overrides.get(namespace, {})})
+    def _factory(self, cls: type, overrides_namespace: str, **params):
+        """Factory method to create a new instance of the class with the given parameters
+
+        Args:
+            :param cls: the class to instantiate
+            :param overrides_namespace: the namespace to look for values in the overrides dictionary
+            :param params: the parameters to pass to the class
+
+        Returns:
+            :return: a new instance of the class
+        """
+        return cls(**{**params, **self.overrides.get(overrides_namespace, {})})
