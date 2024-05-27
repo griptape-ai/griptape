@@ -23,7 +23,7 @@ class TestStructureConfig:
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
         }
 
-    def test_changed_merge_config(self, config):
+    def test_override_config(self, config):
         config = MockStructureConfig(
             overrides={
                 "prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False}
