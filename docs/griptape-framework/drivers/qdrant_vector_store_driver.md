@@ -1,21 +1,6 @@
 # Qdrant Vector Store Driver
 
-This repository contains the implementation of a custom `QdrantVectorStoreDriver` for use with the Griptape framework. The driver allows you to interact with a Qdrant vector store for managing vector data.
-
-## Installation
-
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/yourusername/qdrant-vector-store-driver.git
-    cd qdrant-vector-store-driver
-    ```
-
-2. Install the required dependencies:
-
-    ```bash
-    pip install -r requirements.txt
-    ```
+The implementation of a custom `QdrantVectorStoreDriver` for use with the Griptape framework. The driver allows you to interact with a Qdrant vector store for managing vector data.
 
 ## Usage
 
