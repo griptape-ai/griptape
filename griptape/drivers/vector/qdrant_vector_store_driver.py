@@ -56,17 +56,14 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         # Ensure the collection exists and has the correct configuration
         self._create_collection(self.model)
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        raise NotImplementedError(
-            f"{self.__class__.__name__} does not support loading the entry based on ID or namespace"
-        )
-
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        raise NotImplementedError(
-            f"{self.__class__.__name__} does not support loading entries based on IDs or namespaces"
-        )
-
     def delete_vector(self, vector_ids: Optional[list[str]] = None, **kwargs: Any) -> Any:
+
+        """
+        Delete vectors from the Qdrant collection based on their IDs.
+
+        Parameters:
+        - vector_ids: Optional list of vector IDs to delete.
+        """
         from qdrant_client.http.models import Filter
 
         deletion_response = self.client.delete(collection_name=self.collection_name, points_selector=Filter(ids=vector_ids))
@@ -76,6 +73,19 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self, query: str, count: Optional[int] = None, include_vectors: bool = False, **kwargs: Any
     ) -> list[BaseVectorStoreDriver.QueryResult]:
+
+        """
+        Query the Qdrant collection based on a query vector.
+
+        Parameters:
+        - query: Query string.
+        - count: Optional number of results to return.
+        - include_vectors: Whether to include vectors in the results.
+
+        Returns:
+        - List of QueryResult objects.
+        """
+
         from qdrant_client.http.models import SearchRequest
 
         query_vector = self.model.encode([query])[0]
@@ -115,6 +125,17 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         batch_size: int = BATCH_SIZE,
         **kwargs: Any,
     ) -> None:
+
+        """
+        Upsert vectors into the Qdrant collection.
+
+        Parameters:
+        - texts: Iterable of TextArtifact objects containing text data.
+        - ids: Optional sequence of vector IDs.
+        - metadata: Optional sequence of dictionaries containing metadata.
+        - batch_size: Batch size for upsert operation.
+        """
+
         total_vectors_inserted = 0
 
         for points in self._create_batches(texts, ids, metadata, batch_size=batch_size):
@@ -126,6 +147,13 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         )
 
     def _create_collection(self, model: str) -> None:
+
+        """
+        Create a collection in Qdrant with the given model.
+
+        Parameters:
+        - model: Model for vector encoding.
+        """
         from qdrant_client.models import Distance, VectorParams
 
         if self.force_recreate:
@@ -143,6 +171,19 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         metadata: Optional[Sequence[dict[str, Any]]] = None,
         batch_size: int = BATCH_SIZE,
     ) -> Generator[tuple[list[str], list[rest.PointStruct]], None, None]:
+
+        """
+        Create batches of vectors for upsert operation.
+
+        Parameters:
+        - texts: Iterable of TextArtifact objects containing text data.
+        - ids: Optional sequence of vector IDs.
+        - metadata: Optional sequence of dictionaries containing metadata.
+        - batch_size: Batch size for upsert operation.
+
+        Returns:
+        - Generator yielding batches of vectors.
+        """
         from qdrant_client.http import models as rest
 
         texts_iterator = iter(texts)
@@ -171,6 +212,18 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             yield points
 
     def _build_payloads(self, texts: Iterable[str], content_payload_key: str) -> list[dict]:
+
+        """
+        Build payloads for vectors from text data.
+
+        Parameters:
+        - texts: Iterable of text data.
+        - content_payload_key: Key for content payload.
+
+        Returns:
+        - List of payload dictionaries.
+        """
+
         payloads = []
         for i, text in enumerate(texts):
             if text is None:
@@ -180,3 +233,35 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                 )
             payloads.append({content_payload_key: text})
         return payloads
+
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+
+        """
+        Load a vector entry from the Qdrant collection based on its ID.
+
+        Parameters:
+        - vector_id: ID of the vector to load.
+        - namespace: Optional namespace of the vector.
+
+        Returns:
+        - Vector entry.
+        """
+
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support loading the entry based on ID or namespace"
+        )
+
+    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+
+        """
+        Load vector entries from the Qdrant collection.
+
+        Parameters:
+        - namespace: Optional namespace of the vectors.
+
+        Returns:
+        - List of vector entries.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support loading entries based on IDs or namespaces"
+        )
