@@ -85,7 +85,7 @@ This is an example of [not providing a Task Memory compatible Tool](#not-providi
 
 ## Task Memory Client
 
-The [TaskMemoryClient](../griptape-tools/official-tools/task-memory-client.md) is a Tool that allows an Agent to interact with Task Memory. It has the following methods:
+The [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md) is a Tool that allows an Agent to interact with Task Memory. It has the following methods:
 
 - `query`: Retrieve the content of an Artifact stored in Task Memory.
 - `summarize`: Summarize the content of an Artifact stored in Task Memory.
