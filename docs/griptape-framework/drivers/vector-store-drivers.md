@@ -415,3 +415,110 @@ vector_store_driver.upsert_text_artifacts(
 result = vector_store_driver.query("What is griptape?")
 print(result)
 ```
+
+## Pinecone Vector Store Driver
+
+!!! info
+    This driver requires the `drivers-vector-qdrant` [extra](../index.md#extras).
+
+The [QdrantVectorStoreDriver](../../reference/griptape/drivers/vector/qdrant_vector_store_driver.md) supports the [Qdrant vector database](https://www.pinecone.io/).
+
+Here is an example of how the driver can be used to query information in a Qdrant VectorDB:
+
+```python
+import os
+import logging
+from transformers import AutoTokenizer
+from sentence_transformers import SentenceTransformer
+from griptape.drivers import QdrantVectorStoreDriver, HuggingFaceHubEmbeddingDriver, HuggingFaceHubPromptDriver
+from griptape.tokenizers import HuggingFaceTokenizer
+from griptape.loaders import PdfLoader
+from griptape.chunkers import TextChunker
+import huggingface_hub
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+# HuggingFace Hub login
+def huggingface_login():
+    logging.info("Hugging Face login")
+    huggingface_hub.login(os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"], add_to_git_credential=True)
+
+# Setting the models
+embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
+qdrant_model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+file_name = "linux_bible.pdf"
+HUGGINGFACE_TOKEN = os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"]
+
+# Using HuggingFaceTokenizer
+def create_tokenizer(embedding_model):
+    tokenizer = HuggingFaceTokenizer(
+        max_output_tokens=1024,
+        tokenizer=AutoTokenizer.from_pretrained(embedding_model)
+    )
+    return tokenizer
+
+# Setting the embedding driver
+def create_embedding_driver(embedding_model, tokenizer):
+    embedding_driver = HuggingFaceHubEmbeddingDriver(
+        api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
+        model=embedding_model,
+        tokenizer=tokenizer,
+    )
+    return embedding_driver
+
+# Instantiating QdrantVectorStoreDriver
+def creat_vector_store_driver(url, qdrant_model, collection_name, embedding_driver):
+    vector_store_driver = QdrantVectorStoreDriver(
+        url=url,
+        collection_name=collection_name,
+        embedding_driver=embedding_driver,
+        content_payload_key="content",
+        force_recreate=True,
+        model=qdrant_model,
+    )
+    return vector_store_driver
+
+# Opening the file 
+def load_pdf(file_name, tokenizer):
+    with open(file_name, "rb") as f:
+        loader = PdfLoader(
+            tokenizer=tokenizer,
+            chunker=TextChunker(tokenizer=tokenizer, max_tokens=1024)
+        ).load(f.read())
+    return loader
+
+def main():
+    # Huggingface login
+    huggingface_login()
+
+    tokenizer = create_tokenizer(embedding_model)
+    embedding_driver = create_embedding_driver(embedding_model, tokenizer)
+    vector_store_driver = creat_vector_store_driver(
+        qdrant_model=qdrant_model, 
+        url="http://localhost:6333",
+        collection_name="linux_bible",
+        embedding_driver=embedding_driver,
+    )
+
+    # Loading the data
+    loader = load_pdf(file_name, tokenizer=tokenizer)
+
+    # Generate metadata for each chunk (example metadata)
+    metadata = [{"source": file_name, "page": i+1} for i in range(len(loader))]
+
+    try:
+        vector_store_driver.upsert_vector(texts=loader, metadata=metadata)
+        logging.info("Successfully upserted vectors with metadata.")
+    except Exception as e:
+        logging.error(f"Error during upsert_vector: {e}")
+        
+    query_string = "Who created linux?"
+
+    query_results = vector_store_driver.query(query_string, count=5, include_vectors=True)
+    for result in query_results:
+        print(f"ID: {result.id}, Score: {result.score}, Vector: {result.vector}, Metadata: {result.meta}")
+
+if __name__ == "__main__":
+    main()
+```
