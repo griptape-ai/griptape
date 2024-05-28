@@ -1,22 +1,24 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Any, Iterable, List, Sequence, Generator, Tuple, Dict
+from typing import Optional, TYPE_CHECKING, Any
+from collections.abc import Iterable, Sequence, Generator
 from attr import define, field
 import uuid
 from itertools import islice
-from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
     from qdrant_client.http import models as rest
-    from qdrant_client.http.models import SearchRequest, ScoredPoint
 
 VECTOR_NAME = None
 BATCH_SIZE = 64
 DEFAULT_DISTANCE = "COSINE"
 
+
 @define
 class QdrantVectorStoreDriver(BaseVectorStoreDriver):
+    """A Vector Store Driver for Qdrant Vector DB."""
+
     location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -32,7 +34,8 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
 
     def __attrs_post_init__(self) -> None:
         from qdrant_client import QdrantClient, AsyncQdrantClient
-        if self.location == ':memory:':
+
+        if self.location == ":memory:":
             self.client = AsyncQdrantClient(
                 location=self.location,
                 url=self.url,
@@ -54,29 +57,26 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self._create_collection(self.model)
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support loading the entry based on ID or namespace")
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support loading the entry based on ID or namespace"
+        )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support loading entries based on IDs or namespaces")
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support loading entries based on IDs or namespaces"
+        )
 
-    def delete_vector(self, ids: Optional[List[str]] = None, **kwargs: Any) -> Any:
+    def delete_vector(self, vector_ids: Optional[list[str]] = None, **kwargs: Any) -> Any:
         from qdrant_client.http.models import Filter
 
-        deletion_response = self.client.delete(
-            collection_name=self.collection_name,
-            points_selector=Filter(ids=ids),
-        )
+        deletion_response = self.client.delete(collection_name=self.collection_name, points_selector=Filter(ids=vector_ids))
         if deletion_response.status == rest.UpdateStatus.COMPLETED:
-            return f"Ids {ids} are successfully deleted"
+            return f"Ids {vector_ids} are successfully deleted"
 
     def query(
-        self,
-        query: str,
-        count: Optional[int] = None,
-        include_vectors: bool = False,
-        **kwargs: Any
-    ) -> List[BaseVectorStoreDriver.QueryResult]:
-        from qdrant_client.http.models import SearchRequest, Filter
+        self, query: str, count: Optional[int] = None, include_vectors: bool = False, **kwargs: Any
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
+        from qdrant_client.http.models import SearchRequest
 
         query_vector = self.model.encode([query])[0]
 
@@ -100,7 +100,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                 id=result.id,
                 vector=result.vector if include_vectors else [],
                 score=result.score,
-                meta={k: v for k, v in result.payload.items() if k not in ["_score", "_tensor_facets"]}
+                meta={k: v for k, v in result.payload.items() if k not in ["_score", "_tensor_facets"]},
             )
             for result in results
         ]
@@ -111,27 +111,19 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self,
         texts: Iterable[TextArtifact],
         ids: Optional[Sequence[str]] = None,
-        metadata: Optional[Sequence[Dict[str, Any]]] = None,
+        metadata: Optional[Sequence[dict[str, Any]]] = None,
         batch_size: int = BATCH_SIZE,
         **kwargs: Any,
     ) -> None:
-        from qdrant_client.models import Distance, VectorParams
-
         total_vectors_inserted = 0
 
-        for points in self._create_batches(
-            texts,
-            ids,
-            metadata,
-            batch_size=batch_size
-        ):
-            self.client.upsert(
-                collection_name=self.collection_name,
-                points=points,
-            )
+        for points in self._create_batches(texts, ids, metadata, batch_size=batch_size):
+            self.client.upsert(collection_name=self.collection_name, points=points)
             total_vectors_inserted += len(points)
 
-        print(f"Inserted a total of {total_vectors_inserted} vectors into the Qdrant collection '{self.collection_name}'.")
+        print(
+            f"Inserted a total of {total_vectors_inserted} vectors into the Qdrant collection '{self.collection_name}'."
+        )
 
     def _create_collection(self, model: str) -> None:
         from qdrant_client.models import Distance, VectorParams
@@ -148,9 +140,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self,
         texts: Iterable[TextArtifact],
         ids: Optional[Sequence[str]] = None,
-        metadata: Optional[Sequence[Dict[str, Any]]] = None,
+        metadata: Optional[Sequence[dict[str, Any]]] = None,
         batch_size: int = BATCH_SIZE,
-    ) -> Generator[Tuple[List[str], List[rest.PointStruct]], None, None]:
+    ) -> Generator[tuple[list[str], list[rest.PointStruct]], None, None]:
         from qdrant_client.http import models as rest
 
         texts_iterator = iter(texts)
@@ -171,21 +163,14 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                 for point_id, vector, payload, meta in zip(
                     batch_ids,
                     batch_embeddings,
-                    self._build_payloads(
-                        batch_text_values,
-                        self.content_payload_key,
-                    ),
-                    batch_metadata
+                    self._build_payloads(batch_text_values, self.content_payload_key),
+                    batch_metadata,
                 )
             ]
 
             yield points
 
-    def _build_payloads(
-        self,
-        texts: Iterable[str],
-        content_payload_key: str,
-    ) -> List[dict]:
+    def _build_payloads(self, texts: Iterable[str], content_payload_key: str) -> list[dict]:
         payloads = []
         for i, text in enumerate(texts):
             if text is None:
@@ -193,9 +178,5 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                     "At least one of the texts is None. Please remove it before "
                     "calling .from_texts or .add_texts on Qdrant instance."
                 )
-            payloads.append(
-                {
-                    content_payload_key: text,
-                }
-            )
+            payloads.append({content_payload_key: text})
         return payloads
