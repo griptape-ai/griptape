@@ -3,7 +3,8 @@ from typing import Optional, Any, Literal
 from collections.abc import Iterator
 import openai
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack
+from griptape.common import PromptStack, PromptStackElement, ChunkPromptStackElement
+from griptape.common import TextPromptStackContent, ChunkTextPromptStackContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
 import dateparser
@@ -72,7 +73,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
     _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
         result = self.client.chat.completions.with_raw_response.create(**self._base_params(prompt_stack))
 
         self._extract_ratelimit_metadata(result)
@@ -80,23 +81,29 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         parsed_result = result.parse()
 
         if len(parsed_result.choices) == 1:
-            return TextArtifact(value=parsed_result.choices[0].message.content.strip())
+            message = parsed_result.choices[0].message
+            return PromptStackElement(role=message.role, content=TextPromptStackContent(TextArtifact(message.content)))
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[ChunkPromptStackElement]:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
             if len(chunk.choices) == 1:
-                delta = chunk.choices[0].delta
+                choice = chunk.choices[0]
+                delta = choice.delta
+
+                if delta.content is not None:
+                    delta_content = delta.content
+
+                    yield ChunkPromptStackElement(
+                        index=choice.index,
+                        role=delta.role,
+                        chunk=ChunkTextPromptStackContent(TextArtifact(delta_content)),
+                    )
             else:
                 raise Exception("Completion with more than one choice is not supported yet.")
-
-            if delta.content is not None:
-                delta_content = delta.content
-
-                yield TextArtifact(value=delta_content)
 
     def token_count(self, prompt_stack: PromptStack) -> int:
         if isinstance(self.tokenizer, OpenAiTokenizer):
@@ -130,7 +137,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return params
 
-    def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
+    def __to_openai_role(self, prompt_input: PromptStackElement) -> str:
         if prompt_input.is_system():
             return "system"
         elif prompt_input.is_assistant():

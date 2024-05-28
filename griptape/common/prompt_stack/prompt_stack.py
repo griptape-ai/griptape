@@ -2,7 +2,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
+from griptape.artifacts import TextArtifact
 from griptape.mixins import SerializableMixin
+from griptape.common import PromptStackElement, TextPromptStackContent
 
 if TYPE_CHECKING:
     from griptape.memory.structure import BaseConversationMemory
@@ -15,43 +17,35 @@ class PromptStack(SerializableMixin):
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
+    inputs: list[PromptStackElement] = field(factory=list, kw_only=True, metadata={"serializable": True})
+
     @define
-    class Input(SerializableMixin):
+    class Input(PromptStackElement):
         content: str = field(metadata={"serializable": True})
-        role: str = field(metadata={"serializable": True})
 
-        def is_generic(self) -> bool:
-            return self.role == PromptStack.GENERIC_ROLE
+        def __new__(cls, content: str, *, role: str) -> PromptStackElement:
+            return PromptStackElement(content=TextPromptStackContent(TextArtifact(content)), role=role)
 
-        def is_system(self) -> bool:
-            return self.role == PromptStack.SYSTEM_ROLE
-
-        def is_user(self) -> bool:
-            return self.role == PromptStack.USER_ROLE
-
-        def is_assistant(self) -> bool:
-            return self.role == PromptStack.ASSISTANT_ROLE
-
-    inputs: list[Input] = field(factory=list, kw_only=True, metadata={"serializable": True})
-
-    def add_input(self, content: str, role: str) -> Input:
-        self.inputs.append(self.Input(content=content, role=role))
+    def add_input(self, content: str, role: str) -> PromptStackElement:
+        self.inputs.append(PromptStackElement(content=TextPromptStackContent(TextArtifact(content)), role=role))
 
         return self.inputs[-1]
 
-    def add_generic_input(self, content: str) -> Input:
+    def add_generic_input(self, content: str) -> PromptStackElement:
         return self.add_input(content, self.GENERIC_ROLE)
 
-    def add_system_input(self, content: str) -> Input:
+    def add_system_input(self, content: str) -> PromptStackElement:
         return self.add_input(content, self.SYSTEM_ROLE)
 
-    def add_user_input(self, content: str) -> Input:
+    def add_user_input(self, content: str) -> PromptStackElement:
         return self.add_input(content, self.USER_ROLE)
 
-    def add_assistant_input(self, content: str) -> Input:
+    def add_assistant_input(self, content: str) -> PromptStackElement:
         return self.add_input(content, self.ASSISTANT_ROLE)
 
-    def add_conversation_memory(self, memory: BaseConversationMemory, index: Optional[int] = None) -> list[Input]:
+    def add_conversation_memory(
+        self, memory: BaseConversationMemory, index: Optional[int] = None
+    ) -> list[PromptStackElement]:
         """Add the Conversation Memory runs to the Prompt Stack.
 
         If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack

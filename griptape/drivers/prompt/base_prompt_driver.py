@@ -1,14 +1,18 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable
 from collections.abc import Iterator
-from attrs import define, field, Factory
-from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
-from griptape.mixins.serializable_mixin import SerializableMixin
-from griptape.common import PromptStack
-from griptape.mixins import ExponentialBackoffMixin
-from griptape.tokenizers import BaseTokenizer
+from typing import TYPE_CHECKING, Callable, Optional
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
+from griptape.common import ChunkPromptStackElement, PromptStack, PromptStackElement
+from griptape.common.prompt_stack.contents.text_chunk_prompt_stack_content import TextChunkPromptStackContent
+from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
+from griptape.mixins import ExponentialBackoffMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -77,14 +81,17 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                 if self.stream:
                     tokens = []
+
                     completion_chunks = self.try_stream(prompt_stack)
+
                     for chunk in completion_chunks:
-                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
-                        tokens.append(chunk.value)
+                        if isinstance(chunk.chunk, TextChunkPromptStackContent):
+                            chunk_value = chunk.chunk.value
+                            self.structure.publish_event(CompletionChunkEvent(token=chunk_value))
+                            tokens.append(chunk_value)  # TODO: Bad names
                     result = TextArtifact(value="".join(tokens).strip())
                 else:
                     result = self.try_run(prompt_stack)
-                    result.value = result.value.strip()
 
                 self.after_run(result)
 
@@ -108,7 +115,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[ChunkPromptStackElement]: ...
