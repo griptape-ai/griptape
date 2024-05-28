@@ -416,12 +416,12 @@ result = vector_store_driver.query("What is griptape?")
 print(result)
 ```
 
-## Pinecone Vector Store Driver
+## Qdrant Vector Store Driver
 
 !!! info
     This driver requires the `drivers-vector-qdrant` [extra](../index.md#extras).
 
-The [QdrantVectorStoreDriver](../../reference/griptape/drivers/vector/qdrant_vector_store_driver.md) supports the [Qdrant vector database](https://www.pinecone.io/).
+The [QdrantVectorStoreDriver](../../reference/griptape/drivers/vector/qdrant_vector_store_driver.md) supports the [Qdrant vector database](https://qdrant.tech/).
 
 Here is an example of how the driver can be used to query information in a Qdrant VectorDB:
 
