@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
 - `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
+- `Workflow.set_tasks_from_layers()` to conveniently set the tasks of a Workflow from a list of layers.
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.

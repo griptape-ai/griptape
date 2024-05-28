@@ -430,3 +430,155 @@ class TestWorkflow:
 
         with pytest.deprecated_call():
             Workflow(stream=True)
+
+    def test_set_tasks_from_layers_single(self):
+        task = PromptTask("prompt", id="task")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        workflow.set_tasks_from_layers([task])
+
+        assert workflow.tasks == [task]
+        assert workflow.output_task == task
+        assert task.structure == workflow
+        assert task.parents == []
+        assert task.children == []
+
+    def test_set_tasks_from_layers_series(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        task3 = PromptTask("prompt3", id="task3")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        workflow.set_tasks_from_layers([task1, task2, task3])
+
+        assert workflow.tasks == [task1, task2, task3]
+        assert workflow.output_task == task3
+
+        assert task1.structure == workflow
+        assert task1.parents == []
+        assert task1.parent_ids == []
+        assert task1.children == [task2]
+        assert task1.child_ids == ["task2"]
+
+        assert task2.structure == workflow
+        assert task2.parents == [task1]
+        assert task2.parent_ids == ["task1"]
+        assert task2.children == [task3]
+        assert task2.child_ids == ["task3"]
+
+        assert task3.structure == workflow
+        assert task3.parents == [task2]
+        assert task3.parent_ids == ["task2"]
+        assert task3.children == []
+        assert task3.child_ids == []
+
+    def test_set_tasks_from_layers_batches(self):
+        task1 = PromptTask("prompt1a", id="task1")
+        task2a = PromptTask("prompt2a", id="task2a")
+        task2b = PromptTask("prompt2b", id="task2b")
+        task3a = PromptTask("prompt3a", id="task3a")
+        task3b = PromptTask("prompt3b", id="task3b")
+        task4 = PromptTask("prompt4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        workflow.set_tasks_from_layers([[task1], [task2a, task2b], [task3a, task3b], [task4]])
+
+        assert workflow.tasks == [task1, task2a, task2b, task3a, task3b, task4]
+        assert workflow.output_task == task4
+
+        assert task1.structure == workflow
+        assert task1.parents == []
+        assert task1.parent_ids == []
+        assert task1.children == [task2a, task2b]
+        assert task1.child_ids == ["task2a", "task2b"]
+
+        for task2 in [task2a, task2b]:
+            assert task2.structure == workflow
+            assert task2.parents == [task1]
+            assert task2.parent_ids == ["task1"]
+            assert task2.children == [task3a, task3b]
+            assert task2.child_ids == ["task3a", "task3b"]
+
+        for task3 in [task3a, task3b]:
+            assert task3.structure == workflow
+            assert task3.parents == [task2a, task2b]
+            assert task3.parent_ids == ["task2a", "task2b"]
+            assert task3.children == [task4]
+            assert task3.child_ids == ["task4"]
+
+        assert task4.structure == workflow
+        assert task4.parents == [task3a, task3b]
+        assert task4.parent_ids == ["task3a", "task3b"]
+        assert task4.children == []
+
+    def test_set_tasks_from_layers_mixed(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        task3a = PromptTask("prompt3a", id="task3a")
+        task3b = PromptTask("prompt3b", id="task3b")
+        task4 = PromptTask("prompt4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        workflow.set_tasks_from_layers([task1, task2, [task3a, task3b], task4])
+
+        assert workflow.tasks == [task1, task2, task3a, task3b, task4]
+        assert workflow.output_task == task4
+
+        assert task1.structure == workflow
+        assert task1.parents == []
+        assert task1.parent_ids == []
+        assert task1.children == [task2]
+        assert task1.child_ids == ["task2"]
+
+        assert task2.structure == workflow
+        assert task2.parents == [task1]
+        assert task2.parent_ids == ["task1"]
+        assert task2.children == [task3a, task3b]
+        assert task2.child_ids == ["task3a", "task3b"]
+
+        for task3 in [task3a, task3b]:
+            assert task3.structure == workflow
+            assert task3.parents == [task2]
+            assert task3.parent_ids == ["task2"]
+            assert task3.children == [task4]
+            assert task3.child_ids == ["task4"]
+
+        assert task4.structure == workflow
+        assert task4.parents == [task3a, task3b]
+        assert task4.parent_ids == ["task3a", "task3b"]
+        assert task4.children == []
+
+    def test_set_tasks_from_layers_raises_when_no_layers(self):
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        with pytest.raises(ValueError) as e:
+            workflow.set_tasks_from_layers([])
+
+        assert str(e.value) == "set_tasks_from_layers requires at least one layer."
+
+    def test_set_tasks_from_layers_raises_when_multiple_input_tasks(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        with pytest.raises(ValueError) as e:
+            workflow.set_tasks_from_layers([[task1, task2]])
+
+        assert (
+            str(e.value)
+            == "The first element in layers must consist of a single task as a workflow can only have one input task."
+        )
+
+    def test_set_tasks_from_layers_raises_when_multiple_output_tasks(self):
+        task1 = PromptTask("prompt1", id="task1")
+        task2 = PromptTask("prompt2", id="task2")
+        task3 = PromptTask("prompt3", id="task3")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        with pytest.raises(ValueError) as e:
+            workflow.set_tasks_from_layers([task1, [task2, task3]])
+
+        assert (
+            str(e.value)
+            == "The last element in layers must consist of a single task as a workflow can only have one output task."
+        )

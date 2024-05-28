@@ -89,6 +89,35 @@ class Workflow(Structure):
 
         return task
 
+    def set_tasks_from_layers(self, layers: list[BaseTask | list[BaseTask]]) -> None:
+        if len(layers) < 1:
+            raise ValueError("set_tasks_from_layers requires at least one layer.")
+
+        list_layers = [layer if isinstance(layer, list) else [layer] for layer in layers]
+
+        if len(list_layers[0]) != 1:
+            raise ValueError(
+                "The first element in layers must consist of a single task as a workflow can only have one input task."
+            )
+
+        if len(list_layers[-1]) != 1:
+            raise ValueError(
+                "The last element in layers must consist of a single task as a workflow can only have one output task."
+            )
+
+        self.tasks = []
+        parents = []
+        for layer in list_layers:
+            for task in layer:
+                task.preprocess(self)
+                self.tasks.append(task)
+                task.child_ids.clear()
+                task.parent_ids.clear()
+                for parent in parents:
+                    parent.child_ids.append(task.id)
+                    task.parent_ids.append(parent.id)
+            parents = layer
+
     def try_run(self, *args) -> Workflow:
         self._execution_args = args
         ordered_tasks = self.order_tasks()
