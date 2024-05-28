@@ -31,3 +31,10 @@ Creates a new collection in the Qdrant vector store with the specified configura
 #### `_create_batches(self, texts: Iterable[TextArtifact], ids: Optional[Sequence[str]] = None, metadata: Optional[Sequence[Dict[str, Any]]] = None, batch_size: int = BATCH_SIZE) -> Generator[Tuple[List[str], List[rest.PointStruct]], None, None]`
 
 Splits the texts into batches and creates point structures for insertion into the Qdrant collection.
+
+
+## Acknowledgements
+
+ - [HuggingFace](https://huggingface.co/) For out of the world LLMs and `transformer` package
+ - [Qdrant](https://qdrant.tech/) for high-performant vector similarity search technology.
+ - [Superteams](https://www.superteams.ai/) for providing GPUs with GCP
