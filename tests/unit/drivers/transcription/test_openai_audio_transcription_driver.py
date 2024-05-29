@@ -20,6 +20,6 @@ class TestOpenAiAudioTranscriptionDriver:
     def test_try_text_to_audio(self, driver, audio_artifact):
         driver.client.audio.transcriptions.create.return_value = Mock(text="text data")
 
-        text_artifact = driver.try_transcription(audio_artifact)
+        text_artifact = driver.try_run(audio_artifact)
 
         assert text_artifact.value == "text data"

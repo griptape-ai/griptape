@@ -9,4 +9,4 @@ class AudioTranscriptionEngine:
     audio_transcription_driver: BaseAudioTranscriptionDriver = field(kw_only=True)
 
     def run(self, audio: AudioArtifact, *args, **kwargs) -> TextArtifact:
-        return self.audio_transcription_driver.try_transcription(audio)
+        return self.audio_transcription_driver.try_run(audio)

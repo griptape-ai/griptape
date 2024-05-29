@@ -26,11 +26,11 @@ class BaseAudioTranscriptionDriver(SerializableMixin, ExponentialBackoffMixin, A
         if self.structure:
             self.structure.publish_event(FinishAudioTranscriptionEvent())
 
-    def run_transcription(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
+    def run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:
                 self.before_run()
-                result = self.try_transcription(audio, prompts)
+                result = self.try_run(audio, prompts)
                 self.after_run()
 
                 return result
@@ -39,4 +39,4 @@ class BaseAudioTranscriptionDriver(SerializableMixin, ExponentialBackoffMixin, A
             raise Exception("Failed to run audio transcription")
 
     @abstractmethod
-    def try_transcription(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact: ...
+    def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact: ...

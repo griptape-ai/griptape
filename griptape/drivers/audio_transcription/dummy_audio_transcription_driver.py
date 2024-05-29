@@ -10,5 +10,5 @@ from griptape.exceptions import DummyException
 class DummyAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
     model: str = field(init=False)
 
-    def try_transcription(self, audio: AudioArtifact, prompts: Optional[list] = None) -> TextArtifact:
+    def try_run(self, audio: AudioArtifact, prompts: Optional[list] = None) -> TextArtifact:
         raise DummyException(__class__.__name__, "try_transcription")

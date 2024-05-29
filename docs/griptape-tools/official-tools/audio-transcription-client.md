@@ -5,7 +5,7 @@ This Tool enables [Agents](../../griptape-framework/structures/agents.md) to tra
 ```python
 from griptape.drivers import OpenAiAudioTranscriptionDriver
 from griptape.engines import AudioTranscriptionEngine
-from griptape.tools.transcription_client.tool import TranscriptionClient
+from griptape.tools.audio_transcription_client.tool import AudioTranscriptionClient
 from griptape.structures import Agent
 
 
@@ -13,7 +13,7 @@ driver = OpenAiAudioTranscriptionDriver(
     model="whisper-1"
 )
 
-tool = TranscriptionClient(
+tool = AudioTranscriptionClient(
     off_prompt=False,
     engine=AudioTranscriptionEngine(
         audio_transcription_driver=driver,

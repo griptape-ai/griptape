@@ -3,7 +3,7 @@ from unittest.mock import Mock, mock_open, patch
 import pytest
 
 from griptape.artifacts import AudioArtifact
-from griptape.tools.transcription_client.tool import TranscriptionClient
+from griptape.tools.audio_transcription_client.tool import AudioTranscriptionClient
 
 
 class TestTranscriptionClient:
@@ -19,11 +19,11 @@ class TestTranscriptionClient:
         return loader
 
     def test_init_transcription_client(self, transcription_engine, audio_loader) -> None:
-        assert TranscriptionClient(engine=transcription_engine, audio_loader=audio_loader)
+        assert AudioTranscriptionClient(engine=transcription_engine, audio_loader=audio_loader)
 
     @patch("builtins.open", mock_open(read_data=b"audio data"))
     def test_transcribe_audio_from_disk(self, transcription_engine, audio_loader) -> None:
-        client = TranscriptionClient(engine=transcription_engine, audio_loader=audio_loader)
+        client = AudioTranscriptionClient(engine=transcription_engine, audio_loader=audio_loader)
         client.engine.run.return_value = Mock(value="transcription")  # pyright: ignore
 
         text_artifact = client.transcribe_audio_from_disk(params={"values": {"path": "audio.wav"}})
@@ -32,7 +32,7 @@ class TestTranscriptionClient:
         assert text_artifact.value == "transcription"
 
     def test_transcribe_audio_from_memory(self, transcription_engine, audio_loader) -> None:
-        client = TranscriptionClient(engine=transcription_engine, audio_loader=audio_loader)
+        client = AudioTranscriptionClient(engine=transcription_engine, audio_loader=audio_loader)
         memory = Mock()
         memory.load_artifacts = Mock(return_value=[AudioArtifact(value=b"audio data", format="wav", name="name")])
         client.find_input_memory = Mock(return_value=memory)

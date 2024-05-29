@@ -14,7 +14,7 @@ from griptape.utils.decorators import activity
 
 
 @define
-class TranscriptionClient(BaseTool):
+class AudioTranscriptionClient(BaseTool):
     """A tool that can be used to generate transcriptions from input audio."""
 
     engine: AudioTranscriptionEngine = field(kw_only=True)

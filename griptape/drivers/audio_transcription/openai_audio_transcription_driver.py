@@ -24,7 +24,7 @@ class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
         )
     )
 
-    def try_transcription(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
+    def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
         additional_params = {}
 
         if prompts is not None:
