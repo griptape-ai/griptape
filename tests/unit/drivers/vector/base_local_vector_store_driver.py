@@ -10,16 +10,16 @@ class BaseLocalVectorStoreDriver(ABC):
         ...
 
     def test_upsert(self, driver):
-        namespace = driver.upsert_text_artifact(TextArtifact("foobar"))
+        namespace = driver.upsert_text_artifact(TextArtifact(id="foo1", value="foobar"))
 
         assert len(driver.entries) == 1
         assert list(driver.entries.keys())[0] == namespace
 
-        driver.upsert_text_artifact(TextArtifact("foobar"))
+        driver.upsert_text_artifact(TextArtifact(id="foo1", value="foobar"))
 
         assert len(driver.entries) == 1
 
-        driver.upsert_text_artifact(TextArtifact("foobar2"))
+        driver.upsert_text_artifact(TextArtifact(id="foo2", value="foobar2"))
 
         assert len(driver.entries) == 2
 
