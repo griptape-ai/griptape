@@ -81,9 +81,3 @@ class VectorQueryEngine(BaseQueryEngine):
 
     def upsert_text_artifacts(self, artifacts: list[TextArtifact], namespace: str) -> None:
         self.vector_store_driver.upsert_text_artifacts({namespace: artifacts})
-
-    def load_artifacts(self, namespace: str) -> ListArtifact:
-        result = self.vector_store_driver.load_entries(namespace)
-        artifacts = [r.to_artifact() for r in result]
-
-        return ListArtifact([a for a in artifacts if isinstance(a, TextArtifact)])

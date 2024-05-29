@@ -57,3 +57,12 @@ class BaseLocalVectorStoreDriver(ABC):
         assert len(driver.load_entries()) == 3
         assert len(driver.load_entries("test-namespace-1")) == 2
         assert len(driver.load_entries("test-namespace-2")) == 1
+
+    def test_load_artifacts(self, driver):
+        driver.upsert_text_artifact(TextArtifact("foobar 1"), namespace="test-namespace-1")
+        driver.upsert_text_artifact(TextArtifact("foobar 2"), namespace="test-namespace-1")
+        driver.upsert_text_artifact(TextArtifact("foobar 3"), namespace="test-namespace-2")
+
+        assert len(driver.load_artifacts()) == 3
+        assert len(driver.load_artifacts("test-namespace-1")) == 2
+        assert len(driver.load_artifacts("test-namespace-2")) == 1

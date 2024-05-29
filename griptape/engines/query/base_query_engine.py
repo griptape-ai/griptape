@@ -20,9 +20,6 @@ class BaseQueryEngine(ABC):
     ) -> TextArtifact: ...
 
     @abstractmethod
-    def load_artifacts(self, namespace: str) -> ListArtifact: ...
-
-    @abstractmethod
     def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str: ...
 
     @abstractmethod

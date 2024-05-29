@@ -167,6 +167,7 @@ class Structure(ABC):
                     query_engine=VectorQueryEngine(
                         prompt_driver=self.config.prompt_driver, vector_store_driver=self.config.vector_store_driver
                     ),
+                    vector_store_driver=self.config.vector_store_driver,
                     summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
                     csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),
                     json_extraction_engine=JsonExtractionEngine(prompt_driver=self.config.prompt_driver),

@@ -12,6 +12,8 @@
 
 ### Changed
 - All vector store driver now don't generate embeddings if the value to be stored didn't change.
+- **BREAKING**: `TextArtifactStorage` now requires `vector_store_driver`.
+- **BREAKING**: Moved `load_artifacts` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
 
 # Changelog
 All notable changes to this project will be documented in this file.

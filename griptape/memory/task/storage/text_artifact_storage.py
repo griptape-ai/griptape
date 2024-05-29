@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Optional
 from attr import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
+from griptape.drivers import BaseVectorStoreDriver
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
@@ -10,6 +11,7 @@ if TYPE_CHECKING:
 
 @define
 class TextArtifactStorage(BaseArtifactStorage):
+    vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
     query_engine: VectorQueryEngine = field(kw_only=True)
     summary_engine: Optional[BaseSummaryEngine] = field(kw_only=True, default=None)
     csv_extraction_engine: Optional[CsvExtractionEngine] = field(kw_only=True, default=None)
@@ -25,7 +27,7 @@ class TextArtifactStorage(BaseArtifactStorage):
             raise ValueError("Artifact must be of instance TextArtifact")
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
-        return self.query_engine.load_artifacts(namespace)
+        return self.vector_store_driver.load_artifacts(namespace)
 
     def summarize(self, namespace: str) -> TextArtifact:
         if self.summary_engine is None:

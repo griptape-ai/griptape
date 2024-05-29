@@ -6,7 +6,7 @@ from attr import define, field, Factory
 from typing import Optional, Any
 from griptape import utils
 from griptape.mixins import SerializableMixin
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.drivers import BaseEmbeddingDriver
 
 
@@ -111,6 +111,12 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             return True
         else:
             return False
+
+    def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
+        result = self.load_entries(namespace)
+        artifacts = [r.to_artifact() for r in result]
+
+        return ListArtifact([a for a in artifacts if isinstance(a, TextArtifact)])
 
     @abstractmethod
     def delete_vector(self, vector_id: str) -> None: ...
