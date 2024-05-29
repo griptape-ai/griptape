@@ -22,8 +22,8 @@ class OpenAiTokenizer(BaseTokenizer):
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
         "gpt-4": 8192,
-        "gpt-3.5-turbo-0613": 4096,
-        "gpt-3.5-turbo": 16384,
+        "gpt-3.5-turbo-16k": 16384,
+        "gpt-3.5-turbo": 4096,
         "gpt-35-turbo-16k": 16384,
         "gpt-35-turbo": 4096,
         "text-embedding-ada-002": 8191,
@@ -80,11 +80,8 @@ class OpenAiTokenizer(BaseTokenizer):
                 encoding = tiktoken.get_encoding("cl100k_base")
 
             if model in {
-                "gpt-3.5-turbo-0125",
-                "gpt-3.5-turbo-1106",
-                "gpt-3.5-turbo-0613",  # legacy
-                "gpt-3.5-turbo-16k",  # legacy
-                "gpt-3.5-turbo-16k-0613",  # legacy
+                "gpt-3.5-turbo-0613",
+                "gpt-3.5-turbo-16k-0613",
                 "gpt-4-0314",
                 "gpt-4-32k-0314",
                 "gpt-4-0613",
