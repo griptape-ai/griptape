@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -19,4 +23,4 @@ jobs:
       - name: Init environment 
         uses: ./.github/actions/init-environment 
       - name: Run unit tests
-        run: pytest -n auto tests/unit
+        run: make test/unit

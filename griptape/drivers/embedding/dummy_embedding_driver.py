@@ -5,7 +5,7 @@ from griptape.exceptions import DummyException
 
 @define
 class DummyEmbeddingDriver(BaseEmbeddingDriver):
-    model: str = field(init=False)
+    model: None = field(init=False, default=None, kw_only=True)
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         raise DummyException(__class__.__name__, "try_embed_chunk")
