@@ -84,6 +84,6 @@ class VectorQueryEngine(BaseQueryEngine):
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         result = self.vector_store_driver.load_entries(namespace)
-        artifacts = [r.meta["artifact"].to_artifact() for r in result]
+        artifacts = [r.to_artifact() for r in result]
 
         return ListArtifact([a for a in artifacts if isinstance(a, TextArtifact)])
