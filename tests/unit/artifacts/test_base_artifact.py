@@ -13,7 +13,7 @@ from griptape.artifacts import (
 class TestBaseArtifact:
     def test_text_artifact_from_dict(self):
         dict_value = {"type": "TextArtifact", "value": "foobar"}
-        artifact = dict_value
+        artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, TextArtifact)
         assert artifact.to_text() == "foobar"
