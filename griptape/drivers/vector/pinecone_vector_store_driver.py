@@ -77,7 +77,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         # PineconeVectorStorageDriver-specific params:
         include_metadata=True,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.Entry]:
         vector = self.embedding_driver.embed_string(query)
 
         params = {
@@ -90,7 +90,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         results = self.index.query(vector=vector, **params)
 
         return [
-            BaseVectorStoreDriver.QueryResult(
+            BaseVectorStoreDriver.Entry(
                 id=r["id"], vector=r["values"], score=r["score"], meta=r["metadata"], namespace=results["namespace"]
             )
             for r in results["matches"]

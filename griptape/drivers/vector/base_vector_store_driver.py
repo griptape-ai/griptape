@@ -15,23 +15,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     DEFAULT_QUERY_COUNT = 5
 
     @dataclass
-    class QueryResult:
-        id: str
-        vector: Optional[list[float]]
-        score: float
-        meta: Optional[dict] = None
-        namespace: Optional[str] = None
-
-        def to_artifact(self) -> Optional[BaseArtifact]:
-            try:
-                return BaseArtifact.from_json(self.meta["artifact"])
-            except:
-                return None
-
-    @dataclass
     class Entry:
         id: str
-        vector: list[float]
+        vector: Optional[list[float]] = None
+        score: Optional[float] = None
         meta: Optional[dict] = None
         namespace: Optional[str] = None
 
@@ -145,4 +132,4 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[QueryResult]: ...
+    ) -> list[Entry]: ...

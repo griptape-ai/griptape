@@ -7,13 +7,14 @@
 - RAG modules
 - `utils.execute_futures_list`
 - `LocalVectorStoreDriver.persist_file`
-- `QueryResult.to_artifact`
+- `Entry.to_artifact`
 - `CohereRerankDriver`
 
 ### Changed
 - All vector store driver now don't generate embeddings if the value to be stored didn't change.
 - **BREAKING**: `TextArtifactStorage` now requires `vector_store_driver`.
 - **BREAKING**: Moved `load_artifacts` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
+- **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
 
 # Changelog
 All notable changes to this project will be documented in this file.

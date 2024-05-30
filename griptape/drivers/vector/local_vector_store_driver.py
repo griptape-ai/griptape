@@ -80,7 +80,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.Entry]:
         query_embedding = self.embedding_driver.embed_string(query)
 
         if namespace:
@@ -94,7 +94,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
 
         result = [
-            BaseVectorStoreDriver.QueryResult(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)
+            BaseVectorStoreDriver.Entry(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)
             for er in entries_and_relatednesses
         ][:count]
 
@@ -102,7 +102,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
             return result
         else:
             return [
-                BaseVectorStoreDriver.QueryResult(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
+                BaseVectorStoreDriver.Entry(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
                 for r in result
             ]
 

@@ -160,7 +160,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         include_metadata: bool = True,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.Entry]:
         """Query the Marqo index for documents.
 
         Args:
@@ -188,7 +188,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             ]
 
         return [
-            BaseVectorStoreDriver.QueryResult(
+            BaseVectorStoreDriver.Entry(
                 id=r["_id"],
                 vector=r["_tensor_facets"][0]["_embedding"] if include_vectors else [],
                 score=r["_score"],
