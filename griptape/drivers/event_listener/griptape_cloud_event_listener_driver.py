@@ -4,7 +4,7 @@ import os
 import requests
 
 from urllib.parse import urljoin
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 

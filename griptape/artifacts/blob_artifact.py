@@ -1,7 +1,7 @@
 from __future__ import annotations
 import os.path
 from typing import Optional
-from attr import field, define
+from attrs import field, define
 from griptape.artifacts import BaseArtifact
 
 

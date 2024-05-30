@@ -4,7 +4,7 @@ import re
 from typing import Optional, TYPE_CHECKING, Callable
 
 import schema
-from attr import define, field
+from attrs import define, field
 from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin

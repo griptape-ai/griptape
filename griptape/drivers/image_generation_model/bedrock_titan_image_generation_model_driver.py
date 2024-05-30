@@ -3,7 +3,7 @@ from __future__ import annotations
 import base64
 from typing import Any, Optional
 
-from attr import field, define
+from attrs import field, define
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationModelDriver

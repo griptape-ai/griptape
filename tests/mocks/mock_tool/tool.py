@@ -1,4 +1,4 @@
-from attr import define, field
+from attrs import define, field
 from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact, ListArtifact
 from griptape.tools import BaseTool

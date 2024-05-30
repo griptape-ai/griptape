@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 
-from attr import field, define
+from attrs import field, define
 from typing import Optional
 
 from griptape.artifacts import ImageArtifact

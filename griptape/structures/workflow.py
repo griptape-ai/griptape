@@ -2,7 +2,7 @@ from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
 from typing import Any
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
 from griptape.tasks import BaseTask

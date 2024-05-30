@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC
-from attr import Factory, define, field
+from attrs import Factory, define, field
 from griptape.tools import BaseTool
 
 

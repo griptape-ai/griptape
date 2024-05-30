@@ -1,6 +1,6 @@
 from typing import Optional
 from collections.abc import Sequence
-from attr import field, define
+from attrs import field, define
 from griptape.artifacts import BaseArtifact
 
 

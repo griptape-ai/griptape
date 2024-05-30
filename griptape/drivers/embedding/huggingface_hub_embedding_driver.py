@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from griptape.utils import import_optional_dependency
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
 
 if TYPE_CHECKING:

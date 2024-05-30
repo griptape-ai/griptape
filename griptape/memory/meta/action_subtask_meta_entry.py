@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional
-from attr import field, define
+from attrs import field, define
 from griptape.memory.meta import BaseMetaEntry
 
 

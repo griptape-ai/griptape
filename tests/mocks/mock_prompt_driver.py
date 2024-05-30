@@ -1,6 +1,7 @@
+from __future__ import annotations
 from collections.abc import Iterator
 from typing import Callable
-from attr import Factory, define, field
+from attrs import define, field
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer

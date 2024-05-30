@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
-from attr import Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver

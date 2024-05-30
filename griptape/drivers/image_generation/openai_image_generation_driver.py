@@ -5,7 +5,7 @@ from typing import Literal, Optional, cast, Union
 
 import openai
 from openai.types.images_response import ImagesResponse
-from attr import field, Factory, define
+from attrs import field, Factory, define
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver

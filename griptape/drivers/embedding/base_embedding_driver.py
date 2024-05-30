@@ -2,7 +2,7 @@ from __future__ import annotations
 import numpy as np
 from typing import Optional
 from abc import ABC, abstractmethod
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.tokenizers import BaseTokenizer

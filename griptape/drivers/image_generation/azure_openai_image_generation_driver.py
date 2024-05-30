@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import openai
-from attr import field, Factory, define
+from attrs import field, Factory, define
 from typing import Callable, Optional
 
 from griptape.drivers import OpenAiImageGenerationDriver

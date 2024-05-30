@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from attr import define, field
+from attrs import define, field
 from typing import Optional
 
 if TYPE_CHECKING:
