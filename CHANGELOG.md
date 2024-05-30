@@ -15,6 +15,7 @@
 - **BREAKING**: `TextArtifactStorage` now requires `vector_store_driver`.
 - **BREAKING**: Moved `load_artifacts` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
 - **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
+- **BREAKING**: Replaced `query_engine` with `vector_store_driver` in `VectorStoreClient`.
 
 # Changelog
 All notable changes to this project will be documented in this file.
