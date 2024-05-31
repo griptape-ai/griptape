@@ -1,6 +1,6 @@
 import inspect
 from typing import Optional, Callable
-from attr import define, field
+from attrs import define, field
 from jinja2 import Template
 from schema import Schema, Literal
 

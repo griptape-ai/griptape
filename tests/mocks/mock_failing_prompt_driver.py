@@ -1,5 +1,5 @@
-from typing import Iterator
-from attr import define
+from collections.abc import Iterator
+from attrs import define
 
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver

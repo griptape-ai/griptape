@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attrs import define, field
 from griptape.engines import CsvExtractionEngine
 from griptape.tasks import ExtractionTask
 

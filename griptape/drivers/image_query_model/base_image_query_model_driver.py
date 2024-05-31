@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from attr import define
+from attrs import define
 from griptape.artifacts import TextArtifact, ImageArtifact
 from griptape.mixins import SerializableMixin
 

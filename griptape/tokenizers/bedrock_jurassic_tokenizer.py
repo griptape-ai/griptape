@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from .simple_tokenizer import SimpleTokenizer
 
 

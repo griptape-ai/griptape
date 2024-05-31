@@ -1,6 +1,6 @@
 from __future__ import annotations
 import os
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import BaseFileManagerDriver, LocalFileManagerDriver
 from griptape.tools import BaseTool

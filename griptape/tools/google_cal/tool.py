@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 import datetime
 from schema import Schema, Literal, Optional
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient

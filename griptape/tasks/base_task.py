@@ -7,7 +7,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional
 from collections.abc import Sequence
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact

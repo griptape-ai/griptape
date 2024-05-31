@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import requests
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 

@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseSqlDriver, BaseEmbeddingDriver

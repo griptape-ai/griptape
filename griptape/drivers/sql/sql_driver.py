@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING, Any
 from griptape.drivers import BaseSqlDriver
 from griptape.utils import import_optional_dependency
-from attr import define, field
+from attrs import define, field
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Engine

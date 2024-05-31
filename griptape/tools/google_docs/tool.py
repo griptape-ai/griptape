@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from attr import field, define
+from attrs import field, define
 from schema import Schema, Optional, Literal
 
 from griptape.artifacts import ErrorArtifact, InfoArtifact

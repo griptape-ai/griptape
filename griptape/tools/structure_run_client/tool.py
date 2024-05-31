@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from attr import define, field
+from attrs import define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import BaseArtifact, TextArtifact

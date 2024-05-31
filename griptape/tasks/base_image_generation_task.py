@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from abc import ABC
 
-from attr import field, define
+from attrs import field, define
 
 from griptape.artifacts import MediaArtifact
 from griptape.loaders import ImageLoader

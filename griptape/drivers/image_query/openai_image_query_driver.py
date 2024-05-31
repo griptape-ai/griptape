@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from openai.types.chat import (
     ChatCompletionUserMessageParam,
     ChatCompletionContentPartParam,

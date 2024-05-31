@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 from collections.abc import Iterator
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import import_optional_dependency
 from .base_multi_model_prompt_driver import BaseMultiModelPromptDriver

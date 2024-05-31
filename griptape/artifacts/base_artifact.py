@@ -4,7 +4,7 @@ from typing import Any
 import json
 import uuid
 from abc import ABC, abstractmethod
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 
 @define()

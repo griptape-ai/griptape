@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC
 
-from attr import field, define
+from attrs import field, define
 
 from griptape.drivers import BaseImageQueryDriver, BaseImageQueryModelDriver
 

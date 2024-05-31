@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from concurrent import futures
 from logging import Logger
 
-from attr import Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.events import BaseEvent
 

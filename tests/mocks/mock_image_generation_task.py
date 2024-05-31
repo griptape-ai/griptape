@@ -1,4 +1,4 @@
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask

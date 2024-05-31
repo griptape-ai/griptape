@@ -1,7 +1,7 @@
 import importlib
 import sys
 from io import StringIO
-from attr import define, field
+from attrs import define, field
 
 
 @define

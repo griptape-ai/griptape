@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any, Optional
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseMultiModelImageGenerationDriver
