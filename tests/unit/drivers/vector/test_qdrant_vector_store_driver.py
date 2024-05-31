@@ -1,11 +1,12 @@
 import pytest
+import os
 from griptape.drivers import QdrantVectorStoreDriver
 from griptape.drivers import HuggingFaceHubEmbeddingDriver
 from griptape.artifacts import TextArtifact
 
-
+HUGGINGFACE_TOKEN = os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"]
 embedding_driver = HuggingFaceHubEmbeddingDriver(
-       api_token='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', model='sentence-transformers/all-MiniLM-L6-v2')
+       api_token=HUGGINGFACE_TOKEN, model='sentence-transformers/all-MiniLM-L6-v2')
 
 class TestQdrantVectorVectorStoreDriver:
     @pytest.fixture(autouse=True)
