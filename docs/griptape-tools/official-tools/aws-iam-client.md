@@ -8,7 +8,7 @@ from griptape.structures import Agent
 from griptape.tools import AwsIamClient
 
 # Initialize the AWS IAM client
-aws_iam_client = AwsIamClient(session=boto3.Session(), off_prompt=False)
+aws_iam_client = AwsIamClient(session=boto3.Session())
 
 # Create an agent with the AWS IAM client tool
 agent = Agent(

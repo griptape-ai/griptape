@@ -62,7 +62,7 @@ Finally, let's test our tool:
 from griptape.structures import Agent
 from rng_tool.tool import RandomNumberGenerator
 
-rng_tool = RandomNumberGenerator(off_prompt=False)
+rng_tool = RandomNumberGenerator()
 
 agent = Agent(
     tools=[rng_tool]

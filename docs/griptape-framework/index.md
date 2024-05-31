@@ -102,7 +102,7 @@ Agents on their own are fun, but let's add some capabilities to them using Gript
 from griptape.structures import Agent
 from griptape.tools import Calculator
 
-calculator = Calculator(off_prompt=False)
+calculator = Calculator()
 
 agent = Agent(
    tools=[calculator]

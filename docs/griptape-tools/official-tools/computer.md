@@ -9,7 +9,7 @@ from griptape.structures import Agent
 from griptape.tools import Computer
 
 # Initialize the Computer tool
-computer = Computer(off_prompt=False)
+computer = Computer()
 
 # Create an agent with the Computer tool
 agent = Agent(

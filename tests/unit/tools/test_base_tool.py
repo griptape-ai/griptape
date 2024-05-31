@@ -129,11 +129,11 @@ class TestBaseTool:
 
     @pytest.fixture
     def tool(self):
-        return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"}, off_prompt=False)
+        return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"})
 
     def test_off_prompt(self, tool):
         assert (
-            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=False)])
+            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()])
             .tools[0]
             .output_memory
         )
@@ -161,28 +161,27 @@ class TestBaseTool:
         assert tool.abs_dir_path == os.path.dirname(tool.abs_file_path)
 
     def test_name(self):
-        assert MockTool(off_prompt=False).name == "MockTool"
-        assert MockTool(name="FooBar", off_prompt=False).name == "FooBar"
+        assert MockTool().name == "MockTool"
+        assert MockTool(name="FooBar").name == "FooBar"
 
     def test_class_name(self):
-        assert MockTool(off_prompt=False).class_name == "MockTool"
-        assert MockTool(name="FooBar", off_prompt=False).class_name == "MockTool"
+        assert MockTool().class_name == "MockTool"
+        assert MockTool(name="FooBar").class_name == "MockTool"
 
     def test_validate(self, tool):
         assert tool.validate()
 
     def test_invalid_config(self):
         try:
-            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool
+            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa
 
             assert False
-        except SchemaMissingKeyError as e:
+        except SchemaMissingKeyError:
             assert True
 
     def test_memory(self):
         tool = MockTool(
-            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},
-            off_prompt=False,
+            output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]}
         )
 
         assert tool.output_memory is not None
@@ -191,39 +190,34 @@ class TestBaseTool:
     def test_memory_validation(self):
         with pytest.raises(ValueError):
             MockTool(
-                output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory1")]},
-                off_prompt=False,
+                output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory1")]}
             )
 
         with pytest.raises(ValueError):
-            MockTool(output_memory={"output_memory": [defaults.text_task_memory("Memory1")]}, off_prompt=False)
+            MockTool(output_memory={"output_memory": [defaults.text_task_memory("Memory1")]})
 
         assert MockTool(
             output_memory={
                 "test": [defaults.text_task_memory("Memory1")],
                 "test_str_output": [defaults.text_task_memory("Memory1")],
-            },
-            off_prompt=False,
+            }
         )
 
     def test_find_input_memory(self):
-        assert MockTool(off_prompt=False).find_input_memory("foo") is None
-        assert (
-            MockTool(input_memory=[defaults.text_task_memory("foo")], off_prompt=False).find_input_memory("foo")
-            is not None
-        )
+        assert MockTool().find_input_memory("foo") is None
+        assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
         action = ActionsSubtask.Action(input={}, name="", tag="")
         assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):
-        tool = MockTool(off_prompt=False)
+        tool = MockTool()
 
         assert tool.schema() == self.TARGET_TOOL_SCHEMA
 
     def test_activity_schemas(self, tool):
-        tool = MockTool(off_prompt=False)
+        tool = MockTool()
 
         full_schema = Schema(Or(*tool.activity_schemas()), description=f"{tool.name} action schema.")
 

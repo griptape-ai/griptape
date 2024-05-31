@@ -7,7 +7,7 @@ class TestWebScraper:
     def scraper(self):
         from griptape.tools import WebScraper
 
-        return WebScraper(off_prompt=False)
+        return WebScraper()
 
     def test_get_content(self, scraper):
         assert isinstance(

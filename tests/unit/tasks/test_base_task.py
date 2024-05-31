@@ -12,9 +12,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture
     def task(self):
-        agent = Agent(
-            prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tools=[MockTool(off_prompt=False)]
-        )
+        agent = Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tools=[MockTool()])
 
         agent.add_task(MockTask("foobar", max_meta_memory_entries=2))
 
@@ -27,8 +25,8 @@ class TestBaseTask:
 
         assert len(task.meta_memories) == 0
 
-        task.structure.task_memory.process_output(MockTool(off_prompt=False).test, subtask, TextArtifact("foo"))
-        task.structure.task_memory.process_output(MockTool(off_prompt=False).test, subtask, TextArtifact("foo"))
-        task.structure.task_memory.process_output(MockTool(off_prompt=False).test, subtask, TextArtifact("foo"))
+        task.structure.task_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        task.structure.task_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
+        task.structure.task_memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
 
         assert len(task.meta_memories) == 2

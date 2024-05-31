@@ -26,8 +26,7 @@ sql_tool = SqlClient(
     sql_loader=sql_loader,
     table_name="people",
     table_description="contains information about tech industry professionals",
-    engine_name="redshift",
-    off_prompt=False
+    engine_name="redshift"
 )
 
 agent = Agent(

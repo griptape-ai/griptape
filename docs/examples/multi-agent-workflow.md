@@ -40,7 +40,6 @@ def build_researcher():
             WebSearch(
                 google_api_key=os.environ["GOOGLE_API_KEY"],
                 google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
-                off_prompt=False,
             ),
             WebScraper(
                 off_prompt=True,

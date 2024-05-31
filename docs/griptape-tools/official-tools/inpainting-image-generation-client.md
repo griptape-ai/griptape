@@ -24,7 +24,6 @@ engine = InpaintingImageGenerationEngine(
 # Create a tool configured to use the engine.
 tool = InpaintingImageGenerationClient(
     engine=engine,
-    off_prompt=False
 )
 
 # Create an agent and provide the tool to it.

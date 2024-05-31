@@ -1,4 +1,4 @@
-from attrs import define, Factory, field
+from attrs import Factory, define, field
 
 from griptape.config import StructureConfig
 from griptape.drivers import (

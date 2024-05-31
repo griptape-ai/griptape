@@ -7,7 +7,7 @@ class TestRestApi:
     def client(self):
         from griptape.tools import RestApiClient
 
-        return RestApiClient(base_url="http://www.griptape.ai", description="Griptape website.", off_prompt=False)
+        return RestApiClient(base_url="http://www.griptape.ai", description="Griptape website.")
 
     def test_put(self, client):
         assert isinstance(client.post({"values": {"body": {}}}), BaseArtifact)

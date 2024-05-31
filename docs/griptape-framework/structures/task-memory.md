@@ -11,7 +11,7 @@ Task Memory is a powerful feature of Griptape that allows you to control where t
 
 ## Off Prompt
 
-You must enable or disable Task Memory on a Tool with the `off_prompt` parameter. By default, all Tools have `off_prompt` as a required parameter, forcing you to consider whether you'd like to use Task Memory or not.
+You can enable or disable sending a Tool's results to Task Memory with the `off_prompt` parameter. By default, all Tools have `off_prompt` set to `False` making this an opt-in feature.
 When `off_prompt` is set to `True`, the Tool will store its output in Task Memory. When `off_prompt` is set to `False`, the Tool will return its output directly to the LLM.
 
 Lets look at a simple example where `off_prompt` is set to `False`:
@@ -124,7 +124,7 @@ agent.run("What is the square root of 12345?")
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-While this fixed the problem, it took a handful more steps than when we just had `Calculator(off_prompt=False)`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
+While this fixed the problem, it took a handful more steps than when we just had `Calculator()`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
 Let's look at a more complex example where Task Memory shines.
 
 ## Large Data
@@ -136,7 +136,7 @@ from griptape.structures import Agent
 from griptape.tools import WebScraper
 
 # Create an agent with the Calculator tool
-agent = Agent(tools=[WebScraper(off_prompt=False)])
+agent = Agent(tools=[WebScraper()])
 
 agent.run(
     "According to this page https://en.wikipedia.org/wiki/Elden_Ring, how many copies of Elden Ring have been sold?"
@@ -329,7 +329,7 @@ agent.run("According to this page https://en.wikipedia.org/wiki/Dark_forest_hypo
 ```
 
 ### Task Memory May Not Be Necessary
-Task Memory may not be necessary for all use cases. If the data returned by a Tool is not sensitive, not too large, and does not need to be acted upon by another Tool, you can set `off_prompt` to `False` and return the data directly to the LLM.
+Task Memory may not be necessary for all use cases. If the data returned by a Tool is not sensitive, not too large, and does not need to be acted upon by another Tool, you can leave the default of `off_prompt` to `False` and return the data directly to the LLM.
 
 ```python
 from griptape.structures import Agent
@@ -337,7 +337,7 @@ from griptape.tools import WebScraper
 
 agent = Agent(
     tools=[
-        Calculator(off_prompt=False) # `off_prompt=False` will return the data directly to the LLM
+        Calculator() # Default value of `off_prompt=False` will return the data directly to the LLM
     ]
 )
 agent.run("What is 10 ^ 3, 55 / 23, and 12345 * 0.5?")

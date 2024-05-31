@@ -22,7 +22,6 @@ gmail_tool = GoogleGmailClient(
         "client_x509_cert_url": os.environ["GOOGLE_CERT_URL"]
     },
     owner_email=os.environ["GOOGLE_OWNER_EMAIL"],
-    off_prompt=False
 )
 
 # Set up an agent using the GoogleGmailClient tool

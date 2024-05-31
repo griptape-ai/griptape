@@ -64,7 +64,7 @@ class TestWorkflow:
     def test_with_no_task_memory(self):
         workflow = Workflow()
 
-        workflow.add_task(ToolkitTask(tools=[MockTool(off_prompt=False)]))
+        workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is not None
@@ -86,7 +86,7 @@ class TestWorkflow:
         embedding_driver = MockEmbeddingDriver()
         workflow = Workflow(embedding_driver=embedding_driver)
 
-        workflow.add_task(ToolkitTask(tools=[MockTool(off_prompt=False)]))
+        workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         storage = list(workflow.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
@@ -105,7 +105,7 @@ class TestWorkflow:
     def test_without_task_memory(self):
         workflow = Workflow(task_memory=None)
 
-        workflow.add_task(ToolkitTask(tools=[MockTool(off_prompt=False)]))
+        workflow.add_task(ToolkitTask(tools=[MockTool()]))
 
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is None

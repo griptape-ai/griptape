@@ -1,4 +1,4 @@
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 
 from griptape.config import StructureConfig
 from griptape.drivers import (
@@ -29,6 +29,7 @@ class AnthropicStructureConfig(StructureConfig):
         default=Factory(
             lambda: LocalVectorStoreDriver(embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2"))
         ),
+        kw_only=True,
         metadata={"serializable": True},
     )
     image_query_driver: BaseImageQueryDriver = field(

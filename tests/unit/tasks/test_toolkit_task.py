@@ -147,17 +147,10 @@ class TestToolkitSubtask:
         )
 
     def test_init(self):
-        assert (
-            len(
-                ToolkitTask(
-                    "test", tools=[MockTool(name="Tool1", off_prompt=False), MockTool(name="Tool2", off_prompt=False)]
-                ).tools
-            )
-            == 2
-        )
+        assert len(ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]).tools) == 2
 
         try:
-            ToolkitTask("test", tools=[MockTool(off_prompt=False), MockTool(off_prompt=False)])
+            ToolkitTask("test", tools=[MockTool(), MockTool()])
             assert False
         except ValueError:
             assert True
@@ -165,9 +158,7 @@ class TestToolkitSubtask:
     def test_run(self):
         output = """Answer: done"""
 
-        task = ToolkitTask(
-            "test", tools=[MockTool(name="Tool1", off_prompt=False), MockTool(name="Tool2", off_prompt=False)]
-        )
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
 
         agent.add_task(task)
@@ -181,7 +172,7 @@ class TestToolkitSubtask:
     def test_run_max_subtasks(self):
         output = """Actions: [{"name": "blah"}]"""
 
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)], max_subtasks=3)
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
 
         agent.add_task(task)
@@ -194,7 +185,7 @@ class TestToolkitSubtask:
     def test_run_invalid_react_prompt(self):
         output = """foo bar"""
 
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)], max_subtasks=3)
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
 
         agent.add_task(task)
@@ -211,7 +202,7 @@ class TestToolkitSubtask:
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)])
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         Agent().add_task(task)
 
@@ -227,7 +218,7 @@ class TestToolkitSubtask:
     def test_init_from_prompt_2(self):
         valid_input = """Thought: need to test\nObservation: test 
         observation\nAnswer: test output"""
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)])
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         Agent().add_task(task)
 
@@ -238,7 +229,7 @@ class TestToolkitSubtask:
         assert subtask.output.to_text() == "test output"
 
     def test_add_subtask(self):
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)])
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
             "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
@@ -262,7 +253,7 @@ class TestToolkitSubtask:
         assert subtask2.parents[0] == subtask1
 
     def test_find_subtask(self):
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1", off_prompt=False)])
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
             "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
@@ -279,7 +270,7 @@ class TestToolkitSubtask:
         assert task.find_subtask(subtask2.id) == subtask2
 
     def test_find_tool(self):
-        tool = MockTool(off_prompt=False)
+        tool = MockTool()
         task = ToolkitTask("test", tools=[tool])
 
         Agent().add_task(task)
@@ -327,9 +318,9 @@ class TestToolkitSubtask:
 
         subtask.structure = agent
 
-        memory.process_output(MockTool(off_prompt=False).test, subtask, TextArtifact("foo"))
+        memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
 
-        task = ToolkitTask(tools=[MockTool(off_prompt=False)])
+        task = ToolkitTask(tools=[MockTool()])
 
         agent.add_task(task)
 
@@ -338,7 +329,7 @@ class TestToolkitSubtask:
         assert "You have access to additional contextual information" in system_template
 
     def test_actions_schema(self):
-        tool = MockTool(off_prompt=False)
+        tool = MockTool()
         task = ToolkitTask("test", tools=[tool])
 
         Agent().add_task(task)

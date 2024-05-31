@@ -23,7 +23,7 @@ class TestAgent:
         assert agent.rulesets[0].name == "TestRuleset"
         assert agent.rulesets[0].rules[0].value == "test"
         assert isinstance(agent.conversation_memory, ConversationMemory)
-        assert isinstance(Agent(tools=[MockTool(off_prompt=False)]).task, ToolkitTask)
+        assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
 
     def test_rulesets(self):
         agent = Agent(rulesets=[Ruleset("Foo", [Rule("foo test")])])
@@ -70,7 +70,7 @@ class TestAgent:
         assert agent.tools[0].output_memory == {}
 
     def test_with_no_task_memory_and_empty_tool_output_memory(self):
-        agent = Agent(tools=[MockTool(output_memory={}, off_prompt=False)])
+        agent = Agent(tools=[MockTool(output_memory={})])
 
         assert isinstance(agent.task_memory, TaskMemory)
         assert agent.tools[0].input_memory[0] == agent.task_memory
@@ -78,7 +78,7 @@ class TestAgent:
 
     def test_embedding_driver(self):
         embedding_driver = MockEmbeddingDriver()
-        agent = Agent(tools=[MockTool(off_prompt=False)], embedding_driver=embedding_driver)
+        agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
 
         artifact_storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(artifact_storage, TextArtifactStorage)
@@ -87,7 +87,7 @@ class TestAgent:
         assert memory_embedding_driver == embedding_driver
 
     def test_without_default_task_memory(self):
-        agent = Agent(task_memory=None, tools=[MockTool(off_prompt=False)])
+        agent = Agent(task_memory=None, tools=[MockTool()])
 
         assert agent.tools[0].input_memory is None
         assert agent.tools[0].output_memory is None

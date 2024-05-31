@@ -11,7 +11,6 @@ agent = Agent(
     tools=[
         OpenWeatherClient(
             api_key=os.environ["OPENWEATHER_API_KEY"],
-            off_prompt=False
         ),
     ]
 )
