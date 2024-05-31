@@ -20,7 +20,7 @@ class TestGriptapeCloudStructureRunDriver:
         mocker.patch("requests.get", return_value=mock_response)
 
         return GriptapeCloudStructureRunDriver(
-            base_url="https://cloud-foo.griptape.ai", api_key="foo bar", structure_id="1"
+            base_url="https://cloud-foo.griptape.ai", api_key="foo bar", structure_id="1", env={"key": "value"}
         )
 
     def test_run(self, driver):
