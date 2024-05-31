@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from attr import define
+from attrs import define
 import tiktoken
 from griptape.tokenizers import BaseTokenizer
 from typing import Optional

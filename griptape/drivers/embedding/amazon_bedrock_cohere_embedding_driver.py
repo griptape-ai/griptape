@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from typing import Any, TYPE_CHECKING
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import BedrockCohereTokenizer
 from griptape.utils import import_optional_dependency

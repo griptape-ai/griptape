@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import Factory, define, field
+from attrs import Factory, define, field
 from email.mime.text import MIMEText
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.loaders.email_loader import EmailLoader

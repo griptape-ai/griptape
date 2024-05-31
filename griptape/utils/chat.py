@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable
-from attr import Factory, define, field
+from attrs import Factory, define, field
 from griptape.utils.stream import Stream
 
 if TYPE_CHECKING:

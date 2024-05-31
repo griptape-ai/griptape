@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from attr import define
+from attrs import define
 
 from griptape.artifacts import MediaArtifact
 

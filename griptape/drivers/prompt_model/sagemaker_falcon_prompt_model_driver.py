@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptModelDriver

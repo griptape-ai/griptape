@@ -5,7 +5,7 @@ import time
 import random
 from typing import Optional
 
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import BlobArtifact
 import base64
 

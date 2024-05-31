@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING, cast
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact
 from griptape.drivers import BaseEmbeddingDriver

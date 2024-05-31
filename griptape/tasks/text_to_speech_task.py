@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.engines import TextToSpeechEngine

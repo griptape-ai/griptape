@@ -4,7 +4,7 @@ from griptape import utils
 import logging
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 if TYPE_CHECKING:
     from opensearchpy import OpenSearch

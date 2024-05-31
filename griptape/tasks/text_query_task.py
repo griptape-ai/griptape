@@ -1,4 +1,4 @@
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from typing import Optional
 from griptape.artifacts import TextArtifact
 from griptape.engines import BaseQueryEngine, VectorQueryEngine

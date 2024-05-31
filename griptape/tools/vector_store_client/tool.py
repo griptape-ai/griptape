@@ -1,7 +1,7 @@
 from typing import Optional
 from griptape.engines import VectorQueryEngine
 from schema import Schema, Literal
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity

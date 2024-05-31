@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import Optional, TYPE_CHECKING
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import TextArtifact, ImageArtifact
 from griptape.events import StartImageQueryEvent, FinishImageQueryEvent

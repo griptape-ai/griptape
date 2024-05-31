@@ -1,5 +1,5 @@
 from typing import Optional, cast
-from attr import define, Factory, field
+from attrs import define, Factory, field
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.utils import PromptStack

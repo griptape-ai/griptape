@@ -1,6 +1,6 @@
 import pytest
 
-from attr import define
+from attrs import define
 
 from griptape.artifacts import MediaArtifact
 

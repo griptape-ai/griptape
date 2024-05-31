@@ -3,7 +3,7 @@ from __future__ import annotations
 from io import BytesIO
 from typing import Optional, cast
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.utils import import_optional_dependency
 from griptape.artifacts import ImageArtifact

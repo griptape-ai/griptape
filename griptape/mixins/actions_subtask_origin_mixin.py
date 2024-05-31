@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from abc import abstractmethod
-from attr import define
+from attrs import define
 from schema import Schema, Literal
 
 if TYPE_CHECKING:

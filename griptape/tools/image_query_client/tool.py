@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from schema import Schema, Literal
 
 from griptape.artifacts import TextArtifact, ImageArtifact, ErrorArtifact, BlobArtifact

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import ListArtifact, ErrorArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.tasks import BaseTextInputTask

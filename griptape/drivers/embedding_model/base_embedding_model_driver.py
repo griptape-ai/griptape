@@ -1,4 +1,4 @@
-from attr import define
+from attrs import define
 from abc import ABC, abstractmethod
 
 

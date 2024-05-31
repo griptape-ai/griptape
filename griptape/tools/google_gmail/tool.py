@@ -3,7 +3,7 @@ import logging
 import base64
 from email.message import EmailMessage
 from schema import Schema, Literal
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import InfoArtifact, ErrorArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
