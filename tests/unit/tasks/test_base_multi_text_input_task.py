@@ -1,7 +1,6 @@
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 from griptape.artifacts import TextArtifact
-from griptape.rules import Ruleset, Rule
 from tests.mocks.mock_multi_text_input_task import MockMultiTextInputTask
 
 
