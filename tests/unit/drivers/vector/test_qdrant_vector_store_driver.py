@@ -7,7 +7,6 @@ embedding_driver = MockEmbeddingDriver()
 
 
 class TestQdrantVectorVectorStoreDriver:
-
     @pytest.fixture
     def driver(self, mocker):
         # Mock the QdrantVectorStoreDriver class
@@ -15,7 +14,9 @@ class TestQdrantVectorVectorStoreDriver:
         qdrant_instance = qdrant_mock.return_value
         qdrant_instance.upsert_vector.return_value = 1
         qdrant_instance.upsert_text.return_value = 2
-        qdrant_instance.query.return_value = [{"id": "foo", "vector": [0, 1, 0], "score": 42, "payload": {"foo": "bar"}}]
+        qdrant_instance.query.return_value = [
+            {"id": "foo", "vector": [0, 1, 0], "score": 42, "payload": {"foo": "bar"}}
+        ]
         return qdrant_instance
 
     def test_upsert_vector(self, driver):
