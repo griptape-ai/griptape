@@ -43,10 +43,12 @@ class TestStructureConfig:
 
     def test_changed_merge_config(self, config):
         config = config.merge_config(
-            {"prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False}}
+            {"prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.2, "max_tokens": 100, "stream": True}}
         )
 
-        assert config.prompt_driver.temperature == 0.1
+        assert config.prompt_driver.temperature == 0.2
+        assert config.prompt_driver.max_tokens == 100
+        assert config.prompt_driver.stream is True
 
     def test_dot_update(self, config):
         config.prompt_driver.max_tokens = 10

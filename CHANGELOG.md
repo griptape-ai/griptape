@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
 - `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
+- `api_key`, `base_url`, and `organization` fields to `OpenAiStructureConfig`.
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
