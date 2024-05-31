@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, Any
 from collections.abc import Iterable, Sequence, Generator
 from attrs import define, field
 import uuid
