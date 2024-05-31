@@ -3901,6 +3901,17 @@ files = [
 markdown = ">=3.6"
 pyyaml = "*"
 
+[[package]]
+name = "qdrant-client"
+version = "1.9.1"
+description = "Client library for the Qdrant vector search engine"
+optional = true
+python-versions = ">=3.8"
+files = [
+    {file = "qdrant_client-1.9.1-py3-none-any.whl", hash = "sha256:b9b7e0e5c1a51410d8bb5106a869a51e12f92ab45a99030f27aba790553bd2c8"},
+    {file = "qdrant_client-1.9.1.tar.gz", hash = "sha256:186b9c31d95aefe8f2db84b7746402d7365bd63b305550e530e31bde2002ce79"},
+]
+
 [package.extras]
 extra = ["pygments (>=2.12)"]
 
@@ -5984,7 +5995,7 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "elevenlabs", "google-generativeai", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "torch", "trafilatura", "transformers", "voyageai"]
+all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "elevenlabs", "google-generativeai", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pymongo", "pypdf", "qdrant_client", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "torch", "trafilatura", "transformers", "voyageai"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-google = ["google-generativeai"]
@@ -6010,6 +6021,7 @@ drivers-vector-mongodb = ["pymongo"]
 drivers-vector-opensearch = ["opensearch-py"]
 drivers-vector-pinecone = ["pinecone-client"]
 drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
+drivers-vector-qdrant = ["qdrant-client"]
 drivers-vector-redis = ["redis"]
 drivers-web-scraper-markdownify = ["beautifulsoup4", "markdownify", "playwright"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
