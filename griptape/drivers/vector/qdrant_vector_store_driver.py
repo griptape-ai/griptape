@@ -21,15 +21,14 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    port: Optional[int] = field(default=6333, kw_only=True, metadata={"serializable": True})
-    grpc_port: Optional[int] = field(default=6334, kw_only=True, metadata={"serializable": True})
-    prefer_grpc: Optional[bool] = field(default=False, kw_only=True, metadata={"serializable": True})
-    force_recreate: Optional[bool] = field(default=True, kw_only=True, metadata={"serializable": True})
+    port: int = field(default=6333, kw_only=True, metadata={"serializable": True})
+    grpc_port: int = field(default=6334, kw_only=True, metadata={"serializable": True})
+    prefer_grpc: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    force_recreate: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_name: Optional[str] = VECTOR_NAME
     content_payload_key: str = field(default="data", kw_only=True, metadata={"serializable": True})
-    # model: Any = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         from qdrant_client import QdrantClient, AsyncQdrantClient
