@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING, Any
 from collections.abc import Iterable, Sequence, Generator
-from attr import define, field
+from attrs import define, field
 import uuid
 from itertools import islice
 from griptape.drivers import BaseVectorStoreDriver
