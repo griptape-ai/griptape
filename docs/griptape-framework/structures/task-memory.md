@@ -276,8 +276,6 @@ agent.run(
 
 As seen in the previous example, certain Tools are designed to read directly from Task Memory. This means that you can use these Tools to interact with the data stored in Task Memory without needing to pass it through the LLM.
 
-Unless you're handing off data to another Tool capable of reading from Task Memory, you should most likely set `off_prompt` to `False` on these Tools otherwise you may end up [Task Memory Looping](#task-memory-looping).
-
 Today, these include:
 
 - [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md)
