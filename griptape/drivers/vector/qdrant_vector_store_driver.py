@@ -7,8 +7,7 @@ from itertools import islice
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact
 
-if TYPE_CHECKING:
-    from qdrant_client.http import models as rest
+from qdrant_client.http import models as rest
 
 VECTOR_NAME = None
 BATCH_SIZE = 64
@@ -25,12 +24,12 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     port: Optional[int] = field(default=6333, kw_only=True, metadata={"serializable": True})
     grpc_port: Optional[int] = field(default=6334, kw_only=True, metadata={"serializable": True})
     prefer_grpc: Optional[bool] = field(default=False, kw_only=True, metadata={"serializable": True})
-    force_recreate: Optional[bool] = field(default=False, kw_only=True, metadata={"serializable": True})
+    force_recreate: Optional[bool] = field(default=True, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_name: Optional[str] = VECTOR_NAME
     content_payload_key: str = field(default="data", kw_only=True, metadata={"serializable": True})
-    model: Any = field(default=None, kw_only=True, metadata={"serializable": True})
+    # model: Any = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         from qdrant_client import QdrantClient, AsyncQdrantClient
@@ -54,9 +53,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                 grpc_port=self.grpc_port,
             )
         # Ensure the collection exists and has the correct configuration
-        self._create_collection(self.model)
+        self._create_collection(self.embedding_driver)
 
-    def delete_vector(self, vector_ids: Optional[list[str]] = None, **kwargs: Any) -> Any:
+    def delete_vector(self, vector_id: str) -> None:
 
         """
         Delete vectors from the Qdrant collection based on their IDs.
@@ -64,14 +63,16 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Parameters:
         - vector_ids: Optional list of vector IDs to delete.
         """
-        from qdrant_client.http.models import Filter
-
-        deletion_response = self.client.delete(collection_name=self.collection_name, points_selector=Filter(ids=vector_ids))
+        deletion_response = self.client.delete(collection_name=self.collection_name, points_selector= rest.PointIdsList([vector_id]))
         if deletion_response.status == rest.UpdateStatus.COMPLETED:
-            return f"Ids {vector_ids} are successfully deleted"
+            return f"Ids {vector_id} is successfully deleted"
 
     def query(
-        self, query: str, count: Optional[int] = None, include_vectors: bool = False, **kwargs: Any
+        self,
+        query: str,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
 
         """
@@ -86,22 +87,20 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         - List of QueryResult objects.
         """
 
-        from qdrant_client.http.models import SearchRequest
-
-        query_vector = self.model.encode([query])[0]
+        query_vector = self.embedding_driver.try_embed_chunk(query)
 
         # Create a search request
-        search_request = SearchRequest(
-            vector=query_vector,
-            limit=count,
-            with_payload=True,  # Ensure we get payloads in the results
-        )
+        limit=count
+        with_payload=True
+        with_vectors=True # Ensure we get payloads in the results
+
 
         results = self.client.search(
             collection_name=self.collection_name,
-            query_vector=search_request.vector,
-            limit=search_request.limit,
-            with_payload=search_request.with_payload,
+            query_vector = query_vector,
+            limit=limit,
+            with_payload=with_payload,
+            with_vectors = with_vectors
         )
 
         # Convert results to QueryResult objects
@@ -114,37 +113,46 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             )
             for result in results
         ]
-        print(query_results)
+        # print(query_results)
         return query_results
 
     def upsert_vector(
-        self,
-        texts: Iterable[TextArtifact],
-        ids: Optional[Sequence[str]] = None,
-        metadata: Optional[Sequence[dict[str, Any]]] = None,
-        batch_size: int = BATCH_SIZE,
-        **kwargs: Any,
-    ) -> None:
+            self,
+            vector: list[float],
+            vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
+            meta: Optional[dict] = None,
+            content: Optional[str] = None
+        ) -> str:
 
         """
         Upsert vectors into the Qdrant collection.
 
         Parameters:
-        - texts: Iterable of TextArtifact objects containing text data.
-        - ids: Optional sequence of vector IDs.
-        - metadata: Optional sequence of dictionaries containing metadata.
-        - batch_size: Batch size for upsert operation.
+        - vector: The vector to be upserted.
+        - vector_id: Optional vector ID.
+        - namespace: Optional namespace for the vector.
+        - meta: Optional dictionary containing metadata.
+        - content: The text content to be included in the payload.
         """
 
-        total_vectors_inserted = 0
+        if vector_id is None:
+            vector_id = str(uuid.uuid4())
 
-        for points in self._create_batches(texts, ids, metadata, batch_size=batch_size):
-            self.client.upsert(collection_name=self.collection_name, points=points)
-            total_vectors_inserted += len(points)
+        if meta is None:
+            meta = {}
 
-        print(
-            f"Inserted a total of {total_vectors_inserted} vectors into the Qdrant collection '{self.collection_name}'."
+        if content:
+            meta[self.content_payload_key] = content
+
+        points = rest.Batch(
+            ids=[vector_id],
+            vectors=[vector],
+            payloads=[meta] if meta else None,
         )
+
+        self.client.upsert(collection_name=self.collection_name, points=points)
+        return vector_id
 
     def _create_collection(self, model: str) -> None:
 
@@ -159,7 +167,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         if self.force_recreate:
             self.client.recreate_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=model.get_sentence_embedding_dimension(), distance=Distance.COSINE),
+                vectors_config=VectorParams(size=len(model.try_embed_chunk('test_chunk')), distance=Distance.COSINE),
             )
         else:
             print(f"{self.collection_name} already exists. Use force_recreate=True to recreate the collection.")
