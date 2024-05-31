@@ -5,14 +5,14 @@ from typing import Union, Literal, get_args, get_origin
 from collections.abc import Sequence
 
 import attrs
-from marshmallow import Schema, fields, EXCLUDE
+from marshmallow import Schema, fields, INCLUDE
 
 from griptape.schemas.bytes_field import Bytes
 
 
 class BaseSchema(Schema):
     class Meta:
-        unknown = EXCLUDE
+        unknown = INCLUDE
 
     DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
 
