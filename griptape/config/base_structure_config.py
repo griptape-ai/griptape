@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Optional
+from typing import Optional, Any
 
 from attrs import define, field
 
@@ -16,7 +16,6 @@ from griptape.drivers import (
     BaseTextToSpeechDriver,
     BaseAudioTranscriptionDriver,
 )
-from griptape.utils import dict_merge
 
 
 @define
@@ -33,7 +32,17 @@ class BaseStructureConfig(BaseConfig, ABC):
     audio_transcription_driver: BaseAudioTranscriptionDriver = field(kw_only=True, metadata={"serializable": True})
 
     def merge_config(self, config: dict) -> BaseStructureConfig:
-        base_config = self.to_dict()
-        merged_config = dict_merge(base_config, config)
+        for key, value in config.items():
+            self._merge_config_rec(key, value)
 
-        return BaseStructureConfig.from_dict(merged_config)
+        return self
+
+    def _merge_config_rec(self, key: str, value: Any) -> BaseStructureConfig:
+        if hasattr(self, key):
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    self._merge_config_rec(k, v)
+            else:
+                setattr(self, key, value)
+
+        return self
