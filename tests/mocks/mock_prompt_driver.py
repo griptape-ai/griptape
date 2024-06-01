@@ -19,4 +19,4 @@ class MockPromptDriver(BasePromptDriver):
         return TextArtifact(value=self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        yield TextArtifact(value=self.mock_output)
+        yield TextArtifact(value=self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output)
