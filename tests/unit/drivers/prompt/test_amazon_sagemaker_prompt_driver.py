@@ -1,6 +1,6 @@
 from botocore.response import StreamingBody
 from griptape.artifacts import TextArtifact
-from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerLlamaPromptModelDriver
+from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerFalconPromptModelDriver
 from griptape.tokenizers import HuggingFaceTokenizer, OpenAiTokenizer
 from griptape.utils import PromptStack
 from io import BytesIO
@@ -23,12 +23,12 @@ class TestAmazonSageMakerPromptDriver:
         return mocker.patch("boto3.Session").return_value.client.return_value
 
     def test_init(self):
-        assert AmazonSageMakerPromptDriver(endpoint="foo", prompt_model_driver=SageMakerLlamaPromptModelDriver())
+        assert AmazonSageMakerPromptDriver(endpoint="foo", prompt_model_driver=SageMakerFalconPromptModelDriver())
 
     def test_custom_tokenizer(self):
         assert isinstance(
             AmazonSageMakerPromptDriver(
-                endpoint="foo", prompt_model_driver=SageMakerLlamaPromptModelDriver()
+                endpoint="foo", prompt_model_driver=SageMakerFalconPromptModelDriver()
             ).tokenizer,
             HuggingFaceTokenizer,
         )
@@ -37,7 +37,7 @@ class TestAmazonSageMakerPromptDriver:
             AmazonSageMakerPromptDriver(
                 endpoint="foo",
                 tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
-                prompt_model_driver=SageMakerLlamaPromptModelDriver(),
+                prompt_model_driver=SageMakerFalconPromptModelDriver(),
             ).tokenizer,
             OpenAiTokenizer,
         )
