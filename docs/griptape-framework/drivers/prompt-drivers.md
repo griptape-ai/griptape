@@ -75,7 +75,7 @@ agent = Agent(
         prompt_driver=OpenAiChatPromptDriver(
             api_key=os.environ["OPENAI_API_KEY"],
             temperature=0.1,
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             response_format="json_object",
             seed=42,
         )
