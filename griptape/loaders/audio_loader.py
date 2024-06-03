@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import cast
 
-from attr import define
+from attrs import define
 
 from griptape.artifacts import AudioArtifact
 from griptape.loaders import BaseLoader

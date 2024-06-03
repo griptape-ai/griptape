@@ -4,7 +4,7 @@ import io
 from typing import Optional
 
 import openai
-from attr import field, Factory, define
+from attrs import field, Factory, define
 
 from griptape.artifacts import AudioArtifact, TextArtifact
 from griptape.drivers import BaseAudioTranscriptionDriver
