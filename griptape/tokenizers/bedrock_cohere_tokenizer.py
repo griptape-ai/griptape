@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attrs import define, field
 from .simple_tokenizer import SimpleTokenizer
 
 

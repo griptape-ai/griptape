@@ -1,6 +1,6 @@
 from collections.abc import Iterator
 
-from attr import Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver

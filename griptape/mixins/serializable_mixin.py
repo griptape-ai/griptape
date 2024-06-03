@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TypeVar, Generic, cast, Optional
 
-from attr import Factory, define, field
+from attrs import Factory, define, field
 from abc import ABC
 
 from marshmallow import Schema

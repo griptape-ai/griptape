@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
 from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver

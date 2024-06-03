@@ -1,4 +1,4 @@
-from attr import define, field
+from attrs import define, field
 
 from griptape.events.base_image_query_event import BaseImageQueryEvent
 

@@ -1,6 +1,6 @@
 from abc import ABC
 
-from attr import define
+from attrs import define
 
 from griptape.events import BaseEvent
 

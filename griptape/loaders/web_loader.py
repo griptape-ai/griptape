@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import BaseWebScraperDriver, TrafilaturaWebScraperDriver
 from griptape.artifacts import TextArtifact

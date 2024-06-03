@@ -1,5 +1,5 @@
+from griptape.artifacts.list_artifact import ListArtifact
 from griptape.engines import InpaintingImageGenerationEngine
-from typing import Tuple
 from unittest.mock import Mock
 
 import pytest
@@ -23,17 +23,30 @@ class TestInpaintingImageGenerationTask:
         input_tuple = (text_artifact, image_artifact, image_artifact)
         task = InpaintingImageGenerationTask(input_tuple, image_generation_engine=Mock())
 
-        assert task.input == input_tuple
+        assert task.input.value == list(input_tuple)
 
     def test_callable_input(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
-        input_tuple = (text_artifact, image_artifact, image_artifact)
+        input = [text_artifact, image_artifact, image_artifact]
 
-        def callable(task: BaseTask) -> tuple[TextArtifact, ImageArtifact, ImageArtifact]:
-            return input_tuple
+        def callable(task: BaseTask) -> ListArtifact:
+            return ListArtifact(value=list(input))
 
         task = InpaintingImageGenerationTask(callable, image_generation_engine=Mock())
 
-        assert task.input == input_tuple
+        assert task.input.value == input
+
+    def test_list_input(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
+        input = [text_artifact, image_artifact]
+        task = InpaintingImageGenerationTask(ListArtifact(input), image_generation_engine=Mock())
+
+        assert task.input.value == input
+
+    def test_bad_input(self, image_artifact):
+        with pytest.raises(ValueError):
+            InpaintingImageGenerationTask(("foo", "bar", image_artifact)).run()  # pyright: ignore[reportArgumentType]
+
+        with pytest.raises(ValueError):
+            InpaintingImageGenerationTask(("foo", image_artifact, "baz")).run()  # pyright: ignore[reportArgumentType]
 
     def test_config_image_generation_engine(self, text_artifact, image_artifact):
         task = InpaintingImageGenerationTask((text_artifact, image_artifact, image_artifact))

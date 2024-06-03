@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver

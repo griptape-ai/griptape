@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:

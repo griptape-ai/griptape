@@ -1,7 +1,7 @@
 from __future__ import annotations
 from io import BytesIO
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from typing import Optional, Union, cast
 
 from griptape.artifacts.error_artifact import ErrorArtifact

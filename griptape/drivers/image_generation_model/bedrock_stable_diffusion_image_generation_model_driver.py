@@ -4,7 +4,7 @@ import base64
 import logging
 from typing import Optional
 
-from attr import field, define
+from attrs import field, define
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationModelDriver

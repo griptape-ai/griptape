@@ -5,9 +5,8 @@ from abc import ABC, abstractmethod
 from concurrent import futures
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional
-from collections.abc import Sequence
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
@@ -38,7 +37,7 @@ class BaseTask(ABC):
 
     @property
     @abstractmethod
-    def input(self) -> BaseArtifact | tuple[BaseArtifact, ...] | tuple[BaseArtifact, Sequence[BaseArtifact]]: ...
+    def input(self) -> BaseArtifact: ...
 
     @property
     def parents(self) -> list[BaseTask]:

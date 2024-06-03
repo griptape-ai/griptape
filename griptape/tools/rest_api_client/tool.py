@@ -1,9 +1,9 @@
 from textwrap import dedent
-from typing import Optional, Dict
+from typing import Optional
 from urllib.parse import urljoin
 import schema
 from schema import Schema, Literal
-from attr import define, field
+from attrs import define, field
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
@@ -30,7 +30,7 @@ class RestApiClient(BaseTool):
     request_query_params_schema: Optional[str] = field(default=None, kw_only=True)
     request_body_schema: Optional[str] = field(default=None, kw_only=True)
     response_body_schema: Optional[str] = field(default=None, kw_only=True)
-    request_headers: Optional[Dict[str, str]] = field(default=None, kw_only=True)
+    request_headers: Optional[dict[str, str]] = field(default=None, kw_only=True)
 
     @property
     def full_url(self) -> str:

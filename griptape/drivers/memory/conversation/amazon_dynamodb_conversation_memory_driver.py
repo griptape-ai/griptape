@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from typing import Optional, TYPE_CHECKING, Any
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseConversationMemoryDriver

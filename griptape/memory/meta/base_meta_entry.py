@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define
+from attrs import define
 from abc import ABC
 
 from griptape.mixins import SerializableMixin

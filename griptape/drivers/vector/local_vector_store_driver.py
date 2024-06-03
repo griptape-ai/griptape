@@ -3,7 +3,7 @@ from numpy import dot
 from numpy.linalg import norm
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
-from attr import define, field
+from attrs import define, field
 
 
 @define

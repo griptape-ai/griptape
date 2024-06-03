@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.events.finish_text_to_speech_event import FinishTextToSpeechEvent

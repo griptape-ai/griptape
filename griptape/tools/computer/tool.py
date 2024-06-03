@@ -5,7 +5,7 @@ import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from docker.models.containers import Container
 from schema import Schema, Literal
 import stringcase

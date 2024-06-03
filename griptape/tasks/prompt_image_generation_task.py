@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.engines import PromptImageGenerationEngine
 from griptape.artifacts import ImageArtifact, TextArtifact

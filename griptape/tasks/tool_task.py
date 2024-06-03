@@ -2,7 +2,7 @@ from __future__ import annotations
 import re
 import json
 from typing import Optional, TYPE_CHECKING
-from attr import define, field
+from attrs import define, field
 from schema import Schema
 
 from griptape import utils

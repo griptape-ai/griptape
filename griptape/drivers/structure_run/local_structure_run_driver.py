@@ -6,6 +6,8 @@ from attrs import define, field
 from griptape.artifacts import BaseArtifact, InfoArtifact
 from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
 
+import os
+
 if TYPE_CHECKING:
     from griptape.structures import Structure
 
@@ -15,7 +17,13 @@ class LocalStructureRunDriver(BaseStructureRunDriver):
     structure_factory_fn: Callable[[], Structure] = field(kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact:
-        structure_factory_fn = self.structure_factory_fn().run(*[arg.value for arg in args])
+        old_env = os.environ.copy()
+        try:
+            os.environ.update(self.env)
+            structure_factory_fn = self.structure_factory_fn().run(*[arg.value for arg in args])
+        finally:
+            os.environ.clear()
+            os.environ.update(old_env)
 
         if structure_factory_fn.output_task.output is not None:
             return structure_factory_fn.output_task.output
