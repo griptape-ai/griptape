@@ -8,7 +8,7 @@ from griptape.tools import DateTime
 
 # Create an agent with the DateTime tool
 agent = Agent(
-    tools=[DateTime(off_prompt=False)]
+    tools=[DateTime()]
 )
 
 # Fetch the current date and time

@@ -54,7 +54,7 @@ config = AzureOpenAiStructureConfig(
 
 loader = Agent(
     tools=[
-        WebScraper(),
+        WebScraper(off_prompt=True),
     ],
     config=config,
 )

@@ -149,7 +149,7 @@ pipeline = Pipeline(
 pipeline.add_tasks(
     ToolkitTask(
         "Based on https://griptape.ai, tell me what griptape is.",
-        tools=[WebScraper(), TaskMemoryClient(off_prompt=False)],
+        tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
     )
 )
 
@@ -168,7 +168,7 @@ from griptape.tools import WebScraper
 
 pipeline = Pipeline()
 pipeline.config.prompt_driver.stream = True
-pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.", tools=[WebScraper()]))
+pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.", tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]))
 
 for artifact in Stream(pipeline).run():
     print(artifact.value, end="", flush=True),

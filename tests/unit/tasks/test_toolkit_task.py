@@ -281,7 +281,7 @@ class TestToolkitSubtask:
         m1 = defaults.text_task_memory("Memory1")
         m2 = defaults.text_task_memory("Memory2")
 
-        tool = MockTool(name="Tool1", output_memory={"test": [m1, m2]})
+        tool = MockTool(name="Tool1", output_memory={"test": [m1, m2]}, off_prompt=True)
         task = ToolkitTask("test", tools=[tool])
 
         Agent().add_task(task)
@@ -293,11 +293,13 @@ class TestToolkitSubtask:
         tool1 = MockTool(
             name="Tool1",
             output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},
+            off_prompt=True,
         )
 
         tool2 = MockTool(
             name="Tool2",
             output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory3")]},
+            off_prompt=True,
         )
 
         task = ToolkitTask(tools=[tool1, tool2])

@@ -5,14 +5,13 @@ The [OpenWeatherClient](../../reference/griptape/tools/openweather_client/tool.m
 ```python
 import os
 from griptape.structures import Agent
-from griptape.tools import OpenWeatherClient, TaskMemoryClient
+from griptape.tools import OpenWeatherClient
 
 agent = Agent(
     tools=[
         OpenWeatherClient(
             api_key=os.environ["OPENWEATHER_API_KEY"],
         ),
-        TaskMemoryClient(off_prompt=False)
     ]
 )
 

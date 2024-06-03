@@ -12,11 +12,7 @@ class TestToolTask:
         from griptape.tools import Calculator
 
         return StructureTester(
-            Agent(
-                tasks=[ToolTask(tool=Calculator(off_prompt=False))],
-                conversation_memory=None,
-                prompt_driver=request.param,
-            )
+            Agent(tasks=[ToolTask(tool=Calculator())], conversation_memory=None, prompt_driver=request.param)
         )
 
     def test_tool_task(self, structure_tester):
