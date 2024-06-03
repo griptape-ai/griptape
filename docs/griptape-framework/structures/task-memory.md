@@ -135,7 +135,7 @@ Let's say we want to query the contents of a very large webpage.
 from griptape.structures import Agent
 from griptape.tools import WebScraper
 
-# Create an agent with the Calculator tool
+# Create an agent with the WebScraper tool
 agent = Agent(tools=[WebScraper()])
 
 agent.run(
@@ -315,7 +315,7 @@ This can create a loop where the same data is stored and queried over and over a
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper
+from griptape.tools import WebScraper, TaskMemoryClient
 
 agent = Agent(
     tools=[
@@ -331,7 +331,7 @@ Task Memory may not be necessary for all use cases. If the data returned by a To
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper
+from griptape.tools import Calculator
 
 agent = Agent(
     tools=[

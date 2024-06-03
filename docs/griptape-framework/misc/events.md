@@ -163,7 +163,7 @@ You can also use the [Stream](../../reference/griptape/utils/stream.md) utility 
 from griptape.utils import Stream
 from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
-from griptape.tools import WebScraper
+from griptape.tools import WebScraper, TaskMemoryClient
 
 
 pipeline = Pipeline()
