@@ -2,6 +2,7 @@ from botocore.response import StreamingBody
 from griptape.artifacts import TextArtifact
 from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerLlamaPromptModelDriver
 from griptape.tokenizers import HuggingFaceTokenizer, OpenAiTokenizer
+from griptape.utils import PromptStack
 from io import BytesIO
 from unittest.mock import Mock
 import json
@@ -22,17 +23,19 @@ class TestAmazonSageMakerPromptDriver:
         return mocker.patch("boto3.Session").return_value.client.return_value
 
     def test_init(self):
-        assert AmazonSageMakerPromptDriver(model="foo", prompt_model_driver=SageMakerLlamaPromptModelDriver())
+        assert AmazonSageMakerPromptDriver(endpoint="foo", prompt_model_driver=SageMakerLlamaPromptModelDriver())
 
     def test_custom_tokenizer(self):
         assert isinstance(
-            AmazonSageMakerPromptDriver(model="foo", prompt_model_driver=SageMakerLlamaPromptModelDriver()).tokenizer,
+            AmazonSageMakerPromptDriver(
+                endpoint="foo", prompt_model_driver=SageMakerLlamaPromptModelDriver()
+            ).tokenizer,
             HuggingFaceTokenizer,
         )
 
         assert isinstance(
             AmazonSageMakerPromptDriver(
-                model="foo",
+                endpoint="foo",
                 tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
                 prompt_model_driver=SageMakerLlamaPromptModelDriver(),
             ).tokenizer,
@@ -41,8 +44,9 @@ class TestAmazonSageMakerPromptDriver:
 
     def test_try_run(self, mock_model_driver, mock_client):
         # Given
-        driver = AmazonSageMakerPromptDriver(model="model", prompt_model_driver=mock_model_driver)
-        prompt_stack = "prompt-stack"
+        driver = AmazonSageMakerPromptDriver(endpoint="model", prompt_model_driver=mock_model_driver)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_input("prompt-stack")
         response_body = "invoke-endpoint-response-body"
         mock_client.invoke_endpoint.return_value = {"Body": to_streaming_body(response_body)}
 
@@ -53,7 +57,7 @@ class TestAmazonSageMakerPromptDriver:
         mock_model_driver.prompt_stack_to_model_input.assert_called_once_with(prompt_stack)
         mock_model_driver.prompt_stack_to_model_params.assert_called_once_with(prompt_stack)
         mock_client.invoke_endpoint.assert_called_once_with(
-            EndpointName=driver.model,
+            EndpointName=driver.endpoint,
             ContentType="application/json",
             Body=json.dumps(
                 {
@@ -68,12 +72,14 @@ class TestAmazonSageMakerPromptDriver:
 
     def test_try_run_throws_on_empty_response(self, mock_model_driver, mock_client):
         # Given
-        driver = AmazonSageMakerPromptDriver(model="model", prompt_model_driver=mock_model_driver)
+        driver = AmazonSageMakerPromptDriver(endpoint="model", prompt_model_driver=mock_model_driver)
         mock_client.invoke_endpoint.return_value = {"Body": to_streaming_body("")}
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_input("prompt-stack")
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run("prompt-stack")
+            driver.try_run(prompt_stack)
 
         # Then
         assert e.value.args[0] == "model response is empty"

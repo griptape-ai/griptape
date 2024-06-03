@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Field `azure_ad_token` on all Azure Drivers is no longer serializable.
 - Default standard OpenAI and Azure OpenAI image query model to `gpt-4o`.
 - Error message to be more helpful when importing optional dependencies.
+- **BREAKING**: `AmazonSageMakerPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
+- **BREAKING** `AmazonSageMakerPromptDriver.model` parameter is now optional being passed to `SageMakerRuntime.Client.invoke_endpoint` as `InferenceComponentName` (instead of `EndpointName`).
+- **BREAKING** `SageMakerLlamaPromptModelDriver` modified to exclusively support the Llama 3 Instruct model deployed via SageMaker JumpStart. (Support for Llama 2 models has been removed.)
 
 ### Fixed
 - Extra fields being excluded when using `SerializableMixin.from_dict`.
