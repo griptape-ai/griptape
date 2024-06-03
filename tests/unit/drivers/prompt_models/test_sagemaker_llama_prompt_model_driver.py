@@ -19,6 +19,7 @@ class TestSageMakerLlamaPromptModelDriver:
         ).return_value
         tokenizer.count_output_tokens_left.return_value = 7991
         tokenizer.tokenizer = llama3_instruct_tokenizer
+        return tokenizer
 
     @pytest.fixture
     def driver(self):
@@ -42,15 +43,13 @@ class TestSageMakerLlamaPromptModelDriver:
     def test_init(self, driver):
         assert driver.prompt_driver is not None
 
-    def test_prompt_stack_to_model_input(self, driver, stack):
-        model_input = driver.prompt_stack_to_model_input(stack)
+    def test_prompt_stack_to_model_input(self, driver, stack, hugging_face_tokenizer):
+        driver.prompt_stack_to_model_input(stack)
 
-        assert isinstance(model_input, str)
-        assert model_input == (
-            "<|begin_of_text|>"
-            "<|start_header_id|>system<|end_header_id|>\n\nfoo<|eot_id|>"
-            "<|start_header_id|>user<|end_header_id|>\n\nbar<|eot_id|>"
-            "<|start_header_id|>assistant<|end_header_id|>\n\n"
+        hugging_face_tokenizer.tokenizer.apply_chat_template.assert_called_once_with(
+            [{"role": "system", "content": "foo"}, {"role": "user", "content": "bar"}],
+            tokenize=False,
+            add_generation_prompt=True,
         )
 
     def test_prompt_stack_to_model_params(self, driver, stack):
