@@ -59,5 +59,9 @@ class TestSageMakerLlamaPromptModelDriver:
     def test_process_output(self, driver, stack):
         assert driver.process_output({"generated_text": "foobar"}).value == "foobar"
 
+    def test_process_output_invalid_format(self, driver, stack):
+        with pytest.raises(ValueError):
+            assert driver.process_output([{"generated_text": "foobar"}])
+
     def test_tokenizer_max_model_length(self, driver):
         assert driver.tokenizer.tokenizer.model_max_length == 8000
