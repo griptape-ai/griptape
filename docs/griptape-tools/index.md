@@ -31,7 +31,7 @@ A tool can have many "activities" as denoted by the `@activity` decorator. Each 
 Output artifacts from all tool activities (except for `InfoArtifact` and `ErrorArtifact`) go to short-term `TaskMemory`. To disable that behavior set the `off_prompt` tool parameter to `False`:
 
 ```python title="PYTEST_IGNORE"
-RandomNumberGenerator(off_prompt=False)
+RandomNumberGenerator()
 ```
 
 We provide a set of official Griptape Tools for accessing and processing data. You can also [build your own tools](./custom-tools/index.md).

@@ -21,7 +21,6 @@ structure_run_tool = StructureRunClient(
         api_key=api_key,
         structure_id=structure_id,
     ),
-    off_prompt=False,
 )
 
 # Set up an agent using the StructureRunClient tool

@@ -8,7 +8,7 @@ from griptape.tools import Calculator
 
 # Create an agent with the Calculator tool
 agent = Agent(
-    tools=[Calculator(off_prompt=False)]
+    tools=[Calculator()]
 )
 
 # Run the agent with a task to perform the arithmetic calculation of \(10^5\)

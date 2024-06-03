@@ -21,7 +21,6 @@ engine = ImageQueryEngine(
 # Create an Image Query Client configured to use the engine.
 tool = ImageQueryClient(
     image_query_engine=engine,
-    off_prompt=False,
 )
 
 # Create an agent and provide the tool to it.

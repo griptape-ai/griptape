@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
+- **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
 - Default the value of `azure_deployment` on all Azure Drivers to the model the Driver is using.
 - Field `azure_ad_token` on all Azure Drivers is no longer serializable.
 - Default standard OpenAI and Azure OpenAI image query model to `gpt-4o`.

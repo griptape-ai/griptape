@@ -61,10 +61,20 @@ class TestWorkflow:
             workflow = Workflow()
             workflow.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_task_memory(self):
+    def test_with_no_task_memory(self):
         workflow = Workflow()
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
+
+        assert isinstance(workflow.tasks[0], ToolkitTask)
+        assert workflow.tasks[0].tools[0].input_memory is not None
+        assert workflow.tasks[0].tools[0].input_memory[0] == workflow.task_memory
+        assert workflow.tasks[0].tools[0].output_memory is None
+
+    def test_with_task_memory(self):
+        workflow = Workflow()
+
+        workflow.add_task(ToolkitTask(tools=[MockTool(off_prompt=True)]))
 
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].input_memory is not None
@@ -84,15 +94,15 @@ class TestWorkflow:
 
         assert memory_embedding_driver == embedding_driver
 
-    def test_with_default_task_memory_and_empty_tool_output_memory(self):
+    def test_with_task_memory_and_empty_tool_output_memory(self):
         workflow = Workflow()
 
-        workflow.add_task(ToolkitTask(tools=[MockTool(output_memory={})]))
+        workflow.add_task(ToolkitTask(tools=[MockTool(output_memory={}, off_prompt=True)]))
 
         assert isinstance(workflow.tasks[0], ToolkitTask)
         assert workflow.tasks[0].tools[0].output_memory == {}
 
-    def test_without_default_task_memory(self):
+    def test_without_task_memory(self):
         workflow = Workflow(task_memory=None)
 
         workflow.add_task(ToolkitTask(tools=[MockTool()]))
@@ -306,7 +316,6 @@ class TestWorkflow:
         movie_info_2 = PromptTask(id="movie_info_2")
         movie_info_3 = PromptTask(id="movie_info_3")
         compare_movies = PromptTask(id="compare_movies")
-        prepare_email_task = PromptTask(id="prepare_email_task")
         send_email_task = PromptTask(id="send_email_task")
         save_to_disk = PromptTask(id="save_to_disk")
         publish_website = PromptTask(id="publish_website")

@@ -26,7 +26,6 @@ vector_store_tool = VectorStoreClient(
     description="Contains information about the Griptape Framework from www.griptape.ai",
     query_engine=query_engine,
     namespace=namespace,
-    off_prompt=False
 )
 
 # Load artifacts from the web
