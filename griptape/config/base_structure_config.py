@@ -33,15 +33,15 @@ class BaseStructureConfig(BaseConfig, ABC):
 
     def merge_config(self, config: dict) -> BaseStructureConfig:
         for key, value in config.items():
-            self._merge_config_rec(key, value)
+            self.__merge_config_rec(key, value)
 
         return self
 
-    def _merge_config_rec(self, key: str, value: Any) -> BaseStructureConfig:
+    def __merge_config_rec(self, key: str, value: Any) -> BaseStructureConfig:
         if hasattr(self, key):
             if isinstance(value, dict):
                 for k, v in value.items():
-                    self._merge_config_rec(k, v)
+                    self.__merge_config_rec(k, v)
             else:
                 setattr(self, key, value)
 
