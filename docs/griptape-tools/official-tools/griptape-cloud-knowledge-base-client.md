@@ -11,8 +11,8 @@ from griptape.tools import GriptapeCloudKnowledgeBaseClient
 
 knowledge_base_client = GriptapeCloudKnowledgeBaseClient(
     description="Contains information about the company and its operations",
-    api_key=os.environ["INTEG_GRIPTAPE_CLOUD_API_KEY"],
-    knowledge_base_id=os.environ["INTEG_GRIPTAPE_CLOUD_KB_ID"],
+    api_key=os.environ["GRIPTAPE_CLOUD_API_KEY"],
+    knowledge_base_id=os.environ["GRIPTAPE_CLOUD_KB_ID"],
 )
 
 agent = Agent(
