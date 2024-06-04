@@ -6,4 +6,4 @@ from griptape.artifacts import TextArtifact
 
 @define
 class TextPromptStackContent(BasePromptStackContent):
-    content: TextArtifact = field(metadata={"serializable": True})
+    value: TextArtifact = field(metadata={"serializable": True})

@@ -1,16 +1,24 @@
 from __future__ import annotations
-from typing import Optional, Any, Literal
-from collections.abc import Iterator
-import openai
-from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, PromptStackElement, ChunkPromptStackElement
-from griptape.common import TextPromptStackContent, ChunkTextPromptStackContent
-from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
-import dateparser
-from datetime import datetime, timedelta
 
+from collections.abc import Iterator
+from datetime import datetime, timedelta
+from typing import Any, Literal, Optional
+
+import dateparser
+import openai
 from attrs import Factory, define, field
+
+from griptape.artifacts import TextArtifact
+from griptape.common import (
+    PartialPromptStackElement,
+    TextDeltaPromptStackContent,
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+)
+from griptape.common.prompt_stack.contents.image_prompt_stack_content import ImagePromptStackContent
+from griptape.drivers import BasePromptDriver
+from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
 
 @define
@@ -86,7 +94,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[ChunkPromptStackElement]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[PartialPromptStackElement]:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
@@ -97,10 +105,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 if delta.content is not None:
                     delta_content = delta.content
 
-                    yield ChunkPromptStackElement(
-                        index=choice.index,
-                        role=delta.role,
-                        chunk=ChunkTextPromptStackContent(TextArtifact(delta_content)),
+                    yield PartialPromptStackElement(
+                        index=choice.index, role=delta.role, content_delta=TextDeltaPromptStackContent(delta_content)
                     )
             else:
                 raise Exception("Completion with more than one choice is not supported yet.")
@@ -112,7 +118,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack))
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
-        return [{"role": self.__to_openai_role(i), "content": i.content} for i in prompt_stack.inputs]
+        content = (
+            [self.__to_openai_content(i) for i in prompt_stack.inputs]
+            if isinstance(prompt_stack.inputs, list)
+            else self.__to_openai_content(prompt_stack.inputs)
+        )
+        return [{"role": self.__to_openai_role(i), "content": content} for i in prompt_stack.inputs]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -144,6 +155,16 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return "assistant"
         else:
             return "user"
+
+    def __to_openai_content(self, prompt_input: PromptStackElement) -> dict[str, Any]:
+        content = prompt_input.content
+
+        if isinstance(content, TextPromptStackContent):
+            return {"type": "text", "text": content.value.to_text()}
+        elif isinstance(content, ImagePromptStackContent):
+            return {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{content.value.base64}"}}
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
 
     def _extract_ratelimit_metadata(self, response):
         # The OpenAI SDK's requestssession variable is global, so this hook will fire for all API requests.

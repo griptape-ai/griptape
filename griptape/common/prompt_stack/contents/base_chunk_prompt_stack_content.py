@@ -1,9 +1,9 @@
 from typing import Any
-from attrs import define
+from attrs import define, field
 
-from griptape.common.prompt_stack.contents import BasePromptStackContent
+from griptape.common import BasePromptStackContent
 
 
 @define
 class BaseChunkPromptStackContent(BasePromptStackContent):
-    chunk: Any
+    value: Any = field()

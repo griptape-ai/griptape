@@ -1,5 +1,5 @@
 from attrs import define, field
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 @define
@@ -22,3 +22,6 @@ class BasePromptStackElement(ABC):
 
     def is_assistant(self) -> bool:
         return self.role == self.ASSISTANT_ROLE
+
+    @abstractmethod
+    def to_text(self) -> str: ...

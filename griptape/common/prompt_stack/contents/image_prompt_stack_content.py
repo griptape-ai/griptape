@@ -6,4 +6,4 @@ from griptape.artifacts import ImageArtifact
 
 @define
 class ImagePromptStackContent(BasePromptStackContent):
-    content: ImageArtifact = field(metadata={"serializable": True})
+    value: ImageArtifact = field(metadata={"serializable": True})

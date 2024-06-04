@@ -7,8 +7,9 @@ from typing import TYPE_CHECKING, Callable, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import ChunkPromptStackElement, PromptStack, PromptStackElement
-from griptape.common.prompt_stack.contents.text_chunk_prompt_stack_content import TextChunkPromptStackContent
+from griptape.common import PartialPromptStackElement, PromptStack, PromptStackElement
+from griptape.common import TextDeltaPromptStackContent
+from griptape.common.prompt_stack.contents.text_prompt_stack_content import TextPromptStackContent
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
@@ -68,13 +69,16 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 )
             )
 
-    def after_run(self, result: TextArtifact) -> None:
+    def after_run(self, result: PromptStackElement) -> None:
         if self.structure:
+            artifact = result.content.value
             self.structure.publish_event(
-                FinishPromptEvent(model=self.model, token_count=result.token_count(self.tokenizer), result=result.value)
+                FinishPromptEvent(
+                    model=self.model, token_count=artifact.token_count(self.tokenizer), result=artifact.value
+                )
             )
 
-    def run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def run(self, prompt_stack: PromptStack) -> PromptStackElement:
         for attempt in self.retrying():
             with attempt:
                 self.before_run(prompt_stack)
@@ -82,14 +86,15 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 if self.stream:
                     tokens = []
 
-                    completion_chunks = self.try_stream(prompt_stack)
+                    partial_elements = self.try_stream(prompt_stack)
 
-                    for chunk in completion_chunks:
-                        if isinstance(chunk.chunk, TextChunkPromptStackContent):
-                            chunk_value = chunk.chunk.value
+                    for partial_element in partial_elements:
+                        if isinstance(partial_element.content_delta, TextDeltaPromptStackContent):
+                            chunk_value = partial_element.content_delta.value
                             self.structure.publish_event(CompletionChunkEvent(token=chunk_value))
-                            tokens.append(chunk_value)  # TODO: Bad names
-                    result = TextArtifact(value="".join(tokens).strip())
+                            tokens.append(chunk_value)
+                    content = TextPromptStackContent(value=TextArtifact("".join(tokens).strip()))
+                    result = PromptStackElement(content=content, role=PromptStackElement.ASSISTANT_ROLE)
                 else:
                     result = self.try_run(prompt_stack)
 
@@ -103,12 +108,21 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
-            if i.is_user():
-                prompt_lines.append(f"User: {i.content}")
-            elif i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
+            content = i.content
+
+            if isinstance(content, list):
+                content_value = "\n".join([c.value.value for c in content if isinstance(c, TextPromptStackContent)])
+            elif isinstance(content, TextPromptStackContent):
+                content_value = content.value.value
             else:
-                prompt_lines.append(i.content)
+                content_value = ""  # TODO: how to handle non-text content?
+
+            if i.is_user():
+                prompt_lines.append(f"User: {content_value}")
+            elif i.is_assistant():
+                prompt_lines.append(f"Assistant: {content_value}")
+            else:
+                prompt_lines.append(content_value)
 
         prompt_lines.append("Assistant:")
 
@@ -118,4 +132,4 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_run(self, prompt_stack: PromptStack) -> PromptStackElement: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[ChunkPromptStackElement]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[PartialPromptStackElement]: ...
