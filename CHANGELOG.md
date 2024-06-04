@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Structure.resolve_relationships()` to resolve asymmetrically defined parent/child relationships. In other words, if a parent declares a child, but the child does not declare the parent, the parent will automatically be added as a parent of the child when running this method. The method is invoked automatically by `Structure.before_run()`.
 - `CohereEmbeddingDriver` for using Cohere's embeddings API.
 - `CohereStructureConfig` for providing Structures with quick Cohere configuration.
+- `BaseTokenizer.prompt_stack_to_string()` to convert a Prompt Stack to a string.
+- `BaseTokenizer.prompt_stack_input_to_string()` to convert a Prompt Stack Input to a ChatML-style message dictionary.
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
@@ -27,6 +29,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BedrockLlamaTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `BedrockTitanTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `OpenAiChatCompletionPromptDriver` as it uses the legacy [OpenAi Completions API](https://platform.openai.com/docs/api-reference/completions).
+- **BREAKING**: Removed `BasePromptDriver.count_tokens()`.
+- **BREAKING**: Removed `BasePromptDriver.max_output_tokens()`.
+- **BREAKING**: Moved `BasePromptDriver.prompt_stack_to_string()` to `BaseTokenizer`.
+- **BREAKING**: Moved/renamed `PromptStack.add_to_conversation_memory` to `BaseConversationMemory.add_to_prompt_stack`.
+- **BREAKING**: Moved `griptape.constants.RESPONSE_STOP_SEQUENCE` to `ToolkitTask`.
+- `ToolkitTask.RESPONSE_STOP_SEQUENCE` is now only added when using `ToolkitTask`.
+- `BaseTokenizer.count_tokens()` can now approximately token counts given a Prompt Stack.
+- Updated Prompt Drivers to use `BasePromptDriver.max_tokens` instead of using `BasePromptDriver.max_output_tokens()`.
 - Improved error message when `GriptapeCloudKnowledgeBaseClient` does not have a description set.
 - Updated `AmazonBedrockPromptDriver` to use [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
 - `Structure.before_run()` now automatically resolves asymmetrically defined parent/child relationships using the new `Structure.resolve_relationships()`.

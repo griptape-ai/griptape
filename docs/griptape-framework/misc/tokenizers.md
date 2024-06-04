@@ -78,6 +78,17 @@ print(tokenizer.count_input_tokens_left("Hello world!"))
 print(tokenizer.count_output_tokens_left("Hello world!"))
 ```
 
+### Amazon Bedrock
+```python
+from griptape.tokenizers import AmazonBedrockTitanTokenizer
+
+
+tokenizer = AmazonBedrockTitanTokenizer(model="amazon.titan-text-express-v1")
+
+print(tokenizer.count_tokens("Hello world!"))
+print(tokenizer.count_input_tokens_left("Hello world!"))
+print(tokenizer.count_output_tokens_left("Hello world!"))
+```
 
 ### Simple
 Not all LLM providers have a public tokenizer API. In this case, you can use the `SimpleTokenizer` to count tokens based on a simple heuristic. 

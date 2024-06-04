@@ -6,19 +6,12 @@ from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerLlamaPromptMo
 
 class TestSageMakerLlamaPromptModelDriver:
     @pytest.fixture(autouse=True)
-    def llama3_instruct_tokenizer(self, mocker):
-        tokenizer = mocker.patch("transformers.AutoTokenizer").return_value
-        tokenizer.model_max_length = 8000
+    def tokenizer(self, mocker):
+        from_pretrained = tokenizer = mocker.patch("transformers.AutoTokenizer").from_pretrained
+        from_pretrained.return_value.apply_chat_template.return_value = [1, 2, 3]
+        from_pretrained.return_value.decode.return_value = "model-output"
+        from_pretrained.return_value.model_max_length = 8000
 
-        return tokenizer
-
-    @pytest.fixture(autouse=True)
-    def hugging_face_tokenizer(self, mocker, llama3_instruct_tokenizer):
-        tokenizer = mocker.patch(
-            "griptape.drivers.prompt_model.sagemaker_llama_prompt_model_driver.HuggingFaceTokenizer"
-        ).return_value
-        tokenizer.count_output_tokens_left.return_value = 7991
-        tokenizer.tokenizer = llama3_instruct_tokenizer
         return tokenizer
 
     @pytest.fixture
@@ -29,6 +22,7 @@ class TestSageMakerLlamaPromptModelDriver:
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=SageMakerLlamaPromptModelDriver(),
             temperature=0.12345,
+            max_tokens=7991,
         ).prompt_model_driver
 
     @pytest.fixture
@@ -43,14 +37,16 @@ class TestSageMakerLlamaPromptModelDriver:
     def test_init(self, driver):
         assert driver.prompt_driver is not None
 
-    def test_prompt_stack_to_model_input(self, driver, stack, hugging_face_tokenizer):
-        driver.prompt_stack_to_model_input(stack)
+    def test_prompt_stack_to_model_input(self, driver, stack):
+        result = driver.prompt_stack_to_model_input(stack)
 
-        hugging_face_tokenizer.tokenizer.apply_chat_template.assert_called_once_with(
+        driver.tokenizer.tokenizer.apply_chat_template.assert_called_once_with(
             [{"role": "system", "content": "foo"}, {"role": "user", "content": "bar"}],
-            tokenize=False,
+            tokenize=True,
             add_generation_prompt=True,
         )
+
+        assert result == "model-output"
 
     def test_prompt_stack_to_model_params(self, driver, stack):
         assert driver.prompt_stack_to_model_params(stack)["max_new_tokens"] == 7991

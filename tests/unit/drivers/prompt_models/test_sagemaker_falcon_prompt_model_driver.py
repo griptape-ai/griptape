@@ -5,6 +5,15 @@ from griptape.drivers import AmazonSageMakerPromptDriver, SageMakerFalconPromptM
 
 
 class TestSageMakerFalconPromptModelDriver:
+    @pytest.fixture(autouse=True)
+    def tokenizer(self, mocker):
+        from_pretrained = tokenizer = mocker.patch("transformers.AutoTokenizer").from_pretrained
+        from_pretrained.return_value.apply_chat_template.return_value = [1, 2, 3]
+        from_pretrained.return_value.decode.return_value = "foo\n\nUser: bar"
+        from_pretrained.return_value.model_max_length = 8000
+
+        return tokenizer
+
     @pytest.fixture
     def driver(self):
         return AmazonSageMakerPromptDriver(
@@ -12,6 +21,7 @@ class TestSageMakerFalconPromptModelDriver:
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=SageMakerFalconPromptModelDriver(),
             temperature=0.12345,
+            max_tokens=590,
         ).prompt_model_driver
 
     @pytest.fixture
@@ -40,4 +50,4 @@ class TestSageMakerFalconPromptModelDriver:
         assert driver.process_output([{"generated_text": "foobar"}]).value == "foobar"
 
     def test_tokenizer_max_model_length(self, driver):
-        assert driver.tokenizer.tokenizer.model_max_length == 2048
+        assert driver.tokenizer.tokenizer.model_max_length == 8000

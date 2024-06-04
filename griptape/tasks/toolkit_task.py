@@ -21,6 +21,9 @@ if TYPE_CHECKING:
 @define
 class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     DEFAULT_MAX_STEPS = 20
+    # Stop sequence for chain-of-thought in the framework. Using this "token-like" string to make it more unique,
+    # so that it doesn't trigger on accident.
+    RESPONSE_STOP_SEQUENCE = "<|Response|>"
 
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
@@ -74,7 +77,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
-            stack.add_conversation_memory(memory, 1)
+            memory.add_to_prompt_stack(stack, 1)
 
         return stack
 
@@ -95,17 +98,17 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
-            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE,
+            stop_sequence=self.RESPONSE_STOP_SEQUENCE,
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
-            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
+            stop_sequence=self.RESPONSE_STOP_SEQUENCE, subtask=subtask
         )
 
     def default_user_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
-            stop_sequence=utils.constants.RESPONSE_STOP_SEQUENCE, subtask=subtask
+            stop_sequence=self.RESPONSE_STOP_SEQUENCE, subtask=subtask
         )
 
     def actions_schema(self) -> Schema:
@@ -126,6 +129,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         self.subtasks.clear()
 
+        self.prompt_driver.tokenizer.stop_sequences.extend([self.RESPONSE_STOP_SEQUENCE])
         subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
 
         while True:

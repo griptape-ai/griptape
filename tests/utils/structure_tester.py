@@ -69,10 +69,10 @@ class StructureTester:
         ),
         "AZURE_CHAT_35_TURBO_16K": TesterPromptDriverOption(
             prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
+                api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
                 model="gpt-35-turbo-16k",
                 azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
+                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_2"],
             ),
             enabled=True,
         ),
@@ -190,7 +190,7 @@ class StructureTester:
         "SAGEMAKER_LLAMA_7B": TesterPromptDriverOption(
             prompt_driver=AmazonSageMakerPromptDriver(
                 endpoint=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
+                prompt_model_driver=SageMakerLlamaPromptModelDriver(),
             ),
             enabled=False,
         ),

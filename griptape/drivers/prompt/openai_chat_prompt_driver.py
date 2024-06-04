@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Any, Literal
+from typing import Optional, Literal
 from collections.abc import Iterator
 import openai
 from attrs import define, field, Factory
@@ -79,15 +79,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
                 yield TextArtifact(value=delta_content)
 
-    def token_count(self, prompt_stack: PromptStack) -> int:
-        if isinstance(self.tokenizer, OpenAiTokenizer):
-            return self.tokenizer.count_tokens(self._prompt_stack_to_messages(prompt_stack))
-        else:
-            return self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack))
-
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
-        return [{"role": self.__to_openai_role(i), "content": i.content} for i in prompt_stack.inputs]
-
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
             "model": self.model,
@@ -102,7 +93,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             # JSON mode still requires a system input instructing the LLM to output JSON.
             prompt_stack.add_system_input("Provide your response as a valid JSON object.")
 
-        messages = self._prompt_stack_to_messages(prompt_stack)
+        messages = [self.tokenizer.prompt_stack_input_to_message(input) for input in prompt_stack.inputs]
 
         if self.max_tokens is not None:
             params["max_tokens"] = self.max_tokens
@@ -110,11 +101,3 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         params["messages"] = messages
 
         return params
-
-    def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
-        if prompt_input.is_system():
-            return "system"
-        elif prompt_input.is_assistant():
-            return "assistant"
-        else:
-            return "user"

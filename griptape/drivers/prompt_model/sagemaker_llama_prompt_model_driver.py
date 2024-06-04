@@ -15,28 +15,23 @@ class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
 
     @property
     def tokenizer(self) -> HuggingFaceTokenizer:
-        if self._tokenizer is None:
+        if self._tokenizer is None and self.prompt_driver is not None:
             self._tokenizer = HuggingFaceTokenizer(
                 tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(
-                    "meta-llama/Meta-Llama-3-8B-Instruct", model_max_length=self.DEFAULT_MAX_INPUT_TOKENS
+                    "meta-llama/Meta-Llama-3-8B-Instruct"
                 ),
-                max_output_tokens=self.max_tokens or self.DEFAULT_MAX_INPUT_TOKENS,
+                max_output_tokens=self.prompt_driver.max_tokens or self.DEFAULT_MAX_INPUT_TOKENS,
             )
         return self._tokenizer
 
     def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str:
-        return self.tokenizer.tokenizer.apply_chat_template(  # pyright: ignore
-            [{"role": i.role, "content": i.content} for i in prompt_stack.inputs],
-            tokenize=False,
-            add_generation_prompt=True,
-        )
+        return self.tokenizer.prompt_stack_to_string(prompt_stack)
 
     def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
-        prompt = self.prompt_driver.prompt_stack_to_string(prompt_stack)
         return {
-            "max_new_tokens": self.prompt_driver.max_output_tokens(prompt),
+            "max_new_tokens": self.prompt_driver.max_tokens,
             "temperature": self.prompt_driver.temperature,
-            "stop": self.tokenizer.tokenizer.eos_token,
+            "stop": [self.tokenizer.tokenizer.eos_token, *self.prompt_driver.tokenizer.stop_sequences],
         }
 
     def process_output(self, output: dict | list[dict] | str | bytes) -> TextArtifact:

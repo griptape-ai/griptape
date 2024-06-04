@@ -52,27 +52,20 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        prompt = self.__to_prompt(prompt_stack)
+        prompt = self.tokenizer.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_output_tokens(prompt), **self.params
+            prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
         )
 
         return TextArtifact(value=response)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        prompt = self.__to_prompt(prompt_stack)
+        prompt = self.tokenizer.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_output_tokens(prompt), stream=True, **self.params
+            prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
         )
 
         for token in response:
             yield TextArtifact(value=token)
-
-    def __to_prompt(self, prompt_stack: PromptStack) -> str:
-        tokens = self.tokenizer.tokenizer.apply_chat_template(
-            [{"role": i.role, "content": i.content} for i in prompt_stack.inputs], add_generation_prompt=True
-        )
-
-        return self.tokenizer.tokenizer.decode(tokens)
