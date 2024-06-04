@@ -9,7 +9,7 @@ from griptape.tokenizers import HuggingFaceTokenizer
 @define
 class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
     # Default context length for all Llama 3 models is 8K as per https://huggingface.co/blog/llama3
-    DEFAULT_MAX_TOKENS = 8000
+    DEFAULT_MAX_INPUT_TOKENS = 8000
 
     _tokenizer: HuggingFaceTokenizer = field(default=None, kw_only=True)
 
@@ -18,9 +18,9 @@ class SageMakerLlamaPromptModelDriver(BasePromptModelDriver):
         if self._tokenizer is None:
             self._tokenizer = HuggingFaceTokenizer(
                 tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(
-                    "meta-llama/Meta-Llama-3-8B-Instruct", model_max_length=self.DEFAULT_MAX_TOKENS
+                    "meta-llama/Meta-Llama-3-8B-Instruct", model_max_length=self.DEFAULT_MAX_INPUT_TOKENS
                 ),
-                max_output_tokens=self.max_tokens or self.DEFAULT_MAX_TOKENS,
+                max_output_tokens=self.max_tokens or self.DEFAULT_MAX_INPUT_TOKENS,
             )
         return self._tokenizer
 
