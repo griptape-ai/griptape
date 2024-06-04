@@ -81,5 +81,5 @@ class TestBaseSchema:
 
     def test_load_with_unknown_attribute(self):
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
-        mock_serializable = schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})
-        assert hasattr(mock_serializable, "zoop") is False
+        with pytest.raises(TypeError):
+            schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})

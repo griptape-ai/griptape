@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default standard OpenAI and Azure OpenAI image query model to `gpt-4o`.
 - Error message to be more helpful when importing optional dependencies.
 
+### Fixed
+- Extra fields being excluded when using `SerializableMixin.from_dict`.
+
 ## [0.25.1] - 2024-05-15
 
 ### Fixed
