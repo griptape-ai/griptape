@@ -199,3 +199,24 @@ loader.load(EmailLoader.EmailQuery(label="INBOX"))
 
 loader.load_collection([EmailLoader.EmailQuery(label="INBOX"), EmailLoader.EmailQuery(label="SENT")])
 ```
+
+## Audio Loader 
+
+!!! info
+    This driver requires the `loaders-audio` [extra](../index.md#extras).
+
+The [Audio Loader](../../reference/griptape/loaders/audio_loader.md) is used to load audio content as an [AudioArtifact](./artifacts.md#audioartifact). The Loader operates on audio bytes that can be sourced from files on disk, downloaded audio, or audio in memory.
+
+The Loader will load audio in its native format and populates the resulting Artifact's `format` field by making a best-effort guess of the underlying audio format using the `filetype` package.
+
+```python
+from griptape.loaders import AudioLoader
+from griptape.utils import load_file
+
+# Load an image from disk
+with open("tests/resources/sentences.wav", "rb") as f:
+    audio_artifact = AudioLoader().load(f.read())
+    
+# You can also use the load_file utility function
+AudioLoader().load(load_file("tests/resources/sentences.wav"))
+```

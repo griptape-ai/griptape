@@ -110,6 +110,7 @@ nav:
           - Event Listener Drivers: "griptape-framework/drivers/event-listener-drivers.md"
           - Structure Run Drivers: "griptape-framework/drivers/structure-run-drivers.md"
           - Text to Speech Drivers: "griptape-framework/drivers/text-to-speech-drivers.md"
+          - Audio Transcription Drivers: "griptape-framework/drivers/audio-transcription-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
@@ -146,6 +147,7 @@ nav:
           - OutpaintingImageGenerationClient: "griptape-tools/official-tools/outpainting-image-generation-client.md"
           - ImageQueryClient: "griptape-tools/official-tools/image-query-client.md"
           - TextToSpeechClient: "griptape-tools/official-tools/text-to-speech-client.md"
+          - AudioTranscriptionClient: "griptape-tools/official-tools/audio-transcription-client.md"
       - Custom Tools:
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
   - Recipes:
