@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from attrs import define, field
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 

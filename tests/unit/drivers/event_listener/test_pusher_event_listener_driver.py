@@ -2,7 +2,6 @@ from pytest import fixture
 from tests.mocks.mock_event import MockEvent
 from griptape.drivers.event_listener.pusher_event_listener_driver import PusherEventListenerDriver
 
-@mock_iotdata
 class TestPusherEventListenerDriver:
 
     @fixture()
