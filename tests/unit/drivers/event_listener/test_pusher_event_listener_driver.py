@@ -28,15 +28,15 @@ class TestPusherEventListenerDriver:
         assert driver
 
     def test_try_publish_event_payload(self, driver):
-        driver.try_publish_event_payload(MockEvent().to_dict())
+        data = MockEvent().to_dict()
+        driver.try_publish_event_payload(data)
 
-        assert driver.pusher_client.trigger.called_with(
-            channels="test-channel", event_name="test-event", data=MockEvent().to_dict()
-        )
+        driver.pusher_client.trigger.assert_called_with(channels="test-channel", event_name="test-event", data=data)
 
     def test_try_publish_event_payload_batch(self, driver):
-        driver.try_publish_event_payload_batch([MockEvent().to_dict() for _ in range(3)])
+        data = [MockEvent().to_dict() for _ in range(3)]
+        driver.try_publish_event_payload_batch(data)
 
-        assert driver.pusher_client.trigger_batch.called_with(
-            [{"channel": "test-channel", "name": "test-event", "data": MockEvent().to_dict()} for _ in range(3)]
+        driver.pusher_client.trigger_batch.assert_called_with(
+            [{"channel": "test-channel", "name": "test-event", "data": data[i]} for i in range(3)]
         )
