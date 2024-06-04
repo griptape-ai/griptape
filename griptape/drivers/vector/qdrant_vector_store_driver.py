@@ -122,7 +122,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             )
             for result in results
         ]
-        # print(query_results)
         return query_results
 
     def upsert_vector(
