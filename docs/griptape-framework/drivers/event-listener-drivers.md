@@ -214,6 +214,9 @@ agent.run("Analyze the pros and cons of remote work vs. office work")
 ```
 ### Pusher Event Listener Driver
 
+!!! info
+    This driver requires the `drivers-event-listener-pusher` [extra](../index.md#extras).
+
 The [PusherEventListenerDriver](../../reference/griptape/drivers/event_listener/pusher_event_listener_driver.md) sends Events to [Pusher](https://pusher.com).
 
 ```python
