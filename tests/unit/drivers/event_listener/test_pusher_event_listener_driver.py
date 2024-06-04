@@ -2,8 +2,8 @@ from pytest import fixture
 from tests.mocks.mock_event import MockEvent
 from griptape.drivers.event_listener.pusher_event_listener_driver import PusherEventListenerDriver
 
-class TestPusherEventListenerDriver:
 
+class TestPusherEventListenerDriver:
     @fixture()
     def driver(self):
         return PusherEventListenerDriver(
@@ -11,8 +11,8 @@ class TestPusherEventListenerDriver:
             key="test-key",
             secret="test-secret",
             cluster="test-cluster",
-            channel='test-channel',
-            event_name='test-event'
+            channel="test-channel",
+            event_name="test-event",
         )
 
     def test_init(self, driver):
