@@ -1,6 +1,6 @@
 ## Overview
 
-The `GriptapeCloudKnowledgeBaseClient` is an advanced Tool to retrieve data from a RAG pipeline and vector stores hosted in [Griptape Cloud](https://cloud.griptape.ai). It performs searches across a centralized [Knowledge Base](https://cloud.griptape.ai/knowledge-bases) that can consist of various data sources such as Confluence, Google Docs, and web pages.
+The `GriptapeCloudKnowledgeBaseClient` is a lightweight Tool to retrieve data from a RAG pipeline and vector store hosted in [Griptape Cloud](https://cloud.griptape.ai). It enables searching across a centralized [Knowledge Base](https://cloud.griptape.ai/knowledge-bases) that can consist of various data sources such as Confluence, Google Docs, and web pages.
 
 **Note:** This tool requires a [Knowledge Base](https://cloud.griptape.ai/knowledge-bases) hosted in Griptape Cloud and an [API Key](https://cloud.griptape.ai/keys) for access.
 
