@@ -18,16 +18,6 @@ Let's build a simple workflow. Let's say, we want to write a story in a fantasy 
 from griptape.tasks import PromptTask
 from griptape.structures import Workflow
 
-workflow = Workflow()
-
-def character_task(task_id, character_name) -> PromptTask:
-    return PromptTask(
-        "Based on the following world description create a character named {{ name }}:\n{{ parent_outputs['world'] }}",
-        context={
-            "name": character_name
-        },
-        id=task_id
-    )
 
 world_task = PromptTask(
     "Create a fictional world based on the following key words {{ keywords|join(', ') }}",
@@ -36,20 +26,27 @@ world_task = PromptTask(
     },
     id="world"
 )
-workflow.add_task(world_task)
+
+def character_task(task_id, character_name) -> PromptTask:
+    return PromptTask(
+        "Based on the following world description create a character named {{ name }}:\n{{ parent_outputs['world'] }}",
+        context={
+            "name": character_name
+        },
+        id=task_id,
+        parent_ids=["world"]
+    )
+
+scotty_task = character_task("scotty", "Scotty")
+annie_task = character_task("annie", "Annie")
 
 story_task = PromptTask(
     "Based on the following description of the world and characters, write a short story:\n{{ parent_outputs['world'] }}\n{{ parent_outputs['scotty'] }}\n{{ parent_outputs['annie'] }}",
-    id="story"
+    id="story",
+    parent_ids=["world", "scotty", "annie"]
 )
-workflow.add_task(story_task)
 
-character_task_1 = character_task("scotty", "Scotty")
-character_task_2 = character_task("annie", "Annie")
-
-# Note the preserve_relationship flag. This ensures that world_task remains a parent of
-# story_task so its output can be referenced in the story_task prompt.
-workflow.insert_tasks(world_task, [character_task_1, character_task_2], story_task, preserve_relationship=True)
+workflow = Workflow(tasks=[world_task, story_task, scotty_task, annie_task, story_task])
 
 workflow.run()
 ```
