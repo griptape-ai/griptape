@@ -112,6 +112,10 @@ jobs:
       AWS_IOT_CORE_ENDPOINT: ${{ secrets.INTEG_AWS_IOT_CORE_ENDPOINT }}
       AWS_IOT_CORE_TOPIC: ${{ secrets.INTEG_AWS_IOT_CORE_TOPIC }}
       ELEVEN_LABS_API_KEY: ${{ secrets.INTEG_ELEVEN_LABS_API_KEY }}
+      PUSHER_APP_ID: ${{ secrets.INTEG_PUSHER_APP_ID }}
+      PUSHER_KEY: ${{ secrets.INTEG_PUSHER_KEY }}
+      PUSHER_SECRET: ${{ secrets.INTEG_PUSHER_SECRET }}
+      PUSHER_CLUSTER: ${{ secretes.INTEG_PUSHER_CLUSTER }}
     services:
       postgres:
         image: ankane/pgvector:v0.5.0
