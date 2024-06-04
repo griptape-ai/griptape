@@ -117,7 +117,7 @@ jobs:
       PUSHER_APP_ID: ${{ secrets.INTEG_PUSHER_APP_ID }}
       PUSHER_KEY: ${{ secrets.INTEG_PUSHER_KEY }}
       PUSHER_SECRET: ${{ secrets.INTEG_PUSHER_SECRET }}
-      PUSHER_CLUSTER: ${{ secretes.INTEG_PUSHER_CLUSTER }}
+      PUSHER_CLUSTER: ${{ secrets.INTEG_PUSHER_CLUSTER }}
     services:
       postgres:
         image: ankane/pgvector:v0.5.0
