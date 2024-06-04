@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from attr import define, field
+from attrs import define, field
 from griptape.memory.structure import Run
 from griptape.utils import PromptStack
 from griptape.mixins import SerializableMixin
@@ -41,9 +41,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
             self.driver.store(self)
 
     @abstractmethod
-    def try_add_run(self, run: Run) -> None:
-        ...
+    def try_add_run(self, run: Run) -> None: ...
 
     @abstractmethod
-    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
-        ...
+    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack: ...

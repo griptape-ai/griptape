@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional, Union, cast
 
-from attr import field, define, Factory
+from attrs import field, define, Factory
 
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact

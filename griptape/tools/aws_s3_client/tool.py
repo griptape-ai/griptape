@@ -2,7 +2,7 @@ from __future__ import annotations
 import io
 from typing import Any, TYPE_CHECKING
 from schema import Schema, Literal
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient
@@ -88,6 +88,9 @@ class AwsS3Client(BaseAwsClient):
     def list_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
         try:
             objects = self.s3_client.list_objects_v2(Bucket=params["values"]["bucket_name"])
+
+            if "Contents" not in objects:
+                return ErrorArtifact("no objects found in the bucket")
 
             return ListArtifact([TextArtifact(str(o)) for o in objects["Contents"]])
         except Exception as e:

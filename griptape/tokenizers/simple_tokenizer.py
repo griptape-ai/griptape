@@ -1,11 +1,12 @@
 from __future__ import annotations
-from attr import define, field
+from typing import Optional
+from attrs import define, field
 from griptape.tokenizers import BaseTokenizer
 
 
 @define()
 class SimpleTokenizer(BaseTokenizer):
-    model: str = field(kw_only=True, init=False)
+    model: Optional[str] = field(init=False, kw_only=True, default=None)
     characters_per_token: int = field(kw_only=True)
 
     def count_tokens(self, text: str | list) -> int:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from abc import abstractmethod
-from attr import define
+from attrs import define
 from schema import Schema, Literal
 
 if TYPE_CHECKING:
@@ -13,24 +13,19 @@ if TYPE_CHECKING:
 @define(slots=False)
 class ActionsSubtaskOriginMixin:
     @abstractmethod
-    def find_tool(self, tool_name: str) -> BaseTool:
-        ...
+    def find_tool(self, tool_name: str) -> BaseTool: ...
 
     @abstractmethod
-    def find_memory(self, memory_name: str) -> TaskMemory:
-        ...
+    def find_memory(self, memory_name: str) -> TaskMemory: ...
 
     @abstractmethod
-    def find_subtask(self, subtask_id: str) -> ActionsSubtask:
-        ...
+    def find_subtask(self, subtask_id: str) -> ActionsSubtask: ...
 
     @abstractmethod
-    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
-        ...
+    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask: ...
 
     @abstractmethod
-    def actions_schema(self) -> Schema:
-        ...
+    def actions_schema(self) -> Schema: ...
 
     def _actions_schema_for_tools(self, tools: list[BaseTool]) -> Schema:
         action_schemas = []

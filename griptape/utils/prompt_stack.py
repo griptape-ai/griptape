@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from attr import define, field
+from attrs import define, field
 
 from griptape.mixins import SerializableMixin
 
@@ -66,7 +66,7 @@ class PromptStack(SerializableMixin):
 
         if memory.autoprune and hasattr(memory, "structure"):
             should_prune = True
-            prompt_driver = memory.structure.config.global_drivers.prompt_driver
+            prompt_driver = memory.structure.config.prompt_driver
             temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack, import_optional_dependency
 from griptape.drivers import BasePromptModelDriver
@@ -35,7 +35,7 @@ class SageMakerFalconPromptModelDriver(BasePromptModelDriver):
             "stop": stop_sequences,
         }
 
-    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
+    def process_output(self, output: dict | list[dict] | str | bytes) -> TextArtifact:
         if isinstance(output, list):
             return TextArtifact(output[0]["generated_text"].strip())
         else:

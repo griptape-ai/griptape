@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape import utils
 
 
@@ -38,8 +38,7 @@ class BaseTokenizer(ABC):
             return 0
 
     @abstractmethod
-    def count_tokens(self, text: str | list[dict]) -> int:
-        ...
+    def count_tokens(self, text: str | list[dict]) -> int: ...
 
     def _default_max_input_tokens(self) -> int:
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)

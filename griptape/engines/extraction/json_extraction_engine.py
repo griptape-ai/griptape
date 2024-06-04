@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional, cast
 import json
-from attr import field, Factory, define
+from attrs import field, Factory, define
 from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2

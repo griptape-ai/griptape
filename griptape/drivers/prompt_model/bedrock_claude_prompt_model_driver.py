@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 import json
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptModelDriver, AmazonBedrockPromptDriver
@@ -65,7 +65,7 @@ class BedrockClaudePromptModelDriver(BasePromptModelDriver):
             **input,
         }
 
-    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
+    def process_output(self, output: dict | list[dict] | str | bytes) -> TextArtifact:
         if isinstance(output, bytes):
             body = json.loads(output.decode())
         else:

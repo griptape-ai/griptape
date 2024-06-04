@@ -6,6 +6,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.26.0] - 2024-06-04
+
+### Added
+- `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
+- `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
+- `AudioLoader` for loading audio content into an `AudioArtifact`.
+- `AudioTranscriptionTask` and `AudioTranscriptionClient` for transcribing audio content in Structures.
+- `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
+- Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
+- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket. 
+
+### Changed
+- **BREAKING**: Removed `StructureConfig.global_drivers`. Pass Drivers directly to the Structure Config instead. 
+- **BREAKING**: Removed `StructureConfig.task_memory` in favor of configuring directly on the Structure.  
+- **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
+- **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
+- **BREAKING**: `AmazonSageMakerPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
+- **BREAKING**: `AmazonSageMakerPromptDriver.model` parameter is now optional being passed to `SageMakerRuntime.Client.invoke_endpoint` as `InferenceComponentName` (instead of `EndpointName`).
+- **BREAKING**: `SageMakerLlamaPromptModelDriver` modified to exclusively support the Llama 3 Instruct model deployed via SageMaker JumpStart. (Support for Llama 2 models has been removed.)
+- Simplified custom Task Memory configurations by making several `TextArtifactStorage` Engines optional.
+- Default the value of `azure_deployment` on all Azure Drivers to the model the Driver is using.
+- Field `azure_ad_token` on all Azure Drivers is no longer serializable.
+- Default standard OpenAI and Azure OpenAI image query model to `gpt-4o`.
+- Error message to be more helpful when importing optional dependencies.
+
+### Fixed
+- Extra fields being excluded when using `SerializableMixin.from_dict`.
+
 ## [0.25.1] - 2024-05-15
 
 ### Fixed

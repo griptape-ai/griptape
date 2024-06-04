@@ -2,12 +2,11 @@ from __future__ import annotations
 from typing import Optional, Any, Literal
 from collections.abc import Iterator
 import openai
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
-from typing import Tuple, Type
 import dateparser
 from datetime import datetime, timedelta
 

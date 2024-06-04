@@ -24,7 +24,7 @@ class TestListArtifact:
 
     def test_validate_value(self):
         with pytest.raises(ValueError):
-            ListArtifact([TextArtifact("foo"), BlobArtifact(b"bar")])
+            ListArtifact([TextArtifact("foo"), BlobArtifact(b"bar")], validate_uniform_types=True)
 
     def test_child_type(self):
         assert ListArtifact([TextArtifact("foo")]).child_type == TextArtifact

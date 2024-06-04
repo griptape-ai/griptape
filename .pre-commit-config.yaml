@@ -1,14 +1,27 @@
 repos:
--   repo: https://github.com/ambv/black
-    rev: 23.7.0
-    hooks:
-    - id: black
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.15.0
     hooks:
     - id: pyupgrade
       args: [--py39-plus, --keep-runtime-typing]
--   repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.355
-    hooks:
-    - id: pyright
+- repo: local
+  hooks:
+  - id: ruff-lint
+    name: Ruff
+    entry: make lint
+    language: system
+    types: [python]
+- repo: local
+  hooks:
+  - id: ruff-format
+    name: Ruff
+    entry: make format
+    language: system
+    types: [python]
+- repo: local
+  hooks:
+  - id: pyright
+    name: Pyright
+    entry: make check/types
+    language: system
+    types: [python]

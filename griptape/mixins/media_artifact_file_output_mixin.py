@@ -3,15 +3,15 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from attr import define, field
+from attrs import define, field
 from typing import Optional
 
 if TYPE_CHECKING:
-    from griptape.artifacts import ImageArtifact
+    from griptape.artifacts import BlobArtifact
 
 
 @define(slots=False)
-class ImageArtifactFileOutputMixin:
+class BlobArtifactFileOutputMixin:
     output_dir: Optional[str] = field(default=None, kw_only=True)
     output_file: Optional[str] = field(default=None, kw_only=True)
 
@@ -31,7 +31,7 @@ class ImageArtifactFileOutputMixin:
         if self.output_dir:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    def _write_to_file(self, artifact: ImageArtifact) -> None:
+    def _write_to_file(self, artifact: BlobArtifact) -> None:
         if self.output_file:
             outfile = self.output_file
         elif self.output_dir:

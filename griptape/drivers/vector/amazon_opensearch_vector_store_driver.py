@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from typing import Optional, TYPE_CHECKING
 from griptape.drivers import OpenSearchVectorStoreDriver
 from griptape.utils import import_optional_dependency, str_to_hash

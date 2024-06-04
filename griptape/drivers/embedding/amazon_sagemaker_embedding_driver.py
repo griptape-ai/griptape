@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import json
 from typing import Any
 
-from attr import Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.drivers import BaseMultiModelEmbeddingDriver
 from griptape.utils import import_optional_dependency

@@ -3,9 +3,18 @@ name: Docs Integration Tests
 on:
   pull_request_review:
     types: [submitted]
+  push:
+    branches:
+      - main
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
-    if: github.event.review.state == 'APPROVED'
+    if: github.event.review.state == 'APPROVED' || github.event_name == 'push'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -66,15 +75,20 @@ jobs:
       GRIPTAPE_CLOUD_API_KEY: ${{ secrets.INTEG_GRIPTAPE_CLOUD_API_KEY }}
       GRIPTAPE_CLOUD_STRUCTURE_ID: ${{ secrets.INTEG_GRIPTAPE_CLOUD_STRUCTURE_ID }}
       GRIPTAPE_CLOUD_BASE_URL: ${{ secrets.INTEG_GRIPTAPE_CLOUD_BASE_URL }}
+      GRIPTAPE_CLOUD_KB_ID: ${{ secrets.INTEG_GRIPTAPE_CLOUD_KB_ID }}
       OPENWEATHER_API_KEY: ${{ secrets.INTEG_OPENWEATHER_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.INTEG_ANTHROPIC_API_KEY }}
-      SAGEMAKER_LLAMA_ENDPOINT_NAME: ${{ secrets.INTEG_LLAMA_ENDPOINT_NAME }}
+      SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME: ${{ secrets.SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME }}
+      SAGEMAKER_LLAMA_3_INSTRUCT_INFERENCE_COMPONENT_NAME: ${{ secrets.SAGEMAKER_LLAMA_3_INSTRUCT_INFERENCE_COMPONENT_NAME }}
       SAGEMAKER_FALCON_ENDPOINT_NAME: ${{ secrets.INTEG_FALCON_ENDPOINT_NAME }}
+      SAGEMAKER_FALCON_INFERENCE_COMPONENT_NAME: ${{ secrets.INTEG_FALCON_INFERENCE_COMPONENT_NAME }}
       HUGGINGFACE_HUB_ACCESS_TOKEN: ${{ secrets.INTEG_HUGGINGFACE_HUB_ACCESS_TOKEN }}
       AZURE_OPENAI_ENDPOINT_1: ${{ secrets.INTEG_AZURE_OPENAI_ENDPOINT_1 }}
       AZURE_OPENAI_API_KEY_1: ${{ secrets.INTEG_AZURE_OPENAI_API_KEY_1 }}
       AZURE_OPENAI_ENDPOINT_2: ${{ secrets.INTEG_AZURE_OPENAI_ENDPOINT_2 }}
       AZURE_OPENAI_API_KEY_2: ${{ secrets.INTEG_AZURE_OPENAI_API_KEY_2 }}
+      AZURE_OPENAI_ENDPOINT_3: ${{ secrets.INTEG_AZURE_OPENAI_ENDPOINT_3 }}
+      AZURE_OPENAI_API_KEY_3: ${{ secrets.INTEG_AZURE_OPENAI_API_KEY_3 }}
       AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_35_TURBO_16K_DEPLOYMENT_ID }}
       AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_DAVINCI_DEPLOYMENT_ID }}
       AZURE_OPENAI_4_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_4_DEPLOYMENT_ID }}
@@ -100,6 +114,11 @@ jobs:
       GT_CLOUD_STRUCTURE_RUN_ID: ${{ secrets.INTEG_GT_CLOUD_STRUCTURE_RUN_ID }}
       AWS_IOT_CORE_ENDPOINT: ${{ secrets.INTEG_AWS_IOT_CORE_ENDPOINT }}
       AWS_IOT_CORE_TOPIC: ${{ secrets.INTEG_AWS_IOT_CORE_TOPIC }}
+      ELEVEN_LABS_API_KEY: ${{ secrets.INTEG_ELEVEN_LABS_API_KEY }}
+      PUSHER_APP_ID: ${{ secrets.INTEG_PUSHER_APP_ID }}
+      PUSHER_KEY: ${{ secrets.INTEG_PUSHER_KEY }}
+      PUSHER_SECRET: ${{ secrets.INTEG_PUSHER_SECRET }}
+      PUSHER_CLUSTER: ${{ secrets.INTEG_PUSHER_CLUSTER }}
     services:
       postgres:
         image: ankane/pgvector:v0.5.0
@@ -122,6 +141,7 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v44
+        if: github.event_name == 'pull_request_review'
         with:
           files: |
              **.md
@@ -133,7 +153,7 @@ jobs:
             echo "$file was changed"
           done
       - name: Run integration tests
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: pytest -n auto tests/integration/test_code_blocks.py
+        if: steps.changed-files.outputs.any_changed == 'true' || github.event_name == 'push'
+        run: make test/integration
         env:
-          DOCS_ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          DOCS_ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files || '' }}

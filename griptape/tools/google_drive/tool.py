@@ -3,7 +3,7 @@ import logging
 from typing import Any, Optional
 import schema
 from schema import Schema, Literal, Or
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseGoogleClient
@@ -45,7 +45,7 @@ class GoogleDriveClient(BaseGoogleClient):
     )
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
-        from google.auth.exceptions import MalformedError  # pyright: ignore
+        from google.auth.exceptions import MalformedError  # pyright: ignore[reportMissingImports]
 
         folder_path = values.get("folder_path", self.DEFAULT_FOLDER_PATH)
 
@@ -168,8 +168,8 @@ class GoogleDriveClient(BaseGoogleClient):
         }
     )
     def download_files(self, params: dict) -> ListArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError  # pyright: ignore
-        from googleapiclient.errors import HttpError  # pyright: ignore
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError  # pyright: ignore[reportMissingImports]
 
         values = params["values"]
         downloaded_files = []
@@ -212,7 +212,10 @@ class GoogleDriveClient(BaseGoogleClient):
                         "search_mode",
                         description="File search mode. Use 'name' to search in file name or "
                         "'content' to search in file content",
-                    ): Or("name", "content"),
+                    ): Or(
+                        "name",  # pyright: ignore [reportArgumentType]
+                        "content",  # pyright: ignore [reportArgumentType]
+                    ),
                     Literal(
                         "search_query",
                         description="Query to search for. If search_mode is 'name', it's the file name. If 'content', "
@@ -229,8 +232,8 @@ class GoogleDriveClient(BaseGoogleClient):
         }
     )
     def search_files(self, params: dict) -> ListArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError  # pyright: ignore
-        from googleapiclient.errors import HttpError  # pyright: ignore
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError  # pyright: ignore[reportMissingImports]
 
         values = params["values"]
 
@@ -285,14 +288,18 @@ class GoogleDriveClient(BaseGoogleClient):
                         "role",
                         default="reader",
                         description="The role to give to the user, e.g., 'reader', 'writer', or 'commenter'",
-                    ): Or("reader", "writer", "commenter"),
+                    ): Or(
+                        "reader",  # pyright: ignore [reportArgumentType]
+                        "writer",  # pyright: ignore [reportArgumentType]
+                        "commenter",  # pyright: ignore [reportArgumentType]
+                    ),
                 }
             ),
         }
     )
     def share_file(self, params: dict) -> InfoArtifact | ErrorArtifact:
-        from google.auth.exceptions import MalformedError  # pyright: ignore
-        from googleapiclient.errors import HttpError  # pyright: ignore
+        from google.auth.exceptions import MalformedError
+        from googleapiclient.errors import HttpError  # pyright: ignore [reportMissingImports]
 
         values = params["values"]
         file_path = values.get("file_path")
@@ -328,7 +335,7 @@ class GoogleDriveClient(BaseGoogleClient):
     def _save_to_drive(
         self, filename: str, value: Any, parent_folder_id: Optional[str] = None
     ) -> InfoArtifact | ErrorArtifact:
-        from googleapiclient.http import MediaIoBaseUpload  # pyright: ignore
+        from googleapiclient.http import MediaIoBaseUpload  # pyright: ignore[reportMissingImports]
 
         service = self._build_client(self.DRIVE_FILE_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email)
 

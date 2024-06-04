@@ -1,6 +1,6 @@
 from typing import Optional
 from collections.abc import Sequence
-from attr import field, define
+from attrs import field, define
 from griptape.artifacts import BaseArtifact
 
 
@@ -8,10 +8,11 @@ from griptape.artifacts import BaseArtifact
 class ListArtifact(BaseArtifact):
     value: Sequence[BaseArtifact] = field(factory=list, metadata={"serializable": True})
     item_separator: str = field(default="\n\n", kw_only=True, metadata={"serializable": True})
+    validate_uniform_types: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     @value.validator  # pyright: ignore
     def validate_value(self, _, value: list[BaseArtifact]) -> None:
-        if len(value) > 0:
+        if self.validate_uniform_types and len(value) > 0:
             first_type = type(value[0])
 
             if not all(isinstance(v, first_type) for v in value):

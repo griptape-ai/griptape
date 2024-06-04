@@ -2,12 +2,12 @@ from __future__ import annotations
 from typing import Optional, cast
 import csv
 import io
-from attr import field, Factory, define
+from attrs import field, Factory, define
 from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, ErrorArtifact
 from griptape.utils import PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
-from griptape.rules import Ruleset, rule
+from griptape.rules import Ruleset
 
 
 @define

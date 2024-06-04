@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Callable
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.mixins.rule_mixin import RuleMixin

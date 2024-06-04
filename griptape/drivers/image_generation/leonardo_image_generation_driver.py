@@ -3,7 +3,7 @@ import time
 from typing import Optional, Literal
 
 import requests
-from attr import field, define, Factory
+from attrs import field, define, Factory
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver

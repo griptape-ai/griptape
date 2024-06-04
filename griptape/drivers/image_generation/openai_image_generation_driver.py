@@ -5,7 +5,7 @@ from typing import Literal, Optional, cast, Union
 
 import openai
 from openai.types.images_response import ImagesResponse
-from attr import field, Factory, define
+from attrs import field, Factory, define
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
@@ -46,9 +46,9 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
     quality: Union[Literal["standard"], Literal["hd"]] = field(
         default="standard", kw_only=True, metadata={"serializable": True}
     )
-    image_size: (
-        Union[Literal["256x256"], Literal["512x512"], Literal["1024x1024"], Literal["1024x1792"], Literal["1792x1024"]]
-    ) = field(default="1024x1024", kw_only=True, metadata={"serializable": True})
+    image_size: Union[
+        Literal["256x256"], Literal["512x512"], Literal["1024x1024"], Literal["1024x1792"], Literal["1792x1024"]
+    ] = field(default="1024x1024", kw_only=True, metadata={"serializable": True})
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True, metadata={"serializable": True})
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:

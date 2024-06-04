@@ -1,5 +1,4 @@
-from typing import Optional, Union
-from collections.abc import Sequence
+from typing import Optional
 
 from attrs import define, field
 
@@ -10,7 +9,5 @@ from griptape.events.base_event import BaseEvent
 @define
 class FinishStructureRunEvent(BaseEvent):
     structure_id: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    output_task_input: Union[
-        BaseArtifact, tuple[BaseArtifact, ...], tuple[BaseArtifact, Sequence[BaseArtifact]]
-    ] = field(kw_only=True, metadata={"serializable": True})
+    output_task_input: BaseArtifact = field(kw_only=True, metadata={"serializable": True})
     output_task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serializable": True})

@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import Optional, TYPE_CHECKING
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import TextArtifact, ImageArtifact
 from griptape.events import StartImageQueryEvent, FinishImageQueryEvent
@@ -42,5 +42,4 @@ class BaseImageQueryDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             raise Exception("image query driver failed after all retry attempts")
 
     @abstractmethod
-    def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
-        ...
+    def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact: ...

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Callable
 
-from attr import define, field
+from attrs import define, field
 
-from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 from griptape.engines import ImageQueryEngine
 from griptape.tasks import BaseTask
 from griptape.utils import J2
@@ -23,19 +23,24 @@ class ImageQueryTask(BaseTask):
     """
 
     _image_query_engine: ImageQueryEngine = field(default=None, kw_only=True, alias="image_query_engine")
-    _input: tuple[str, list[ImageArtifact]] | tuple[TextArtifact, list[ImageArtifact]] | Callable[
-        [BaseTask], tuple[TextArtifact, list[ImageArtifact]]
-    ] = field(default=None, alias="input")
+    _input: (
+        tuple[str, list[ImageArtifact]]
+        | tuple[TextArtifact, list[ImageArtifact]]
+        | Callable[[BaseTask], ListArtifact]
+        | ListArtifact
+    ) = field(default=None, alias="input")
 
     @property
-    def input(self) -> tuple[TextArtifact, list[ImageArtifact]]:
-        if isinstance(self._input, tuple):
+    def input(self) -> ListArtifact:
+        if isinstance(self._input, ListArtifact):
+            return self._input
+        elif isinstance(self._input, tuple):
             if isinstance(self._input[0], TextArtifact):
                 query_text = self._input[0]
             else:
                 query_text = TextArtifact(J2().render_from_string(self._input[0], **self.full_context))
 
-            return query_text, self._input[1]
+            return ListArtifact([query_text, *self._input[1]])
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
@@ -47,8 +52,11 @@ class ImageQueryTask(BaseTask):
     @input.setter
     def input(
         self,
-        value: tuple[TextArtifact, list[ImageArtifact]]
-        | Callable[[BaseTask], tuple[TextArtifact, list[ImageArtifact]]],
+        value: (
+            tuple[str, list[ImageArtifact]]
+            | tuple[TextArtifact, list[ImageArtifact]]
+            | Callable[[BaseTask], ListArtifact]
+        ),
     ) -> None:
         self._input = value
 
@@ -56,9 +64,7 @@ class ImageQueryTask(BaseTask):
     def image_query_engine(self) -> ImageQueryEngine:
         if self._image_query_engine is None:
             if self.structure is not None:
-                self._image_query_engine = ImageQueryEngine(
-                    image_query_driver=self.structure.config.global_drivers.image_query_driver
-                )
+                self._image_query_engine = ImageQueryEngine(image_query_driver=self.structure.config.image_query_driver)
             else:
                 raise ValueError("Image Query Engine is not set.")
         return self._image_query_engine
@@ -68,8 +74,13 @@ class ImageQueryTask(BaseTask):
         self._image_query_engine = value
 
     def run(self) -> TextArtifact:
-        query, image_artifacts = self.input
+        query = self.input.value[0]
 
-        response = self.image_query_engine.run(query.value, image_artifacts)
+        if all([isinstance(input, ImageArtifact) for input in self.input.value[1:]]):
+            image_artifacts = [input for input in self.input.value[1:] if isinstance(input, ImageArtifact)]
+        else:
+            raise ValueError("All inputs after the query must be ImageArtifacts.")
 
-        return response
+        self.output = self.image_query_engine.run(query.value, image_artifacts)
+
+        return self.output

@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import Mock
-from griptape.drivers import OpenAiVisionImageQueryDriver
+from griptape.drivers import OpenAiImageQueryDriver
 from griptape.artifacts import ImageArtifact
 
 
@@ -13,10 +13,10 @@ class TestOpenAiVisionImageQueryDriver:
         return mock_chat_create
 
     def test_init(self):
-        assert OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview")
+        assert OpenAiImageQueryDriver(model="gpt-4-vision-preview")
 
     def test_try_query_defaults(self, mock_completion_create):
-        driver = OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview")
+        driver = OpenAiImageQueryDriver(model="gpt-4-vision-preview")
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
         test_image = ImageArtifact(value=test_binary_data, width=100, height=100, format="png")
@@ -29,7 +29,7 @@ class TestOpenAiVisionImageQueryDriver:
         assert text_artifact.value == "expected_output_text"
 
     def test_try_query_max_tokens(self, mock_completion_create):
-        driver = OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview", max_tokens=1024)
+        driver = OpenAiImageQueryDriver(model="gpt-4-vision-preview", max_tokens=1024)
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
         test_image = ImageArtifact(value=test_binary_data, width=100, height=100, format="png")
@@ -41,7 +41,7 @@ class TestOpenAiVisionImageQueryDriver:
 
     def test_try_query_multiple_choices(self, mock_completion_create):
         mock_completion_create.return_value.choices.append(Mock(message=Mock(content="expected_output_text2")))
-        driver = OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview")
+        driver = OpenAiImageQueryDriver(model="gpt-4-vision-preview")
 
         with pytest.raises(Exception):
             driver.try_query("Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100, format="png")])

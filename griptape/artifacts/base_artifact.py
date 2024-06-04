@@ -4,7 +4,7 @@ from typing import Any
 import json
 import uuid
 from abc import ABC, abstractmethod
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 
 @define()
@@ -44,5 +44,4 @@ class BaseArtifact(SerializableMixin, ABC):
         return len(self.value)
 
     @abstractmethod
-    def __add__(self, other: BaseArtifact) -> BaseArtifact:
-        ...
+    def __add__(self, other: BaseArtifact) -> BaseArtifact: ...

@@ -22,6 +22,28 @@ agent = Agent(
 agent = Agent() # This is equivalent to the above
 ```
 
+#### Azure OpenAI
+
+The [Azure OpenAI Structure Config](../../reference/griptape/config/azure_openai_structure_config.md) provides default Drivers for Azure's OpenAI APIs.
+
+
+```python
+import os
+from griptape.structures import Agent
+from griptape.config import AzureOpenAiStructureConfig
+
+agent = Agent(
+    config=AzureOpenAiStructureConfig(
+        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
+        api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
+    ).merge_config({
+        "image_query_driver": {
+            "azure_deployment": "gpt-4o",
+        },
+    }),
+)
+```
+
 #### Amazon Bedrock
 The [Amazon Bedrock Structure Config](../../reference/griptape/config/amazon_bedrock_structure_config.md) provides default Drivers for Amazon Bedrock's APIs.
 
@@ -74,41 +96,16 @@ This approach ensures that you are informed through clear error messages if you 
 ```python
 import os
 from griptape.structures import Agent
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 from griptape.drivers import AnthropicPromptDriver
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AnthropicPromptDriver(
-                model="claude-3-sonnet-20240229",
-                api_key=os.environ["ANTHROPIC_API_KEY"],
-            )
+        prompt_driver=AnthropicPromptDriver(
+            model="claude-3-sonnet-20240229",
+            api_key=os.environ["ANTHROPIC_API_KEY"],
         )
     ),
-)
-```
-
-### Task Memory
-
-Griptape allows for detailed control over [Task Memory](./task-memory.md) settings, permitting overrides on a per Engine basis, beyond the global Drivers configuration.
-
-```python
-from griptape.structures import Agent
-from griptape.config import StructureConfig, StructureTaskMemoryConfig, StructureTaskMemoryQueryEngineConfig
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
-
-
-agent = Agent(
-    config=StructureConfig(
-        task_memory=StructureTaskMemoryConfig(
-            query_engine=StructureTaskMemoryQueryEngineConfig(
-                vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=OpenAiEmbeddingDriver(),
-                )
-            )
-        )
-    )
 )
 ```
 
@@ -122,26 +119,26 @@ from griptape.config import AmazonBedrockStructureConfig
 from griptape.drivers import AmazonBedrockCohereEmbeddingDriver
 
 custom_config = AmazonBedrockStructureConfig()
-custom_config.global_drivers.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
+custom_config.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
 custom_config.merge_config(
     {
-        "task_memory": {
-            "summary_engine": {
-                "prompt_driver": {
-                    "model": "amazon.titan-text-express-v1",
-                    "prompt_model_driver": {
-                        "type": "BedrockTitanPromptModelDriver",
-                    },
-                }
-            }
-        }
+        "embedding_driver": {
+            "base_url": None,
+            "model": "text-embedding-3-small",
+            "organization": None,
+            "type": "OpenAiEmbeddingDriver",
+        },
     }
 )
 serialized_config = custom_config.to_json()
 deserialized_config = AmazonBedrockStructureConfig.from_json(serialized_config)
 
 agent = Agent(
-    config=deserialized_config,
+    config=deserialized_config.merge_config({
+        "prompt_driver" : {
+            "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+        },
+    }),
 )
 ```
 

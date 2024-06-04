@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 import logging
 import uuid
 from abc import ABC, abstractmethod
@@ -12,14 +11,7 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
-from griptape.drivers import (
-    BaseEmbeddingDriver,
-    BasePromptDriver,
-    DummyPromptDriver,
-    DummyVectorStoreDriver,
-    OpenAiEmbeddingDriver,
-    OpenAiChatPromptDriver,
-)
+from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
 from griptape.events import BaseEvent, EventListener
@@ -56,8 +48,7 @@ class Structure(ABC):
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(
-            lambda self: ConversationMemory(driver=self.config.global_drivers.conversation_memory_driver),
-            takes_self=True,
+            lambda self: ConversationMemory(driver=self.config.conversation_memory_driver), takes_self=True
         ),
         kw_only=True,
     )
@@ -98,19 +89,17 @@ class Structure(ABC):
     @prompt_driver.validator  # pyright: ignore
     def validate_prompt_driver(self, attribute, value):
         if value is not None:
-            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.global_drivers.prompt_driver` instead.")
+            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver` instead.")
 
     @embedding_driver.validator  # pyright: ignore
     def validate_embedding_driver(self, attribute, value):
         if value is not None:
-            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.global_drivers.embedding_driver` instead.")
+            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.embedding_driver` instead.")
 
     @stream.validator  # pyright: ignore
     def validate_stream(self, attribute, value):
         if value is not None:
-            deprecation_warn(
-                f"`{attribute.name}` is deprecated, use `config.global_drivers.prompt_driver.stream` instead."
-            )
+            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver.stream` instead.")
 
     @property
     def execution_args(self) -> tuple:
@@ -148,7 +137,7 @@ class Structure(ABC):
             config = StructureConfig()
 
             if self.prompt_driver is None:
-                prompt_driver = OpenAiChatPromptDriver(model="gpt-4")
+                prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
             else:
                 prompt_driver = self.prompt_driver
 
@@ -162,15 +151,9 @@ class Structure(ABC):
 
             vector_store_driver = LocalVectorStoreDriver(embedding_driver=embedding_driver)
 
-            config.global_drivers.prompt_driver = prompt_driver
-            config.global_drivers.vector_store_driver = vector_store_driver
-            config.global_drivers.embedding_driver = embedding_driver
-
-            config.task_memory.query_engine.prompt_driver = prompt_driver
-            config.task_memory.query_engine.vector_store_driver = vector_store_driver
-            config.task_memory.summary_engine.prompt_driver = prompt_driver
-            config.task_memory.extraction_engine.csv.prompt_driver = prompt_driver
-            config.task_memory.extraction_engine.json.prompt_driver = prompt_driver
+            config.prompt_driver = prompt_driver
+            config.vector_store_driver = vector_store_driver
+            config.embedding_driver = embedding_driver
         else:
             config = OpenAiStructureConfig()
 
@@ -178,45 +161,15 @@ class Structure(ABC):
 
     @property
     def default_task_memory(self) -> TaskMemory:
-        global_drivers = self.config.global_drivers
-        task_memory = self.config.task_memory
-
         return TaskMemory(
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     query_engine=VectorQueryEngine(
-                        prompt_driver=(
-                            global_drivers.prompt_driver
-                            if isinstance(task_memory.query_engine.prompt_driver, DummyPromptDriver)
-                            else task_memory.query_engine.prompt_driver
-                        ),
-                        vector_store_driver=(
-                            global_drivers.vector_store_driver
-                            if isinstance(task_memory.query_engine.prompt_driver, DummyVectorStoreDriver)
-                            else task_memory.query_engine.vector_store_driver
-                        ),
+                        prompt_driver=self.config.prompt_driver, vector_store_driver=self.config.vector_store_driver
                     ),
-                    summary_engine=PromptSummaryEngine(
-                        prompt_driver=(
-                            global_drivers.prompt_driver
-                            if isinstance(task_memory.summary_engine.prompt_driver, DummyPromptDriver)
-                            else task_memory.summary_engine.prompt_driver
-                        )
-                    ),
-                    csv_extraction_engine=CsvExtractionEngine(
-                        prompt_driver=(
-                            global_drivers.prompt_driver
-                            if isinstance(task_memory.extraction_engine.csv.prompt_driver, DummyPromptDriver)
-                            else task_memory.extraction_engine.csv.prompt_driver
-                        )
-                    ),
-                    json_extraction_engine=JsonExtractionEngine(
-                        prompt_driver=(
-                            global_drivers.prompt_driver
-                            if isinstance(task_memory.extraction_engine.json.prompt_driver, DummyPromptDriver)
-                            else task_memory.extraction_engine.json.prompt_driver
-                        )
-                    ),
+                    summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
+                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),
+                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.config.prompt_driver),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
             }
@@ -274,8 +227,7 @@ class Structure(ABC):
         )
 
     @abstractmethod
-    def add_task(self, task: BaseTask) -> BaseTask:
-        ...
+    def add_task(self, task: BaseTask) -> BaseTask: ...
 
     def run(self, *args) -> Structure:
         self.before_run()
@@ -287,5 +239,4 @@ class Structure(ABC):
         return result
 
     @abstractmethod
-    def try_run(self, *args) -> Structure:
-        ...
+    def try_run(self, *args) -> Structure: ...

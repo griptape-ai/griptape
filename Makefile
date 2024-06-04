@@ -12,6 +12,48 @@ publish: ## Push git tag and publish version to PyPI.
 	@poetry build
 	@poetry publish
 
+.PHONY: install
+install: ## Install all dependencies.
+	@poetry install --with dev --with test --with docs --all-extras
+
+.PHONY: test
+test: test/unit test/integration ## Run all tests.
+
+.PHONY: test/unit
+test/unit: ## Run unit tests.
+	@poetry run pytest -n auto tests/unit
+
+.PHONY: test/unit/coverage
+test/unit/coverage:
+	@poetry run pytest -n auto --cov=griptape tests/unit
+
+.PHONY: test/integration
+test/integration:
+	@poetry run pytest -n auto tests/integration/test_code_blocks.py
+
+.PHONY: lint
+lint: ## Lint project.
+	@poetry run ruff check --fix griptape/
+
+.PHONY: format
+format: ## Format project.
+	@poetry run ruff format .
+
+.PHONY: check
+check: check/format check/lint check/types ## Run all checks.
+
+.PHONY: check/format
+check/format:
+	@poetry run ruff format --check griptape/
+
+.PHONY: check/lint
+check/lint:
+	@poetry run ruff check griptape/
+
+.PHONY: check/types
+check/types:
+	@poetry run pyright griptape/
+
 .DEFAULT_GOAL := help
 .PHONY: help
 help: ## Print Makefile help text.

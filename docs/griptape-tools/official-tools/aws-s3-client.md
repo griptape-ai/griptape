@@ -9,7 +9,8 @@ from griptape.tools import AwsS3Client, TaskMemoryClient
 
 # Initialize the AWS S3 client
 aws_s3_client = AwsS3Client(
-    session=boto3.Session()
+    session=boto3.Session(),
+    off_prompt=True
 )
 
 # Create an agent with the AWS S3 client tool

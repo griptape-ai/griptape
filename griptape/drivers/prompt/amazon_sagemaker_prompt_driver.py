@@ -2,7 +2,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 from collections.abc import Iterator
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.utils import import_optional_dependency
 from .base_multi_model_prompt_driver import BaseMultiModelPromptDriver
@@ -18,6 +18,8 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
     sagemaker_client: Any = field(
         default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True), kw_only=True
     )
+    endpoint: str = field(kw_only=True, metadata={"serializable": True})
+    model: str = field(default=None, kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
@@ -32,10 +34,11 @@ class AmazonSageMakerPromptDriver(BaseMultiModelPromptDriver):
             "parameters": self.prompt_model_driver.prompt_stack_to_model_params(prompt_stack),
         }
         response = self.sagemaker_client.invoke_endpoint(
-            EndpointName=self.model,
+            EndpointName=self.endpoint,
             ContentType="application/json",
             Body=json.dumps(payload),
             CustomAttributes=self.custom_attributes,
+            **({"InferenceComponentName": self.model} if self.model is not None else {}),
         )
 
         decoded_body = json.loads(response["Body"].read().decode("utf8"))

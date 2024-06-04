@@ -4,7 +4,8 @@
 [![Tests](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/griptape-ai/griptape/actions/workflows/unit-tests.yml)
 [![Docs](https://readthedocs.org/projects/griptape/badge/)](https://griptape.readthedocs.io/)
 [![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![codecov](https://codecov.io/github/griptape-ai/griptape/graph/badge.svg?token=HUBqUpl3NB)](https://codecov.io/github/griptape-ai/griptape)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
 
 Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
@@ -93,9 +94,9 @@ from griptape.tools import WebScraper, FileManager, TaskMemoryClient
 agent = Agent(
     input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
-        WebScraper(),
-        FileManager(),
-        TaskMemoryClient(off_prompt=True)
+        WebScraper(off_prompt=True),
+        TaskMemoryClient(off_prompt=True),
+        FileManager()
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
@@ -141,13 +142,13 @@ And here is the output:
                              Output: The summarized content of the website https://griptape.ai has been successfully saved to a file named 'griptape.txt'.
 ```
 
-During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Task Memory**, queried it to answer the original question, and finally saved the answer to a file.
+During the run, the Griptape Agent loaded a webpage with a [Tool](https://docs.griptape.ai/stable/griptape-tools/), stored its full content in [Task Memory](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md), queried it to answer the original question, and finally saved the answer to a file.
 
 The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
 
-All Tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `TaskMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
+In the above example, we set [off_prompt](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md#off-prompt) to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
-[Check out our docs](https://docs.griptape.ai/latest/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
+[Check out our docs](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
 ## Versioning
 
@@ -179,14 +180,20 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 4. **Documentation:** Every pull request must include updates to documentation or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
 
-5. **Code Style:** Griptape uses [Black](https://github.com/ambv/black) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
+5. **Code Style:** Griptape uses [Ruff](https://github.com/astral-sh/ruff) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
 
 ### Tools
 
-Install dev dependencies with Poetry:
+Install dev dependencies via Make:
 
 ```shell
-poetry install --all-extras --with dev --with test
+make install
+```
+
+Or install by calling Poetry directly:
+
+```shell
+poetry install --all-extras --with dev --with test --with docs
 ```
 
 Configure pre-commit to ensure that your code is formatted correctly and passes all checks:

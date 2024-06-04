@@ -1,5 +1,5 @@
 from typing import Optional
-from attr import define
+from attrs import define
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryDriver
 from griptape.drivers.image_generation.base_image_generation_driver import BaseImageGenerationDriver

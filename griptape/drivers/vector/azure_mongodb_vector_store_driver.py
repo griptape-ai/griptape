@@ -1,12 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
-from attr import define, field, Factory
+from typing import Optional
+from attrs import define
 from griptape.drivers import BaseVectorStoreDriver, MongoDbAtlasVectorStoreDriver
-from griptape.utils import import_optional_dependency
-
-if TYPE_CHECKING:
-    from pymongo import MongoClient
-    from pymongo.collection import Collection
 
 
 @define

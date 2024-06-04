@@ -10,12 +10,12 @@ from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.mixins import ImageArtifactFileOutputMixin
+from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 
 @define
-class OutpaintingImageGenerationClient(ImageArtifactFileOutputMixin, BaseTool):
+class OutpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
     """A tool that can be used to generate prompted outpaintings of an image.
 
     Attributes:

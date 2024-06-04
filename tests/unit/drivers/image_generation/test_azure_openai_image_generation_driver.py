@@ -16,17 +16,17 @@ class TestAzureOpenAiImageGenerationDriver:
 
     def test_init(self, driver):
         assert driver
+        assert (
+            AzureOpenAiImageGenerationDriver(
+                model="dall-e-3", client=Mock(), azure_endpoint="https://dalle.example.com", image_size="512x512"
+            ).azure_deployment
+            == "dall-e-3"
+        )
 
     def test_init_requires_endpoint(self):
         with pytest.raises(TypeError):
             AzureOpenAiImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_deployment="dalle-deployment", image_size="512x512"
-            )  # pyright: ignore
-
-    def test_init_requires_deployment(self):
-        with pytest.raises(TypeError):
-            AzureOpenAiImageGenerationDriver(
-                model="dall-e-3", client=Mock(), azure_endpoint="https://dalle.example.com", image_size="512x512"
             )  # pyright: ignore
 
     def test_try_text_to_image(self, driver):

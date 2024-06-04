@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from openai.types.chat import (
     ChatCompletionUserMessageParam,
     ChatCompletionContentPartParam,
@@ -16,7 +16,7 @@ from griptape.drivers.image_query.base_image_query_driver import BaseImageQueryD
 
 
 @define
-class OpenAiVisionImageQueryDriver(BaseImageQueryDriver):
+class OpenAiImageQueryDriver(BaseImageQueryDriver):
     model: str = field(kw_only=True, metadata={"serializable": True})
     api_type: str = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})

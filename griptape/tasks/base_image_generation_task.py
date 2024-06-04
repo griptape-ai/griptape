@@ -3,17 +3,17 @@ from __future__ import annotations
 import os
 from abc import ABC
 
-from attr import field, define
+from attrs import field, define
 
-from griptape.artifacts import ImageArtifact
+from griptape.artifacts import MediaArtifact
 from griptape.loaders import ImageLoader
-from griptape.mixins import RuleMixin, ImageArtifactFileOutputMixin
+from griptape.mixins import RuleMixin, BlobArtifactFileOutputMixin
 from griptape.rules import Ruleset, Rule
 from griptape.tasks import BaseTask
 
 
 @define
-class BaseImageGenerationTask(ImageArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
+class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
     """Provides a base class for image generation-related tasks.
 
     Attributes:
@@ -55,7 +55,7 @@ class BaseImageGenerationTask(ImageArtifactFileOutputMixin, RuleMixin, BaseTask,
 
         return task_rulesets
 
-    def _read_from_file(self, path: str) -> ImageArtifact:
+    def _read_from_file(self, path: str) -> MediaArtifact:
         self.structure.logger.info(f"Reading image from {os.path.abspath(path)}")
         with open(path, "rb") as file:
             return ImageLoader().load(file.read())

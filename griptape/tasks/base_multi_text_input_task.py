@@ -3,9 +3,9 @@ from __future__ import annotations
 from abc import ABC
 from typing import Callable
 
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
@@ -20,20 +20,19 @@ class BaseMultiTextInputTask(RuleMixin, BaseTask, ABC):
     )
 
     @property
-    def input(self) -> tuple[TextArtifact, ...]:
+    def input(self) -> ListArtifact:
         if all(isinstance(elem, TextArtifact) for elem in self._input):
-            return self._input  # pyright: ignore
+            return ListArtifact([artifact for artifact in self._input if isinstance(artifact, TextArtifact)])
         elif all(isinstance(elem, Callable) for elem in self._input):
-            return tuple([elem(self) for elem in self._input])  # pyright: ignore
-        elif isinstance(self._input, tuple):
-            return tuple(
+            return ListArtifact([callable(self) for callable in self._input if isinstance(callable, Callable)])
+        else:
+            return ListArtifact(
                 [
-                    TextArtifact(J2().render_from_string(input_template, **self.full_context))  # pyright: ignore
+                    TextArtifact(J2().render_from_string(input_template, **self.full_context))
                     for input_template in self._input
+                    if isinstance(input_template, str)
                 ]
             )
-        else:
-            return tuple([TextArtifact(J2().render_from_string(self._input, **self.full_context))])
 
     @input.setter
     def input(

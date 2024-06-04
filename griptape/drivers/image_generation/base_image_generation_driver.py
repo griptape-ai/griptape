@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.events import StartImageGenerationEvent, FinishImageGenerationEvent
@@ -89,14 +89,12 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
             raise Exception("Failed to run image outpainting")
 
     @abstractmethod
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
-        ...
+    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact: ...
 
     @abstractmethod
     def try_image_variation(
         self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
-    ) -> ImageArtifact:
-        ...
+    ) -> ImageArtifact: ...
 
     @abstractmethod
     def try_image_inpainting(
@@ -105,8 +103,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         image: ImageArtifact,
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
-    ) -> ImageArtifact:
-        ...
+    ) -> ImageArtifact: ...
 
     @abstractmethod
     def try_image_outpainting(
@@ -115,5 +112,4 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         image: ImageArtifact,
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
-    ) -> ImageArtifact:
-        ...
+    ) -> ImageArtifact: ...

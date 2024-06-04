@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.engines import PromptSummaryEngine
 from griptape.tasks import BaseTextInputTask
@@ -17,9 +17,7 @@ class TextSummaryTask(BaseTextInputTask):
     def summary_engine(self) -> Optional[BaseSummaryEngine]:
         if self._summary_engine is None:
             if self.structure is not None:
-                self._summary_engine = PromptSummaryEngine(
-                    prompt_driver=self.structure.config.global_drivers.prompt_driver
-                )
+                self._summary_engine = PromptSummaryEngine(prompt_driver=self.structure.config.prompt_driver)
             else:
                 raise ValueError("Summary Engine is not set.")
         return self._summary_engine

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from attr import define
+from attrs import define
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.rules import Ruleset
 
@@ -11,5 +11,6 @@ class BaseSummaryEngine(ABC):
         return self.summarize_artifacts(ListArtifact([TextArtifact(text)]), rulesets=rulesets).value
 
     @abstractmethod
-    def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
-        ...
+    def summarize_artifacts(
+        self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None
+    ) -> TextArtifact: ...

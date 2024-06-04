@@ -1,5 +1,5 @@
 from __future__ import annotations
-from attr import define, field
+from attrs import define
 from schema import Schema, Literal
 from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
 from griptape.tools import BaseTool
@@ -8,8 +8,6 @@ from griptape.utils.decorators import activity
 
 @define
 class TaskMemoryClient(BaseTool):
-    off_prompt: bool = field(kw_only=True)
-
     @activity(
         config={
             "description": "Can be used to summarize memory content",

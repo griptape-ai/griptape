@@ -3,8 +3,8 @@ import json
 import logging
 import numpy as np
 from griptape.utils import import_optional_dependency, str_to_hash
-from typing import Optional, List, TYPE_CHECKING, Dict, Any
-from attr import define, field, Factory
+from typing import Optional, TYPE_CHECKING
+from attrs import define, field, Factory
 from griptape.drivers import BaseVectorStoreDriver
 
 logging.basicConfig(level=logging.WARNING)

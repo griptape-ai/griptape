@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from attr import define
+from attrs import define
 
 from typing import Optional
 from griptape.engines import BaseImageGenerationEngine

@@ -4,5 +4,4 @@ from .base_task_event import BaseTaskEvent
 
 
 @define
-class StartTaskEvent(BaseTaskEvent):
-    ...
+class StartTaskEvent(BaseTaskEvent): ...

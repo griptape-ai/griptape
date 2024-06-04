@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, Callable
 from collections.abc import Iterator
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
 from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import PromptStack
@@ -108,9 +108,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        ...
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]: ...

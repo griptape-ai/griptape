@@ -14,13 +14,12 @@ from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
 from griptape.tools import RestApiClient
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 posts_client = RestApiClient(
     base_url="https://jsonplaceholder.typicode.com",
     path="posts",
     description="Allows for creating, updating, deleting, patching, and getting posts.",
-    off_prompt=False,
     request_body_schema=dumps(
         {
             "$schema": "https://json-schema.org/draft/2019-09/schema",
@@ -119,12 +118,10 @@ posts_client = RestApiClient(
 pipeline = Pipeline(
     conversation_memory=ConversationMemory(),
     config = StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=OpenAiChatPromptDriver(
-                model="gpt-4",
-                temperature=0.1
-            ),
-        )
+        prompt_driver=OpenAiChatPromptDriver(
+            model="gpt-4o",
+            temperature=0.1
+        ),
     ),
 )
 

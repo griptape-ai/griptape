@@ -4,7 +4,7 @@ import time
 import uuid
 from abc import ABC
 
-from attr import Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.mixins import SerializableMixin
 

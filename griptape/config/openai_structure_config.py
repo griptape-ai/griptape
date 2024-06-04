@@ -1,56 +1,54 @@
 from attrs import Factory, define, field
 
-from griptape.config import (
-    BaseStructureConfig,
-    StructureGlobalDriversConfig,
-    StructureTaskMemoryConfig,
-    StructureTaskMemoryExtractionEngineConfig,
-    StructureTaskMemoryExtractionEngineCsvConfig,
-    StructureTaskMemoryExtractionEngineJsonConfig,
-    StructureTaskMemoryQueryEngineConfig,
-    StructureTaskMemorySummaryEngineConfig,
-)
+from griptape.config import StructureConfig
 from griptape.drivers import (
+    BaseEmbeddingDriver,
+    BaseImageGenerationDriver,
+    BaseImageQueryDriver,
+    BasePromptDriver,
+    BaseVectorStoreDriver,
     LocalVectorStoreDriver,
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
     OpenAiImageGenerationDriver,
-    OpenAiVisionImageQueryDriver,
+    BaseTextToSpeechDriver,
+    OpenAiTextToSpeechDriver,
+    BaseAudioTranscriptionDriver,
+    OpenAiAudioTranscriptionDriver,
+    OpenAiImageQueryDriver,
 )
 
 
 @define
-class OpenAiStructureConfig(BaseStructureConfig):
-    global_drivers: StructureGlobalDriversConfig = field(
+class OpenAiStructureConfig(StructureConfig):
+    prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-4o")), metadata={"serializable": True}, kw_only=True
+    )
+    image_generation_driver: BaseImageGenerationDriver = field(
+        default=Factory(lambda: OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    image_query_driver: BaseImageQueryDriver = field(
+        default=Factory(lambda: OpenAiImageQueryDriver(model="gpt-4o")), kw_only=True, metadata={"serializable": True}
+    )
+    embedding_driver: BaseEmbeddingDriver = field(
+        default=Factory(lambda: OpenAiEmbeddingDriver(model="text-embedding-3-small")),
+        metadata={"serializable": True},
+        kw_only=True,
+    )
+    vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(
-            lambda: StructureGlobalDriversConfig(
-                prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
-                image_generation_driver=OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512"),
-                image_query_driver=OpenAiVisionImageQueryDriver(model="gpt-4-vision-preview"),
-                embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small"),
-                vector_store_driver=LocalVectorStoreDriver(
-                    embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small")
-                ),
-            )
+            lambda: LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small"))
         ),
         kw_only=True,
         metadata={"serializable": True},
     )
-    task_memory: StructureTaskMemoryConfig = field(
-        default=Factory(
-            lambda self: StructureTaskMemoryConfig(
-                query_engine=StructureTaskMemoryQueryEngineConfig(
-                    prompt_driver=self.global_drivers.prompt_driver,
-                    vector_store_driver=LocalVectorStoreDriver(embedding_driver=self.global_drivers.embedding_driver),
-                ),
-                extraction_engine=StructureTaskMemoryExtractionEngineConfig(
-                    csv=StructureTaskMemoryExtractionEngineCsvConfig(prompt_driver=self.global_drivers.prompt_driver),
-                    json=StructureTaskMemoryExtractionEngineJsonConfig(prompt_driver=self.global_drivers.prompt_driver),
-                ),
-                summary_engine=StructureTaskMemorySummaryEngineConfig(prompt_driver=self.global_drivers.prompt_driver),
-            ),
-            takes_self=True,
-        ),
+    text_to_speech_driver: BaseTextToSpeechDriver = field(
+        default=Factory(lambda: OpenAiTextToSpeechDriver(model="tts")), kw_only=True, metadata={"serializable": True}
+    )
+    audio_transcription_driver: BaseAudioTranscriptionDriver = field(
+        default=Factory(lambda: OpenAiAudioTranscriptionDriver(model="whisper-1")),
         kw_only=True,
         metadata={"serializable": True},
     )

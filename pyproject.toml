@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "griptape"
-version = "0.25.1"
+version = "0.26.0"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
@@ -25,7 +25,7 @@ pyyaml = ">=6"
 tenacity = ">=8.0"
 numpy = ">=1"
 stringcase = "^1.2.0"
-docker = "^6.1.3"
+docker = "^7.1.0"
 sqlalchemy = "~=1.0"
 dateparser = "^1.1.8"
 requests = "^2"
@@ -51,17 +51,22 @@ playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
 markdownify = {version = "^0.11.6", optional = true}
 voyageai = {version = "^0.2.1", optional = true}
+elevenlabs = {version = "^1.1.2", optional = true}
+torch = {version = "^2.3.0", optional = true}
+pusher = {version = "^3.3.2", optional = true}
 
 # loaders
 pandas = {version = "^1.3", optional = true}
 pypdf = {version = "^3.9", optional = true}
 pillow = {version = "^10.2.0", optional = true}
 mail-parser = {version = "^3.15.0", optional = true}
+filetype = {version = "^1.2", optional = true}
 
 [tool.poetry.extras]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
+drivers-prompt-huggingface-pipeline = ["huggingface-hub", "transformers", "torch"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-google = ["google-generativeai"]
@@ -71,6 +76,7 @@ drivers-sql-snowflake = ["snowflake-sqlalchemy", "snowflake", "snowflake-connect
 drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
 
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
+drivers-memory-conversation-redis = ["redis"]
 
 drivers-vector-marqo = ["marqo"]
 drivers-vector-pinecone = ["pinecone-client"]
@@ -91,11 +97,13 @@ drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"
 
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
+drivers-event-listener-pusher = ["pusher"]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]
 loaders-email = ["mail-parser"]
+loaders-audio = ["filetype"]
 
 all = [
     # drivers
@@ -120,12 +128,16 @@ all = [
     "beautifulsoup4",
     "markdownify",
     "voyageai",
+    "elevenlabs",
+    "torch",
+    "pusher",
 
     # loaders
     "pandas",
     "pypdf",
     "pillow",
     "mail-parser",
+    "filetype",
 ]
 
 [tool.poetry.group.test]
@@ -139,7 +151,7 @@ mongomock = "*"
 twine = ">=4"
 moto = {extras = ["dynamodb", "iotdata", "sqs"], version = "^4.2.13"}
 pytest-xdist = "^3.3.1"
-pytest-cov = "^4.1.0"
+pytest-cov = "^5.0.0"
 pytest-env = "^1.1.1"
 fuzzywuzzy = "^0.18.0"
 pytest-clarity = "^1.0.1"
@@ -149,11 +161,10 @@ pytest-clarity = "^1.0.1"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.0.286"
-black = "^23.7.0"
-pyright = "^1.1.355"
-pre-commit = "^3.5.0"
-boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], version = "^1.34.18"}
+ruff = "^0.4.6"
+pyright = "^1.1.363"
+pre-commit = "^3.7.1"
+boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], version = "^1.34.105"}
 
 
 [tool.poetry.group.docs]
@@ -169,12 +180,17 @@ mkdocs-literate-nav = "^0.6.0"
 mkdocs-section-index = "^0.3.6"
 pymdown-extensions = "^10.3"
 
-[tool.black]
-line-length=120
-skip_magic_trailing_comma = true
-
 [tool.ruff]
-line-length=120
+line-length = 120
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "TID251"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"attr".msg = "The attr module is deprecated, use attrs instead."
 
 [tool.pyright]
 venvPath = "."

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from attr import define, field
+from attrs import define, field
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
@@ -16,6 +16,6 @@ class CohereTokenizer(BaseTokenizer):
 
     def count_tokens(self, text: str | list) -> int:
         if isinstance(text, str):
-            return len(self.client.tokenize(text=text).tokens)
+            return len(self.client.tokenize(text=text, model=self.model).tokens)
         else:
             raise ValueError("Text must be a string.")

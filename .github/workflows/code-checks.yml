@@ -6,30 +6,67 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   format:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.12"]
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run formatter
-        run: poetry run black --check .
+        run: make check/format
   type-check:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.9" ]
+        python-version: [ "3.12" ]
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run type checker
-        run: poetry run pyright griptape/
+        run: make check/types
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.12" ]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run linter
+        run: make check/lint
+  coverage:
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          python-version: ["3.12"]
+      steps:
+        - name: Checkout actions
+          uses: actions/checkout@v3
+        - name: Init environment 
+          uses: ./.github/actions/init-environment 
+        - name: Run unit tests
+          run: make test/unit/coverage
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v4
+          with:
+            flags: smart-tests
+            verbose: true
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

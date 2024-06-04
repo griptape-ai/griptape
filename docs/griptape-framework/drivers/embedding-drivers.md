@@ -174,18 +174,13 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     VoyageAiEmbeddingDriver,
 )
-from griptape.config import (
-    StructureGlobalDriversConfig,
-    StructureConfig,
-)
+from griptape.config import StructureConfig
 
 agent = Agent(
-    tools=[WebScraper(), TaskMemoryClient(off_prompt=False)],
+    tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
-            embedding_driver=VoyageAiEmbeddingDriver(),
-        )
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
+        embedding_driver=VoyageAiEmbeddingDriver(),
     ),
 )
 

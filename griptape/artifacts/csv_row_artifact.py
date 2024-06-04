@@ -1,7 +1,7 @@
 from __future__ import annotations
 import csv
 import io
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact
 
 

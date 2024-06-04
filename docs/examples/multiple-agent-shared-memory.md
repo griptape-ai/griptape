@@ -10,12 +10,12 @@ The `MongoDbAtlasVectorStoreDriver` assumes that you have a vector index configu
 import os
 from griptape.tools import WebScraper, VectorStoreClient, TaskMemoryClient
 from griptape.structures import Agent
-from griptape.drivers import AzureOpenAiChatPromptDriver, AzureOpenAiEmbeddingDriver, AzureMongoDbVectorStoreDriver
+from griptape.drivers import AzureOpenAiEmbeddingDriver, AzureMongoDbVectorStoreDriver
 from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.memory import TaskMemory 
 from griptape.artifacts import TextArtifact
 from griptape.memory.task.storage import TextArtifactStorage
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import AzureOpenAiStructureConfig
 
 
 AZURE_OPENAI_ENDPOINT_1 = os.environ["AZURE_OPENAI_ENDPOINT_1"]
@@ -31,40 +31,32 @@ MONGODB_VECTOR_PATH = os.environ["MONGODB_VECTOR_PATH"]
 MONGODB_CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}/{MONGODB_DATABASE_NAME}?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000"
 
 
-azure_embedding_driver = AzureOpenAiEmbeddingDriver(
+embedding_driver = AzureOpenAiEmbeddingDriver(
     model='text-embedding-ada-002',
     azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
     api_key=AZURE_OPENAI_API_KEY_1,
-    azure_deployment='text-embedding-ada-002'
-)
-
-azure_prompt_driver = AzureOpenAiChatPromptDriver(
-    model='gpt-4',
-    azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
-    api_key=AZURE_OPENAI_API_KEY_1,
-    azure_deployment='gpt-4'
 )
 
 mongo_driver = AzureMongoDbVectorStoreDriver(
     connection_string=MONGODB_CONNECTION_STRING,
     database_name=MONGODB_DATABASE_NAME,
     collection_name=MONGODB_COLLECTION_NAME,
-    embedding_driver=azure_embedding_driver,
+    embedding_driver=embedding_driver,
     index_name=MONGODB_INDEX_NAME,
-    vector_path=MONGODB_VECTOR_PATH
+    vector_path=MONGODB_VECTOR_PATH,
+)
+
+config = AzureOpenAiStructureConfig(
+    azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
+    vector_store_driver=mongo_driver,
+    embedding_driver=embedding_driver,
 )
 
 loader = Agent(
     tools=[
-        WebScraper()
+        WebScraper(off_prompt=True),
     ],
-    config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=azure_prompt_driver,
-            vector_store_driver=mongo_driver,
-            embedding_driver=azure_embedding_driver
-        )
-    ),
+    config=config,
 )
 asker = Agent(
     tools=[
@@ -72,6 +64,7 @@ asker = Agent(
     ],
     meta_memory=loader.meta_memory,
     task_memory=loader.task_memory,
+    config=config,
 )
 
 if __name__ == "__main__":

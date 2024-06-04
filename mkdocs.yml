@@ -84,7 +84,7 @@ nav:
           - Pipelines: "griptape-framework/structures/pipelines.md"
           - Workflows: "griptape-framework/structures/workflows.md"
           - Tasks: "griptape-framework/structures/tasks.md"
-          - Task Memory: "griptape-framework/structures/task-memory.md"
+          - Task Memory and Off Prompt: "griptape-framework/structures/task-memory.md"
           - Conversation Memory: "griptape-framework/structures/conversation-memory.md"
           - Rulesets: "griptape-framework/structures/rulesets.md"
           - Config: "griptape-framework/structures/config.md"
@@ -97,6 +97,7 @@ nav:
           - Summary Engines: "griptape-framework/engines/summary-engines.md"
           - Image Generation Engines: "griptape-framework/engines/image-generation-engines.md"
           - Image Query Engines: "griptape-framework/engines/image-query-engines.md"
+          - Audio Engines: "griptape-framework/engines/audio-engines.md"
       - Drivers:
           - Prompt Drivers: "griptape-framework/drivers/prompt-drivers.md"
           - Embedding Drivers: "griptape-framework/drivers/embedding-drivers.md"
@@ -108,6 +109,8 @@ nav:
           - Conversation Memory Drivers: "griptape-framework/drivers/conversation-memory-drivers.md"
           - Event Listener Drivers: "griptape-framework/drivers/event-listener-drivers.md"
           - Structure Run Drivers: "griptape-framework/drivers/structure-run-drivers.md"
+          - Text to Speech Drivers: "griptape-framework/drivers/text-to-speech-drivers.md"
+          - Audio Transcription Drivers: "griptape-framework/drivers/audio-transcription-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
@@ -143,6 +146,8 @@ nav:
           - InpaintingImageGenerationClient: "griptape-tools/official-tools/inpainting-image-generation-client.md"
           - OutpaintingImageGenerationClient: "griptape-tools/official-tools/outpainting-image-generation-client.md"
           - ImageQueryClient: "griptape-tools/official-tools/image-query-client.md"
+          - TextToSpeechClient: "griptape-tools/official-tools/text-to-speech-client.md"
+          - AudioTranscriptionClient: "griptape-tools/official-tools/audio-transcription-client.md"
       - Custom Tools:
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
   - Recipes:

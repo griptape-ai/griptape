@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-from attr import Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 from griptape.utils import import_optional_dependency

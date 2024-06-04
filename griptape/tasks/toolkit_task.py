@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Callable, Optional
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from schema import Schema
 
 from griptape import utils

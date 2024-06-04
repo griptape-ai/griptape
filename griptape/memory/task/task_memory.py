@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Type, Any, Callable
-from attr import define, field, Factory
+from typing import TYPE_CHECKING, Optional, Any, Callable
+from attrs import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
@@ -28,7 +28,8 @@ class TaskMemory(ActivityMixin):
             seen_types.append(type(storage))
 
     def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
-        find_storage = lambda a: next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
+        def find_storage(a):
+            return next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
 
         if isinstance(artifact, ListArtifact):
             if artifact.has_items():

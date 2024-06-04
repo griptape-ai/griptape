@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any
-from attr import define, field
+from typing import TYPE_CHECKING, Any, Optional
+from attrs import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.memory.task.storage import BaseArtifactStorage
 
@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 @define
 class TextArtifactStorage(BaseArtifactStorage):
     query_engine: VectorQueryEngine = field(kw_only=True)
-    summary_engine: BaseSummaryEngine = field(kw_only=True)
-    csv_extraction_engine: CsvExtractionEngine = field(kw_only=True)
-    json_extraction_engine: JsonExtractionEngine = field(kw_only=True)
+    summary_engine: Optional[BaseSummaryEngine] = field(kw_only=True, default=None)
+    csv_extraction_engine: Optional[CsvExtractionEngine] = field(kw_only=True, default=None)
+    json_extraction_engine: Optional[JsonExtractionEngine] = field(kw_only=True, default=None)
 
     def can_store(self, artifact: BaseArtifact) -> bool:
         return isinstance(artifact, TextArtifact)
@@ -28,6 +28,8 @@ class TextArtifactStorage(BaseArtifactStorage):
         return self.query_engine.load_artifacts(namespace)
 
     def summarize(self, namespace: str) -> TextArtifact:
+        if self.summary_engine is None:
+            raise ValueError("Summary engine is not set.")
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
     def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact:

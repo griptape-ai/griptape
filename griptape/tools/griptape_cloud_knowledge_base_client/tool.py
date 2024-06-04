@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional
 from urllib.parse import urljoin
 from schema import Schema, Literal
-from attr import define, field
+from attrs import define, field
 from griptape.tools.base_griptape_cloud_client import BaseGriptapeCloudClient
 from griptape.utils.decorators import activity
 from griptape.artifacts import TextArtifact, ErrorArtifact

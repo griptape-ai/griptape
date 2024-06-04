@@ -16,7 +16,12 @@ from .start_image_generation_event import StartImageGenerationEvent
 from .finish_image_generation_event import FinishImageGenerationEvent
 from .start_image_query_event import StartImageQueryEvent
 from .finish_image_query_event import FinishImageQueryEvent
-
+from .base_text_to_speech_event import BaseTextToSpeechEvent
+from .start_text_to_speech_event import StartTextToSpeechEvent
+from .finish_text_to_speech_event import FinishTextToSpeechEvent
+from .base_audio_transcription_event import BaseAudioTranscriptionEvent
+from .start_audio_transcription_event import StartAudioTranscriptionEvent
+from .finish_audio_transcription_event import FinishAudioTranscriptionEvent
 
 __all__ = [
     "BaseEvent",
@@ -37,4 +42,10 @@ __all__ = [
     "FinishImageGenerationEvent",
     "StartImageQueryEvent",
     "FinishImageQueryEvent",
+    "BaseTextToSpeechEvent",
+    "StartTextToSpeechEvent",
+    "FinishTextToSpeechEvent",
+    "BaseAudioTranscriptionEvent",
+    "StartAudioTranscriptionEvent",
+    "FinishAudioTranscriptionEvent",
 ]

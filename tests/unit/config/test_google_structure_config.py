@@ -14,99 +14,35 @@ class TestGoogleStructureConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "GoogleStructureConfig",
-            "global_drivers": {
-                "type": "StructureGlobalDriversConfig",
-                "prompt_driver": {
-                    "type": "GooglePromptDriver",
-                    "temperature": 0.1,
-                    "max_tokens": None,
-                    "stream": False,
-                    "model": "gemini-pro",
-                    "top_p": None,
-                    "top_k": None,
-                },
-                "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-                "image_query_driver": {"type": "DummyImageQueryDriver"},
+            "prompt_driver": {
+                "type": "GooglePromptDriver",
+                "temperature": 0.1,
+                "max_tokens": None,
+                "stream": False,
+                "model": "gemini-pro",
+                "top_p": None,
+                "top_k": None,
+            },
+            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
+            "image_query_driver": {"type": "DummyImageQueryDriver"},
+            "embedding_driver": {
+                "type": "GoogleEmbeddingDriver",
+                "model": "models/embedding-001",
+                "task_type": "retrieval_document",
+                "title": None,
+            },
+            "vector_store_driver": {
+                "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
                     "type": "GoogleEmbeddingDriver",
                     "model": "models/embedding-001",
                     "task_type": "retrieval_document",
                     "title": None,
                 },
-                "vector_store_driver": {
-                    "type": "LocalVectorStoreDriver",
-                    "embedding_driver": {
-                        "type": "GoogleEmbeddingDriver",
-                        "model": "models/embedding-001",
-                        "task_type": "retrieval_document",
-                        "title": None,
-                    },
-                },
-                "conversation_memory_driver": None,
             },
-            "task_memory": {
-                "type": "StructureTaskMemoryConfig",
-                "query_engine": {
-                    "type": "StructureTaskMemoryQueryEngineConfig",
-                    "prompt_driver": {
-                        "type": "GooglePromptDriver",
-                        "temperature": 0.1,
-                        "max_tokens": None,
-                        "stream": False,
-                        "model": "gemini-pro",
-                        "top_p": None,
-                        "top_k": None,
-                    },
-                    "vector_store_driver": {
-                        "type": "LocalVectorStoreDriver",
-                        "embedding_driver": {
-                            "type": "GoogleEmbeddingDriver",
-                            "model": "models/embedding-001",
-                            "task_type": "retrieval_document",
-                            "title": None,
-                        },
-                    },
-                },
-                "extraction_engine": {
-                    "type": "StructureTaskMemoryExtractionEngineConfig",
-                    "csv": {
-                        "type": "StructureTaskMemoryExtractionEngineCsvConfig",
-                        "prompt_driver": {
-                            "type": "GooglePromptDriver",
-                            "temperature": 0.1,
-                            "max_tokens": None,
-                            "stream": False,
-                            "model": "gemini-pro",
-                            "top_p": None,
-                            "top_k": None,
-                        },
-                    },
-                    "json": {
-                        "type": "StructureTaskMemoryExtractionEngineJsonConfig",
-                        "prompt_driver": {
-                            "type": "GooglePromptDriver",
-                            "temperature": 0.1,
-                            "max_tokens": None,
-                            "stream": False,
-                            "model": "gemini-pro",
-                            "top_p": None,
-                            "top_k": None,
-                        },
-                    },
-                },
-                "summary_engine": {
-                    "type": "StructureTaskMemorySummaryEngineConfig",
-                    "prompt_driver": {
-                        "type": "GooglePromptDriver",
-                        "temperature": 0.1,
-                        "max_tokens": None,
-                        "stream": False,
-                        "model": "gemini-pro",
-                        "top_p": None,
-                        "top_k": None,
-                    },
-                },
-            },
+            "conversation_memory_driver": None,
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
 
     def test_from_dict(self, config):

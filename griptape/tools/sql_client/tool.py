@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import InfoArtifact, ListArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity

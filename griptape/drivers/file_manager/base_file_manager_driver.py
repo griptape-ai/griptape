@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from attr import Factory, define, field
+from attrs import Factory, define, field
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, InfoArtifact, ListArtifact
 import griptape.loaders as loaders
 
@@ -50,8 +50,7 @@ class BaseFileManagerDriver(ABC):
             return ErrorArtifact(f"Failed to list files: {str(e)}")
 
     @abstractmethod
-    def try_list_files(self, path: str) -> list[str]:
-        ...
+    def try_list_files(self, path: str) -> list[str]: ...
 
     def load_file(self, path: str) -> BaseArtifact:
         try:
@@ -74,8 +73,7 @@ class BaseFileManagerDriver(ABC):
             return ErrorArtifact(f"Failed to load file: {str(e)}")
 
     @abstractmethod
-    def try_load_file(self, path: str) -> bytes:
-        ...
+    def try_load_file(self, path: str) -> bytes: ...
 
     def save_file(self, path: str, value: bytes | str) -> InfoArtifact | ErrorArtifact:
         try:
@@ -100,5 +98,4 @@ class BaseFileManagerDriver(ABC):
             return ErrorArtifact(f"Failed to save file: {str(e)}")
 
     @abstractmethod
-    def try_save_file(self, path: str, value: bytes):
-        ...
+    def try_save_file(self, path: str, value: bytes): ...

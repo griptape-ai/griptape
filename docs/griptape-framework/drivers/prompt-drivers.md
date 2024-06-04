@@ -8,13 +8,11 @@ You can instantiate drivers and pass them to structures:
 from griptape.structures import Agent
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.rules import Rule
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=OpenAiChatPromptDriver(model="gpt-4", temperature=0.3),
-        )
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.3),
     ),
     input_template="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
     rules=[
@@ -70,18 +68,16 @@ import os
 from griptape.structures import Agent
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.rules import Rule
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=OpenAiChatPromptDriver(
-                api_key=os.environ["OPENAI_API_KEY"],
-                temperature=0.1,
-                model="gpt-3.5-turbo",
-                response_format="json_object",
-                seed=42,
-            )
+        prompt_driver=OpenAiChatPromptDriver(
+            api_key=os.environ["OPENAI_API_KEY"],
+            temperature=0.1,
+            model="gpt-4o",
+            response_format="json_object",
+            seed=42,
         )
     ),
     input_template="You will be provided with a description of a mood, and your task is to generate the CSS code for a color that matches it. Description: {{ args[0] }}",
@@ -107,17 +103,15 @@ import os
 from griptape.structures import Agent
 from griptape.rules import Rule
 from griptape.drivers import AzureOpenAiChatPromptDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
-                model="gpt-3.5-turbo-16k",
-                azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
-            )
+        prompt_driver=AzureOpenAiChatPromptDriver(
+            api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
+            model="gpt-3.5-turbo-16k",
+            azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID"],
+            azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
         )
     ),
     rules=[
@@ -139,18 +133,16 @@ The [AzureOpenAiCompletionPromptDriver](../../reference/griptape/drivers/prompt/
 import os
 from griptape.structures import Agent
 from griptape.drivers import AzureOpenAiCompletionPromptDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AzureOpenAiCompletionPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
-                model="text-davinci-003",
-                azure_deployment=os.environ["AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
-                temperature=1
-            )
+        prompt_driver=AzureOpenAiCompletionPromptDriver(
+            api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
+            model="text-davinci-003",
+            azure_deployment=os.environ["AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID"],
+            azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
+            temperature=1
         )
     )
 )
@@ -176,15 +168,13 @@ The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_d
 import os
 from griptape.structures import Agent
 from griptape.drivers import CoherePromptDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=CoherePromptDriver(
-                model="command",
-                api_key=os.environ['COHERE_API_KEY'],
-            )
+        prompt_driver=CoherePromptDriver(
+            model="command",
+            api_key=os.environ['COHERE_API_KEY'],
         )
     )
 )
@@ -203,15 +193,13 @@ The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_pr
 import os
 from griptape.structures import Agent
 from griptape.drivers import AnthropicPromptDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AnthropicPromptDriver(
-                model="claude-3-opus-20240229",
-                api_key=os.environ['ANTHROPIC_API_KEY'],
-            )
+        prompt_driver=AnthropicPromptDriver(
+            model="claude-3-opus-20240229",
+            api_key=os.environ['ANTHROPIC_API_KEY'],
         )
     )
 )
@@ -230,15 +218,13 @@ The [GooglePromptDriver](../../reference/griptape/drivers/prompt/google_prompt_d
 import os
 from griptape.structures import Agent
 from griptape.drivers import GooglePromptDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=GooglePromptDriver(
-                model="gemini-pro",
-                api_key=os.environ['GOOGLE_API_KEY'],
-            )
+        prompt_driver=GooglePromptDriver(
+            model="gemini-pro",
+            api_key=os.environ['GOOGLE_API_KEY'],
         )
     )
 )
@@ -256,6 +242,15 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
 - text2text-generation
 - text-generation
 
+!!! warning
+    Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by
+    [Hugging Face serverless inference](https://huggingface.co/docs/api-inference/en/index) will not work with this driver.
+    Due to the limitations of Hugging Face serverless inference, only models that are than 10GB are supported.
+
+!!! info
+    The `prompt_stack_to_string_converter` function is intended to convert a `PromptStack` to model specific input. You
+    should consult the model's documentation to determine the correct format.
+
 Let's recreate the [Falcon-7B-Instruct](https://huggingface.co/tiiuae/falcon-7b-instruct) example using Griptape:
 
 ```python
@@ -264,7 +259,7 @@ from griptape.structures import Agent
 from griptape.drivers import HuggingFaceHubPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.utils import PromptStack
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 
 def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
@@ -284,12 +279,10 @@ def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=HuggingFaceHubPromptDriver(
-                model="tiiuae/falcon-7b-instruct",
-                api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
-                prompt_stack_to_string=prompt_stack_to_string_converter,
-            )
+        prompt_driver=HuggingFaceHubPromptDriver(
+            model="tiiuae/falcon-7b-instruct",
+            api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
+            prompt_stack_to_string=prompt_stack_to_string_converter,
         )
     ),
     rulesets=[
@@ -317,17 +310,15 @@ The [HuggingFaceHubPromptDriver](#hugging-face-hub) also supports [Text Generati
 import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFaceHubPromptDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=HuggingFaceHubPromptDriver(
-                model="http://127.0.0.1:8080",
-                api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
-            ),
-        )
+        prompt_driver=HuggingFaceHubPromptDriver(
+            model="http://127.0.0.1:8080",
+            api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
+        ),
     ),
 )
 
@@ -337,9 +328,9 @@ agent.run("Write the code for a snake game.")
 ### Hugging Face Pipeline
 
 !!! info
-    This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-huggingface-pipeline` [extra](../index.md#extras).
 
-The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally. It supports models with the following tasks:
+The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally. It supports models with the following tasks:
 
 - text2text-generation
 - text-generation
@@ -350,10 +341,10 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
 ```python
 import os
 from griptape.structures import Agent
-from griptape.drivers import HuggingFaceHubPromptDriver
+from griptape.drivers import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.utils import PromptStack
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 
 # Override the default Prompt Stack to string converter
@@ -375,12 +366,9 @@ def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=HuggingFaceHubPromptDriver(
-                model="tiiuae/falcon-7b-instruct",
-                api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
-                prompt_stack_to_string=prompt_stack_to_string_converter,
-            ),
+        prompt_driver=HuggingFacePipelinePromptDriver(
+            model="TinyLlama/TinyLlama-1.1B-Chat-v0.6",
+            prompt_stack_to_string=prompt_stack_to_string_converter,
         )
     ),
     rulesets=[
@@ -413,7 +401,22 @@ through the [prompt_model_driver](../../reference/griptape/drivers/prompt/base_m
 
 The [AmazonSageMakerPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_prompt_driver.md) uses [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) for inference on AWS.
 
-##### LLaMA
+!!! info
+    For single model endpoints, the `model` parameter does not need to be specified.  
+    For multi-model endpoints, the `model` parameter should be the inference component name.
+
+!!! warning
+    Make sure that the selected prompt model driver is compatible with the selected model. Note that even the same
+    logical model can require different prompt model drivers depending on how it is bundled in the endpoint. For
+    example, the reponse format are different for `Meta-Llama-3-8B-Instruct` when deployed via
+    "Amazon SageMaker JumpStart" and "Hugging Face on Amazon SageMaker".
+
+##### Llama
+
+!!! info
+    `SageMakerLlamaPromptModelDriver` requires a tokenizer corresponding to a [Gated Model](https://huggingface.co/docs/hub/en/models-gated) on Hugging Face.
+    
+    Make sure to request access to the [Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model on Hugging Face and configure your environment for hugging face use.
 
 ```python title="PYTEST_IGNORE"
 import os
@@ -423,16 +426,15 @@ from griptape.drivers import (
     SageMakerLlamaPromptModelDriver,
 )
 from griptape.rules import Rule
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerLlamaPromptModelDriver(),
-                temperature=0.75,
-            ),
+        prompt_driver=AmazonSageMakerPromptDriver(
+            endpoint=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME"],
+            model=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_INFERENCE_COMPONENT_NAME"],
+            prompt_model_driver=SageMakerLlamaPromptModelDriver(),
+            temperature=0.75,
         )
     ),
     rules=[
@@ -455,15 +457,14 @@ from griptape.drivers import (
     AmazonSageMakerPromptDriver,
     SageMakerFalconPromptModelDriver,
 )
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerFalconPromptModelDriver(),
-            ),
+        prompt_driver=AmazonSageMakerPromptDriver(
+            endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
+            model=os.environ["SAGEMAKER_FALCON_INFERENCE_COMPONENT_NAME"],
+            prompt_model_driver=SageMakerFalconPromptModelDriver(),
         )
     )
 )
@@ -486,16 +487,14 @@ To use this model with Amazon Bedrock, use the [BedrockTitanPromptModelDriver](.
 ```python
 from griptape.structures import Agent
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockTitanPromptModelDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="amazon.titan-text-express-v1",
-                prompt_model_driver=BedrockTitanPromptModelDriver(
-                    top_p=1,
-                )
+        prompt_driver=AmazonBedrockPromptDriver(
+            model="amazon.titan-text-express-v1",
+            prompt_model_driver=BedrockTitanPromptModelDriver(
+                top_p=1,
             )
         )
     )
@@ -515,17 +514,15 @@ To use this model with Amazon Bedrock, use the [BedrockClaudePromptModelDriver](
 from griptape.structures import Agent
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockClaudePromptModelDriver
 from griptape.rules import Rule
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="anthropic.claude-3-sonnet-20240229-v1:0",
-                prompt_model_driver=BedrockClaudePromptModelDriver(
-                    top_p=1,
-                ),
-            ),
+        prompt_driver=AmazonBedrockPromptDriver(
+            model="anthropic.claude-3-sonnet-20240229-v1:0",
+            prompt_model_driver=BedrockClaudePromptModelDriver(
+                top_p=1,
+            )
         )
     ),
     rules=[
@@ -554,15 +551,13 @@ To use this model with Amazon Bedrock, use the [BedrockLlamaPromptModelDriver](.
 ```python
 from griptape.structures import Agent
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockLlamaPromptModelDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="meta.llama2-13b-chat-v1",
-                prompt_model_driver=BedrockLlamaPromptModelDriver(),
-            ),
+        prompt_driver=AmazonBedrockPromptDriver(
+            model="meta.llama2-13b-chat-v1",
+            prompt_model_driver=BedrockLlamaPromptModelDriver(),
         )
     )
 )
@@ -578,16 +573,14 @@ To use this model with Amazon Bedrock, use the [BedrockJurassicPromptModelDriver
 ```python
 from griptape.structures import Agent
 from griptape.drivers import AmazonBedrockPromptDriver, BedrockJurassicPromptModelDriver
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="ai21.j2-ultra-v1",
-                prompt_model_driver=BedrockJurassicPromptModelDriver(top_p=0.95),
-                temperature=0.7,
-            )
+        prompt_driver=AmazonBedrockPromptDriver(
+            model="ai21.j2-ultra-v1",
+            prompt_model_driver=BedrockJurassicPromptModelDriver(top_p=0.95),
+            temperature=0.7,
         )
     )
 )

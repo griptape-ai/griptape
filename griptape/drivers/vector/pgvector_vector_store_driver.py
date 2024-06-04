@@ -1,7 +1,6 @@
 import uuid
-from logging import exception
 from typing import Optional, Any, cast
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from dataclasses import dataclass
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency

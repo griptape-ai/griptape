@@ -118,7 +118,7 @@ The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_liste
 ```python
 import os
 
-from griptape.config import StructureConfig, StructureGlobalDriversConfig
+from griptape.config import StructureConfig
 from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriver
 from griptape.events import (
     EventListener,
@@ -134,10 +134,8 @@ agent = Agent(
         )
     ],
     config=StructureConfig(
-        global_drivers=StructureGlobalDriversConfig(
-            prompt_driver=OpenAiChatPromptDriver(
-                model="gpt-3.5-turbo", temperature=0.7
-            ),
+        prompt_driver=OpenAiChatPromptDriver(
+            model="gpt-3.5-turbo", temperature=0.7
         )
     ),
     event_listeners=[
@@ -214,4 +212,39 @@ agent = Agent(
 
 agent.run("Analyze the pros and cons of remote work vs. office work")
 ```
+### Pusher Event Listener Driver
 
+!!! info
+    This driver requires the `drivers-event-listener-pusher` [extra](../index.md#extras).
+
+The [PusherEventListenerDriver](../../reference/griptape/drivers/event_listener/pusher_event_listener_driver.md) sends Events to [Pusher](https://pusher.com).
+
+```python
+import os
+from griptape.drivers import PusherEventListenerDriver
+from griptape.events import (
+    EventListener,
+    FinishStructureRunEvent
+)
+from griptape.structures import Agent
+
+agent = Agent(
+    event_listeners=[
+        EventListener(
+            event_types=[FinishStructureRunEvent],
+            driver=PusherEventListenerDriver(
+                batched=False,
+                app_id=os.environ["PUSHER_APP_ID"],
+                key=os.environ["PUSHER_KEY"],
+                secret=os.environ["PUSHER_SECRET"],
+                cluster=os.environ["PUSHER_CLUSTER"],
+                channel='my-channel',
+                event_name='my-event'
+            ),
+        ),
+    ],
+)
+
+agent.run("Analyze the pros and cons of remote work vs. office work")
+
+```

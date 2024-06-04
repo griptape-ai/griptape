@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Optional
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
@@ -17,17 +17,13 @@ class BasePromptModelDriver(SerializableMixin, ABC):
 
     @property
     @abstractmethod
-    def tokenizer(self) -> BaseTokenizer:
-        ...
+    def tokenizer(self) -> BaseTokenizer: ...
 
     @abstractmethod
-    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str | list | dict:
-        ...
+    def prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> str | list | dict: ...
 
     @abstractmethod
-    def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict:
-        ...
+    def prompt_stack_to_model_params(self, prompt_stack: PromptStack) -> dict: ...
 
     @abstractmethod
-    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
-        ...
+    def process_output(self, output: dict | list[dict] | str | bytes) -> TextArtifact: ...

@@ -4,7 +4,7 @@ import base64
 import logging
 from typing import Optional
 
-from attr import field, define
+from attrs import field, define
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationModelDriver
@@ -151,6 +151,6 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         if image_response.get("finishReason") == "ERROR":
             raise Exception(f"Image generation failed: {image_response.get('finishReason')}")
         elif image_response.get("finishReason") == "CONTENT_FILTERED":
-            logging.warning(f"Image generation triggered content filter and may be blurred")
+            logging.warning("Image generation triggered content filter and may be blurred")
 
         return base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))

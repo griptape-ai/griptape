@@ -4,5 +4,4 @@ from .base_actions_subtask_event import BaseActionsSubtaskEvent
 
 
 @define
-class StartActionsSubtaskEvent(BaseActionsSubtaskEvent):
-    ...
+class StartActionsSubtaskEvent(BaseActionsSubtaskEvent): ...
