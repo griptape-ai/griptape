@@ -6,7 +6,7 @@ import uuid
 from itertools import islice
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact
-
+from griptape.utils import import_optional_dependency
 from qdrant_client.http import models as rest
 
 VECTOR_NAME = None
@@ -16,7 +16,21 @@ DEFAULT_DISTANCE = "COSINE"
 
 @define
 class QdrantVectorStoreDriver(BaseVectorStoreDriver):
-    """A Vector Store Driver for Qdrant Vector DB."""
+    """
+    Attributes:
+        location: An optional location for the Qdrant client. If set to ':memory:', an in-memory client is used.
+        url: An optional Qdrant API URL.
+        host: An optional Qdrant host.
+        port: The port number for the Qdrant client. Defaults to 6333.
+        grpc_port: The gRPC port number for the Qdrant client. Defaults to 6334.
+        prefer_grpc: A boolean indicating whether to prefer gRPC over HTTP. Defaults to False.
+        force_recreate: A boolean indicating whether to force recreation of the collection. Defaults to True.
+        distance: The distance metric to be used for the vectors. Defaults to 'COSINE'.
+        collection_name: The name of the Qdrant collection.
+        vector_name: An optional name for the vectors.
+        content_payload_key: The key for the content payload in the metadata. Defaults to 'data'.
+    """
+
 
     location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -31,10 +45,8 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     content_payload_key: str = field(default="data", kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
-        from qdrant_client import QdrantClient, AsyncQdrantClient
-
         if self.location == ":memory:":
-            self.client = AsyncQdrantClient(
+            self.client = import_optional_dependency("qdrant_client").AsyncQdrantClient(
                 location=self.location,
                 url=self.url,
                 host=self.host,
@@ -43,7 +55,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                 grpc_port=self.grpc_port,
             )
         else:
-            self.client = QdrantClient(
+            self.client = import_optional_dependency("qdrant_client").QdrantClient(
                 location=self.location,
                 url=self.url,
                 host=self.host,
@@ -51,38 +63,41 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                 prefer_grpc=self.prefer_grpc,
                 grpc_port=self.grpc_port,
             )
-        # Ensure the collection exists and has the correct configuration
-        self._create_collection(self.embedding_driver)
 
     def delete_vector(self, vector_id: str) -> None:
         """
-        Delete vectors from the Qdrant collection based on their IDs.
+        Delete a vector from the Qdrant collection based on its ID.
 
         Parameters:
-        - vector_ids: Optional list of vector IDs to delete.
+            vector_id (str): ID of the vector to delete.
         """
-        deletion_response = self.client.delete(
-            collection_name=self.collection_name, points_selector=rest.PointIdsList([vector_id])
-        )
-        if deletion_response.status == rest.UpdateStatus.COMPLETED:
-            return f"Ids {vector_id} is successfully deleted"
+        try:
+            deletion_response = self.client.delete(
+                collection_name=self.collection_name, points_selector=rest.PointIdsList([vector_id])
+            )
+            if deletion_response.status == rest.UpdateStatus.COMPLETED:
+                print(f"ID {vector_id} is successfully deleted")
+            else:
+                print(f"Failed to delete ID {vector_id}. Status: {deletion_response.status}")
+        except Exception as e:
+            print(f"An error occurred while trying to delete ID {vector_id}: {e}")
 
     def query(
-        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, include_vectors: bool = False
+        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, include_vectors: bool = False, **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """
         Query the Qdrant collection based on a query vector.
 
         Parameters:
-        - query: Query string.
-        - count: Optional number of results to return.
-        - include_vectors: Whether to include vectors in the results.
+            query (str): Query string.
+            count (Optional[int]): Optional number of results to return.
+            namespace (Optional[str]): Optional namespace of the vectors.
+            include_vectors (bool): Whether to include vectors in the results.
 
         Returns:
-        - List of QueryResult objects.
+            list[BaseVectorStoreDriver.QueryResult]: List of QueryResult objects.
         """
-
-        query_vector = self.embedding_driver.try_embed_chunk(query)
+        query_vector = self.embedding_driver.embed_string(query)
 
         # Create a search request
         limit = count
@@ -122,11 +137,14 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Upsert vectors into the Qdrant collection.
 
         Parameters:
-        - vector: The vector to be upserted.
-        - vector_id: Optional vector ID.
-        - namespace: Optional namespace for the vector.
-        - meta: Optional dictionary containing metadata.
-        - content: The text content to be included in the payload.
+            vector (list[float]): The vector to be upserted.
+            vector_id (Optional[str]): Optional vector ID.
+            namespace (Optional[str]): Optional namespace for the vector.
+            meta (Optional[dict]): Optional dictionary containing metadata.
+            content (Optional[str]): The text content to be included in the payload.
+
+        Returns:
+            str: The ID of the upserted vector.
         """
 
         if vector_id is None:
@@ -148,7 +166,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Create a collection in Qdrant with the given model.
 
         Parameters:
-        - model: Model for vector encoding.
+            model (str): Model for vector encoding.
         """
         from qdrant_client.models import Distance, VectorParams
 
@@ -171,13 +189,13 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Create batches of vectors for upsert operation.
 
         Parameters:
-        - texts: Iterable of TextArtifact objects containing text data.
-        - ids: Optional sequence of vector IDs.
-        - metadata: Optional sequence of dictionaries containing metadata.
-        - batch_size: Batch size for upsert operation.
+            texts (Iterable[TextArtifact]): Iterable of TextArtifact objects containing text data.
+            ids (Optional[Sequence[str]]): Optional sequence of vector IDs.
+            metadata (Optional[Sequence[dict[str, Any]]]): Optional sequence of dictionaries containing metadata.
+            batch_size (int): Batch size for upsert operation.
 
         Returns:
-        - Generator yielding batches of vectors.
+            Generator: Generator yielding batches of vectors.
         """
         from qdrant_client.http import models as rest
 
@@ -211,11 +229,11 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Build payloads for vectors from text data.
 
         Parameters:
-        - texts: Iterable of text data.
-        - content_payload_key: Key for content payload.
+            texts (Iterable): Iterable of text data.
+            content_payload_key (str): Key for content payload.
 
         Returns:
-        - List of payload dictionaries.
+            List: List of payload dictionaries.
         """
 
         payloads = []
@@ -233,11 +251,11 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Load a vector entry from the Qdrant collection based on its ID.
 
         Parameters:
-        - vector_id: ID of the vector to load.
-        - namespace: Optional namespace of the vector.
+            vector_id (str): ID of the vector to load.
+            namespace (str, optional): Optional namespace of the vector.
 
         Returns:
-        - Vector entry.
+            Vector entry.
         """
 
         raise NotImplementedError(
@@ -249,10 +267,10 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Load vector entries from the Qdrant collection.
 
         Parameters:
-        - namespace: Optional namespace of the vectors.
+            namespace: Optional namespace of the vectors.
 
         Returns:
-        - List of vector entries.
+            List of vector entries.
         """
         raise NotImplementedError(
             f"{self.__class__.__name__} does not support loading entries based on IDs or namespaces"
