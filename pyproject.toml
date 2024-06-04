@@ -96,6 +96,7 @@ drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"
 
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
+drivers-event-listener-pusher = ["pusher"]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
@@ -128,6 +129,7 @@ all = [
     "voyageai",
     "elevenlabs",
     "torch",
+    "pusher",
 
     # loaders
     "pandas",

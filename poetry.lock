@@ -6003,6 +6003,7 @@ drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-amazon-sqs = ["boto3"]
+drivers-event-listener-pusher = []
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
 drivers-memory-conversation-redis = ["redis"]
 drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
@@ -6033,4 +6034,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "da89e6bb7aa395fd5badc416ec859e574416ea1fe07ee6f93035fe6a7e314dcd"
+content-hash = "8335891edd5a6a312ada0ec78ad29ed31783b0c1f01382293ffec49e82c66354"
