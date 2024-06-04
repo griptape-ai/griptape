@@ -89,11 +89,11 @@ class BedrockLlamaPromptModelDriver(BasePromptModelDriver):
             "top_p": self.top_p,
         }
 
-    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
+    def process_output(self, output: dict | list[dict] | str | bytes) -> TextArtifact:
         # When streaming, the response body comes back as bytes.
         if isinstance(output, bytes):
             output = output.decode()
-        elif isinstance(output, list):
+        elif isinstance(output, list) or isinstance(output, dict):
             raise Exception("Invalid output format.")
 
         body = json.loads(output)

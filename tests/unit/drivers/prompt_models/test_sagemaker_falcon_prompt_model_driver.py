@@ -8,7 +8,7 @@ class TestSageMakerFalconPromptModelDriver:
     @pytest.fixture
     def driver(self):
         return AmazonSageMakerPromptDriver(
-            model="foo",
+            endpoint="endpoint-name",
             session=boto3.Session(region_name="us-east-1"),
             prompt_model_driver=SageMakerFalconPromptModelDriver(),
             temperature=0.12345,

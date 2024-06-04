@@ -67,7 +67,7 @@ class BedrockTitanPromptModelDriver(BasePromptModelDriver):
             }
         }
 
-    def process_output(self, output: list[dict] | str | bytes) -> TextArtifact:
+    def process_output(self, output: dict | list[dict] | str | bytes) -> TextArtifact:
         # When streaming, the response body comes back as bytes.
         if isinstance(output, str) or isinstance(output, bytes):
             if isinstance(output, bytes):

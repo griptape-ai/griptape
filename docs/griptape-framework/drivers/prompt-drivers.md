@@ -401,7 +401,22 @@ through the [prompt_model_driver](../../reference/griptape/drivers/prompt/base_m
 
 The [AmazonSageMakerPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_prompt_driver.md) uses [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) for inference on AWS.
 
-##### LLaMA
+!!! info
+    For single model endpoints, the `model` parameter does not need to be specified.  
+    For multi-model endpoints, the `model` parameter should be the inference component name.
+
+!!! warning
+    Make sure that the selected prompt model driver is compatible with the selected model. Note that even the same
+    logical model can require different prompt model drivers depending on how it is bundled in the endpoint. For
+    example, the reponse format are different for `Meta-Llama-3-8B-Instruct` when deployed via
+    "Amazon SageMaker JumpStart" and "Hugging Face on Amazon SageMaker".
+
+##### Llama
+
+!!! info
+    `SageMakerLlamaPromptModelDriver` requires a tokenizer corresponding to a [Gated Model](https://huggingface.co/docs/hub/en/models-gated) on Hugging Face.
+    
+    Make sure to request access to the [Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model on Hugging Face and configure your environment for hugging face use.
 
 ```python title="PYTEST_IGNORE"
 import os
@@ -416,7 +431,8 @@ from griptape.config import StructureConfig
 agent = Agent(
     config=StructureConfig(
         prompt_driver=AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
+            endpoint=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME"],
+            model=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_INFERENCE_COMPONENT_NAME"],
             prompt_model_driver=SageMakerLlamaPromptModelDriver(),
             temperature=0.75,
         )
@@ -446,7 +462,8 @@ from griptape.config import StructureConfig
 agent = Agent(
     config=StructureConfig(
         prompt_driver=AmazonSageMakerPromptDriver(
-            model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
+            endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
+            model=os.environ["SAGEMAKER_FALCON_INFERENCE_COMPONENT_NAME"],
             prompt_model_driver=SageMakerFalconPromptModelDriver(),
         )
     )
