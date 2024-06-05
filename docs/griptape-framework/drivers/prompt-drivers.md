@@ -232,6 +232,47 @@ agent = Agent(
 agent.run('Briefly explain how a computer works to a young child.')
 ```
 
+### Amazon Bedrock
+
+!!! info
+    This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
+
+The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
+
+All models supported by the Converse API are available for use with this driver.
+
+```python
+from griptape.structures import Agent
+from griptape.drivers import AmazonBedrockPromptDriver
+from griptape.rules import Rule
+from griptape.config import StructureConfig
+
+agent = Agent(
+    config=StructureConfig(
+        prompt_driver=AmazonBedrockPromptDriver(
+            model="anthropic.claude-3-sonnet-20240229-v1:0",
+        )
+    ),
+    rules=[
+        Rule(
+            value="You are a customer service agent that is classifying emails by type. I want you to give your answer and then explain it."
+        )
+    ],
+)
+agent.run(
+    """How would you categorize this email?
+    <email>
+    Can I use my Mixmaster 4000 to mix paint, or is it only meant for mixing food?
+    </email>
+
+    Categories are:
+    (A) Pre-sale question
+    (B) Broken or defective item
+    (C) Billing question
+    (D) Other (please explain)"""
+)
+```
+
 ### Hugging Face Hub
 
 !!! info
@@ -339,7 +380,7 @@ agent.run("How many helicopters can a human eat in one sitting?")
 ```
 
 ### Multi Model Prompt Drivers
-Certain LLM providers such as Amazon SageMaker and Amazon Bedrock supports many types of models, each with their own slight differences in prompt structure and parameters. To support this variation across models, these Prompt Drivers takes a [Prompt Model Driver](../../reference/griptape/drivers/prompt_model/base_prompt_model_driver.md)
+Certain LLM providers such as Amazon SageMaker support many types of models, each with their own slight differences in prompt structure and parameters. To support this variation across models, these Prompt Drivers takes a [Prompt Model Driver](../../reference/griptape/drivers/prompt_model/base_prompt_model_driver.md)
 through the [prompt_model_driver](../../reference/griptape/drivers/prompt/base_multi_model_prompt_driver.md#griptape.drivers.prompt.base_multi_model_prompt_driver.BaseMultiModelPromptDriver.prompt_model_driver) parameter.
 [Prompt Model Driver](../../reference/griptape/drivers/prompt_model/base_prompt_model_driver.md)s allows for model-specific customization for Prompt Drivers. 
 
@@ -421,121 +462,4 @@ agent = Agent(
 
 agent.run("What is a good lasagna recipe?")
 
-```
-
-#### Amazon Bedrock
-
-!!! info
-    This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
-
-The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/) for inference on AWS.
-
-##### Amazon Titan
-
-To use this model with Amazon Bedrock, use the [BedrockTitanPromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_titan_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockTitanPromptModelDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="amazon.titan-text-express-v1",
-            prompt_model_driver=BedrockTitanPromptModelDriver(
-                top_p=1,
-            )
-        )
-    )
-)
-agent.run(
-    "Write an informational article for children about how birds fly."
-    "Compare how birds fly to how airplanes fly."
-    'Make sure to use the word "Thrust" at least three times.'
-)
-```
-
-##### Anthropic Claude
-
-To use this model with Amazon Bedrock, use the [BedrockClaudePromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_claude_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockClaudePromptModelDriver
-from griptape.rules import Rule
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="anthropic.claude-3-sonnet-20240229-v1:0",
-            prompt_model_driver=BedrockClaudePromptModelDriver(
-                top_p=1,
-            )
-        )
-    ),
-    rules=[
-        Rule(
-            value="You are a customer service agent that is classifying emails by type. I want you to give your answer and then explain it."
-        )
-    ],
-)
-agent.run(
-    """How would you categorize this email?
-    <email>
-    Can I use my Mixmaster 4000 to mix paint, or is it only meant for mixing food?
-    </email>
-
-    Categories are:
-    (A) Pre-sale question
-    (B) Broken or defective item
-    (C) Billing question
-    (D) Other (please explain)"""
-)
-```
-##### Meta Llama 2
-
-To use this model with Amazon Bedrock, use the [BedrockLlamaPromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_llama_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockLlamaPromptModelDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="meta.llama2-13b-chat-v1",
-            prompt_model_driver=BedrockLlamaPromptModelDriver(),
-        )
-    )
-)
-agent.run(
-    "Write an article about impact of high inflation to GDP of a country"
-)
-```
-
-##### Ai21 Jurassic
-
-To use this model with Amazon Bedrock, use the [BedrockJurassicPromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_jurassic_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockJurassicPromptModelDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="ai21.j2-ultra-v1",
-            prompt_model_driver=BedrockJurassicPromptModelDriver(top_p=0.95),
-            temperature=0.7,
-        )
-    )
-)
-agent.run(
-    "Suggest an outline for a blog post based on a title. "
-    "Title: How I put the pro in prompt engineering."
-)
 ```
