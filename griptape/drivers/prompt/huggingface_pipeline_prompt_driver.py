@@ -50,10 +50,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         result = self.pipe(
             messages,
             max_new_tokens=self.max_tokens,
-            eos_token_id=[
-                self.tokenizer.tokenizer.eos_token_id,
-                *[self.pipe.tokenizer.convert_tokens_to_ids(token) for token in self.tokenizer.stop_sequences],
-            ],
+            tokenizer=self.tokenizer.tokenizer,
+            stop_strings=self.tokenizer.stop_sequences,
             temperature=self.temperature,
             do_sample=True,
         )
