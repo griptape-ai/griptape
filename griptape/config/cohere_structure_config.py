@@ -31,14 +31,7 @@ class CohereStructureConfig(StructureConfig):
         kw_only=True,
     )
     vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(
-            lambda self: LocalVectorStoreDriver(
-                embedding_driver=CohereEmbeddingDriver(
-                    model="embed-english-v3.0", api_key=self.api_key, input_type="search_document"
-                )
-            ),
-            takes_self=True,
-        ),
+        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding_driver), takes_self=True),
         kw_only=True,
         metadata={"serializable": True},
     )
