@@ -305,62 +305,37 @@ agent.run("Write the code for a snake game.")
 !!! info
     This driver requires the `drivers-prompt-huggingface-pipeline` [extra](../index.md#extras).
 
-The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally. It supports models with the following tasks:
-
-- text2text-generation
-- text-generation
+The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally.
 
 !!! warning
     Running a model locally can be a computationally expensive process.
 
 ```python
-import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.utils import PromptStack
 from griptape.config import StructureConfig
-
-
-# Override the default Prompt Stack to string converter
-# to format the prompt in a way that is easier for this model to understand.
-def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
-    prompt_lines = []
-
-    for i in prompt_stack.inputs:
-        if i.is_user():
-            prompt_lines.append(f"User: {i.content}")
-        elif i.is_assistant():
-            prompt_lines.append(f"Girafatron: {i.content}")
-        else:
-            prompt_lines.append(f"Instructions: {i.content}")
-    prompt_lines.append("Girafatron:")
-
-    return "\n".join(prompt_lines)
 
 
 agent = Agent(
     config=StructureConfig(
         prompt_driver=HuggingFacePipelinePromptDriver(
-            model="TinyLlama/TinyLlama-1.1B-Chat-v0.6",
-            prompt_stack_to_string=prompt_stack_to_string_converter,
+            model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
         )
     ),
     rulesets=[
         Ruleset(
-            name="Girafatron",
+            name="Pirate",
             rules=[
                 Rule(
-                    value="You are Girafatron, a giraffe-obsessed robot. You are talking to a human. "
-                    "Girafatron is obsessed with giraffes, the most glorious animal on the face of this Earth. "
-                    "Giraftron believes all other animals are irrelevant when compared to the glorious majesty of the giraffe."
+                    value="You are a pirate chatbot who always responds in pirate speak!"
                 )
-            ]
+            ],
         )
     ],
 )
 
-agent.run("Hello Girafatron, what is your favorite animal?")
+agent.run("How many helicopters can a human eat in one sitting?")
 ```
 
 ### Multi Model Prompt Drivers
