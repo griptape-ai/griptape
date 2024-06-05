@@ -14,7 +14,7 @@ from griptape.tasks import BaseTask
 
 @define
 class AudioTranscriptionTask(RuleMixin, BaseTask, ABC):
-    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field()
+    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field(alias="input")
     _audio_transcription_engine: AudioTranscriptionEngine = field(
         default=None, kw_only=True, alias="audio_transcription_engine"
     )
@@ -46,6 +46,16 @@ class AudioTranscriptionTask(RuleMixin, BaseTask, ABC):
     @audio_transcription_engine.setter
     def audio_transcription_engine(self, value: AudioTranscriptionEngine) -> None:
         self._audio_transcription_engine = value
+
+    def before_run(self) -> None:
+        super().before_run()
+
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {self.input.to_text()}")
+
+    def after_run(self) -> None:
+        super().after_run()
+
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")
 
     def run(self) -> TextArtifact:
         return self.audio_transcription_engine.run(self.input)
