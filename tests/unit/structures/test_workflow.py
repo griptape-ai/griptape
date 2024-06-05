@@ -280,7 +280,7 @@ class TestWorkflow:
         task4 = PromptTask("test4", id="task4")
         task2.add_parent(task1)
         task3.add_parent("task1")
-        task4.add_parents(task2, "task3")
+        task4.add_parents([task2, "task3"])
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4])
 
         workflow.run()
@@ -292,7 +292,7 @@ class TestWorkflow:
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
-        task1.add_children(task2, task3)
+        task1.add_children([task2, task3])
         task2.add_child(task4)
         task3.add_child(task4)
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4])
@@ -306,8 +306,8 @@ class TestWorkflow:
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
-        task1.add_children(task2, task3)
-        task4.add_parents(task2, task3)
+        task1.add_children([task2, task3])
+        task4.add_parents([task2, task3])
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4])
 
         workflow.run()
@@ -371,8 +371,8 @@ class TestWorkflow:
         taske = PromptTask("teste", id="taske")
         taskb.add_parent(taska)
         taskc.add_parent("taska")
-        taskd.add_parents(taska, taskb, taskc)
-        taske.add_parents("taska", taskd, "taskc")
+        taskd.add_parents([taska, taskb, taskc])
+        taske.add_parents(["taska", taskd, "taskc"])
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
@@ -385,9 +385,9 @@ class TestWorkflow:
         taskc = PromptTask("testc", id="taskc")
         taskd = PromptTask("testd", id="taskd")
         taske = PromptTask("teste", id="taske")
-        taska.add_children(taskb, taskc, taskd, taske)
+        taska.add_children([taskb, taskc, taskd, taske])
         taskb.add_child(taskd)
-        taskc.add_children(taskd, taske)
+        taskc.add_children([taskd, taske])
         taskd.add_child(taske)
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
 
@@ -401,10 +401,10 @@ class TestWorkflow:
         taskc = PromptTask("testc", id="taskc")
         taskd = PromptTask("testd", id="taskd")
         taske = PromptTask("teste", id="taske")
-        taska.add_children(taskb, taskc, taskd, taske)
+        taska.add_children([taskb, taskc, taskd, taske])
         taskb.add_child(taskd)
         taskd.add_parent(taskc)
-        taske.add_parents("taska", taskd, "taskc")
+        taske.add_parents(["taska", taskd, "taskc"])
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
@@ -412,7 +412,6 @@ class TestWorkflow:
         self._validate_topology_2(workflow)
 
     def test_run_topology_2_imperative_insert(self):
-        """Adapted from https://en.wikipedia.org/wiki/Directed_acyclic_graph#/media/File:Tred-G.svg"""
         taska = PromptTask("testa", id="taska")
         taskb = PromptTask("testb", id="taskb")
         taskc = PromptTask("testc", id="taskc")

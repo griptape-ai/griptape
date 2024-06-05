@@ -60,7 +60,7 @@ class BaseTask(ABC):
     def __str__(self) -> str:
         return str(self.output.value)
 
-    def add_parents(self, *parents: str | BaseTask) -> None:
+    def add_parents(self, parents: list[str | BaseTask]) -> None:
         for parent in parents:
             self.add_parent(parent)
 
@@ -70,7 +70,7 @@ class BaseTask(ABC):
         if parent_id not in self.parent_ids:
             self.parent_ids.append(parent_id)
 
-    def add_children(self, *children: str | BaseTask) -> None:
+    def add_children(self, children: list[str | BaseTask]) -> None:
         for child in children:
             self.add_child(child)
 

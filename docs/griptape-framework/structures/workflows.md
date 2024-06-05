@@ -144,3 +144,151 @@ workflow.run()
                              unity and harmony that can exist in diversity.
 ```
 
+### Declarative vs Imperative Syntax
+
+The above example showed how to create a workflow using the declarative syntax via the `parent_ids` init param, but there are a number of declarative and imperative options for you to choose between. There is no functional difference, they merely exist to allow you to structure your code as is most readable for your use case. Possibilities are illustrated below.
+
+Declaratively specify parents (same as above example):
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    tasks=[
+        PromptTask("Name an animal", id="animal"),
+        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"]),
+        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal", parent_ids=["adjective"]),
+    ],
+    rules=[Rule("output a single lowercase word")]
+)
+
+workflow.run()
+```
+
+Declaratively specify children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    tasks=[
+        PromptTask("Name an animal", id="animal", child_ids=["adjective"]),
+        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", child_ids=["new-animal"]),
+        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal"),
+    ],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Declaratively specifying a mix of parents and children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    tasks=[
+        PromptTask("Name an animal", id="animal"),
+        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"], child_ids=["new-animal"]),
+        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal"),
+    ],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Imperatively specify parents:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+
+adjective_task.add_parent(animal_task)
+new_animal_task.add_parent(adjective_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Imperatively specify children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+
+animal_task.add_child(adjective_task)
+adjective_task.add_child(new_animal_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Imperatively specify a mix of parents and children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+
+adjective_task.add_parent(animal_task)
+adjective_task.add_child(new_animal_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Or even mix imparetive and declarative:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"])
+
+
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+new_animal_task.add_parent(adjective_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
