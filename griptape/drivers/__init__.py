@@ -29,6 +29,7 @@ from .embedding.voyageai_embedding_driver import VoyageAiEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
 from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
+from .embedding.cohere_embedding_driver import CohereEmbeddingDriver
 
 from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
 from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
@@ -143,6 +144,7 @@ __all__ = [
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "BaseEmbeddingModelDriver",
+    "CohereEmbeddingDriver",
     "SageMakerHuggingFaceEmbeddingModelDriver",
     "SageMakerTensorFlowHubEmbeddingModelDriver",
     "BaseVectorStoreDriver",

@@ -12,12 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.add_parent()` to add a parent task to a child task.
 - `BaseTask.add_parents()` to add multiple parent tasks to a child task.
 - `Structure.resolve_relationships()` to resolve asymmetrically defined parent/child relationships. In other words, if a parent declares a child, but the child does not declare the parent, the parent will automatically be added as a parent of the child when running this method. The method is invoked automatically by `Structure.before_run()`.
+- `CohereEmbeddingDriver` for using Cohere's embeddings API.
+- `CohereStructureConfig` for providing Structures with quick Cohere configuration.
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
 - `Structure.before_run()` now automatically resolves asymmetrically defined parent/child relationships using the new `Structure.resolve_relationships()`.
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
 - Updated `HuggingFacePipelinePromptDriver` to use chat features of `transformers.TextGenerationPipeline`.
+- Updated `CoherePromptDriver` to use Cohere's latest SDK.
 
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.

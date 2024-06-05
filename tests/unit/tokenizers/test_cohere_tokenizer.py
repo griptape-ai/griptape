@@ -7,6 +7,7 @@ class TestCohereTokenizer:
     @pytest.fixture(autouse=True)
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value.tokenize.return_value.tokens = ["foo", "bar"]
+
         return mock_client
 
     @pytest.fixture

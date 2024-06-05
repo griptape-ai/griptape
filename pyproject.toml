@@ -31,9 +31,9 @@ dateparser = "^1.1.8"
 requests = "^2"
 
 # drivers
-cohere = { version = ">=4", optional = true }
+cohere = { version = "^5.5.4", optional = true }
 anthropic = { version = "^0.20.0", optional = true }
-transformers = { version = "^4.41.2", optional = true }
+transformers = { version = "^4.39.3", optional = true }
 huggingface-hub = { version = ">=0.13", optional = true }
 boto3 = { version = "^1.28.2", optional = true }
 sqlalchemy-redshift = { version = "*", optional = true }
@@ -91,6 +91,7 @@ drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
 drivers-embedding-google = ["google-generativeai"]
+drivers-embedding-cohere = ["cohere"]
 
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]
