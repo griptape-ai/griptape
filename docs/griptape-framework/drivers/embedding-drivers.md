@@ -165,6 +165,12 @@ print(embeddings[:3])
 ```
 
 ### Cohere Embeddings
+
+The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_embedding_driver.md) uses the [Cohere Embeddings API](https://docs.cohere.com/docs/embeddings).
+
+!!! info
+    This driver requires the `drivers-embedding-cohere` [extra](../index.md#extras).
+
 ```python
 import os
 from griptape.drivers import CohereEmbeddingDriver

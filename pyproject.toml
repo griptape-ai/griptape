@@ -91,6 +91,7 @@ drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
 drivers-embedding-google = ["google-generativeai"]
+drivers-embedding-cohere = ["cohere"]
 
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]

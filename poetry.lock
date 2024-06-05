@@ -6059,6 +6059,7 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "elevenlabs", "filetype", "google-generativeai", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pusher", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "torch", "trafilatura", "transformers", "voyageai"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
+drivers-embedding-cohere = ["cohere"]
 drivers-embedding-google = ["google-generativeai"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
@@ -6095,4 +6096,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "76080d50d5bc35d4f45d2a419cb6356b5e5db7f8777af93f45a6f586d9dd86f1"
+content-hash = "4836f45544c148fc9241a48cce8fd002729a276ec229894c59f75e4150ea6d55"
