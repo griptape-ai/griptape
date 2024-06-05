@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
+
 ## [0.26.0] - 2024-06-04
 
 ### Added
