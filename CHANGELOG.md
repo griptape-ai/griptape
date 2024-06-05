@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
+- **BREAKING**: Removed `AmazonBedrockPromptDriver.prompt_model_driver` as it is no longer needed with the `AmazonBedrockPromptDriver` Converse API implementation.
+- **BREAKING**: Removed `BedrockClaudePromptModelDriver`.
+- **BREAKING**: Removed `BedrockJurassicPromptModelDriver`.
+- **BREAKING**: Removed `BedrockLlamaPromptModelDriver`.
+- **BREAKING**: Removed `BedrockTitanPromptModelDriver`.
+- **BREAKING**: Removed `BedrockClaudeTokenizer`, use `SimpleTokenizer` instead.
+- **BREAKING**: Removed `BedrockJurassicTokenizer`, use `SimpleTokenizer` instead.
+- **BREAKING**: Removed `BedrockLlamaTokenizer`, use `SimpleTokenizer` instead.
+- **BREAKING**: Removed `BedrockTitanTokenizer`, use `SimpleTokenizer` instead.
+- Updated `AmazonBedrockPromptDriver` to use [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
 - `Structure.before_run()` now automatically resolves asymmetrically defined parent/child relationships using the new `Structure.resolve_relationships()`.
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
 - Updated `HuggingFacePipelinePromptDriver` to use chat features of `transformers.TextGenerationPipeline`.

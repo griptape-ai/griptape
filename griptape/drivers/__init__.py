@@ -55,10 +55,6 @@ from .sql.sql_driver import SqlDriver
 from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
 from .prompt_model.sagemaker_llama_prompt_model_driver import SageMakerLlamaPromptModelDriver
 from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPromptModelDriver
-from .prompt_model.bedrock_titan_prompt_model_driver import BedrockTitanPromptModelDriver
-from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePromptModelDriver
-from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPromptModelDriver
-from .prompt_model.bedrock_llama_prompt_model_driver import BedrockLlamaPromptModelDriver
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
 from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
@@ -165,10 +161,6 @@ __all__ = [
     "BasePromptModelDriver",
     "SageMakerLlamaPromptModelDriver",
     "SageMakerFalconPromptModelDriver",
-    "BedrockTitanPromptModelDriver",
-    "BedrockClaudePromptModelDriver",
-    "BedrockJurassicPromptModelDriver",
-    "BedrockLlamaPromptModelDriver",
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",
