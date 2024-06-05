@@ -237,52 +237,27 @@ agent.run('Briefly explain how a computer works to a young child.')
 !!! info
     This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
 
-The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api). It supports models with the following tasks:
+The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api).
 
-- text2text-generation
-- text-generation
 
 !!! warning
     Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by
     [Hugging Face serverless inference](https://huggingface.co/docs/api-inference/en/index) will not work with this driver.
     Due to the limitations of Hugging Face serverless inference, only models that are than 10GB are supported.
 
-!!! info
-    The `prompt_stack_to_string_converter` function is intended to convert a `PromptStack` to model specific input. You
-    should consult the model's documentation to determine the correct format.
-
-Let's recreate the [Falcon-7B-Instruct](https://huggingface.co/tiiuae/falcon-7b-instruct) example using Griptape:
-
 ```python
 import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFaceHubPromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.utils import PromptStack
 from griptape.config import StructureConfig
-
-
-def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
-    prompt_lines = []
-
-    for i in prompt_stack.inputs:
-        if i.is_user():
-            prompt_lines.append(f"User: {i.content}")
-        elif i.is_assistant():
-            prompt_lines.append(f"Girafatron: {i.content}")
-        else:
-            prompt_lines.append(f"Instructions: {i.content}")
-    prompt_lines.append("Girafatron:")
-
-    return "\n".join(prompt_lines)
 
 
 agent = Agent(
     config=StructureConfig(
         prompt_driver=HuggingFaceHubPromptDriver(
-            model="tiiuae/falcon-7b-instruct",
+            model="HuggingFaceH4/zephyr-7b-beta",
             api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
-            prompt_stack_to_string=prompt_stack_to_string_converter,
         )
     ),
     rulesets=[
@@ -294,7 +269,7 @@ agent = Agent(
                     "Girafatron is obsessed with giraffes, the most glorious animal on the face of this Earth. "
                     "Giraftron believes all other animals are irrelevant when compared to the glorious majesty of the giraffe."
                 )
-            ]
+            ],
         )
     ],
 )
