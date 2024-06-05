@@ -161,6 +161,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         if len(self.subtasks) > 0:
             self.subtasks[-1].add_child(subtask)
+            subtask.add_parent(self.subtasks[-1])
 
         self.subtasks.append(subtask)
 
