@@ -271,7 +271,7 @@ workflow = Workflow(
 workflow.run()
 ```
 
-Or even mix imparetive and declarative:
+Or even mix imperative and declarative:
 
 ```python
 from griptape.tasks import PromptTask
