@@ -7,10 +7,9 @@ from .prompt.cohere_prompt_driver import CoherePromptDriver
 from .prompt.huggingface_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
 from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
-from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
+from .prompt.amazon_sagemaker_jumpstart_prompt_driver import AmazonSageMakerJumpstartPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.google_prompt_driver import GooglePromptDriver
-from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 from .prompt.dummy_prompt_driver import DummyPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
@@ -51,10 +50,6 @@ from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
 from .sql.snowflake_sql_driver import SnowflakeSqlDriver
 from .sql.sql_driver import SqlDriver
-
-from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
-from .prompt_model.sagemaker_llama_prompt_model_driver import SageMakerLlamaPromptModelDriver
-from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPromptModelDriver
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
 from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
@@ -119,10 +114,9 @@ __all__ = [
     "HuggingFacePipelinePromptDriver",
     "HuggingFaceHubPromptDriver",
     "AnthropicPromptDriver",
-    "AmazonSageMakerPromptDriver",
+    "AmazonSageMakerJumpstartPromptDriver",
     "AmazonBedrockPromptDriver",
     "GooglePromptDriver",
-    "BaseMultiModelPromptDriver",
     "DummyPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
@@ -158,9 +152,6 @@ __all__ = [
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
     "SqlDriver",
-    "BasePromptModelDriver",
-    "SageMakerLlamaPromptModelDriver",
-    "SageMakerFalconPromptModelDriver",
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",

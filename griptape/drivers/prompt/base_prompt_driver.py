@@ -39,7 +39,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         default=Factory(lambda: (ImportError, ValueError)), kw_only=True
     )
     model: str = field(metadata={"serializable": True})
-    tokenizer: BaseTokenizer
+    tokenizer: BaseTokenizer = field(kw_only=True)
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def max_output_tokens(self, text: str | list) -> int:

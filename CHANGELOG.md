@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BedrockJurassicTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `BedrockLlamaTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `BedrockTitanTokenizer`, use `SimpleTokenizer` instead.
+- **BREAKING**: Removed `SagemakerFalconPromptDriver`, use `AmazonSageMakerJumpstartPromptDriver` instead.
+- **BREAKING**: Removed `SagemakerLlamaPromptDriver`, use `AmazonSageMakerJumpstartPromptDriver` instead.
+- **BREAKING**: Renamed `AmazonSagemakerPromptDriver` to `AmazonSageMakerJumpstartPromptDriver`.
 - Updated `AmazonBedrockPromptDriver` to use [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
 - `Structure.before_run()` now automatically resolves asymmetrically defined parent/child relationships using the new `Structure.resolve_relationships()`.
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
