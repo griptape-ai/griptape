@@ -5536,7 +5536,7 @@ files = [
 
 [package.dependencies]
 filelock = "*"
-huggingface-hub = ">=0.23.0,<1.0"
+huggingface-hub = ">=0.19.3,<1.0"
 numpy = ">=1.17"
 packaging = ">=20.0"
 pyyaml = ">=5.1"
@@ -5569,7 +5569,7 @@ natten = ["natten (>=0.14.6,<0.15.0)"]
 onnx = ["onnxconverter-common", "onnxruntime (>=1.4.0)", "onnxruntime-tools (>=1.4.2)", "tf2onnx"]
 onnxruntime = ["onnxruntime (>=1.4.0)", "onnxruntime-tools (>=1.4.2)"]
 optuna = ["optuna"]
-quality = ["GitPython (<3.1.19)", "datasets (!=2.5.0)", "isort (>=5.5.4)", "ruff (==0.1.5)", "urllib3 (<2.0.0)"]
+quality = ["GitPython (<3.1.19)", "datasets (!=2.5.0)", "hf-doc-builder (>=0.3.0)", "isort (>=5.5.4)", "ruff (==0.1.5)", "urllib3 (<2.0.0)"]
 ray = ["ray[tune] (>=2.7.0)"]
 retrieval = ["datasets (!=2.5.0)", "faiss-cpu"]
 sagemaker = ["sagemaker (>=2.31.0)"]
@@ -6096,4 +6096,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "4836f45544c148fc9241a48cce8fd002729a276ec229894c59f75e4150ea6d55"
+content-hash = "7d073f2b3d8b7e16b3315c7c59925884fadda9c0b0c179b191a748de669f2e0c"
