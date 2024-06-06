@@ -4,7 +4,6 @@ from attrs import define, field
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
-from qdrant_client.http import models as rest
 
 VECTOR_NAME = None
 BATCH_SIZE = 64
@@ -67,6 +66,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Parameters:
             vector_id (str): ID of the vector to delete.
         """
+        rest = import_optional_dependency("qdrant_client.http.models")
         try:
             deletion_response = self.client.delete(
                 collection_name=self.collection_name, points_selector=rest.PointIdsList(points=[vector_id])
@@ -145,6 +145,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             str: The ID of the upserted vector.
         """
+        rest = import_optional_dependency("qdrant_client.http.models")
 
         if vector_id is None:
             vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
