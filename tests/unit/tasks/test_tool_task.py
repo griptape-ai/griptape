@@ -147,7 +147,7 @@ class TestToolTask:
         )
 
     def test_run_without_memory(self, agent):
-        task = ToolTask(tool=MockTool(off_prompt=False))
+        task = ToolTask(tool=MockTool())
 
         agent.add_task(task)
 
@@ -155,7 +155,7 @@ class TestToolTask:
         assert task.run().value == "ack foobar"
 
     def test_run_with_memory(self, agent):
-        task = ToolTask(tool=MockTool())
+        task = ToolTask(tool=MockTool(off_prompt=True))
 
         agent.add_task(task)
 
@@ -170,7 +170,7 @@ class TestToolTask:
 
         memory.process_output(MockTool().test, subtask, TextArtifact("foo"))
 
-        task = ToolTask(tool=MockTool(off_prompt=False))
+        task = ToolTask(tool=MockTool())
 
         agent.add_task(task)
 

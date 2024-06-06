@@ -133,11 +133,13 @@ class TestBaseTool:
 
     def test_off_prompt(self, tool):
         assert (
-            ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()]).tools[0].output_memory
+            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()])
+            .tools[0]
+            .output_memory
         )
 
         assert (
-            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=False)])
+            ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=True)])
             .tools[0]
             .output_memory
         )
@@ -171,10 +173,10 @@ class TestBaseTool:
 
     def test_invalid_config(self):
         try:
-            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool
+            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa
 
             assert False
-        except SchemaMissingKeyError as e:
+        except SchemaMissingKeyError:
             assert True
 
     def test_memory(self):

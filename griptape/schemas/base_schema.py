@@ -5,14 +5,14 @@ from typing import Union, Literal, get_args, get_origin
 from collections.abc import Sequence
 
 import attrs
-from marshmallow import Schema, fields, EXCLUDE
+from marshmallow import Schema, fields, INCLUDE
 
 from griptape.schemas.bytes_field import Bytes
 
 
 class BaseSchema(Schema):
     class Meta:
-        unknown = EXCLUDE
+        unknown = INCLUDE
 
     DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
 
@@ -110,6 +110,7 @@ class BaseSchema(Schema):
         from typing import Any
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
+        Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
 
         attrs.resolve_types(
             attrs_cls,
@@ -122,6 +123,7 @@ class BaseSchema(Schema):
                 "BaseTokenizer": BaseTokenizer,
                 "BasePromptModelDriver": BasePromptModelDriver,
                 "boto3": boto3,
+                "Client": Client,
             },
         )
 

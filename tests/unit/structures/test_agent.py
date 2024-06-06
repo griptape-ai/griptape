@@ -53,8 +53,8 @@ class TestAgent:
             agent = Agent()
             agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
-    def test_with_default_task_memory(self):
-        agent = Agent(tools=[MockTool()])
+    def test_with_task_memory(self):
+        agent = Agent(tools=[MockTool(off_prompt=True)])
 
         assert isinstance(agent.task_memory, TaskMemory)
         assert agent.tools[0].input_memory is not None
@@ -62,7 +62,14 @@ class TestAgent:
         assert agent.tools[0].output_memory is not None
         assert agent.tools[0].output_memory["test"][0] == agent.task_memory
 
-    def test_with_default_task_memory_and_empty_tool_output_memory(self):
+    def test_with_task_memory_and_empty_tool_output_memory(self):
+        agent = Agent(tools=[MockTool(output_memory={}, off_prompt=True)])
+
+        assert isinstance(agent.task_memory, TaskMemory)
+        assert agent.tools[0].input_memory[0] == agent.task_memory
+        assert agent.tools[0].output_memory == {}
+
+    def test_with_no_task_memory_and_empty_tool_output_memory(self):
         agent = Agent(tools=[MockTool(output_memory={})])
 
         assert isinstance(agent.task_memory, TaskMemory)

@@ -17,7 +17,4 @@ class HuggingFaceTokenizer(BaseTokenizer):
     max_output_tokens: int = field(kw_only=True)  # pyright: ignore[reportGeneralTypeIssues]
 
     def count_tokens(self, text: str | list) -> int:
-        if isinstance(text, str):
-            return len(self.tokenizer.encode(text))
-        else:
-            raise ValueError("Text must be a string.")
+        return len(self.tokenizer.encode(text))

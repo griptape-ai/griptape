@@ -11,7 +11,6 @@ from griptape.drivers import (
     BasePromptDriver,
     BaseVectorStoreDriver,
     BedrockClaudeImageQueryModelDriver,
-    BedrockClaudePromptModelDriver,
     BedrockTitanImageGenerationModelDriver,
     LocalVectorStoreDriver,
 )
@@ -21,11 +20,7 @@ from griptape.drivers import (
 class AmazonBedrockStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
         default=Factory(
-            lambda: AmazonBedrockPromptDriver(
-                model="anthropic.claude-3-sonnet-20240229-v1:0",
-                stream=False,
-                prompt_model_driver=BedrockClaudePromptModelDriver(),
-            )
+            lambda: AmazonBedrockPromptDriver(model="anthropic.claude-3-sonnet-20240229-v1:0", stream=False)
         ),
         metadata={"serializable": True},
     )

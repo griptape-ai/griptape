@@ -7,7 +7,7 @@ from griptape.structures import Agent
 from griptape.tools import WebScraper, TaskMemoryClient
 
 agent = Agent(
-    tools=[WebScraper(), TaskMemoryClient(off_prompt=False)]
+    tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]
 )
 
 agent.run(

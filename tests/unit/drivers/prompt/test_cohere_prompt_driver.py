@@ -8,16 +8,16 @@ class TestCoherePromptDriver:
     @pytest.fixture
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
-        mock_client.generate.return_value.generations = [Mock()]
-        mock_client.generate.return_value.generations[0].text = "model-output"
+        mock_client.chat.return_value = Mock(text="model-output")
+
         return mock_client
 
     @pytest.fixture
     def mock_stream_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
-        mock_chunk = Mock()
-        mock_chunk.text = "model-output"
-        mock_client.generate.return_value = iter([mock_chunk])
+        mock_chunk = Mock(text="model-output", event_type="text-generation")
+        mock_client.chat_stream.return_value = iter([mock_chunk])
+
         return mock_client
 
     @pytest.fixture(autouse=True)
@@ -55,16 +55,3 @@ class TestCoherePromptDriver:
 
         # Then
         assert text_artifact.value == "model-output"
-
-    @pytest.mark.parametrize("choices", [[], [1, 2]])
-    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_client, prompt_stack):
-        # Given
-        driver = CoherePromptDriver(model="command", api_key="api-key")
-        mock_client.generate.return_value.generations = choices
-
-        # When
-        with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
-
-        # Then
-        e.value.args[0] == "Completion with more than one choice is not supported yet."

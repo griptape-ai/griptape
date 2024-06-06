@@ -17,6 +17,8 @@ from griptape.drivers import (
     BaseImageQueryDriver,
     BaseTextToSpeechDriver,
     DummyTextToSpeechDriver,
+    BaseAudioTranscriptionDriver,
+    DummyAudioTranscriptionDriver,
 )
 
 
@@ -42,4 +44,7 @@ class StructureConfig(BaseStructureConfig):
     )
     text_to_speech_driver: BaseTextToSpeechDriver = field(
         default=Factory(lambda: DummyTextToSpeechDriver()), kw_only=True, metadata={"serializable": True}
+    )
+    audio_transcription_driver: BaseAudioTranscriptionDriver = field(
+        default=Factory(lambda: DummyAudioTranscriptionDriver()), kw_only=True, metadata={"serializable": True}
     )
