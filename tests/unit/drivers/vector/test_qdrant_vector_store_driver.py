@@ -1,7 +1,6 @@
 import pytest
-from griptape.drivers import QdrantVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from griptape.artifacts import TextArtifact
+from unittest.mock import MagicMock
 
 embedding_driver = MockEmbeddingDriver()
 
@@ -20,10 +19,16 @@ class TestQdrantVectorVectorStoreDriver:
         return qdrant_instance
 
     def test_upsert_vector(self, driver):
-        assert driver.upsert_vector(embedding_driver.try_embed_chunk("foo"), vector_id=1) == 1
+        assert driver.upsert_vector(embedding_driver.embed_string("foo"), vector_id=1) == 1
 
     def test_upsert_text(self, driver):
         assert driver.upsert_text("foo", vector_id=2) == 2
 
     def test_query(self, driver):
         results = driver.query("test", count=10)
+        assert len(results) == 1
+        assert results[0]["id"] == "foo"
+        assert results[0]["vector"] == [0, 1, 0]
+        assert results[0]["score"] == 42
+        assert results[0]["payload"]["foo"] == "bar"
+    

@@ -82,8 +82,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         except Exception as e:
             print(f"An error occurred while trying to delete ID {vector_id}: {e}")
 
+
     def query(
-        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, include_vectors: bool = False, **kwargs,
+        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, include_vectors: bool = False, with_payload: bool = True, with_vectors: bool = True, **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """
         Query the Qdrant collection based on a query vector.
@@ -100,14 +101,10 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         query_vector = self.embedding_driver.embed_string(query)
 
         # Create a search request
-        limit = count
-        with_payload = True
-        with_vectors = True  # Ensure we get payloads in the results
-
         results = self.client.search(
             collection_name=self.collection_name,
             query_vector=query_vector,
-            limit=limit,
+            limit=count,
             with_payload=with_payload,
             with_vectors=with_vectors,
         )
@@ -254,23 +251,57 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             namespace (str, optional): Optional namespace of the vector.
 
         Returns:
-            Vector entry.
+            Optional[BaseVectorStoreDriver.Entry]: Vector entry if found, else None.
         """
+        try:
+            results = self.client.retrieve(
+                collection_name=self.collection_name,
+                ids=[vector_id],
+                with_payload=True,
+                with_vectors=True,
+            )
+            if results:
+                entry = results[0]
+                return BaseVectorStoreDriver.Entry(
+                    id=entry.id,
+                    vector=entry.vector,
+                    meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
+                )
+            else:
+                return None
+        except Exception as e:
+            print(f"An error occurred while trying to retrieve the vector by ID: {e}")
+            return None
 
-        raise NotImplementedError(
-            f"{self.__class__.__name__} does not support loading the entry based on ID or namespace"
-        )
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, ids: list[str], with_payload: bool = True, with_vectors: bool = True, namespace: Optional[str] = None, ) -> list[BaseVectorStoreDriver.Entry]:
         """
         Load vector entries from the Qdrant collection.
 
         Parameters:
             namespace: Optional namespace of the vectors.
+            ids (list[str]): List of IDs to lookup.
+            with_payload (bool): Specify which stored payload should be attached to the result.
+            with_vectors (bool): Whether to attach stored vectors to the search result.
 
         Returns:
-            List of vector entries.
+            List of points.
         """
-        raise NotImplementedError(
-            f"{self.__class__.__name__} does not support loading entries based on IDs or namespaces"
-        )
+        try:
+            results = self.client.retrieve(
+                collection_name=self.collection_name,
+                ids=ids,
+                with_payload=with_payload,
+                with_vectors=with_vectors,
+            )
+            return [
+                BaseVectorStoreDriver.Entry(
+                    id=entry.id,
+                    vector=entry.vector if with_vectors else [],
+                    meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
+                )
+                for entry in results
+            ]
+        except Exception as e:
+            print(f"An error occurred while trying to retrieve points by IDs: {e}")
+            return []
