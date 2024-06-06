@@ -48,6 +48,14 @@ class BaseTask(ABC):
         return [self.structure.find_task(child_id) for child_id in self.child_ids]
 
     @property
+    def parent_outputs(self) -> dict[str, str]:
+        return {parent.id: parent.output.to_text() if parent.output else "" for parent in self.parents}
+
+    @property
+    def parents_output(self) -> str:
+        return "\n".join([parent.output.to_text() for parent in self.parents if parent.output])
+
+    @property
     def meta_memories(self) -> list[BaseMetaEntry]:
         if self.structure and self.structure.meta_memory:
             if self.max_meta_memory_entries:

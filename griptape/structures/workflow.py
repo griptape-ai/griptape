@@ -127,9 +127,8 @@ class Workflow(Structure):
 
         context.update(
             {
-                "parent_outputs": {
-                    parent.id: parent.output.to_text() if parent.output else "" for parent in task.parents
-                },
+                "parent_outputs": task.parent_outputs,
+                "parents_output": task.parents_output,
                 "parents": {parent.id: parent for parent in task.parents},
                 "children": {child.id: child for child in task.children},
             }
