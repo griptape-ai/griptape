@@ -52,4 +52,6 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
             if "description" in response:
                 return response["description"]
             else:
-                raise ValueError(f'Error getting Knowledge Base description: {response["message"]}')
+                raise ValueError(
+                    f"No description found for Knowledge Base {self.knowledge_base_id}. Please set a description, or manually set the `GriptapeCloudKnowledgeBaseClient.description` attribute."
+                )
