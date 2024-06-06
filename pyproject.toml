@@ -27,7 +27,6 @@ numpy = ">=1"
 stringcase = "^1.2.0"
 docker = "^7.1.0"
 sqlalchemy = "~=1.0"
-dateparser = "^1.1.8"
 requests = "^2"
 
 # drivers
