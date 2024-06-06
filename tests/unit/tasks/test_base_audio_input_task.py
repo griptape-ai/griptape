@@ -1,7 +1,7 @@
 import pytest
 
 from tests.mocks.mock_audio_input_task import MockAudioInputTask
-from griptape.artifacts import AudioArtifact
+from griptape.artifacts import AudioArtifact, TextArtifact
 from tests.mocks.mock_text_input_task import MockTextInputTask
 
 
@@ -15,3 +15,7 @@ class TestBaseAudioInputTask:
 
     def test_callable_input(self, audio_artifact):
         assert MockTextInputTask(lambda _: audio_artifact).input.value == audio_artifact.value
+
+    def test_bad_input(self):
+        with pytest.raises(ValueError):
+            assert MockAudioInputTask(TextArtifact("foobar")).input.value == "foobar"
