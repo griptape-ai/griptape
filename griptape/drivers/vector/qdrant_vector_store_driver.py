@@ -1,11 +1,8 @@
 from __future__ import annotations
-from typing import Optional, Any
-from collections.abc import Iterable, Sequence, Generator
+from typing import Optional
 from attrs import define, field
-import uuid
-from itertools import islice
+from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
-from griptape.artifacts import TextArtifact
 from griptape.utils import import_optional_dependency
 from qdrant_client.http import models as rest
 
@@ -144,7 +141,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         if vector_id is None:
-            vector_id = str(uuid.uuid4())
+            vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
 
         if meta is None:
             meta = {}
