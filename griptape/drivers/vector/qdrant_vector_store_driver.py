@@ -195,9 +195,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
 
         Parameters:
             namespace: Optional namespace of the vectors.
-            ids (list[str]): List of IDs to lookup.
-            with_payload (bool): Specify which stored payload should be attached to the result.
-            with_vectors (bool): Whether to attach stored vectors to the search result.
 
         Returns:
             List of points.
