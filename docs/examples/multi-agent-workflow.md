@@ -155,35 +155,33 @@ if __name__ == "__main__":
             ),
         ),
     )
-    end_task = team.add_task(
-        PromptTask(
-            'State "All Done!"',
-        )
-    )
-    team.insert_tasks(
-        research_task,
-        [
-            StructureRunTask(
-                (
-                    """Using insights provided, develop an engaging blog
+    writer_tasks = team.add_tasks(*[
+        StructureRunTask(
+            (
+                """Using insights provided, develop an engaging blog
                 post that highlights the most significant AI advancements.
                 Your post should be informative yet accessible, catering to a tech-savvy audience.
                 Make it sound cool, avoid complex words so it doesn't sound like AI.
 
                 Insights:
                 {{ parent_outputs["research"] }}""",
-                ),
-                driver=LocalStructureRunDriver(
-                    structure_factory_fn=lambda: build_writer(
-                        role=writer["role"],
-                        goal=writer["goal"],
-                        backstory=writer["backstory"],
-                    )
-                ),
-            )
-            for writer in WRITERS
-        ],
-        end_task,
+            ),
+            driver=LocalStructureRunDriver(
+                structure_factory_fn=lambda: build_writer(
+                    role=writer["role"],
+                    goal=writer["goal"],
+                    backstory=writer["backstory"],
+                )
+            ),
+            parent_ids=[research_task.id],
+        )
+        for writer in WRITERS
+    ])
+    end_task = team.add_task(
+        PromptTask(
+            'State "All Done!"',
+            parent_ids=[writer_task.id for writer_task in writer_tasks],
+        )
     )
 
     team.run()

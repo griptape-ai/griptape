@@ -1,8 +1,6 @@
 from .prompt.base_prompt_driver import BasePromptDriver
 from .prompt.openai_chat_prompt_driver import OpenAiChatPromptDriver
-from .prompt.openai_completion_prompt_driver import OpenAiCompletionPromptDriver
 from .prompt.azure_openai_chat_prompt_driver import AzureOpenAiChatPromptDriver
-from .prompt.azure_openai_completion_prompt_driver import AzureOpenAiCompletionPromptDriver
 from .prompt.cohere_prompt_driver import CoherePromptDriver
 from .prompt.huggingface_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
 from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
@@ -29,6 +27,7 @@ from .embedding.voyageai_embedding_driver import VoyageAiEmbeddingDriver
 from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingDriver
 from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
+from .embedding.cohere_embedding_driver import CohereEmbeddingDriver
 
 from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
 from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
@@ -54,10 +53,6 @@ from .sql.sql_driver import SqlDriver
 from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
 from .prompt_model.sagemaker_llama_prompt_model_driver import SageMakerLlamaPromptModelDriver
 from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPromptModelDriver
-from .prompt_model.bedrock_titan_prompt_model_driver import BedrockTitanPromptModelDriver
-from .prompt_model.bedrock_claude_prompt_model_driver import BedrockClaudePromptModelDriver
-from .prompt_model.bedrock_jurassic_prompt_model_driver import BedrockJurassicPromptModelDriver
-from .prompt_model.bedrock_llama_prompt_model_driver import BedrockLlamaPromptModelDriver
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
 from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
@@ -115,9 +110,7 @@ from .audio_transcription.openai_audio_transcription_driver import OpenAiAudioTr
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
-    "OpenAiCompletionPromptDriver",
     "AzureOpenAiChatPromptDriver",
-    "AzureOpenAiCompletionPromptDriver",
     "CoherePromptDriver",
     "HuggingFacePipelinePromptDriver",
     "HuggingFaceHubPromptDriver",
@@ -143,6 +136,7 @@ __all__ = [
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "BaseEmbeddingModelDriver",
+    "CohereEmbeddingDriver",
     "SageMakerHuggingFaceEmbeddingModelDriver",
     "SageMakerTensorFlowHubEmbeddingModelDriver",
     "BaseVectorStoreDriver",
@@ -163,10 +157,6 @@ __all__ = [
     "BasePromptModelDriver",
     "SageMakerLlamaPromptModelDriver",
     "SageMakerFalconPromptModelDriver",
-    "BedrockTitanPromptModelDriver",
-    "BedrockClaudePromptModelDriver",
-    "BedrockJurassicPromptModelDriver",
-    "BedrockLlamaPromptModelDriver",
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",

@@ -16,10 +16,6 @@ class Workflow(Structure):
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
 
-        if self.output_task:
-            self.output_task.child_ids.append(task.id)
-            task.parent_ids.append(self.output_task.id)
-
         self.tasks.append(task)
 
         return task
@@ -77,6 +73,7 @@ class Workflow(Structure):
                     if parent_task.id in child_task.parent_ids:
                         child_task.parent_ids.remove(parent_task.id)
 
+        last_parent_index = -1
         for parent_task in parent_tasks:
             # Link the new task to the parent task
             if parent_task.id not in task.parent_ids:
@@ -85,7 +82,11 @@ class Workflow(Structure):
                 parent_task.child_ids.append(task.id)
 
             parent_index = self.tasks.index(parent_task)
-            self.tasks.insert(parent_index + 1, task)
+            if parent_index > last_parent_index:
+                last_parent_index = parent_index
+
+        # Insert the new task once, just after the last parent task
+        self.tasks.insert(last_parent_index + 1, task)
 
         return task
 
