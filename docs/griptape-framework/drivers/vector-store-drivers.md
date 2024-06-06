@@ -461,11 +461,7 @@ def create_embedding_driver(embedding_model, tokenizer):
 # Instantiating QdrantVectorStoreDriver
 def create_vector_store_driver(url, collection_name, embedding_driver):
     vector_store_driver = QdrantVectorStoreDriver(
-        url=url,
-        collection_name=collection_name,
-        content_payload_key="content",
-        force_recreate=True,
-        embedding_driver=embedding_driver,
+        url=url, collection_name=collection_name, content_payload_key="content", embedding_driver=embedding_driver
     )
     return vector_store_driver
 
@@ -480,21 +476,19 @@ def load_pdf(file_name, tokenizer):
 
 
 def main():
-
     tokenizer = create_tokenizer(embedding_model)
     embedding_driver = create_embedding_driver(embedding_model, tokenizer)
     vector_store_driver = create_vector_store_driver(
-        url="http://localhost:6333",
-        collection_name="linux_bible",
-        embedding_driver=embedding_driver,
+        url="http://localhost:6333", collection_name="linux_bible", embedding_driver=embedding_driver
     )
 
     # Loading the data
     loader = load_pdf(file_name, tokenizer=tokenizer)
 
-    #Generate metadata for each chunk (example metadata)
+    # Generate metadata for each chunk (example metadata)
     metadata = [{"source": file_name, "page": i + 1} for i in range(len(loader))]
 
+    # Upserting the vector
     try:
         for i, l in enumerate(loader):
             content = str(l)
@@ -504,14 +498,29 @@ def main():
     except Exception as e:
         logging.error(f"Error during upsert_vector: {e}")
 
+    # Querying the data
     query_string = "Who created linux?"
-
     query_results = vector_store_driver.query(query_string, count=6, include_vectors=True)
-    #print(f"Query results: {query_results}")
     for result in query_results:
-        print(f"ID: {result.id}, Score: {result.score}, Vector: {result.vector}, Metadata: {result.meta}")
+       print(f"ID: {result.id}, Score: {result.score}, Vector: {result.vector}, Metadata: {result.meta}")
 
+    # Retrieving single entries
+    single_entry = vector_store_driver.load_entry(vector_id="00499354-9362-49c7-97b6-0220b9de84e7")
+    if single_entry:
+        print(f"Vector ID: {single_entry.id}")
+        print(f"Vector: {single_entry.vector}")
+        print(f"Metadata: {single_entry.meta}")
+    else:
+        print("Vector with ID 00499354-9362-49c7-97b6-0220b9de84e7 was not found.")
 
+    # Retrieving multiple entries
+    multiple_entries = vector_store_driver.load_entries(ids=["707a004c-23bc-476c-a097-e527977777f3"])
+    print(multiple_entries)
+
+    # Deleting the vector
+    vector_store_driver.delete_vector(vector_id="00499354-9362-49c7-97b6-0220b9de84e7")
+        
 if __name__ == "__main__":
     main()
+
 ```
