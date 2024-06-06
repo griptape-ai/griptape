@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BedrockLlamaTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `BedrockTitanTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `OpenAiChatCompletionPromptDriver` as it uses the legacy [OpenAi Completions API](https://platform.openai.com/docs/api-reference/completions).
+- Improved error message when `GriptapeCloudKnowledgeBaseClient` does not have a description set.
 - Updated `AmazonBedrockPromptDriver` to use [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
 - `Structure.before_run()` now automatically resolves asymmetrically defined parent/child relationships using the new `Structure.resolve_relationships()`.
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
