@@ -1,5 +1,3 @@
-import datetime
-
 from transformers import AutoTokenizer
 
 from griptape.drivers import OpenAiChatPromptDriver
@@ -13,11 +11,11 @@ import pytest
 class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def mock_chat_completion_create(self, mocker):
-        mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.with_raw_response.create
+        mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
         mock_choice = Mock()
         mock_choice.message.content = "model-output"
         mock_chat_create.return_value.headers = {}
-        mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
+        mock_chat_create.return_value.choices = [mock_choice]
         return mock_chat_create
 
     @pytest.fixture
@@ -202,7 +200,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_chat_completion_create, prompt_stack):
         # Given
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, api_key="api-key")
-        mock_chat_completion_create.return_value.parse.return_value.choices = [choices]
+        mock_chat_completion_create.return_value.choices = [choices]
 
         # When
         with pytest.raises(Exception) as e:
@@ -257,65 +255,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         ).max_output_tokens(messages)
 
         assert max_tokens == 42
-
-    def test_extract_ratelimit_metadata(self):
-        response_with_headers = OpenAiApiResponseWithHeaders()
-        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
-        driver._extract_ratelimit_metadata(response_with_headers)
-
-        assert driver._ratelimit_requests_remaining == response_with_headers.remaining_requests
-        assert driver._ratelimit_tokens_remaining == response_with_headers.remaining_tokens
-        assert driver._ratelimit_request_limit == response_with_headers.limit_requests
-        assert driver._ratelimit_token_limit == response_with_headers.limit_tokens
-
-        # Assert that the reset times are within one second of the expected value.
-        expected_request_reset_time = datetime.datetime.now() + datetime.timedelta(
-            seconds=response_with_headers.reset_requests_in
-        )
-        expected_token_reset_time = datetime.datetime.now() + datetime.timedelta(
-            seconds=response_with_headers.reset_tokens_in
-        )
-
-        assert driver._ratelimit_requests_reset_at is not None
-        assert abs(driver._ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
-        assert driver._ratelimit_tokens_reset_at is not None
-        assert abs(driver._ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
-
-    def test_extract_ratelimit_metadata_with_subsecond_reset_times(self):
-        response_with_headers = OpenAiApiResponseWithHeaders(
-            reset_requests_in=1, reset_requests_in_unit="ms", reset_tokens_in=10, reset_tokens_in_unit="ms"
-        )
-        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, api_key="api-key")
-        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
-        driver._extract_ratelimit_metadata(response_with_headers)
-
-        # Assert that the reset times are within one second of the expected value. With a sub-second reset time,
-        # this is rounded up to one second in the future.
-        expected_request_reset_time = datetime.datetime.now() + datetime.timedelta(seconds=1)
-        expected_token_reset_time = datetime.datetime.now() + datetime.timedelta(seconds=1)
-
-        assert driver._ratelimit_requests_reset_at is not None
-        assert abs(driver._ratelimit_requests_reset_at - expected_request_reset_time) < datetime.timedelta(seconds=1)
-        assert driver._ratelimit_tokens_reset_at is not None
-        assert abs(driver._ratelimit_tokens_reset_at - expected_token_reset_time) < datetime.timedelta(seconds=1)
-
-    def test_extract_ratelimit_metadata_missing_headers(self):
-        class OpenAiApiResponseNoHeaders:
-            @property
-            def headers(self):
-                return {}
-
-        response_without_headers = OpenAiApiResponseNoHeaders()
-
-        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
-        driver._extract_ratelimit_metadata(response_without_headers)
-
-        assert driver._ratelimit_request_limit is None
-        assert driver._ratelimit_requests_remaining is None
-        assert driver._ratelimit_requests_reset_at is None
-        assert driver._ratelimit_token_limit is None
-        assert driver._ratelimit_tokens_remaining is None
-        assert driver._ratelimit_tokens_reset_at is None
 
     def test_custom_tokenizer(self, mock_chat_completion_create, prompt_stack, messages):
         driver = OpenAiChatPromptDriver(
