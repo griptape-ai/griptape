@@ -7,11 +7,11 @@ from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiC
 class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.fixture
     def mock_chat_completion_create(self, mocker):
-        mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.with_raw_response.create
+        mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
         mock_choice = Mock()
         mock_choice.message.content = "model-output"
         mock_chat_create.return_value.headers = {}
-        mock_chat_create.return_value.parse.return_value.choices = [mock_choice]
+        mock_chat_create.return_value.choices = [mock_choice]
         return mock_chat_create
 
     @pytest.fixture

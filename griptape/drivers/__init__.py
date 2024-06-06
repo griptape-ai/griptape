@@ -1,8 +1,6 @@
 from .prompt.base_prompt_driver import BasePromptDriver
 from .prompt.openai_chat_prompt_driver import OpenAiChatPromptDriver
-from .prompt.openai_completion_prompt_driver import OpenAiCompletionPromptDriver
 from .prompt.azure_openai_chat_prompt_driver import AzureOpenAiChatPromptDriver
-from .prompt.azure_openai_completion_prompt_driver import AzureOpenAiCompletionPromptDriver
 from .prompt.cohere_prompt_driver import CoherePromptDriver
 from .prompt.huggingface_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
 from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
@@ -113,9 +111,7 @@ from .audio_transcription.openai_audio_transcription_driver import OpenAiAudioTr
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
-    "OpenAiCompletionPromptDriver",
     "AzureOpenAiChatPromptDriver",
-    "AzureOpenAiCompletionPromptDriver",
     "CoherePromptDriver",
     "HuggingFacePipelinePromptDriver",
     "HuggingFaceHubPromptDriver",

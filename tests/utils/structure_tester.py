@@ -16,7 +16,6 @@ from griptape.drivers import (
     AnthropicPromptDriver,
     CoherePromptDriver,
     OpenAiChatPromptDriver,
-    OpenAiCompletionPromptDriver,
     AzureOpenAiChatPromptDriver,
     AmazonSageMakerPromptDriver,
     SageMakerLlamaPromptModelDriver,
@@ -49,12 +48,6 @@ class StructureTester:
             prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo-1106", api_key=os.environ["OPENAI_API_KEY"]),
             enabled=True,
         ),
-        "OPENAI_CHAT_35_TURBO_INSTRUCT": TesterPromptDriverOption(
-            prompt_driver=OpenAiCompletionPromptDriver(
-                model="gpt-3.5-turbo-instruct", api_key=os.environ["OPENAI_API_KEY"]
-            ),
-            enabled=True,
-        ),
         "OPENAI_CHAT_4": TesterPromptDriverOption(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]), enabled=True
         ),
@@ -63,10 +56,6 @@ class StructureTester:
         ),
         "OPENAI_CHAT_4_1106_PREVIEW": TesterPromptDriverOption(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]),
-            enabled=True,
-        ),
-        "OPENAI_COMPLETION_DAVINCI": TesterPromptDriverOption(
-            prompt_driver=OpenAiCompletionPromptDriver(api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"),
             enabled=True,
         ),
         "AZURE_CHAT_35_TURBO": TesterPromptDriverOption(

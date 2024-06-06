@@ -125,38 +125,6 @@ agent = Agent(
 agent.run("Artificial intelligence is a technology with great promise.")
 ```
 
-### Azure OpenAI Completion
-
-The [AzureOpenAiCompletionPromptDriver](../../reference/griptape/drivers/prompt/azure_openai_completion_prompt_driver.md) connects to Azure OpenAI [Text Completion](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/reference) API.
-
-```python
-import os
-from griptape.structures import Agent
-from griptape.drivers import AzureOpenAiCompletionPromptDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AzureOpenAiCompletionPromptDriver(
-            api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
-            model="text-davinci-003",
-            azure_deployment=os.environ["AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID"],
-            azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
-            temperature=1
-        )
-    )
-)
-
-agent.run(
-    """
-    Write a product launch email for new AI-powered headphones that are priced at $79.99 and available at Best Buy, Target and Amazon.com. The target audience is tech-savvy music lovers and the tone is friendly and exciting.
-
-    1. What should be the subject line of the email?
-    2. What should be the body of the email?
-    """
-)
-```
-
 ### Cohere
 
 The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Generate](https://docs.cohere.ai/reference/generate) API.
