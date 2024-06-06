@@ -28,7 +28,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         content_payload_key: The key for the content payload in the metadata. Defaults to 'data'.
     """
 
-
     location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -79,9 +78,15 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         except Exception as e:
             print(f"An error occurred while trying to delete ID {vector_id}: {e}")
 
-
     def query(
-        self, query: str, count: Optional[int] = None, namespace: Optional[str] = None, include_vectors: bool = False, with_payload: bool = True, with_vectors: bool = True, **kwargs,
+        self,
+        query: str,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        with_payload: bool = True,
+        with_vectors: bool = True,
+        **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """
         Query the Qdrant collection based on a query vector.
@@ -167,10 +172,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
         try:
             results = self.client.retrieve(
-                collection_name=self.collection_name,
-                ids=[vector_id],
-                with_payload=True,
-                with_vectors=True,
+                collection_name=self.collection_name, ids=[vector_id], with_payload=True, with_vectors=True
             )
             if results:
                 entry = results[0]
@@ -185,8 +187,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             print(f"An error occurred while trying to retrieve the vector by ID: {e}")
             return None
 
-
-    def load_entries(self, ids: list[str], with_payload: bool = True, with_vectors: bool = True, namespace: Optional[str] = None, ) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(
+        self, ids: list[str], with_payload: bool = True, with_vectors: bool = True, namespace: Optional[str] = None
+    ) -> list[BaseVectorStoreDriver.Entry]:
         """
         Load vector entries from the Qdrant collection.
 
@@ -201,10 +204,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
         try:
             results = self.client.retrieve(
-                collection_name=self.collection_name,
-                ids=ids,
-                with_payload=with_payload,
-                with_vectors=with_vectors,
+                collection_name=self.collection_name, ids=ids, with_payload=with_payload, with_vectors=with_vectors
             )
             return [
                 BaseVectorStoreDriver.Entry(

@@ -31,4 +31,3 @@ class TestQdrantVectorVectorStoreDriver:
         assert results[0]["vector"] == [0, 1, 0]
         assert results[0]["score"] == 42
         assert results[0]["payload"]["foo"] == "bar"
-    
