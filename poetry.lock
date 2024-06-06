@@ -6249,4 +6249,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "66c229c725469e9111e8f863cb7ce5a27a3288507914c6e3b9b301585bd3e1e9"
+content-hash = "23a91e1f062c266ab4bea224bb9003fb9848e83e7221c392c57698332fa6a587"
