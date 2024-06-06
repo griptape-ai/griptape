@@ -78,56 +78,6 @@ print(tokenizer.count_input_tokens_left("Hello world!"))
 print(tokenizer.count_output_tokens_left("Hello world!"))
 ```
 
-### Bedrock
-
-#### Anthropic Claude
-```python
-from griptape.tokenizers import BedrockClaudeTokenizer
-
-
-tokenizer = BedrockClaudeTokenizer(model="anthropic.claude-3-sonnet-20240229-v1:0")
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
-```
-
-#### Amazon Titan
-```python
-from griptape.tokenizers import BedrockTitanTokenizer
-
-
-tokenizer = BedrockTitanTokenizer(model="amazon.titan-text-express-v1")
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
-```
-
-#### Meta Llama 2
-```python
-from griptape.tokenizers import BedrockLlamaTokenizer
-
-
-tokenizer = BedrockLlamaTokenizer(model="meta.llama2-13b-chat-v1")
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
-```
-
-#### Ai21 Jurassic
-```python
-from griptape.tokenizers import BedrockJurassicTokenizer
-
-
-tokenizer = BedrockJurassicTokenizer(model="ai21.j2-ultra-v1")
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
-```
-
 
 ### Simple
 Not all LLM providers have a public tokenizer API. In this case, you can use the `SimpleTokenizer` to count tokens based on a simple heuristic. 
