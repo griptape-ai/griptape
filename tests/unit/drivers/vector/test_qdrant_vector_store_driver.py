@@ -1,7 +1,8 @@
 import pytest
-from unittest.mock import MagicMock
-from griptape.drivers import BaseVectorStoreDriver
+from unittest.mock import MagicMock, patch
+from griptape.drivers import QdrantVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from griptape.utils import import_optional_dependency
 
 embedding_driver = MockEmbeddingDriver()
 
@@ -44,21 +45,68 @@ class TestQdrantVectorVectorStoreDriver:
         assert results[0]["score"] == 42
         assert results[0]["payload"]["foo"] == "bar"
 
+    from unittest.mock import patch
+
     def test_delete_vector(self, driver):
-        assert driver.delete_vector(vector_id=2)
+        with patch.object(driver.client, "delete") as mock_delete:
+            mock_delete.return_value.status = import_optional_dependency(
+                "qdrant_client.http.models"
+            ).UpdateStatus.COMPLETED
+            assert driver.delete_vector(vector_id="2")
 
     def test_load_entry(self, driver):
-        # Run the actual load_entry method
         entry = driver.load_entry(vector_id="foo")
+
         assert entry.id == "foo"
         assert entry.vector == [0.1, 0.2, 0.3]
         assert entry.payload == {"meta_key": "meta_value"}
 
     def test_load_entries(self, driver):
-        # Run the actual load_entries method
         entries = driver.load_entries(vector_id=["foo"])
 
-        # Assert the contents of the first entry in the list
         assert entries[0].id == "foo"
         assert entries[0].vector == [0.1, 0.2, 0.3]
         assert entries[0].payload == {"meta_key": "meta_value"}
+
+    @patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency")
+    def test_client_initialization_in_memory(self, mock_import_optional_dependency):
+        mock_qdrant_client = MagicMock()
+        mock_import_optional_dependency.return_value = mock_qdrant_client
+
+        driver = QdrantVectorStoreDriver(
+            location=":memory:",
+            url="some_url",
+            host="localhost",
+            port=8080,
+            prefer_grpc=True,
+            grpc_port=50051,
+            embedding_driver=embedding_driver,
+            collection_name="some_collection",
+        )
+
+        mock_import_optional_dependency.assert_called_with("qdrant_client")
+        mock_qdrant_client.AsyncQdrantClient.assert_called_with(
+            location=":memory:", url="some_url", host="localhost", port=8080, prefer_grpc=True, grpc_port=50051
+        )
+
+    @patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency")
+    def test_client_initialization_not_in_memory(self, mock_import_optional_dependency):
+        # Mock the import_optional_dependency function to return a MagicMock
+        mock_qdrant_client = MagicMock()
+        mock_import_optional_dependency.return_value = mock_qdrant_client
+
+        driver = QdrantVectorStoreDriver(
+            location="/some/path",
+            url="some_url",
+            host="localhost",
+            port=8080,
+            prefer_grpc=True,
+            grpc_port=50051,
+            embedding_driver=embedding_driver,
+            collection_name="some_collection",
+        )
+
+        mock_import_optional_dependency.assert_called_with("qdrant_client")
+        mock_qdrant_client.QdrantClient.assert_called_with(
+            location="/some/path", url="some_url", host="localhost", port=8080, prefer_grpc=True, grpc_port=50051
+        )

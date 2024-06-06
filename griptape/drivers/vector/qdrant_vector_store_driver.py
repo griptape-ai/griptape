@@ -66,12 +66,18 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Parameters:
             vector_id (str): ID of the vector to delete.
         """
-        rest = import_optional_dependency("qdrant_client.http.models")
+        # rest = import_optional_dependency("qdrant_client.http.models")
         try:
             deletion_response = self.client.delete(
-                collection_name=self.collection_name, points_selector=rest.PointIdsList(points=[vector_id])
+                collection_name=self.collection_name,
+                points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(
+                    points=[vector_id]
+                ),
             )
-            if deletion_response.status == rest.UpdateStatus.COMPLETED:
+            if (
+                deletion_response.status
+                == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED
+            ):
                 print(f"ID {vector_id} is successfully deleted")
             else:
                 print(f"Failed to delete ID {vector_id}. Status: {deletion_response.status}")
@@ -145,7 +151,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             str: The ID of the upserted vector.
         """
-        rest = import_optional_dependency("qdrant_client.http.models")
 
         if vector_id is None:
             vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
@@ -156,7 +161,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         if content:
             meta[self.content_payload_key] = content
 
-        points = rest.Batch(ids=[vector_id], vectors=[vector], payloads=[meta] if meta else None)
+        points = import_optional_dependency("qdrant_client.http.models").Batch(
+            ids=[vector_id], vectors=[vector], payloads=[meta] if meta else None
+        )
 
         self.client.upsert(collection_name=self.collection_name, points=points)
         return vector_id
