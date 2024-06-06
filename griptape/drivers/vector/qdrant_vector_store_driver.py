@@ -69,7 +69,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
         try:
             deletion_response = self.client.delete(
-                collection_name=self.collection_name, points_selector=rest.PointIdsList([vector_id])
+                collection_name=self.collection_name, points_selector={"points": [vector_id]}
             )
             if deletion_response.status == rest.UpdateStatus.COMPLETED:
                 print(f"ID {vector_id} is successfully deleted")
@@ -130,6 +130,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         content: Optional[str] = None,
+        **kwargs,
     ) -> str:
         """
         Upsert vectors into the Qdrant collection.
@@ -187,9 +188,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             print(f"An error occurred while trying to retrieve the vector by ID: {e}")
             return None
 
-    def load_entries(
-        self, ids: list[str], with_payload: bool = True, with_vectors: bool = True, namespace: Optional[str] = None
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, namespace: Optional[str] = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
         """
         Load vector entries from the Qdrant collection.
 
@@ -202,6 +201,10 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             List of points.
         """
+        ids = kwargs.get("ids", [])
+        with_payload = kwargs.get("with_payload", True)
+        with_vectors = kwargs.get("with_vectors", True)
+
         try:
             results = self.client.retrieve(
                 collection_name=self.collection_name, ids=ids, with_payload=with_payload, with_vectors=with_vectors
