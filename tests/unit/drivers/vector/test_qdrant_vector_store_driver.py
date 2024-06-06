@@ -4,10 +4,12 @@ from griptape.drivers import QdrantVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from griptape.utils import import_optional_dependency
 
-embedding_driver = MockEmbeddingDriver()
-
 
 class TestQdrantVectorVectorStoreDriver:
+    @pytest.fixture
+    def embedding_driver(self):
+        return MockEmbeddingDriver()
+
     @pytest.fixture
     def driver(self, mocker):
         # Mock the QdrantVectorStoreDriver class
@@ -31,7 +33,7 @@ class TestQdrantVectorVectorStoreDriver:
 
         return qdrant_instance
 
-    def test_upsert_vector(self, driver):
+    def test_upsert_vector(self, driver, embedding_driver):
         assert driver.upsert_vector(embedding_driver.embed_string("foo"), vector_id=1) == 1
 
     def test_upsert_text(self, driver):
@@ -69,7 +71,7 @@ class TestQdrantVectorVectorStoreDriver:
         assert entries[0].payload == {"meta_key": "meta_value"}
 
     @patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency")
-    def test_client_initialization_in_memory(self, mock_import_optional_dependency):
+    def test_client_initialization_in_memory(self, mock_import_optional_dependency, embedding_driver):
         mock_qdrant_client = MagicMock()
         mock_import_optional_dependency.return_value = mock_qdrant_client
 
@@ -90,7 +92,7 @@ class TestQdrantVectorVectorStoreDriver:
         )
 
     @patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency")
-    def test_client_initialization_not_in_memory(self, mock_import_optional_dependency):
+    def test_client_initialization_not_in_memory(self, mock_import_optional_dependency, embedding_driver):
         # Mock the import_optional_dependency function to return a MagicMock
         mock_qdrant_client = MagicMock()
         mock_import_optional_dependency.return_value = mock_qdrant_client
