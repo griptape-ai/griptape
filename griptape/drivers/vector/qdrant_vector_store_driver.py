@@ -69,7 +69,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
         try:
             deletion_response = self.client.delete(
-                collection_name=self.collection_name, points_selector={"points": [vector_id]}
+                collection_name=self.collection_name, points_selector=rest.PointIdsList(points=[vector_id])
             )
             if deletion_response.status == rest.UpdateStatus.COMPLETED:
                 print(f"ID {vector_id} is successfully deleted")
