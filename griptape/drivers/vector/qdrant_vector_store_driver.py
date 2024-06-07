@@ -20,7 +20,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         port: The port number for the Qdrant client. Defaults to 6333.
         grpc_port: The gRPC port number for the Qdrant client. Defaults to 6334.
         prefer_grpc: A boolean indicating whether to prefer gRPC over HTTP. Defaults to False.
-        force_recreate: A boolean indicating whether to force recreation of the collection. Defaults to True.
+        api_key: API key for authentication in Qdrant Cloud. Defaults to None
         distance: The distance metric to be used for the vectors. Defaults to 'COSINE'.
         collection_name: The name of the Qdrant collection.
         vector_name: An optional name for the vectors.
@@ -33,7 +33,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     port: int = field(default=6333, kw_only=True, metadata={"serializable": True})
     grpc_port: int = field(default=6334, kw_only=True, metadata={"serializable": True})
     prefer_grpc: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    force_recreate: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_name: Optional[str] = VECTOR_NAME
@@ -162,9 +162,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             Optional[BaseVectorStoreDriver.Entry]: Vector entry if found, else None.
         """
         try:
-            results = self.client.retrieve(
-                collection_name=self.collection_name, ids=[vector_id], with_payload=True, with_vectors=True
-            )
+            results = self.client.retrieve(collection_name=self.collection_name, ids=[vector_id])
             if results:
                 entry = results[0]
                 return BaseVectorStoreDriver.Entry(
