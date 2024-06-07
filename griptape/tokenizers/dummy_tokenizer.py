@@ -10,5 +10,5 @@ class DummyTokenizer(BaseTokenizer):
     max_input_tokens: int = field(init=False, default=0, kw_only=True)
     max_output_tokens: int = field(init=False, default=0, kw_only=True)
 
-    def count_tokens(self, text: str | list) -> int:
+    def try_count_tokens(self, text: str) -> int:
         raise DummyException(__class__.__name__, "count_tokens")

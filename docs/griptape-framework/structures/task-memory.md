@@ -206,7 +206,6 @@ from griptape.config import (
 )
 from griptape.drivers import (
     AmazonBedrockPromptDriver,
-    BedrockTitanPromptModelDriver,
     AmazonBedrockTitanEmbeddingDriver,
     LocalVectorStoreDriver,
     OpenAiChatPromptDriver,
@@ -227,7 +226,6 @@ agent = Agent(
                 query_engine=VectorQueryEngine(
                     prompt_driver=AmazonBedrockPromptDriver(
                         model="amazon.titan-text-express-v1",
-                        prompt_model_driver=BedrockTitanPromptModelDriver(),
                     ),
                     vector_store_driver=LocalVectorStoreDriver(
                         embedding_driver=AmazonBedrockTitanEmbeddingDriver()

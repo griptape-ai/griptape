@@ -43,29 +43,25 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     )
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model),
-                max_output_tokens=self.max_tokens,
-            ),
-            takes_self=True,
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
         ),
         kw_only=True,
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        prompt = self.prompt_stack_to_string(prompt_stack)
+        prompt = self.tokenizer.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_output_tokens(prompt), **self.params
+            prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
         )
 
         return TextArtifact(value=response)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        prompt = self.prompt_stack_to_string(prompt_stack)
+        prompt = self.tokenizer.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_output_tokens(prompt), stream=True, **self.params
+            prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
         )
 
         for token in response:

@@ -10,6 +10,13 @@ class TestHuggingFaceHubPromptDriver:
         mock_client.text_generation.return_value = "model-output"
         return mock_client
 
+    @pytest.fixture(autouse=True)
+    def tokenizer(self, mocker):
+        from_pretrained = tokenizer = mocker.patch("transformers.AutoTokenizer").from_pretrained
+        from_pretrained.return_value.apply_chat_template.return_value = [1, 2, 3]
+
+        return tokenizer
+
     @pytest.fixture
     def mock_client_stream(self, mocker):
         mock_client = mocker.patch("huggingface_hub.InferenceClient").return_value

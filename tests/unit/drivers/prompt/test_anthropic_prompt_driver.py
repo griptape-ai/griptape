@@ -63,9 +63,9 @@ class TestAnthropicPromptDriver:
         # Then
         mock_client.return_value.messages.create.assert_called_once_with(
             messages=expected_messages,
-            stop_sequences=["<|Response|>"],
+            stop_sequences=[],
             model=driver.model,
-            max_tokens=4091,
+            max_tokens=1000,
             temperature=0.1,
             top_p=0.999,
             top_k=250,
@@ -106,9 +106,9 @@ class TestAnthropicPromptDriver:
         # Then
         mock_stream_client.return_value.messages.create.assert_called_once_with(
             messages=expected_messages,
-            stop_sequences=["<|Response|>"],
+            stop_sequences=[],
             model=driver.model,
-            max_tokens=4091,
+            max_tokens=1000,
             temperature=0.1,
             stream=True,
             top_p=0.999,

@@ -3,7 +3,8 @@ import json
 from typing import Any, TYPE_CHECKING
 from attrs import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
-from griptape.tokenizers import BedrockCohereTokenizer
+from griptape.tokenizers.amazon_bedrock_tokenizer import AmazonBedrockTokenizer
+from griptape.tokenizers.base_tokenizer import BaseTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -28,8 +29,8 @@ class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
     model: str = field(default=DEFAULT_MODEL, kw_only=True)
     input_type: str = field(default="search_query", kw_only=True)
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    tokenizer: BedrockCohereTokenizer = field(
-        default=Factory(lambda self: BedrockCohereTokenizer(model=self.model), takes_self=True), kw_only=True
+    tokenizer: BaseTokenizer = field(
+        default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     bedrock_client: Any = field(
         default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True

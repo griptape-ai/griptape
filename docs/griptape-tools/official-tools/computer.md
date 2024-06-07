@@ -4,7 +4,7 @@ This tool enables LLMs to execute Python code and run shell commands inside a Do
 
 You can specify a local working directory and environment variables during tool initialization:
 
-```python
+```python title="PYTEST_IGNORE"
 from griptape.structures import Agent
 from griptape.tools import Computer
 

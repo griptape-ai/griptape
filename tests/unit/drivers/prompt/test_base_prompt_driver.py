@@ -39,35 +39,6 @@ class TestBasePromptDriver:
     def test_run(self):
         assert isinstance(MockPromptDriver().run(PromptStack(inputs=[])), TextArtifact)
 
-    def test_token_count(self):
-        assert (
-            MockPromptDriver().token_count(
-                PromptStack(inputs=[PromptStack.Input("foobar", role=PromptStack.USER_ROLE)])
-            )
-            == 24
-        )
-
-    def test_max_output_tokens(self):
-        assert MockPromptDriver().max_output_tokens("foobar") == 4090
-        assert MockPromptDriver(max_tokens=5000).max_output_tokens("foobar") == 4090
-        assert MockPromptDriver(max_tokens=100).max_output_tokens("foobar") == 100
-
-    def test_prompt_stack_to_string(self):
-        assert (
-            MockPromptDriver().prompt_stack_to_string(
-                PromptStack(inputs=[PromptStack.Input("foobar", role=PromptStack.USER_ROLE)])
-            )
-            == "User: foobar\n\nAssistant:"
-        )
-
-    def test_custom_prompt_stack_to_string(self):
-        assert (
-            MockPromptDriver(
-                prompt_stack_to_string=lambda stack: f"Foo: {stack.inputs[0].content}"
-            ).prompt_stack_to_string(PromptStack(inputs=[PromptStack.Input("foobar", role=PromptStack.USER_ROLE)]))
-            == "Foo: foobar"
-        )
-
 
 def instance_count(instances, clazz):
     return len([instance for instance in instances if isinstance(instance, clazz)])

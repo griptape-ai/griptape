@@ -5,14 +5,14 @@ from typing import Union, Literal, get_args, get_origin
 from collections.abc import Sequence
 
 import attrs
-from marshmallow import Schema, fields, EXCLUDE
+from marshmallow import Schema, fields, INCLUDE
 
 from griptape.schemas.bytes_field import Bytes
 
 
 class BaseSchema(Schema):
     class Meta:
-        unknown = EXCLUDE
+        unknown = INCLUDE
 
     DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
 
@@ -103,13 +103,14 @@ class BaseSchema(Schema):
         from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
 
         # These modules are required to avoid `NameError`s when resolving types.
-        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver, BasePromptModelDriver
+        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
         from griptape.structures import Structure
         from griptape.common import PromptStack
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
         from typing import Any
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
+        Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
 
         attrs.resolve_types(
             attrs_cls,
@@ -120,8 +121,8 @@ class BaseSchema(Schema):
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BasePromptDriver": BasePromptDriver,
                 "BaseTokenizer": BaseTokenizer,
-                "BasePromptModelDriver": BasePromptModelDriver,
                 "boto3": boto3,
+                "Client": Client,
             },
         )
 

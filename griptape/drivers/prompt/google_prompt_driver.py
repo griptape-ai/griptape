@@ -23,7 +23,6 @@ class GooglePromptDriver(BasePromptDriver):
         api_key: Google API key.
         model: Google model name.
         model_client: Custom `GenerativeModel` client.
-        tokenizer: Custom `GoogleTokenizer`.
         top_p: Optional value for top_p.
         top_k: Optional value for top_k.
     """
@@ -46,7 +45,7 @@ class GooglePromptDriver(BasePromptDriver):
             inputs,
             generation_config=GenerationConfig(
                 stop_sequences=self.tokenizer.stop_sequences,
-                max_output_tokens=self.max_output_tokens(inputs),
+                max_output_tokens=self.max_tokens,
                 temperature=self.temperature,
                 top_p=self.top_p,
                 top_k=self.top_k,
@@ -64,7 +63,7 @@ class GooglePromptDriver(BasePromptDriver):
             stream=True,
             generation_config=GenerationConfig(
                 stop_sequences=self.tokenizer.stop_sequences,
-                max_output_tokens=self.max_output_tokens(inputs),
+                max_output_tokens=self.max_tokens,
                 temperature=self.temperature,
                 top_p=self.top_p,
                 top_k=self.top_k,
@@ -94,13 +93,6 @@ class GooglePromptDriver(BasePromptDriver):
 
     def __to_content_dict(self, prompt_input: PromptStack.Input) -> ContentDict:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
+        message = self.tokenizer.prompt_stack_input_to_message(prompt_input)
 
-        return ContentDict({"role": self.__to_google_role(prompt_input), "parts": [prompt_input.content]})
-
-    def __to_google_role(self, prompt_input: PromptStack.Input) -> str:
-        if prompt_input.is_system():
-            return "user"
-        elif prompt_input.is_assistant():
-            return "model"
-        else:
-            return "user"
+        return ContentDict(message)
