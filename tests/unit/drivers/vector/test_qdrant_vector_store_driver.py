@@ -34,28 +34,7 @@ class TestQdrantVectorVectorStoreDriver:
         return qdrant_instance
 
     @patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency")
-    def test_client_initialization_in_memory(self, mock_import_optional_dependency, embedding_driver):
-        mock_qdrant_client = MagicMock()
-        mock_import_optional_dependency.return_value = mock_qdrant_client
-
-        driver = QdrantVectorStoreDriver(
-            location=":memory:",
-            url="some_url",
-            host="localhost",
-            port=8080,
-            prefer_grpc=True,
-            grpc_port=50051,
-            embedding_driver=embedding_driver,
-            collection_name="some_collection",
-        )
-
-        mock_import_optional_dependency.assert_called_with("qdrant_client")
-        mock_qdrant_client.AsyncQdrantClient.assert_called_with(
-            location=":memory:", url="some_url", host="localhost", port=8080, prefer_grpc=True, grpc_port=50051
-        )
-
-    @patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency")
-    def test_client_initialization_not_in_memory(self, mock_import_optional_dependency, embedding_driver):
+    def test_client_initialization(self, mock_import_optional_dependency, embedding_driver):
         # Mock the import_optional_dependency function to return a MagicMock
         mock_qdrant_client = MagicMock()
         mock_import_optional_dependency.return_value = mock_qdrant_client

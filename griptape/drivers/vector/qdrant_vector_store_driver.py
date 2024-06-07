@@ -1,13 +1,13 @@
 from __future__ import annotations
 from typing import Optional
 from attrs import define, field
-from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+import uuid
 
 VECTOR_NAME = None
-BATCH_SIZE = 64
 DEFAULT_DISTANCE = "COSINE"
+CONTENT_PAYLOAD_KEY = "data"
 
 
 @define
@@ -37,27 +37,17 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_name: Optional[str] = VECTOR_NAME
-    content_payload_key: str = field(default="data", kw_only=True, metadata={"serializable": True})
+    content_payload_key: str = field(default=CONTENT_PAYLOAD_KEY, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
-        if self.location == ":memory:":
-            self.client = import_optional_dependency("qdrant_client").AsyncQdrantClient(
-                location=self.location,
-                url=self.url,
-                host=self.host,
-                port=self.port,
-                prefer_grpc=self.prefer_grpc,
-                grpc_port=self.grpc_port,
-            )
-        else:
-            self.client = import_optional_dependency("qdrant_client").QdrantClient(
-                location=self.location,
-                url=self.url,
-                host=self.host,
-                port=self.port,
-                prefer_grpc=self.prefer_grpc,
-                grpc_port=self.grpc_port,
-            )
+        self.client = import_optional_dependency("qdrant_client").QdrantClient(
+            location=self.location,
+            url=self.url,
+            host=self.host,
+            port=self.port,
+            prefer_grpc=self.prefer_grpc,
+            grpc_port=self.grpc_port,
+        )
 
     def delete_vector(self, vector_id: str) -> None:
         """
@@ -90,8 +80,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        with_payload: bool = True,
-        with_vectors: bool = True,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """
@@ -109,13 +97,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         query_vector = self.embedding_driver.embed_string(query)
 
         # Create a search request
-        results = self.client.search(
-            collection_name=self.collection_name,
-            query_vector=query_vector,
-            limit=count,
-            with_payload=with_payload,
-            with_vectors=with_vectors,
-        )
+        results = self.client.search(collection_name=self.collection_name, query_vector=query_vector, limit=count)
 
         # Convert results to QueryResult objects
         query_results = [
@@ -153,7 +135,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         if vector_id is None:
-            vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
+            vector_id = vector_id if vector_id else str(uuid.uuid4())
 
         if meta is None:
             meta = {}
