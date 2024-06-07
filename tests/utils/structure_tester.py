@@ -17,9 +17,7 @@ from griptape.drivers import (
     CoherePromptDriver,
     OpenAiChatPromptDriver,
     AzureOpenAiChatPromptDriver,
-    AmazonSageMakerPromptDriver,
-    SageMakerLlamaPromptModelDriver,
-    SageMakerFalconPromptModelDriver,
+    AmazonSageMakerJumpstartPromptDriver,
     GooglePromptDriver,
 )
 
@@ -188,17 +186,11 @@ class StructureTester:
             prompt_driver=AmazonBedrockPromptDriver(model="mistral.mistral-small-2402-v1:0"), enabled=True
         ),
         "SAGEMAKER_LLAMA_7B": TesterPromptDriverOption(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                endpoint=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
-            ),
+            prompt_driver=AmazonSageMakerJumpstartPromptDriver(endpoint=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"]),
             enabled=False,
         ),
         "SAGEMAKER_FALCON_7b": TesterPromptDriverOption(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerFalconPromptModelDriver(),
-            ),
+            prompt_driver=AmazonSageMakerJumpstartPromptDriver(endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"]),
             enabled=False,
         ),
         "GOOGLE_GEMINI_PRO": TesterPromptDriverOption(
