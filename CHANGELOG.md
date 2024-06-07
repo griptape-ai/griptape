@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `SagemakerHuggingfaceEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: Removed `SagemakerTensorflowHubEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: `AmazonSageMakerJumpstartPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
+- **BREAKING**: `SimpleTokenizer` now requires a `model` parameter like other Tokenizers. It is not used at this time.
 - `ToolkitTask.RESPONSE_STOP_SEQUENCE` is now only added when using `ToolkitTask`.
 - `BaseTokenizer.count_tokens()` can now approximately token counts given a Prompt Stack.
 - Updated Prompt Drivers to use `BasePromptDriver.max_tokens` instead of using `BasePromptDriver.max_output_tokens()`.

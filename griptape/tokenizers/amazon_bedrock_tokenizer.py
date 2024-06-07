@@ -32,7 +32,6 @@ class AmazonBedrockTokenizer(SimpleTokenizer):
         "mistral": 8192,
     }
 
-    model: str = field(kw_only=True)
     characters_per_token: int = field(default=4, kw_only=True)
 
     def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
