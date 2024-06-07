@@ -1,11 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from griptape.mixins import SerializableMixin
-
-if TYPE_CHECKING:
-    from griptape.tokenizers import BaseTokenizer
 
 
 @define
@@ -14,8 +10,6 @@ class PromptStack(SerializableMixin):
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
-
-    tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)  # TODO: This should not belong here
 
     @define
     class Input(SerializableMixin):
