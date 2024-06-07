@@ -16,7 +16,6 @@ __pycache__
 npm-debug.log
 **/.mypy_cache/**
 !yarn.lock
-coverage/
 cucumber-report.json
 **/.vscode-test/**
 **/.vscode test/**
@@ -57,3 +56,7 @@ dist/**
 # mkdocs build output
 site
 reference
+
+# coverage.py
+htmlcov/
+coverage.*
