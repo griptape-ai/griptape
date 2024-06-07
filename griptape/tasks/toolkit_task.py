@@ -35,6 +35,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
         default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True), kw_only=True
     )
+    response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.task_memory:
@@ -98,17 +99,17 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
-            stop_sequence=self.RESPONSE_STOP_SEQUENCE,
+            stop_sequence=self.response_stop_sequence,
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
-            stop_sequence=self.RESPONSE_STOP_SEQUENCE, subtask=subtask
+            stop_sequence=self.response_stop_sequence, subtask=subtask
         )
 
     def default_user_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
-            stop_sequence=self.RESPONSE_STOP_SEQUENCE, subtask=subtask
+            stop_sequence=self.response_stop_sequence, subtask=subtask
         )
 
     def actions_schema(self) -> Schema:
@@ -129,7 +130,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         self.subtasks.clear()
 
-        self.prompt_driver.tokenizer.stop_sequences.extend([self.RESPONSE_STOP_SEQUENCE])
+        self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
         subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
 
         while True:
