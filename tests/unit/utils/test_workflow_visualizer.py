@@ -21,5 +21,5 @@ class TestWorkflowVisualizer:
 
         assert (
             result
-            == "https://mermaid.ink/img/Z3JhcGggTFI7Cgl0YXNrMS0tPiB0YXNrMiAmIHRhc2szOwoJdGFzazItLT4gdGFzazQ7Cgl0YXNrMy0tPiB0YXNrNDs="
+            == "https://mermaid.ink/img/Z3JhcGggVEQ7OwoJdGFzazEtLT4gdGFzazIgJiB0YXNrMzsKCXRhc2syLS0+IHRhc2s0OwoJdGFzazMtLT4gdGFzazQ7"
         )

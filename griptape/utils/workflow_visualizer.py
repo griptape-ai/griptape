@@ -14,6 +14,7 @@ class WorkflowVisualizer:
     """Utility class to visualize a Workflow structure"""
 
     structure: Structure = field()
+    header: str = field(default="graph TD;", kw_only=True)
 
     def render(self) -> str:
         """Renders the Workflow structure as a Mermaid flowchart
@@ -25,7 +26,7 @@ class WorkflowVisualizer:
         self.structure.resolve_relationships()
 
         tasks = "\n\t" + "\n\t".join([self.__render_task(task) for task in self.structure.tasks if task.children])
-        graph = f"graph LR;{tasks}"
+        graph = f"{self.header};{tasks}"
 
         graph_bytes = graph.encode("utf-8")
         base64_string = base64.b64encode(graph_bytes).decode("utf-8")

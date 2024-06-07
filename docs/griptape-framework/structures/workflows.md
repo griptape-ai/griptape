@@ -17,6 +17,7 @@ Let's build a simple workflow. Let's say, we want to write a story in a fantasy 
 ```python
 from griptape.tasks import PromptTask
 from griptape.structures import Workflow
+from griptape.utils import WorkflowVisualizer
 
 
 world_task = PromptTask(
@@ -48,9 +49,14 @@ story_task = PromptTask(
 
 workflow = Workflow(tasks=[world_task, story_task, scotty_task, annie_task, story_task])
 
+print(WorkflowVisualizer(workflow).render())
+
 workflow.run()
 ```
 
+Note that we use the `WorkflowVisualizer` to get a visual representation of the workflow. If we visit the printed url, it should look like this:
+
+![Workflow](https://mermaid.ink/img/Z3JhcGggVEQ7OwoJd29ybGQtLT4gc3RvcnkgJiBzY290dHkgJiBhbm5pZTsKCXNjb3R0eS0tPiBzdG9yeTsKCWFubmllLS0+IHN0b3J5Ow==)
 
 !!! Info
     Output edited for brevity
