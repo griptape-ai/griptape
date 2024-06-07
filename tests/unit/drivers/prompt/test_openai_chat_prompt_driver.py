@@ -1,5 +1,3 @@
-from transformers import AutoTokenizer
-
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
 from griptape.utils import PromptStack
@@ -188,7 +186,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_custom_tokenizer(self, mock_chat_completion_create, prompt_stack, messages):
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
-            tokenizer=HuggingFaceTokenizer(tokenizer=AutoTokenizer.from_pretrained("gpt2"), max_output_tokens=1000),
+            tokenizer=HuggingFaceTokenizer(model="gpt2", max_output_tokens=1000),
             max_tokens=1,
         )
 

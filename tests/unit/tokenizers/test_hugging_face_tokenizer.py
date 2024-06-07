@@ -4,14 +4,13 @@ environ["TRANSFORMERS_VERBOSITY"] = "error"
 
 import pytest  # noqa: E402
 from griptape.utils import PromptStack  # noqa: E402
-from transformers import GPT2Tokenizer  # noqa: E402
 from griptape.tokenizers import HuggingFaceTokenizer  # noqa: E402
 
 
 class TestHuggingFaceTokenizer:
     @pytest.fixture
     def tokenizer(self):
-        return HuggingFaceTokenizer(tokenizer=GPT2Tokenizer.from_pretrained("gpt2"), max_output_tokens=1024)
+        return HuggingFaceTokenizer(model="gpt2", max_output_tokens=1024)
 
     def test_token_count(self, tokenizer):
         assert (

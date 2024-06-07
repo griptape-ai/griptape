@@ -30,11 +30,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model),
-                max_output_tokens=self.max_tokens,
-            ),
-            takes_self=True,
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
         ),
         kw_only=True,
     )

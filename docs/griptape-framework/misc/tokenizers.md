@@ -69,8 +69,8 @@ from griptape.tokenizers import HuggingFaceTokenizer
 
 
 tokenizer = HuggingFaceTokenizer(
+    model="sentence-transformers/all-MiniLM-L6-v2",
     max_output_tokens=512,
-    tokenizer=AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
 )
 
 print(tokenizer.count_tokens("Hello world!"))
