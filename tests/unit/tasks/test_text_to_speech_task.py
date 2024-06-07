@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, AudioArtifact
 from griptape.engines import TextToSpeechEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, TextToSpeechTask
@@ -28,3 +28,9 @@ class TestTextToSpeechTask:
         Agent(config=MockStructureConfig()).add_task(task)
 
         assert isinstance(task.text_to_speech_engine, TextToSpeechEngine)
+
+    def test_calls(self):
+        text_to_speech_engine = Mock()
+        text_to_speech_engine.run.return_value = AudioArtifact(b"audio content", format="mp3")
+
+        assert TextToSpeechTask("test", text_to_speech_engine=text_to_speech_engine).run().value == b"audio content"
