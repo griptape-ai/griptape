@@ -8,10 +8,12 @@ class TestGriptapeCloudKnowledgeBaseClient:
         from griptape.tools import GriptapeCloudKnowledgeBaseClient
 
         mock_response = mocker.Mock()
+        mock_response.status_code = 201
         mock_response.text.return_value = "foo bar"
         mocker.patch("requests.post", return_value=mock_response)
 
         mock_response = mocker.Mock()
+        mock_response.status_code = 200
         mock_response.json.return_value = {"description": "fizz buzz"}
         mocker.patch("requests.get", return_value=mock_response)
 
