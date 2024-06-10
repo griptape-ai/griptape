@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonSageMakerJumpstartEmbeddingDriver.inference_component_name` for setting the `InferenceComponentName` parameter when invoking an endpoint.
 - `AmazonSageMakerJumpstartEmbeddingDriver.custom_attributes` for setting custom attributes when invoking an endpoint.
 - `ToolkitTask.response_stop_sequence` for overriding the default Chain of Thought stop sequence.
+- `griptape.utils.StructureVisualizer` for visualizing Workflow structures with Mermaid.js
+- `BaseTask.parents_outputs` to get the textual output of all parent tasks. 
+- `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
+- `parents_output_text` to Workflow context.
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
@@ -59,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
 - Performance issue in `OpenAiChatPromptDriver` when extracting unused rate-limiting headers.
+- Streaming not working when using deprecated `Structure.stream` field.
 
 ## [0.26.0] - 2024-06-04
 

@@ -133,7 +133,7 @@ class Structure(ABC):
 
     @property
     def default_config(self) -> BaseStructureConfig:
-        if self.prompt_driver is not None or self.embedding_driver is not None:
+        if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
 
             if self.prompt_driver is None:

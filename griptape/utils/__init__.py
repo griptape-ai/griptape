@@ -16,6 +16,7 @@ from .import_utils import is_dependency_installed
 from .stream import Stream
 from .load_artifact_from_memory import load_artifact_from_memory
 from .deprecation import deprecation_warn
+from .structure_visualizer import StructureVisualizer
 
 
 def minify_json(value: str) -> str:
@@ -43,4 +44,5 @@ __all__ = [
     "deprecation_warn",
     "load_file",
     "load_files",
+    "StructureVisualizer",
 ]
