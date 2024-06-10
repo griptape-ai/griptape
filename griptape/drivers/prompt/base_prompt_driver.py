@@ -59,7 +59,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         if self.structure:
             self.structure.publish_event(
                 FinishPromptEvent(
-                    model=self.model, result=result.value, token_count=self.tokenizer.count_tokens(result.value)
+                    model=self.model,
+                    result=result.value,
+                    token_count=self.tokenizer.count_tokens(result.value.to_text()),
                 )
             )
 

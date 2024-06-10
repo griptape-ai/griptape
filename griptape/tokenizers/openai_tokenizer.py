@@ -91,7 +91,6 @@ class OpenAiTokenizer(BaseTokenizer):
             text: A single message or a list of messages.
             model: The model to use. Defaults to None.
         """
-        print(text)
         if isinstance(text, list):
             model = model if model else self.model
 

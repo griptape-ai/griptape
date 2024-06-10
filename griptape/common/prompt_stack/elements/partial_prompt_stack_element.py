@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from attrs import define, field
 
@@ -15,3 +15,11 @@ class PartialPromptStackElement(BasePromptStackElement):
     content_delta: Optional[TextDeltaPromptStackContent] = field(
         kw_only=True, default=None, metadata={"serializable": True}
     )
+
+    @property
+    def value(self) -> Any:
+        if self.content_delta is not None:
+            return self.content_delta.value
+
+    def to_text(self) -> str:
+        return self.value.to_text()

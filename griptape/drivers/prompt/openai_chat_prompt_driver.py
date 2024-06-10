@@ -71,7 +71,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if len(result.choices) == 1:
             message = result.choices[0].message
-            print(message)
             return PromptStackElement(role=message.role, content=TextPromptStackContent(TextArtifact(message.content)))
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
