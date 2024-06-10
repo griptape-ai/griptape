@@ -1,9 +1,6 @@
 import pytest
 from requests import exceptions
 from griptape.artifacts import TextArtifact, ErrorArtifact
-from logging import getLogger
-
-logger = getLogger(__name__)
 
 
 class TestGriptapeCloudKnowledgeBaseClient:
