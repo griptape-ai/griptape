@@ -13,6 +13,9 @@ from griptape.utils import import_optional_dependency
 if TYPE_CHECKING:
     from transformers import TextGenerationPipeline
 
+if TYPE_CHECKING:
+    from transformers import TextGenerationPipeline
+
 
 @define
 class HuggingFacePipelinePromptDriver(BasePromptDriver):

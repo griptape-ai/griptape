@@ -13,20 +13,19 @@ from griptape.common import ImagePromptStackContent
 
 @define()
 class BaseTokenizer(ABC):
+    DEFAULT_MAX_INPUT_TOKENS = 4096
+    DEFAULT_MAX_OUTPUT_TOKENS = 1000
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {}
 
     model: str = field(kw_only=True)
     stop_sequences: list[str] = field(default=Factory(list), kw_only=True)
-    max_input_tokens: int = field(kw_only=True, default=None)
-    max_output_tokens: int = field(kw_only=True, default=None)
-
-    def __attrs_post_init__(self) -> None:
-        if self.max_input_tokens is None:
-            self.max_input_tokens = self._default_max_input_tokens()
-
-        if self.max_output_tokens is None:
-            self.max_output_tokens = self._default_max_output_tokens()
+    max_input_tokens: int = field(
+        kw_only=True, default=Factory(lambda self: self._default_max_input_tokens(), takes_self=True)
+    )
+    max_output_tokens: int = field(
+        kw_only=True, default=Factory(lambda self: self._default_max_output_tokens(), takes_self=True)
+    )
 
     def count_input_tokens_left(self, text: str | PromptStack) -> int:
         diff = self.max_input_tokens - self.count_tokens(text)
@@ -119,7 +118,7 @@ class BaseTokenizer(ABC):
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
 
         if tokens is None:
-            raise ValueError(f"Unknown model default max input tokens: {self.model}")
+            return self.DEFAULT_MAX_INPUT_TOKENS
         else:
             return tokens
 
@@ -129,6 +128,6 @@ class BaseTokenizer(ABC):
         )
 
         if tokens is None:
-            raise ValueError(f"Unknown model for default max output tokens: {self.model}")
+            return self.DEFAULT_MAX_OUTPUT_TOKENS
         else:
             return tokens

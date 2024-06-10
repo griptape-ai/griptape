@@ -57,7 +57,6 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def after_run(self, result: PromptStackElement) -> None:
         if self.structure:
-            artifact = result.content.value
             self.structure.publish_event(
                 FinishPromptEvent(
                     model=self.model, result=result.value, token_count=self.tokenizer.count_tokens(result.value)
