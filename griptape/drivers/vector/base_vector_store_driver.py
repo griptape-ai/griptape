@@ -2,12 +2,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
-from attr import define, field, Factory
-from typing import Optional, Any
+from typing import Any
+from typing import Optional
+from attrs import define, field, Factory
 from griptape import utils
-from griptape.mixins import SerializableMixin
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.drivers import BaseEmbeddingDriver
+from griptape.mixins import SerializableMixin
 
 
 @define

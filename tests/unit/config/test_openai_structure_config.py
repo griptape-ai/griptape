@@ -27,7 +27,6 @@ class TestOpenAiStructureConfig:
                 "user": "",
             },
             "conversation_memory_driver": None,
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
@@ -62,6 +61,22 @@ class TestOpenAiStructureConfig:
                     "type": "OpenAiEmbeddingDriver",
                 },
                 "type": "LocalVectorStoreDriver",
+            },
+            "text_to_speech_driver": {
+                "type": "OpenAiTextToSpeechDriver",
+                "api_version": None,
+                "base_url": None,
+                "format": "mp3",
+                "model": "tts",
+                "organization": None,
+                "voice": "alloy",
+            },
+            "audio_transcription_driver": {
+                "type": "OpenAiAudioTranscriptionDriver",
+                "api_version": None,
+                "base_url": None,
+                "model": "whisper-1",
+                "organization": None,
             },
         }
 

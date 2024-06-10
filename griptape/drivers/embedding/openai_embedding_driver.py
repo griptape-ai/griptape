@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
 import openai

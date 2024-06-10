@@ -3,7 +3,7 @@ import csv
 from io import StringIO
 from typing import Optional, Union, cast
 
-from attr import define, field
+from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact, ErrorArtifact
 from griptape.drivers import BaseEmbeddingDriver

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
@@ -17,7 +17,4 @@ class HuggingFaceTokenizer(BaseTokenizer):
     max_output_tokens: int = field(kw_only=True)  # pyright: ignore[reportGeneralTypeIssues]
 
     def count_tokens(self, text: str | list) -> int:
-        if isinstance(text, str):
-            return len(self.tokenizer.encode(text))
-        else:
-            raise ValueError("Text must be a string.")
+        return len(self.tokenizer.encode(text))

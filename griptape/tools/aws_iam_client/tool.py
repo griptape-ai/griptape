@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from schema import Schema, Literal
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact, ErrorArtifact, ListArtifact
 from griptape.utils.decorators import activity
 from griptape.tools import BaseAwsClient

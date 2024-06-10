@@ -1,6 +1,6 @@
 from __future__ import annotations
 import os
-from attr import field, define
+from attrs import field, define
 from schema import Schema, Literal
 import logging
 import json
@@ -14,17 +14,10 @@ from griptape.drivers import (
     BasePromptDriver,
     AmazonBedrockPromptDriver,
     AnthropicPromptDriver,
-    BedrockClaudePromptModelDriver,
-    BedrockJurassicPromptModelDriver,
-    BedrockTitanPromptModelDriver,
-    BedrockLlamaPromptModelDriver,
     CoherePromptDriver,
     OpenAiChatPromptDriver,
-    OpenAiCompletionPromptDriver,
     AzureOpenAiChatPromptDriver,
-    AmazonSageMakerPromptDriver,
-    SageMakerLlamaPromptModelDriver,
-    SageMakerFalconPromptModelDriver,
+    AmazonSageMakerJumpstartPromptDriver,
     GooglePromptDriver,
 )
 
@@ -53,12 +46,6 @@ class StructureTester:
             prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo-1106", api_key=os.environ["OPENAI_API_KEY"]),
             enabled=True,
         ),
-        "OPENAI_CHAT_35_TURBO_INSTRUCT": TesterPromptDriverOption(
-            prompt_driver=OpenAiCompletionPromptDriver(
-                model="gpt-3.5-turbo-instruct", api_key=os.environ["OPENAI_API_KEY"]
-            ),
-            enabled=True,
-        ),
         "OPENAI_CHAT_4": TesterPromptDriverOption(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4", api_key=os.environ["OPENAI_API_KEY"]), enabled=True
         ),
@@ -67,10 +54,6 @@ class StructureTester:
         ),
         "OPENAI_CHAT_4_1106_PREVIEW": TesterPromptDriverOption(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4-1106-preview", api_key=os.environ["OPENAI_API_KEY"]),
-            enabled=True,
-        ),
-        "OPENAI_COMPLETION_DAVINCI": TesterPromptDriverOption(
-            prompt_driver=OpenAiCompletionPromptDriver(api_key=os.environ["OPENAI_API_KEY"], model="text-davinci-003"),
             enabled=True,
         ),
         "AZURE_CHAT_35_TURBO": TesterPromptDriverOption(
@@ -142,72 +125,72 @@ class StructureTester:
         "COHERE_COMMAND": TesterPromptDriverOption(
             prompt_driver=CoherePromptDriver(model="command", api_key=os.environ["COHERE_API_KEY"]), enabled=True
         ),
-        "BEDROCK_TITAN": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="amazon.titan-tg1-large", prompt_model_driver=BedrockTitanPromptModelDriver()
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_ANTHROPIC_CLAUDE_3_SONNET": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="anthropic.claude-3-sonnet-20240229-v1:0"), enabled=True
         ),
-        "BEDROCK_CLAUDE_INSTANT": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="anthropic.claude-instant-v1", prompt_model_driver=BedrockClaudePromptModelDriver()
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_ANTHROPIC_CLAUDE_3_HAIKU": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="anthropic.claude-3-haiku-20240307-v1:0"), enabled=True
         ),
-        "BEDROCK_CLAUDE_2": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="anthropic.claude-v2", prompt_model_driver=BedrockClaudePromptModelDriver()
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_ANTHROPIC_CLAUDE_2": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="anthropic.claude-v2"), enabled=True
         ),
-        "BEDROCK_CLAUDE_2.1": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="anthropic.claude-v2:1", prompt_model_driver=BedrockClaudePromptModelDriver()
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_ANTHROPIC_CLAUDE_2.1": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="anthropic.claude-v2:1"), enabled=True
         ),
-        "BEDROCK_CLAUDE_3_SONNET": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="anthropic.claude-3-sonnet-20240229-v1:0", prompt_model_driver=BedrockClaudePromptModelDriver()
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_ANTHROPIC_CLAUDE_INSTANT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="anthropic.claude-instant-v1"), enabled=True
         ),
-        "BEDROCK_CLAUDE_3_HAIKU": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="anthropic.claude-3-haiku-20240307-v1:0", prompt_model_driver=BedrockClaudePromptModelDriver()
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_J2_ULTRA": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="ai21.j2-ultra"), enabled=True
         ),
-        "BEDROCK_J2": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="ai21.j2-ultra", prompt_model_driver=BedrockJurassicPromptModelDriver()
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_J2_MID": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="ai21.j2-mid"), enabled=True
         ),
-        "BEDROCK_LLAMA2_13B": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="meta.llama2-13b-chat-v1", prompt_model_driver=BedrockLlamaPromptModelDriver(), max_attempts=1
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_TITAN_TEXT_LITE": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="amazon.titan-text-lite-v1"), enabled=True
         ),
-        "BEDROCK_LLAMA2_70B": TesterPromptDriverOption(
-            prompt_driver=AmazonBedrockPromptDriver(
-                model="meta.llama2-70b-chat-v1", prompt_model_driver=BedrockLlamaPromptModelDriver(), max_attempts=1
-            ),
-            enabled=True,
+        "AMAZON_BEDROCK_TITAN_TEXT_EXPRESS": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="amazon.titan-text-express-v1"), enabled=True
+        ),
+        "AMAZON_BEDROCK_COHERE_COMMAND_R_PLUS": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="cohere.command-r-plus-v1:0"), enabled=True
+        ),
+        "AMAZON_BEDROCK_COHERE_COMMAND_R": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="cohere.command-r-v1:0"), enabled=True
+        ),
+        "AMAZON_BEDROCK_COHERE_COMMAND_TEXT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="cohere.command-text-v14"), enabled=True
+        ),
+        "AMAZON_BEDROCK_COHERE_COMMAND_LIGHT_TEXT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="cohere.command-light-text-v14"), enabled=True
+        ),
+        "AMAZON_BEDROCK_LLAMA3_8B_INSTRUCT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="meta.llama3-8b-instruct-v1:0"), enabled=True
+        ),
+        "AMAZON_BEDROCK_LLAMA2_13B_CHAT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="meta.llama2-13b-chat-v1"), enabled=True
+        ),
+        "AMAZON_BEDROCK_LLAMA2_70B_CHAT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="meta.llama2-70b-chat-v1"), enabled=True
+        ),
+        "AMAZON_BEDROCK_MISTRAL_7B_INSTRUCT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="mistral.mistral-7b-instruct-v0:2"), enabled=True
+        ),
+        "AMAZON_BEDROCK_MISTRAL_MIXTRAL_8X7B_INSTRUCT": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="mistral.mixtral-8x7b-instruct-v0:1"), enabled=True
+        ),
+        "AMAZON_BEDROCK_MISTRAL_LARGE_2402": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="mistral.mistral-large-2402-v1:0"), enabled=True
+        ),
+        "AMAZON_BEDROCK_MISTRAL_SMALL_2402": TesterPromptDriverOption(
+            prompt_driver=AmazonBedrockPromptDriver(model="mistral.mistral-small-2402-v1:0"), enabled=True
         ),
         "SAGEMAKER_LLAMA_7B": TesterPromptDriverOption(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                model=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
-            ),
+            prompt_driver=AmazonSageMakerJumpstartPromptDriver(endpoint=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"]),
             enabled=False,
         ),
         "SAGEMAKER_FALCON_7b": TesterPromptDriverOption(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                model=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerFalconPromptModelDriver(),
-            ),
+            prompt_driver=AmazonSageMakerJumpstartPromptDriver(endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"]),
             enabled=False,
         ),
         "GOOGLE_GEMINI_PRO": TesterPromptDriverOption(
@@ -220,6 +203,7 @@ class StructureTester:
             PROMPT_DRIVERS["OPENAI_CHAT_4_1106_PREVIEW"],
             PROMPT_DRIVERS["AZURE_CHAT_4"],
             PROMPT_DRIVERS["AZURE_CHAT_4_32K"],
+            PROMPT_DRIVERS["ANTHROPIC_CLAUDE_3_OPUS"],
             PROMPT_DRIVERS["ANTHROPIC_CLAUDE_3_OPUS"],
             PROMPT_DRIVERS["GOOGLE_GEMINI_PRO"],
         ]

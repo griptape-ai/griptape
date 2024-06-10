@@ -1,5 +1,5 @@
 import uuid
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.mixins import SerializableMixin
 
 

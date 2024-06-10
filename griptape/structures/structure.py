@@ -133,7 +133,7 @@ class Structure(ABC):
 
     @property
     def default_config(self) -> BaseStructureConfig:
-        if self.prompt_driver is not None or self.embedding_driver is not None:
+        if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
 
             if self.prompt_driver is None:
@@ -210,12 +210,34 @@ class Structure(ABC):
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
 
+    def resolve_relationships(self) -> None:
+        task_by_id = {task.id: task for task in self.tasks}
+
+        for task in self.tasks:
+            # Ensure parents include this task as a child
+            for parent_id in task.parent_ids:
+                if parent_id not in task_by_id:
+                    raise ValueError(f"Task with id {parent_id} doesn't exist.")
+                parent = task_by_id[parent_id]
+                if task.id not in parent.child_ids:
+                    parent.child_ids.append(task.id)
+
+            # Ensure children include this task as a parent
+            for child_id in task.child_ids:
+                if child_id not in task_by_id:
+                    raise ValueError(f"Task with id {child_id} doesn't exist.")
+                child = task_by_id[child_id]
+                if task.id not in child.parent_ids:
+                    child.parent_ids.append(task.id)
+
     def before_run(self) -> None:
         self.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id, input_task_input=self.input_task.input, input_task_output=self.input_task.output
             )
         )
+
+        self.resolve_relationships()
 
     def after_run(self) -> None:
         self.publish_event(

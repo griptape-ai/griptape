@@ -5,7 +5,7 @@ The GoogleCalendarClient tool allows you to interact with Google Calendar.
 
 ```python
 import os
-from griptape.tools import GoogleCalendarClient, TaskMemoryClient
+from griptape.tools import GoogleCalendarClient
 from griptape.structures import Agent
 
 # Create the GoogleCalendarClient tool
@@ -22,12 +22,13 @@ google_calendar_tool = GoogleCalendarClient(
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
         "client_x509_cert_url": os.environ["GOOGLE_CERT_URL"]
     },
-    owner_email=os.environ["GOOGLE_OWNER_EMAIL"]
+    owner_email=os.environ["GOOGLE_OWNER_EMAIL"],
+    
 )
 
 # Set up an agent using the GoogleCalendarClient tool
 agent = Agent(
-    tools=[google_calendar_tool, TaskMemoryClient(off_prompt=False)]
+    tools=[google_calendar_tool]
 )
 
 # Task: Get upcoming events from a Google calendar

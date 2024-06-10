@@ -94,9 +94,9 @@ from griptape.tools import WebScraper, FileManager, TaskMemoryClient
 agent = Agent(
     input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
-        WebScraper(),
-        FileManager(),
-        TaskMemoryClient(off_prompt=True)
+        WebScraper(off_prompt=True),
+        TaskMemoryClient(off_prompt=True),
+        FileManager()
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
@@ -142,13 +142,13 @@ And here is the output:
                              Output: The summarized content of the website https://griptape.ai has been successfully saved to a file named 'griptape.txt'.
 ```
 
-During the run, the Griptape Agent loaded a webpage with a **Tool**, stored its full content in **Task Memory**, queried it to answer the original question, and finally saved the answer to a file.
+During the run, the Griptape Agent loaded a webpage with a [Tool](https://docs.griptape.ai/stable/griptape-tools/), stored its full content in [Task Memory](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md), queried it to answer the original question, and finally saved the answer to a file.
 
 The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
 
-All Tools have the `off_prompt` property enabled be default. Disabling it (`off_prompt=False`) will force the framework to return all tool outputs directly to the LLM prompt. `TaskMemoryClient` requires the user to set this property explicitly for usability reasons. In the above example, we set `off_prompt` to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
+In the above example, we set [off_prompt](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md#off-prompt) to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
-[Check out our docs](https://docs.griptape.ai/latest/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
+[Check out our docs](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
 ## Versioning
 

@@ -102,7 +102,7 @@ Agents on their own are fun, but let's add some capabilities to them using Gript
 from griptape.structures import Agent
 from griptape.tools import Calculator
 
-calculator = Calculator(off_prompt=False)
+calculator = Calculator()
 
 agent = Agent(
    tools=[calculator]
@@ -151,7 +151,7 @@ pipeline.add_tasks(
     ToolkitTask(
         "{{ args[0] }}",
         # Add tools for web scraping, and file management
-        tools=[WebScraper(), FileManager(), TaskMemoryClient(off_prompt=False)]
+        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), TaskMemoryClient(off_prompt=False)]
     ),
     # Augment `input` from the previous task.
     PromptTask(

@@ -4,16 +4,16 @@ This tool enables LLMs to execute Python code and run shell commands inside a Do
 
 You can specify a local working directory and environment variables during tool initialization:
 
-```python
+```python title="PYTEST_IGNORE"
 from griptape.structures import Agent
-from griptape.tools import Computer, TaskMemoryClient
+from griptape.tools import Computer
 
 # Initialize the Computer tool
 computer = Computer()
 
 # Create an agent with the Computer tool
 agent = Agent(
-    tools=[computer, TaskMemoryClient(off_prompt=False)]
+    tools=[computer]
 )
 
 # Create a file using the shell command

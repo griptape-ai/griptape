@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from attr import define, field
+from attrs import define, field
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 @define()
 class CohereTokenizer(BaseTokenizer):
-    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"command": 4096}
-    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"command": 4096}
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"command-r": 128000, "command": 4096, "embed": 512}
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"command": 4096, "embed": 512}
 
     client: Client = field(kw_only=True)
 

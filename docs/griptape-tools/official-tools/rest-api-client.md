@@ -20,7 +20,6 @@ posts_client = RestApiClient(
     base_url="https://jsonplaceholder.typicode.com",
     path="posts",
     description="Allows for creating, updating, deleting, patching, and getting posts.",
-    off_prompt=False,
     request_body_schema=dumps(
         {
             "$schema": "https://json-schema.org/draft/2019-09/schema",

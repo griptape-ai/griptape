@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from attr import define
+from attrs import define
 
 from griptape.artifacts import ImageArtifact
 from griptape.mixins import SerializableMixin

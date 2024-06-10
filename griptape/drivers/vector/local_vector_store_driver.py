@@ -3,11 +3,12 @@ import os
 import threading
 from dataclasses import asdict
 from typing import Optional, Callable, TextIO
+from attr import Factory
+from attrs import define, field
 from numpy import dot
 from numpy.linalg import norm
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
-from attr import define, field, Factory
 
 
 @define(kw_only=True)

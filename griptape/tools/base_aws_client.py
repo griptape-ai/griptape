@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from abc import ABC
-from attr import define, field
+from attrs import define, field
 from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity

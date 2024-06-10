@@ -4,7 +4,7 @@ from typing import Optional, Union, cast
 import logging
 import imaplib
 
-from attr import astuple, define, field
+from attrs import astuple, define, field
 
 from griptape.utils import import_optional_dependency
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact

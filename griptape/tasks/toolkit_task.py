@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Callable, Optional
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from schema import Schema
 
 from griptape import utils
@@ -161,6 +161,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         if len(self.subtasks) > 0:
             self.subtasks[-1].add_child(subtask)
+            subtask.add_parent(self.subtasks[-1])
 
         self.subtasks.append(subtask)
 

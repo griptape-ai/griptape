@@ -14,7 +14,6 @@ web_search_tool = WebSearch(
     google_api_key=os.environ["GOOGLE_API_KEY"],
     google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
     google_api_country="us",
-    off_prompt=False
 )
 
 # Set up an agent using the WebSearch tool

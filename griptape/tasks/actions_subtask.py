@@ -4,7 +4,7 @@ import re
 from typing import Optional, TYPE_CHECKING, Callable
 
 import schema
-from attr import define, field
+from attrs import define, field
 from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
@@ -171,24 +171,6 @@ class ActionsSubtask(BaseTextInputTask):
 
     def actions_to_json(self) -> str:
         return json.dumps(self.actions_to_dicts())
-
-    def add_child(self, child: ActionsSubtask) -> ActionsSubtask:
-        if child.id not in self.child_ids:
-            self.child_ids.append(child.id)
-
-        if self.id not in child.parent_ids:
-            child.parent_ids.append(self.id)
-
-        return child
-
-    def add_parent(self, parent: ActionsSubtask) -> ActionsSubtask:
-        if parent.id not in self.parent_ids:
-            self.parent_ids.append(parent.id)
-
-        if self.id not in parent.child_ids:
-            parent.child_ids.append(self.id)
-
-        return parent
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)

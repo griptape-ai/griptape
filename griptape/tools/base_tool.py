@@ -9,7 +9,7 @@ import os
 from abc import ABC
 from typing import Optional
 import yaml
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 
@@ -41,7 +41,7 @@ class BaseTool(ActivityMixin, ABC):
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
     verbose: bool = field(default=False, kw_only=True)
-    off_prompt: bool = field(default=True, kw_only=True)
+    off_prompt: bool = field(default=False, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:

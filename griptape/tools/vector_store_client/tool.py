@@ -1,8 +1,9 @@
 from __future__ import annotations
 from typing import Optional
-from attr import define, field
+from attrs import define, field
 from schema import Schema, Literal
-from griptape.artifacts import ErrorArtifact, ListArtifact
+from griptape.artifacts import ErrorArtifact
+from griptape.artifacts import ListArtifact
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity

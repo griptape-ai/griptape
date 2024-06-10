@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from collections.abc import Iterator
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
@@ -20,8 +20,8 @@ class CoherePromptDriver(BasePromptDriver):
         client: Custom `cohere.Client`.
         tokenizer: Custom `CohereTokenizer`.
     """
-
-    api_key: str = field(metadata={"serializable": True})
+    api_key: str = field(metadata={"serializable": False})
+    model: str = field(metadata={"serializable": True})
     client: Client = field(
         default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True)
     )
@@ -30,33 +30,37 @@ class CoherePromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        result = self.client.generate(**self._base_params(prompt_stack))
+        result = self.client.chat(**self._base_params(prompt_stack))
 
-        if result.generations:
-            if len(result.generations) == 1:
-                generation = result.generations[0]
-
-                return TextArtifact(value=generation.text.strip())
-            else:
-                raise Exception("completion with more than one choice is not supported yet")
-        else:
-            raise Exception("model response is empty")
+        return TextArtifact(value=result.text)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        result = self.client.generate(
-            **self._base_params(prompt_stack),
-            stream=True,  # pyright: ignore[reportCallIssue]
-        )
+        result = self.client.chat_stream(**self._base_params(prompt_stack))
 
-        for chunk in result:
-            yield TextArtifact(value=chunk.text)
+        for event in result:
+            if event.event_type == "text-generation":
+                yield TextArtifact(value=event.text)
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        prompt = self.prompt_stack_to_string(prompt_stack)
+        user_message = prompt_stack.inputs[-1].content
+        history_messages = [self.__to_cohere_message(input) for input in prompt_stack.inputs[:-1]]
+
         return {
-            "prompt": self.prompt_stack_to_string(prompt_stack),
-            "model": self.model,
+            "message": user_message,
+            "chat_history": history_messages,
             "temperature": self.temperature,
-            "end_sequences": self.tokenizer.stop_sequences,
-            "max_tokens": self.max_output_tokens(prompt),
+            "stop_sequences": self.tokenizer.stop_sequences,
         }
+
+    def __to_cohere_message(self, input: PromptStack.Input) -> dict[str, Any]:
+        return {"role": self.__to_cohere_role(input.role), "text": input.content}
+
+    def __to_cohere_role(self, role: str) -> str:
+        if role == PromptStack.SYSTEM_ROLE:
+            return "SYSTEM"
+        if role == PromptStack.USER_ROLE:
+            return "USER"
+        elif role == PromptStack.ASSISTANT_ROLE:
+            return "CHATBOT"
+        else:
+            return "USER"
