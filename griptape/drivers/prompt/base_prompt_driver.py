@@ -7,8 +7,9 @@ from collections.abc import Iterator
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PartialPromptStackElement, PromptStack, PromptStackElement
-from griptape.common import TextDeltaPromptStackContent
+from griptape.common import PromptStack, PromptStackElement, DeltaPromptStackElement
+from griptape.common.prompt_stack.contents.base_delta_prompt_stack_content import BaseDeltaPromptStackContent
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.common.prompt_stack.contents.text_prompt_stack_content import TextPromptStackContent
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin
@@ -58,11 +59,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def after_run(self, result: PromptStackElement) -> None:
         if self.structure:
             self.structure.publish_event(
-                FinishPromptEvent(
-                    model=self.model,
-                    result=result.value,
-                    token_count=self.tokenizer.count_tokens(result.value.to_text()),
-                )
+                FinishPromptEvent(model=self.model, result=result.value, token_count=result.usage.output_tokens)
             )
 
     def run(self, prompt_stack: PromptStack) -> PromptStackElement:
@@ -72,16 +69,22 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                 if self.stream:
                     tokens = []
+                    usage = None
 
-                    partial_elements = self.try_stream(prompt_stack)
+                    delta_elements = self.try_stream(prompt_stack)
 
-                    for partial_element in partial_elements:
-                        if isinstance(partial_element.content_delta, TextDeltaPromptStackContent):
-                            chunk_value = partial_element.content_delta.value
+                    for delta_element in delta_elements:
+                        if isinstance(delta_element, DeltaPromptStackElement):
+                            usage = delta_element.usage
+                        elif isinstance(delta_element, DeltaTextPromptStackContent):
+                            chunk_value = delta_element.artifact.value
                             self.structure.publish_event(CompletionChunkEvent(token=chunk_value))
                             tokens.append(chunk_value)
-                    content = TextPromptStackContent(value=TextArtifact("".join(tokens).strip()))
-                    result = PromptStackElement(content=content, role=PromptStackElement.ASSISTANT_ROLE)
+
+                    content = TextPromptStackContent(artifact=TextArtifact("".join(tokens).strip()))
+                    result = PromptStackElement(
+                        content=content, role=PromptStackElement.ASSISTANT_ROLE, **({"usage": usage} if usage else {})
+                    )
                 else:
                     result = self.try_run(prompt_stack)
 
@@ -95,4 +98,6 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_run(self, prompt_stack: PromptStack) -> PromptStackElement: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[PartialPromptStackElement]: ...
+    def try_stream(
+        self, prompt_stack: PromptStack
+    ) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]: ...

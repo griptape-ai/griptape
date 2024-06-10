@@ -1,9 +1,9 @@
 from attrs import define, field
 
-from griptape.common import BasePromptStackContent
 from griptape.artifacts import TextArtifact
+from griptape.common import BaseDeltaPromptStackContent
 
 
 @define
-class TextPromptStackContent(BasePromptStackContent):
+class DeltaTextPromptStackContent(BaseDeltaPromptStackContent):
     artifact: TextArtifact = field(metadata={"serializable": True})

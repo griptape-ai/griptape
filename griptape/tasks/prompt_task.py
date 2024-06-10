@@ -63,6 +63,8 @@ class PromptTask(BaseTextInputTask):
         )
 
     def run(self) -> BaseArtifact:
-        self.output = self.prompt_driver.run(self.prompt_stack)
+        output = self.prompt_driver.run(self.prompt_stack)
+
+        self.output = output.content
 
         return self.output

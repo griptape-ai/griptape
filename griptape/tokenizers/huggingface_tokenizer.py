@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from attrs import define, field, Factory
 from griptape.common import PromptStack
+from griptape.common.prompt_stack.elements.prompt_stack_element import PromptStackElement
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
 
@@ -37,8 +38,8 @@ class HuggingFaceTokenizer(BaseTokenizer):
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        return {"role": prompt_input.role, "content": prompt_input.content}
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        return {"role": prompt_input.role, "content": prompt_input.content.artifact.value}
 
     def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
         tokens = self.tokenizer.apply_chat_template(

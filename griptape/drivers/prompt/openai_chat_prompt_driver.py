@@ -8,11 +8,12 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import (
-    PartialPromptStackElement,
-    TextDeltaPromptStackContent,
+    DeltaTextPromptStackContent,
     PromptStack,
     PromptStackElement,
+    DeltaPromptStackElement,
     TextPromptStackContent,
+    BaseDeltaPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -71,26 +72,42 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if len(result.choices) == 1:
             message = result.choices[0].message
-            return PromptStackElement(role=message.role, content=TextPromptStackContent(TextArtifact(message.content)))
+
+            return PromptStackElement(
+                content=TextPromptStackContent(TextArtifact(message.content)),
+                role=message.role,
+                usage=PromptStackElement.Usage(
+                    input_tokens=message.usage.prompt_tokens, output_tokens=message.usage.completion_tokens
+                ),
+            )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[PartialPromptStackElement]:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+        result = self.client.chat.completions.create(
+            **self._base_params(prompt_stack), stream=True, stream_options={"include_usage": True}
+        )
 
         for chunk in result:
-            if len(chunk.choices) == 1:
-                choice = chunk.choices[0]
-                delta = choice.delta
-
-                if delta.content is not None:
-                    delta_content = delta.content
-
-                    yield PartialPromptStackElement(
-                        index=choice.index, role=delta.role, content_delta=TextDeltaPromptStackContent(delta_content)
+            if chunk.usage is not None:
+                yield DeltaPromptStackElement(
+                    usage=PromptStackElement.Usage(
+                        input_tokens=chunk.usage.prompt_tokens, output_tokens=chunk.usage.completion_tokens
                     )
-            else:
-                raise Exception("Completion with more than one choice is not supported yet.")
+                )
+            elif chunk.choices is not None:
+                if len(chunk.choices) == 1:
+                    choice = chunk.choices[0]
+                    delta = choice.delta
+
+                    if delta.content is not None:
+                        delta_content = delta.content
+
+                        yield DeltaTextPromptStackContent(
+                            TextArtifact(delta_content), index=choice.index, role=delta.role
+                        )
+                else:
+                    raise Exception("Completion with more than one choice is not supported yet.")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {

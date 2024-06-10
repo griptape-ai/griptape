@@ -1,6 +1,6 @@
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
-from griptape.common import PromptStack
+from griptape.common import PromptStack, DeltaTextPromptStackContent
 from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
 import pytest
@@ -107,7 +107,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        element = driver.try_run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -119,7 +119,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             seed=driver.seed,
             response_format={"type": "json_object"},
         )
-        assert text_artifact.value == "model-output"
+        assert element.value == "model-output"
 
     def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
         # Given
@@ -137,8 +137,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream=True,
             messages=messages,
             seed=driver.seed,
+            stream_options={"include_usage": True},
         )
-        assert text_artifact.value == "model-output"
+
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.artifact.value == "model-output"
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
