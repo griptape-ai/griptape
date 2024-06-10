@@ -1,10 +1,20 @@
 from __future__ import annotations
+
 import logging
-from attrs import define, field, Factory
-import tiktoken
 from typing import Optional
+
+import tiktoken
+from attrs import Factory, define, field
+
+from griptape.artifacts import TextArtifact
+from griptape.common import (
+    BasePromptStackContent,
+    PromptStack,
+    TextPromptStackContent,
+    ImagePromptStackContent,
+    PromptStackElement,
+)
 from griptape.tokenizers import BaseTokenizer
-from griptape.common import PromptStack
 
 
 @define()
@@ -82,6 +92,33 @@ class OpenAiTokenizer(BaseTokenizer):
 
     def try_count_tokens(self, text: str) -> int:
         return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))
+
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        message_content = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+
+        if prompt_input.is_system():
+            return {"role": "system", "content": message_content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": message_content}
+        else:
+            return {"role": "user", "content": message_content}
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+        if isinstance(content, TextPromptStackContent):
+            return {"type": "text", "text": content.artifact.to_text()}
+        elif isinstance(content, ImagePromptStackContent):
+            return {
+                "type": "image",
+                "image_url": {"url": f"data:{content.artifact.media_type};base64,{content.artifact.base64}"},
+            }
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def message_content_to_prompt_stack_content(self, message_content: str) -> BasePromptStackContent:
+        if isinstance(message_content, str):
+            return TextPromptStackContent(TextArtifact(message_content))
+        else:
+            raise ValueError(f"Unsupported message content type: {type(message_content)}")
 
     def __count_tokens_messages(self, text: str | list[dict], model: Optional[str] = None) -> int:
         """Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:

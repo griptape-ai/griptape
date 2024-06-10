@@ -1,6 +1,10 @@
 from __future__ import annotations
+
 from attrs import define, field
-from griptape.common import PromptStack
+
+from griptape.common import BasePromptStackContent, ImagePromptStackContent, TextPromptStackContent
+from griptape.common import PromptStackElement
+from griptape.artifacts import TextArtifact
 from griptape.tokenizers import SimpleTokenizer
 
 
@@ -34,12 +38,26 @@ class AmazonBedrockTokenizer(SimpleTokenizer):
 
     characters_per_token: int = field(default=4, kw_only=True)
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        content = [{"text": prompt_input.content}]
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        content = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
 
-        if prompt_input.is_system():
-            return {"text": prompt_input.content}
-        elif prompt_input.is_assistant():
+        if prompt_input.is_assistant():
             return {"role": "assistant", "content": content}
         else:
             return {"role": "user", "content": content}
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+        if isinstance(content, TextPromptStackContent):
+            return {"text": content.artifact.to_text()}
+        elif isinstance(content, ImagePromptStackContent):
+            return {
+                "source": {"type": "base64", "format": content.artifact.media_type, "bytes": content.artifact.value}
+            }
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def message_content_to_prompt_stack_content(self, message_content: dict) -> BasePromptStackContent:
+        if "text " in message_content:
+            return TextPromptStackContent(TextArtifact(message_content["text"]))
+        else:
+            raise ValueError(f"Unsupported message content type: {message_content['text']}")

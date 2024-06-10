@@ -69,13 +69,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                 if self.stream:
                     tokens = []
-                    usage = None
+                    delta_usage = DeltaPromptStackElement.DeltaUsage()
 
                     delta_elements = self.try_stream(prompt_stack)
 
                     for delta_element in delta_elements:
                         if isinstance(delta_element, DeltaPromptStackElement):
-                            usage = delta_element.usage
+                            delta_usage += delta_element.delta_usage
                         elif isinstance(delta_element, DeltaTextPromptStackContent):
                             chunk_value = delta_element.artifact.value
                             self.structure.publish_event(CompletionChunkEvent(token=chunk_value))
@@ -83,7 +83,11 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                     content = TextPromptStackContent(artifact=TextArtifact("".join(tokens).strip()))
                     result = PromptStackElement(
-                        content=content, role=PromptStackElement.ASSISTANT_ROLE, **({"usage": usage} if usage else {})
+                        content=content,
+                        role=PromptStackElement.ASSISTANT_ROLE,
+                        usage=PromptStackElement.Usage(
+                            input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0
+                        ),
                     )
                 else:
                     result = self.try_run(prompt_stack)

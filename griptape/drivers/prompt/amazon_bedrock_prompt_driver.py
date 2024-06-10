@@ -6,6 +6,12 @@ from typing import TYPE_CHECKING, Any
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
+from griptape.common import (
+    BaseDeltaPromptStackContent,
+    DeltaPromptStackElement,
+    PromptStackElement,
+    DeltaTextPromptStackContent,
+)
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
@@ -27,22 +33,41 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
 
+        usage = response["usage"]
         output_message = response["output"]["message"]
-        output_content = output_message["content"][0]["text"]
 
-        return TextArtifact(output_content)
+        return PromptStackElement(
+            content=[
+                self.tokenizer.message_content_to_prompt_stack_content(content) for content in output_message["content"]
+            ],
+            role=output_message["role"],
+            usage=PromptStackElement.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
+        )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
         response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
 
         stream = response.get("stream")
         if stream is not None:
             for event in stream:
-                if "contentBlockDelta" in event:
-                    yield TextArtifact(event["contentBlockDelta"]["delta"]["text"])
+                if "messageStart" in event:
+                    yield DeltaPromptStackElement(role=event["messageStart"]["role"])
+                elif "contentBlockDelta" in event:
+                    content_block_delta = event["contentBlockDelta"]
+                    yield DeltaTextPromptStackContent(
+                        TextArtifact(value=content_block_delta["delta"]["text"]),
+                        index=content_block_delta["contentBlockIndex"],
+                    )
+                elif "metadata" in event:
+                    usage = event["metadata"]["usage"]
+                    yield DeltaPromptStackElement(
+                        delta_usage=DeltaPromptStackElement.DeltaUsage(
+                            input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]
+                        )
+                    )
         else:
             raise Exception("model response is empty")
 

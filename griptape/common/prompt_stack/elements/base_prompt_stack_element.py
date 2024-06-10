@@ -1,4 +1,4 @@
-from attrs import define, field, Factory
+from attrs import define, field
 from abc import ABC, abstractmethod
 
 
@@ -9,19 +9,7 @@ class BasePromptStackElement(ABC):
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    @define
-    class Usage:
-        input_tokens: int = field(kw_only=True, default=0, metadata={"serializable": True})
-        output_tokens: int = field(kw_only=True, default=0, metadata={"serializable": True})
-
-        @property
-        def total_tokens(self) -> int:
-            return self.input_tokens + self.output_tokens
-
     role: str = field(kw_only=True, metadata={"serializable": True})
-    usage: Usage = field(
-        kw_only=True, default=Factory(lambda: BasePromptStackElement.Usage()), metadata={"serializable": True}
-    )
 
     def is_generic(self) -> bool:
         return self.role == self.GENERIC_ROLE

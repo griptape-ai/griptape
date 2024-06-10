@@ -5,10 +5,7 @@ from typing import Any
 
 from attrs import Factory, define, field
 
-from griptape.common import PromptStack, PromptStackElement
-from griptape.common import BasePromptStackContent
-from griptape.common import TextPromptStackContent
-from griptape.common import ImagePromptStackContent
+from griptape.common import BasePromptStackContent, PromptStack, PromptStackElement
 
 
 @define()
@@ -76,6 +73,7 @@ class BaseTokenizer(ABC):
 
         return "\n\n".join(prompt_lines)
 
+    @abstractmethod
     def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
         """Converts a PromptStack Input to a ChatML-style message dictionary for token counting or model input.
 
@@ -85,21 +83,11 @@ class BaseTokenizer(ABC):
         Returns:
             A dictionary with the role and content of the input.
         """
+        ...
 
-        if isinstance(prompt_input.content, BasePromptStackContent):
-            message_content = str(prompt_input.content)
-        else:
-            message_content = [self.prompt_stack_content_to_message(content) for content in prompt_input.content]
-
-        if prompt_input.is_system():
-            return {"role": "system", "content": message_content}
-        elif prompt_input.is_assistant():
-            return {"role": "assistant", "content": message_content}
-        else:
-            return {"role": "user", "content": message_content}
-
-    def prompt_stack_content_to_message(self, content: BasePromptStackContent) -> dict | list[dict]:
-        """Converts a BasePromptStackContent to a ChatML-style message dictionary for token counting or model input.
+    @abstractmethod
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> Any:
+        """Converts a BasePromptStackContent to message content for token counting or model input.
 
         Args:
             content: The BasePromptStackContent to convert.
@@ -107,12 +95,19 @@ class BaseTokenizer(ABC):
         Returns:
             A dictionary with the role and content of the input.
         """
-        if isinstance(content, TextPromptStackContent):
-            return {"type": "text", "text": content.value.to_text()}
-        elif isinstance(content, ImagePromptStackContent):
-            return {"type": "image", "image_url": {"url": f"data:image/jpeg;base64,{content.value.base64}"}}
-        else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
+        ...
+
+    @abstractmethod
+    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
+        """Converts a message content dictionary to a BasePromptStackContent.
+
+        Args:
+            message_content: The message content dictionary to convert.
+
+        Returns:
+            A BasePromptStackContent instance.
+        """
+        ...
 
     def _default_max_input_tokens(self) -> int:
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)

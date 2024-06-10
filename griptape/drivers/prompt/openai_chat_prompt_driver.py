@@ -12,7 +12,6 @@ from griptape.common import (
     PromptStack,
     PromptStackElement,
     DeltaPromptStackElement,
-    TextPromptStackContent,
     BaseDeltaPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -74,10 +73,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             message = result.choices[0].message
 
             return PromptStackElement(
-                content=TextPromptStackContent(TextArtifact(message.content)),
+                content=[self.tokenizer.message_content_to_prompt_stack_content(message.content)],
                 role=message.role,
                 usage=PromptStackElement.Usage(
-                    input_tokens=message.usage.prompt_tokens, output_tokens=message.usage.completion_tokens
+                    input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
                 ),
             )
         else:
@@ -91,7 +90,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         for chunk in result:
             if chunk.usage is not None:
                 yield DeltaPromptStackElement(
-                    usage=PromptStackElement.Usage(
+                    delta_usage=DeltaPromptStackElement.DeltaUsage(
                         input_tokens=chunk.usage.prompt_tokens, output_tokens=chunk.usage.completion_tokens
                     )
                 )

@@ -10,10 +10,16 @@ from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.common import (
+    PromptStackElement,
+    DeltaPromptStackElement,
+    BaseDeltaPromptStackContent,
+    DeltaTextPromptStackContent,
+)
 
 if TYPE_CHECKING:
     from google.generativeai import GenerativeModel
-    from google.generativeai.types import ContentDict
+    from google.generativeai.types import ContentDict, GenerationConfig, GenerateContentResponse
 
 
 @define
@@ -37,11 +43,11 @@ class GooglePromptDriver(BasePromptDriver):
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
         inputs = self._prompt_stack_to_model_input(prompt_stack)
-        response = self.model_client.generate_content(
+        response: GenerateContentResponse = self.model_client.generate_content(
             inputs,
             generation_config=GenerationConfig(
                 stop_sequences=self.tokenizer.stop_sequences,
@@ -52,13 +58,29 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
-        return TextArtifact(value=response.text)
+        candidates = response.candidates
+        usage_metadata = response.usage_metadata  # pyright: ignore[reportAttributeAccessIssue]
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+        if len(candidates) == 1:
+            content = candidates[0].content
+            content_parts = content.parts
+            content_role = content.role
+
+            return PromptStackElement(
+                content=[self.tokenizer.message_content_to_prompt_stack_content(part) for part in content_parts],
+                role=content_role,
+                usage=PromptStackElement.Usage(
+                    input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
+                ),
+            )
+        else:
+            raise Exception("Completion with more than one candidate is not supported.")
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
         inputs = self._prompt_stack_to_model_input(prompt_stack)
-        response = self.model_client.generate_content(
+        response: GenerationConfig = self.model_client.generate_content(
             inputs,
             stream=True,
             generation_config=GenerationConfig(
@@ -71,7 +93,7 @@ class GooglePromptDriver(BasePromptDriver):
         )
 
         for chunk in response:
-            yield TextArtifact(value=chunk.text)
+            yield DeltaTextPromptStackContent(TextArtifact(chunk.text), index=chunk.index)
 
     def _default_model_client(self) -> GenerativeModel:
         genai = import_optional_dependency("google.generativeai")
@@ -87,11 +109,11 @@ class GooglePromptDriver(BasePromptDriver):
         # Gemini does not have the notion of a system message, so we insert it as part of the first message in the history.
         system = next((i for i in prompt_stack.inputs if i.is_system()), None)
         if system is not None:
-            inputs[0]["parts"].insert(0, system.content)
+            inputs[0]["parts"].insert(0, "\n".join(content.to_text() for content in system.content))
 
         return inputs
 
-    def __to_content_dict(self, prompt_input: PromptStack.Input) -> ContentDict:
+    def __to_content_dict(self, prompt_input: PromptStackElement) -> ContentDict:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
         message = self.tokenizer.prompt_stack_input_to_message(prompt_input)
 

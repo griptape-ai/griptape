@@ -1,9 +1,16 @@
 from __future__ import annotations
 from attrs import define, field, Factory
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
-from griptape.common import PromptStack
+from griptape.common import (
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+    ImagePromptStackContent,
+    BasePromptStackContent,
+)
+from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
     from google.generativeai import GenerativeModel
@@ -33,7 +40,6 @@ class GoogleTokenizer(BaseTokenizer):
             )
 
     def try_count_tokens(self, text: ContentDict | list[ContentDict]) -> int:
-        print(text)
         return self.model_client.count_tokens(text).total_tokens
 
     def _default_model_client(self) -> GenerativeModel:
@@ -42,10 +48,24 @@ class GoogleTokenizer(BaseTokenizer):
 
         return genai.GenerativeModel(self.model)
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        parts = [prompt_input.content]
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        parts = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
 
         if prompt_input.is_assistant():
             return {"role": "model", "parts": parts}
         else:
             return {"role": "user", "parts": parts}
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str | dict:
+        if isinstance(content, TextPromptStackContent):
+            return content.artifact.to_text()
+        elif isinstance(content, ImagePromptStackContent):
+            return {"mime_type": content.artifact.mime_type, "data": content.artifact.value}
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
+        if message_content.text:
+            return TextPromptStackContent(TextArtifact(message_content.text))
+        else:
+            raise ValueError(f"Unsupported mime type: {type(message_content)}")

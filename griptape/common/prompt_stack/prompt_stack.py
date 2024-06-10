@@ -20,10 +20,10 @@ class PromptStack(SerializableMixin):
         content: str = field(metadata={"serializable": True})
 
         def __new__(cls, content: str, *, role: str) -> PromptStackElement:
-            return PromptStackElement(content=TextPromptStackContent(TextArtifact(content)), role=role)
+            return PromptStackElement(content=[TextPromptStackContent(TextArtifact(content))], role=role)
 
     def add_input(self, content: str, role: str) -> PromptStackElement:
-        self.inputs.append(PromptStackElement(content=TextPromptStackContent(TextArtifact(content)), role=role))
+        self.inputs.append(PromptStackElement(content=[TextPromptStackContent(TextArtifact(content))], role=role))
 
         return self.inputs[-1]
 
