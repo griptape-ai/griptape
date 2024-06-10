@@ -82,7 +82,7 @@ class TestAgent:
 
         artifact_storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(artifact_storage, TextArtifactStorage)
-        memory_embedding_driver = artifact_storage.query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = artifact_storage.rag_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -236,8 +236,8 @@ class TestAgent:
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
-        assert storage.query_engine.prompt_driver == prompt_driver
-        assert storage.query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert storage.rag_engine.prompt_driver == prompt_driver
+        assert storage.rag_engine.vector_store_driver.embedding_driver == embedding_driver
         assert isinstance(storage.summary_engine, PromptSummaryEngine)
         assert storage.summary_engine.prompt_driver == prompt_driver
         assert storage.csv_extraction_engine.prompt_driver == prompt_driver

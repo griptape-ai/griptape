@@ -11,7 +11,7 @@ def text_tool_artifact_storage():
     vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
 
     return TextArtifactStorage(
-        query_engine=VectorQueryEngine(
+        rag_engine=VectorQueryEngine(
             vector_store_driver=vector_store_driver,
             prompt_driver=MockPromptDriver(),
         ),
