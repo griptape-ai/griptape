@@ -53,8 +53,7 @@ class TestGriptapeCloudKnowledgeBaseClient:
         from griptape.tools import GriptapeCloudKnowledgeBaseClient
 
         mock_response = mocker.Mock()
-        mock_response.status_code = 201
-        mock_response.text.return_value = "foo bar"
+        mock_response.status_code = 500
         mocker.patch("requests.post", return_value=mock_response, side_effect=exceptions.RequestException("error"))
 
         return GriptapeCloudKnowledgeBaseClient(
@@ -80,7 +79,6 @@ class TestGriptapeCloudKnowledgeBaseClient:
             client_no_description._get_knowledge_base_description()
 
     def test_get_knowledge_base_kb_error(self, client_kb_not_found):
-        with pytest.raises(ValueError) as e:
+        exception_match_text = f"Error accessing Knowledge Base {client_kb_not_found.knowledge_base_id}."
+        with pytest.raises(ValueError, match=exception_match_text) as e:
             client_kb_not_found._get_knowledge_base_description()
-
-            assert str(e) == f"Error accessing Knowledge Base {client_kb_not_found.knowledge_base_id}."
