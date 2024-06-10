@@ -1,6 +1,9 @@
 import pytest
 from requests import exceptions
 from griptape.artifacts import TextArtifact, ErrorArtifact
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 class TestGriptapeCloudKnowledgeBaseClient:
@@ -28,6 +31,7 @@ class TestGriptapeCloudKnowledgeBaseClient:
 
         mock_response = mocker.Mock()
         mock_response.json.return_value = {}
+        mock_response.status_code = 200
         mocker.patch("requests.get", return_value=mock_response)
 
         return GriptapeCloudKnowledgeBaseClient(
@@ -74,13 +78,9 @@ class TestGriptapeCloudKnowledgeBaseClient:
         assert client._get_knowledge_base_description() == "foo bar"
 
     def test_get_knowledge_base_description_error(self, client_no_description):
-        with pytest.raises(ValueError) as e:
+        exception_match_text = f"No description found for Knowledge Base {client_no_description.knowledge_base_id}. Please set a description, or manually set the `GriptapeCloudKnowledgeBaseClient.description` attribute."
+        with pytest.raises(ValueError, match=exception_match_text) as e:
             client_no_description._get_knowledge_base_description()
-
-            assert (
-                str(e)
-                == f"No description found for Knowledge Base {client_no_description.knowledge_base_id}. Please set a description, or manually set the `GriptapeCloudKnowledgeBaseClient.description` attribute."
-            )
 
     def test_get_knowledge_base_kb_error(self, client_kb_not_found):
         with pytest.raises(ValueError) as e:
