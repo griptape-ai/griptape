@@ -128,7 +128,7 @@ class Workflow(Structure):
         context.update(
             {
                 "parent_outputs": task.parent_outputs,
-                "parents_output": task.parents_output,
+                "parents_output_text": task.parents_output_text,
                 "parents": {parent.id: parent for parent in task.parents},
                 "children": {child.id: child for child in task.children},
             }

@@ -52,7 +52,7 @@ class BaseTask(ABC):
         return {parent.id: parent.output.to_text() if parent.output else "" for parent in self.parents}
 
     @property
-    def parents_output(self) -> str:
+    def parents_output_text(self) -> str:
         return "\n".join([parent.output.to_text() for parent in self.parents if parent.output])
 
     @property

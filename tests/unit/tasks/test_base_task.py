@@ -67,4 +67,4 @@ class TestBaseTask:
 
         parent_2.output = None
 
-        assert child.parents_output == "foobar1\nfoobar3"
+        assert child.parents_output_text == "foobar1\nfoobar3"
