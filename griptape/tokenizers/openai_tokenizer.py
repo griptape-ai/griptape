@@ -126,9 +126,6 @@ class OpenAiTokenizer(BaseTokenizer):
             for message in text:
                 num_tokens += tokens_per_message
                 for key, value in message.items():
-                    if isinstance(value, list):
-                        value = "\n".join([v["text"] for v in value if v["type"] == "text"])
-
                     num_tokens += len(encoding.encode(value))
                     if key == "name":
                         num_tokens += tokens_per_name
