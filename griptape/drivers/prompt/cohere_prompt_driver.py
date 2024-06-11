@@ -5,7 +5,14 @@ from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
-from griptape.common import PromptStack, PromptStackElement, DeltaPromptStackElement, BaseDeltaPromptStackContent
+from griptape.common import (
+    PromptStack,
+    PromptStackElement,
+    DeltaPromptStackElement,
+    BaseDeltaPromptStackContent,
+    TextPromptStackContent,
+    BasePromptStackContent,
+)
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
 
@@ -45,18 +52,33 @@ class CoherePromptDriver(BasePromptDriver):
             if event.event_type == "text-generation":
                 yield TextArtifact(value=event.text)
 
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        if len(prompt_input.content) == 1:
+            message_content = self.prompt_stack_content_to_message_content(prompt_input.content[0])
+
+            if prompt_input.is_system():
+                return {"role": "SYSTEM", "message": message_content}
+            elif prompt_input.is_user():
+                return {"role": "USER", "message": message_content}
+            else:
+                return {"role": "CHATBOT", "message": message_content}
+        else:
+            raise ValueError("Cohere does not support multiple prompt stack contents.")
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str:
+        if isinstance(content, TextPromptStackContent):
+            return content.artifact.to_text()
+        else:
+            raise ValueError("Cohere does not support non-text prompt stack contents.")
+
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         user_message = prompt_stack.inputs[-1].content
 
         history_messages = [
-            self.tokenizer.prompt_stack_input_to_message(input)
-            for input in prompt_stack.inputs[:-1]
-            if not input.is_system()
+            self.prompt_stack_input_to_message(input) for input in prompt_stack.inputs[:-1] if not input.is_system()
         ]
 
-        system = next(
-            (self.tokenizer.prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None
-        )
+        system = next((self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None)
 
         return {
             "message": user_message,

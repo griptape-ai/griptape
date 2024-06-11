@@ -1,16 +1,21 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
 from collections.abc import Iterator
+from typing import TYPE_CHECKING, Optional, Any
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, PromptStackElement, DeltaPromptStackElement
-from griptape.common.prompt_stack.contents.base_delta_prompt_stack_content import BaseDeltaPromptStackContent
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
-from griptape.common.prompt_stack.contents.text_prompt_stack_content import TextPromptStackContent
+from griptape.common import (
+    BaseDeltaPromptStackContent,
+    DeltaPromptStackElement,
+    DeltaTextPromptStackContent,
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+    BasePromptStackContent,
+)
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
@@ -97,6 +102,66 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 return result
         else:
             raise Exception("prompt driver failed after all retry attempts")
+
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        """Converts a Prompt Stack to a string for token counting or model input.
+        This base implementation will not be very accurate, and should be overridden by subclasses with model-specific tokens.
+
+        Args:
+            prompt_stack: The Prompt Stack to convert to a string.
+
+        Returns:
+            A single string representation of the Prompt Stack.
+        """
+        prompt_lines = []
+
+        for i in prompt_stack.inputs:
+            if i.is_user():
+                prompt_lines.append(f"User: {i.content}")
+            elif i.is_assistant():
+                prompt_lines.append(f"Assistant: {i.content}")
+            else:
+                prompt_lines.append(str(i.content))
+
+        prompt_lines.append("Assistant:")
+
+        return "\n\n".join(prompt_lines)
+
+    @abstractmethod
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        """Converts a PromptStack Input to a ChatML-style message dictionary for token counting or model input.
+
+        Args:
+            prompt_input: The PromptStack Input to convert.
+
+        Returns:
+            A dictionary with the role and content of the input.
+        """
+        ...
+
+    @abstractmethod
+    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> Any:
+        """Converts a BasePromptStackContent to message content for token counting or model input.
+
+        Args:
+            content: The BasePromptStackContent to convert.
+
+        Returns:
+            A dictionary with the role and content of the input.
+        """
+        ...
+
+    @abstractmethod
+    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
+        """Converts a message content dictionary to a BasePromptStackContent.
+
+        Args:
+            message_content: The message content dictionary to convert.
+
+        Returns:
+            A BasePromptStackContent instance.
+        """
+        ...
 
     @abstractmethod
     def try_run(self, prompt_stack: PromptStack) -> PromptStackElement: ...

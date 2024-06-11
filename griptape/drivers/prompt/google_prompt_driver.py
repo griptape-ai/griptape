@@ -6,20 +6,23 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack
+from griptape.common import (
+    BaseDeltaPromptStackContent,
+    BasePromptStackContent,
+    DeltaPromptStackElement,
+    DeltaTextPromptStackContent,
+    ImagePromptStackContent,
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+)
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency
-from griptape.common import (
-    PromptStackElement,
-    DeltaPromptStackElement,
-    BaseDeltaPromptStackContent,
-    DeltaTextPromptStackContent,
-)
 
 if TYPE_CHECKING:
     from google.generativeai import GenerativeModel
-    from google.generativeai.types import ContentDict, GenerationConfig, GenerateContentResponse
+    from google.generativeai.types import ContentDict, GenerateContentResponse, GenerationConfig
 
 
 @define
@@ -67,7 +70,7 @@ class GooglePromptDriver(BasePromptDriver):
             content_role = content.role
 
             return PromptStackElement(
-                content=[self.tokenizer.message_content_to_prompt_stack_content(part) for part in content_parts],
+                content=[self.message_content_to_prompt_stack_content(part) for part in content_parts],
                 role=content_role,
                 usage=PromptStackElement.Usage(
                     input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
@@ -95,6 +98,28 @@ class GooglePromptDriver(BasePromptDriver):
         for chunk in response:
             yield DeltaTextPromptStackContent(TextArtifact(chunk.text), index=chunk.index)
 
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        parts = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+
+        if prompt_input.is_assistant():
+            return {"role": "model", "parts": parts}
+        else:
+            return {"role": "user", "parts": parts}
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str | dict:
+        if isinstance(content, TextPromptStackContent):
+            return content.artifact.to_text()
+        elif isinstance(content, ImagePromptStackContent):
+            return {"mime_type": content.artifact.mime_type, "data": content.artifact.value}
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
+        if message_content.text:
+            return TextPromptStackContent(TextArtifact(message_content.text))
+        else:
+            raise ValueError(f"Unsupported mime type: {type(message_content)}")
+
     def _default_model_client(self) -> GenerativeModel:
         genai = import_optional_dependency("google.generativeai")
         genai.configure(api_key=self.api_key)
@@ -115,6 +140,6 @@ class GooglePromptDriver(BasePromptDriver):
 
     def __to_content_dict(self, prompt_input: PromptStackElement) -> ContentDict:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
-        message = self.tokenizer.prompt_stack_input_to_message(prompt_input)
+        message = self.prompt_stack_input_to_message(prompt_input)
 
         return ContentDict(message)

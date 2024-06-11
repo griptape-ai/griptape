@@ -11,6 +11,9 @@ from griptape.common import (
     DeltaPromptStackElement,
     PromptStackElement,
     DeltaTextPromptStackContent,
+    BasePromptStackContent,
+    TextPromptStackContent,
+    ImagePromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
@@ -40,9 +43,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         output_message = response["output"]["message"]
 
         return PromptStackElement(
-            content=[
-                self.tokenizer.message_content_to_prompt_stack_content(content) for content in output_message["content"]
-            ],
+            content=[self.message_content_to_prompt_stack_content(content) for content in output_message["content"]],
             role=output_message["role"],
             usage=PromptStackElement.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
@@ -71,16 +72,38 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        content = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+
+        if prompt_input.is_assistant():
+            return {"role": "assistant", "content": content}
+        else:
+            return {"role": "user", "content": content}
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+        if isinstance(content, TextPromptStackContent):
+            return {"text": content.artifact.to_text()}
+        elif isinstance(content, ImagePromptStackContent):
+            return {
+                "source": {"type": "base64", "format": content.artifact.media_type, "bytes": content.artifact.value}
+            }
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def message_content_to_prompt_stack_content(self, message_content: dict) -> BasePromptStackContent:
+        if "text " in message_content:
+            return TextPromptStackContent(TextArtifact(message_content["text"]))
+        else:
+            raise ValueError(f"Unsupported message content type: {message_content['text']}")
+
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [
-            self.tokenizer.prompt_stack_input_to_message(input)
+            self._prompt_stack_input_to_message(input)
             for input in prompt_stack.inputs
             if input.is_system() and input.content
         ]
         messages = [
-            self.tokenizer.prompt_stack_input_to_message(input)
-            for input in prompt_stack.inputs
-            if not input.is_system()
+            self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs if not input.is_system()
         ]
 
         return {

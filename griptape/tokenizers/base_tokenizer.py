@@ -5,7 +5,7 @@ from typing import Any
 
 from attrs import Factory, define, field
 
-from griptape.common import BasePromptStackContent, PromptStack, PromptStackElement
+from griptape.common import PromptStack
 
 
 @define()
@@ -48,66 +48,6 @@ class BaseTokenizer(ABC):
 
     @abstractmethod
     def try_count_tokens(self, text: Any) -> int: ...
-
-    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
-        """Converts a Prompt Stack to a string for token counting or model input.
-        This base implementation will not be very accurate, and should be overridden by subclasses with model-specific tokens.
-
-        Args:
-            prompt_stack: The Prompt Stack to convert to a string.
-
-        Returns:
-            A single string representation of the Prompt Stack.
-        """
-        prompt_lines = []
-
-        for i in prompt_stack.inputs:
-            if i.is_user():
-                prompt_lines.append(f"User: {i.content}")
-            elif i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
-            else:
-                prompt_lines.append(str(i.content))
-
-        prompt_lines.append("Assistant:")
-
-        return "\n\n".join(prompt_lines)
-
-    @abstractmethod
-    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
-        """Converts a PromptStack Input to a ChatML-style message dictionary for token counting or model input.
-
-        Args:
-            prompt_input: The PromptStack Input to convert.
-
-        Returns:
-            A dictionary with the role and content of the input.
-        """
-        ...
-
-    @abstractmethod
-    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> Any:
-        """Converts a BasePromptStackContent to message content for token counting or model input.
-
-        Args:
-            content: The BasePromptStackContent to convert.
-
-        Returns:
-            A dictionary with the role and content of the input.
-        """
-        ...
-
-    @abstractmethod
-    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
-        """Converts a message content dictionary to a BasePromptStackContent.
-
-        Args:
-            message_content: The message content dictionary to convert.
-
-        Returns:
-            A BasePromptStackContent instance.
-        """
-        ...
 
     def _default_max_input_tokens(self) -> int:
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)

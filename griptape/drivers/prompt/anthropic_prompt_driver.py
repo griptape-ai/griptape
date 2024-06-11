@@ -6,8 +6,16 @@ from typing import Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import BaseDeltaPromptStackContent, DeltaPromptStackElement, PromptStack, PromptStackElement
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from griptape.common import (
+    BaseDeltaPromptStackContent,
+    BasePromptStackContent,
+    DeltaPromptStackElement,
+    DeltaTextPromptStackContent,
+    ImagePromptStackContent,
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+)
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
@@ -41,7 +49,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
         return PromptStackElement(
-            content=[self.tokenizer.message_content_to_prompt_stack_content(content) for content in response.content],
+            content=[self.message_content_to_prompt_stack_content(content) for content in response.content],
             role=response.role,
             usage=PromptStackElement.Usage(
                 input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens
@@ -64,15 +72,44 @@ class AnthropicPromptDriver(BasePromptDriver):
                     delta_usage=DeltaPromptStackElement.DeltaUsage(output_tokens=event.usage.output_tokens)
                 )
 
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        message_content = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+
+        if prompt_input.is_system():
+            return {"role": "system", "content": message_content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": message_content}
+        else:
+            return {"role": "user", "content": message_content}
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+        if isinstance(content, TextPromptStackContent):
+            return {"type": "text", "text": content.artifact.to_text()}
+        elif isinstance(content, ImagePromptStackContent):
+            return {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": content.artifact.media_type,
+                    "data": content.artifact.base64,
+                },
+            }
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def message_content_to_prompt_stack_content(self, message_content: dict) -> BasePromptStackContent:
+        if message_content["type"] == "text":
+            return TextPromptStackContent(TextArtifact(message_content["text"]))
+        else:
+            raise ValueError(f"Unsupported message content type: {message_content['type']}")
+
     def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
         messages = [
-            self.tokenizer.prompt_stack_input_to_message(prompt_input)
+            self.prompt_stack_input_to_message(prompt_input)
             for prompt_input in prompt_stack.inputs
             if not prompt_input.is_system()
         ]
-        system = next(
-            (self.tokenizer.prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None
-        )
+        system = next((self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None)
 
         if system is None:
             return {"messages": messages}

@@ -8,11 +8,14 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import (
+    BaseDeltaPromptStackContent,
+    BasePromptStackContent,
+    DeltaPromptStackElement,
     DeltaTextPromptStackContent,
+    ImagePromptStackContent,
     PromptStack,
     PromptStackElement,
-    DeltaPromptStackElement,
-    BaseDeltaPromptStackContent,
+    TextPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -73,7 +76,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             message = result.choices[0].message
 
             return PromptStackElement(
-                content=[self.tokenizer.message_content_to_prompt_stack_content(message.content)],
+                content=[self.message_content_to_prompt_stack_content(message.content)],
                 role=message.role,
                 usage=PromptStackElement.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
@@ -108,6 +111,33 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        message_content = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+
+        if prompt_input.is_system():
+            return {"role": "system", "content": message_content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": message_content}
+        else:
+            return {"role": "user", "content": message_content}
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+        if isinstance(content, TextPromptStackContent):
+            return {"type": "text", "text": content.artifact.to_text()}
+        elif isinstance(content, ImagePromptStackContent):
+            return {
+                "type": "image",
+                "image_url": {"url": f"data:{content.artifact.media_type};base64,{content.artifact.base64}"},
+            }
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def message_content_to_prompt_stack_content(self, message_content: str) -> BasePromptStackContent:
+        if isinstance(message_content, str):
+            return TextPromptStackContent(TextArtifact(message_content))
+        else:
+            raise ValueError(f"Unsupported message content type: {type(message_content)}")
+
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
             "model": self.model,
@@ -122,7 +152,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             # JSON mode still requires a system input instructing the LLM to output JSON.
             prompt_stack.add_system_input("Provide your response as a valid JSON object.")
 
-        messages = [self.tokenizer.prompt_stack_input_to_message(input) for input in prompt_stack.inputs]
+        messages = [self.prompt_stack_input_to_message(input) for input in prompt_stack.inputs]
 
         if self.max_tokens is not None:
             params["max_tokens"] = self.max_tokens

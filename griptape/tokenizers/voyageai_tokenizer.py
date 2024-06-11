@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Any
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.common import BasePromptStackContent, PromptStackElement
 from griptape.tokenizers import BaseTokenizer
 from griptape.utils import import_optional_dependency
 
@@ -32,12 +31,3 @@ class VoyageAiTokenizer(BaseTokenizer):
 
     def try_count_tokens(self, text: str) -> int:
         return self.client.count_tokens([text])
-
-    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
-        raise NotImplementedError("VoyageAiTokenizer does not support prompt stack content to message conversion.")
-
-    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict | list[dict]:
-        raise NotImplementedError("VoyageAiTokenizer does not support prompt stack content to message conversion.")
-
-    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
-        raise NotImplementedError("VoyageAiTokenizer does not support message to prompt stack content conversion.")

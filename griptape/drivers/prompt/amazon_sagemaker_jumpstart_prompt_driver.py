@@ -10,6 +10,7 @@ from griptape.artifacts import TextArtifact
 from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.common import PromptStack, TextPromptStackContent, PromptStackElement, BasePromptStackContent
 
 if TYPE_CHECKING:
     import boto3
@@ -68,6 +69,24 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")
 
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+
+    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        if len(prompt_input.content) == 1:
+            return {
+                "role": prompt_input.role,
+                "content": self.prompt_stack_content_to_message_content(prompt_input.content[0]),
+            }
+        else:
+            raise ValueError("HuggingFace does not support multiple prompt stack contents.")
+
+    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str:
+        if isinstance(content, TextPromptStackContent):
+            return content.artifact.value
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
     def _to_model_input(self, prompt_stack: PromptStack) -> str:
         prompt = self.tokenizer.tokenizer.apply_chat_template(
             [{"role": i.role, "content": i.content} for i in prompt_stack.inputs],
@@ -89,3 +108,15 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             "stop_strings": self.tokenizer.stop_sequences,
             "return_full_text": False,
         }
+
+    def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
+        tokens = self.tokenizer.tokenizer.apply_chat_template(
+            [self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
+            add_generation_prompt=True,
+            tokenize=True,
+        )
+
+        if isinstance(tokens, list):
+            return tokens
+        else:
+            raise ValueError("Invalid output type.")
