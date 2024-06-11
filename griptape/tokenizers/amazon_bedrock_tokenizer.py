@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from attrs import define, field
-from griptape.tokenizers import SimpleTokenizer
+from griptape.tokenizers.base_tokenizer import BaseTokenizer
 
 
 @define()
-class AmazonBedrockTokenizer(SimpleTokenizer):
+class AmazonBedrockTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
         "anthropic.claude-3": 200000,
         "anthropic.claude-v2:1": 200000,
@@ -32,4 +32,10 @@ class AmazonBedrockTokenizer(SimpleTokenizer):
         "mistral": 8192,
     }
 
+    model: str = field(kw_only=True)
     characters_per_token: int = field(default=4, kw_only=True)
+
+    def count_tokens(self, text: str) -> int:
+        num_tokens = (len(text) + self.characters_per_token - 1) // self.characters_per_token
+
+        return num_tokens
