@@ -42,7 +42,7 @@ class TestAmazonBedrockPromptDriver:
 
     def test_try_run(self, mock_converse, prompt_stack, messages):
         # Given
-        driver = AmazonBedrockPromptDriver(model="foo bar")
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -63,7 +63,7 @@ class TestAmazonBedrockPromptDriver:
 
     def test_try_stream_run(self, mock_converse_stream, prompt_stack, messages):
         # Given
-        driver = AmazonBedrockPromptDriver(model="foo bar", stream=True)
+        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
 
         # When
         text_artifact = next(driver.try_stream(prompt_stack))

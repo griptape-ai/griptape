@@ -88,10 +88,8 @@ driver = HuggingFaceHubEmbeddingDriver(
     api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
     model="sentence-transformers/all-MiniLM-L6-v2",
     tokenizer=HuggingFaceTokenizer(
+        model="sentence-transformers/all-MiniLM-L6-v2",
         max_output_tokens=512,
-        tokenizer=AutoTokenizer.from_pretrained(
-            "sentence-transformers/all-MiniLM-L6-v2"
-        )
     ),
 )
 

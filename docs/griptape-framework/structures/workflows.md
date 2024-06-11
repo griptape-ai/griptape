@@ -7,7 +7,8 @@ A [Workflow](../../reference/griptape/structures/workflow.md) is a non-sequentia
 
 Workflows have access to the following [context](../../reference/griptape/structures/workflow.md#griptape.structures.workflow.Workflow.context) variables in addition to the [base context](./tasks.md#context):
 
-* `parent_outputs`: outputs into the current task referenceable by parent task IDs.
+* `parent_outputs`: dictionary containing mapping of parent ids to their outputs.
+* `parents_output_text`: string containing the concatenated outputs of all parent tasks.
 * `parents`: parent tasks referenceable by IDs.
 * `children`: child tasks referenceable by IDs.
 
@@ -17,6 +18,7 @@ Let's build a simple workflow. Let's say, we want to write a story in a fantasy 
 ```python
 from griptape.tasks import PromptTask
 from griptape.structures import Workflow
+from griptape.utils import StructureVisualizer
 
 
 world_task = PromptTask(
@@ -48,9 +50,14 @@ story_task = PromptTask(
 
 workflow = Workflow(tasks=[world_task, story_task, scotty_task, annie_task, story_task])
 
+print(StructureVisualizer(workflow).to_url())
+
 workflow.run()
 ```
 
+Note that we use the `StructureVisualizer` to get a visual representation of the workflow. If we visit the printed url, it should look like this:
+
+![Workflow](https://mermaid.ink/img/Z3JhcGggVEQ7OwoJd29ybGQtLT4gc3RvcnkgJiBzY290dHkgJiBhbm5pZTsKCXNjb3R0eS0tPiBzdG9yeTsKCWFubmllLS0+IHN0b3J5Ow==)
 
 !!! Info
     Output edited for brevity

@@ -17,8 +17,5 @@ class AnthropicTokenizer(BaseTokenizer):
         default=Factory(lambda: import_optional_dependency("anthropic").Anthropic()), kw_only=True
     )
 
-    def count_tokens(self, text: str | list) -> int:
-        if isinstance(text, str):
-            return self.client.count_tokens(text)
-        else:
-            raise ValueError("Text must be a string.")
+    def count_tokens(self, text: str) -> int:
+        return self.client.count_tokens(text)

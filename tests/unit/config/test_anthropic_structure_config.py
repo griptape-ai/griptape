@@ -18,7 +18,7 @@ class TestAnthropicStructureConfig:
             "prompt_driver": {
                 "type": "AnthropicPromptDriver",
                 "temperature": 0.1,
-                "max_tokens": None,
+                "max_tokens": 1000,
                 "stream": False,
                 "model": "claude-3-opus-20240229",
                 "top_p": 0.999,
