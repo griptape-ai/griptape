@@ -6,6 +6,8 @@ from griptape.artifacts import TextArtifact
 @define(kw_only=True)
 class RagContext:
     initial_query: str = field()
+    namespace: Optional[str] = field(default=None)
+    metadata: Optional[str] = field(default=None)
     alternative_queries: list[str] = field(factory=list)
     before_query: list[str] = field(factory=list)
     after_query: list[str] = field(factory=list)

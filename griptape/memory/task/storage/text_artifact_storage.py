@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.drivers import BaseVectorStoreDriver
-from griptape.engines.rag import RagEngine
+from griptape.engines.rag import RagEngine, RagContext
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
@@ -36,6 +36,10 @@ class TextArtifactStorage(BaseArtifactStorage):
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
     def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact:
-        return self.rag_engine.process_query(
-            query
+        return self.rag_engine.process(
+            RagContext(
+                initial_query=query,
+                namespace=namespace,
+                metadata=str(metadata) if metadata else None
+            )
         ).output

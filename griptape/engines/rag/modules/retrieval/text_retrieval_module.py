@@ -19,10 +19,13 @@ class TextRetrievalModule(BaseRetrievalModule):
 
     def run(self, context: RagContext) -> list[TextArtifact]:
         all_queries = [context.initial_query] + context.alternative_queries
+        namespace = self.namespace or context.namespace
 
         results = utils.execute_futures_list(
+
+
             [
-                self.futures_executor.submit(self.vector_store_driver.query, query, self.top_n, self.namespace, False)
+                self.futures_executor.submit(self.vector_store_driver.query, query, self.top_n, namespace, False)
                 for query in all_queries
             ]
         )

@@ -9,6 +9,8 @@ class MetadataGenerationModule(BaseBeforeGenerationModule):
     metadata: str = field(kw_only=True)
 
     def run(self, context: RagContext) -> RagContext:
-        context.before_query.append(J2("data/modules/metadata/system.j2").render(metadata=self.metadata))
+        metadata = self.metadata or context.metadata
+
+        context.before_query.append(J2("data/modules/metadata/system.j2").render(metadata=metadata))
 
         return context
