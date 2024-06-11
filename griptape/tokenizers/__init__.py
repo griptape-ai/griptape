@@ -7,6 +7,7 @@ from griptape.tokenizers.google_tokenizer import GoogleTokenizer
 from griptape.tokenizers.voyageai_tokenizer import VoyageAiTokenizer
 from griptape.tokenizers.simple_tokenizer import SimpleTokenizer
 from griptape.tokenizers.dummy_tokenizer import DummyTokenizer
+from griptape.tokenizers.amazon_bedrock_tokenizer import AmazonBedrockTokenizer
 
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "VoyageAiTokenizer",
     "SimpleTokenizer",
     "DummyTokenizer",
+    "AmazonBedrockTokenizer",
 ]

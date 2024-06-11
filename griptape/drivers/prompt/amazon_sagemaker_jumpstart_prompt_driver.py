@@ -30,11 +30,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model),
-                max_output_tokens=self.max_tokens,
-            ),
-            takes_self=True,
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
         ),
         kw_only=True,
     )
@@ -72,9 +68,12 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")
 
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        return {"role": prompt_input.role, "content": prompt_input.content}
+
     def _to_model_input(self, prompt_stack: PromptStack) -> str:
         prompt = self.tokenizer.tokenizer.apply_chat_template(
-            [{"role": i.role, "content": i.content} for i in prompt_stack.inputs],
+            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
             tokenize=False,
             add_generation_prompt=True,
         )
