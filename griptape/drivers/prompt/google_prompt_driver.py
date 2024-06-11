@@ -69,6 +69,14 @@ class GooglePromptDriver(BasePromptDriver):
         for chunk in response:
             yield TextArtifact(value=chunk.text)
 
+    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        parts = [prompt_input.content]
+
+        if prompt_input.is_assistant():
+            return {"role": "model", "parts": parts}
+        else:
+            return {"role": "user", "parts": parts}
+
     def _default_model_client(self) -> GenerativeModel:
         genai = import_optional_dependency("google.generativeai")
         genai.configure(api_key=self.api_key)
@@ -89,6 +97,6 @@ class GooglePromptDriver(BasePromptDriver):
 
     def __to_content_dict(self, prompt_input: PromptStack.Input) -> ContentDict:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
-        message = self.tokenizer.prompt_stack_input_to_message(prompt_input)
+        message = self.prompt_stack_input_to_message(prompt_input)
 
         return ContentDict(message)

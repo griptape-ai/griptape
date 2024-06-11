@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from attrs import define, field
 from griptape.tokenizers import BaseTokenizer
-from griptape.utils import PromptStack
 
 if TYPE_CHECKING:
     from cohere import Client
@@ -15,13 +14,5 @@ class CohereTokenizer(BaseTokenizer):
 
     client: Client = field(kw_only=True)
 
-    def try_count_tokens(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         return len(self.client.tokenize(text=text, model=self.model).tokens)
-
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        if prompt_input.is_system():
-            return {"role": "SYSTEM", "text": prompt_input.content}
-        elif prompt_input.is_user():
-            return {"role": "USER", "text": prompt_input.content}
-        else:
-            return {"role": "ASSISTANT", "text": prompt_input.content}

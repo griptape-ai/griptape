@@ -48,7 +48,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        prompt = self.tokenizer.prompt_stack_to_string(prompt_stack)
+        prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
@@ -57,7 +57,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         return TextArtifact(value=response)
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        prompt = self.tokenizer.prompt_stack_to_string(prompt_stack)
+        prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
@@ -65,3 +65,21 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
         for token in response:
             yield TextArtifact(value=token)
+
+    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        return {"role": prompt_input.role, "content": prompt_input.content}
+
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+
+    def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
+        tokens = self.tokenizer.tokenizer.apply_chat_template(
+            [self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
+            add_generation_prompt=True,
+            tokenize=True,
+        )
+
+        if isinstance(tokens, list):
+            return tokens
+        else:
+            raise ValueError("Invalid output type.")

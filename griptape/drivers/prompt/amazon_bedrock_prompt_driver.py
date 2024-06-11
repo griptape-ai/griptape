@@ -46,17 +46,23 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
+    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        content = [{"text": prompt_input.content}]
+
+        if prompt_input.is_system():
+            return {"text": prompt_input.content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": content}
+        else:
+            return {"role": "user", "content": content}
+
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [
-            self.tokenizer.prompt_stack_input_to_message(input)
+            self.prompt_stack_input_to_message(input)
             for input in prompt_stack.inputs
             if input.is_system() and input.content
         ]
-        messages = [
-            self.tokenizer.prompt_stack_input_to_message(input)
-            for input in prompt_stack.inputs
-            if not input.is_system()
-        ]
+        messages = [self.prompt_stack_input_to_message(input) for input in prompt_stack.inputs if not input.is_system()]
 
         return {
             "modelId": self.model,

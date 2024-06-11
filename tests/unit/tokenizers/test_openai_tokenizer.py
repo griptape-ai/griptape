@@ -1,6 +1,5 @@
 import pytest
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.utils.prompt_stack import PromptStack
 
 
 class TestOpenAiTokenizer:
@@ -50,29 +49,19 @@ class TestOpenAiTokenizer:
         ],
         indirect=["tokenizer"],
     )
-    def test_token_count_for_prompt_stack(self, tokenizer, expected):
+    def test_token_count_for_messages(self, tokenizer, expected):
         assert (
             tokenizer.count_tokens(
-                PromptStack(
-                    inputs=[
-                        PromptStack.Input("foobar baz", role=PromptStack.SYSTEM_ROLE),
-                        PromptStack.Input("how foobar am I?", role=PromptStack.USER_ROLE),
-                    ]
-                )
+                [{"role": "system", "content": "foobar baz"}, {"role": "user", "content": "how foobar am I?"}]
             )
             == expected
         )
 
     @pytest.mark.parametrize("tokenizer,expected", [("not-real-model", 19)], indirect=["tokenizer"])
-    def test_token_count_for_prompt_stack_unknown_model(self, tokenizer, expected):
+    def test_token_count_for_messages_unknown_model(self, tokenizer, expected):
         with pytest.raises(NotImplementedError):
             tokenizer.count_tokens(
-                PromptStack(
-                    inputs=[
-                        PromptStack.Input("foobar baz", role=PromptStack.SYSTEM_ROLE),
-                        PromptStack.Input("how foobar am I?", role=PromptStack.USER_ROLE),
-                    ]
-                )
+                [{"role": "system", "content": "foobar baz"}, {"role": "user", "content": "how foobar am I?"}]
             )
 
     @pytest.mark.parametrize(

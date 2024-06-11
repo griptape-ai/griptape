@@ -44,9 +44,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             self.structure.publish_event(
                 StartPromptEvent(
                     model=self.model,
-                    token_count=self.tokenizer.count_tokens(prompt_stack),
+                    token_count=self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack)),
                     prompt_stack=prompt_stack,
-                    prompt=self.tokenizer.prompt_stack_to_string(prompt_stack),
+                    prompt=self.prompt_stack_to_string(prompt_stack),
                 )
             )
 
@@ -79,6 +79,42 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 return result
         else:
             raise Exception("prompt driver failed after all retry attempts")
+
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        """Converts a Prompt Stack to a string for token counting or model input.
+        This base implementation will not be very accurate, and should be overridden by subclasses with model-specific tokens.
+
+        Args:
+            prompt_stack: The Prompt Stack to convert to a string.
+
+        Returns:
+            A single string representation of the Prompt Stack.
+        """
+        prompt_lines = []
+
+        for i in prompt_stack.inputs:
+            if i.is_user():
+                prompt_lines.append(f"User: {i.content}")
+            elif i.is_assistant():
+                prompt_lines.append(f"Assistant: {i.content}")
+            else:
+                prompt_lines.append(i.content)
+
+        prompt_lines.append("Assistant:")
+
+        return "\n\n".join(prompt_lines)
+
+    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        """Converts a PromptStack Input to a ChatML-style message dictionary for token counting or model input.
+
+        Args:
+            prompt_input: The PromptStack Input to convert.
+
+        Returns:
+            A dictionary with the role and content of the input.
+        """
+
+        return {"role": prompt_input.role, "content": prompt_input.content}
 
     @abstractmethod
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...

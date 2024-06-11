@@ -4,7 +4,6 @@ from attrs import define, field, Factory
 import tiktoken
 from typing import Optional
 from griptape.tokenizers import BaseTokenizer
-from griptape.utils import PromptStack
 
 
 @define()
@@ -72,24 +71,10 @@ class OpenAiTokenizer(BaseTokenizer):
         else:
             return tokens
 
-    def count_tokens(self, text: str | PromptStack) -> int:
-        if isinstance(text, PromptStack):
-            messages = [self.prompt_stack_input_to_message(i) for i in text.inputs]
-
-            return self.__count_tokens_messages(messages, self.model)
-        else:
-            return self.try_count_tokens(text)
-
-    def try_count_tokens(self, text: str) -> int:
-        return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))
-
-    def __count_tokens_messages(self, text: str | list[dict], model: Optional[str] = None) -> int:
-        """Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
+    def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:
+        """
+        Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
-
-        Args:
-            text: A single message or a list of messages.
-            model: The model to use. Defaults to None.
         """
         if isinstance(text, list):
             model = model if model else self.model
@@ -119,16 +104,16 @@ class OpenAiTokenizer(BaseTokenizer):
                 tokens_per_name = -1
             elif "gpt-3.5-turbo" in model or "gpt-35-turbo" in model:
                 logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
-                return self.__count_tokens_messages(text, model="gpt-3.5-turbo-0613")
+                return self.count_tokens(text, model="gpt-3.5-turbo-0613")
             elif "gpt-4o" in model:
                 logging.info("gpt-4o may update over time. Returning num tokens assuming gpt-4o-2024-05-13.")
-                return self.__count_tokens_messages(text, model="gpt-4o-2024-05-13")
+                return self.count_tokens(text, model="gpt-4o-2024-05-13")
             elif "gpt-4" in model:
                 logging.info("gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
-                return self.__count_tokens_messages(text, model="gpt-4-0613")
+                return self.count_tokens(text, model="gpt-4-0613")
             else:
                 raise NotImplementedError(
-                    f"""count_tokens() is not implemented for model {model}. 
+                    f"""token_count() is not implemented for model {model}. 
                     See https://github.com/openai/openai-python/blob/main/chatml.md for 
                     information on how messages are converted to tokens."""
                 )
@@ -147,4 +132,5 @@ class OpenAiTokenizer(BaseTokenizer):
 
             return num_tokens
         else:
+            print(type(text))
             return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))

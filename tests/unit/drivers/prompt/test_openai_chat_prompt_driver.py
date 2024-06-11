@@ -200,7 +200,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=[
-                {"role": "generic", "content": "generic-input"},
+                {"role": "user", "content": "generic-input"},
                 {"role": "system", "content": "system-input"},
                 {"role": "user", "content": "user-input"},
                 {"role": "assistant", "content": "assistant-input"},

@@ -44,15 +44,23 @@ class AnthropicPromptDriver(BasePromptDriver):
             if chunk.type == "content_block_delta":
                 yield TextArtifact(value=chunk.delta.text)
 
+    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        content = prompt_input.content
+
+        if prompt_input.is_system():
+            return {"role": "system", "content": content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": content}
+        else:
+            return {"role": "user", "content": content}
+
     def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
         messages = [
-            self.tokenizer.prompt_stack_input_to_message(prompt_input)
+            self.prompt_stack_input_to_message(prompt_input)
             for prompt_input in prompt_stack.inputs
             if not prompt_input.is_system()
         ]
-        system = next(
-            (self.tokenizer.prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None
-        )
+        system = next((self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None)
 
         if system is None:
             return {"messages": messages}

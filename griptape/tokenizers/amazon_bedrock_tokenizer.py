@@ -1,6 +1,5 @@
 from __future__ import annotations
 from attrs import define, field
-from griptape.utils import PromptStack
 from griptape.tokenizers import SimpleTokenizer
 
 
@@ -33,13 +32,3 @@ class AmazonBedrockTokenizer(SimpleTokenizer):
     }
 
     characters_per_token: int = field(default=4, kw_only=True)
-
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        content = [{"text": prompt_input.content}]
-
-        if prompt_input.is_system():
-            return {"text": prompt_input.content}
-        elif prompt_input.is_assistant():
-            return {"role": "assistant", "content": content}
-        else:
-            return {"role": "user", "content": content}
