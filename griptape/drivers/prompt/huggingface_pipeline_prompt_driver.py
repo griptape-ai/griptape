@@ -41,7 +41,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     )
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        messages = [self.prompt_stack_input_to_message(input) for input in prompt_stack.inputs]
+        messages = [self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs]
 
         result = self.pipe(
             messages,
@@ -65,15 +65,15 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        return {"role": prompt_input.role, "content": prompt_input.content}
-
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        return {"role": prompt_input.role, "content": prompt_input.content}
+
     def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
         tokens = self.tokenizer.tokenizer.apply_chat_template(
-            [self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
+            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
             add_generation_prompt=True,
             tokenize=True,
         )

@@ -13,6 +13,7 @@ from tests.mocks.mock_tokenizer import MockTokenizer
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
+    mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
     mock_output: str | Callable[[], str] = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
@@ -20,6 +21,3 @@ class MockPromptDriver(BasePromptDriver):
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         yield TextArtifact(value=self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output)
-
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        return

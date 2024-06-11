@@ -46,7 +46,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
         content = [{"text": prompt_input.content}]
 
         if prompt_input.is_system():
@@ -58,11 +58,13 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [
-            self.prompt_stack_input_to_message(input)
+            self._prompt_stack_input_to_message(input)
             for input in prompt_stack.inputs
             if input.is_system() and input.content
         ]
-        messages = [self.prompt_stack_input_to_message(input) for input in prompt_stack.inputs if not input.is_system()]
+        messages = [
+            self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs if not input.is_system()
+        ]
 
         return {
             "modelId": self.model,

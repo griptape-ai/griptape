@@ -18,5 +18,5 @@ class DummyPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise DummyException(__class__.__name__, "try_stream")
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        raise DummyException(__class__.__name__, "prompt_stack_input_to_message")
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        raise DummyException(__class__.__name__, "_prompt_stack_input_to_message")

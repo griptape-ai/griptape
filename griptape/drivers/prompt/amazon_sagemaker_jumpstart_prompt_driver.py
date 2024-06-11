@@ -68,9 +68,12 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         raise NotImplementedError("streaming is not supported")
 
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        return {"role": prompt_input.role, "content": prompt_input.content}
+
     def _to_model_input(self, prompt_stack: PromptStack) -> str:
         prompt = self.tokenizer.tokenizer.apply_chat_template(
-            [self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
+            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
             tokenize=False,
             add_generation_prompt=True,
         )

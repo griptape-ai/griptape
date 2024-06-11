@@ -82,7 +82,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         """Converts a Prompt Stack to a string for token counting or model input.
-        This base implementation will not be very accurate, and should be overridden by subclasses with model-specific tokens.
+        This base implementation is only a rough approximation, and should be overridden by subclasses with model-specific tokens.
 
         Args:
             prompt_stack: The Prompt Stack to convert to a string.
@@ -103,18 +103,6 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         prompt_lines.append("Assistant:")
 
         return "\n\n".join(prompt_lines)
-
-    def prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        """Converts a PromptStack Input to a ChatML-style message dictionary for token counting or model input.
-
-        Args:
-            prompt_input: The PromptStack Input to convert.
-
-        Returns:
-            A dictionary with the role and content of the input.
-        """
-
-        return {"role": prompt_input.role, "content": prompt_input.content}
 
     @abstractmethod
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...
