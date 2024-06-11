@@ -17,7 +17,7 @@ from .stream import Stream
 from .constants import Constants as constants
 from .load_artifact_from_memory import load_artifact_from_memory
 from .deprecation import deprecation_warn
-from .workflow_visualizer import WorkflowVisualizer
+from .structure_visualizer import StructureVisualizer
 
 
 def minify_json(value: str) -> str:
@@ -46,5 +46,5 @@ __all__ = [
     "deprecation_warn",
     "load_file",
     "load_files",
-    "WorkflowVisualizer",
+    "StructureVisualizer",
 ]
