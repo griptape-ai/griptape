@@ -7,7 +7,8 @@ A [Workflow](../../reference/griptape/structures/workflow.md) is a non-sequentia
 
 Workflows have access to the following [context](../../reference/griptape/structures/workflow.md#griptape.structures.workflow.Workflow.context) variables in addition to the [base context](./tasks.md#context):
 
-* `parent_outputs`: outputs into the current task referenceable by parent task IDs.
+* `parent_outputs`: dictionary containing mapping of parent ids to their outputs.
+* `parents_output_text`: string containing the concatenated outputs of all parent tasks.
 * `parents`: parent tasks referenceable by IDs.
 * `children`: child tasks referenceable by IDs.
 
