@@ -24,7 +24,6 @@ class TestAmazonBedrockPromptDriver:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
@@ -34,7 +33,6 @@ class TestAmazonBedrockPromptDriver:
     @pytest.fixture
     def messages(self):
         return [
-            {"role": "user", "content": [{"text": "generic-input"}]},
             {"role": "system", "content": [{"text": "system-input"}]},
             {"role": "user", "content": [{"text": "user-input"}]},
             {"role": "assistant", "content": [{"text": "assistant-input"}]},
@@ -51,7 +49,6 @@ class TestAmazonBedrockPromptDriver:
         mock_converse.assert_called_once_with(
             modelId=driver.model,
             messages=[
-                {"role": "user", "content": [{"text": "generic-input"}]},
                 {"role": "user", "content": [{"text": "user-input"}]},
                 {"role": "assistant", "content": [{"text": "assistant-input"}]},
             ],
@@ -72,7 +69,6 @@ class TestAmazonBedrockPromptDriver:
         mock_converse_stream.assert_called_once_with(
             modelId=driver.model,
             messages=[
-                {"role": "user", "content": [{"text": "generic-input"}]},
                 {"role": "user", "content": [{"text": "user-input"}]},
                 {"role": "assistant", "content": [{"text": "assistant-input"}]},
             ],

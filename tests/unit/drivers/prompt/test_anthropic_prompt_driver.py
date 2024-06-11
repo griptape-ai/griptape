@@ -45,14 +45,12 @@ class TestAnthropicPromptDriver:
     def test_try_run(self, mock_client, model, system_enabled):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
         if system_enabled:
             prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         expected_messages = [
-            {"role": "user", "content": "generic-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
         ]
@@ -88,7 +86,6 @@ class TestAnthropicPromptDriver:
     def test_try_stream_run(self, mock_stream_client, model, system_enabled):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
         if system_enabled:
             prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")

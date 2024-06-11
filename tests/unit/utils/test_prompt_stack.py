@@ -16,12 +16,6 @@ class TestPromptStack:
         assert prompt_stack.inputs[0].role == "role"
         assert prompt_stack.inputs[0].content == "foo"
 
-    def test_add_generic_input(self, prompt_stack):
-        prompt_stack.add_generic_input("foo")
-
-        assert prompt_stack.inputs[0].role == "generic"
-        assert prompt_stack.inputs[0].content == "foo"
-
     def test_add_system_input(self, prompt_stack):
         prompt_stack.add_system_input("foo")
 

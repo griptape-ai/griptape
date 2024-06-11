@@ -29,7 +29,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
@@ -38,7 +37,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def messages(self):
         return [
-            {"role": "user", "content": "generic-input"},
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
@@ -203,7 +201,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=[
-                {"role": "user", "content": "generic-input"},
                 {"role": "system", "content": "system-input"},
                 {"role": "user", "content": "user-input"},
                 {"role": "assistant", "content": "assistant-input"},

@@ -30,7 +30,6 @@ class TestGooglePromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_generic_input("generic-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50)
 
         # When
@@ -41,7 +40,6 @@ class TestGooglePromptDriver:
             [
                 {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
-                {"parts": ["generic-input"], "role": "user"},
             ],
             generation_config=GenerationConfig(
                 max_output_tokens=None, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]
@@ -55,7 +53,6 @@ class TestGooglePromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_generic_input("generic-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", stream=True, top_p=0.5, top_k=50)
 
         # When
@@ -67,7 +64,6 @@ class TestGooglePromptDriver:
             [
                 {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
-                {"parts": ["generic-input"], "role": "user"},
             ],
             stream=True,
             generation_config=GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]),
@@ -81,7 +77,6 @@ class TestGooglePromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_generic_input("generic-input")
         prompt_stack.add_assistant_input("assistant-input")
         prompt_stack.add_user_input("user-input")
 
@@ -92,7 +87,6 @@ class TestGooglePromptDriver:
         assert model_input == [
             {"role": "user", "parts": ["system-input", "user-input"]},
             {"role": "model", "parts": ["assistant-input"]},
-            {"role": "user", "parts": ["generic-input"]},
             {"role": "model", "parts": ["assistant-input"]},
             {"role": "user", "parts": ["user-input"]},
         ]

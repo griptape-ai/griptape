@@ -4,15 +4,11 @@ from abc import ABC, abstractmethod
 
 @define
 class BasePromptStackElement(ABC):
-    GENERIC_ROLE = "generic"
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
     role: str = field(kw_only=True, metadata={"serializable": True})
-
-    def is_generic(self) -> bool:
-        return self.role == self.GENERIC_ROLE
 
     def is_system(self) -> bool:
         return self.role == self.SYSTEM_ROLE
