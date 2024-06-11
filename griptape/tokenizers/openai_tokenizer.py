@@ -132,5 +132,4 @@ class OpenAiTokenizer(BaseTokenizer):
 
             return num_tokens
         else:
-            print(type(text))
             return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))
