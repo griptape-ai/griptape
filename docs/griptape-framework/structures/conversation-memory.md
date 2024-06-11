@@ -57,7 +57,7 @@ agent.run("Hello!")
 print(agent.conversation_memory)
 ```
 
-You can set the [max_runs](../../reference/griptape/memory/structure/conversation_memory.md#griptape.memory.structure.conversation_memory.ConversationMemory.max_runs) parameter to limit how many runs are kept in memory.
+You can set the [max_runs](../../reference/griptape/memory/structure/base_conversation_memory.md#griptape.memory.structure.base_conversation_memory.BaseConversationMemory.max_runs) parameter to limit how many runs are kept in memory.
 
 ```python
 from griptape.structures import Agent
