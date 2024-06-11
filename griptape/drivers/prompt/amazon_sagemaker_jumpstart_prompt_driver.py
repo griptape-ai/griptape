@@ -72,16 +72,16 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
         if len(prompt_input.content) == 1:
             return {
                 "role": prompt_input.role,
-                "content": self.prompt_stack_content_to_message_content(prompt_input.content[0]),
+                "content": self._prompt_stack_content_to_message_content(prompt_input.content[0]),
             }
         else:
             raise ValueError("HuggingFace does not support multiple prompt stack contents.")
 
-    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str:
+    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str:
         if isinstance(content, TextPromptStackContent):
             return content.artifact.value
         else:
@@ -111,7 +111,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
 
     def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
         tokens = self.tokenizer.tokenizer.apply_chat_template(
-            [self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
+            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
             add_generation_prompt=True,
             tokenize=True,
         )

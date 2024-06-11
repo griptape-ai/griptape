@@ -70,7 +70,7 @@ class GooglePromptDriver(BasePromptDriver):
             content_role = content.role
 
             return PromptStackElement(
-                content=[self.message_content_to_prompt_stack_content(part) for part in content_parts],
+                content=[self._message_content_to_prompt_stack_content(part) for part in content_parts],
                 role=content_role,
                 usage=PromptStackElement.Usage(
                     input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
@@ -98,15 +98,15 @@ class GooglePromptDriver(BasePromptDriver):
         for chunk in response:
             yield DeltaTextPromptStackContent(TextArtifact(chunk.text), index=chunk.index)
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
-        parts = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+        parts = [self._prompt_stack_content_to_message_content(content) for content in prompt_input.content]
 
         if prompt_input.is_assistant():
             return {"role": "model", "parts": parts}
         else:
             return {"role": "user", "parts": parts}
 
-    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str | dict:
+    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str | dict:
         if isinstance(content, TextPromptStackContent):
             return content.artifact.to_text()
         elif isinstance(content, ImagePromptStackContent):
@@ -114,19 +114,11 @@ class GooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
+    def _message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
         if message_content.text:
             return TextPromptStackContent(TextArtifact(message_content.text))
         else:
             raise ValueError(f"Unsupported mime type: {type(message_content)}")
-
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        parts = [prompt_input.content]
-
-        if prompt_input.is_assistant():
-            return {"role": "model", "parts": parts}
-        else:
-            return {"role": "user", "parts": parts}
 
     def _default_model_client(self) -> GenerativeModel:
         genai = import_optional_dependency("google.generativeai")

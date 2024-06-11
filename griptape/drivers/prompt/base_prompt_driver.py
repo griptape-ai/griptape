@@ -88,7 +88,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                     content = TextPromptStackContent(artifact=TextArtifact("".join(tokens).strip()))
                     result = PromptStackElement(
-                        content=content,
+                        content=[content],
                         role=PromptStackElement.ASSISTANT_ROLE,
                         usage=PromptStackElement.Usage(
                             input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0
@@ -152,7 +152,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         ...
 
     @abstractmethod
-    def message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
+    def _message_content_to_prompt_stack_content(self, message_content: Any) -> BasePromptStackContent:
         """Converts a message content dictionary to a BasePromptStackContent.
 
         Args:

@@ -52,9 +52,9 @@ class CoherePromptDriver(BasePromptDriver):
             if event.event_type == "text-generation":
                 yield TextArtifact(value=event.text)
 
-    def prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
         if len(prompt_input.content) == 1:
-            message_content = self.prompt_stack_content_to_message_content(prompt_input.content[0])
+            message_content = self._prompt_stack_content_to_message_content(prompt_input.content[0])
 
             if prompt_input.is_system():
                 return {"role": "SYSTEM", "message": message_content}
@@ -65,7 +65,7 @@ class CoherePromptDriver(BasePromptDriver):
         else:
             raise ValueError("Cohere does not support multiple prompt stack contents.")
 
-    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str:
+    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> str:
         if isinstance(content, TextPromptStackContent):
             return content.artifact.to_text()
         else:
@@ -75,10 +75,10 @@ class CoherePromptDriver(BasePromptDriver):
         user_message = prompt_stack.inputs[-1].content
 
         history_messages = [
-            self.prompt_stack_input_to_message(input) for input in prompt_stack.inputs[:-1] if not input.is_system()
+            self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs[:-1] if not input.is_system()
         ]
 
-        system = next((self.prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None)
+        system = next((self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None)
 
         return {
             "message": user_message,

@@ -43,7 +43,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         output_message = response["output"]["message"]
 
         return PromptStackElement(
-            content=[self.message_content_to_prompt_stack_content(content) for content in output_message["content"]],
+            content=[self._message_content_to_prompt_stack_content(content) for content in output_message["content"]],
             role=output_message["role"],
             usage=PromptStackElement.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
@@ -73,14 +73,14 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             raise Exception("model response is empty")
 
     def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
-        content = [self.prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+        content = [self._prompt_stack_content_to_message_content(content) for content in prompt_input.content]
 
         if prompt_input.is_assistant():
             return {"role": "assistant", "content": content}
         else:
             return {"role": "user", "content": content}
 
-    def prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"text": content.artifact.to_text()}
         elif isinstance(content, ImagePromptStackContent):
@@ -90,7 +90,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def message_content_to_prompt_stack_content(self, message_content: dict) -> BasePromptStackContent:
+    def _message_content_to_prompt_stack_content(self, message_content: dict) -> BasePromptStackContent:
         if "text " in message_content:
             return TextPromptStackContent(TextArtifact(message_content["text"]))
         else:
