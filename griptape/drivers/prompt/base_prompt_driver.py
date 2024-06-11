@@ -51,19 +51,17 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
-            self.structure.publish_event(
-                StartPromptEvent(
-                    model=self.model,
-                    token_count=self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack)),
-                    prompt_stack=prompt_stack,
-                    prompt=self.prompt_stack_to_string(prompt_stack),
-                )
-            )
+            self.structure.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     def after_run(self, result: PromptStackElement) -> None:
         if self.structure:
             self.structure.publish_event(
-                FinishPromptEvent(model=self.model, result=result.value, token_count=result.usage.output_tokens)
+                FinishPromptEvent(
+                    model=self.model,
+                    result=result.value,
+                    input_token_count=result.usage.input_tokens,
+                    output_token_count=result.usage.output_tokens,
+                )
             )
 
     def run(self, prompt_stack: PromptStack) -> PromptStackElement:
