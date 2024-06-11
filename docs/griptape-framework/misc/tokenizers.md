@@ -96,7 +96,7 @@ Not all LLM providers have a public tokenizer API. In this case, you can use the
 ```python
 from griptape.tokenizers import SimpleTokenizer
 
-tokenizer = SimpleTokenizer(model="any-model", max_input_tokens=1024, max_output_tokens=1024, characters_per_token=6)
+tokenizer = SimpleTokenizer(max_input_tokens=1024, max_output_tokens=1024, characters_per_token=6)
 
 print(tokenizer.count_tokens("Hello world!"))
 print(tokenizer.count_input_tokens_left("Hello world!"))
