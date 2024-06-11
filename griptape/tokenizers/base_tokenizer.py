@@ -1,11 +1,7 @@
 from __future__ import annotations
-
-from abc import ABC, abstractmethod
-from typing import Any
-
-from attrs import Factory, define, field
-
-from griptape.common import PromptStack
+import logging
+from abc import ABC
+from attrs import define, field, Factory
 
 
 @define()
@@ -24,7 +20,7 @@ class BaseTokenizer(ABC):
         kw_only=True, default=Factory(lambda self: self._default_max_output_tokens(), takes_self=True)
     )
 
-    def count_input_tokens_left(self, text: str | PromptStack) -> int:
+    def count_input_tokens_left(self, text: str) -> int:
         diff = self.max_input_tokens - self.count_tokens(text)
 
         if diff > 0:
@@ -32,7 +28,7 @@ class BaseTokenizer(ABC):
         else:
             return 0
 
-    def count_output_tokens_left(self, text: str | PromptStack) -> int:
+    def count_output_tokens_left(self, text: str) -> int:
         diff = self.max_output_tokens - self.count_tokens(text)
 
         if diff > 0:
@@ -40,19 +36,15 @@ class BaseTokenizer(ABC):
         else:
             return 0
 
-    def count_tokens(self, text: str | PromptStack) -> int:
-        if isinstance(text, PromptStack):
-            return self.try_count_tokens(self.prompt_stack_to_string(text))
-        else:
-            return self.try_count_tokens(text)
-
-    @abstractmethod
-    def try_count_tokens(self, text: Any) -> int: ...
+    def count_tokens(self, text: str) -> int: ...
 
     def _default_max_input_tokens(self) -> int:
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
 
         if tokens is None:
+            logging.warning(
+                f"Model {self.model} not found in MODEL_PREFIXES_TO_MAX_INPUT_TOKENS, using default value of {self.DEFAULT_MAX_INPUT_TOKENS}."
+            )
             return self.DEFAULT_MAX_INPUT_TOKENS
         else:
             return tokens
@@ -63,6 +55,9 @@ class BaseTokenizer(ABC):
         )
 
         if tokens is None:
+            logging.warning(
+                f"Model {self.model} not found in MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS, using default value of {self.DEFAULT_MAX_OUTPUT_TOKENS}."
+            )
             return self.DEFAULT_MAX_OUTPUT_TOKENS
         else:
             return tokens

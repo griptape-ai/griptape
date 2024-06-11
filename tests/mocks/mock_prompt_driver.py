@@ -15,6 +15,7 @@ from griptape.tokenizers import BaseTokenizer
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
+    mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
     mock_output: str | Callable[[], str] = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:

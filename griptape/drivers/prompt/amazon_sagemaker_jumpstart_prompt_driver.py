@@ -89,7 +89,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
 
     def _to_model_input(self, prompt_stack: PromptStack) -> str:
         prompt = self.tokenizer.tokenizer.apply_chat_template(
-            [{"role": i.role, "content": i.content} for i in prompt_stack.inputs],
+            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
             tokenize=False,
             add_generation_prompt=True,
         )

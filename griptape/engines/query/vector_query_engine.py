@@ -50,11 +50,13 @@ class VectorQueryEngine(BaseQueryEngine):
             user_message = self.user_template_generator.render(query=query)
 
             message_token_count = self.prompt_driver.tokenizer.count_input_tokens_left(
-                PromptStack(
-                    inputs=[
-                        PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
-                        PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
-                    ]
+                self.prompt_driver.prompt_stack_to_string(
+                    PromptStack(
+                        inputs=[
+                            PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
+                            PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
+                        ]
+                    )
                 )
             )
 

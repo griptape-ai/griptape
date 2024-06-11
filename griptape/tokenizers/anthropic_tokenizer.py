@@ -17,5 +17,5 @@ class AnthropicTokenizer(BaseTokenizer):
         default=Factory(lambda: import_optional_dependency("anthropic").Anthropic()), kw_only=True
     )
 
-    def try_count_tokens(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         return self.client.count_tokens(text)

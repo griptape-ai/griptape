@@ -103,6 +103,16 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type: {message_content['type']}")
 
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        content = prompt_input.content
+
+        if prompt_input.is_system():
+            return {"role": "system", "content": content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": content}
+        else:
+            return {"role": "user", "content": content}
+
     def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
         messages = [
             self.prompt_stack_input_to_message(prompt_input)

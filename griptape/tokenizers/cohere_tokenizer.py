@@ -14,5 +14,5 @@ class CohereTokenizer(BaseTokenizer):
 
     client: Client = field(kw_only=True)
 
-    def try_count_tokens(self, text: str) -> int:
+    def count_tokens(self, text: str) -> int:
         return len(self.client.tokenize(text=text, model=self.model).tokens)
