@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
 - Performance issue in `OpenAiChatPromptDriver` when extracting unused rate-limiting headers.
 - Streaming not working when using deprecated `Structure.stream` field.
+- `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON
 
 ## [0.26.0] - 2024-06-04
 
