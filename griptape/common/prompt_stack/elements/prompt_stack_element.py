@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from attrs import define, field, Factory
 
@@ -13,12 +13,12 @@ from .base_prompt_stack_element import BasePromptStackElement
 class PromptStackElement(BasePromptStackElement):
     @define
     class Usage:
-        input_tokens: int = field(kw_only=True, default=0, metadata={"serializable": True})
-        output_tokens: int = field(kw_only=True, default=0, metadata={"serializable": True})
+        input_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
+        output_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
 
         @property
-        def total_tokens(self) -> int:
-            return self.input_tokens + self.output_tokens
+        def total_tokens(self) -> float:
+            return (self.input_tokens or 0) + (self.output_tokens or 0)
 
     content: list[BasePromptStackContent] = field(kw_only=True, metadata={"serializable": True})
     usage: Usage = field(

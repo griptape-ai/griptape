@@ -8,7 +8,6 @@ from griptape.common import PromptStackElement, TextPromptStackContent
 
 @define
 class PromptStack(SerializableMixin):
-    GENERIC_ROLE = "generic"
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
@@ -26,9 +25,6 @@ class PromptStack(SerializableMixin):
         self.inputs.append(PromptStackElement(content=[TextPromptStackContent(TextArtifact(content))], role=role))
 
         return self.inputs[-1]
-
-    def add_generic_input(self, content: str) -> PromptStackElement:
-        return self.add_input(content, self.GENERIC_ROLE)
 
     def add_system_input(self, content: str) -> PromptStackElement:
         return self.add_input(content, self.SYSTEM_ROLE)

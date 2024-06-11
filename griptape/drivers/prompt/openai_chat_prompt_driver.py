@@ -76,7 +76,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             message = result.choices[0].message
 
             return PromptStackElement(
-                content=[self._message_content_to_prompt_stack_content(message.content)],
+                content=[TextPromptStackContent(TextArtifact(message.content))],
                 role=message.role,
                 usage=PromptStackElement.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
@@ -111,32 +111,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
-        message_content = [self._prompt_stack_content_to_message_content(content) for content in prompt_input.content]
-
-        if prompt_input.is_system():
-            return {"role": "system", "content": message_content}
-        elif prompt_input.is_assistant():
-            return {"role": "assistant", "content": message_content}
-        else:
-            return {"role": "user", "content": message_content}
-
-    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
-        if isinstance(content, TextPromptStackContent):
-            return {"type": "text", "text": content.artifact.to_text()}
-        elif isinstance(content, ImagePromptStackContent):
-            return {
-                "type": "image",
-                "image_url": {"url": f"data:{content.artifact.media_type};base64,{content.artifact.base64}"},
-            }
-        else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
-
-    def _message_content_to_prompt_stack_content(self, message_content: str) -> BasePromptStackContent:
-        if isinstance(message_content, str):
-            return TextPromptStackContent(TextArtifact(message_content))
-        else:
-            raise ValueError(f"Unsupported message content type: {type(message_content)}")
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+        return [
+            {"role": self.__to_role(input), "content": [self.__to_content(content) for content in input.content]}
+            for input in prompt_stack.inputs
+        ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -152,7 +131,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             # JSON mode still requires a system input instructing the LLM to output JSON.
             prompt_stack.add_system_input("Provide your response as a valid JSON object.")
 
-        messages = [self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs]
+        messages = self._prompt_stack_to_messages(prompt_stack)
 
         if self.max_tokens is not None:
             params["max_tokens"] = self.max_tokens
@@ -160,3 +139,22 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         params["messages"] = messages
 
         return params
+
+    def __to_content(self, content: BasePromptStackContent) -> dict:
+        if isinstance(content, TextPromptStackContent):
+            return {"type": "text", "text": content.artifact.to_text()}
+        elif isinstance(content, ImagePromptStackContent):
+            return {
+                "type": "image",
+                "image_url": {"url": f"data:{content.artifact.media_type};base64,{content.artifact.base64}"},
+            }
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def __to_role(self, input: PromptStackElement) -> str:
+        if input.is_system():
+            return "system"
+        elif input.is_assistant():
+            return "assistant"
+        else:
+            return "user"

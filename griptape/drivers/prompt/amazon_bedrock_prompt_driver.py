@@ -43,7 +43,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         output_message = response["output"]["message"]
 
         return PromptStackElement(
-            content=[self._message_content_to_prompt_stack_content(content) for content in output_message["content"]],
+            content=[TextPromptStackContent(TextArtifact(content["text"])) for content in output_message["content"]],
             role=output_message["role"],
             usage=PromptStackElement.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
@@ -72,15 +72,32 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
-        content = [self._prompt_stack_content_to_message_content(content) for content in prompt_input.content]
+    def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
+        return [
+            {"role": self.__to_role(input), "content": [self.__to_content(content) for content in input.content]}
+            for input in elements
+        ]
 
-        if prompt_input.is_assistant():
-            return {"role": "assistant", "content": content}
-        else:
-            return {"role": "user", "content": content}
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        system_messages = [
+            [self.__to_content(content) for content in input.content]
+            for input in prompt_stack.inputs
+            if input.is_system() and input.content
+        ]
 
-    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+        messages = self._prompt_stack_elements_to_messages(
+            [input for input in prompt_stack.inputs if not input.is_system()]
+        )
+
+        return {
+            "modelId": self.model,
+            "messages": messages,
+            "system": system_messages,
+            "inferenceConfig": {"temperature": self.temperature},
+            "additionalModelRequestFields": self.additional_model_request_fields,
+        }
+
+    def __to_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"text": content.artifact.to_text()}
         elif isinstance(content, ImagePromptStackContent):
@@ -90,26 +107,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def _message_content_to_prompt_stack_content(self, message_content: dict) -> BasePromptStackContent:
-        if "text " in message_content:
-            return TextPromptStackContent(TextArtifact(message_content["text"]))
+    def __to_role(self, input: PromptStackElement) -> str:
+        if input.is_system():
+            return "system"
+        elif input.is_assistant():
+            return "assistant"
         else:
-            raise ValueError(f"Unsupported message content type: {message_content['text']}")
-
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
-        system_messages = [
-            self._prompt_stack_input_to_message(input)
-            for input in prompt_stack.inputs
-            if input.is_system() and input.content
-        ]
-        messages = [
-            self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs if not input.is_system()
-        ]
-
-        return {
-            "modelId": self.model,
-            "messages": messages,
-            "system": system_messages,
-            "inferenceConfig": {"temperature": self.temperature},
-            "additionalModelRequestFields": self.additional_model_request_fields,
-        }
+            return "user"

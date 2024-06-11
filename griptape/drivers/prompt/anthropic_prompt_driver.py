@@ -49,7 +49,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
         return PromptStackElement(
-            content=[self._message_content_to_prompt_stack_content(content) for content in response.content],
+            content=[TextPromptStackContent(TextArtifact(content)) for content in response.content],
             role=response.role,
             usage=PromptStackElement.Usage(
                 input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens
@@ -72,7 +72,43 @@ class AnthropicPromptDriver(BasePromptDriver):
                     delta_usage=DeltaPromptStackElement.DeltaUsage(output_tokens=event.usage.output_tokens)
                 )
 
-    def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
+    def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
+        return [
+            {"role": self.__to_role(input), "text": [self.__to_content(content) for content in input.content]}
+            for input in elements
+        ]
+
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        messages = self._prompt_stack_elements_to_messages([i for i in prompt_stack.inputs if not i.is_system()])
+
+        system_element = next((i for i in prompt_stack.inputs if i.is_system()), None)
+
+        system_message = None
+        if len(system_element.content) == 1:
+            system_message = system_element.content[0].artifact.to_text()
+        else:
+            raise ValueError("System element must have exactly one content.")
+
+        return {
+            "model": self.model,
+            "temperature": self.temperature,
+            "stop_sequences": self.tokenizer.stop_sequences,
+            "top_p": self.top_p,
+            "top_k": self.top_k,
+            "max_tokens": self.max_tokens,
+            "messages": messages,
+            **({"system": system_message} if system_message else {}),
+        }
+
+    def __to_role(self, input: PromptStackElement) -> str:
+        if input.is_system():
+            return "system"
+        elif input.is_assistant():
+            return "assistant"
+        else:
+            return "user"
+
+    def __to_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"type": "text", "text": content.artifact.to_text()}
         elif isinstance(content, ImagePromptStackContent):
@@ -86,43 +122,3 @@ class AnthropicPromptDriver(BasePromptDriver):
             }
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
-
-    def _message_content_to_prompt_stack_content(self, message_content: dict) -> BasePromptStackContent:
-        if message_content["type"] == "text":
-            return TextPromptStackContent(TextArtifact(message_content["text"]))
-        else:
-            raise ValueError(f"Unsupported message content type: {message_content['type']}")
-
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
-        content = [self._prompt_stack_content_to_message_content(content) for content in prompt_input.content]
-
-        if prompt_input.is_system():
-            return {"role": "system", "content": content}
-        elif prompt_input.is_assistant():
-            return {"role": "assistant", "content": content}
-        else:
-            return {"role": "user", "content": content}
-
-    def _prompt_stack_to_model_input(self, prompt_stack: PromptStack) -> dict:
-        messages = [
-            self._prompt_stack_input_to_message(prompt_input)
-            for prompt_input in prompt_stack.inputs
-            if not prompt_input.is_system()
-        ]
-        system = next((self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs if i.is_system()), None)
-
-        if system is None:
-            return {"messages": messages}
-        else:
-            return {"messages": messages, "system": system["content"]}
-
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
-        return {
-            "model": self.model,
-            "temperature": self.temperature,
-            "stop_sequences": self.tokenizer.stop_sequences,
-            "top_p": self.top_p,
-            "top_k": self.top_k,
-            "max_tokens": self.max_tokens,
-            **self._prompt_stack_to_model_input(prompt_stack),
-        }

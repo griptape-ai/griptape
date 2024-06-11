@@ -8,7 +8,15 @@ from attrs import Factory, define, field
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import PromptStack
+from griptape.common import (
+    PromptStack,
+    PromptStackElement,
+    DeltaPromptStackElement,
+    BaseDeltaPromptStackContent,
+    TextPromptStackContent,
+    BasePromptStackContent,
+    DeltaTextPromptStackContent,
+)
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -48,39 +56,65 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
         )
+        input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
+        output_tokens = len(self.tokenizer.tokenizer.encode(response))
 
-        return TextArtifact(value=response)
+        return PromptStackElement(
+            content=[TextPromptStackContent(TextArtifact(response))],
+            role=PromptStackElement.ASSISTANT_ROLE,
+            usage=PromptStackElement.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+        )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
         )
 
+        input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
+
+        full_text = ""
         for token in response:
-            yield TextArtifact(value=token)
+            full_text += token
+            yield DeltaTextPromptStackContent(TextArtifact(value=token), index=0)
+
+        output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
+        yield DeltaPromptStackElement(
+            role=PromptStackElement.ASSISTANT_ROLE,
+            delta_usage=DeltaPromptStackElement.DeltaUsage(input_tokens=input_tokens, output_tokens=output_tokens),
+        )
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        return {"role": prompt_input.role, "content": prompt_input.content}
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+        messages = []
+        for i in prompt_stack.inputs:
+            if len(i.content) == 1:
+                messages.append({"role": i.role, "content": self.__to_content(i.content[0])})
+            else:
+                raise ValueError("Invalid input content length.")
+
+        return messages
 
     def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
-        tokens = self.tokenizer.tokenizer.apply_chat_template(
-            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
-            add_generation_prompt=True,
-            tokenize=True,
-        )
+        messages = self._prompt_stack_to_messages(prompt_stack)
+        tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):
             return tokens
         else:
             raise ValueError("Invalid output type.")
+
+    def __to_content(self, content: BasePromptStackContent) -> str:
+        if isinstance(content, TextPromptStackContent):
+            return content.artifact.value
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")

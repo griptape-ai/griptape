@@ -13,11 +13,11 @@ from .base_prompt_stack_element import BasePromptStackElement
 class DeltaPromptStackElement(BasePromptStackElement):
     @define
     class DeltaUsage:
-        input_tokens: Optional[int] = field(kw_only=True, default=None, metadata={"serializable": True})
-        output_tokens: Optional[int] = field(kw_only=True, default=None, metadata={"serializable": True})
+        input_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
+        output_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
 
         @property
-        def total_tokens(self) -> int:
+        def total_tokens(self) -> float:
             return (self.input_tokens or 0) + (self.output_tokens or 0)
 
         def __add__(self, other: DeltaPromptStackElement.DeltaUsage) -> DeltaPromptStackElement.DeltaUsage:
@@ -42,5 +42,7 @@ class DeltaPromptStackElement(BasePromptStackElement):
 
     def __add__(self, other: DeltaPromptStackElement) -> DeltaPromptStackElement:
         return DeltaPromptStackElement(
-            delta_content=self.delta_content + other.delta_content, delta_usage=self.delta_usage + other.delta_usage
+            role=other.role or self.role,
+            delta_content=(self.delta_content or 0) + (other.delta_content or 0),
+            delta_usage=self.delta_usage + other.delta_usage,
         )
