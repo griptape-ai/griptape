@@ -331,6 +331,32 @@ class TestWorkflow:
 
         self._validate_topology_1(workflow)
 
+    def test_run_topology_1_missing_parent(self):
+        task1 = PromptTask("test1", id="task1")
+        task2 = PromptTask("test2", id="task2")
+        task3 = PromptTask("test3", id="task3")
+        task4 = PromptTask("test4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        # task1 never added to workflow
+        workflow + task4
+        with pytest.raises(ValueError):
+            workflow.insert_tasks(task1, [task2, task3], task4)
+
+    def test_run_topology_1_missing_child(self):
+        task1 = PromptTask("test1", id="task1")
+        task2 = PromptTask("test2", id="task2")
+        task3 = PromptTask("test3", id="task3")
+        task4 = PromptTask("test4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        # task4 never added to workflow
+        workflow + task1
+        workflow.insert_tasks(task1, [task2, task3], task4)
+
+        with pytest.raises(ValueError):
+            workflow.run()
+
     def test_run_topology_2_declarative_parents(self):
         workflow = Workflow(
             prompt_driver=MockPromptDriver(),
