@@ -10,7 +10,7 @@ You can optionally provide a [Tokenizer](../misc/tokenizers.md) via the [tokeniz
 
 ## Embedding Drivers
 
-### OpenAI Embeddings
+### OpenAI
 
 The [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md) uses the [OpenAI Embeddings API](https://platform.openai.com/docs/guides/embeddings).
 
@@ -27,12 +27,12 @@ print(embeddings[:3])
 [0.0017853748286142945, 0.006118456833064556, -0.005811543669551611]
 ```
 
-### Azure OpenAI Embeddings
+### Azure OpenAI
 
 The [AzureOpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/azure_openai_embedding_driver.md) uses the same parameters as [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md)
 with updated defaults.
 
-### Bedrock Titan Embeddings
+### Bedrock Titan
 
 !!! info
     This driver requires the `drivers-embedding-amazon-bedrock` [extra](../index.md#extras).
@@ -51,7 +51,7 @@ print(embeddings[:3])
 [-0.234375, -0.024902344, -0.14941406]
 ```
 
-### Google Embeddings
+### Google
 !!! info
     This driver requires the `drivers-embedding-google` [extra](../index.md#extras).
 
@@ -69,7 +69,7 @@ print(embeddings[:3])
 [0.0588633, 0.0033929371, -0.072810836]
 ```
 
-### Hugging Face Hub Embeddings
+### Hugging Face Hub
 
 !!! info
     This driver requires the `drivers-embedding-huggingface` [extra](../index.md#extras).
@@ -99,7 +99,7 @@ embeddings = driver.embed_string("Hello world!")
 print(embeddings[:3])
 
 ```
-### Amazon SageMaker Jumpstart Embeddings
+### Amazon SageMaker Jumpstart
 
 The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_sagemaker_jumpstart_embedding_driver.md) uses the [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) to generate embeddings on AWS.
 
@@ -120,7 +120,7 @@ embeddings = driver.embed_string("Hello world!")
 print(embeddings[:3])
 ```
 
-### VoyageAI Embeddings
+### VoyageAI
 The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyageai_embedding_driver.md) uses the [VoyageAI Embeddings API](https://www.voyageai.com/).
 
 !!! info
@@ -140,7 +140,7 @@ embeddings = driver.embed_string("Hello world!")
 print(embeddings[:3])
 ```
 
-### Cohere Embeddings
+### Cohere
 
 The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_embedding_driver.md) uses the [Cohere Embeddings API](https://docs.cohere.com/docs/embeddings).
 

@@ -1,6 +1,7 @@
 site_name: Griptape Docs
 hooks:
   - docs/plugins/swagger_ui_plugin.py
+strict: true
 plugins:
   - glightbox
   - search
@@ -96,7 +97,6 @@ nav:
           - Extraction Engines: "griptape-framework/engines/extraction-engines.md"
           - Summary Engines: "griptape-framework/engines/summary-engines.md"
           - Image Generation Engines: "griptape-framework/engines/image-generation-engines.md"
-          - Image Query Engines: "griptape-framework/engines/image-query-engines.md"
           - Audio Engines: "griptape-framework/engines/audio-engines.md"
       - Drivers:
           - Prompt Drivers: "griptape-framework/drivers/prompt-drivers.md"
@@ -148,6 +148,7 @@ nav:
           - ImageQueryClient: "griptape-tools/official-tools/image-query-client.md"
           - TextToSpeechClient: "griptape-tools/official-tools/text-to-speech-client.md"
           - AudioTranscriptionClient: "griptape-tools/official-tools/audio-transcription-client.md"
+          - GriptapeCloudKnowledgeBaseClient: "griptape-tools/official-tools/griptape-cloud-knowledge-base-client.md"
       - Custom Tools:
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
   - Recipes:

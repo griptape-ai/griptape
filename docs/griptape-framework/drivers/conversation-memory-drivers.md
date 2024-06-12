@@ -2,7 +2,7 @@
 
 You can persist and load memory by using Conversation Memory Drivers. You can build drivers for your own data stores by extending [BaseConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/base_conversation_memory_driver.md).
 
-### LocalConversationMemoryDriver
+### Local
 
 The [LocalConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/local_conversation_memory_driver.md) allows you to persist Conversation Memory in a local JSON file.
 
@@ -18,7 +18,7 @@ agent.run("Surfing is my favorite sport.")
 agent.run("What is my favorite sport?")
 ```
 
-### AmazonDynamoDbConversationMemoryDriver
+### Amazon DynamoDb
 
 !!! info
     This driver requires the `drivers-memory-conversation-amazon-dynamodb` [extra](../index.md#extras).
@@ -47,7 +47,7 @@ agent.run("What is my name?")
 ```
 
 
-### Redis Conversation Memory Driver
+### Redis
 
 !!! info
     This driver requires the `drivers-memory-conversation-redis` [extra](../index.md#extras).
