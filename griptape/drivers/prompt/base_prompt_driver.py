@@ -70,29 +70,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 self.before_run(prompt_stack)
 
                 if self.stream:
-                    tokens = []
-                    delta_usage = DeltaPromptStackElement.DeltaUsage()
-
-                    delta_elements = self.try_stream(prompt_stack)
-
-                    for delta_element in delta_elements:
-                        if isinstance(delta_element, DeltaPromptStackElement):
-                            delta_usage += delta_element.delta_usage
-                        elif isinstance(delta_element, DeltaTextPromptStackContent):
-                            chunk_value = delta_element.artifact.value
-                            self.structure.publish_event(CompletionChunkEvent(token=chunk_value))
-                            tokens.append(chunk_value)
-
-                    content = TextPromptStackContent(artifact=TextArtifact("".join(tokens).strip()))
-                    result = PromptStackElement(
-                        content=[content],
-                        role=PromptStackElement.ASSISTANT_ROLE,
-                        usage=PromptStackElement.Usage(
-                            input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0
-                        ),
-                    )
+                    result = self.__process_stream(prompt_stack)
                 else:
-                    result = self.try_run(prompt_stack)
+                    result = self.__process_run(prompt_stack)
 
                 self.after_run(result)
 
@@ -131,3 +111,33 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_stream(
         self, prompt_stack: PromptStack
     ) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]: ...
+
+    def __process_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+        result = self.try_run(prompt_stack)
+
+        return result
+
+    def __process_stream(self, prompt_stack: PromptStack) -> PromptStackElement:
+        tokens = []
+        delta_usage = DeltaPromptStackElement.DeltaUsage()
+
+        delta_elements = self.try_stream(prompt_stack)
+
+        for delta_element in delta_elements:
+            if isinstance(delta_element, DeltaPromptStackElement):
+                delta_usage += delta_element.delta_usage
+            elif isinstance(delta_element, DeltaTextPromptStackContent):
+                chunk_value = delta_element.artifact.value
+                self.structure.publish_event(CompletionChunkEvent(token=chunk_value))
+                tokens.append(chunk_value)
+
+        content = TextPromptStackContent(artifact=TextArtifact("".join(tokens).strip()))
+        result = PromptStackElement(
+            content=[content],
+            role=PromptStackElement.ASSISTANT_ROLE,
+            usage=PromptStackElement.Usage(
+                input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0
+            ),
+        )
+
+        return result

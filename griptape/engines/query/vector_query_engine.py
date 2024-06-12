@@ -78,7 +78,7 @@ class VectorQueryEngine(BaseQueryEngine):
                     PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
                 ]
             )
-        )
+        ).to_text_artifact()
 
     def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         result = self.vector_store_driver.upsert_text_artifact(artifact, namespace=namespace)

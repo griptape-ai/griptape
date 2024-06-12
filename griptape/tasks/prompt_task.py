@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact
 from griptape.common import PromptStack
 from griptape.tasks import BaseTextInputTask
 from griptape.utils import J2
@@ -65,6 +65,9 @@ class PromptTask(BaseTextInputTask):
     def run(self) -> BaseArtifact:
         output = self.prompt_driver.run(self.prompt_stack)
 
-        self.output = output.content[0].artifact  # TODO: Handle multiple outputs
+        if len(output.content) == 1:
+            self.output = output.content[0].artifact
+        else:
+            self.output = ListArtifact([content.artifact for content in output.content])
 
         return self.output

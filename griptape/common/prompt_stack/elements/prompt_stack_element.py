@@ -4,8 +4,9 @@ from typing import Any, Optional
 
 from attrs import define, field, Factory
 
-from griptape.common import BasePromptStackContent
+from griptape.common import BasePromptStackContent, TextPromptStackContent
 
+from griptape.artifacts import TextArtifact
 from .base_prompt_stack_element import BasePromptStackElement
 
 
@@ -33,4 +34,12 @@ class PromptStackElement(BasePromptStackElement):
             return self.content.artifact.value
 
     def to_text(self) -> str:
-        return self.value.to_text()
+        return self.to_text_artifact().to_text()
+
+    def to_text_artifact(self) -> TextArtifact:
+        artifact = TextArtifact(value="")
+
+        for content in self.content:
+            if isinstance(content, TextPromptStackContent):
+                artifact.value += content.artifact.value
+        return artifact
