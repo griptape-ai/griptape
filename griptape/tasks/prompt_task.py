@@ -65,9 +65,9 @@ class PromptTask(BaseTextInputTask):
     def run(self) -> BaseArtifact:
         output = self.prompt_driver.run(self.prompt_stack)
 
-        if len(output.content) == 1:
-            self.output = output.content[0].artifact
+        if isinstance(output.value, list):
+            self.output = ListArtifact([artifact_value for artifact_value in output.value])
         else:
-            self.output = ListArtifact([content.artifact for content in output.content])
+            self.output = output.content[0].artifact
 
         return self.output

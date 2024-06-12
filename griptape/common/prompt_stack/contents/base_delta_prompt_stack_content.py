@@ -1,10 +1,14 @@
+from __future__ import annotations
+
+from abc import ABC
+from typing import Optional
+
 from attrs import define, field
 
-from typing import Optional
-from griptape.common import BasePromptStackContent
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 
 @define
-class BaseDeltaPromptStackContent(BasePromptStackContent):
-    index: int = field(kw_only=True, metadata={"serializable": True})
+class BaseDeltaPromptStackContent(ABC, SerializableMixin):
+    index: int = field(kw_only=True, default=0, metadata={"serializable": True})
     role: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})

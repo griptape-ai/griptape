@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import Mock
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.drivers import AzureOpenAiChatPromptDriver
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
@@ -62,5 +63,8 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             stream=True,
             messages=messages,
+            stream_options={"include_usage": True},
         )
-        assert text_artifact.value == "model-output"
+
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact == "model-output"

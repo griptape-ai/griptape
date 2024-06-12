@@ -3,6 +3,7 @@ from attrs import define, Factory, field
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.common import PromptStack
+from griptape.common.prompt_stack.elements.prompt_stack_element import PromptStackElement
 from griptape.drivers import BasePromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
@@ -55,7 +56,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
         if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             return self.prompt_driver.run(
-                PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
+                PromptStack(inputs=[PromptStackElement(full_text, role=PromptStack.USER_ROLE)])
             ).to_text_artifact()
         else:
             chunks = self.chunker.chunk(artifacts_text)
@@ -67,7 +68,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
             return self.summarize_artifacts_rec(
                 chunks[1:],
                 self.prompt_driver.run(
-                    PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)])
+                    PromptStack(inputs=[PromptStackElement(partial_text, role=PromptStack.USER_ROLE)])
                 ).value,
                 rulesets=rulesets,
             )

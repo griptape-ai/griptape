@@ -1,10 +1,14 @@
 from __future__ import annotations
+
 from abc import ABC
+from collections.abc import Sequence
 
 from attrs import define, field
 
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.mixins import SerializableMixin
+
+from .base_delta_prompt_stack_content import BaseDeltaPromptStackContent
 
 
 @define
@@ -22,3 +26,6 @@ class BasePromptStackContent(ABC, SerializableMixin):
 
     def __len__(self) -> int:
         return len(self.artifact)
+
+    @classmethod
+    def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> BasePromptStackContent: ...

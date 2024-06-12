@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
     DeltaPromptStackElement,
@@ -16,8 +15,7 @@ from griptape.common import (
     TextPromptStackContent,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
-from griptape.mixins import ExponentialBackoffMixin
-from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
@@ -118,22 +116,31 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return result
 
     def __process_stream(self, prompt_stack: PromptStack) -> PromptStackElement:
-        tokens = []
+        delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
         delta_usage = DeltaPromptStackElement.DeltaUsage()
 
-        delta_elements = self.try_stream(prompt_stack)
+        deltas = self.try_stream(prompt_stack)
 
-        for delta_element in delta_elements:
-            if isinstance(delta_element, DeltaPromptStackElement):
-                delta_usage += delta_element.delta_usage
-            elif isinstance(delta_element, DeltaTextPromptStackContent):
-                chunk_value = delta_element.artifact.value
-                self.structure.publish_event(CompletionChunkEvent(token=chunk_value))
-                tokens.append(chunk_value)
+        for delta in deltas:
+            if isinstance(delta, DeltaPromptStackElement):
+                delta_usage += delta.delta_usage
+            elif isinstance(delta, BaseDeltaPromptStackContent):
+                if delta.index in delta_contents:
+                    delta_contents[delta.index].append(delta)
+                else:
+                    delta_contents[delta.index] = [delta]
 
-        content = TextPromptStackContent(artifact=TextArtifact("".join(tokens).strip()))
+                if isinstance(delta, DeltaTextPromptStackContent):
+                    self.structure.publish_event(CompletionChunkEvent(token=delta.text))
+
+        content = []
+        for index, deltas in delta_contents.items():
+            text_deltas = [delta for delta in deltas if isinstance(delta, DeltaTextPromptStackContent)]
+            if text_deltas:
+                content.append(TextPromptStackContent.from_deltas(text_deltas))
+
         result = PromptStackElement(
-            content=[content],
+            content=content,
             role=PromptStackElement.ASSISTANT_ROLE,
             usage=PromptStackElement.Usage(
                 input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0

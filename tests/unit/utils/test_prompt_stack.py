@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.common import PromptStack
 
 
@@ -14,22 +15,22 @@ class TestPromptStack:
         prompt_stack.add_input("foo", "role")
 
         assert prompt_stack.inputs[0].role == "role"
-        assert prompt_stack.inputs[0].content == "foo"
+        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
 
     def test_add_system_input(self, prompt_stack):
         prompt_stack.add_system_input("foo")
 
         assert prompt_stack.inputs[0].role == "system"
-        assert prompt_stack.inputs[0].content == "foo"
+        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
 
     def test_add_user_input(self, prompt_stack):
         prompt_stack.add_user_input("foo")
 
         assert prompt_stack.inputs[0].role == "user"
-        assert prompt_stack.inputs[0].content == "foo"
+        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
 
     def test_add_assistant_input(self, prompt_stack):
         prompt_stack.add_assistant_input("foo")
 
         assert prompt_stack.inputs[0].role == "assistant"
-        assert prompt_stack.inputs[0].content == "foo"
+        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"

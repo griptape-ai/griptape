@@ -5,6 +5,7 @@ import io
 from attrs import field, Factory, define
 from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, ErrorArtifact
 from griptape.common import PromptStack
+from griptape.common.prompt_stack.elements.prompt_stack_element import PromptStackElement
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.rules import Ruleset
@@ -64,7 +65,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
             rows.extend(
                 self.text_to_csv_rows(
                     self.prompt_driver.run(
-                        PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
+                        PromptStack(inputs=[PromptStackElement(full_text, role=PromptStack.USER_ROLE)])
                     ).value,
                     column_names,
                 )
@@ -82,7 +83,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
             rows.extend(
                 self.text_to_csv_rows(
                     self.prompt_driver.run(
-                        PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)])
+                        PromptStack(inputs=[PromptStackElement(partial_text, role=PromptStack.USER_ROLE)])
                     ).value,
                     column_names,
                 )

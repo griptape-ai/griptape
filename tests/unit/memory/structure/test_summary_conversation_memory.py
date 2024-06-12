@@ -1,6 +1,5 @@
 import json
 
-import pytest
 
 from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
@@ -59,9 +58,9 @@ class TestSummaryConversationMemory:
 
         prompt_stack = memory.to_prompt_stack()
 
-        assert prompt_stack.inputs[0].content == "Summary of the conversation so far: foobar"
-        assert prompt_stack.inputs[1].content == "foo"
-        assert prompt_stack.inputs[2].content == "bar"
+        assert prompt_stack.inputs[0].content[0].artifact.value == "Summary of the conversation so far: foobar"
+        assert prompt_stack.inputs[1].content[0].artifact.value == "foo"
+        assert prompt_stack.inputs[2].content[0].artifact.value == "bar"
 
     def test_from_dict(self):
         memory = SummaryConversationMemory()

@@ -30,9 +30,12 @@ class TestBaseEvent:
         dict_value = {
             "type": "StartPromptEvent",
             "timestamp": 123.0,
-            "token_count": 10,
-            "prompt_stack": {"inputs": [{"content": "foo", "role": "user"}, {"content": "bar", "role": "system"}]},
-            "prompt": "foo bar",
+            "prompt_stack": {
+                "inputs": [
+                    {"type": "TextPromptStackContent", "content": "foo", "role": "user"},
+                    {"type": "TextPromptStackContent", "content": "bar", "role": "system"},
+                ]
+            },
             "model": "foo bar",
         }
 
@@ -40,19 +43,18 @@ class TestBaseEvent:
 
         assert isinstance(event, StartPromptEvent)
         assert event.timestamp == 123
-        assert event.token_count == 10
-        assert event.prompt_stack.inputs[0].content == "foo"
+        assert event.prompt_stack.inputs[0].content[0].artifact.value == "foo"
         assert event.prompt_stack.inputs[0].role == "user"
-        assert event.prompt_stack.inputs[1].content == "bar"
+        assert event.prompt_stack.inputs[1].content[0].artifact.value == "bar"
         assert event.prompt_stack.inputs[1].role == "system"
-        assert event.prompt == "foo bar"
         assert event.model == "foo bar"
 
     def test_finish_prompt_event_from_dict(self):
         dict_value = {
             "type": "FinishPromptEvent",
             "timestamp": 123.0,
-            "token_count": 10,
+            "input_token_count": 10,
+            "output_token_count": 12,
             "result": "foo bar",
             "model": "foo bar",
         }
@@ -61,7 +63,8 @@ class TestBaseEvent:
 
         assert isinstance(event, FinishPromptEvent)
         assert event.timestamp == 123
-        assert event.token_count == 10
+        assert event.input_token_count == 10
+        assert event.output_token_count == 12
         assert event.result == "foo bar"
         assert event.model == "foo bar"
 

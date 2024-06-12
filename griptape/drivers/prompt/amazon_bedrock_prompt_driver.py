@@ -44,7 +44,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
         return PromptStackElement(
             content=[TextPromptStackContent(TextArtifact(content["text"])) for content in output_message["content"]],
-            role=output_message["role"],
+            role=PromptStackElement.ASSISTANT_ROLE,
             usage=PromptStackElement.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
 
@@ -59,8 +59,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 elif "contentBlockDelta" in event:
                     content_block_delta = event["contentBlockDelta"]
                     yield DeltaTextPromptStackContent(
-                        TextArtifact(value=content_block_delta["delta"]["text"]),
-                        index=content_block_delta["contentBlockIndex"],
+                        content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
                     )
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
@@ -74,15 +73,16 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
         return [
-            {"role": self.__to_role(input), "content": [self.__to_content(content) for content in input.content]}
+            {
+                "role": self.__to_role(input),
+                "content": [self.__prompt_stack_content_message_content(content) for content in input.content],
+            }
             for input in elements
         ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [
-            [self.__to_content(content) for content in input.content]
-            for input in prompt_stack.inputs
-            if input.is_system() and input.content
+            {"text": input.to_text_artifact().to_text()} for input in prompt_stack.inputs if input.is_system()
         ]
 
         messages = self._prompt_stack_elements_to_messages(
@@ -97,7 +97,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "additionalModelRequestFields": self.additional_model_request_fields,
         }
 
-    def __to_content(self, content: BasePromptStackContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"text": content.artifact.to_text()}
         elif isinstance(content, ImagePromptStackContent):

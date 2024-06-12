@@ -56,7 +56,7 @@ class CoherePromptDriver(BasePromptDriver):
 
         for event in result:
             if event.event_type == "text-generation":
-                yield DeltaTextPromptStackContent(TextArtifact(value=event.text), index=0)
+                yield DeltaTextPromptStackContent(event.text, index=0)
             if event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
@@ -69,7 +69,10 @@ class CoherePromptDriver(BasePromptDriver):
 
     def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
         return [
-            {"role": self.__to_role(input), "content": [self.__to_content(content) for content in input.content]}
+            {
+                "role": self.__to_role(input),
+                "content": [self.__prompt_stack_content_message_content(content) for content in input.content],
+            }
             for input in elements
         ]
 
@@ -102,7 +105,7 @@ class CoherePromptDriver(BasePromptDriver):
             **({"preamble": preamble} if preamble else {}),
         }
 
-    def __to_content(self, content: BasePromptStackContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"text": content.artifact.to_text()}
         else:

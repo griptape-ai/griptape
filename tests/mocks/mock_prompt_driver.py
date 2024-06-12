@@ -39,7 +39,7 @@ class MockPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
         output = self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output
 
+        yield DeltaTextPromptStackContent(output)
         yield DeltaPromptStackElement(
-            delta_content=DeltaTextPromptStackContent(TextArtifact(output), index=0),
-            delta_usage=DeltaPromptStackElement.DeltaUsage(input_tokens=100, output_tokens=100),
+            delta_usage=DeltaPromptStackElement.DeltaUsage(input_tokens=100, output_tokens=100)
         )

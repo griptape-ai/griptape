@@ -139,7 +139,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         if isinstance(text_artifact, DeltaTextPromptStackContent):
-            assert text_artifact.artifact.value == "model-output"
+            assert text_artifact.text == "model-output"
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given

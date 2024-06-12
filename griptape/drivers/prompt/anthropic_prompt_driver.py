@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -19,6 +19,10 @@ from griptape.common import (
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
+
+if TYPE_CHECKING:
+    from anthropic.types import ContentBlockDeltaEvent
+    from anthropic.types import ContentBlock
 
 
 @define
@@ -49,7 +53,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
         return PromptStackElement(
-            content=[TextPromptStackContent(TextArtifact(content)) for content in response.content],
+            content=[self.__message_content_to_prompt_stack_content(content) for content in response.content],
             role=response.role,
             usage=PromptStackElement.Usage(
                 input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens
@@ -61,7 +65,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         for event in events:
             if event.type == "content_block_delta":
-                yield DeltaTextPromptStackContent(TextArtifact(value=event.delta.text), index=event.index)
+                yield self.__message_content_delta_to_prompt_stack_content_delta(event)
             elif event.type == "message_start":
                 yield DeltaPromptStackElement(
                     role=event.message.role,
@@ -73,21 +77,16 @@ class AnthropicPromptDriver(BasePromptDriver):
                 )
 
     def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
-        return [
-            {"role": self.__to_role(input), "text": [self.__to_content(content) for content in input.content]}
-            for input in elements
-        ]
+        return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in elements]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = self._prompt_stack_elements_to_messages([i for i in prompt_stack.inputs if not i.is_system()])
 
         system_element = next((i for i in prompt_stack.inputs if i.is_system()), None)
-
-        system_message = None
-        if len(system_element.content) == 1:
-            system_message = system_element.content[0].artifact.to_text()
+        if system_element:
+            system_message = system_element.to_text_artifact().to_text()
         else:
-            raise ValueError("System element must have exactly one content.")
+            system_message = None
 
         return {
             "model": self.model,
@@ -108,7 +107,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             return "user"
 
-    def __to_content(self, content: BasePromptStackContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"type": "text", "text": content.artifact.to_text()}
         elif isinstance(content, ImagePromptStackContent):
@@ -121,4 +120,29 @@ class AnthropicPromptDriver(BasePromptDriver):
                 },
             }
         else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
+            raise ValueError(f"Unsupported prompt content type: {type(content)}")
+
+    def __message_content_to_prompt_stack_content(self, content: ContentBlock) -> BasePromptStackContent:
+        content_type = content.type
+
+        if content_type == "text":
+            return TextPromptStackContent(TextArtifact(content.text))
+        else:
+            raise ValueError(f"Unsupported message content type: {content_type}")
+
+    def __message_content_delta_to_prompt_stack_content_delta(
+        self, content_delta: ContentBlockDeltaEvent
+    ) -> BaseDeltaPromptStackContent:
+        index = content_delta.index
+        delta_type = content_delta.delta.type
+
+        if delta_type == "text_delta":
+            return DeltaTextPromptStackContent(content_delta.delta.text, index=index)
+        else:
+            raise ValueError(f"Unsupported message content delta type : {delta_type}")
+
+    def __to_content(self, input: PromptStackElement) -> str | list[dict]:
+        if all(isinstance(content, TextPromptStackContent) for content in input.content):
+            return input.to_text_artifact().to_text()
+        else:
+            return [self.__prompt_stack_content_message_content(content) for content in input.content]

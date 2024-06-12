@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.common import (
@@ -66,7 +65,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
 
         return PromptStackElement(
-            content=[TextPromptStackContent(TextArtifact(response))],
+            content=response,
             role=PromptStackElement.ASSISTANT_ROLE,
             usage=PromptStackElement.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
@@ -83,7 +82,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         full_text = ""
         for token in response:
             full_text += token
-            yield DeltaTextPromptStackContent(TextArtifact(value=token), index=0)
+            yield DeltaTextPromptStackContent(token, index=0)
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
         yield DeltaPromptStackElement(
@@ -98,7 +97,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         messages = []
         for i in prompt_stack.inputs:
             if len(i.content) == 1:
-                messages.append({"role": i.role, "content": self.__to_content(i.content[0])})
+                messages.append({"role": i.role, "content": self.__prompt_stack_content_message_content(i.content[0])})
             else:
                 raise ValueError("Invalid input content length.")
 
@@ -113,7 +112,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         else:
             raise ValueError("Invalid output type.")
 
-    def __to_content(self, content: BasePromptStackContent) -> str:
+    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> str:
         if isinstance(content, TextPromptStackContent):
             return content.artifact.value
         else:

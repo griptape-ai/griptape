@@ -1,9 +1,14 @@
-from attrs import define, field
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+
+from attrs import define, field
+
+from griptape.mixins import SerializableMixin
 
 
 @define
-class BasePromptStackElement(ABC):
+class BasePromptStackElement(ABC, SerializableMixin):
     USER_ROLE = "user"
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"

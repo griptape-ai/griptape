@@ -83,7 +83,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         messages = []
         for i in prompt_stack.inputs:
             if len(i.content) == 1:
-                messages.append({"role": i.role, "content": self.__to_content(i.content[0])})
+                messages.append({"role": i.role, "content": self.__prompt_stack_content_message_content(i.content[0])})
             else:
                 raise ValueError("Invalid input content length.")
 
@@ -98,7 +98,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         else:
             raise ValueError("Invalid output type.")
 
-    def __to_content(self, content: BasePromptStackContent) -> str:
+    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> str:
         if isinstance(content, TextPromptStackContent):
             return content.artifact.value
         else:

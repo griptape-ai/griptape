@@ -35,14 +35,7 @@ class DeltaPromptStackElement(BasePromptStackElement):
     @property
     def value(self) -> Any:
         if self.delta_content is not None:
-            return self.delta_content.artifact.value
+            return self.delta_content.text
 
     def to_text(self) -> str:
         return self.value.to_text()
-
-    def __add__(self, other: DeltaPromptStackElement) -> DeltaPromptStackElement:
-        return DeltaPromptStackElement(
-            role=other.role or self.role,
-            delta_content=(self.delta_content or 0) + (other.delta_content or 0),
-            delta_usage=self.delta_usage + other.delta_usage,
-        )

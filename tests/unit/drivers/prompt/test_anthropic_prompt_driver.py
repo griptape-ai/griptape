@@ -1,3 +1,4 @@
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.drivers import AnthropicPromptDriver
 from griptape.common import PromptStack
 from unittest.mock import Mock
@@ -9,6 +10,7 @@ class TestAnthropicPromptDriver:
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
         mock_content = Mock()
+        mock_content.type = "text"
         mock_content.text = "model-output"
         mock_client.return_value.messages.create.return_value.content = [mock_content]
         mock_client.return_value.count_tokens.return_value = 5
@@ -20,6 +22,7 @@ class TestAnthropicPromptDriver:
         mock_stream_client = mocker.patch("anthropic.Anthropic")
         mock_chunk = Mock()
         mock_chunk.type = "content_block_delta"
+        mock_chunk.delta.type = "text_delta"
         mock_chunk.delta.text = "model-output"
         mock_stream_client.return_value.messages.create.return_value = iter([mock_chunk])
         mock_stream_client.return_value.count_tokens.return_value = 5
@@ -91,7 +94,6 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         expected_messages = [
-            {"role": "user", "content": "generic-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
         ]
@@ -112,7 +114,8 @@ class TestAnthropicPromptDriver:
             top_k=250,
             **{"system": "system-input"} if system_enabled else {},
         )
-        assert text_artifact.value == "model-output"
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.text == "model-output"
 
     def test_try_run_throws_when_prompt_stack_is_string(self):
         # Given

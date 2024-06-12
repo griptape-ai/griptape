@@ -1,6 +1,7 @@
 import pytest
 
 from griptape.common import PromptStack
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.drivers import AmazonBedrockPromptDriver
 
 
@@ -9,7 +10,10 @@ class TestAmazonBedrockPromptDriver:
     def mock_converse(self, mocker):
         mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
 
-        mock_converse.return_value = {"output": {"message": {"content": [{"text": "model-output"}]}}}
+        mock_converse.return_value = {
+            "output": {"message": {"content": [{"text": "model-output"}]}},
+            "usage": {"inputTokens": 100, "outputTokens": 100},
+        }
 
         return mock_converse
 
@@ -17,7 +21,9 @@ class TestAmazonBedrockPromptDriver:
     def mock_converse_stream(self, mocker):
         mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
 
-        mock_converse_stream.return_value = {"stream": [{"contentBlockDelta": {"delta": {"text": "model-output"}}}]}
+        mock_converse_stream.return_value = {
+            "stream": [{"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"text": "model-output"}}}]
+        }
 
         return mock_converse_stream
 
@@ -76,4 +82,6 @@ class TestAmazonBedrockPromptDriver:
             inferenceConfig={"temperature": driver.temperature},
             additionalModelRequestFields={},
         )
-        assert text_artifact.value == "model-output"
+
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.text == "model-output"

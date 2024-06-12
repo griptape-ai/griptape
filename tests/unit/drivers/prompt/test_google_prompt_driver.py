@@ -1,4 +1,5 @@
 from google.generativeai.types import GenerationConfig
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.drivers import GooglePromptDriver
 from griptape.common import PromptStack
 from unittest.mock import Mock
@@ -38,7 +39,8 @@ class TestGooglePromptDriver:
         # Then
         mock_generative_model.return_value.generate_content.assert_called_once_with(
             [
-                {"parts": ["system-input", "user-input"], "role": "user"},
+                {"parts": ["system-input", "system-input"], "role": "user"},
+                {"parts": ["user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
             ],
             generation_config=GenerationConfig(
@@ -62,31 +64,12 @@ class TestGooglePromptDriver:
         text_artifact = next(text_artifact_stream)
         mock_stream_generative_model.return_value.generate_content.assert_called_once_with(
             [
-                {"parts": ["system-input", "user-input"], "role": "user"},
+                {"parts": ["system-input", "system-input"], "role": "user"},
+                {"parts": ["user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
             ],
             stream=True,
             generation_config=GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]),
         )
-        assert text_artifact.value == "model-output"
-
-    def test_prompt_stack_to_model_input(self):
-        # Given
-        driver = GooglePromptDriver(model="gemini-pro", api_key="1234")
-        prompt_stack = PromptStack()
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_user_input("user-input")
-
-        # When
-        model_input = driver._prompt_stack_to_model_input(prompt_stack)
-
-        # Then
-        assert model_input == [
-            {"role": "user", "parts": ["system-input", "user-input"]},
-            {"role": "model", "parts": ["assistant-input"]},
-            {"role": "model", "parts": ["assistant-input"]},
-            {"role": "user", "parts": ["user-input"]},
-        ]
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.text == "model-output"

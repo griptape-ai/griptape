@@ -67,9 +67,14 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         )
 
         decoded_body = json.loads(response["Body"].read().decode("utf8"))
-        generated_text = (
-            decoded_body[0]["generated_text"] if isinstance(decoded_body, list) else decoded_body["generated_text"]
-        )
+
+        if isinstance(decoded_body, list):
+            if decoded_body:
+                generated_text = decoded_body[0]["generated_text"]
+            else:
+                raise ValueError("model response is empty")
+        else:
+            generated_text = decoded_body["generated_text"]
 
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
@@ -101,7 +106,9 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
 
         for input in prompt_stack.inputs:
             if len(input.content) == 1:
-                messages.append({"role": input.role, "content": self.__to_content(input.content[0])})
+                messages.append(
+                    {"role": input.role, "content": self.__prompt_stack_content_message_content(input.content[0])}
+                )
             else:
                 raise ValueError(f"Invalid input content length: {len(input.content)}")
 
@@ -117,7 +124,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         else:
             raise ValueError("Invalid output type.")
 
-    def __to_content(self, content: BasePromptStackContent) -> str:
+    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> str:
         if isinstance(content, TextPromptStackContent):
             return content.artifact.value
         else:

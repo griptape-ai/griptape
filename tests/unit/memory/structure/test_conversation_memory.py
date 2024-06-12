@@ -37,8 +37,8 @@ class TestConversationMemory:
 
         prompt_stack = memory.to_prompt_stack()
 
-        assert prompt_stack.inputs[0].content == "foo"
-        assert prompt_stack.inputs[1].content == "bar"
+        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
+        assert prompt_stack.inputs[1].content[0].artifact.value == "bar"
 
     def test_from_dict(self):
         memory = ConversationMemory()
