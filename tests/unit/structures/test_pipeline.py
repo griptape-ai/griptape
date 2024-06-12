@@ -94,7 +94,7 @@ class TestPipeline:
 
         storage = list(pipeline.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.rag_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
