@@ -29,7 +29,7 @@ class TestWebLoader:
         artifact = loader.load(source)
 
         assert isinstance(artifact, ErrorArtifact)
-        assert f"Error loading text from {source}" == artifact.value
+        assert f"Error loading from source: {source}" == artifact.value
 
     def test_load_collection(self, loader):
         artifacts = loader.load_collection(

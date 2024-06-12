@@ -17,4 +17,4 @@ class WebLoader(BaseTextLoader):
             single_chunk_text_artifact = self.web_scraper_driver.scrape_url(source)
             return self._text_to_artifacts(single_chunk_text_artifact.value)
         except Exception as e:
-            return ErrorArtifact(f"Error loading text from {source}", exception=e)
+            return ErrorArtifact(f"Error loading from source: {source}", exception=e)
