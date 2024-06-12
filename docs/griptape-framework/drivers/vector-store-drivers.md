@@ -16,7 +16,7 @@ Each vector driver takes a [BaseEmbeddingDriver](../../reference/griptape/driver
 !!! info
     More vector drivers are coming soon.
 
-## Local Vector Store Driver
+## Local
 
 The [LocalVectorStoreDriver](../../reference/griptape/drivers/vector/local_vector_store_driver.md) can be used to load and query data from memory. Here is a complete example of how the driver can be used to load a webpage into the driver and query it later:
 
@@ -47,7 +47,7 @@ print("\n\n".join(values))
 
 ```
 
-## Pinecone Vector Store Driver
+## Pinecone
 
 !!! info
     This driver requires the `drivers-vector-pinecone` [extra](../index.md#extras).
@@ -103,7 +103,7 @@ result = vector_store_driver.query(
 )
 ```
 
-## Marqo Vector Store Driver
+## Marqo
 
 !!! info
     This driver requires the `drivers-vector-marqo` [extra](../index.md#extras).
@@ -157,7 +157,7 @@ result = vector_store.query(query="What is griptape?")
 print(result)
 ```
 
-## Mongodb Atlas Vector Store Driver
+## Mongodb Atlas
 
 !!! info
     This driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
@@ -225,14 +225,14 @@ The format for creating a vector index should look similar to the following:
 ```
 Replace `path_to_vector` with the expected field name where the vector content will be.
 
-## Azure MongoDB Vector Store Driver
+## Azure MongoDB
 
 !!! info
     This driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
 
 The [AzureMongoDbVectorStoreDriver](../../reference/griptape/drivers/vector/azure_mongodb_vector_store_driver.md) provides support for storing vector data in an Azure CosmosDb database account using the MongoDb vCore API
 
-Here is an example of how the driver can be used to load and query information in an Azure CosmosDb MongoDb vCore database. It is almost the same as the [MongodbAtlasVectorStoreDriver](#mongodb-atlas-vector-store-driver):
+Here is an example of how the driver can be used to load and query information in an Azure CosmosDb MongoDb vCore database. It is very similar to the Driver for [MongoDb Atlas](#mongodb-atlas):
 
 ```python
 from griptape.drivers import AzureMongoDbVectorStoreDriver, OpenAiEmbeddingDriver
@@ -274,7 +274,7 @@ result = vector_store.query(query="What is griptape?")
 print(result)
 ```
 
-## Redis Vector Store Driver
+## Redis
 
 !!! info
     This driver requires the `drivers-vector-redis` [extra](../index.md#extras).
@@ -319,7 +319,7 @@ The format for creating a vector index should be similar to the following:
 FT.CREATE idx:griptape ON hash PREFIX 1 "griptape:" SCHEMA namespace TAG vector VECTOR FLAT 6 TYPE FLOAT32 DIM 1536 DISTANCE_METRIC COSINE
 ```
 
-## OpenSearch Vector Store Driver
+## OpenSearch
 
 !!! info
     This driver requires the `drivers-vector-opensearch` [extra](../index.md#extras).
@@ -372,7 +372,7 @@ The body mappings for creating a vector index should look similar to the followi
 }
 ```
 
-## PGVector Vector Store Driver
+## PGVector
 
 !!! info
     This driver requires the `drivers-vector-postgresql` [extra](../index.md#extras).

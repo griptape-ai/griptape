@@ -635,7 +635,7 @@ pipeline.run("An image of a mountain shrouded by clouds")
 
 ## Image Query Task
 
-The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) executes a natural language query on one or more input images. This Task uses an [Image Query Engine](../engines/image-query-engines.md) configured with an [Image Query Driver](../drivers/image-query-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
+The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) executes a natural language query on one or more input images. This Task uses an [Image Query Engine](../engines/query-engines.md#image) configured with an [Image Query Driver](../drivers/image-query-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
 
 This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#textartifact)) and a list of [Image Artifacts](../data/artifacts.md#imageartifact) or a Callable returning these two values.
 

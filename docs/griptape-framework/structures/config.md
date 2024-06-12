@@ -89,7 +89,7 @@ agent = Agent(
 
 ### Custom Configs
 
-You can create your own [StructureConfig](../../reference/griptape/config/structure_config.md) by overriding the Drivers in [default_config](../../reference/griptape/config/structure_config.md#griptape.config.structure_config.StructureConfig.default_config).
+You can create your own [StructureConfig](../../reference/griptape/config/structure_config.md) by overriding relevant Drivers.
 The [StructureConfig](../../reference/griptape/config/structure_config.md) class includes "Dummy" Drivers for all types, which throw a [DummyException](../../reference/griptape/exceptions/dummy_exception.md) if invoked without being overridden. 
 This approach ensures that you are informed through clear error messages if you attempt to use Structures without proper Driver configurations.
 

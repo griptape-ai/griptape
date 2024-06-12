@@ -4,7 +4,7 @@ Loaders are used to load textual data from different sources and chunk it into [
 Each loader can be used to load a single "document" with [load()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load) or
 multiple documents with [load_collection()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load_collection).
 
-## Pdf Loader
+## PDF
 
 !!! info
     This driver requires the `loaders-pdf` [extra](../index.md#extras).
@@ -33,7 +33,7 @@ with open("attention.pdf", "rb") as attention, open("CoT.pdf", "rb") as cot:
 PdfLoader().load_collection(list(load_files(["attention.pdf", "CoT.pdf"]).values()))
 ```
 
-## Sql Loader
+## SQL
 
 Can be used to load data from a SQL database into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
@@ -54,7 +54,7 @@ SqlLoader(
 ).load_collection(["SELECT 'foo', 'bar';", "SELECT 'fizz', 'buzz';"])
 ```
 
-## Csv Loader
+## CSV
 
 Can be used to load CSV files into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
@@ -76,7 +76,7 @@ CsvLoader().load_collection(list(load_files(["tests/resources/cities.csv", "test
 ```
 
 
-## DataFrame Loader
+## DataFrame
 
 !!! info
     This driver requires the `loaders-dataframe` [extra](../index.md#extras).
@@ -100,7 +100,7 @@ DataFrameLoader().load_collection(
 ```
 
 
-## Text Loader
+## Text
 
 Used to load arbitrary text and text files:
 
@@ -124,9 +124,9 @@ with open("example.txt", "r") as f:
     )
 ```
 
-You can set a custom [tokenizer](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.tokenizer.md), [max_tokens](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.max_tokens.md) parameter, and [chunker](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.chunker.md).
+You can set a custom [tokenizer](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.tokenizer), [max_tokens](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.max_tokens) parameter, and [chunker](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.chunker).
 
-## Web Loader
+## Web
 
 !!! info
     This driver requires the `loaders-web` [extra](../index.md#extras).
@@ -145,7 +145,7 @@ WebLoader().load_collection(
 )
 ```
 
-## Image Loader
+## Image
 
 !!! info
     This driver requires the `loaders-image` [extra](../index.md#extras).
@@ -183,7 +183,7 @@ ImageLoader().load_collection(list(load_files(["tests/resources/mountain.png", "
 ```
 
 
-## Email Loader
+## Email
 
 !!! info
     This driver requires the `loaders-email` [extra](../index.md#extras).
@@ -200,7 +200,7 @@ loader.load(EmailLoader.EmailQuery(label="INBOX"))
 loader.load_collection([EmailLoader.EmailQuery(label="INBOX"), EmailLoader.EmailQuery(label="SENT")])
 ```
 
-## Audio Loader 
+## Audio
 
 !!! info
     This driver requires the `loaders-audio` [extra](../index.md#extras).
