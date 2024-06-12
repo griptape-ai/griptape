@@ -5,7 +5,7 @@ from schema import Schema, Literal
 from attrs import define, field
 from griptape.tools.base_griptape_cloud_client import BaseGriptapeCloudClient
 from griptape.utils.decorators import activity
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact, ErrorArtifact
 
 
 @define
@@ -37,6 +37,23 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
             response = post(url, json={"query": query}, headers=self.headers)
 
             return TextArtifact(response.text)
+        except exceptions.RequestException as err:
+            return ErrorArtifact(str(err))
+    
+    def raw_query(self, params: dict) -> ListArtifact | ErrorArtifact:
+        from requests import post, exceptions
+
+        query = params["values"]["query"]
+        url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
+
+        try:
+            response = post(url, json={"query": query, "raw": True}, headers=self.headers)
+
+            artifacts: list[BaseArtifact] = []
+            for query_result in response.result:
+                artifacts.append(BaseArtifact.from_json(query_result.meta["artifact"]))
+
+            return ListArtifact(artifacts)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
