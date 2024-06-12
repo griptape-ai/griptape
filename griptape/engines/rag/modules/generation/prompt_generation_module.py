@@ -9,13 +9,12 @@ from griptape.utils import J2
 
 @define(kw_only=True)
 class PromptGenerationModule(BaseGenerationModule):
-    answer_token_offset: int = field(default=400, kw_only=True)
+    answer_token_offset: int = field(default=400)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
-        kw_only=True,
+        default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL))
     )
     generate_system_template: Callable[[list[str], list[str], list[str]], str] = field(
-        default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_system_template_generator, takes_self=True)
     )
 
     def run(self, context: RagContext) -> RagContext:
@@ -53,7 +52,7 @@ class PromptGenerationModule(BaseGenerationModule):
     def default_system_template_generator(
         self, text_chunks: list[str], before_system_prompt: list, after_system_prompt: list
     ) -> str:
-        return J2("engines/rag/modules/prompt_generator/system.j2").render(
+        return J2("engines/rag/modules/prompt_generation/system.j2").render(
             text_chunks=text_chunks,
             before_system_prompt="\n\n".join(before_system_prompt),
             after_system_prompt="\n\n".join(after_system_prompt),

@@ -30,4 +30,4 @@ class RelatedQueryGenerationModule(BaseQueryModule):
         return [r.value for r in results]
 
     def default_system_template_generator(self, initial_query: str) -> str:
-        return J2("engines/rag/modules/query_generator/system.j2").render(initial_query=initial_query)
+        return J2("engines/rag/modules/query_generation/system.j2").render(initial_query=initial_query)

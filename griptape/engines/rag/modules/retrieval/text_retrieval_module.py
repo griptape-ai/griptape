@@ -11,19 +11,17 @@ if TYPE_CHECKING:
     from griptape.drivers import BaseVectorStoreDriver
 
 
-@define
+@define(kw_only=True)
 class TextRetrievalModule(BaseRetrievalModule):
-    namespace: Optional[str] = field(default=None, kw_only=True)
-    top_n: Optional[int] = field(default=None, kw_only=True)
-    vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
+    vector_store_driver: BaseVectorStoreDriver = field()
+    namespace: Optional[str] = field(default=None)
+    top_n: Optional[int] = field(default=None)
 
     def run(self, context: RagContext) -> list[TextArtifact]:
         all_queries = [context.initial_query] + context.alternative_queries
         namespace = self.namespace or context.namespace
 
         results = utils.execute_futures_list(
-
-
             [
                 self.futures_executor.submit(self.vector_store_driver.query, query, self.top_n, namespace, False)
                 for query in all_queries

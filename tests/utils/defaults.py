@@ -1,6 +1,6 @@
 from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
+from griptape.engines import PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import TextRetrievalModule, PromptGenerationModule
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
