@@ -91,12 +91,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
+            content = i.to_text_artifact().to_text()
             if i.is_user():
-                prompt_lines.append(f"User: {i.content}")
+                prompt_lines.append(f"User: {content}")
             elif i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
+                prompt_lines.append(f"Assistant: {content}")
             else:
-                prompt_lines.append(str(i.content))
+                prompt_lines.append(content)
 
         prompt_lines.append("Assistant:")
 

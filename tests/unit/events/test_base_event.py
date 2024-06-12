@@ -29,14 +29,30 @@ class TestBaseEvent:
     def test_start_prompt_event_from_dict(self):
         dict_value = {
             "type": "StartPromptEvent",
-            "timestamp": 123.0,
-            "prompt_stack": {
-                "inputs": [
-                    {"type": "TextPromptStackContent", "content": "foo", "role": "user"},
-                    {"type": "TextPromptStackContent", "content": "bar", "role": "system"},
-                ]
-            },
+            "id": "917298d4bf894b0a824a8fdb26717a0c",
+            "timestamp": 123,
             "model": "foo bar",
+            "prompt_stack": {
+                "type": "PromptStack",
+                "inputs": [
+                    {
+                        "type": "PromptStackElement",
+                        "role": "user",
+                        "content": [
+                            {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
+                        ],
+                        "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
+                    },
+                    {
+                        "type": "PromptStackElement",
+                        "role": "system",
+                        "content": [
+                            {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "bar"}}
+                        ],
+                        "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
+                    },
+                ],
+            },
         }
 
         event = BaseEvent.from_dict(dict_value)

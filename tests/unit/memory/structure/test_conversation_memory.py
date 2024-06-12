@@ -161,8 +161,8 @@ class TestConversationMemory:
 
         # We expect one run (2 prompt stack inputs) to be pruned.
         assert len(prompt_stack.inputs) == 11
-        assert prompt_stack.inputs[0].content == "fizz"
-        assert prompt_stack.inputs[1].content == "foo2"
-        assert prompt_stack.inputs[2].content == "bar2"
-        assert prompt_stack.inputs[-2].content == "foo"
-        assert prompt_stack.inputs[-1].content == "bar"
+        assert prompt_stack.inputs[0].content[0].artifact.value == "fizz"
+        assert prompt_stack.inputs[1].content[0].artifact.value == "foo2"
+        assert prompt_stack.inputs[2].content[0].artifact.value == "bar2"
+        assert prompt_stack.inputs[-2].content[0].artifact.value == "foo"
+        assert prompt_stack.inputs[-1].content[0].artifact.value == "bar"

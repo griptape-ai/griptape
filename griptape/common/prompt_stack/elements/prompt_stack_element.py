@@ -39,6 +39,9 @@ class PromptStackElement(BasePromptStackElement):
         else:
             return [content.artifact for content in self.content]
 
+    def __str__(self) -> str:
+        return self.to_text()
+
     def to_text(self) -> str:
         return self.to_text_artifact().to_text()
 
