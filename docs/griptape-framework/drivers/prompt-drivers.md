@@ -347,7 +347,7 @@ agent = Agent(
 agent.run("How many helicopters can a human eat in one sitting?")
 ```
 
-#### Amazon SageMaker Jumpstart
+### Amazon SageMaker Jumpstart
 
 !!! info
     This driver requires the `drivers-prompt-amazon-sagemaker` [extra](../index.md#extras).
