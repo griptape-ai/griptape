@@ -8,7 +8,6 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import (
-    BasePromptStackContent,
     PromptStack,
     PromptStackElement,
     TextPromptStackContent,
@@ -105,12 +104,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         messages = []
 
         for input in prompt_stack.inputs:
-            if len(input.content) == 1:
-                messages.append(
-                    {"role": input.role, "content": self.__prompt_stack_content_message_content(input.content[0])}
-                )
-            else:
-                raise ValueError(f"Invalid input content length: {len(input.content)}")
+            messages.append({"role": input.role, "content": TextPromptStackContent(input.to_text_artifact())})
 
         return messages
 
@@ -123,9 +117,3 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             return tokens
         else:
             raise ValueError("Invalid output type.")
-
-    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> str:
-        if isinstance(content, TextPromptStackContent):
-            return content.artifact.value
-        else:
-            raise ValueError(f"Unsupported content type: {type(content)}")

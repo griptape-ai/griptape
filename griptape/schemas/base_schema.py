@@ -33,14 +33,14 @@ class BaseSchema(Schema):
 
         if issubclass(attrs_cls, SerializableMixin):
             cls._resolve_types(attrs_cls)
-            data = {
-                a.alias or a.name: cls._get_field_for_type(a.type)
-                for a in attrs.fields(attrs_cls)
-                if a.metadata.get("serializable")
-            }
-            if "content" in data:
-                print(data["content"])
-            return SubSchema.from_dict(data, name=f"{attrs_cls.__name__}Schema")
+            return SubSchema.from_dict(
+                {
+                    a.alias or a.name: cls._get_field_for_type(a.type)
+                    for a in attrs.fields(attrs_cls)
+                    if a.metadata.get("serializable")
+                },
+                name=f"{attrs_cls.__name__}Schema",
+            )
         else:
             raise ValueError(f"Class must implement SerializableMixin: {attrs_cls}")
 

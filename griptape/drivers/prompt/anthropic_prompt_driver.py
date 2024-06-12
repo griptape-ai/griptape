@@ -107,6 +107,12 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             return "user"
 
+    def __to_content(self, input: PromptStackElement) -> str | list[dict]:
+        if all(isinstance(content, TextPromptStackContent) for content in input.content):
+            return input.to_text_artifact().to_text()
+        else:
+            return [self.__prompt_stack_content_message_content(content) for content in input.content]
+
     def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"type": "text", "text": content.artifact.to_text()}
@@ -140,9 +146,3 @@ class AnthropicPromptDriver(BasePromptDriver):
             return DeltaTextPromptStackContent(content_delta.delta.text, index=index)
         else:
             raise ValueError(f"Unsupported message content delta type : {delta_type}")
-
-    def __to_content(self, input: PromptStackElement) -> str | list[dict]:
-        if all(isinstance(content, TextPromptStackContent) for content in input.content):
-            return input.to_text_artifact().to_text()
-        else:
-            return [self.__prompt_stack_content_message_content(content) for content in input.content]

@@ -39,8 +39,7 @@ class TestGooglePromptDriver:
         # Then
         mock_generative_model.return_value.generate_content.assert_called_once_with(
             [
-                {"parts": ["system-input", "system-input"], "role": "user"},
-                {"parts": ["user-input"], "role": "user"},
+                {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
             ],
             generation_config=GenerationConfig(
@@ -64,8 +63,7 @@ class TestGooglePromptDriver:
         text_artifact = next(text_artifact_stream)
         mock_stream_generative_model.return_value.generate_content.assert_called_once_with(
             [
-                {"parts": ["system-input", "system-input"], "role": "user"},
-                {"parts": ["user-input"], "role": "user"},
+                {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
             ],
             stream=True,

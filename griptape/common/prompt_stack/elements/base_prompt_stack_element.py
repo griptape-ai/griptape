@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from attrs import define, field
 
@@ -23,6 +23,3 @@ class BasePromptStackElement(ABC, SerializableMixin):
 
     def is_assistant(self) -> bool:
         return self.role == self.ASSISTANT_ROLE
-
-    @abstractmethod
-    def to_text(self) -> str: ...

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Any
+from typing import Optional
 
 from attrs import define, field
 
@@ -31,11 +31,3 @@ class DeltaPromptStackElement(BasePromptStackElement):
         kw_only=True, default=None, metadata={"serializable": True}
     )
     delta_usage: DeltaUsage = field(kw_only=True, default=DeltaUsage(), metadata={"serializable": True})
-
-    @property
-    def value(self) -> Any:
-        if self.delta_content is not None:
-            return self.delta_content.text
-
-    def to_text(self) -> str:
-        return self.value.to_text()

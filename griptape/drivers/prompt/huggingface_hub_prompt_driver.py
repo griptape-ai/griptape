@@ -13,7 +13,6 @@ from griptape.common import (
     DeltaPromptStackElement,
     BaseDeltaPromptStackContent,
     TextPromptStackContent,
-    BasePromptStackContent,
     DeltaTextPromptStackContent,
 )
 from griptape.utils import import_optional_dependency
@@ -97,7 +96,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         messages = []
         for i in prompt_stack.inputs:
             if len(i.content) == 1:
-                messages.append({"role": i.role, "content": self.__prompt_stack_content_message_content(i.content[0])})
+                messages.append({"role": i.role, "content": TextPromptStackContent(i.to_text_artifact())})
             else:
                 raise ValueError("Invalid input content length.")
 
@@ -111,9 +110,3 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             return tokens
         else:
             raise ValueError("Invalid output type.")
-
-    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> str:
-        if isinstance(content, TextPromptStackContent):
-            return content.artifact.value
-        else:
-            raise ValueError(f"Unsupported content type: {type(content)}")

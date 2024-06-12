@@ -108,11 +108,9 @@ class GooglePromptDriver(BasePromptDriver):
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         inputs = [
-            {
-                "role": self.__to_role(input),
-                "parts": [self.__prompt_stack_content_message_content(content) for content in input.content],
-            }
+            {"role": self.__to_role(input), "parts": self.__to_content(input)}
             for input in prompt_stack.inputs
+            if not input.is_system()
         ]
 
         # Gemini does not have the notion of a system message, so we insert it as part of the first message in the history.
@@ -137,3 +135,6 @@ class GooglePromptDriver(BasePromptDriver):
             return "model"
         else:
             return "user"
+
+    def __to_content(self, input: PromptStackElement) -> list[ContentDict | str]:
+        return [self.__prompt_stack_content_message_content(content) for content in input.content]
