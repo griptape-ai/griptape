@@ -13,7 +13,7 @@ from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
-from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
+from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import TextRetrievalModule, RulesetsGenerationModule, PromptGenerationModule
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
