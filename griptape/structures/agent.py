@@ -5,7 +5,7 @@ from griptape.tools import BaseTool
 from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
-from griptape.utils import observable
+from griptape.utils.decorators import observable
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask

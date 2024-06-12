@@ -7,7 +7,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
 from griptape.tasks import BaseTask
 from griptape.memory.structure import Run
-from griptape.utils import observable
+from griptape.utils.decorators import observable
 
 
 @define

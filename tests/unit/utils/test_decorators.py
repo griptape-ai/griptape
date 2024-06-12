@@ -3,14 +3,14 @@ from unittest.mock import MagicMock, call
 from griptape.utils.observability.griptape_instrumentor import unwrap_function_wrapper
 
 
-class TestObservable:
+class TestDecorators:
     def test_observable_no_parenthesis(self, mocker):
-        import griptape.utils.observability.observable as observable_module
+        import griptape.utils.decorators as decorators
 
-        observable_spy = mocker.spy(observable_module, "observable")
-        create_observable_wrapper_spy = mocker.spy(observable_module, "create_observable_wrapper")
-        observable_wrapper_impl_spy = mocker.spy(observable_module, "observable_wrapper_impl")
-        from griptape.utils.observability.observable import observable
+        observable_spy = mocker.spy(decorators, "observable")
+        create_observable_wrapper_spy = mocker.spy(decorators, "create_observable_wrapper")
+        observable_wrapper_impl_spy = mocker.spy(decorators, "observable_wrapper_impl")
+        from griptape.utils.decorators import observable
 
         @observable
         def bar(*args, **kwargs):
@@ -37,12 +37,12 @@ class TestObservable:
         )
 
     def test_observable_empty_parenthesis(self, mocker):
-        import griptape.utils.observability.observable as observable_module
+        import griptape.utils.decorators as decorators
 
-        observable_spy = mocker.spy(observable_module, "observable")
-        create_observable_wrapper_spy = mocker.spy(observable_module, "create_observable_wrapper")
-        observable_wrapper_impl_spy = mocker.spy(observable_module, "observable_wrapper_impl")
-        from griptape.utils.observability.observable import observable
+        observable_spy = mocker.spy(decorators, "observable")
+        create_observable_wrapper_spy = mocker.spy(decorators, "create_observable_wrapper")
+        observable_wrapper_impl_spy = mocker.spy(decorators, "observable_wrapper_impl")
+        from griptape.utils.decorators import observable
 
         @observable()
         def bar(*args, **kwargs):
@@ -69,12 +69,12 @@ class TestObservable:
         )
 
     def test_observable_args(self, mocker):
-        import griptape.utils.observability.observable as observable_module
+        import griptape.utils.decorators as decorators
 
-        observable_spy = mocker.spy(observable_module, "observable")
-        create_observable_wrapper_spy = mocker.spy(observable_module, "create_observable_wrapper")
-        observable_wrapper_impl_spy = mocker.spy(observable_module, "observable_wrapper_impl")
-        from griptape.utils.observability.observable import observable
+        observable_spy = mocker.spy(decorators, "observable")
+        create_observable_wrapper_spy = mocker.spy(decorators, "create_observable_wrapper")
+        observable_wrapper_impl_spy = mocker.spy(decorators, "observable_wrapper_impl")
+        from griptape.utils.decorators import observable
 
         @observable("one", 2, {"th": "ree"}, a="b", b=6)
         def bar(*args, **kwargs):
@@ -101,7 +101,7 @@ class TestObservable:
         )
 
     def test_observable_wrapt_impl(self):
-        from griptape.utils.observability.observable import observable
+        from griptape.utils.decorators import observable
 
         @observable("one", 2, {"th": "ree"}, a="b", b=6)
         def bar(*args, **kwargs):
@@ -120,7 +120,7 @@ class TestObservable:
             return observable_wrapper_impl(*args[0], *args[1])
 
         wrapt.wrap_function_wrapper(
-            "griptape.utils.observability.observable", "observable_wrapper_impl", observable_wrapper_impl_patch
+            "griptape.utils.decorators", "observable_wrapper_impl", observable_wrapper_impl_patch
         )
 
         assert bar() == None
@@ -138,4 +138,4 @@ class TestObservable:
             ]
         )
 
-        unwrap_function_wrapper("griptape.utils.observability.observable", "observable_wrapper_impl")
+        unwrap_function_wrapper("griptape.utils.decorators", "observable_wrapper_impl")

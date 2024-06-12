@@ -17,7 +17,6 @@ from .stream import Stream
 from .load_artifact_from_memory import load_artifact_from_memory
 from .deprecation import deprecation_warn
 from .structure_visualizer import StructureVisualizer
-from .observability.observable import observable
 
 
 def minify_json(value: str) -> str:
@@ -46,5 +45,4 @@ __all__ = [
     "load_file",
     "load_files",
     "StructureVisualizer",
-    "observable",
 ]

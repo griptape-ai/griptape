@@ -24,7 +24,7 @@ from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorag
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask
 from griptape.utils import deprecation_warn
-from griptape.utils import observable
+from griptape.utils.decorators import observable
 
 if TYPE_CHECKING:
     from griptape.memory.structure import BaseConversationMemory

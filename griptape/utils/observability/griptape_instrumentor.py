@@ -35,12 +35,12 @@ class GriptapeInstrumentor(BaseInstrumentor):
             return observable_wrapper_impl(*args[0], *args[1])
 
         wrapt.wrap_function_wrapper(
-            "griptape.utils.observability.observable", "observable_wrapper_impl", observable_wrapper_impl_patch
+            "griptape.utils.decorators", "observable_wrapper_impl", observable_wrapper_impl_patch
         )
 
     @override
     def _uninstrument(self, **kwargs):
-        unwrap_function_wrapper("griptape.utils.observability.observable", "create_observable_wrapper")
+        unwrap_function_wrapper("griptape.utils.decorators", "observable_wrapper_impl")
 
 
 def unwrap_function_wrapper(module, name):
