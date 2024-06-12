@@ -39,7 +39,7 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
             return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
-    
+
     def raw_query(self, params: dict) -> ListArtifact | ErrorArtifact:
         from requests import post, exceptions
 
@@ -48,9 +48,10 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
 
         try:
             response = post(url, json={"query": query, "raw": True}, headers=self.headers)
+            response_body = response.json()
 
             artifacts: list[BaseArtifact] = []
-            for query_result in response.result:
+            for query_result in response_body.get("result", []):
                 artifacts.append(BaseArtifact.from_json(query_result.meta["artifact"]))
 
             return ListArtifact(artifacts)

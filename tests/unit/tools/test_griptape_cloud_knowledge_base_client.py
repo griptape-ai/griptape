@@ -1,6 +1,6 @@
 import pytest
 from requests import exceptions
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact, ListArtifact
 
 
 class TestGriptapeCloudKnowledgeBaseClient:
@@ -17,6 +17,19 @@ class TestGriptapeCloudKnowledgeBaseClient:
         mock_response.status_code = 200
         mock_response.json.return_value = {"description": "fizz buzz"}
         mocker.patch("requests.get", return_value=mock_response)
+
+        return GriptapeCloudKnowledgeBaseClient(
+            base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
+        )
+
+    @pytest.fixture
+    def client_raw(self, mocker):
+        from griptape.tools import GriptapeCloudKnowledgeBaseClient
+
+        mock_response = mocker.Mock()
+        mock_response.status_code = 201
+        mock_response.json.return_value = {"result": []}
+        mocker.patch("requests.post", return_value=mock_response)
 
         return GriptapeCloudKnowledgeBaseClient(
             base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
@@ -66,6 +79,13 @@ class TestGriptapeCloudKnowledgeBaseClient:
     def test_query_error(self, client_kb_error):
         assert isinstance(client_kb_error.query({"values": {"query": "foo bar"}}), ErrorArtifact)
         assert client_kb_error.query({"values": {"query": "foo bar"}}).value == "error"
+
+    def test_raw_query(self, client_raw):
+        assert isinstance(client_raw.raw_query({"values": {"query": "foo bar"}}), ListArtifact)
+
+    def test_raw_query_error(self, client_kb_error):
+        assert isinstance(client_kb_error.query({"values": {"query": "foo bar"}}), ErrorArtifact)
+        assert client_kb_error.raw_query({"values": {"query": "foo bar"}}).value == "error"
 
     def test_get_knowledge_base_description(self, client):
         assert client._get_knowledge_base_description() == "fizz buzz"
