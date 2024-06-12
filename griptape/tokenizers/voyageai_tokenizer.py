@@ -26,8 +26,5 @@ class VoyageAiTokenizer(BaseTokenizer):
         kw_only=True,
     )
 
-    def count_tokens(self, text: str | list) -> int:
-        if isinstance(text, str):
-            return self.client.count_tokens([text])
-        else:
-            raise ValueError("Text must be a str.")
+    def count_tokens(self, text: str) -> int:
+        return self.client.count_tokens([text])

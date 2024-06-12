@@ -20,6 +20,8 @@ class TestHuggingFacePipelinePromptDriver:
     def mock_autotokenizer(self, mocker):
         mock_autotokenizer = mocker.patch("transformers.AutoTokenizer.from_pretrained").return_value
         mock_autotokenizer.model_max_length = 42
+        mock_autotokenizer.apply_chat_template.return_value = [1, 2, 3]
+        mock_autotokenizer.decode.return_value = "model-output"
         return mock_autotokenizer
 
     @pytest.fixture
@@ -78,3 +80,13 @@ class TestHuggingFacePipelinePromptDriver:
 
         # Then
         assert e.value.args[0] == "invalid output format"
+
+    def test_prompt_stack_to_string(self, prompt_stack):
+        # Given
+        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
+
+        # When
+        result = driver.prompt_stack_to_string(prompt_stack)
+
+        # Then
+        assert result == "model-output"

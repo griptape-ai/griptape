@@ -27,7 +27,7 @@ agent.run("Generate a watercolor painting of a dog riding a skateboard")
 
 The [Amazon Bedrock Image Generation Driver](../../reference/griptape/drivers/image_generation/amazon_bedrock_image_generation_driver.md) provides multi-model access to image generation models hosted by Amazon Bedrock. This Driver manages API calls to the Bedrock API, while the specific Model Drivers below format the API requests and parse the responses.
 
-#### Bedrock Stable Diffusion Model Driver
+#### Stable Diffusion
 
 The [Bedrock Stable Diffusion Model Driver](../../reference/griptape/drivers/image_generation_model/bedrock_stable_diffusion_image_generation_model_driver.md) provides support for Stable Diffusion models hosted by Amazon Bedrock. This Model Driver supports configurations specific to Stable Diffusion, like style presets, clip guidance presets, and sampler.
 
@@ -58,7 +58,7 @@ agent = Agent(tools=[
 agent.run("Generate an image of a dog riding a skateboard")
 ```
 
-#### Bedrock Titan Image Generator Model Driver
+#### Titan 
 
 The [Bedrock Titan Image Generator Model Driver](../../reference/griptape/drivers/image_generation_model/bedrock_titan_image_generation_model_driver.md) provides support for Titan Image Generator models hosted by Amazon Bedrock. This Model Driver supports configurations specific to Titan Image Generator, like quality, seed, and cfg_scale.
 

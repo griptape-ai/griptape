@@ -7,8 +7,6 @@ from io import BytesIO
 import json
 import pytest
 
-from griptape.utils.constants import Constants
-
 
 def to_streaming_body(data: Any) -> StreamingBody:
     bytes = json.dumps(data).encode("utf-8")
@@ -57,7 +55,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
                         "max_new_tokens": 250,
                         "do_sample": True,
                         "eos_token_id": 1,
-                        "stop_strings": [Constants.RESPONSE_STOP_SEQUENCE],
+                        "stop_strings": [],
                         "return_full_text": False,
                     },
                 }
@@ -85,7 +83,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
                         "max_new_tokens": 250,
                         "do_sample": True,
                         "eos_token_id": 1,
-                        "stop_strings": [Constants.RESPONSE_STOP_SEQUENCE],
+                        "stop_strings": [],
                         "return_full_text": False,
                     },
                 }

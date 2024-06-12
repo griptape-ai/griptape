@@ -13,6 +13,7 @@ class TestOpenAiTokenizer:
             ("gpt-4-1106", 5),
             ("gpt-4-32k", 5),
             ("gpt-4", 5),
+            ("gpt-4o", 5),
             ("gpt-3.5-turbo-0301", 5),
             ("gpt-3.5-turbo-16k", 5),
             ("gpt-3.5-turbo", 5),
@@ -38,10 +39,12 @@ class TestOpenAiTokenizer:
             ("gpt-4-1106", 19),
             ("gpt-4-32k", 19),
             ("gpt-4", 19),
+            ("gpt-4o", 19),
             ("gpt-3.5-turbo-0301", 21),
             ("gpt-3.5-turbo-16k", 19),
             ("gpt-3.5-turbo", 19),
             ("gpt-35-turbo-16k", 19),
+            ("gpt-35-turbo", 19),
             ("gpt-35-turbo", 19),
         ],
         indirect=["tokenizer"],
@@ -54,10 +57,18 @@ class TestOpenAiTokenizer:
             == expected
         )
 
+    @pytest.mark.parametrize("tokenizer,expected", [("not-real-model", 19)], indirect=["tokenizer"])
+    def test_token_count_for_messages_unknown_model(self, tokenizer, expected):
+        with pytest.raises(NotImplementedError):
+            tokenizer.count_tokens(
+                [{"role": "system", "content": "foobar baz"}, {"role": "user", "content": "how foobar am I?"}]
+            )
+
     @pytest.mark.parametrize(
         "tokenizer,expected",
         [
             ("gpt-4-1106", 127987),
+            ("gpt-4o", 127987),
             ("gpt-4-32k", 32755),
             ("gpt-4", 8179),
             ("gpt-3.5-turbo-16k", 16371),
@@ -80,6 +91,7 @@ class TestOpenAiTokenizer:
             ("gpt-4-1106", 4091),
             ("gpt-4-32k", 4091),
             ("gpt-4", 4091),
+            ("gpt-4o", 4091),
             ("gpt-3.5-turbo-16k", 4091),
             ("gpt-3.5-turbo", 4091),
             ("gpt-35-turbo-16k", 4091),
