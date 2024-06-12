@@ -1,4 +1,5 @@
 import functools
+from typing import Generic, TypeVar
 import schema
 from schema import Schema
 from inspect import isfunction
@@ -34,7 +35,10 @@ def observable(*args, **kwargs):
     return Observable(*args, **kwargs)
 
 
-class Observable:
+T = TypeVar("T")
+
+
+class Observable(Generic[T]):
     def __init__(self, *args, **kwargs):
         self._instance = None
         if len(args) == 1 and len(kwargs) == 0 and isfunction(args[0]):

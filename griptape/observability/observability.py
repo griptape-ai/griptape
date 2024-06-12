@@ -12,12 +12,12 @@ class Observability:
     driver: BaseObservabilityDriver = field(kw_only=True)
 
     @staticmethod
-    def get_global_driver() -> BaseObservabilityDriver:
+    def get_global_driver() -> Optional[BaseObservabilityDriver]:
         global _global_observability_driver
         return _global_observability_driver
 
     @staticmethod
-    def set_global_driver(driver: BaseObservabilityDriver):
+    def set_global_driver(driver: Optional[BaseObservabilityDriver]):
         global _global_observability_driver
         _global_observability_driver = driver
 

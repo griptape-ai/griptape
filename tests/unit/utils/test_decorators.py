@@ -1,3 +1,4 @@
+import inspect
 import pytest
 
 from unittest.mock import call
@@ -19,6 +20,7 @@ class TestDecorators:
 
         @observable
         def bar(*args, **kwargs):
+            """bar's docstring"""
             if args:
                 return args[0]
 
@@ -28,6 +30,10 @@ class TestDecorators:
         assert bar("c", x="y") == "c"
 
         original_bar = bar.__wrapped__
+        assert bar.__name__ == original_bar.__name__
+        assert bar.__name__ == "bar"
+        assert bar.__doc__ == original_bar.__doc__
+        assert bar.__doc__ == "bar's docstring"
 
         assert invoke_observable_spy.call_count == 4
         invoke_observable_spy.assert_has_calls(
