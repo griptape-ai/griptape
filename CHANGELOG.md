@@ -17,6 +17,7 @@
 - **BREAKING**: Moved `load_artifacts` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
 - **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
 - **BREAKING**: Replaced `query_engine` with `vector_store_driver` in `VectorStoreClient`.
+- **BREAKING**: Replaced `TaskQueryTask` with `RagTask`.
 
 # Changelog
 All notable changes to this project will be documented in this file.
