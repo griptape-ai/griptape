@@ -1,8 +1,8 @@
 import functools
 import schema
 from schema import Schema
-import wrapt
 from inspect import isfunction
+from griptape.observability.observability import Observability
 
 
 CONFIG_SCHEMA = Schema({"description": str, schema.Optional("schema"): Schema})
@@ -31,37 +31,43 @@ def activity(config: dict):
 
 
 def observable(*args, **kwargs):
-    wrapped = args[0] if len(args) == 1 and len(kwargs) == 0 and isfunction(args[0]) else None
-    if wrapped is not None:
-        # The decorator was not called. In otherwords, the
-        # `@observable` annotation was not followed by parentheses.
-        return create_observable_wrapper()(wrapped)  # pyright: ignore
-
-    # The decorator was "called", possibly with arguments. In otherwords,
-    # the `@observable` annotation was followed by parentheses, for example
-    # `@observable()`, `@observable("x")` or `@observable(y="y")`.
-    return create_observable_wrapper(*args, **kwargs)
+    return Observable(*args, **kwargs)
 
 
-def create_observable_wrapper(*observable_args, **observable_kwargs):
-    @wrapt.decorator
-    def observable_wrapper(wrapped, instance, args, kwargs):
-        wrapt_params = (wrapped, instance, args, kwargs)
-        observable_params = (observable_args, observable_kwargs)
-        return observable_wrapper_impl(wrapt_params, observable_params)
+class Observable:
+    def __init__(self, *args, **kwargs):
+        self._instance = None
+        if len(args) == 1 and len(kwargs) == 0 and isfunction(args[0]):
+            # Parameterless call. In otherwords, the `@observable` annotation
+            # was not followed by parentheses.
+            self._func = args[0]
+            functools.update_wrapper(self, self._func)
+            self.decorator_args = ()
+            self.decorator_kwargs = {}
+        else:
+            # Parameterized call. In otherwords, the `@observable` annotation
+            # was followed by parentheses, for example `@observable()`,
+            # `@observable("x")` or `@observable(y="y")`.
+            self._func = None
+            self.decorator_args = args
+            self.decorator_kwargs = kwargs
 
-    return observable_wrapper
+    def __get__(self, obj, objtype=None):
+        self._instance = obj
+        return self
 
-
-# By default observable_wrapper_impl does nothing but invoke the
-# original function. If you decided to monkey patch this method to
-# change the behavior, the function is provided both the wrapt
-# function parameters (required to invoke the original function)
-# and the parameters that were passed to the original observable
-# decorator.
-#
-# This function can be monkey patched at runtime before or after
-# the observable decorator has been applied to the target functions.
-def observable_wrapper_impl(wrapt_params, observable_params):
-    wrapped, instance, args, kwargs = wrapt_params
-    return wrapped(*args, **kwargs)
+    def __call__(self, *args, **kwargs):
+        if self._func:
+            # Parameterless call (self._func was a set in __init__)
+            if self._instance:
+                args = (self._instance, *args)
+            return Observability.invoke_observable(
+                self._func, self._instance, args, kwargs, self.decorator_args, self.decorator_kwargs
+            )
+        else:
+            # Parameterized call, create and return the "rea" observable decorator
+            func = args[0]
+            decorated_func = Observable(func)
+            decorated_func.decorator_args = self.decorator_args
+            decorated_func.decorator_kwargs = self.decorator_kwargs
+            return decorated_func

@@ -1,15 +1,20 @@
-from unittest.mock import MagicMock, call
+import pytest
 
-from griptape.utils.observability.griptape_instrumentor import unwrap_function_wrapper
+from unittest.mock import call
+import griptape.utils.decorators as decorators
+import griptape.observability.observability as observability
 
 
 class TestDecorators:
-    def test_observable_no_parenthesis(self, mocker):
-        import griptape.utils.decorators as decorators
+    @pytest.fixture
+    def observable_spy(self, mocker):
+        return mocker.spy(decorators, "observable")
 
-        observable_spy = mocker.spy(decorators, "observable")
-        create_observable_wrapper_spy = mocker.spy(decorators, "create_observable_wrapper")
-        observable_wrapper_impl_spy = mocker.spy(decorators, "observable_wrapper_impl")
+    @pytest.fixture
+    def invoke_observable_spy(self, mocker):
+        return mocker.spy(observability.Observability, "invoke_observable")
+
+    def test_observable_function_no_parenthesis(self, invoke_observable_spy):
         from griptape.utils.decorators import observable
 
         @observable
@@ -22,26 +27,19 @@ class TestDecorators:
         assert bar("b", "2") == "b"
         assert bar("c", x="y") == "c"
 
-        assert observable_spy.call_count == 1
-        observable_spy.assert_called_with(bar)
-        assert create_observable_wrapper_spy.call_count == 1
-        create_observable_wrapper_spy.assert_called_with()
-        assert observable_wrapper_impl_spy.call_count == 4
-        observable_wrapper_impl_spy.assert_has_calls(
+        original_bar = bar.__wrapped__
+
+        assert invoke_observable_spy.call_count == 4
+        invoke_observable_spy.assert_has_calls(
             [
-                call((bar, None, (), {}), ((), {})),
-                call((bar, None, ("a",), {}), ((), {})),
-                call((bar, None, ("b", "2"), {}), ((), {})),
-                call((bar, None, ("c",), {"x": "y"}), ((), {})),
+                call(original_bar, None, (), {}, (), {}),
+                call(original_bar, None, ("a",), {}, (), {}),
+                call(original_bar, None, ("b", "2"), {}, (), {}),
+                call(original_bar, None, ("c",), {"x": "y"}, (), {}),
             ]
         )
 
-    def test_observable_empty_parenthesis(self, mocker):
-        import griptape.utils.decorators as decorators
-
-        observable_spy = mocker.spy(decorators, "observable")
-        create_observable_wrapper_spy = mocker.spy(decorators, "create_observable_wrapper")
-        observable_wrapper_impl_spy = mocker.spy(decorators, "observable_wrapper_impl")
+    def test_observable_function_empty_parenthesis(self, invoke_observable_spy):
         from griptape.utils.decorators import observable
 
         @observable()
@@ -54,26 +52,19 @@ class TestDecorators:
         assert bar("b", "2") == "b"
         assert bar("c", x="y") == "c"
 
-        assert observable_spy.call_count == 1
-        observable_spy.assert_called_with()
-        assert create_observable_wrapper_spy.call_count == 1
-        create_observable_wrapper_spy.assert_called_with()
-        assert observable_wrapper_impl_spy.call_count == 4
-        observable_wrapper_impl_spy.assert_has_calls(
+        original_bar = bar.__wrapped__
+
+        assert invoke_observable_spy.call_count == 4
+        invoke_observable_spy.assert_has_calls(
             [
-                call((bar, None, (), {}), ((), {})),
-                call((bar, None, ("a",), {}), ((), {})),
-                call((bar, None, ("b", "2"), {}), ((), {})),
-                call((bar, None, ("c",), {"x": "y"}), ((), {})),
+                call(original_bar, None, (), {}, (), {}),
+                call(original_bar, None, ("a",), {}, (), {}),
+                call(original_bar, None, ("b", "2"), {}, (), {}),
+                call(original_bar, None, ("c",), {"x": "y"}, (), {}),
             ]
         )
 
-    def test_observable_args(self, mocker):
-        import griptape.utils.decorators as decorators
-
-        observable_spy = mocker.spy(decorators, "observable")
-        create_observable_wrapper_spy = mocker.spy(decorators, "create_observable_wrapper")
-        observable_wrapper_impl_spy = mocker.spy(decorators, "observable_wrapper_impl")
+    def test_observable_function_args(self, invoke_observable_spy):
         from griptape.utils.decorators import observable
 
         @observable("one", 2, {"th": "ree"}, a="b", b=6)
@@ -86,56 +77,98 @@ class TestDecorators:
         assert bar("b", "2") == "b"
         assert bar("c", x="y") == "c"
 
-        assert observable_spy.call_count == 1
-        observable_spy.assert_called_with("one", 2, {"th": "ree"}, a="b", b=6)
-        assert create_observable_wrapper_spy.call_count == 1
-        create_observable_wrapper_spy.assert_called_with("one", 2, {"th": "ree"}, a="b", b=6)
-        assert observable_wrapper_impl_spy.call_count == 4
-        observable_wrapper_impl_spy.assert_has_calls(
+        original_bar = bar.__wrapped__
+
+        assert invoke_observable_spy.call_count == 4
+        invoke_observable_spy.assert_has_calls(
             [
-                call((bar, None, (), {}), (("one", 2, {"th": "ree"}), {"a": "b", "b": 6})),
-                call((bar, None, ("a",), {}), (("one", 2, {"th": "ree"}), {"a": "b", "b": 6})),
-                call((bar, None, ("b", "2"), {}), (("one", 2, {"th": "ree"}), {"a": "b", "b": 6})),
-                call((bar, None, ("c",), {"x": "y"}), (("one", 2, {"th": "ree"}), {"a": "b", "b": 6})),
+                call(original_bar, None, (), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+                call(original_bar, None, ("a",), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+                call(original_bar, None, ("b", "2"), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+                call(original_bar, None, ("c",), {"x": "y"}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
             ]
         )
 
-    def test_observable_wrapt_impl(self):
+    def test_observable_method_no_parenthesis(self, invoke_observable_spy):
         from griptape.utils.decorators import observable
 
-        @observable("one", 2, {"th": "ree"}, a="b", b=6)
-        def bar(*args, **kwargs):
-            if args:
-                return args[0]
+        class Foo:
+            @observable
+            def bar(self, *args, **kwargs):
+                if args:
+                    return args[0]
+                return None
 
-        import wrapt
+        foo = Foo()
+        assert foo.bar() == None
+        assert foo.bar("a") == "a"
+        assert foo.bar("b", "2") == "b"
+        assert foo.bar("c", x="y") == "c"
 
-        mock = MagicMock()
+        original_bar = foo.bar.__wrapped__
 
-        def observable_wrapper_impl(wrapped, instance, args, kwargs, observable_args, observable_kwargs):
-            mock.impl(wrapped, instance, args, kwargs, observable_args, observable_kwargs)
-            return wrapped(*args, **kwargs)
-
-        def observable_wrapper_impl_patch(wrapped, instance, args, kwargs):
-            return observable_wrapper_impl(*args[0], *args[1])
-
-        wrapt.wrap_function_wrapper(
-            "griptape.utils.decorators", "observable_wrapper_impl", observable_wrapper_impl_patch
-        )
-
-        assert bar() == None
-        assert bar("a") == "a"
-        assert bar("b", "2") == "b"
-        assert bar("c", x="y") == "c"
-
-        mock.impl.call_count == 4
-        mock.impl.assert_has_calls(
+        assert invoke_observable_spy.call_count == 4
+        invoke_observable_spy.assert_has_calls(
             [
-                call(bar, None, (), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
-                call(bar, None, ("a",), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
-                call(bar, None, ("b", "2"), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
-                call(bar, None, ("c",), {"x": "y"}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+                call(original_bar, foo, (foo,), {}, (), {}),
+                call(original_bar, foo, (foo, "a"), {}, (), {}),
+                call(original_bar, foo, (foo, "b", "2"), {}, (), {}),
+                call(original_bar, foo, (foo, "c"), {"x": "y"}, (), {}),
             ]
         )
 
-        unwrap_function_wrapper("griptape.utils.decorators", "observable_wrapper_impl")
+    def test_observable_method_empty_parenthesis(self, invoke_observable_spy):
+        from griptape.utils.decorators import observable
+
+        class Foo:
+            @observable()
+            def bar(self, *args, **kwargs):
+                if args:
+                    return args[0]
+                return None
+
+        foo = Foo()
+        assert foo.bar() == None
+        assert foo.bar("a") == "a"
+        assert foo.bar("b", "2") == "b"
+        assert foo.bar("c", x="y") == "c"
+
+        original_bar = foo.bar.__wrapped__
+
+        assert invoke_observable_spy.call_count == 4
+        invoke_observable_spy.assert_has_calls(
+            [
+                call(original_bar, foo, (foo,), {}, (), {}),
+                call(original_bar, foo, (foo, "a"), {}, (), {}),
+                call(original_bar, foo, (foo, "b", "2"), {}, (), {}),
+                call(original_bar, foo, (foo, "c"), {"x": "y"}, (), {}),
+            ]
+        )
+
+    def test_observable_method_args(self, invoke_observable_spy):
+        from griptape.utils.decorators import observable
+
+        class Foo:
+            @observable("one", 2, {"th": "ree"}, a="b", b=6)
+            def bar(self, *args, **kwargs):
+                if args:
+                    return args[0]
+                return None
+
+        foo = Foo()
+        assert foo.bar() == None
+        assert foo.bar("a") == "a"
+        assert foo.bar("b", "2") == "b"
+        assert foo.bar("c", x="y") == "c"
+
+        original_bar = foo.bar.__wrapped__
+
+        assert invoke_observable_spy.call_count == 4
+        invoke_observable_spy.assert_has_calls(
+            [
+                call(original_bar, foo, (foo,), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+                call(original_bar, foo, (foo, "a"), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+                call(original_bar, foo, (foo, "b", "2"), {}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+                call(original_bar, foo, (foo, "c"), {"x": "y"}, ("one", 2, {"th": "ree"}), {"a": "b", "b": 6}),
+            ]
+        )
