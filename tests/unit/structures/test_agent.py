@@ -252,3 +252,13 @@ class TestAgent:
 
         with pytest.deprecated_call():
             Agent(stream=True)
+
+    def finished_tasks(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+
+        agent.add_task(task)
+
+        agent.run("hello")
+
+        assert len(agent.finished_tasks) == 1
