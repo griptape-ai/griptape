@@ -1,10 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Callable
-from attrs import define, field, Factory
-from griptape.utils import PromptStack
-from griptape.utils import J2
-from griptape.tasks import BaseTextInputTask
+
+from typing import TYPE_CHECKING, Callable, Optional
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import BaseArtifact
+from griptape.common import PromptStack
+from griptape.tasks import BaseTextInputTask
+from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -27,7 +30,7 @@ class PromptTask(BaseTextInputTask):
 
         stack.add_system_input(self.generate_system_template(self))
 
-        stack.add_user_input(self.input.to_text())
+        stack.add_user_input(self.input)
 
         if self.output:
             stack.add_assistant_input(self.output.to_text())

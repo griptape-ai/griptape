@@ -39,19 +39,6 @@ class ActionsSubtask(BaseTextInputTask):
     _memory: Optional[TaskMemory] = None
 
     @property
-    def input(self) -> TextArtifact:
-        if isinstance(self._input, TextArtifact):
-            return self._input
-        elif isinstance(self._input, Callable):
-            return self._input(self)
-        else:
-            return TextArtifact(self._input)
-
-    @input.setter
-    def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
-        self._input = value
-
-    @property
     def origin_task(self) -> BaseTask:
         if self.parent_task_id:
             return self.structure.find_task(self.parent_task_id)
@@ -177,6 +164,14 @@ class ActionsSubtask(BaseTextInputTask):
 
     def actions_to_json(self) -> str:
         return json.dumps(self.actions_to_dicts())
+
+    def _process_task_input(
+        self, task_input: str | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
+    ) -> BaseArtifact:
+        if isinstance(task_input, TextArtifact):
+            return task_input
+        else:
+            return super()._process_task_input(task_input)
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)

@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
+from griptape.common.prompt_stack.elements.prompt_stack_element import PromptStackElement
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
 from griptape.rules import Ruleset
@@ -53,8 +54,8 @@ class VectorQueryEngine(BaseQueryEngine):
                 self.prompt_driver.prompt_stack_to_string(
                     PromptStack(
                         inputs=[
-                            PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
-                            PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
+                            PromptStackElement(system_message, role=PromptStackElement.SYSTEM_ROLE),
+                            PromptStackElement(user_message, role=PromptStackElement.USER_ROLE),
                         ]
                     )
                 )
@@ -71,14 +72,19 @@ class VectorQueryEngine(BaseQueryEngine):
 
                 break
 
-        return self.prompt_driver.run(
+        result = self.prompt_driver.run(
             PromptStack(
                 inputs=[
-                    PromptStack.Input(system_message, role=PromptStack.SYSTEM_ROLE),
-                    PromptStack.Input(user_message, role=PromptStack.USER_ROLE),
+                    PromptStackElement(system_message, role=PromptStackElement.SYSTEM_ROLE),
+                    PromptStackElement(user_message, role=PromptStackElement.USER_ROLE),
                 ]
             )
         )
+
+        if isinstance(result, TextArtifact):
+            return result
+        else:
+            raise ValueError("Prompt Driver did not return a TextArtifact.")
 
     def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         result = self.vector_store_driver.upsert_text_artifact(artifact, namespace=namespace)

@@ -4,8 +4,18 @@ from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
-from griptape.utils import PromptStack, import_optional_dependency
-from griptape.tokenizers import BaseTokenizer, CohereTokenizer
+from griptape.tokenizers import CohereTokenizer
+from griptape.common import (
+    PromptStack,
+    PromptStackElement,
+    DeltaPromptStackElement,
+    BaseDeltaPromptStackContent,
+    TextPromptStackContent,
+    BasePromptStackContent,
+    DeltaTextPromptStackContent,
+)
+from griptape.utils import import_optional_dependency
+from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
     from cohere import Client
@@ -31,30 +41,60 @@ class CoherePromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
         result = self.client.chat(**self._base_params(prompt_stack))
+        usage = result.meta.tokens
 
-        return TextArtifact(value=result.text)
+        return PromptStackElement(
+            content=[TextPromptStackContent(TextArtifact(result.text))],
+            role=PromptStackElement.ASSISTANT_ROLE,
+            usage=PromptStackElement.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
+        )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
         result = self.client.chat_stream(**self._base_params(prompt_stack))
 
         for event in result:
             if event.event_type == "text-generation":
-                yield TextArtifact(value=event.text)
+                yield DeltaTextPromptStackContent(event.text, index=0)
+            if event.event_type == "stream-end":
+                usage = event.response.meta.tokens
 
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        if prompt_input.is_system():
-            return {"role": "SYSTEM", "text": prompt_input.content}
-        elif prompt_input.is_user():
-            return {"role": "USER", "text": prompt_input.content}
-        else:
-            return {"role": "ASSISTANT", "text": prompt_input.content}
+                yield DeltaPromptStackElement(
+                    role=PromptStackElement.ASSISTANT_ROLE,
+                    delta_usage=DeltaPromptStackElement.DeltaUsage(
+                        input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
+                    ),
+                )
+
+    def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
+        return [
+            {
+                "role": self.__to_role(input),
+                "content": [self.__prompt_stack_content_message_content(content) for content in input.content],
+            }
+            for input in elements
+        ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        user_message = prompt_stack.inputs[-1].content
+        last_input = prompt_stack.inputs[-1]
+        if last_input is not None and len(last_input.content) == 1:
+            user_message = last_input.content[0].artifact.to_text()
+        else:
+            raise ValueError("User element must have exactly one content.")
 
-        history_messages = [self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs[:-1]]
+        history_messages = self._prompt_stack_elements_to_messages(
+            [input for input in prompt_stack.inputs[:-1] if not input.is_system()]
+        )
+
+        system_element = next((input for input in prompt_stack.inputs if input.is_system()), None)
+        if system_element is not None:
+            if len(system_element.content) == 1:
+                preamble = system_element.content[0].artifact.to_text()
+            else:
+                raise ValueError("System element must have exactly one content.")
+        else:
+            preamble = None
 
         return {
             "message": user_message,
@@ -62,4 +102,19 @@ class CoherePromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
+            **({"preamble": preamble} if preamble else {}),
         }
+
+    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
+        if isinstance(content, TextPromptStackContent):
+            return {"text": content.artifact.to_text()}
+        else:
+            raise ValueError(f"Unsupported content type: {type(content)}")
+
+    def __to_role(self, input: PromptStackElement) -> str:
+        if input.is_system():
+            return "SYSTEM"
+        elif input.is_user():
+            return "USER"
+        else:
+            return "CHATBOT"
