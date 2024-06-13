@@ -92,11 +92,11 @@ class Workflow(Structure):
 
     def try_run(self, *args) -> Workflow:
         self._execution_args = args
-        ordered_tasks = self.order_tasks()
         exit_loop = False
 
         while not self.is_finished() and not exit_loop:
             futures_list = {}
+            ordered_tasks = self.order_tasks()
 
             for task in ordered_tasks:
                 if task.can_execute():
