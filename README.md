@@ -96,7 +96,7 @@ agent = Agent(
     tools=[
         WebScraper(off_prompt=True),
         TaskMemoryClient(off_prompt=True),
-        FileManager()
+        FileManager(allowlist=["save_memory_artifacts_to_disk"]),
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")

@@ -237,7 +237,7 @@ agent = Agent(
     tools=[
         WebScraper(off_prompt=True),
         TaskMemoryClient(off_prompt=True, allowlist=["query"]),
-        FileManager(off_prompt=True), # FileManager returns an InfoArtifact which will not be stored in Task Memory regardless of the off_prompt setting
+        FileManager(off_prompt=True, allowlist=["save_memory_artifacts_to_disk"]), # FileManager returns an InfoArtifact which will not be stored in Task Memory regardless of the off_prompt setting
     ],
 )
 

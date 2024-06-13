@@ -18,7 +18,7 @@ pipeline = Pipeline()
 pipeline.add_tasks(
     ToolkitTask(
         "Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt", 
-        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), TaskMemoryClient(off_prompt=False)]
+        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True, allowlist=["save_memory_artifacts_to_disk"]), TaskMemoryClient(off_prompt=False)]
     ),
 )
 
