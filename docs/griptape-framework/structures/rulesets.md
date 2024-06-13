@@ -154,7 +154,7 @@ pipeline.run("I love skateboarding!")
 
 ### Rules
 
-You can pass [rules](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.prompt_task.PromptTask.rules) directly to the Task to have a Ruleset created for you.
+You can pass [rules](../../reference/griptape/mixins/rule_mixin.md#griptape.mixins.rule_mixin.RuleMixin.rules) directly to the Task to have a Ruleset created for you.
 
 ```python
 from griptape.structures import Pipeline

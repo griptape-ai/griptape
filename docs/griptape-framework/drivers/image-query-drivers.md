@@ -1,11 +1,11 @@
 # Image Query Drivers
 
-Image Query Drivers are used by [Image Query Engines](../engines/image-query-engines.md) to execute natural language queries on the contents of images. You can specify the provider and model used to query the image by providing the Engine with a particular Image Query Driver.
+Image Query Drivers are used by [Image Query Engines](../engines/query-engines.md#image) to execute natural language queries on the contents of images. You can specify the provider and model used to query the image by providing the Engine with a particular Image Query Driver.
 
 !!! info
     All Image Query Drivers default to a `max_tokens` of 256. It is recommended that you set this value to correspond to the desired response length. 
 
-## AnthropicImageQueryDriver
+## Anthropic
 
 !!! info
     To tune `max_tokens`, see [Anthropic's documentation on image tokens](https://docs.anthropic.com/claude/docs/vision#image-costs) for more information on how to relate token count to response length.
@@ -59,7 +59,7 @@ result = engine.run("Describe the weather in the image", [image_artifact1, image
 print(result)
 ```
 
-## OpenAiVisionImageQueryDriver
+## OpenAI
 
 !!! info
     While the `max_tokens` field is optional, it is recommended to set this to a value that corresponds to the desired response length. Without an explicit value, the model will default to very short responses. See [OpenAI's documentation](https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them) for more information on how to relate token count to response length.
@@ -86,7 +86,7 @@ with open("tests/resources/mountain.png", "rb") as f:
 engine.run("Describe the weather in the image", [image_artifact])
 ```
 
-## AzureOpenAiVisionImageQueryDriver
+## Azure OpenAI
     
 !!! info
     In order to use the `gpt-4-vision-preview` model on Azure OpenAI, the `gpt-4` model must be deployed with the version set to `vision-preview`. More information can be found in the [Azure OpenAI documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/gpt-with-vision).
@@ -117,7 +117,7 @@ with open("tests/resources/mountain.png", "rb") as f:
 engine.run("Describe the weather in the image", [image_artifact])
 ```
 
-## AmazonBedrockImageQueryDriver
+## Amazon Bedrock
 
 The [Amazon Bedrock Image Query Driver](../../reference/griptape/drivers/image_query/amazon_bedrock_image_query_driver.md) provides multi-model access to image query models hosted by Amazon Bedrock. This Driver manages API calls to the Bedrock API, while the specific Model Drivers below format the API requests and parse the responses.
 
