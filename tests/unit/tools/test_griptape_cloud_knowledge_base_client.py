@@ -74,18 +74,21 @@ class TestGriptapeCloudKnowledgeBaseClient:
         )
 
     def test_query(self, client):
-        assert isinstance(client.query({"values": {"query": "foo bar"}}), TextArtifact)
+        assert isinstance(client.query({"values": {"query": "foo bar", "raw": False}}), TextArtifact)
 
     def test_query_error(self, client_kb_error):
         assert isinstance(client_kb_error.query({"values": {"query": "foo bar"}}), ErrorArtifact)
         assert client_kb_error.query({"values": {"query": "foo bar"}}).value == "error"
 
-    def test_raw_query(self, client_raw):
-        assert isinstance(client_raw.raw_query({"values": {"query": "foo bar"}}), ListArtifact)
+    def test_query_raw_default(self, client):
+        assert isinstance(client.query({"values": {"query": "foo bar"}}), TextArtifact)
 
-    def test_raw_query_error(self, client_kb_error):
-        assert isinstance(client_kb_error.query({"values": {"query": "foo bar"}}), ErrorArtifact)
-        assert client_kb_error.raw_query({"values": {"query": "foo bar"}}).value == "error"
+    def test_query_raw(self, client_raw):
+        assert isinstance(client_raw.query({"values": {"query": "foo bar", "raw": True}}), ListArtifact)
+
+    def test_query_raw_error(self, client_kb_error):
+        assert isinstance(client_kb_error.query({"values": {"query": "foo bar", "raw": True}}), ErrorArtifact)
+        assert client_kb_error.query({"values": {"query": "foo bar"}}).value == "error"
 
     def test_get_knowledge_base_description(self, client):
         assert client._get_knowledge_base_description() == "fizz buzz"
