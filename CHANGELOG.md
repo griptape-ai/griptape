@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
 - Updated `HuggingFacePipelinePromptDriver` to use chat features of `transformers.TextGenerationPipeline`.
 - Updated `CoherePromptDriver` to use Cohere's latest SDK.
+- Moved Task reset logic for all Structures to `Structure.before_run`.
 
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
@@ -64,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web Loader to catch Exceptions and properly return an ErrorArtifact.
 - Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
+- Structure run args not being set immediately.
 
 ## [0.26.0] - 2024-06-04
 

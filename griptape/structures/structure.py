@@ -233,7 +233,11 @@ class Structure(ABC):
                 if task.id not in child.parent_ids:
                     child.parent_ids.append(task.id)
 
-    def before_run(self) -> None:
+    def before_run(self, args: Any) -> None:
+        self._execution_args = args
+
+        [task.reset() for task in self.tasks]
+
         self.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id, input_task_input=self.input_task.input, input_task_output=self.input_task.output
@@ -256,7 +260,7 @@ class Structure(ABC):
     def add_task(self, task: BaseTask) -> BaseTask: ...
 
     def run(self, *args) -> Structure:
-        self.before_run()
+        self.before_run(args)
 
         result = self.try_run(*args)
 
