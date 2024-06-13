@@ -62,7 +62,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        stack = PromptStack()
+        stack = PromptStack(actions=self.tools)
         memory = self.structure.conversation_memory
 
         stack.add_system_message(self.generate_system_template(self))
@@ -73,8 +73,12 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_message(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_assistant_message(self.generate_assistant_subtask_template(s))
-                stack.add_user_message(self.generate_user_subtask_template(s))
+                if self.prompt_driver.use_native_tools:
+                    stack.add_action_call_message(s.thought, s.actions)
+                    stack.add_action_result_message(self.generate_user_subtask_template(s), s.actions)
+                else:
+                    stack.add_assistant_message(self.generate_assistant_subtask_template(s))
+                    stack.add_user_message(self.generate_user_subtask_template(s))
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
@@ -99,6 +103,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
+            use_native_tools=self.prompt_driver.use_native_tools,
             stop_sequence=self.response_stop_sequence,
         )
 
