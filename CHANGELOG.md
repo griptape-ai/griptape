@@ -60,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance issue in `OpenAiChatPromptDriver` when extracting unused rate-limiting headers.
 - Streaming not working when using deprecated `Structure.stream` field.
 - Raw Tool output being lost when being executed by ActionsSubtask.
-- Web Loader catches Exceptions and returns ErrorArtifact
+- Web Loader to catch Exceptions and properly return an ErrorArtifact.
 
 ## [0.26.0] - 2024-06-04
 
