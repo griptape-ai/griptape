@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Re-order Workflow tasks on every task execution wave.
 - Web Loader to catch Exceptions and properly return an ErrorArtifact.
 - Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
+- `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 
 ## [0.26.0] - 2024-06-04
 
