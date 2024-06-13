@@ -129,7 +129,7 @@ class Structure(ABC):
 
     @property
     def output(self) -> Optional[BaseArtifact]:
-        return self.output_task.output if self.output_task else None
+        return self.output_task.output if self.output_task is not None else None
 
     @property
     def finished_tasks(self) -> list[BaseTask]:
