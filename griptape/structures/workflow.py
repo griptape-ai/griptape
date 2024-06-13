@@ -110,7 +110,7 @@ class Workflow(Structure):
 
                     break
 
-        if self.conversation_memory:
+        if self.conversation_memory and self.output is not None:
             if isinstance(self.input_task.input, tuple):
                 input_text = self.input_task.input[0].to_text()
             else:

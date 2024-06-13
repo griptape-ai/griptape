@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 from rich.logging import RichHandler
 
-from griptape.artifacts import BlobArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -126,6 +126,10 @@ class Structure(ABC):
     @property
     def output_task(self) -> Optional[BaseTask]:
         return self.tasks[-1] if self.tasks else None
+
+    @property
+    def output(self) -> Optional[BaseArtifact]:
+        return self.output_task.output if self.output_task is not None else None
 
     @property
     def finished_tasks(self) -> list[BaseTask]:

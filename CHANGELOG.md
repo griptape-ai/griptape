@@ -62,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Raw Tool output being lost when being executed by ActionsSubtask.
 - Re-order Workflow tasks on every task execution wave.
 - Web Loader to catch Exceptions and properly return an ErrorArtifact.
+- Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
 
 ## [0.26.0] - 2024-06-04
 
@@ -72,7 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AudioTranscriptionTask` and `AudioTranscriptionClient` for transcribing audio content in Structures.
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
-- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket. 
+- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
+- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
