@@ -1,5 +1,5 @@
 from griptape.drivers import HuggingFacePipelinePromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 import pytest
 
 
@@ -27,7 +27,6 @@ class TestHuggingFacePipelinePromptDriver:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")

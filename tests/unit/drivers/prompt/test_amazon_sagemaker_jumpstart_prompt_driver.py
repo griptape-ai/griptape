@@ -2,7 +2,7 @@ from typing import Any
 from botocore.response import StreamingBody
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.drivers.prompt.amazon_sagemaker_jumpstart_prompt_driver import AmazonSageMakerJumpstartPromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from io import BytesIO
 import json
 import pytest
@@ -18,7 +18,8 @@ class TestAmazonSageMakerJumpstartPromptDriver:
     @pytest.fixture(autouse=True)
     def tokenizer(self, mocker):
         from_pretrained = mocker.patch("transformers.AutoTokenizer").from_pretrained
-        from_pretrained.return_value.apply_chat_template.return_value = "foo\n\nUser: bar"
+        from_pretrained.return_value.decode.return_value = "foo\n\nUser: bar"
+        from_pretrained.return_value.apply_chat_template.return_value = ["foo", "\nbar"]
         from_pretrained.return_value.model_max_length = 8000
         from_pretrained.return_value.eos_token_id = 1
 

@@ -1,14 +1,23 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
 from collections.abc import Iterator
-from attrs import define, field, Factory
-from griptape.events import StartPromptEvent, FinishPromptEvent, CompletionChunkEvent
-from griptape.mixins.serializable_mixin import SerializableMixin
-from griptape.utils import PromptStack
-from griptape.mixins import ExponentialBackoffMixin
+from typing import TYPE_CHECKING, Optional
+
+from attrs import Factory, define, field
+
+from griptape.artifacts.text_artifact import TextArtifact
+from griptape.common import (
+    BaseDeltaPromptStackContent,
+    DeltaPromptStackElement,
+    DeltaTextPromptStackContent,
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+)
+from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 from griptape.tokenizers import BaseTokenizer
-from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -41,20 +50,16 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
-            self.structure.publish_event(
-                StartPromptEvent(
-                    model=self.model,
-                    token_count=self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack)),
-                    prompt_stack=prompt_stack,
-                    prompt=self.prompt_stack_to_string(prompt_stack),
-                )
-            )
+            self.structure.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
-    def after_run(self, result: TextArtifact) -> None:
+    def after_run(self, result: PromptStackElement) -> None:
         if self.structure:
             self.structure.publish_event(
                 FinishPromptEvent(
-                    model=self.model, result=result.value, token_count=self.tokenizer.count_tokens(result.value)
+                    model=self.model,
+                    result=result.value,
+                    input_token_count=result.usage.input_tokens,
+                    output_token_count=result.usage.output_tokens,
                 )
             )
 
@@ -64,19 +69,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 self.before_run(prompt_stack)
 
                 if self.stream:
-                    tokens = []
-                    completion_chunks = self.try_stream(prompt_stack)
-                    for chunk in completion_chunks:
-                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
-                        tokens.append(chunk.value)
-                    result = TextArtifact(value="".join(tokens).strip())
+                    result = self.__process_stream(prompt_stack)
                 else:
-                    result = self.try_run(prompt_stack)
-                    result.value = result.value.strip()
+                    result = self.__process_run(prompt_stack)
 
                 self.after_run(result)
 
-                return result
+                return result.to_text_artifact()
         else:
             raise Exception("prompt driver failed after all retry attempts")
 
@@ -93,19 +92,61 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         prompt_lines = []
 
         for i in prompt_stack.inputs:
+            content = i.to_text_artifact().to_text()
             if i.is_user():
-                prompt_lines.append(f"User: {i.content}")
+                prompt_lines.append(f"User: {content}")
             elif i.is_assistant():
-                prompt_lines.append(f"Assistant: {i.content}")
+                prompt_lines.append(f"Assistant: {content}")
             else:
-                prompt_lines.append(i.content)
+                prompt_lines.append(content)
 
         prompt_lines.append("Assistant:")
 
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact: ...
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]: ...
+    def try_stream(
+        self, prompt_stack: PromptStack
+    ) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]: ...
+
+    def __process_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+        result = self.try_run(prompt_stack)
+
+        return result
+
+    def __process_stream(self, prompt_stack: PromptStack) -> PromptStackElement:
+        delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
+        delta_usage = DeltaPromptStackElement.DeltaUsage()
+
+        deltas = self.try_stream(prompt_stack)
+
+        for delta in deltas:
+            if isinstance(delta, DeltaPromptStackElement):
+                delta_usage += delta.delta_usage
+            elif isinstance(delta, BaseDeltaPromptStackContent):
+                if delta.index in delta_contents:
+                    delta_contents[delta.index].append(delta)
+                else:
+                    delta_contents[delta.index] = [delta]
+
+                if isinstance(delta, DeltaTextPromptStackContent):
+                    self.structure.publish_event(CompletionChunkEvent(token=delta.text))
+
+        content = []
+        for index, deltas in delta_contents.items():
+            text_deltas = [delta for delta in deltas if isinstance(delta, DeltaTextPromptStackContent)]
+            if text_deltas:
+                content.append(TextPromptStackContent.from_deltas(text_deltas))
+
+        result = PromptStackElement(
+            content=content,
+            role=PromptStackElement.ASSISTANT_ROLE,
+            usage=PromptStackElement.Usage(
+                input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0
+            ),
+        )
+
+        return result

@@ -7,14 +7,21 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
+from griptape.common import (
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+    DeltaPromptStackElement,
+    BaseDeltaPromptStackContent,
+)
+from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     import boto3
 
-    from griptape.utils import PromptStack
+    from griptape.common import PromptStack
 
 
 @define
@@ -40,8 +47,11 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         if stream:
             raise ValueError("streaming is not supported")
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        payload = {"inputs": self._to_model_input(prompt_stack), "parameters": self._to_model_params(prompt_stack)}
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+        payload = {
+            "inputs": self.prompt_stack_to_string(prompt_stack),
+            "parameters": {**self._base_params(prompt_stack)},
+        }
 
         response = self.sagemaker_client.invoke_endpoint(
             EndpointName=self.endpoint,
@@ -59,31 +69,28 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
 
         if isinstance(decoded_body, list):
             if decoded_body:
-                return TextArtifact(decoded_body[0]["generated_text"])
+                generated_text = decoded_body[0]["generated_text"]
             else:
                 raise ValueError("model response is empty")
         else:
-            return TextArtifact(decoded_body["generated_text"])
+            generated_text = decoded_body["generated_text"]
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        raise NotImplementedError("streaming is not supported")
+        input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
+        output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        return {"role": prompt_input.role, "content": prompt_input.content}
-
-    def _to_model_input(self, prompt_stack: PromptStack) -> str:
-        prompt = self.tokenizer.tokenizer.apply_chat_template(
-            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
-            tokenize=False,
-            add_generation_prompt=True,
+        return PromptStackElement(
+            content=[TextPromptStackContent(TextArtifact(generated_text))],
+            role=PromptStackElement.ASSISTANT_ROLE,
+            usage=PromptStackElement.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-        if isinstance(prompt, str):
-            return prompt
-        else:
-            raise ValueError("Invalid output type.")
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+        raise NotImplementedError("streaming is not supported")
 
-    def _to_model_params(self, prompt_stack: PromptStack) -> dict:
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
         return {
             "temperature": self.temperature,
             "max_new_tokens": self.max_tokens,
@@ -92,3 +99,21 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             "stop_strings": self.tokenizer.stop_sequences,
             "return_full_text": False,
         }
+
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+        messages = []
+
+        for input in prompt_stack.inputs:
+            messages.append({"role": input.role, "content": TextPromptStackContent(input.to_text_artifact())})
+
+        return messages
+
+    def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
+        messages = self._prompt_stack_to_messages(prompt_stack)
+
+        tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
+
+        if isinstance(tokens, list):
+            return tokens
+        else:
+            raise ValueError("Invalid output type.")
