@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Streaming not working when using deprecated `Structure.stream` field.
 - Raw Tool output being lost when being executed by ActionsSubtask.
 - Re-order Workflow tasks on every task execution wave.
+- Web Loader to catch Exceptions and properly return an ErrorArtifact.
 
 ## [0.26.0] - 2024-06-04
 
