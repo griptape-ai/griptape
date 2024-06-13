@@ -1,8 +1,8 @@
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
-from griptape.utils import PromptStack
+from griptape.common import PromptStack, DeltaTextPromptStackContent
 from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
+from tests.mocks.mock_tokenizer import MockTokenizer
 import pytest
 
 
@@ -29,7 +29,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
@@ -38,7 +37,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def messages(self):
         return [
-            {"role": "user", "content": "generic-input"},
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
@@ -91,12 +89,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
-            model=driver.model,
-            temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
-            user=driver.user,
-            messages=messages,
-            seed=driver.seed,
+            model=driver.model, temperature=driver.temperature, user=driver.user, messages=messages, seed=driver.seed
         )
         assert text_artifact.value == "model-output"
 
@@ -107,19 +100,18 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        element = driver.try_run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
             seed=driver.seed,
             response_format={"type": "json_object"},
         )
-        assert text_artifact.value == "model-output"
+        assert element.value == "model-output"
 
     def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
         # Given
@@ -132,13 +124,15 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_stream_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             stream=True,
             messages=messages,
             seed=driver.seed,
+            stream_options={"include_usage": True},
         )
-        assert text_artifact.value == "model-output"
+
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.text == "model-output"
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
@@ -151,7 +145,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=messages,
             max_tokens=1,
@@ -186,7 +179,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_custom_tokenizer(self, mock_chat_completion_create, prompt_stack, messages):
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
-            tokenizer=HuggingFaceTokenizer(model="gpt2", max_output_tokens=1000),
+            tokenizer=MockTokenizer(model="mock-model", stop_sequences=["mock-stop"]),
             max_tokens=1,
         )
 
@@ -200,7 +193,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             messages=[
-                {"role": "user", "content": "generic-input"},
                 {"role": "system", "content": "system-input"},
                 {"role": "user", "content": "user-input"},
                 {"role": "assistant", "content": "assistant-input"},

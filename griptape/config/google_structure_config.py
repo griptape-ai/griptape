@@ -14,7 +14,9 @@ from griptape.drivers import (
 @define
 class GoogleStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: GooglePromptDriver(model="gemini-pro")), kw_only=True, metadata={"serializable": True}
+        default=Factory(lambda: GooglePromptDriver(model="gemini-1.5-flash")),
+        kw_only=True,
+        metadata={"serializable": True},
     )
     embedding_driver: BaseEmbeddingDriver = field(
         default=Factory(lambda: GoogleEmbeddingDriver(model="models/embedding-001")),

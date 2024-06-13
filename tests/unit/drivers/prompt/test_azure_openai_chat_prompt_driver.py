@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import Mock
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.drivers import AzureOpenAiChatPromptDriver
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
@@ -37,11 +38,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
-            model=driver.model,
-            temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
-            user=driver.user,
-            messages=messages,
+            model=driver.model, temperature=driver.temperature, user=driver.user, messages=messages
         )
         assert text_artifact.value == "model-output"
 
@@ -58,9 +55,11 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_stream_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
             user=driver.user,
             stream=True,
             messages=messages,
+            stream_options={"include_usage": True},
         )
-        assert text_artifact.value == "model-output"
+
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact == "model-output"

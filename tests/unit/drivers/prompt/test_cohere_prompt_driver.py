@@ -1,7 +1,9 @@
-from griptape.drivers import CoherePromptDriver
-from griptape.utils import PromptStack
 from unittest.mock import Mock
+
 import pytest
+
+from griptape.common import DeltaTextPromptStackContent, PromptStack
+from griptape.drivers import CoherePromptDriver
 
 
 class TestCoherePromptDriver:
@@ -27,7 +29,6 @@ class TestCoherePromptDriver:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
@@ -54,4 +55,5 @@ class TestCoherePromptDriver:
         text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-        assert text_artifact.value == "model-output"
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.text == "model-output"

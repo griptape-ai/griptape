@@ -1,10 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Callable
 from attrs import define, field
 from griptape.tools import BaseTool
 from griptape.memory.structure import Run
 from griptape.structures import Structure
-from griptape.tasks import PromptTask, ToolkitTask
+from griptape.tasks import PromptTask, ToolkitTask, BaseTextInputTask
+from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -12,7 +13,9 @@ if TYPE_CHECKING:
 
 @define
 class Agent(Structure):
-    input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
+    input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+        default=BaseTextInputTask.DEFAULT_INPUT_TEMPLATE
+    )
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
@@ -20,11 +23,9 @@ class Agent(Structure):
         super().__attrs_post_init__()
         if len(self.tasks) == 0:
             if self.tools:
-                task = ToolkitTask(
-                    self.input_template, tools=self.tools, max_meta_memory_entries=self.max_meta_memory_entries
-                )
+                task = ToolkitTask(self.input, tools=self.tools, max_meta_memory_entries=self.max_meta_memory_entries)
             else:
-                task = PromptTask(self.input_template, max_meta_memory_entries=self.max_meta_memory_entries)
+                task = PromptTask(self.input, max_meta_memory_entries=self.max_meta_memory_entries)
 
             self.add_task(task)
 

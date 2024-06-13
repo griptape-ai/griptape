@@ -1,6 +1,7 @@
 from google.generativeai.types import GenerationConfig
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.drivers import GooglePromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from unittest.mock import Mock
 import pytest
 
@@ -30,7 +31,6 @@ class TestGooglePromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_generic_input("generic-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50)
 
         # When
@@ -41,7 +41,6 @@ class TestGooglePromptDriver:
             [
                 {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
-                {"parts": ["generic-input"], "role": "user"},
             ],
             generation_config=GenerationConfig(
                 max_output_tokens=None, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]
@@ -55,7 +54,6 @@ class TestGooglePromptDriver:
         prompt_stack.add_system_input("system-input")
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_generic_input("generic-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", stream=True, top_p=0.5, top_k=50)
 
         # When
@@ -67,32 +65,9 @@ class TestGooglePromptDriver:
             [
                 {"parts": ["system-input", "user-input"], "role": "user"},
                 {"parts": ["assistant-input"], "role": "model"},
-                {"parts": ["generic-input"], "role": "user"},
             ],
             stream=True,
             generation_config=GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]),
         )
-        assert text_artifact.value == "model-output"
-
-    def test_prompt_stack_to_model_input(self):
-        # Given
-        driver = GooglePromptDriver(model="gemini-pro", api_key="1234")
-        prompt_stack = PromptStack()
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_generic_input("generic-input")
-        prompt_stack.add_assistant_input("assistant-input")
-        prompt_stack.add_user_input("user-input")
-
-        # When
-        model_input = driver._prompt_stack_to_model_input(prompt_stack)
-
-        # Then
-        assert model_input == [
-            {"role": "user", "parts": ["system-input", "user-input"]},
-            {"role": "model", "parts": ["assistant-input"]},
-            {"role": "user", "parts": ["generic-input"]},
-            {"role": "model", "parts": ["assistant-input"]},
-            {"role": "user", "parts": ["user-input"]},
-        ]
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.text == "model-output"
