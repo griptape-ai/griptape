@@ -72,14 +72,19 @@ class VectorQueryEngine(BaseQueryEngine):
 
                 break
 
-        return self.prompt_driver.run(
+        result = self.prompt_driver.run(
             PromptStack(
                 inputs=[
                     PromptStackElement(system_message, role=PromptStack.SYSTEM_ROLE),
                     PromptStackElement(user_message, role=PromptStack.USER_ROLE),
                 ]
             )
-        ).to_text_artifact()
+        )
+
+        if isinstance(result, TextArtifact):
+            return result
+        else:
+            raise ValueError("Prompt Driver did not return a TextArtifact.")
 
     def upsert_text_artifact(self, artifact: TextArtifact, namespace: Optional[str] = None) -> str:
         result = self.vector_store_driver.upsert_text_artifact(artifact, namespace=namespace)
