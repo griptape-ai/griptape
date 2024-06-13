@@ -49,7 +49,7 @@ class Pipeline(Structure):
 
         self.__run_from_task(self.input_task)
 
-        if self.conversation_memory:
+        if self.conversation_memory and self.output_task.output is not None:
             if isinstance(self.input_task.input, tuple):
                 input_text = self.input_task.input[0].to_text()
             else:
