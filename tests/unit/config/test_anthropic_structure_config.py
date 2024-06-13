@@ -23,6 +23,7 @@ class TestAnthropicStructureConfig:
                 "model": "claude-3-opus-20240229",
                 "top_p": 0.999,
                 "top_k": 250,
+                "use_native_tools": False,
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {

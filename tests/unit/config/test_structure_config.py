@@ -10,7 +10,13 @@ class TestStructureConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "StructureConfig",
-            "prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False},
+            "prompt_driver": {
+                "type": "DummyPromptDriver",
+                "temperature": 0.1,
+                "max_tokens": None,
+                "stream": False,
+                "use_native_tools": False,
+            },
             "conversation_memory_driver": None,
             "embedding_driver": {"type": "DummyEmbeddingDriver"},
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},

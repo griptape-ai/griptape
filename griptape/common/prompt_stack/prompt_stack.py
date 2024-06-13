@@ -1,14 +1,29 @@
 from __future__ import annotations
+
+import json
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact, ImageArtifact
+from griptape.artifacts import ActionCallArtifact, BaseArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.common import (
+    ActionCallPromptStackContent,
+    ImagePromptStackContent,
+    PromptStackElement,
+    TextPromptStackContent,
+)
+from griptape.common.prompt_stack.contents.action_result_prompt_stack_content import ActionResultPromptStackContent
 from griptape.mixins import SerializableMixin
-from griptape.common import PromptStackMessage, TextPromptStackContent, BasePromptStackContent, ImagePromptStackContent
+
+if TYPE_CHECKING:
+    from griptape.tools import BaseTool
+    from griptape.tasks.actions_subtask import ActionsSubtask
 
 
 @define
 class PromptStack(SerializableMixin):
-    messages: list[PromptStackMessage] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    inputs: list[PromptStackElement] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    actions: list[BaseTool] = field(factory=list, kw_only=True)
 
     def add_message(self, artifact: str | BaseArtifact, role: str) -> PromptStackMessage:
         new_content = self.__process_artifact(artifact)
@@ -20,8 +35,8 @@ class PromptStack(SerializableMixin):
     def add_system_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
         return self.add_message(artifact, PromptStackMessage.SYSTEM_ROLE)
 
-    def add_user_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
-        return self.add_message(artifact, PromptStackMessage.USER_ROLE)
+    def add_user_input(self, input_content: str | BaseArtifact) -> PromptStackElement:
+        return self.add_input(input_content, PromptStackElement.USER_ROLE)
 
     def add_assistant_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
         return self.add_message(artifact, PromptStackMessage.ASSISTANT_ROLE)

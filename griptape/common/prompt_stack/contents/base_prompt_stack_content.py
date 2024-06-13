@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from collections.abc import Sequence
 
 from attrs import define, field
@@ -28,4 +28,5 @@ class BasePromptStackContent(ABC, SerializableMixin):
         return len(self.artifact)
 
     @classmethod
+    @abstractmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> BasePromptStackContent: ...
