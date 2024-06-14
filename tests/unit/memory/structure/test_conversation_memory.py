@@ -6,12 +6,13 @@ from griptape.structures import Pipeline
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 from griptape.tasks import PromptTask
+from griptape.artifacts import TextArtifact
 
 
 class TestConversationMemory:
     def test_add_run(self):
         memory = ConversationMemory()
-        run = Run(input="test", output="test")
+        run = Run(input=TextArtifact("foo"), output=TextArtifact("bar"))
 
         memory.add_run(run)
 
@@ -19,21 +20,21 @@ class TestConversationMemory:
 
     def test_to_json(self):
         memory = ConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
 
         assert json.loads(memory.to_json())["type"] == "ConversationMemory"
-        assert json.loads(memory.to_json())["runs"][0]["input"] == "foo"
+        assert json.loads(memory.to_json())["runs"][0]["input"]["value"] == "foo"
 
     def test_to_dict(self):
         memory = ConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
 
         assert memory.to_dict()["type"] == "ConversationMemory"
-        assert memory.to_dict()["runs"][0]["input"] == "foo"
+        assert memory.to_dict()["runs"][0]["input"]["value"] == "foo"
 
     def test_to_prompt_stack(self):
         memory = ConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
 
         prompt_stack = memory.to_prompt_stack()
 
@@ -42,19 +43,19 @@ class TestConversationMemory:
 
     def test_from_dict(self):
         memory = ConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
         memory_dict = memory.to_dict()
 
         assert isinstance(BaseConversationMemory.from_dict(memory_dict), ConversationMemory)
-        assert BaseConversationMemory.from_dict(memory_dict).runs[0].input == "foo"
+        assert BaseConversationMemory.from_dict(memory_dict).runs[0].input.value == "foo"
 
     def test_from_json(self):
         memory = ConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
         memory_dict = memory.to_dict()
 
         assert isinstance(memory.from_dict(memory_dict), ConversationMemory)
-        assert memory.from_dict(memory_dict).runs[0].input == "foo"
+        assert memory.from_dict(memory_dict).runs[0].input.value == "foo"
 
     def test_buffering(self):
         memory = ConversationMemory(max_runs=2)
@@ -70,24 +71,24 @@ class TestConversationMemory:
         pipeline.run("run5")
 
         assert len(pipeline.conversation_memory.runs) == 2
-        assert pipeline.conversation_memory.runs[0].input == "run4"
-        assert pipeline.conversation_memory.runs[1].input == "run5"
+        assert pipeline.conversation_memory.runs[0].input.value == "run4"
+        assert pipeline.conversation_memory.runs[1].input.value == "run5"
 
     def test_add_to_prompt_stack_autopruing_disabled(self):
         agent = Agent(prompt_driver=MockPromptDriver())
         memory = ConversationMemory(
             autoprune=False,
             runs=[
-                Run(input="foo1", output="bar1"),
-                Run(input="foo2", output="bar2"),
-                Run(input="foo3", output="bar3"),
-                Run(input="foo4", output="bar4"),
-                Run(input="foo5", output="bar5"),
+                Run(input=TextArtifact("foo1"), output=TextArtifact("bar1")),
+                Run(input=TextArtifact("foo2"), output=TextArtifact("bar2")),
+                Run(input=TextArtifact("foo3"), output=TextArtifact("bar3")),
+                Run(input=TextArtifact("foo4"), output=TextArtifact("bar4")),
+                Run(input=TextArtifact("foo5"), output=TextArtifact("bar5")),
             ],
         )
         memory.structure = agent
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input("foo")
+        prompt_stack.add_user_input(TextArtifact("foo"))
         prompt_stack.add_assistant_input("bar")
         memory.add_to_prompt_stack(prompt_stack)
 
@@ -99,11 +100,11 @@ class TestConversationMemory:
         memory = ConversationMemory(
             autoprune=True,
             runs=[
-                Run(input="foo1", output="bar1"),
-                Run(input="foo2", output="bar2"),
-                Run(input="foo3", output="bar3"),
-                Run(input="foo4", output="bar4"),
-                Run(input="foo5", output="bar5"),
+                Run(input=TextArtifact("foo1"), output=TextArtifact("bar1")),
+                Run(input=TextArtifact("foo2"), output=TextArtifact("bar2")),
+                Run(input=TextArtifact("foo3"), output=TextArtifact("bar3")),
+                Run(input=TextArtifact("foo4"), output=TextArtifact("bar4")),
+                Run(input=TextArtifact("foo5"), output=TextArtifact("bar5")),
             ],
         )
         memory.structure = agent
@@ -120,11 +121,11 @@ class TestConversationMemory:
         memory = ConversationMemory(
             autoprune=True,
             runs=[
-                Run(input="foo1", output="bar1"),
-                Run(input="foo2", output="bar2"),
-                Run(input="foo3", output="bar3"),
-                Run(input="foo4", output="bar4"),
-                Run(input="foo5", output="bar5"),
+                Run(input=TextArtifact("foo1"), output=TextArtifact("bar1")),
+                Run(input=TextArtifact("foo2"), output=TextArtifact("bar2")),
+                Run(input=TextArtifact("foo3"), output=TextArtifact("bar3")),
+                Run(input=TextArtifact("foo4"), output=TextArtifact("bar4")),
+                Run(input=TextArtifact("foo5"), output=TextArtifact("bar5")),
             ],
         )
         memory.structure = agent
@@ -144,11 +145,11 @@ class TestConversationMemory:
             autoprune=True,
             runs=[
                 # All of these sum to 155 tokens with the MockTokenizer.
-                Run(input="foo1", output="bar1"),
-                Run(input="foo2", output="bar2"),
-                Run(input="foo3", output="bar3"),
-                Run(input="foo4", output="bar4"),
-                Run(input="foo5", output="bar5"),
+                Run(input=TextArtifact("foo1"), output=TextArtifact("bar1")),
+                Run(input=TextArtifact("foo2"), output=TextArtifact("bar2")),
+                Run(input=TextArtifact("foo3"), output=TextArtifact("bar3")),
+                Run(input=TextArtifact("foo4"), output=TextArtifact("bar4")),
+                Run(input=TextArtifact("foo5"), output=TextArtifact("bar5")),
             ],
         )
         memory.structure = agent
