@@ -26,6 +26,7 @@ from .outpainting_image_generation_client.tool import OutpaintingImageGeneration
 from .griptape_cloud_knowledge_base_client.tool import GriptapeCloudKnowledgeBaseClient
 from .structure_run_client.tool import StructureRunClient
 from .image_query_client.tool import ImageQueryClient
+from .rag_engine_client.tool import RagEngineClient
 
 __all__ = [
     "BaseTool",
@@ -56,4 +57,5 @@ __all__ = [
     "GriptapeCloudKnowledgeBaseClient",
     "StructureRunClient",
     "ImageQueryClient",
+    "RagEngineClient",
 ]
