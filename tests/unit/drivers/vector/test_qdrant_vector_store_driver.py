@@ -41,18 +41,38 @@ class TestQdrantVectorVectorStoreDriver:
 
         driver = QdrantVectorStoreDriver(
             location="/some/path",
-            url="some_url",
+            url="http://some_url",
             host="localhost",
+            path=None,
             port=8080,
-            prefer_grpc=True,
             grpc_port=50051,
-            embedding_driver=embedding_driver,
+            prefer_grpc=True,
+            api_key=None,
+            https=False,
+            prefix=None,
+            force_disable_check_same_thread=False,
+            timeout=5,
+            distance="COSINE",
             collection_name="some_collection",
+            vector_name=None,
+            content_payload_key="data",
+            embedding_driver=embedding_driver,
         )
 
         mock_import_optional_dependency.assert_called_with("qdrant_client")
         mock_qdrant_client.QdrantClient.assert_called_with(
-            location="/some/path", url="some_url", host="localhost", port=8080, prefer_grpc=True, grpc_port=50051
+            location="/some/path",
+            url="http://some_url",
+            host="localhost",
+            path=None,
+            port=8080,
+            grpc_port=50051,
+            prefer_grpc=True,
+            api_key=None,
+            https=False,
+            prefix=None,
+            force_disable_check_same_thread=False,
+            timeout=5,
         )
 
     def test_upsert_vector(self, driver, embedding_driver):
