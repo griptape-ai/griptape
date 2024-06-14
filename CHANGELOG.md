@@ -5,6 +5,7 @@
   - `RagContext`
   - RAG stages
   - RAG modules
+- `RagEngineClient` tool
 - `utils.execute_futures_list`
 - `LocalVectorStoreDriver.persist_file`
 - `Entry.to_artifact`
