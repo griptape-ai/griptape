@@ -75,22 +75,14 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             vector_id (str): ID of the vector to delete.
         """
         # rest = import_optional_dependency("qdrant_client.http.models")
-        try:
-            deletion_response = self.client.delete(
-                collection_name=self.collection_name,
-                points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(
-                    points=[vector_id]
-                ),
-            )
-            if (
-                deletion_response.status
-                == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED
-            ):
-                print(f"ID {vector_id} is successfully deleted")
-            else:
-                print(f"Failed to delete ID {vector_id}. Status: {deletion_response.status}")
-        except Exception as e:
-            print(f"An error occurred while trying to delete ID {vector_id}: {e}")
+        deletion_response = self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(points=[vector_id]),
+        )
+        if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
+            print(f"ID {vector_id} is successfully deleted")
+        else:
+            print(f"Failed to delete ID {vector_id}. Status: {deletion_response.status}")
 
     def query(
         self,
@@ -179,19 +171,15 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             Optional[BaseVectorStoreDriver.Entry]: Vector entry if found, else None.
         """
-        try:
-            results = self.client.retrieve(collection_name=self.collection_name, ids=[vector_id])
-            if results:
-                entry = results[0]
-                return BaseVectorStoreDriver.Entry(
-                    id=entry.id,
-                    vector=entry.vector,
-                    meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
-                )
-            else:
-                return None
-        except Exception as e:
-            print(f"An error occurred while trying to retrieve the vector by ID: {e}")
+        results = self.client.retrieve(collection_name=self.collection_name, ids=[vector_id])
+        if results:
+            entry = results[0]
+            return BaseVectorStoreDriver.Entry(
+                id=entry.id,
+                vector=entry.vector,
+                meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
+            )
+        else:
             return None
 
     def load_entries(self, namespace: Optional[str] = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
@@ -208,18 +196,17 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         with_payload = kwargs.get("with_payload", True)
         with_vectors = kwargs.get("with_vectors", True)
 
-        try:
-            results = self.client.retrieve(
-                collection_name=self.collection_name, ids=ids, with_payload=with_payload, with_vectors=with_vectors
-            )
-            return [
-                BaseVectorStoreDriver.Entry(
-                    id=entry.id,
-                    vector=entry.vector if with_vectors else [],
-                    meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
-                )
-                for entry in results
-            ]
-        except Exception as e:
-            print(f"An error occurred while trying to retrieve points by IDs: {e}")
+        results = self.client.retrieve(
+            collection_name=self.collection_name, ids=ids, with_payload=with_payload, with_vectors=with_vectors
+        )
+        if not results:
+            print("An error occurred or no results found.")
             return []
+        return [
+            BaseVectorStoreDriver.Entry(
+                id=entry.id,
+                vector=entry.vector if with_vectors else [],
+                meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
+            )
+            for entry in results
+        ]
