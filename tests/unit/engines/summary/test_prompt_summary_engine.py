@@ -4,6 +4,7 @@ from griptape.engines import PromptSummaryEngine
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 import os
 
+
 class TestPromptSummaryEngine:
     @pytest.fixture
     def engine(self):
@@ -16,18 +17,16 @@ class TestPromptSummaryEngine:
         assert (
             engine.summarize_artifacts(ListArtifact([TextArtifact("foo"), TextArtifact("bar")])).value == "mock output"
         )
-    
-    def test_max_token_multiplier_invalid(self, engine):
-        engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=0)
-        with pytest.raises(ValueError):
-            engine.summarize_text("foobar")
 
-        engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=100000)
+    def test_max_token_multiplier_invalid(self, engine):
         with pytest.raises(ValueError):
-            engine.summarize_text("foobar")
-        
+            PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=0)
+
+        with pytest.raises(ValueError):
+            PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=10000)
+
     def test_chunked_summary(self, engine):
-        engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=.01)
+        engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=0.1)
 
         def copy_test_resource(resource_path: str):
             file_dir = os.path.dirname(__file__)
