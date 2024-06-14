@@ -26,7 +26,7 @@ class TestPromptSummaryEngine:
             PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=10000)
 
     def test_chunked_summary(self, engine):
-        engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=0.1)
+        engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=0.03)
 
         def copy_test_resource(resource_path: str):
             file_dir = os.path.dirname(__file__)
