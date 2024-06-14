@@ -51,12 +51,7 @@ class Agent(Structure):
         self.task.execute()
 
         if self.conversation_memory and self.output is not None:
-            if isinstance(self.task.input, tuple):
-                input_text = self.task.input[0].to_text()
-            else:
-                input_text = self.task.input.to_text()
-
-            run = Run(input=input_text, output=self.task.output.to_text())
+            run = Run(input=self.input_task.input, output=self.output)
 
             self.conversation_memory.add_run(run)
 

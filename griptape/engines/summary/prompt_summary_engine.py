@@ -64,8 +64,8 @@ class PromptSummaryEngine(BaseSummaryEngine):
             return self.prompt_driver.run(
                 PromptStack(
                     inputs=[
-                        PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
-                        PromptStack.Input(user_prompt, role=PromptStack.USER_ROLE),
+                        PromptStackElement(system_prompt, role=PromptStackElement.SYSTEM_ROLE),
+                        PromptStackElement(user_prompt, role=PromptStackElement.USER_ROLE),
                     ]
                 )
             )
@@ -79,8 +79,8 @@ class PromptSummaryEngine(BaseSummaryEngine):
                 self.prompt_driver.run(
                     PromptStack(
                         inputs=[
-                            PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
-                            PromptStack.Input(partial_text, role=PromptStack.USER_ROLE),
+                            PromptStackElement(system_prompt, role=PromptStackElement.SYSTEM_ROLE),
+                            PromptStackElement(partial_text, role=PromptStackElement.USER_ROLE),
                         ]
                     )
                 ).value,

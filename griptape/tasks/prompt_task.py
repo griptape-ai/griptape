@@ -33,7 +33,7 @@ class PromptTask(BaseTextInputTask):
         stack.add_user_input(self.input)
 
         if self.output:
-            stack.add_assistant_input(self.output.to_text())
+            stack.add_assistant_input(self.output)
 
         if memory:
             # inserting at index 1 to place memory right after system prompt

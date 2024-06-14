@@ -52,7 +52,7 @@ class BaseTextInputTask(RuleMixin, BaseTask, ABC):
 
             return task_input
         elif isinstance(task_input, Callable):
-            return task_input(self)
+            return self._process_task_input(task_input(self))
         elif isinstance(task_input, str):
             return self._process_task_input(TextArtifact(task_input))
         elif isinstance(task_input, BaseArtifact):

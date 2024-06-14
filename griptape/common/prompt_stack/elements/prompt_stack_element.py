@@ -46,13 +46,9 @@ class PromptStackElement(BasePromptStackElement):
         return self.to_text_artifact().to_text()
 
     def to_text_artifact(self) -> TextArtifact:
-        if all(isinstance(content, TextPromptStackContent) for content in self.content):
-            artifact = TextArtifact(value="")
+        artifact = TextArtifact(value="")
 
-            for content in self.content:
-                if isinstance(content, TextPromptStackContent):
-                    artifact += content.artifact
+        for content in self.content:
+            artifact.value += content.artifact.to_text()
 
-            return artifact
-        else:
-            raise ValueError("Cannot convert to TextArtifact")
+        return artifact
