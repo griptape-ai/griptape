@@ -67,7 +67,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         stack.add_system_input(self.generate_system_template(self))
 
-        stack.add_user_input(self.input.to_text())
+        stack.add_user_input(self.input)
 
         if self.output:
             stack.add_assistant_input(self.output.to_text())
