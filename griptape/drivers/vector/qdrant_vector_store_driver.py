@@ -17,10 +17,15 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         location: An optional location for the Qdrant client. If set to ':memory:', an in-memory client is used.
         url: An optional Qdrant API URL.
         host: An optional Qdrant host.
+        path: Persistence path for QdrantLocal. Default: None
         port: The port number for the Qdrant client. Defaults to 6333.
         grpc_port: The gRPC port number for the Qdrant client. Defaults to 6334.
         prefer_grpc: A boolean indicating whether to prefer gRPC over HTTP. Defaults to False.
-        api_key: API key for authentication in Qdrant Cloud. Defaults to None
+        force_disable_check_same_thread: For QdrantLocal, force disable check_same_thread. Default: False Only use this if you can guarantee that you can resolve the thread safety outside QdrantClient.
+        timeout: Timeout for REST and gRPC API requests. Default: 5 seconds for REST and unlimited for gRPC
+        api_key: API key for authentication in Qdrant Cloud. Defaults to False
+        https: If true - use HTTPS(SSL) protocol. Default: None
+        prefix: Add prefix to the REST URL path. Example: service/v1 will result in Example: service/v1 will result in http://localhost:6333/service/v1/{qdrant-endpoint} for REST API. Defaults to None
         distance: The distance metric to be used for the vectors. Defaults to 'COSINE'.
         collection_name: The name of the Qdrant collection.
         vector_name: An optional name for the vectors.
@@ -30,10 +35,17 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    path: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     port: int = field(default=6333, kw_only=True, metadata={"serializable": True})
     grpc_port: int = field(default=6334, kw_only=True, metadata={"serializable": True})
     prefer_grpc: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    https: bool = field(default=None, kw_only=True, metadata={"serializable": True})
+    prefix: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    force_disable_check_same_thread: Optional[bool] = field(
+        default=False, kw_only=True, metadata={"serializable": True}
+    )
+    timeout: Optional[int] = field(default=5, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_name: Optional[str] = VECTOR_NAME
@@ -44,9 +56,15 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             location=self.location,
             url=self.url,
             host=self.host,
+            path=self.path,
             port=self.port,
             prefer_grpc=self.prefer_grpc,
             grpc_port=self.grpc_port,
+            api_key=self.api_key,
+            https=self.https,
+            prefix=self.prefix,
+            force_disable_check_same_thread=self.force_disable_check_same_thread,
+            timeout=self.timeout,
         )
 
     def delete_vector(self, vector_id: str) -> None:
