@@ -1,10 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable
 from attrs import define, field
+from griptape.artifacts.text_artifact import TextArtifact
 from griptape.tools import BaseTool
 from griptape.memory.structure import Run
 from griptape.structures import Structure
-from griptape.tasks import PromptTask, ToolkitTask, BaseTextInputTask
+from griptape.tasks import PromptTask, ToolkitTask
 from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
 @define
 class Agent(Structure):
     input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
-        default=BaseTextInputTask.DEFAULT_INPUT_TEMPLATE
+        default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value="")
     )
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
