@@ -15,7 +15,8 @@ from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbedd
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalModule, RulesetsGenerationModule, PromptGenerationModule
+from griptape.engines.rag.modules import TextRetrievalModule, RulesetsGenerationModule, PromptGenerationModule, \
+    MetadataGenerationModule
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -179,7 +180,8 @@ class Structure(ABC):
                 before_generator_modules=[
                     RulesetsGenerationModule(
                         rulesets=self.rulesets
-                    )
+                    ),
+                    MetadataGenerationModule()
                 ],
                 generation_module=PromptGenerationModule(
                     prompt_driver=self.config.prompt_driver,
