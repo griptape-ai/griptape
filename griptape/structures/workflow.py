@@ -91,7 +91,6 @@ class Workflow(Structure):
         return task
 
     def try_run(self, *args) -> Workflow:
-        self._execution_args = args
         exit_loop = False
 
         while not self.is_finished() and not exit_loop:
