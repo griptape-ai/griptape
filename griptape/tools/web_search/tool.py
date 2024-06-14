@@ -5,6 +5,7 @@ from schema import Schema, Literal
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 import requests
+import json
 
 
 @define
@@ -32,7 +33,7 @@ class WebSearch(BaseTool):
         query = props["values"]["query"]
 
         try:
-            return ListArtifact([TextArtifact(str(result)) for result in self._search_google(query)])
+            return ListArtifact([TextArtifact(json.dumps(result)) for result in self._search_google(query)])
         except Exception as e:
             return ErrorArtifact(f"error searching Google: {e}")
 

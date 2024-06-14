@@ -5,10 +5,9 @@ from .prompt.cohere_prompt_driver import CoherePromptDriver
 from .prompt.huggingface_pipeline_prompt_driver import HuggingFacePipelinePromptDriver
 from .prompt.huggingface_hub_prompt_driver import HuggingFaceHubPromptDriver
 from .prompt.anthropic_prompt_driver import AnthropicPromptDriver
-from .prompt.amazon_sagemaker_prompt_driver import AmazonSageMakerPromptDriver
+from .prompt.amazon_sagemaker_jumpstart_prompt_driver import AmazonSageMakerJumpstartPromptDriver
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.google_prompt_driver import GooglePromptDriver
-from .prompt.base_multi_model_prompt_driver import BaseMultiModelPromptDriver
 from .prompt.dummy_prompt_driver import DummyPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
@@ -19,8 +18,7 @@ from .memory.conversation.redis_conversation_memory_driver import RedisConversat
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
 from .embedding.azure_openai_embedding_driver import AzureOpenAiEmbeddingDriver
-from .embedding.base_multi_model_embedding_driver import BaseMultiModelEmbeddingDriver
-from .embedding.amazon_sagemaker_embedding_driver import AmazonSageMakerEmbeddingDriver
+from .embedding.amazon_sagemaker_jumpstart_embedding_driver import AmazonSageMakerJumpstartEmbeddingDriver
 from .embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
 from .embedding.amazon_bedrock_cohere_embedding_driver import AmazonBedrockCohereEmbeddingDriver
 from .embedding.voyageai_embedding_driver import VoyageAiEmbeddingDriver
@@ -28,10 +26,6 @@ from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingD
 from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
 from .embedding.cohere_embedding_driver import CohereEmbeddingDriver
-
-from .embedding_model.base_embedding_model_driver import BaseEmbeddingModelDriver
-from .embedding_model.sagemaker_huggingface_embedding_model_driver import SageMakerHuggingFaceEmbeddingModelDriver
-from .embedding_model.sagemaker_tensorflow_hub_embedding_model_driver import SageMakerTensorFlowHubEmbeddingModelDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -50,10 +44,6 @@ from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
 from .sql.snowflake_sql_driver import SnowflakeSqlDriver
 from .sql.sql_driver import SqlDriver
-
-from .prompt_model.base_prompt_model_driver import BasePromptModelDriver
-from .prompt_model.sagemaker_llama_prompt_model_driver import SageMakerLlamaPromptModelDriver
-from .prompt_model.sagemaker_falcon_prompt_model_driver import SageMakerFalconPromptModelDriver
 
 from .image_generation_model.base_image_generation_model_driver import BaseImageGenerationModelDriver
 from .image_generation_model.bedrock_stable_diffusion_image_generation_model_driver import (
@@ -116,10 +106,9 @@ __all__ = [
     "HuggingFacePipelinePromptDriver",
     "HuggingFaceHubPromptDriver",
     "AnthropicPromptDriver",
-    "AmazonSageMakerPromptDriver",
+    "AmazonSageMakerJumpstartPromptDriver",
     "AmazonBedrockPromptDriver",
     "GooglePromptDriver",
-    "BaseMultiModelPromptDriver",
     "DummyPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
@@ -128,18 +117,14 @@ __all__ = [
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
-    "BaseMultiModelEmbeddingDriver",
-    "AmazonSageMakerEmbeddingDriver",
+    "AmazonSageMakerJumpstartEmbeddingDriver",
     "AmazonBedrockTitanEmbeddingDriver",
     "AmazonBedrockCohereEmbeddingDriver",
     "VoyageAiEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
-    "BaseEmbeddingModelDriver",
     "CohereEmbeddingDriver",
-    "SageMakerHuggingFaceEmbeddingModelDriver",
-    "SageMakerTensorFlowHubEmbeddingModelDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
@@ -156,9 +141,6 @@ __all__ = [
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
     "SqlDriver",
-    "BasePromptModelDriver",
-    "SageMakerLlamaPromptModelDriver",
-    "SageMakerFalconPromptModelDriver",
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",

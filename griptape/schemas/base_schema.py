@@ -103,7 +103,7 @@ class BaseSchema(Schema):
         from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
 
         # These modules are required to avoid `NameError`s when resolving types.
-        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver, BasePromptModelDriver
+        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
         from griptape.structures import Structure
         from griptape.utils import PromptStack
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
@@ -121,7 +121,6 @@ class BaseSchema(Schema):
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BasePromptDriver": BasePromptDriver,
                 "BaseTokenizer": BaseTokenizer,
-                "BasePromptModelDriver": BasePromptModelDriver,
                 "boto3": boto3,
                 "Client": Client,
             },

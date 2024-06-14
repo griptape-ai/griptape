@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 from rich.logging import RichHandler
 
-from griptape.artifacts import BlobArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -128,12 +128,16 @@ class Structure(ABC):
         return self.tasks[-1] if self.tasks else None
 
     @property
+    def output(self) -> Optional[BaseArtifact]:
+        return self.output_task.output if self.output_task is not None else None
+
+    @property
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
 
     @property
     def default_config(self) -> BaseStructureConfig:
-        if self.prompt_driver is not None or self.embedding_driver is not None:
+        if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
 
             if self.prompt_driver is None:
@@ -229,7 +233,11 @@ class Structure(ABC):
                 if task.id not in child.parent_ids:
                     child.parent_ids.append(task.id)
 
-    def before_run(self) -> None:
+    def before_run(self, args: Any) -> None:
+        self._execution_args = args
+
+        [task.reset() for task in self.tasks]
+
         self.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id, input_task_input=self.input_task.input, input_task_output=self.input_task.output
@@ -252,7 +260,7 @@ class Structure(ABC):
     def add_task(self, task: BaseTask) -> BaseTask: ...
 
     def run(self, *args) -> Structure:
-        self.before_run()
+        self.before_run(args)
 
         result = self.try_run(*args)
 

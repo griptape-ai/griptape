@@ -1,5 +1,3 @@
-from transformers import AutoTokenizer
-
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tokenizers.huggingface_tokenizer import HuggingFaceTokenizer
 from griptape.utils import PromptStack
@@ -161,30 +159,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
         assert text_artifact.value == "model-output"
 
-    def test_try_run_max_tokens_limited_by_tokenizer(self, mock_chat_completion_create, prompt_stack, messages):
-        # Given
-        max_tokens_request = 9999999
-        driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, max_tokens=max_tokens_request
-        )
-        tokens_left = driver.tokenizer.count_input_tokens_left(driver._prompt_stack_to_messages(prompt_stack))
-
-        # When
-        text_artifact = driver.try_run(prompt_stack)
-
-        # Then
-        mock_chat_completion_create.assert_called_once_with(
-            model=driver.model,
-            temperature=driver.temperature,
-            stop=driver.tokenizer.stop_sequences,
-            user=driver.user,
-            messages=messages,
-            max_tokens=max_tokens_request,
-            seed=driver.seed,
-        )
-        assert max_tokens_request > tokens_left
-        assert text_artifact.value == "model-output"
-
     def test_try_run_throws_when_prompt_stack_is_string(self):
         # Given
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
@@ -209,57 +183,10 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Then
         e.value.args[0] == "Completion with more than one choice is not supported yet."
 
-    def test_token_count(self, prompt_stack, messages):
-        # Given
-        mock_tokenizer = Mock(spec=OpenAiTokenizer)
-        mock_tokenizer.count_tokens.return_value = 42
-        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, tokenizer=mock_tokenizer)
-
-        # When
-        token_count = driver.token_count(prompt_stack)
-
-        # Then
-        mock_tokenizer.count_tokens.assert_called_once_with(messages)
-        assert token_count == 42
-
-        # Given
-        mock_tokenizer = Mock()
-        mock_tokenizer.count_tokens.return_value = 42
-        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, tokenizer=mock_tokenizer)
-
-        # When
-        token_count = driver.token_count(prompt_stack)
-
-        # Then
-        mock_tokenizer.count_tokens.assert_called_once_with(driver.prompt_stack_to_string(prompt_stack))
-        assert token_count == 42
-
-    def test_max_output_tokens(self, messages):
-        # Given
-        mock_tokenizer = Mock()
-        mock_tokenizer.count_output_tokens_left.return_value = 42
-        driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, tokenizer=mock_tokenizer, max_tokens=45
-        )
-
-        # When
-        max_output_tokens = driver.max_output_tokens(messages)
-
-        # Then
-        mock_tokenizer.count_output_tokens_left.assert_called_once_with(messages)
-        assert max_output_tokens == 42
-
-    def test_max_output_tokens_with_max_tokens(self, messages):
-        max_tokens = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, max_tokens=42
-        ).max_output_tokens(messages)
-
-        assert max_tokens == 42
-
     def test_custom_tokenizer(self, mock_chat_completion_create, prompt_stack, messages):
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
-            tokenizer=HuggingFaceTokenizer(tokenizer=AutoTokenizer.from_pretrained("gpt2"), max_output_tokens=1000),
+            tokenizer=HuggingFaceTokenizer(model="gpt2", max_output_tokens=1000),
             max_tokens=1,
         )
 
@@ -272,7 +199,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
             user=driver.user,
-            messages=messages,
+            messages=[
+                {"role": "user", "content": "generic-input"},
+                {"role": "system", "content": "system-input"},
+                {"role": "user", "content": "user-input"},
+                {"role": "assistant", "content": "assistant-input"},
+            ],
             seed=driver.seed,
             max_tokens=1,
         )

@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Structure.resolve_relationships()` to resolve asymmetrically defined parent/child relationships. In other words, if a parent declares a child, but the child does not declare the parent, the parent will automatically be added as a parent of the child when running this method. The method is invoked automatically by `Structure.before_run()`.
 - `CohereEmbeddingDriver` for using Cohere's embeddings API.
 - `CohereStructureConfig` for providing Structures with quick Cohere configuration.
+- `AmazonSageMakerJumpstartPromptDriver.inference_component_name` for setting the `InferenceComponentName` parameter when invoking an endpoint.
+- `AmazonSageMakerJumpstartEmbeddingDriver.inference_component_name` for setting the `InferenceComponentName` parameter when invoking an endpoint.
+- `AmazonSageMakerJumpstartEmbeddingDriver.custom_attributes` for setting custom attributes when invoking an endpoint.
+- `ToolkitTask.response_stop_sequence` for overriding the default Chain of Thought stop sequence.
+- `griptape.utils.StructureVisualizer` for visualizing Workflow structures with Mermaid.js
+- `BaseTask.parents_outputs` to get the textual output of all parent tasks. 
+- `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
+- `parents_output_text` to Workflow context.
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
@@ -27,16 +35,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BedrockLlamaTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `BedrockTitanTokenizer`, use `SimpleTokenizer` instead.
 - **BREAKING**: Removed `OpenAiChatCompletionPromptDriver` as it uses the legacy [OpenAi Completions API](https://platform.openai.com/docs/api-reference/completions).
+- **BREAKING**: Removed `BasePromptDriver.count_tokens()`.
+- **BREAKING**: Removed `BasePromptDriver.max_output_tokens()`.
+- **BREAKING**: Moved/renamed `PromptStack.add_to_conversation_memory` to `BaseConversationMemory.add_to_prompt_stack`.
+- **BREAKING**: Moved `griptape.constants.RESPONSE_STOP_SEQUENCE` to `ToolkitTask`.
+- **BREAKING**: Renamed `AmazonSagemakerPromptDriver` to `AmazonSageMakerJumpstartPromptDriver`.
+- **BREAKING**: Removed `SagemakerFalconPromptModelDriver`, use `AmazonSageMakerJumpstartPromptDriver` instead.
+- **BREAKING**: Removed `SagemakerLlamaPromptModelDriver`, use `AmazonSageMakerJumpstartPromptDriver` instead.
+- **BREAKING**: Renamed `AmazonSagemakerEmbeddingDriver` to `AmazonSageMakerJumpstartEmbeddingDriver`.
+- **BREAKING**: Removed `SagemakerHuggingfaceEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
+- **BREAKING**: Removed `SagemakerTensorflowHubEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
+- **BREAKING**: `AmazonSageMakerJumpstartPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
+- `ToolkitTask.RESPONSE_STOP_SEQUENCE` is now only added when using `ToolkitTask`.
+- Updated Prompt Drivers to use `BasePromptDriver.max_tokens` instead of using `BasePromptDriver.max_output_tokens()`.
 - Improved error message when `GriptapeCloudKnowledgeBaseClient` does not have a description set.
 - Updated `AmazonBedrockPromptDriver` to use [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
 - `Structure.before_run()` now automatically resolves asymmetrically defined parent/child relationships using the new `Structure.resolve_relationships()`.
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
 - Updated `HuggingFacePipelinePromptDriver` to use chat features of `transformers.TextGenerationPipeline`.
 - Updated `CoherePromptDriver` to use Cohere's latest SDK.
+- Moved Task reset logic for all Structures to `Structure.before_run`.
 
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
 - Performance issue in `OpenAiChatPromptDriver` when extracting unused rate-limiting headers.
+- Streaming not working when using deprecated `Structure.stream` field.
+- Raw Tool output being lost when being executed by ActionsSubtask.
+- Re-order Workflow tasks on every task execution wave.
+- Web Loader to catch Exceptions and properly return an ErrorArtifact.
+- Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
+- `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
+- Structure run args not being set immediately.
 
 ## [0.26.0] - 2024-06-04
 
@@ -47,7 +76,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AudioTranscriptionTask` and `AudioTranscriptionClient` for transcribing audio content in Structures.
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
-- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket. 
+- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
+- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
@@ -263,7 +293,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ImageLoader` for loading images files into `ImageArtifact`s.
 
 - Support for all Tokenizers in `OpenAiChatPromptDriver`, enabling OpenAI drop-in clients such as Together AI.
-- `AmazonSageMakerEmbeddingDriver` for using Amazon SageMaker to generate embeddings. Thanks @KaushikIyer16!
+- `AmazonSageMakerJumpstartEmbeddingDriver` for using Amazon SageMaker to generate embeddings. Thanks @KaushikIyer16!
 - Claude 2.1 support in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver` via `BedrockClaudePromptModelDriver`.
 - `CodeExecutionTask` for executing code as a Task without the need for an LLM.
 - `BedrockLlamaPromptModelDriver` for using Llama models on Amazon Bedrock.

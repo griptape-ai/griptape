@@ -2,7 +2,6 @@ from google.generativeai.types import GenerationConfig
 from griptape.drivers import GooglePromptDriver
 from griptape.utils import PromptStack
 from unittest.mock import Mock
-from tests.mocks.mock_tokenizer import MockTokenizer
 import pytest
 
 
@@ -32,9 +31,7 @@ class TestGooglePromptDriver:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         prompt_stack.add_generic_input("generic-input")
-        driver = GooglePromptDriver(
-            model="gemini-pro", api_key="api-key", tokenizer=MockTokenizer(model="gemini-pro"), top_p=0.5, top_k=50
-        )
+        driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50)
 
         # When
         text_artifact = driver.try_run(prompt_stack)
@@ -47,7 +44,7 @@ class TestGooglePromptDriver:
                 {"parts": ["generic-input"], "role": "user"},
             ],
             generation_config=GenerationConfig(
-                max_output_tokens=997, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=["<|Response|>"]
+                max_output_tokens=None, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]
             ),
         )
         assert text_artifact.value == "model-output"
@@ -59,14 +56,7 @@ class TestGooglePromptDriver:
         prompt_stack.add_user_input("user-input")
         prompt_stack.add_assistant_input("assistant-input")
         prompt_stack.add_generic_input("generic-input")
-        driver = GooglePromptDriver(
-            model="gemini-pro",
-            api_key="api-key",
-            stream=True,
-            tokenizer=MockTokenizer(model="gemini-pro"),
-            top_p=0.5,
-            top_k=50,
-        )
+        driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", stream=True, top_p=0.5, top_k=50)
 
         # When
         text_artifact_stream = driver.try_stream(prompt_stack)
@@ -80,9 +70,7 @@ class TestGooglePromptDriver:
                 {"parts": ["generic-input"], "role": "user"},
             ],
             stream=True,
-            generation_config=GenerationConfig(
-                max_output_tokens=997, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=["<|Response|>"]
-            ),
+            generation_config=GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]),
         )
         assert text_artifact.value == "model-output"
 
@@ -108,26 +96,3 @@ class TestGooglePromptDriver:
             {"role": "model", "parts": ["assistant-input"]},
             {"role": "user", "parts": ["user-input"]},
         ]
-
-    def test_to_content_dict(self):
-        # Given
-        driver = GooglePromptDriver(model="gemini-pro", api_key="1234")
-
-        # When
-        assert driver._GooglePromptDriver__to_content_dict(PromptStack.Input("system-input", "system")) == {
-            "role": "user",
-            "parts": ["system-input"],
-        }
-        assert driver._GooglePromptDriver__to_content_dict(PromptStack.Input("user-input", "user")) == {
-            "role": "user",
-            "parts": ["user-input"],
-        }
-        assert driver._GooglePromptDriver__to_content_dict(PromptStack.Input("assistant-input", "assistant")) == {
-            "role": "model",
-            "parts": ["assistant-input"],
-        }
-
-        assert driver._GooglePromptDriver__to_content_dict(PromptStack.Input("generic-input", "generic")) == {
-            "role": "user",
-            "parts": ["generic-input"],
-        }

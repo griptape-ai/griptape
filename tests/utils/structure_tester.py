@@ -17,9 +17,7 @@ from griptape.drivers import (
     CoherePromptDriver,
     OpenAiChatPromptDriver,
     AzureOpenAiChatPromptDriver,
-    AmazonSageMakerPromptDriver,
-    SageMakerLlamaPromptModelDriver,
-    SageMakerFalconPromptModelDriver,
+    AmazonSageMakerJumpstartPromptDriver,
     GooglePromptDriver,
 )
 
@@ -69,10 +67,10 @@ class StructureTester:
         ),
         "AZURE_CHAT_35_TURBO_16K": TesterPromptDriverOption(
             prompt_driver=AzureOpenAiChatPromptDriver(
-                api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
+                api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
                 model="gpt-35-turbo-16k",
                 azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID"],
-                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
+                azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_2"],
             ),
             enabled=True,
         ),
@@ -188,16 +186,14 @@ class StructureTester:
             prompt_driver=AmazonBedrockPromptDriver(model="mistral.mistral-small-2402-v1:0"), enabled=True
         ),
         "SAGEMAKER_LLAMA_7B": TesterPromptDriverOption(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                endpoint=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerLlamaPromptModelDriver(max_tokens=4096),
+            prompt_driver=AmazonSageMakerJumpstartPromptDriver(
+                endpoint=os.environ["SAGEMAKER_LLAMA_ENDPOINT_NAME"], model="meta-llama/Llama-2-7b-chat-hf"
             ),
             enabled=False,
         ),
         "SAGEMAKER_FALCON_7b": TesterPromptDriverOption(
-            prompt_driver=AmazonSageMakerPromptDriver(
-                endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-                prompt_model_driver=SageMakerFalconPromptModelDriver(),
+            prompt_driver=AmazonSageMakerJumpstartPromptDriver(
+                endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"], model="tiiuae/falcon-7b-instruct"
             ),
             enabled=False,
         ),
@@ -241,7 +237,7 @@ class StructureTester:
         )
         task_names = [task.__class__.__name__ for task in structure.tasks]
         prompt = structure.input_task.input.to_text()
-        actual = structure.output_task.output.to_text()
+        actual = structure.output.to_text()
         rules = [rule.value for ruleset in structure.input_task.all_rulesets for rule in ruleset.rules]
 
         agent = Agent(
