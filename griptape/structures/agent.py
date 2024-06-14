@@ -47,13 +47,9 @@ class Agent(Structure):
         return super().add_tasks(*tasks)
 
     def try_run(self, *args) -> Agent:
-        self._execution_args = args
-
-        self.task.reset()
-
         self.task.execute()
 
-        if self.conversation_memory:
+        if self.conversation_memory and self.output is not None:
             if isinstance(self.task.input, tuple):
                 input_text = self.task.input[0].to_text()
             else:
