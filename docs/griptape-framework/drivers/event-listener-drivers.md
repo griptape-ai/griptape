@@ -66,7 +66,7 @@ event_driver.publish_event(done_event)
 
 Griptape offers the following Event Listener Drivers for forwarding Griptape Events.
 
-### Amazon SQS Event Listener Driver
+### Amazon SQS
 
 !!! info
     This driver requires the `drivers-event-listener-amazon-sqs` [extra](../index.md#extras).
@@ -108,7 +108,7 @@ agent.run(
 )
 ```
 
-### AWS IoT Event Listener Driver
+### AWS IoT
 
 !!! info
     This driver requires the `drivers-event-listener-amazon-iot` [extra](../index.md#extras).
@@ -152,7 +152,7 @@ agent = Agent(
 agent.run("I want to fly from Orlando to Boston")
 ```
 
-### Griptape Cloud Event Listener Driver
+### Griptape Cloud
 
 The [GriptapeCloudEventListenerDriver](../../reference/griptape/drivers/event_listener/griptape_cloud_event_listener_driver.md) sends Events to [Griptape Cloud](https://www.griptape.ai/cloud).
 
@@ -212,7 +212,7 @@ agent = Agent(
 
 agent.run("Analyze the pros and cons of remote work vs. office work")
 ```
-### Pusher Event Listener Driver
+### Pusher
 
 !!! info
     This driver requires the `drivers-event-listener-pusher` [extra](../index.md#extras).

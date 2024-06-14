@@ -91,12 +91,11 @@ class Workflow(Structure):
         return task
 
     def try_run(self, *args) -> Workflow:
-        self._execution_args = args
-        ordered_tasks = self.order_tasks()
         exit_loop = False
 
         while not self.is_finished() and not exit_loop:
             futures_list = {}
+            ordered_tasks = self.order_tasks()
 
             for task in ordered_tasks:
                 if task.can_execute():
@@ -110,7 +109,7 @@ class Workflow(Structure):
 
                     break
 
-        if self.conversation_memory:
+        if self.conversation_memory and self.output is not None:
             if isinstance(self.input_task.input, tuple):
                 input_text = self.input_task.input[0].to_text()
             else:
@@ -127,9 +126,8 @@ class Workflow(Structure):
 
         context.update(
             {
-                "parent_outputs": {
-                    parent.id: parent.output.to_text() if parent.output else "" for parent in task.parents
-                },
+                "parent_outputs": task.parent_outputs,
+                "parents_output_text": task.parents_output_text,
                 "parents": {parent.id: parent for parent in task.parents},
                 "children": {child.id: child for child in task.children},
             }

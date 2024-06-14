@@ -1,9 +1,9 @@
 from __future__ import annotations
 import logging
-from attrs import define
+from attrs import define, field, Factory
 import tiktoken
-from griptape.tokenizers import BaseTokenizer
 from typing import Optional
+from griptape.tokenizers import BaseTokenizer
 
 
 @define()
@@ -40,6 +40,13 @@ class OpenAiTokenizer(BaseTokenizer):
         "text-embedding-3-small",
         "text-embedding-3-large",
     ]
+
+    max_input_tokens: int = field(
+        kw_only=True, default=Factory(lambda self: self._default_max_input_tokens(), takes_self=True)
+    )
+    max_output_tokens: int = field(
+        kw_only=True, default=Factory(lambda self: self._default_max_output_tokens(), takes_self=True)
+    )
 
     @property
     def encoding(self) -> tiktoken.Encoding:

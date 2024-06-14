@@ -14,7 +14,7 @@ and access it with [embedding](../../reference/griptape/artifacts/text_artifact.
 ## CsvRowArtifact
 
 Used for passing structured row data around the framework. It inherits from [TextArtifact](../../reference/griptape/artifacts/text_artifact.md) and overrides the 
-[to_text()](../../reference/griptape/artifacts/text_artifact.md#griptape.artifacts.text_artifact.TextArtifact.to_text) method, which always returns a valid CSV row.
+[to_text()](../../reference/griptape/artifacts/csv_row_artifact.md#griptape.artifacts.csv_row_artifact.CsvRowArtifact.to_text) method, which always returns a valid CSV row.
 
 ## InfoArtifact
 
@@ -29,7 +29,7 @@ Used for passing errors back to the LLM without task memory storing them.
 Used for passing binary large objects (blobs) back to the LLM. 
 Treat it as a way to return unstructured data, such as images, videos, audio, and other files back from tools. 
 Each blob has a [name](../../reference/griptape/artifacts/base_artifact.md#griptape.artifacts.base_artifact.BaseArtifact.name) and 
-[dir](../../reference/griptape/artifacts/blob_artifact.md#griptape.artifacts.blob_artifact.BlobArtifact.dir) to uniquely identify stored objects.
+[dir](../../reference/griptape/artifacts/blob_artifact.md#griptape.artifacts.blob_artifact.BlobArtifact.dir_name) to uniquely identify stored objects.
 
 [TaskMemory](../../reference/griptape/memory/task/task_memory.md) automatically stores [BlobArtifact](../../reference/griptape/artifacts/blob_artifact.md)s returned by tool activities that can be reused by other tools.
 
