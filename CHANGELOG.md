@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added parameters `system_template_generator` and `user_template_generator` on `PromptSumnmaryEngine`.
 - Added templates `engines/summary/system.j2` and `engines/summary/user.j2`.
 - Updated default prompt templates for `PromptSummaryEngine`.
+- Updated template `templates/tasks/tool_task/system.j2`
 
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
