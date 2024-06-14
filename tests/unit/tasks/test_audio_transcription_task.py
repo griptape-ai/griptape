@@ -40,9 +40,14 @@ class TestAudioTranscriptionTask:
 
     def test_run(self, audio_artifact, audio_transcription_engine):
         audio_transcription_engine.run.return_value = TextArtifact("mock transcription")
+        logger = Mock()
 
         task = AudioTranscriptionTask(audio_artifact, audio_transcription_engine=audio_transcription_engine)
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(), logger=logger)
         pipeline.add_task(task)
 
-        assert task.run().to_text() == "mock transcription"
+        assert pipeline.run().output.to_text() == "mock transcription"
+
+    def test_before_run(self, audio_artifact, audio_transcription_engine):
+        task = AudioTranscriptionTask(audio_artifact, audio_transcription_engine=audio_transcription_engine)
+        task

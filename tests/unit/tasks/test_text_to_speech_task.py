@@ -44,4 +44,4 @@ class TestTextToSpeechTask:
         pipeline = Pipeline(prompt_driver=MockPromptDriver())
         pipeline.add_task(task)
 
-        assert isinstance(task.run(), AudioArtifact)
+        assert isinstance(pipeline.run().output, AudioArtifact)
