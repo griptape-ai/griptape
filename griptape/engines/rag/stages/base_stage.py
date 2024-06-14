@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from concurrent import futures
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.engines.rag import RagContext
 
 
@@ -9,5 +9,4 @@ class BaseStage(ABC):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()))
 
     @abstractmethod
-    def run(self, context: RagContext) -> RagContext:
-        ...
+    def run(self, context: RagContext) -> RagContext: ...

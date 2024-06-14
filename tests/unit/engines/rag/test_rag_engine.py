@@ -19,9 +19,7 @@ class TestRagEngine:
                 ]
             ),
             generation_stage=GenerationStage(
-                generation_module=PromptGenerationModule(
-                    prompt_driver=MockPromptDriver(),
-                )
+                generation_module=PromptGenerationModule(prompt_driver=MockPromptDriver())
             ),
         )
 

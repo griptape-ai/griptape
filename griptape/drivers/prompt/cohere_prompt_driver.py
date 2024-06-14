@@ -19,6 +19,7 @@ class CoherePromptDriver(BasePromptDriver):
         model: 	Cohere model name.
         client: Custom `cohere.Client`.
     """
+
     api_key: str = field(metadata={"serializable": False})
     model: str = field(metadata={"serializable": True})
     client: Client = field(

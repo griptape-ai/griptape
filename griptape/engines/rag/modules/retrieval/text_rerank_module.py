@@ -1,4 +1,4 @@
-from attr import define
+from attrs import define
 from griptape.artifacts import BaseArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRerankModule

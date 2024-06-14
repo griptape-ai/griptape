@@ -1,7 +1,7 @@
 import itertools
 import logging
 from typing import Optional
-from attr import define, field
+from attrs import define, field
 from griptape import utils
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRerankModule
@@ -41,6 +41,6 @@ class RetrievalStage(BaseStage):
             context.text_chunks = self.rerank_module.run(context)
 
         if self.max_chunks:
-            context.text_chunks = context.text_chunks[0:self.max_chunks]
+            context.text_chunks = context.text_chunks[0 : self.max_chunks]
 
         return context

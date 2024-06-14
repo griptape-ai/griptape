@@ -6,8 +6,7 @@ from griptape.artifacts import TextArtifact, BaseArtifact
 class BaseLocalVectorStoreDriver(ABC):
     @pytest.fixture
     @abstractmethod
-    def driver(self):
-        ...
+    def driver(self): ...
 
     def test_upsert(self, driver):
         namespace = driver.upsert_text_artifact(TextArtifact(id="foo1", value="foobar"))

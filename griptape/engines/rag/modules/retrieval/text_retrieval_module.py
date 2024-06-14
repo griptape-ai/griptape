@@ -1,7 +1,7 @@
 from __future__ import annotations
 import itertools
 from typing import TYPE_CHECKING, Optional
-from attr import define, field
+from attrs import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext

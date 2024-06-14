@@ -12,15 +12,8 @@ class TestVectorStoreClient:
 
     def test_search(self):
         driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
-        tool = VectorStoreClient(
-            description="Test",
-            vector_store_driver=driver,
-        )
+        tool = VectorStoreClient(description="Test", vector_store_driver=driver)
 
-        driver.upsert_text_artifacts({
-            "test": [
-                TextArtifact("foo"), TextArtifact("bar")
-            ]
-        })
+        driver.upsert_text_artifacts({"test": [TextArtifact("foo"), TextArtifact("bar")]})
 
         assert [a.value for a in tool.search({"values": {"query": "test"}})] == ["foo", "bar"]

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from attr import define
+from attrs import define
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseModule
 
@@ -7,5 +7,4 @@ from griptape.engines.rag.modules import BaseModule
 @define(kw_only=True)
 class BaseQueryModule(BaseModule, ABC):
     @abstractmethod
-    def run(self, context: RagContext) -> list[str]:
-        ...
+    def run(self, context: RagContext) -> list[str]: ...

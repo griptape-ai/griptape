@@ -1,6 +1,6 @@
 import itertools
 import logging
-from attr import define, field
+from attrs import define, field
 from griptape import utils
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseQueryModule

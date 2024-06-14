@@ -1,4 +1,4 @@
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagEngine
 from griptape.loaders import TextLoader

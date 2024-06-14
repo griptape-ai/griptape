@@ -37,9 +37,5 @@ class TextArtifactStorage(BaseArtifactStorage):
 
     def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact:
         return self.rag_engine.process(
-            RagContext(
-                initial_query=query,
-                namespace=namespace,
-                metadata=str(metadata) if metadata else None
-            )
+            RagContext(initial_query=query, namespace=namespace, metadata=str(metadata) if metadata else None)
         ).output

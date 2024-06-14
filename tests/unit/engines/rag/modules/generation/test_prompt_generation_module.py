@@ -7,9 +7,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestPromptGenerationModule:
     @pytest.fixture
     def module(self):
-        return PromptGenerationModule(
-                prompt_driver=MockPromptDriver(),
-            )
+        return PromptGenerationModule(prompt_driver=MockPromptDriver())
 
     def test_run(self, module):
         assert module.run(RagContext(initial_query="test")).output.value == "mock output"
@@ -18,7 +16,7 @@ class TestPromptGenerationModule:
         system_message = module.default_system_template_generator(
             text_chunks=["*TEXT SEGMENT 1*", "*TEXT SEGMENT 2*"],
             before_system_prompt=["*RULESET*", "*META*"],
-            after_system_prompt=[]
+            after_system_prompt=[],
         )
 
         assert "*RULESET*" in system_message

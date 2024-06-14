@@ -15,7 +15,7 @@ class TestFutures:
     def test_execute_futures_list(self):
         with futures.ThreadPoolExecutor() as executor:
             result = utils.execute_futures_list(
-                [executor.submit(self.foobar, "foo"),executor.submit(self.foobar, "baz")]
+                [executor.submit(self.foobar, "foo"), executor.submit(self.foobar, "baz")]
             )
 
             assert result[0] == "foo-bar"

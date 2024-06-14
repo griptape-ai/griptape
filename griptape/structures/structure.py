@@ -1,22 +1,23 @@
 from __future__ import annotations
-
 import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import TYPE_CHECKING, Any, Optional
-
 from attrs import Factory, define, field
 from rich.logging import RichHandler
-
 from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalModule, RulesetsGenerationModule, PromptGenerationModule, \
-    MetadataGenerationModule
+from griptape.engines.rag.modules import (
+    TextRetrievalModule,
+    RulesetsGenerationModule,
+    PromptGenerationModule,
+    MetadataGenerationModule,
+)
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
@@ -56,9 +57,7 @@ class Structure(ABC):
         ),
         kw_only=True,
     )
-    rag_engine: RagEngine = field(
-        default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True
-    )
+    rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
     task_memory: TaskMemory = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
     )
@@ -174,22 +173,11 @@ class Structure(ABC):
     def default_rag_engine(self) -> RagEngine:
         return RagEngine(
             retrieval_stage=RetrievalStage(
-                retrieval_modules=[
-                    TextRetrievalModule(
-                        vector_store_driver=self.config.vector_store_driver
-                    )
-                ]
+                retrieval_modules=[TextRetrievalModule(vector_store_driver=self.config.vector_store_driver)]
             ),
             generation_stage=GenerationStage(
-                before_generator_modules=[
-                    RulesetsGenerationModule(
-                        rulesets=self.rulesets
-                    ),
-                    MetadataGenerationModule()
-                ],
-                generation_module=PromptGenerationModule(
-                    prompt_driver=self.config.prompt_driver,
-                )
+                before_generator_modules=[RulesetsGenerationModule(rulesets=self.rulesets), MetadataGenerationModule()],
+                generation_module=PromptGenerationModule(prompt_driver=self.config.prompt_driver),
             ),
         )
 

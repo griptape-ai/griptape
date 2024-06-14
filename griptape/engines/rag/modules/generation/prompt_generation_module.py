@@ -1,5 +1,5 @@
 from typing import Callable
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseGenerationModule
@@ -33,9 +33,7 @@ class PromptGenerationModule(BaseGenerationModule):
 
                 system_prompt = self.generate_system_template(text_chunks, before_query, after_query)
                 message_token_count = self.prompt_driver.tokenizer.count_input_tokens_left(
-                    self.prompt_driver.prompt_stack_to_string(
-                        self.generate_query_prompt_stack(system_prompt, query)
-                    )
+                    self.prompt_driver.prompt_stack_to_string(self.generate_query_prompt_stack(system_prompt, query))
                 )
 
                 if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:

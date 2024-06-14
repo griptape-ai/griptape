@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
-from attr import define, field, Factory
+from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseRerankDriver
 from griptape.utils import import_optional_dependency

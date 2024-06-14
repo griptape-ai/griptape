@@ -23,9 +23,7 @@ class TestRagTask:
         vector_store_driver.upsert_text_artifact(artifact=artifact)
 
         agent = Agent(prompt_driver=request.param)
-        agent.add_task(
-            RagTask("Respond to the users following query: {{ args[0] }}", rag_engine=rag_engine_instance)
-        )
+        agent.add_task(RagTask("Respond to the users following query: {{ args[0] }}", rag_engine=rag_engine_instance))
 
         return StructureTester(agent)
 

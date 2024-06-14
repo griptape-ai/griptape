@@ -14,11 +14,9 @@ class TestRagTask:
             input="test",
             rag_engine=RagEngine(
                 generation_stage=GenerationStage(
-                    generation_module=PromptGenerationModule(
-                        prompt_driver=MockPromptDriver()
-                    )
+                    generation_module=PromptGenerationModule(prompt_driver=MockPromptDriver())
                 )
-            )
+            ),
         )
 
     def test_run(self, task):

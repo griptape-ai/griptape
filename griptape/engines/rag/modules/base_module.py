@@ -1,6 +1,6 @@
 from abc import ABC
 from concurrent import futures
-from attr import define, field, Factory
+from attrs import define, field, Factory
 
 from griptape.utils import PromptStack
 

@@ -30,7 +30,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         def to_artifact(self) -> Optional[BaseArtifact]:
             try:
                 return BaseArtifact.from_json(self.meta["artifact"])
-            except:
+            except Exception:
                 return None
 
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})

@@ -31,15 +31,7 @@ def text_task_memory(name):
 def rag_engine(prompt_driver, vector_store_driver):
     return RagEngine(
         retrieval_stage=RetrievalStage(
-            retrieval_modules=[
-                TextRetrievalModule(
-                    vector_store_driver=vector_store_driver
-                )
-            ]
+            retrieval_modules=[TextRetrievalModule(vector_store_driver=vector_store_driver)]
         ),
-        generation_stage=GenerationStage(
-            generation_module=PromptGenerationModule(
-                prompt_driver=prompt_driver,
-            )
-        ),
+        generation_stage=GenerationStage(generation_module=PromptGenerationModule(prompt_driver=prompt_driver)),
     )

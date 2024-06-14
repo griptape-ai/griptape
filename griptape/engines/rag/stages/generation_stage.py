@@ -1,5 +1,5 @@
 import logging
-from attr import define, field
+from attrs import define, field
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseGenerationModule, BaseBeforeGenerationModule, BaseAfterGenerationModule
 from griptape.engines.rag.stages import BaseStage
@@ -17,7 +17,7 @@ class GenerationStage(BaseStage):
         for generator in self.before_generator_modules:
             context = generator.run(context)
 
-        logging.info(f"GenerationStage: running generation module")
+        logging.info("GenerationStage: running generation module")
 
         context = self.generation_module.run(context)
 
