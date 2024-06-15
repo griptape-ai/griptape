@@ -23,8 +23,8 @@ class BaseChunker(ABC):
 
     @max_tokens.validator  # pyright: ignore
     def validate_max_tokens(self, _, max_tokens: int) -> None:
-        if max_tokens < 1:
-            raise ValueError("max_tokens must be greater than 0")
+        if max_tokens < 0:
+            raise ValueError("max_tokens must be 0 or greater.")
 
     def chunk(self, text: TextArtifact | str) -> list[TextArtifact]:
         text = text.value if isinstance(text, TextArtifact) else text
