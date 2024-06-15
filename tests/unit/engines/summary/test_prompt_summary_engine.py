@@ -3,9 +3,7 @@ from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.engines import PromptSummaryEngine
 from griptape.utils import PromptStack
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_tokenizer import MockTokenizer
 import os
-import random
 
 
 class TestPromptSummaryEngine:
