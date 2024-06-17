@@ -46,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `SagemakerHuggingfaceEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: Removed `SagemakerTensorflowHubEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: `AmazonSageMakerJumpstartPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
+- **BREAKING**: Removed parameter `template_generator` on `PromptSummaryEngine` and added parameters `system_template_generator` and `user_template_generator`.
+- **BREAKING**: Removed template `engines/summary/prompt_summary.j2` and added templates `engines/summary/system.j2` and `engines/summary/user.j2`.
 - `ToolkitTask.RESPONSE_STOP_SEQUENCE` is now only added when using `ToolkitTask`.
 - Updated Prompt Drivers to use `BasePromptDriver.max_tokens` instead of using `BasePromptDriver.max_output_tokens()`.
 - Improved error message when `GriptapeCloudKnowledgeBaseClient` does not have a description set.
@@ -54,6 +56,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
 - Updated `HuggingFacePipelinePromptDriver` to use chat features of `transformers.TextGenerationPipeline`.
 - Updated `CoherePromptDriver` to use Cohere's latest SDK.
+- Moved Task reset logic for all Structures to `Structure.before_run`.
+- Updated default prompt templates for `PromptSummaryEngine`.
+- Updated template `templates/tasks/tool_task/system.j2`.
 
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
@@ -62,6 +67,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Raw Tool output being lost when being executed by ActionsSubtask.
 - Re-order Workflow tasks on every task execution wave.
 - `Workflow.insert_task()` enumerates by parent id equality, opposed to object equality.
+- Web Loader to catch Exceptions and properly return an ErrorArtifact.
+- Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
+- `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
+- Structure run args not being set immediately.
 
 ## [0.26.0] - 2024-06-04
 
@@ -72,7 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AudioTranscriptionTask` and `AudioTranscriptionClient` for transcribing audio content in Structures.
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
-- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket. 
+- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
+- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
