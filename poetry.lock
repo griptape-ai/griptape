@@ -3236,6 +3236,20 @@ files = [
 ]
 
 [[package]]
+name = "ollama"
+version = "0.2.1"
+description = "The official Python client for Ollama."
+optional = true
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "ollama-0.2.1-py3-none-any.whl", hash = "sha256:b6e2414921c94f573a903d1069d682ba2fb2607070ea9e19ca4a7872f2a460ec"},
+    {file = "ollama-0.2.1.tar.gz", hash = "sha256:fa316baa9a81eac3beb4affb0a17deb3008fdd6ed05b123c26306cfbe4c349b6"},
+]
+
+[package.dependencies]
+httpx = ">=0.27.0,<0.28.0"
+
+[[package]]
 name = "openai"
 version = "1.30.1"
 description = "The official Python library for the openai API"
@@ -6056,7 +6070,7 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "elevenlabs", "filetype", "google-generativeai", "mail-parser", "markdownify", "marqo", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pusher", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "torch", "trafilatura", "transformers", "voyageai"]
+all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "elevenlabs", "filetype", "google-generativeai", "mail-parser", "markdownify", "marqo", "ollama", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pusher", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "torch", "trafilatura", "transformers", "voyageai"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-cohere = ["cohere"]
@@ -6075,6 +6089,7 @@ drivers-prompt-cohere = ["cohere"]
 drivers-prompt-google = ["google-generativeai"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-huggingface-pipeline = ["huggingface-hub", "torch", "transformers"]
+drivers-prompt-ollama = ["ollama"]
 drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
 drivers-sql-redshift = ["boto3", "sqlalchemy-redshift"]
 drivers-sql-snowflake = ["snowflake-sqlalchemy"]
@@ -6096,4 +6111,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "74de0d1e5ee382332635cea14dc0d39e288ab65adfec91569da0dbb06fd316e2"
+content-hash = "6ccbbba60b534e4756d1c36e37ce1379ee2126d37b822f186b5dbb8e8f701ff3"

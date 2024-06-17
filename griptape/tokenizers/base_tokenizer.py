@@ -17,11 +17,12 @@ class BaseTokenizer(ABC):
     max_output_tokens: int = field(kw_only=True, default=None)
 
     def __attrs_post_init__(self) -> None:
-        if self.max_input_tokens is None:
-            self.max_input_tokens = self._default_max_input_tokens()
+        if hasattr(self, "model"):
+            if self.max_input_tokens is None:
+                self.max_input_tokens = self._default_max_input_tokens()
 
-        if self.max_output_tokens is None:
-            self.max_output_tokens = self._default_max_output_tokens()
+            if self.max_output_tokens is None:
+                self.max_output_tokens = self._default_max_output_tokens()
 
     def count_input_tokens_left(self, text: str) -> int:
         diff = self.max_input_tokens - self.count_tokens(text)
