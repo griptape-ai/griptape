@@ -74,8 +74,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         else:
             for s in self.subtasks:
                 if self.prompt_driver.use_native_tools:
-                    stack.add_action_call_message(s.thought, s.actions)
-                    stack.add_action_result_message(self.generate_user_subtask_template(s), s.actions)
+                    stack.add_action_call_input(s.thought, s.actions)
+                    stack.add_action_result_input(None if s.output else "Please keep going!", s.actions)
                 else:
                     stack.add_assistant_message(self.generate_assistant_subtask_template(s))
                     stack.add_user_message(self.generate_user_subtask_template(s))

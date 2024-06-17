@@ -9,7 +9,7 @@ from typing import Callable
 class ExponentialBackoffMixin(ABC):
     min_retry_delay: float = field(default=2, kw_only=True)
     max_retry_delay: float = field(default=10, kw_only=True)
-    max_attempts: int = field(default=10, kw_only=True)
+    max_attempts: int = field(default=0, kw_only=True)
     after_hook: Callable = field(default=lambda s: logging.warning(s), kw_only=True)
     ignored_exception_types: tuple[type[Exception], ...] = field(factory=tuple, kw_only=True)
 
