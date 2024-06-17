@@ -71,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 - Structure run args not being set immediately.
+- Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
 
 ## [0.26.0] - 2024-06-04
 
