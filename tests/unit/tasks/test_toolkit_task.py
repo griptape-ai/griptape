@@ -324,7 +324,7 @@ class TestToolkitSubtask:
 
         agent.add_task(task)
 
-        system_template = task.generate_system_template(PromptTask())
+        system_template = task.generate_system_template()
 
         assert "You have access to additional contextual information" in system_template
 

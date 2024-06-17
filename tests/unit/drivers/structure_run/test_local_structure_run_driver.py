@@ -1,6 +1,4 @@
 import os
-import pytest
-from griptape.artifacts.text_artifact import TextArtifact
 from griptape.tasks import StructureRunTask
 from griptape.structures import Agent
 from tests.mocks.mock_prompt_driver import MockPromptDriver

@@ -14,18 +14,16 @@ if TYPE_CHECKING:
 @define
 class PromptTask(BaseTextInputTask):
     _prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True, alias="prompt_driver")
-    generate_system_template: Callable[[PromptTask], str] = field(
-        default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
-    )
-
     output: Optional[BaseArtifact] = field(default=None, init=False)
+    system_template_path: str = field(default="tasks/prompt_task/system.j2", kw_only=True)
+    user_template_path: str = field(default="tasks/prompt_task/user.j2", kw_only=True)
 
     @property
     def prompt_stack(self) -> PromptStack:
         stack = PromptStack()
         memory = self.structure.conversation_memory
 
-        stack.add_system_input(self.generate_system_template(self))
+        stack.add_system_input(self.generate_system_template())
 
         stack.add_user_input(self.input.to_text())
 
@@ -54,10 +52,8 @@ class PromptTask(BaseTextInputTask):
 
         return self
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
-        return J2("tasks/prompt_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets)
-        )
+    def generate_system_template(self) -> str:
+        return self.render_system_template(rulesets=self.render_rulesets_template(rulesets=self.all_rulesets))
 
     def run(self) -> BaseArtifact:
         self.output = self.prompt_driver.run(self.prompt_stack)

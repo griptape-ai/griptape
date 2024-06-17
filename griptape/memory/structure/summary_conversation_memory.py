@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
 from griptape.utils import J2, PromptStack
 from griptape.memory.structure import ConversationMemory
+from griptape.mixins import J2Mixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -11,14 +12,14 @@ if TYPE_CHECKING:
 
 
 @define
-class SummaryConversationMemory(ConversationMemory):
+class SummaryConversationMemory(ConversationMemory, J2Mixin):
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
     _prompt_driver: BasePromptDriver = field(kw_only=True, default=None, alias="prompt_driver")
     summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
-    summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
-    summarize_conversation_template_generator: J2 = field(
-        default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")), kw_only=True
+    summary_template_path: str = field(default="memory/conversation/summary.j2", kw_only=True)
+    summarize_conversation_template_path: str = field(
+        default="memory/conversation/summarize_conversation.j2", kw_only=True
     )
 
     @property
@@ -37,7 +38,7 @@ class SummaryConversationMemory(ConversationMemory):
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
-            stack.add_user_input(self.summary_template_generator.render(summary=self.summary))
+            stack.add_user_input(self.render_template(self.summary_template_path, summary=self.summary))
 
         for r in self.unsummarized_runs(last_n):
             stack.add_user_input(r.input)
@@ -71,7 +72,9 @@ class SummaryConversationMemory(ConversationMemory):
     def summarize_runs(self, previous_summary: str | None, runs: list[Run]) -> str | None:
         try:
             if len(runs) > 0:
-                summary = self.summarize_conversation_template_generator.render(summary=previous_summary, runs=runs)
+                summary = self.render_template(
+                    self.summarize_conversation_template_path, summary=previous_summary, runs=runs
+                )
                 return self.prompt_driver.run(
                     prompt_stack=PromptStack(inputs=[PromptStack.Input(summary, role=PromptStack.USER_ROLE)])
                 ).to_text()

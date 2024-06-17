@@ -29,13 +29,10 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionsSubtask] = field(factory=list)
-    generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True), kw_only=True
-    )
-    generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True), kw_only=True
-    )
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
+    system_template_path: str = field(default="tasks/toolkit_task/system.j2", kw_only=True)
+    assistant_template_path: str = field(default="tasks/toolkit_task/assistant_subtask.j2", kw_only=True)
+    user_template_path: str = field(default="tasks/toolkit_task/user_subtask.j2", kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.task_memory:
@@ -65,7 +62,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         stack = PromptStack()
         memory = self.structure.conversation_memory
 
-        stack.add_system_input(self.generate_system_template(self))
+        stack.add_system_input(self.generate_system_template())
 
         stack.add_user_input(self.input.to_text())
 
@@ -73,8 +70,12 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_input(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_assistant_input(self.generate_assistant_subtask_template(s))
-                stack.add_user_input(self.generate_user_subtask_template(s))
+                stack.add_assistant_input(
+                    self.render_template(
+                        self.assistant_template_path, stop_sequence=self.response_stop_sequence, subtask=s
+                    )
+                )
+                stack.add_user_input(self.render_user_template(stop_sequence=self.response_stop_sequence, subtask=s))
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
@@ -90,26 +91,16 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         return self
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
+    def generate_system_template(self) -> str:
         schema = self.actions_schema().json_schema("Actions Schema")
         schema["minItems"] = 1  # The `schema` library doesn't support `minItems` so we must add it manually.
 
-        return J2("tasks/toolkit_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
+        return self.render_system_template(
+            rulesets=self.render_rulesets_template(rulesets=self.all_rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
-            meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
+            meta_memory=self.render_meta_memory_template(meta_memories=self.meta_memories),
             stop_sequence=self.response_stop_sequence,
-        )
-
-    def default_assistant_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
-        return J2("tasks/toolkit_task/assistant_subtask.j2").render(
-            stop_sequence=self.response_stop_sequence, subtask=subtask
-        )
-
-    def default_user_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
-        return J2("tasks/toolkit_task/user_subtask.j2").render(
-            stop_sequence=self.response_stop_sequence, subtask=subtask
         )
 
     def actions_schema(self) -> Schema:

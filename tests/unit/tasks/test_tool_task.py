@@ -174,7 +174,7 @@ class TestToolTask:
 
         agent.add_task(task)
 
-        system_template = task.generate_system_template(task)
+        system_template = task.generate_system_template()
 
         assert "You have access to additional contextual information" in system_template
 

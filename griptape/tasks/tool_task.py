@@ -24,6 +24,9 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+    system_template_path: str = field(default="tasks/tool_task/system.j2", kw_only=True)
+    user_template_path: str = field(default="tasks/tool_task/user.j2", kw_only=True)
+    subtask_template_path: str = field(default="tasks/tool_task/subtask.j2", kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if self.task_memory is not None:
@@ -37,11 +40,11 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
 
         return self
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
-        return J2("tasks/tool_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
+    def generate_system_template(self) -> str:
+        return self.render_system_template(
+            rulesets=self.render_rulesets_template(rulesets=self.all_rulesets),
             action_schema=utils.minify_json(json.dumps(self.tool.schema())),
-            meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
+            meta_memory=self.render_meta_memory_template(meta_memories=self.meta_memories),
         )
 
     def actions_schema(self) -> Schema:
@@ -56,7 +59,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
                 data = action_matches[-1]
                 action_dict = json.loads(data)
                 action_dict["tag"] = self.tool.name
-                subtask_input = J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict))
+                subtask_input = self.render_template(self.subtask_template_path, action_json=json.dumps(action_dict))
                 subtask = self.add_subtask(ActionsSubtask(subtask_input))
 
                 subtask.before_run()

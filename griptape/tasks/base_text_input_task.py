@@ -8,11 +8,11 @@ from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
-from griptape.utils import J2
+from griptape.mixins import J2Mixin
 
 
 @define
-class BaseTextInputTask(RuleMixin, BaseTask, ABC):
+class BaseTextInputTask(RuleMixin, J2Mixin, BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
@@ -26,7 +26,7 @@ class BaseTextInputTask(RuleMixin, BaseTask, ABC):
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
-            return TextArtifact(J2().render_from_string(self._input, **self.full_context))
+            return TextArtifact(self.render_from_string(self._input, **self.full_context))
 
     @input.setter
     def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
