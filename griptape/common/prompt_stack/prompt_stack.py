@@ -22,24 +22,24 @@ class PromptStack(SerializableMixin):
     inputs: list[PromptStackElement] = field(factory=list, kw_only=True, metadata={"serializable": True})
     actions: list[BaseTool] = field(factory=list, kw_only=True)
 
-    def add_message(self, artifact: str | BaseArtifact, role: str) -> PromptStackMessage:
-        new_content = self.__process_artifact(artifact)
+    def add_input(self, artifact: str | BaseArtifact, role: str) -> PromptStackElement:
+        content = self.__process_artifact(artifact)
 
-        self.messages.append(PromptStackMessage(content=new_content, role=role))
+        self.inputs.append(PromptStackElement(content=content, role=role))
 
         return self.messages[-1]
 
-    def add_system_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
-        return self.add_message(artifact, PromptStackMessage.SYSTEM_ROLE)
+    def add_system_input(self, artifact: str | BaseArtifact) -> PromptStackElement:
+        return self.add_input(artifact, PromptStackElement.SYSTEM_ROLE)
 
-    def add_user_input(self, content: str | BaseArtifact) -> PromptStackElement:
-        return self.add_input(content, PromptStackElement.USER_ROLE)
+    def add_user_input(self, artifact: str | BaseArtifact) -> PromptStackElement:
+        return self.add_input(artifact, PromptStackElement.USER_ROLE)
 
-    def add_assistant_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
-        return self.add_message(artifact, PromptStackMessage.ASSISTANT_ROLE)
+    def add_assistant_input(self, artifact: str | BaseArtifact) -> PromptStackElement:
+        return self.add_input(artifact, PromptStackElement.ASSISTANT_ROLE)
 
     def add_action_call_input(self, thought: Optional[str], actions: list[ActionsSubtask.Action]) -> PromptStackElement:
-        thought_content = self.__process_content(thought) if thought else []
+        thought_content = self.__process_artifact(thought) if thought else []
 
         action_calls_content = [
             ActionCallPromptStackContent(
@@ -63,7 +63,7 @@ class PromptStack(SerializableMixin):
     def add_action_result_input(
         self, instructions: Optional[str | BaseArtifact], actions: list[ActionsSubtask.Action]
     ) -> PromptStackElement:
-        instructions_content = self.__process_content(instructions) if instructions else []
+        instructions_content = self.__process_artifact(instructions) if instructions else []
 
         action_results_content = [
             ActionResultPromptStackContent(action.output, action_tag=action.tag)
@@ -79,17 +79,17 @@ class PromptStack(SerializableMixin):
 
         return self.inputs[-1]
 
-    def __process_content(self, content: str | BaseArtifact) -> list[BasePromptStackContent]:
-        if isinstance(content, str):
-            return [TextPromptStackContent(TextArtifact(content))]
-        elif isinstance(content, TextArtifact):
-            return [TextPromptStackContent(content)]
-        elif isinstance(content, ImageArtifact):
-            return [ImagePromptStackContent(content)]
-        elif isinstance(content, ActionCallArtifact):
-            return [ActionCallPromptStackContent(content)]
-        elif isinstance(content, ListArtifact):
-            processed_contents = [self.__process_content(artifact) for artifact in content.value]
+    def __process_artifact(self, artifact: str | BaseArtifact) -> list[BasePromptStackContent]:
+        if isinstance(artifact, str):
+            return [TextPromptStackContent(TextArtifact(artifact))]
+        elif isinstance(artifact, TextArtifact):
+            return [TextPromptStackContent(artifact)]
+        elif isinstance(artifact, ImageArtifact):
+            return [ImagePromptStackContent(artifact)]
+        elif isinstance(artifact, ActionCallArtifact):
+            return [ActionCallPromptStackContent(artifact)]
+        elif isinstance(artifact, ListArtifact):
+            processed_contents = [self.__process_artifact(artifact) for artifact in artifact.value]
             flattened_content = [
                 sub_content for processed_content in processed_contents for sub_content in processed_content
             ]

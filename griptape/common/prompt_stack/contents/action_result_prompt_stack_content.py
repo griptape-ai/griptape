@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from attrs import define, field
 from collections.abc import Sequence
 
-from griptape.artifacts.base_artifact import BaseArtifact
+from attrs import define, field
+
+from griptape.artifacts import BaseArtifact
 from griptape.common import BaseDeltaPromptStackContent, BasePromptStackContent
 
 
