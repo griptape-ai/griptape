@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Iterator
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import ActionCallArtifact, ErrorArtifact, TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
@@ -16,13 +17,20 @@ from griptape.common import (
     PromptStackMessage,
     TextPromptStackContent,
 )
+from griptape.common.prompt_stack.contents.action_call_prompt_stack_content import ActionCallPromptStackContent
+from griptape.common.prompt_stack.contents.action_result_prompt_stack_content import ActionResultPromptStackContent
+from griptape.common.prompt_stack.contents.delta_action_call_prompt_stack_content import (
+    DeltaActionCallPromptStackContent,
+)
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
+from schema import Schema
 
 if TYPE_CHECKING:
-    from anthropic.types import ContentBlockDeltaEvent
-    from anthropic.types import ContentBlock
+    from anthropic import Client
+    from anthropic.types import ContentBlock, ContentBlockDeltaEvent, ContentBlockStartEvent
+    from griptape.tools.base_tool import BaseTool
 
 
 @define
@@ -36,7 +44,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    client: Any = field(
+    client: Client = field(
         default=Factory(
             lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key), takes_self=True
         ),
@@ -47,6 +55,8 @@ class AnthropicPromptDriver(BasePromptDriver):
     )
     top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
+    tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
 
     def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
@@ -64,7 +74,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         events = self.client.messages.create(**self._base_params(prompt_stack), stream=True)
 
         for event in events:
-            if event.type == "content_block_delta":
+            if event.type == "content_block_delta" or event.type == "content_block_start":
                 yield self.__message_content_delta_to_prompt_stack_content_delta(event)
             elif event.type == "message_start":
                 yield DeltaPromptStackMessage(
@@ -78,6 +88,13 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
         return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in elements]
+
+    def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
+        return (
+            {"tools": self.__to_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
+            if prompt_stack.actions and self.use_native_tools
+            else {}
+        )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = self._prompt_stack_messages_to_messages([i for i in prompt_stack.messages if not i.is_system()])
@@ -96,6 +113,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             "top_k": self.top_k,
             "max_tokens": self.max_tokens,
             "messages": messages,
+            **self._prompt_stack_to_tools(prompt_stack),
             **({"system": system_message} if system_message else {}),
         }
 
@@ -107,11 +125,26 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             return "user"
 
-    def __to_content(self, input: PromptStackMessage) -> str | list[dict]:
+    def __to_tools(self, tools: list[BaseTool]) -> list[dict]:
+        return [
+            {
+                "name": f"{tool.name}-{tool.activity_name(activity)}",
+                "description": tool.activity_description(activity),
+                "input_schema": (tool.activity_schema(activity) or Schema({})).json_schema("Input Schema"),
+            }
+            for tool in tools
+            for activity in tool.activities()
+        ]
+
+    def __to_content(self, input: PromptStackElement) -> str | list[dict]:
         if all(isinstance(content, TextPromptStackContent) for content in input.content):
             return input.to_text_artifact().to_text()
         else:
-            return [self.__prompt_stack_content_message_content(content) for content in input.content]
+            content = [self.__prompt_stack_content_message_content(content) for content in input.content]
+            sorted_content = sorted(
+                content, key=lambda message_content: -1 if message_content["type"] == "tool_result" else 1
+            )  # Tool results must come first in the content list
+            return sorted_content
 
     def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
@@ -121,17 +154,46 @@ class AnthropicPromptDriver(BasePromptDriver):
                 "type": "image",
                 "source": {"type": "base64", "media_type": content.artifact.mime_type, "data": content.artifact.base64},
             }
+        elif isinstance(content, ActionCallPromptStackContent):
+            action = content.artifact.value
+
+            return {
+                "type": "tool_use",
+                "id": action.tag,
+                "name": f"{action.name}-{action.path}",
+                "input": json.loads(action.input),
+            }
+        elif isinstance(content, ActionResultPromptStackContent):
+            artifact = content.artifact
+
+            return {
+                "type": "tool_result",
+                "tool_use_id": content.action_tag,
+                "content": artifact.to_text(),
+                "is_error": isinstance(artifact, ErrorArtifact),
+            }
         else:
             raise ValueError(f"Unsupported prompt content type: {type(content)}")
 
     def __message_content_to_prompt_stack_content(self, content: ContentBlock) -> BasePromptStackContent:
         if content.type == "text":
             return TextPromptStackContent(TextArtifact(content.text))
+        elif content.type == "tool_use":
+            return ActionCallPromptStackContent(
+                artifact=ActionCallArtifact(
+                    value=ActionCallArtifact.ActionCall(
+                        tag=content.id,
+                        name=content.name.split("-")[0],
+                        path=content.name.split("-")[1],
+                        input=json.dumps(content.input),
+                    )
+                )
+            )
         else:
             raise ValueError(f"Unsupported message content type: {content.type}")
 
     def __message_content_delta_to_prompt_stack_content_delta(
-        self, content_delta: ContentBlockDeltaEvent
+        self, event: ContentBlockDeltaEvent | ContentBlockStartEvent
     ) -> BaseDeltaPromptStackContent:
         index = content_delta.index
 

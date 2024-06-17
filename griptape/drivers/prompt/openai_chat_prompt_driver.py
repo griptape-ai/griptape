@@ -132,7 +132,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                             {
                                 "role": self.__to_role(input),
                                 "content": self.__prompt_stack_content_message_content(action_result),
-                                "name": f"{action_result.action_name}-{action_result.action_path}",
                                 "tool_call_id": action_result.action_tag,
                             }
                         )
