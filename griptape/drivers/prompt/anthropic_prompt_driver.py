@@ -7,6 +7,10 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ActionCallArtifact, ErrorArtifact, TextArtifact
+from griptape.artifacts.base_artifact import BaseArtifact
+from griptape.artifacts.image_artifact import ImageArtifact
+from griptape.artifacts.info_artifact import InfoArtifact
+from griptape.artifacts.list_artifact import ListArtifact
 from griptape.common import (
     BasePromptStackContent,
     DeltaPromptStackMessage,
@@ -16,11 +20,9 @@ from griptape.common import (
     PromptStackMessage,
     TextPromptStackContent,
 )
-from griptape.common.prompt_stack.contents.action_call_prompt_stack_content import ActionCallPromptStackContent
-from griptape.common.prompt_stack.contents.action_result_prompt_stack_content import ActionResultPromptStackContent
-from griptape.common.prompt_stack.contents.delta_action_call_prompt_stack_content import (
-    DeltaActionCallPromptStackContent,
-)
+from griptape.common import ActionCallPromptStackContent
+from griptape.common import ActionResultPromptStackContent
+from griptape.common import DeltaActionCallPromptStackContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
@@ -136,20 +138,17 @@ class AnthropicPromptDriver(BasePromptDriver):
         if all(isinstance(content, TextPromptStackContent) for content in input.content):
             return input.to_text_artifact().to_text()
         else:
-            content = [self.__prompt_stack_content_message_content(content) for content in input.content]
+            content = [self.__prompt_stack_content_to_message_content(content) for content in input.content]
             sorted_content = sorted(
                 content, key=lambda message_content: -1 if message_content["type"] == "tool_result" else 1
             )  # Tool results must come first in the content list
             return sorted_content
 
-    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
+    def __prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
-            return {"type": "text", "text": content.artifact.to_text()}
+            return self.__artifact_to_message_content(content.artifact)
         elif isinstance(content, ImagePromptStackContent):
-            return {
-                "type": "image",
-                "source": {"type": "base64", "media_type": content.artifact.mime_type, "data": content.artifact.base64},
-            }
+            return self.__artifact_to_message_content(content.artifact)
         elif isinstance(content, ActionCallPromptStackContent):
             action = content.artifact.value
 
@@ -165,11 +164,30 @@ class AnthropicPromptDriver(BasePromptDriver):
             return {
                 "type": "tool_result",
                 "tool_use_id": content.action_tag,
-                "content": artifact.to_text(),
+                "content": [self.__artifact_to_message_content(artifact) for artifact in artifact.value]
+                if isinstance(artifact, ListArtifact)
+                else [self.__artifact_to_message_content(artifact)],
                 "is_error": isinstance(artifact, ErrorArtifact),
             }
         else:
             raise ValueError(f"Unsupported prompt content type: {type(content)}")
+
+    def __artifact_to_message_content(self, artifact: BaseArtifact) -> dict:
+        if isinstance(artifact, ImageArtifact):
+            return {
+                "type": "image",
+                "source": {"type": "base64", "media_type": artifact.mime_type, "data": artifact.base64},
+            }
+        elif (
+            isinstance(artifact, TextArtifact)
+            or isinstance(artifact, ErrorArtifact)
+            or isinstance(artifact, InfoArtifact)
+        ):
+            return {"text": artifact.to_text()}
+        elif isinstance(artifact, ErrorArtifact):
+            return {"text": artifact.to_text()}
+        else:
+            raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
     def __message_content_to_prompt_stack_content(self, content: ContentBlock) -> BasePromptStackContent:
         if content.type == "text":
