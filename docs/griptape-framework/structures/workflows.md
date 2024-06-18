@@ -299,3 +299,60 @@ workflow = Workflow(
 
 workflow.run()
 ```
+
+### Insert Parallel Tasks
+
+`Workflow.insert_tasks()` provides a convenient way to insert parallel tasks between parents and children.
+
+!!! info
+    By default, all children are removed from the parent task and all parent tasks are removed from the child task. If you want to keep these parent-child relationships, then set the `preserve_relationship` parameter to `True`.
+
+Imperatively insert parallel tasks between a parent and child:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    rules=[Rule("output a single lowercase word")],
+)
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+color_task = PromptTask("Describe {{ parent_outputs['animal'] }} with a color", id="color")
+new_animal_task = PromptTask("Name an animal described as: \n{{ parents_output_text }}", id="new-animal")
+
+# The following workflow runs animal_task, then (adjective_task, and color_task)
+# in parallel, then finally new_animal_task.
+#
+# In other words, the output of animal_task is passed to both adjective_task and color_task
+# and the outputs of adjective_task and color_task are then passed to new_animal_task.
+workflow.add_task(animal_task)
+workflow.add_task(new_animal_task)
+workflow.insert_tasks(animal_task, [adjective_task, color_task], new_animal_task)
+
+workflow.run()
+```
+
+output:
+```
+[06/18/24 09:52:21] INFO     PromptTask animal
+                             Input: Name an animal
+[06/18/24 09:52:22] INFO     PromptTask animal
+                             Output: elephant
+                    INFO     PromptTask adjective
+                             Input: Describe elephant with an adjective
+                    INFO     PromptTask color
+                             Input: Describe elephant with a color
+                    INFO     PromptTask color
+                             Output: gray
+                    INFO     PromptTask adjective
+                             Output: majestic
+                    INFO     PromptTask new-animal
+                             Input: Name an animal described as:
+                             majestic
+                             gray
+[06/18/24 09:52:23] INFO     PromptTask new-animal
+                             Output: elephant
+```
