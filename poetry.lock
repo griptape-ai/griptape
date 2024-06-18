@@ -1523,13 +1523,13 @@ dev = ["flake8", "markdown", "twine", "wheel"]
 
 [[package]]
 name = "google-ai-generativelanguage"
-version = "0.6.4"
+version = "0.6.5"
 description = "Google Ai Generativelanguage API client library"
 optional = true
 python-versions = ">=3.7"
 files = [
-    {file = "google-ai-generativelanguage-0.6.4.tar.gz", hash = "sha256:1750848c12af96cb24ae1c3dd05e4bfe24867dc4577009ed03e1042d8421e874"},
-    {file = "google_ai_generativelanguage-0.6.4-py3-none-any.whl", hash = "sha256:730e471aa549797118fb1c88421ba1957741433ada575cf5dd08d3aebf903ab1"},
+    {file = "google-ai-generativelanguage-0.6.5.tar.gz", hash = "sha256:c4089c277fa4e26722f76ab03ee3039f28be8bf1c9be282948b9583a154c6d79"},
+    {file = "google_ai_generativelanguage-0.6.5-py3-none-any.whl", hash = "sha256:236875bb4a6d6ebdba2f12bd9d5e776100fd913402157a47b5e9fb80a13f25a7"},
 ]
 
 [package.dependencies]
@@ -1627,16 +1627,16 @@ httplib2 = ">=0.19.0"
 
 [[package]]
 name = "google-generativeai"
-version = "0.6.0"
+version = "0.7.0"
 description = "Google Generative AI High level API client library and tools."
 optional = true
 python-versions = ">=3.9"
 files = [
-    {file = "google_generativeai-0.6.0-py3-none-any.whl", hash = "sha256:ba1d3b826b872bffe330aaac0dc6de2f0e4610df861c8ce7ec6433771611b676"},
+    {file = "google_generativeai-0.7.0-py3-none-any.whl", hash = "sha256:7be4b634afeb8b6bebde1af7271e94d2af84d2d28b5988c7ed9921733c40fe63"},
 ]
 
 [package.dependencies]
-google-ai-generativelanguage = "0.6.4"
+google-ai-generativelanguage = "0.6.5"
 google-api-core = "*"
 google-api-python-client = "*"
 google-auth = ">=2.15.0"
@@ -3776,7 +3776,7 @@ testing = ["google-api-core[grpc] (>=1.31.5)"]
 name = "protobuf"
 version = "4.25.3"
 description = ""
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "protobuf-4.25.3-cp310-abi3-win32.whl", hash = "sha256:d4198877797a83cbfe9bffa3803602bbe1625dc30d8a097365dbc762e5790faa"},
@@ -6256,4 +6256,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a2d363808de47ee033716c07e6db617c7319327c54290439878707c66b5adb56"
+content-hash = "f527252623659d42316b3dc56a124b1e617599ae7540f1cd5acd599ad795bb73"

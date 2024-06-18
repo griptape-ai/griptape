@@ -7,7 +7,7 @@ from .command_runner import CommandRunner
 from .chat import Chat
 from .futures import execute_futures_dict
 from .token_counter import TokenCounter
-from .dict_utils import remove_null_values_in_dict_recursively, dict_merge
+from .dict_utils import remove_null_values_in_dict_recursively, dict_merge, remove_key_in_dict_recursively
 from .file_utils import load_file, load_files
 from .hash import str_to_hash
 from .import_utils import import_optional_dependency
@@ -37,6 +37,7 @@ __all__ = [
     "TokenCounter",
     "remove_null_values_in_dict_recursively",
     "dict_merge",
+    "remove_key_in_dict_recursively",
     "Stream",
     "load_artifact_from_memory",
     "deprecation_warn",
