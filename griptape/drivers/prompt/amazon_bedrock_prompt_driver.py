@@ -147,6 +147,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     name=name,
                     path=path,
                 )
+            elif "text" in content_block:
+                return DeltaTextPromptStackContent(
+                    content_block["text"], index=event["contentBlockStart"]["contentBlockIndex"]
+                )
             else:
                 raise ValueError(f"Unsupported message content type: {event}")
         elif "contentBlockDelta" in event:
