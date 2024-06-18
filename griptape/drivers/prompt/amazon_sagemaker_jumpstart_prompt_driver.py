@@ -97,8 +97,8 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []
 
-        for input in prompt_stack.messages:
-            messages.append({"role": input.role, "content": TextPromptStackContent(input.to_text_artifact())})
+        for message in prompt_stack.messages:
+            messages.append({"role": message.role, "content": TextPromptStackContent(message.to_text_artifact())})
 
         return messages
 
