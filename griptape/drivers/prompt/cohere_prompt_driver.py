@@ -1,23 +1,34 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+import json
 from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
+from griptape.artifacts.list_artifact import ListArtifact
+from griptape.common.prompt_stack.contents.delta_action_call_prompt_stack_content import (
+    DeltaActionCallPromptStackContent,
+)
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
+from griptape.artifacts import ActionCallArtifact
 from griptape.common import (
-    PromptStack,
-    PromptStackMessage,
-    DeltaPromptStackMessage,
-    TextPromptStackContent,
+    ActionCallPromptStackContent,
+    BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    TextDeltaPromptStackContent,
+    DeltaPromptStackElement,
+    DeltaTextPromptStackContent,
+    PromptStack,
+    PromptStackElement,
+    TextPromptStackContent,
+    ActionResultPromptStackContent,
 )
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
     from cohere import Client
+    from cohere.types import NonStreamedChatResponse
+    from griptape.tools import BaseTool
 
 
 @define
@@ -39,53 +50,89 @@ class CoherePromptDriver(BasePromptDriver):
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
         kw_only=True,
     )
+    force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
     def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         result = self.client.chat(**self._base_params(prompt_stack))
         usage = result.meta.tokens
 
-        return PromptStackMessage(
-            content=[TextPromptStackContent(TextArtifact(result.text))],
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
+        return PromptStackElement(
+            content=self.__message_to_prompt_stack_content(result),
+            role=PromptStackElement.ASSISTANT_ROLE,
+            usage=PromptStackElement.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         result = self.client.chat_stream(**self._base_params(prompt_stack))
 
         for event in result:
-            if event.event_type == "text-generation":
-                yield DeltaPromptStackMessage(content=TextDeltaPromptStackContent(event.text, index=0))
-            elif event.event_type == "stream-end":
+            if event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
-                yield DeltaPromptStackMessage(
-                    usage=DeltaPromptStackMessage.Usage(
+                return DeltaPromptStackElement(
+                    role=PromptStackElement.ASSISTANT_ROLE,
+                    delta_usage=DeltaPromptStackElement.DeltaUsage(
                         input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
                     )
                 )
+            elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
+                yield self.__message_delta_to_prompt_stack_content(event.dict())
 
-    def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
-        return [
-            {
-                "role": self.__to_role(input),
-                "content": [self.__prompt_stack_content_message_content(content) for content in input.content],
-            }
-            for input in elements
-        ]
+    def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
+        messages = []
 
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
-        last_input = prompt_stack.messages[-1]
-        if last_input is not None and len(last_input.content) == 1:
-            user_message = last_input.content[0].artifact.to_text()
-        else:
-            raise ValueError("User element must have exactly one content.")
+        for input in elements:
+            message: dict = {"role": self.__to_role(input)}
 
-        history_messages = self._prompt_stack_messages_to_messages(
-            [input for input in prompt_stack.messages[:-1] if not input.is_system()]
+            if input.has_action_results():
+                message["tool_results"] = [
+                    self.__prompt_stack_content_message_content(action_call)
+                    for action_call in input.content
+                    if isinstance(action_call, ActionResultPromptStackContent)
+                ]
+            else:
+                message["message"] = input.to_text_artifact().to_text()
+                message["tool_calls"] = [
+                    self.__prompt_stack_content_message_content(action_call)
+                    for action_call in input.content
+                    if isinstance(action_call, ActionCallPromptStackContent)
+                ]
+
+            messages.append(message)
+
+        return messages
+
+    def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
+        return (
+            {"tools": self.__to_tools(prompt_stack.actions), "force_single_step": self.force_single_step}
+            if prompt_stack.actions and self.use_native_tools
+            else {}
         )
 
-        system_element = next((input for input in prompt_stack.messages if input.is_system()), None)
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        # Current message
+        last_input = prompt_stack.inputs[-1]
+        user_message = ""
+        tool_results = []
+        if last_input is not None:
+            message = self._prompt_stack_elements_to_messages([prompt_stack.inputs[-1]])
+
+            if "message" in message[0]:
+                user_message = message[0]["message"]
+            elif "tool_results" in message[0]:
+                tool_results = message[0]["tool_results"]
+            else:
+                raise ValueError("Unsupported message type")
+
+        # History messages
+        history_messages = self._prompt_stack_elements_to_messages(
+            [input for input in prompt_stack.inputs[:-1] if not input.is_system()]
+        )
+
+        # System message (preamble)
+        system_element = next((input for input in prompt_stack.inputs if input.is_system()), None)
         if system_element is not None:
             if len(system_element.content) == 1:
                 preamble = system_element.content[0].artifact.to_text()
@@ -100,19 +147,111 @@ class CoherePromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
+            **({"tool_results": tool_results} if tool_results else {}),
+            **self._prompt_stack_to_tools(prompt_stack),
             **({"preamble": preamble} if preamble else {}),
         }
 
     def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
             return {"text": content.artifact.to_text()}
+        elif isinstance(content, ActionCallPromptStackContent):
+            action = content.artifact.value
+
+            return {"call": {"name": f"{action.name}_{action.path}", "parameters": json.loads(action.input)}}
+        elif isinstance(content, ActionResultPromptStackContent):
+            artifact = content.artifact
+
+            return {
+                "call": {"name": f"{content.action_name}_{content.action_path}", "parameters": content.action_input},
+                "outputs": [{"text": artifact.to_text()} for artifact in artifact.value]
+                if isinstance(artifact, ListArtifact)
+                else [{"text": artifact.to_text()}],
+            }
+        elif isinstance(content, ActionResultPromptStackContent):
+            return {"text": content.artifact.to_text()}
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __to_role(self, input: PromptStackMessage) -> str:
+    def __message_to_prompt_stack_content(self, message: NonStreamedChatResponse) -> list[BasePromptStackContent]:
+        content = []
+        if message.text:
+            content.append(TextPromptStackContent(TextArtifact(message.text)))
+        if message.tool_calls:
+            content.extend(
+                [
+                    ActionCallPromptStackContent(
+                        ActionCallArtifact(
+                            ActionCallArtifact.ActionCall(
+                                tag=tool_call.name,
+                                name=tool_call.name.split("_")[0],
+                                path=tool_call.name.split("_")[1],
+                                input=json.dumps(tool_call.parameters),
+                            )
+                        )
+                    )
+                    for tool_call in message.tool_calls
+                ]
+            )
+
+        return content
+
+    def __message_delta_to_prompt_stack_content(self, event: dict) -> BaseDeltaPromptStackContent:
+        if event["event_type"] == "text-generation":
+            return DeltaTextPromptStackContent(event["text"], index=0)
+        elif event["event_type"] == "tool-calls-chunk":
+            if "tool_call_delta" in event:
+                tool_call_delta = event["tool_call_delta"]
+                if "name" in tool_call_delta:
+                    name, path = tool_call_delta["name"].split("_", 1)
+
+                    return DeltaActionCallPromptStackContent(tag=tool_call_delta["name"], name=name, path=path)
+                else:
+                    return DeltaActionCallPromptStackContent(delta_input=tool_call_delta["parameters"])
+
+            else:
+                return DeltaTextPromptStackContent(event["text"])
+        else:
+            raise ValueError(f"Unsupported event type: {event['event_type']}")
+
+    def __to_role(self, input: PromptStackElement) -> str:
         if input.is_system():
             return "SYSTEM"
-        elif input.is_user():
-            return "USER"
-        else:
+        elif input.is_assistant():
             return "CHATBOT"
+        else:
+            if input.has_action_results():
+                return "TOOL"
+            else:
+                return "USER"
+
+    def __to_tools(self, tools: list[BaseTool]) -> list[dict]:
+        tool_definitions = []
+
+        for tool in tools:
+            for activity in tool.activities():
+                properties_values = tool.activity_schema(activity).json_schema("Parameters Schema")["properties"][
+                    "values"
+                ]
+                properties = properties_values["properties"]
+
+                tool_definitions.append(
+                    {
+                        "name": f"{tool.name}_{tool.activity_name(activity)}",
+                        "description": tool.activity_description(activity),
+                        "parameter_definitions": {
+                            property_name: {
+                                "type": property_value["type"],
+                                "required": property_name in properties_values["required"],
+                                **(
+                                    {"description": property_value["description"]}
+                                    if "description" in property_value
+                                    else {}
+                                ),
+                            }
+                            for property_name, property_value in properties.items()
+                        },
+                    }
+                )
+
+        return tool_definitions

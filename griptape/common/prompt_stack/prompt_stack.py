@@ -66,14 +66,20 @@ class PromptStack(SerializableMixin):
         instructions_content = self.__process_artifact(instructions) if instructions else []
 
         action_results_content = [
-            ActionResultPromptStackContent(action.output, action_tag=action.tag)
+            ActionResultPromptStackContent(
+                action.output,
+                action_tag=action.tag,
+                action_name=action.name,
+                action_path=action.path,
+                action_input=action.input,
+            )
             for action in actions
             if action.output is not None
         ]
 
         self.inputs.append(
             PromptStackElement(
-                content=[*instructions_content, *action_results_content], role=PromptStackElement.USER_ROLE
+                content=[*action_results_content, *instructions_content], role=PromptStackElement.USER_ROLE
             )
         )
 

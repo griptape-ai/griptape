@@ -12,6 +12,9 @@ from griptape.common import BaseDeltaPromptStackContent, BasePromptStackContent
 class ActionResultPromptStackContent(BasePromptStackContent):
     artifact: BaseArtifact = field(metadata={"serializable": True})
     action_tag: str = field(kw_only=True, metadata={"serializable": True})
+    action_name: str = field(kw_only=True, metadata={"serializable": True})
+    action_path: str = field(kw_only=True, metadata={"serializable": True})
+    action_input: dict = field(kw_only=True, metadata={"serializable": True})
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> ActionResultPromptStackContent:

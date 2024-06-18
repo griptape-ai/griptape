@@ -5,32 +5,38 @@ from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
+from schema import Schema
 
-from griptape.artifacts import ActionCallArtifact, ErrorArtifact, TextArtifact
-from griptape.artifacts.base_artifact import BaseArtifact
-from griptape.artifacts.image_artifact import ImageArtifact
-from griptape.artifacts.info_artifact import InfoArtifact
-from griptape.artifacts.list_artifact import ListArtifact
+from griptape.artifacts import (
+    ActionCallArtifact,
+    BaseArtifact,
+    ErrorArtifact,
+    ImageArtifact,
+    InfoArtifact,
+    ListArtifact,
+    TextArtifact,
+)
 from griptape.common import (
+    ActionCallPromptStackContent,
+    ActionResultPromptStackContent,
+    BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaPromptStackMessage,
-    TextDeltaPromptStackContent,
+    DeltaActionCallPromptStackContent,
+    DeltaPromptStackElement,
+    DeltaTextPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
     PromptStackMessage,
     TextPromptStackContent,
 )
-from griptape.common import ActionCallPromptStackContent
-from griptape.common import ActionResultPromptStackContent
-from griptape.common import DeltaActionCallPromptStackContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
-from schema import Schema
 
 if TYPE_CHECKING:
     from anthropic import Client
     from anthropic.types import ContentBlock, ContentBlockDeltaEvent, ContentBlockStartEvent
+
     from griptape.tools.base_tool import BaseTool
 
 
@@ -126,7 +132,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     def __to_tools(self, tools: list[BaseTool]) -> list[dict]:
         return [
             {
-                "name": f"{tool.name}-{tool.activity_name(activity)}",
+                "name": f"{tool.name}_{tool.activity_name(activity)}",
                 "description": tool.activity_description(activity),
                 "input_schema": (tool.activity_schema(activity) or Schema({})).json_schema("Input Schema"),
             }
@@ -155,7 +161,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             return {
                 "type": "tool_use",
                 "id": action.tag,
-                "name": f"{action.name}-{action.path}",
+                "name": f"{action.name}_{action.path}",
                 "input": json.loads(action.input),
             }
         elif isinstance(content, ActionResultPromptStackContent):
@@ -183,9 +189,9 @@ class AnthropicPromptDriver(BasePromptDriver):
             or isinstance(artifact, ErrorArtifact)
             or isinstance(artifact, InfoArtifact)
         ):
-            return {"text": artifact.to_text()}
+            return {"type": "text", "text": artifact.to_text()}
         elif isinstance(artifact, ErrorArtifact):
-            return {"text": artifact.to_text()}
+            return {"type": "text", "text": artifact.to_text()}
         else:
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
@@ -193,13 +199,12 @@ class AnthropicPromptDriver(BasePromptDriver):
         if content.type == "text":
             return TextPromptStackContent(TextArtifact(content.text))
         elif content.type == "tool_use":
+            name, path = content.name.split("_", 1)
+
             return ActionCallPromptStackContent(
                 artifact=ActionCallArtifact(
                     value=ActionCallArtifact.ActionCall(
-                        tag=content.id,
-                        name=content.name.split("-")[0],
-                        path=content.name.split("-")[1],
-                        input=json.dumps(content.input),
+                        tag=content.id, name=name, path=path, input=json.dumps(content.input)
                     )
                 )
             )
@@ -209,9 +214,27 @@ class AnthropicPromptDriver(BasePromptDriver):
     def __message_content_delta_to_prompt_stack_content_delta(
         self, event: ContentBlockDeltaEvent | ContentBlockStartEvent
     ) -> BaseDeltaPromptStackContent:
-        index = content_delta.index
+        if event.type == "content_block_start":
+            content_block = event.content_block
 
-        if content_delta.delta.type == "text_delta":
-            return TextDeltaPromptStackContent(content_delta.delta.text, index=index)
+            if content_block.type == "tool_use":
+                name, path = content_block.name.split("_", 1)
+
+                return DeltaActionCallPromptStackContent(index=event.index, tag=content_block.id, name=name, path=path)
+            elif content_block.type == "text":
+                return DeltaTextPromptStackContent(content_block.text, index=event.index)
+            else:
+                raise ValueError(f"Unsupported content block type: {content_block.type}")
+        elif event.type == "content_block_delta":
+            content_block_delta = event.delta
+
+            if content_block_delta.type == "text_delta":
+                return DeltaTextPromptStackContent(content_block_delta.text, index=event.index)
+            elif content_block_delta.type == "input_json_delta":
+                return DeltaActionCallPromptStackContent(
+                    index=event.index, delta_input=content_block_delta.partial_json
+                )
+            else:
+                raise ValueError(f"Unsupported message content type: {event}")
         else:
-            raise ValueError(f"Unsupported message content delta type : {content_delta.delta.type}")
+            raise ValueError(f"Unsupported message content type: {event}")
