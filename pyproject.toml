@@ -44,7 +44,8 @@ redis = { version = "^4.6.0", optional = true }
 opensearch-py = { version = "^2.3.1", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
-google-generativeai = { version = "^0.6.0", optional = true }
+google-generativeai = { version = "^0.7.0", optional = true }
+protobuf = { version = "4.25.3", optional = true }
 trafilatura = {version = "^1.6", optional = true}
 playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
@@ -70,7 +71,7 @@ drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-huggingface-pipeline = ["huggingface-hub", "transformers", "torch"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
-drivers-prompt-google = ["google-generativeai"]
+drivers-prompt-google = ["google-generativeai", "protobuf"]
 drivers-prompt-ollama = ["ollama"]
 
 drivers-sql-redshift = ["sqlalchemy-redshift", "boto3"]
@@ -128,6 +129,7 @@ all = [
     "pgvector",
     "psycopg2-binary",
     "google-generativeai",
+    "protobuf",
     "trafilatura",
     "playwright",
     "beautifulsoup4",
