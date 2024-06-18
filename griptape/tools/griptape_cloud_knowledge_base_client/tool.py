@@ -3,6 +3,7 @@ from typing import Optional
 from urllib.parse import urljoin
 from schema import Schema, Literal
 from attrs import define, field
+import json
 from griptape.tools.base_griptape_cloud_client import BaseGriptapeCloudClient
 from griptape.utils.decorators import activity
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact, ErrorArtifact
@@ -49,8 +50,8 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
                 response_body = response.json()
                 artifacts: list[BaseArtifact] = []
                 for query_result in response_body.get("query_results", []):
-                    artifact_json = query_result["meta"]["bonus"] | query_result["meta"]["artifact"]
-                    artifacts.append(BaseArtifact.from_json(artifact_json))
+                    artifact_dict = query_result["meta"]["bonus"] | json.loads(query_result["meta"]["artifact"])
+                    artifacts.append(BaseArtifact.from_dict(artifact_dict))
 
                 return ListArtifact(artifacts)
             else:
