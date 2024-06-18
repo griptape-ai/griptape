@@ -304,7 +304,7 @@ workflow.run()
 
 `Workflow.insert_tasks()` provides a convenient way to insert parallel tasks between parents and children.
 
-!! Info
+!!! info
     By default, all children are removed from the parent task and all parent tasks are removed from the child task. If you want to keep these parent-child relationships, then set the `preserve_relationship` parameter to `True`.
 
 Imperatively insert parallel tasks between a parent and child:
