@@ -8,11 +8,11 @@ from griptape.artifacts import TextArtifact
 from griptape.common import BasePromptStackContent, TextPromptStackContent
 from griptape.mixins.serializable_mixin import SerializableMixin
 
-from .base_prompt_stack_element import BasePromptStackElement
+from .base_prompt_stack_message import BasePromptStackMessage
 
 
 @define
-class PromptStackElement(BasePromptStackElement):
+class PromptStackMessage(BasePromptStackMessage):
     @define
     class Usage(SerializableMixin):
         input_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
@@ -29,7 +29,7 @@ class PromptStackElement(BasePromptStackElement):
 
     content: list[BasePromptStackContent] = field(metadata={"serializable": True})
     usage: Usage = field(
-        kw_only=True, default=Factory(lambda: PromptStackElement.Usage()), metadata={"serializable": True}
+        kw_only=True, default=Factory(lambda: PromptStackMessage.Usage()), metadata={"serializable": True}
     )
 
     @property

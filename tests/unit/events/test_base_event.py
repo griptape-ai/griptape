@@ -34,9 +34,9 @@ class TestBaseEvent:
             "model": "foo bar",
             "prompt_stack": {
                 "type": "PromptStack",
-                "inputs": [
+                "messages": [
                     {
-                        "type": "PromptStackElement",
+                        "type": "PromptStackMessage",
                         "role": "user",
                         "content": [
                             {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
@@ -44,7 +44,7 @@ class TestBaseEvent:
                         "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
                     },
                     {
-                        "type": "PromptStackElement",
+                        "type": "PromptStackMessage",
                         "role": "system",
                         "content": [
                             {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "bar"}}
@@ -59,10 +59,10 @@ class TestBaseEvent:
 
         assert isinstance(event, StartPromptEvent)
         assert event.timestamp == 123
-        assert event.prompt_stack.inputs[0].content[0].artifact.value == "foo"
-        assert event.prompt_stack.inputs[0].role == "user"
-        assert event.prompt_stack.inputs[1].content[0].artifact.value == "bar"
-        assert event.prompt_stack.inputs[1].role == "system"
+        assert event.prompt_stack.messages[0].content[0].artifact.value == "foo"
+        assert event.prompt_stack.messages[0].role == "user"
+        assert event.prompt_stack.messages[1].content[0].artifact.value == "bar"
+        assert event.prompt_stack.messages[1].role == "system"
         assert event.model == "foo bar"
 
     def test_finish_prompt_event_from_dict(self):

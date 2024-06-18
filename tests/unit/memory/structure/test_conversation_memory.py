@@ -38,8 +38,8 @@ class TestConversationMemory:
 
         prompt_stack = memory.to_prompt_stack()
 
-        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
-        assert prompt_stack.inputs[1].content[0].artifact.value == "bar"
+        assert prompt_stack.messages[0].content[0].artifact.value == "foo"
+        assert prompt_stack.messages[1].content[0].artifact.value == "bar"
 
     def test_from_dict(self):
         memory = ConversationMemory()
@@ -88,11 +88,11 @@ class TestConversationMemory:
         )
         memory.structure = agent
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input(TextArtifact("foo"))
-        prompt_stack.add_assistant_input("bar")
+        prompt_stack.add_user_message(TextArtifact("foo"))
+        prompt_stack.add_assistant_message("bar")
         memory.add_to_prompt_stack(prompt_stack)
 
-        assert len(prompt_stack.inputs) == 12
+        assert len(prompt_stack.messages) == 12
 
     def test_add_to_prompt_stack_autopruning_enabled(self):
         # All memory is pruned.
@@ -109,12 +109,12 @@ class TestConversationMemory:
         )
         memory.structure = agent
         prompt_stack = PromptStack()
-        prompt_stack.add_system_input("fizz")
-        prompt_stack.add_user_input("foo")
-        prompt_stack.add_assistant_input("bar")
+        prompt_stack.add_system_message("fizz")
+        prompt_stack.add_user_message("foo")
+        prompt_stack.add_assistant_message("bar")
         memory.add_to_prompt_stack(prompt_stack)
 
-        assert len(prompt_stack.inputs) == 3
+        assert len(prompt_stack.messages) == 3
 
         # No memory is pruned.
         agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=1000)))
@@ -130,12 +130,12 @@ class TestConversationMemory:
         )
         memory.structure = agent
         prompt_stack = PromptStack()
-        prompt_stack.add_system_input("fizz")
-        prompt_stack.add_user_input("foo")
-        prompt_stack.add_assistant_input("bar")
+        prompt_stack.add_system_message("fizz")
+        prompt_stack.add_user_message("foo")
+        prompt_stack.add_assistant_message("bar")
         memory.add_to_prompt_stack(prompt_stack)
 
-        assert len(prompt_stack.inputs) == 13
+        assert len(prompt_stack.messages) == 13
 
         # One memory is pruned.
         # MockTokenizer's max_input_tokens set to one below the sum of memory + system prompt tokens
@@ -155,15 +155,15 @@ class TestConversationMemory:
         memory.structure = agent
         prompt_stack = PromptStack()
         # And then another 6 tokens from fizz for a total of 161 tokens.
-        prompt_stack.add_system_input("fizz")
-        prompt_stack.add_user_input("foo")
-        prompt_stack.add_assistant_input("bar")
+        prompt_stack.add_system_message("fizz")
+        prompt_stack.add_user_message("foo")
+        prompt_stack.add_assistant_message("bar")
         memory.add_to_prompt_stack(prompt_stack, 1)
 
         # We expect one run (2 prompt stack inputs) to be pruned.
-        assert len(prompt_stack.inputs) == 11
-        assert prompt_stack.inputs[0].content[0].artifact.value == "fizz"
-        assert prompt_stack.inputs[1].content[0].artifact.value == "foo2"
-        assert prompt_stack.inputs[2].content[0].artifact.value == "bar2"
-        assert prompt_stack.inputs[-2].content[0].artifact.value == "foo"
-        assert prompt_stack.inputs[-1].content[0].artifact.value == "bar"
+        assert len(prompt_stack.messages) == 11
+        assert prompt_stack.messages[0].content[0].artifact.value == "fizz"
+        assert prompt_stack.messages[1].content[0].artifact.value == "foo2"
+        assert prompt_stack.messages[2].content[0].artifact.value == "bar2"
+        assert prompt_stack.messages[-2].content[0].artifact.value == "foo"
+        assert prompt_stack.messages[-1].content[0].artifact.value == "bar"

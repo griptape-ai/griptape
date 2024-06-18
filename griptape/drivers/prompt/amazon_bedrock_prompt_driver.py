@@ -8,8 +8,8 @@ from attrs import Factory, define, field
 from griptape.artifacts import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
-    DeltaPromptStackElement,
-    PromptStackElement,
+    DeltaPromptStackMessage,
+    PromptStackMessage,
     DeltaTextPromptStackContent,
     BasePromptStackContent,
     TextPromptStackContent,
@@ -36,26 +36,26 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
 
         usage = response["usage"]
         output_message = response["output"]["message"]
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=[TextPromptStackContent(TextArtifact(content["text"])) for content in output_message["content"]],
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
 
         stream = response.get("stream")
         if stream is not None:
             for event in stream:
                 if "messageStart" in event:
-                    yield DeltaPromptStackElement(role=event["messageStart"]["role"])
+                    yield DeltaPromptStackMessage(role=event["messageStart"]["role"])
                 elif "contentBlockDelta" in event:
                     content_block_delta = event["contentBlockDelta"]
                     yield DeltaTextPromptStackContent(
@@ -63,15 +63,15 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     )
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
-                    yield DeltaPromptStackElement(
-                        delta_usage=DeltaPromptStackElement.DeltaUsage(
+                    yield DeltaPromptStackMessage(
+                        delta_usage=DeltaPromptStackMessage.DeltaUsage(
                             input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]
                         )
                     )
         else:
             raise Exception("model response is empty")
 
-    def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
         return [
             {
                 "role": self.__to_role(input),
@@ -82,11 +82,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [
-            {"text": input.to_text_artifact().to_text()} for input in prompt_stack.inputs if input.is_system()
+            {"text": input.to_text_artifact().to_text()} for input in prompt_stack.messages if input.is_system()
         ]
 
-        messages = self._prompt_stack_elements_to_messages(
-            [input for input in prompt_stack.inputs if not input.is_system()]
+        messages = self._prompt_stack_messages_to_messages(
+            [input for input in prompt_stack.messages if not input.is_system()]
         )
 
         return {
@@ -105,7 +105,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __to_role(self, input: PromptStackElement) -> str:
+    def __to_role(self, input: PromptStackMessage) -> str:
         if input.is_system():
             return "system"
         elif input.is_assistant():

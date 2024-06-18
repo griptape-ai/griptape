@@ -9,8 +9,8 @@ from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.common import (
     PromptStack,
-    PromptStackElement,
-    DeltaPromptStackElement,
+    PromptStackMessage,
+    DeltaPromptStackMessage,
     BaseDeltaPromptStackContent,
     TextPromptStackContent,
     DeltaTextPromptStackContent,
@@ -54,7 +54,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
@@ -63,13 +63,13 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=response,
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
@@ -84,9 +84,9 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             yield DeltaTextPromptStackContent(token, index=0)
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
-        yield DeltaPromptStackElement(
-            role=PromptStackElement.ASSISTANT_ROLE,
-            delta_usage=DeltaPromptStackElement.DeltaUsage(input_tokens=input_tokens, output_tokens=output_tokens),
+        yield DeltaPromptStackMessage(
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
@@ -94,7 +94,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []
-        for i in prompt_stack.inputs:
+        for i in prompt_stack.messages:
             if len(i.content) == 1:
                 messages.append({"role": i.role, "content": TextPromptStackContent(i.to_text_artifact())})
             else:

@@ -8,8 +8,8 @@ from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.common import (
     PromptStack,
-    PromptStackElement,
-    DeltaPromptStackElement,
+    PromptStackMessage,
+    DeltaPromptStackMessage,
     BaseDeltaPromptStackContent,
     TextPromptStackContent,
     DeltaTextPromptStackContent,
@@ -27,19 +27,19 @@ class MockPromptDriver(BasePromptDriver):
     mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
     mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=[TextPromptStackContent(TextArtifact(output))],
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(input_tokens=100, output_tokens=100),
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(input_tokens=100, output_tokens=100),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
         yield DeltaTextPromptStackContent(output)
-        yield DeltaPromptStackElement(
-            delta_usage=DeltaPromptStackElement.DeltaUsage(input_tokens=100, output_tokens=100)
+        yield DeltaPromptStackMessage(
+            delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=100, output_tokens=100)
         )

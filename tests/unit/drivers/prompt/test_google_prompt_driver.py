@@ -28,9 +28,9 @@ class TestGooglePromptDriver:
     def test_try_run(self, mock_generative_model):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50)
 
         # When
@@ -51,9 +51,9 @@ class TestGooglePromptDriver:
     def test_try_stream(self, mock_stream_generative_model):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", stream=True, top_p=0.5, top_k=50)
 
         # When

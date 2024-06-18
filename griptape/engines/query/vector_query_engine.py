@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.common import PromptStack
-from griptape.common.prompt_stack.elements.prompt_stack_element import PromptStackElement
+from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
 from griptape.rules import Ruleset
@@ -53,9 +53,9 @@ class VectorQueryEngine(BaseQueryEngine):
             message_token_count = self.prompt_driver.tokenizer.count_input_tokens_left(
                 self.prompt_driver.prompt_stack_to_string(
                     PromptStack(
-                        inputs=[
-                            PromptStackElement(system_message, role=PromptStackElement.SYSTEM_ROLE),
-                            PromptStackElement(user_message, role=PromptStackElement.USER_ROLE),
+                        messages=[
+                            PromptStackMessage(system_message, role=PromptStackMessage.SYSTEM_ROLE),
+                            PromptStackMessage(user_message, role=PromptStackMessage.USER_ROLE),
                         ]
                     )
                 )
@@ -74,9 +74,9 @@ class VectorQueryEngine(BaseQueryEngine):
 
         result = self.prompt_driver.run(
             PromptStack(
-                inputs=[
-                    PromptStackElement(system_message, role=PromptStackElement.SYSTEM_ROLE),
-                    PromptStackElement(user_message, role=PromptStackElement.USER_ROLE),
+                messages=[
+                    PromptStackMessage(system_message, role=PromptStackMessage.SYSTEM_ROLE),
+                    PromptStackMessage(user_message, role=PromptStackMessage.USER_ROLE),
                 ]
             )
         )

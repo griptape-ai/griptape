@@ -9,11 +9,11 @@ from griptape.artifacts import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -49,40 +49,40 @@ class AnthropicPromptDriver(BasePromptDriver):
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=[self.__message_content_to_prompt_stack_content(content) for content in response.content],
             role=response.role,
-            usage=PromptStackElement.Usage(
+            usage=PromptStackMessage.Usage(
                 input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens
             ),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         events = self.client.messages.create(**self._base_params(prompt_stack), stream=True)
 
         for event in events:
             if event.type == "content_block_delta":
                 yield self.__message_content_delta_to_prompt_stack_content_delta(event)
             elif event.type == "message_start":
-                yield DeltaPromptStackElement(
+                yield DeltaPromptStackMessage(
                     role=event.message.role,
-                    delta_usage=DeltaPromptStackElement.DeltaUsage(input_tokens=event.message.usage.input_tokens),
+                    delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=event.message.usage.input_tokens),
                 )
             elif event.type == "message_delta":
-                yield DeltaPromptStackElement(
-                    delta_usage=DeltaPromptStackElement.DeltaUsage(output_tokens=event.usage.output_tokens)
+                yield DeltaPromptStackMessage(
+                    delta_usage=DeltaPromptStackMessage.DeltaUsage(output_tokens=event.usage.output_tokens)
                 )
 
-    def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
         return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in elements]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        messages = self._prompt_stack_elements_to_messages([i for i in prompt_stack.inputs if not i.is_system()])
+        messages = self._prompt_stack_messages_to_messages([i for i in prompt_stack.messages if not i.is_system()])
 
-        system_element = next((i for i in prompt_stack.inputs if i.is_system()), None)
+        system_element = next((i for i in prompt_stack.messages if i.is_system()), None)
         if system_element:
             system_message = system_element.to_text_artifact().to_text()
         else:
@@ -99,7 +99,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             **({"system": system_message} if system_message else {}),
         }
 
-    def __to_role(self, input: PromptStackElement) -> str:
+    def __to_role(self, input: PromptStackMessage) -> str:
         if input.is_system():
             return "system"
         elif input.is_assistant():
@@ -107,7 +107,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             return "user"
 
-    def __to_content(self, input: PromptStackElement) -> str | list[dict]:
+    def __to_content(self, input: PromptStackMessage) -> str | list[dict]:
         if all(isinstance(content, TextPromptStackContent) for content in input.content):
             return input.to_text_artifact().to_text()
         else:
