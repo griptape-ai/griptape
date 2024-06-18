@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.parents_outputs` to get the textual output of all parent tasks. 
 - `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
 - `parents_output_text` to Workflow context.
-- `BaseObservabilityDriver` as the 
+- `BaseObservabilityDriver` as the base class for all observability drivers.
 - `DummyObservabilityDriver` as a no-op observability driver.
 - `OpenTelemetryObservabilityDriver` for sending observability data to an open telemetry collector or vendor.
 - `GriptapeCloudObservabilityDriver` for sending observability data to Griptape Cloud.

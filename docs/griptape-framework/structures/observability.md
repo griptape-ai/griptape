@@ -1,8 +1,8 @@
 ## Overview
 
-You can use [Observability](../../reference/griptape/observability/observability.md) context manager to send telemetry (metrics and traces) for all functions and methods annotated with the `@observable` decorator to a destination of your choice. This is useful for monitoring and debugging your application.
+The [Observability](../../reference/griptape/observability/observability.md) context manager sends telemetry (metrics and traces) for all functions and methods annotated with the `@observable` decorator to a destination of your choice. This is useful for monitoring and debugging your application.
 
-Observability is completely optional. You can opt in to using it by providing an `ObservabilityDriver` to the `Observability` context manager, for example:
+Observability is completely optional. To opt in, provide an `ObservabilityDriver` to the `Observability` context manager, for example:
 
 ```python title="PYTEST_IGNORE"
 from griptape.drivers import BaseObservabilityDriver
@@ -17,21 +17,21 @@ with Observability(driver=driver):
     # Important! Only code within this block will be instrumented
 ```
 
-For available drivers, see [Observability Drivers](../drivers/observability-drivers.md).
+For available drivers (and destinations), see [Observability Drivers](../drivers/observability-drivers.md).
 
 ## Tracing Custom Code
 
-All functions and methods annotated with the `@observable` decorator will be traced by default. If you want to trace custom code, you can use the `@observable` decorator.
+All functions and methods annotated with the `@observable` decorator will be traced when invoked within the context of the [Observability](../../reference/griptape/observability/observability.md) context manager, including functions and methods defined outside of the griptape framework. Thus to trace custom code, you just need to add the `@observable` decorator to your function or method, then invoke it within the [Observability](../../reference/griptape/observability/observability.md) context manager.
 
 For example:
 
 ```python title="PYTEST_IGNORE"
 import time
-from griptape.observability import observable
 from griptape.drivers import BaseObservabilityDriver
 from griptape.rules import Rule
 from griptape.structures import Agent
 from griptape.observability import Observability
+from griptape.utils.decorators import observable
 
 # Decorate a function
 @observable
