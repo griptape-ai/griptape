@@ -1,5 +1,6 @@
+from __future__ import annotations
 import functools
-from typing import Generic, TypeVar
+from typing import Any, Callable, TypeVar, cast
 import schema
 from schema import Schema
 from inspect import isfunction
@@ -31,14 +32,14 @@ def activity(config: dict):
     return decorator
 
 
-def observable(*args, **kwargs):
-    return Observable(*args, **kwargs)
+T = TypeVar("T", bound=Callable)
 
 
-T = TypeVar("T")
+def observable(*args: T | Any, **kwargs: Any) -> T:
+    return cast(T, Observable(*args, **kwargs))
 
 
-class Observable(Generic[T]):
+class Observable:
     def __init__(self, *args, **kwargs):
         self._instance = None
         if len(args) == 1 and len(kwargs) == 0 and isfunction(args[0]):
