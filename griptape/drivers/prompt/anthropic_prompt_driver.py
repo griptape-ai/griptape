@@ -125,20 +125,17 @@ class AnthropicPromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported prompt content type: {type(content)}")
 
     def __message_content_to_prompt_stack_content(self, content: ContentBlock) -> BasePromptStackContent:
-        content_type = content.type
-
-        if content_type == "text":
+        if content.type == "text":
             return TextPromptStackContent(TextArtifact(content.text))
         else:
-            raise ValueError(f"Unsupported message content type: {content_type}")
+            raise ValueError(f"Unsupported message content type: {content.type}")
 
     def __message_content_delta_to_prompt_stack_content_delta(
         self, content_delta: ContentBlockDeltaEvent
     ) -> BaseDeltaPromptStackContent:
         index = content_delta.index
-        delta_type = content_delta.delta.type
 
-        if delta_type == "text_delta":
+        if content_delta.delta.type == "text_delta":
             return DeltaTextPromptStackContent(content_delta.delta.text, index=index)
         else:
-            raise ValueError(f"Unsupported message content delta type : {delta_type}")
+            raise ValueError(f"Unsupported message content delta type : {content_delta.delta.type}")
