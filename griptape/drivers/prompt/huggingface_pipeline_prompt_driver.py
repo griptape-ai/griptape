@@ -8,9 +8,9 @@ from attrs import Factory, define, field
 from griptape.artifacts import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -48,7 +48,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         )
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
         result = self.pipe(
@@ -62,17 +62,17 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
                 input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
                 output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
-                return PromptStackElement(
+                return PromptStackMessage(
                     content=[TextPromptStackContent(TextArtifact(generated_text))],
-                    role=PromptStackElement.ASSISTANT_ROLE,
-                    usage=PromptStackElement.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+                    role=PromptStackMessage.ASSISTANT_ROLE,
+                    usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
                 )
             else:
                 raise Exception("completion with more than one choice is not supported yet")
         else:
             raise Exception("invalid output format")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         raise NotImplementedError("streaming is not supported")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
@@ -80,7 +80,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []
-        for i in prompt_stack.inputs:
+        for i in prompt_stack.messages:
             if len(i.content) == 1:
                 messages.append({"role": i.role, "content": TextPromptStackContent(i.to_text_artifact())})
             else:

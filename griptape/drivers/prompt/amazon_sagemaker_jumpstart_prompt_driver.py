@@ -9,9 +9,9 @@ from attrs import Factory, define, field
 from griptape.artifacts import TextArtifact
 from griptape.common import (
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     BaseDeltaPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -47,7 +47,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         if stream:
             raise ValueError("streaming is not supported")
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         payload = {
             "inputs": self.prompt_stack_to_string(prompt_stack),
             "parameters": {**self._base_params(prompt_stack)},
@@ -78,13 +78,13 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=[TextPromptStackContent(TextArtifact(generated_text))],
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         raise NotImplementedError("streaming is not supported")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
@@ -103,7 +103,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []
 
-        for input in prompt_stack.inputs:
+        for input in prompt_stack.messages:
             messages.append({"role": input.role, "content": TextPromptStackContent(input.to_text_artifact())})
 
         return messages

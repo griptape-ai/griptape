@@ -29,9 +29,9 @@ class TestCoherePromptDriver:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         return prompt_stack
 
     def test_init(self):

@@ -7,8 +7,8 @@ from attrs import Factory, define, field
 from griptape.common import (
     BasePromptStackContent,
     PromptStack,
-    PromptStackElement,
-    DeltaPromptStackElement,
+    PromptStackMessage,
+    DeltaPromptStackMessage,
     BaseDeltaPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -21,13 +21,13 @@ class DummyPromptDriver(BasePromptDriver):
     model: None = field(init=False, default=None, kw_only=True)
     tokenizer: DummyTokenizer = field(default=Factory(lambda: DummyTokenizer()), kw_only=True)
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         raise DummyException(__class__.__name__, "try_run")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         raise DummyException(__class__.__name__, "try_stream")
 
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStackElement) -> dict:
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStackMessage) -> dict:
         raise DummyException(__class__.__name__, "_prompt_stack_input_to_message")
 
     def _prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> Any:

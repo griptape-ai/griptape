@@ -10,11 +10,11 @@ from griptape.artifacts import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -74,31 +74,31 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
             message = result.choices[0].message
 
-            return PromptStackElement(
+            return PromptStackMessage(
                 content=[self.__message_to_prompt_stack_content(message)],
                 role=message.role,
-                usage=PromptStackElement.Usage(
+                usage=PromptStackMessage.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
                 ),
             )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         result = self.client.chat.completions.create(
             **self._base_params(prompt_stack), stream=True, stream_options={"include_usage": True}
         )
 
         for chunk in result:
             if chunk.usage is not None:
-                yield DeltaPromptStackElement(
-                    delta_usage=DeltaPromptStackElement.DeltaUsage(
+                yield DeltaPromptStackMessage(
+                    delta_usage=DeltaPromptStackMessage.DeltaUsage(
                         input_tokens=chunk.usage.prompt_tokens, output_tokens=chunk.usage.completion_tokens
                     )
                 )
@@ -112,7 +112,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     raise Exception("Completion with more than one choice is not supported yet.")
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
-        return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in prompt_stack.inputs]
+        return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in prompt_stack.messages]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -127,7 +127,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         if self.response_format == "json_object":
             params["response_format"] = {"type": "json_object"}
             # JSON mode still requires a system input instructing the LLM to output JSON.
-            prompt_stack.add_system_input("Provide your response as a valid JSON object.")
+            prompt_stack.add_system_message("Provide your response as a valid JSON object.")
 
         messages = self._prompt_stack_to_messages(prompt_stack)
 
@@ -135,7 +135,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return params
 
-    def __to_role(self, input: PromptStackElement) -> str:
+    def __to_role(self, input: PromptStackMessage) -> str:
         if input.is_system():
             return "system"
         elif input.is_assistant():
@@ -143,7 +143,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             return "user"
 
-    def __to_content(self, input: PromptStackElement) -> str | list[dict]:
+    def __to_content(self, input: PromptStackMessage) -> str | list[dict]:
         if all(isinstance(content, TextPromptStackContent) for content in input.content):
             return input.to_text_artifact().to_text()
         else:
