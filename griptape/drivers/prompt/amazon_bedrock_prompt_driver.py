@@ -56,10 +56,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         usage = response["usage"]
         output_message = response["output"]["message"]
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=[self.__message_content_to_prompt_stack_content(content) for content in output_message["content"]],
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
@@ -69,7 +69,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         if stream is not None:
             for event in stream:
                 if "messageStart" in event:
-                    yield DeltaPromptStackElement(role=PromptStackElement.ASSISTANT_ROLE)
+                    yield DeltaPromptStackMessage(role=PromptStackMessage.ASSISTANT_ROLE)
                 elif "contentBlockDelta" in event or "contentBlockStart" in event:
                     yield self.__message_content_delta_to_prompt_stack_content_delta(event)
                 elif "metadata" in event:
@@ -85,10 +85,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
         return [
             {
-                "role": self.__to_role(input),
-                "content": [self.__prompt_stack_content_message_content(content) for content in input.content],
+                "role": self.__to_role(message),
+                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
             }
-            for input in elements
+            for message in elements
         ]
 
     def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
@@ -100,11 +100,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [
-            {"text": input.to_text_artifact().to_text()} for input in prompt_stack.messages if input.is_system()
+            {"text": message.to_text_artifact().to_text()} for message in prompt_stack.messages if message.is_system()
         ]
 
         messages = self._prompt_stack_messages_to_messages(
-            [input for input in prompt_stack.messages if not input.is_system()]
+            [message for message in prompt_stack.messages if not message.is_system()]
         )
 
         return {
@@ -214,10 +214,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
-    def __to_role(self, input: PromptStackElement) -> str:
-        if input.is_system():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_system():
             return "system"
-        elif input.is_assistant():
+        elif message.is_assistant():
             return "assistant"
         else:
             return "user"

@@ -22,7 +22,7 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaActionCallPromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
@@ -94,7 +94,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                 )
 
     def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
-        return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in elements]
+        return [{"role": self.__to_role(message), "content": self.__to_content(message)} for message in elements]
 
     def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
         return (
@@ -124,10 +124,10 @@ class AnthropicPromptDriver(BasePromptDriver):
             **({"system": system_message} if system_message else {}),
         }
 
-    def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_system():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_system():
             return "system"
-        elif input.is_assistant():
+        elif message.is_assistant():
             return "assistant"
         else:
             return "user"
@@ -143,11 +143,11 @@ class AnthropicPromptDriver(BasePromptDriver):
             for activity in tool.activities()
         ]
 
-    def __to_content(self, input: PromptStackElement) -> str | list[dict]:
-        if all(isinstance(content, TextPromptStackContent) for content in input.content):
-            return input.to_text_artifact().to_text()
+    def __to_content(self, message: PromptStackMessage) -> str | list[dict]:
+        if all(isinstance(content, TextPromptStackContent) for content in message.content):
+            return message.to_text_artifact().to_text()
         else:
-            content = [self.__prompt_stack_content_to_message_content(content) for content in input.content]
+            content = [self.__prompt_stack_content_to_message_content(content) for content in message.content]
             sorted_content = sorted(
                 content, key=lambda message_content: -1 if message_content["type"] == "tool_result" else 1
             )  # Tool results must come first in the content list

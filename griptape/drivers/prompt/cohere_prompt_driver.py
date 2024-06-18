@@ -15,10 +15,10 @@ from griptape.common import (
     ActionCallPromptStackContent,
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
     ActionResultPromptStackContent,
 )
@@ -58,10 +58,10 @@ class CoherePromptDriver(BasePromptDriver):
         result = self.client.chat(**self._base_params(prompt_stack))
         usage = result.meta.tokens
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=self.__message_to_prompt_stack_content(result),
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
@@ -71,38 +71,38 @@ class CoherePromptDriver(BasePromptDriver):
             if event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
-                return DeltaPromptStackElement(
-                    role=PromptStackElement.ASSISTANT_ROLE,
-                    delta_usage=DeltaPromptStackElement.DeltaUsage(
+                return DeltaPromptStackMessage(
+                    role=PromptStackMessage.ASSISTANT_ROLE,
+                    delta_usage=DeltaPromptStackMessage.DeltaUsage(
                         input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
                     ),
                 )
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
                 yield self.__message_delta_to_prompt_stack_content(event.dict())
 
-    def _prompt_stack_elements_to_messages(self, elements: list[PromptStackElement]) -> list[dict]:
-        messages = []
+    def _prompt_stack_messages_to_messages(self, messages: list[PromptStackMessage]) -> list[dict]:
+        new_messages = []
 
-        for input in elements:
-            message: dict = {"role": self.__to_role(input)}
+        for message in messages:
+            new_message: dict = {"role": self.__to_role(message)}
 
-            if input.has_action_results():
-                message["tool_results"] = [
+            if message.has_action_results():
+                new_message["tool_results"] = [
                     self.__prompt_stack_content_message_content(action_call)
-                    for action_call in input.content
+                    for action_call in message.content
                     if isinstance(action_call, ActionResultPromptStackContent)
                 ]
             else:
-                message["message"] = input.to_text_artifact().to_text()
-                message["tool_calls"] = [
+                new_message["message"] = message.to_text_artifact().to_text()
+                new_message["tool_calls"] = [
                     self.__prompt_stack_content_message_content(action_call)
-                    for action_call in input.content
+                    for action_call in message.content
                     if isinstance(action_call, ActionCallPromptStackContent)
                 ]
 
-            messages.append(message)
+            new_messages.append(new_message)
 
-        return messages
+        return new_messages
 
     def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
         return (
@@ -113,11 +113,11 @@ class CoherePromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         # Current message
-        last_input = prompt_stack.inputs[-1]
+        last_input = prompt_stack.messages[-1]
         user_message = ""
         tool_results = []
         if last_input is not None:
-            message = self._prompt_stack_elements_to_messages([prompt_stack.inputs[-1]])
+            message = self._prompt_stack_messages_to_messages([prompt_stack.messages[-1]])
 
             if "message" in message[0]:
                 user_message = message[0]["message"]
@@ -127,12 +127,12 @@ class CoherePromptDriver(BasePromptDriver):
                 raise ValueError("Unsupported message type")
 
         # History messages
-        history_messages = self._prompt_stack_elements_to_messages(
-            [input for input in prompt_stack.inputs[:-1] if not input.is_system()]
+        history_messages = self._prompt_stack_messages_to_messages(
+            [message for message in prompt_stack.messages[:-1] if not message.is_system()]
         )
 
         # System message (preamble)
-        system_element = next((input for input in prompt_stack.inputs if input.is_system()), None)
+        system_element = next((message for message in prompt_stack.messages if message.is_system()), None)
         if system_element is not None:
             if len(system_element.content) == 1:
                 preamble = system_element.content[0].artifact.to_text()
@@ -214,13 +214,13 @@ class CoherePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported event type: {event['event_type']}")
 
-    def __to_role(self, input: PromptStackElement) -> str:
-        if input.is_system():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_system():
             return "SYSTEM"
-        elif input.is_assistant():
+        elif message.is_assistant():
             return "CHATBOT"
         else:
-            if input.has_action_results():
+            if message.has_action_results():
                 return "TOOL"
             else:
                 return "USER"

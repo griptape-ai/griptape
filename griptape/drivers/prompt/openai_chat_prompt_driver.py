@@ -16,7 +16,7 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaActionCallPromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
@@ -89,10 +89,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         if len(result.choices) == 1:
             message = result.choices[0].message
 
-            return PromptStackElement(
+            return PromptStackMessage(
                 content=self.__message_to_prompt_stack_content(message),
-                role=PromptStackElement.ASSISTANT_ROLE,
-                usage=PromptStackElement.Usage(
+                role=PromptStackMessage.ASSISTANT_ROLE,
+                usage=PromptStackMessage.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
                 ),
             )
@@ -123,14 +123,14 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []
 
-        for input in prompt_stack.inputs:
-            if input.has_action_results():
+        for message in prompt_stack.messages:
+            if message.has_action_results():
                 # Action results need to be expanded into separate messages.
-                for action_result in input.content:
+                for action_result in message.content:
                     if isinstance(action_result, ActionResultPromptStackContent):
                         messages.append(
                             {
-                                "role": self.__to_role(input),
+                                "role": self.__to_role(message),
                                 "content": self.__prompt_stack_content_message_content(action_result),
                                 "tool_call_id": action_result.action_tag,
                             }
@@ -139,10 +139,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 # Action calls are attached to the assistant message that originally generated them.
                 messages.append(
                     {
-                        "role": self.__to_role(input),
+                        "role": self.__to_role(message),
                         "content": [
                             self.__prompt_stack_content_message_content(content)
-                            for content in input.content
+                            for content in message.content
                             if not isinstance(  # Action calls do not belong in the content
                                 content, ActionCallPromptStackContent
                             )
@@ -151,11 +151,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                             {
                                 "tool_calls": [
                                     self.__prompt_stack_content_message_content(action_call)
-                                    for action_call in input.content
+                                    for action_call in message.content
                                     if isinstance(action_call, ActionCallPromptStackContent)
                                 ]
                             }
-                            if input.has_action_calls()
+                            if message.has_action_calls()
                             else {}
                         ),
                     }
@@ -192,13 +192,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return params
 
-    def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_system():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_system():
             return "system"
-        elif input.is_assistant():
+        elif message.is_assistant():
             return "assistant"
         else:
-            if input.has_action_results():
+            if message.has_action_results():
                 return "tool"
             else:
                 return "user"

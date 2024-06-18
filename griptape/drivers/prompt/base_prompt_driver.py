@@ -11,7 +11,7 @@ from griptape.common import (
     ActionCallPromptStackContent,
     BaseDeltaPromptStackContent,
     DeltaActionCallPromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     PromptStack,
     PromptStackMessage,
