@@ -70,7 +70,7 @@ class Observable:
                 self._func, self._instance, args, kwargs, self.decorator_args, self.decorator_kwargs
             )
         else:
-            # Parameterized call, create and return the "rea" observable decorator
+            # Parameterized call, create and return the "real" observable decorator
             func = args[0]
             decorated_func = Observable(func)
             decorated_func.decorator_args = self.decorator_args
