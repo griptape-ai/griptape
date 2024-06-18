@@ -102,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Extra fields being excluded when using `SerializableMixin.from_dict`.
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.25.1] - 2024-05-15
 
