@@ -9,11 +9,11 @@ from griptape.artifacts import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -46,7 +46,7 @@ class GooglePromptDriver(BasePromptDriver):
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -63,15 +63,15 @@ class GooglePromptDriver(BasePromptDriver):
 
         usage_metadata = response.usage_metadata
 
-        return PromptStackElement(
+        return PromptStackMessage(
             content=[TextPromptStackContent(TextArtifact(response.text))],
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(
                 input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
             ),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -93,9 +93,9 @@ class GooglePromptDriver(BasePromptDriver):
             yield DeltaTextPromptStackContent(chunk.text)
 
             # TODO: Only yield the first one
-            yield DeltaPromptStackElement(
-                role=PromptStackElement.ASSISTANT_ROLE,
-                delta_usage=DeltaPromptStackElement.DeltaUsage(
+            yield DeltaPromptStackMessage(
+                role=PromptStackMessage.ASSISTANT_ROLE,
+                delta_usage=DeltaPromptStackMessage.DeltaUsage(
                     input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
                 ),
             )
@@ -109,12 +109,12 @@ class GooglePromptDriver(BasePromptDriver):
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         inputs = [
             {"role": self.__to_role(input), "parts": self.__to_content(input)}
-            for input in prompt_stack.inputs
+            for input in prompt_stack.messages
             if not input.is_system()
         ]
 
         # Gemini does not have the notion of a system message, so we insert it as part of the first message in the history.
-        system = next((i for i in prompt_stack.inputs if i.is_system()), None)
+        system = next((i for i in prompt_stack.messages if i.is_system()), None)
         if system is not None:
             inputs[0]["parts"].insert(0, "\n".join(content.to_text() for content in system.content))
 
@@ -130,11 +130,11 @@ class GooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __to_role(self, input: PromptStackElement) -> str:
+    def __to_role(self, input: PromptStackMessage) -> str:
         if input.is_assistant():
             return "model"
         else:
             return "user"
 
-    def __to_content(self, input: PromptStackElement) -> list[ContentDict | str]:
+    def __to_content(self, input: PromptStackMessage) -> list[ContentDict | str]:
         return [self.__prompt_stack_content_message_content(content) for content in input.content]

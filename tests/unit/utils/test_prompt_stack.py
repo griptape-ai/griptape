@@ -11,26 +11,26 @@ class TestPromptStack:
     def test_init(self):
         assert PromptStack()
 
-    def test_add_input(self, prompt_stack):
-        prompt_stack.add_input("foo", "role")
+    def test_add_message(self, prompt_stack):
+        prompt_stack.add_message("foo", "role")
 
-        assert prompt_stack.inputs[0].role == "role"
-        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
+        assert prompt_stack.messages[0].role == "role"
+        assert prompt_stack.messages[0].content[0].artifact.value == "foo"
 
-    def test_add_system_input(self, prompt_stack):
-        prompt_stack.add_system_input("foo")
+    def test_add_system_message(self, prompt_stack):
+        prompt_stack.add_system_message("foo")
 
-        assert prompt_stack.inputs[0].role == "system"
-        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
+        assert prompt_stack.messages[0].role == "system"
+        assert prompt_stack.messages[0].content[0].artifact.value == "foo"
 
-    def test_add_user_input(self, prompt_stack):
-        prompt_stack.add_user_input("foo")
+    def test_add_user_message(self, prompt_stack):
+        prompt_stack.add_user_message("foo")
 
-        assert prompt_stack.inputs[0].role == "user"
-        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
+        assert prompt_stack.messages[0].role == "user"
+        assert prompt_stack.messages[0].content[0].artifact.value == "foo"
 
-    def test_add_assistant_input(self, prompt_stack):
-        prompt_stack.add_assistant_input("foo")
+    def test_add_assistant_message(self, prompt_stack):
+        prompt_stack.add_assistant_message("foo")
 
-        assert prompt_stack.inputs[0].role == "assistant"
-        assert prompt_stack.inputs[0].content[0].artifact.value == "foo"
+        assert prompt_stack.messages[0].role == "assistant"
+        assert prompt_stack.messages[0].content[0].artifact.value == "foo"

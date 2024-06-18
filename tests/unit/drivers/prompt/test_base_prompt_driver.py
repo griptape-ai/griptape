@@ -37,7 +37,7 @@ class TestBasePromptDriver:
         assert instance_count(events, FinishPromptEvent) == 1
 
     def test_run(self):
-        assert isinstance(MockPromptDriver().run(PromptStack(inputs=[])), TextArtifact)
+        assert isinstance(MockPromptDriver().run(PromptStack(messages=[])), TextArtifact)
 
 
 def instance_count(instances, clazz):

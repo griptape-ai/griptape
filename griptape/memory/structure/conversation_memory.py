@@ -18,6 +18,6 @@ class ConversationMemory(BaseConversationMemory):
         prompt_stack = PromptStack()
         runs = self.runs[-last_n:] if last_n else self.runs
         for run in runs:
-            prompt_stack.add_user_input(run.input)
-            prompt_stack.add_assistant_input(run.output)
+            prompt_stack.add_user_message(run.input)
+            prompt_stack.add_assistant_message(run.output)
         return prompt_stack

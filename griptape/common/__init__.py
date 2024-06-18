@@ -4,18 +4,18 @@ from .prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextProm
 from .prompt_stack.contents.text_prompt_stack_content import TextPromptStackContent
 from .prompt_stack.contents.image_prompt_stack_content import ImagePromptStackContent
 
-from .prompt_stack.elements.base_prompt_stack_element import BasePromptStackElement
-from .prompt_stack.elements.delta_prompt_stack_element import DeltaPromptStackElement
-from .prompt_stack.elements.prompt_stack_element import PromptStackElement
+from .prompt_stack.messages.base_prompt_stack_message import BasePromptStackMessage
+from .prompt_stack.messages.delta_prompt_stack_message import DeltaPromptStackMessage
+from .prompt_stack.messages.prompt_stack_message import PromptStackMessage
 
 from .prompt_stack.prompt_stack import PromptStack
 
 __all__ = [
-    "BasePromptStackElement",
+    "BasePromptStackMessage",
     "BaseDeltaPromptStackContent",
     "BasePromptStackContent",
-    "DeltaPromptStackElement",
-    "PromptStackElement",
+    "DeltaPromptStackMessage",
+    "PromptStackMessage",
     "DeltaTextPromptStackContent",
     "TextPromptStackContent",
     "ImagePromptStackContent",

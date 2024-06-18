@@ -36,7 +36,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         # Given
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input("prompt-stack")
+        prompt_stack.add_user_message("prompt-stack")
 
         # When
         response_body = [{"generated_text": "foobar"}]
@@ -98,7 +98,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         # Given
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input("prompt-stack")
+        prompt_stack.add_user_message("prompt-stack")
 
         # When
         with pytest.raises(NotImplementedError) as e:
@@ -123,7 +123,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         mock_client.invoke_endpoint.return_value = {"Body": to_streaming_body([])}
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input("prompt-stack")
+        prompt_stack.add_user_message("prompt-stack")
 
         # When
         with pytest.raises(Exception) as e:

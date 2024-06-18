@@ -49,9 +49,9 @@ class TestAnthropicPromptDriver:
         # Given
         prompt_stack = PromptStack()
         if system_enabled:
-            prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+            prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         expected_messages = [
             {"role": "user", "content": "user-input"},
@@ -90,9 +90,9 @@ class TestAnthropicPromptDriver:
         # Given
         prompt_stack = PromptStack()
         if system_enabled:
-            prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+            prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         expected_messages = [
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
@@ -127,4 +127,4 @@ class TestAnthropicPromptDriver:
             driver.try_run(prompt_stack)  # pyright: ignore
 
         # Then
-        assert e.value.args[0] == "'str' object has no attribute 'inputs'"
+        assert e.value.args[0] == "'str' object has no attribute 'messages'"

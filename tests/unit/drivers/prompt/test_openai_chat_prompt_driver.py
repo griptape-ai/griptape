@@ -29,9 +29,9 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         return prompt_stack
 
     @pytest.fixture
@@ -161,7 +161,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             driver.try_run("prompt-stack")  # pyright: ignore
 
         # Then
-        assert e.value.args[0] == "'str' object has no attribute 'inputs'"
+        assert e.value.args[0] == "'str' object has no attribute 'messages'"
 
     @pytest.mark.parametrize("choices", [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_chat_completion_create, prompt_stack):

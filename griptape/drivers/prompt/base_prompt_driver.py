@@ -9,10 +9,10 @@ from attrs import Factory, define, field
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
@@ -52,7 +52,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         if self.structure:
             self.structure.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
-    def after_run(self, result: PromptStackElement) -> None:
+    def after_run(self, result: PromptStackMessage) -> None:
         if self.structure:
             self.structure.publish_event(
                 FinishPromptEvent(
@@ -91,7 +91,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         """
         prompt_lines = []
 
-        for i in prompt_stack.inputs:
+        for i in prompt_stack.messages:
             content = i.to_text_artifact().to_text()
             if i.is_user():
                 prompt_lines.append(f"User: {content}")
@@ -105,26 +105,26 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement: ...
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage: ...
 
     @abstractmethod
     def try_stream(
         self, prompt_stack: PromptStack
-    ) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]: ...
+    ) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]: ...
 
-    def __process_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def __process_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         result = self.try_run(prompt_stack)
 
         return result
 
-    def __process_stream(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def __process_stream(self, prompt_stack: PromptStack) -> PromptStackMessage:
         delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
-        delta_usage = DeltaPromptStackElement.DeltaUsage()
+        delta_usage = DeltaPromptStackMessage.DeltaUsage()
 
         deltas = self.try_stream(prompt_stack)
 
         for delta in deltas:
-            if isinstance(delta, DeltaPromptStackElement):
+            if isinstance(delta, DeltaPromptStackMessage):
                 delta_usage += delta.delta_usage
             elif isinstance(delta, BaseDeltaPromptStackContent):
                 if delta.index in delta_contents:
@@ -141,10 +141,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             if text_deltas:
                 content.append(TextPromptStackContent.from_deltas(text_deltas))
 
-        result = PromptStackElement(
+        result = PromptStackMessage(
             content=content,
-            role=PromptStackElement.ASSISTANT_ROLE,
-            usage=PromptStackElement.Usage(
+            role=PromptStackMessage.ASSISTANT_ROLE,
+            usage=PromptStackMessage.Usage(
                 input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0
             ),
         )

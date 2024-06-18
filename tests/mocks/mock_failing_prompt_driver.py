@@ -5,9 +5,9 @@ from attrs import define
 from griptape.artifacts import TextArtifact
 from griptape.common import (
     PromptStack,
-    PromptStackElement,
+    PromptStackMessage,
     TextPromptStackContent,
-    DeltaPromptStackElement,
+    DeltaPromptStackMessage,
     DeltaTextPromptStackContent,
     BaseDeltaPromptStackContent,
 )
@@ -22,25 +22,25 @@ class MockFailingPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
             raise Exception("failed attempt")
         else:
-            return PromptStackElement(
+            return PromptStackMessage(
                 content=[TextPromptStackContent(TextArtifact("success"))],
-                role=PromptStackElement.ASSISTANT_ROLE,
-                usage=PromptStackElement.Usage(input_tokens=100, output_tokens=100),
+                role=PromptStackMessage.ASSISTANT_ROLE,
+                usage=PromptStackMessage.Usage(input_tokens=100, output_tokens=100),
             )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
             raise Exception("failed attempt")
         else:
-            yield DeltaPromptStackElement(
+            yield DeltaPromptStackMessage(
                 delta_content=DeltaTextPromptStackContent("success"),
-                delta_usage=DeltaPromptStackElement.DeltaUsage(input_tokens=100, output_tokens=100),
+                delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=100, output_tokens=100),
             )

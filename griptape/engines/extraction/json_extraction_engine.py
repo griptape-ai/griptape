@@ -3,7 +3,7 @@ from typing import Optional, cast
 import json
 from attrs import field, Factory, define
 from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
-from griptape.common.prompt_stack.elements.prompt_stack_element import PromptStackElement
+from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
 from griptape.common import PromptStack
@@ -60,7 +60,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(
-                        PromptStack(inputs=[PromptStackElement(full_text, role=PromptStackElement.USER_ROLE)])
+                        PromptStack(messages=[PromptStackMessage(full_text, role=PromptStackMessage.USER_ROLE)])
                     ).value
                 )
             )
@@ -77,7 +77,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             extractions.extend(
                 self.json_to_text_artifacts(
                     self.prompt_driver.run(
-                        PromptStack(inputs=[PromptStackElement(partial_text, role=PromptStackElement.USER_ROLE)])
+                        PromptStack(messages=[PromptStackMessage(partial_text, role=PromptStackMessage.USER_ROLE)])
                     ).value
                 )
             )
