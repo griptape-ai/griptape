@@ -1,7 +1,7 @@
 import os
 
 from attrs import define, Factory, field
-from griptape.drivers.observability.open_telemetry_observabillity_driver import OpenTelemetryObservabilityDriver
+from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
 from opentelemetry.sdk.trace import SpanProcessor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter

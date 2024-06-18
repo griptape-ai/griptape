@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 import pytest
-from griptape.drivers.observability.open_telemetry_observabillity_driver import OpenTelemetryObservabilityDriver
+from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
 from opentelemetry.trace import StatusCode
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from griptape.observability.observability import Observability

@@ -1,5 +1,5 @@
 import pytest
-from griptape.drivers.observability.griptape_cloud_observabillity_driver import GriptapeCloudObservabilityDriver
+from griptape.drivers.observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
 from opentelemetry.trace import StatusCode
 from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 
@@ -13,7 +13,7 @@ class TestGriptapeCloudObservabilityDriver:
 
     @pytest.fixture(autouse=True)
     def mock_span_exporter_class(self, mocker):
-        return mocker.patch("griptape.drivers.observability.griptape_cloud_observabillity_driver.OTLPSpanExporter")
+        return mocker.patch("griptape.drivers.observability.griptape_cloud_observability_driver.OTLPSpanExporter")
 
     @pytest.fixture
     def mock_span_exporter(self, mock_span_exporter_class):
