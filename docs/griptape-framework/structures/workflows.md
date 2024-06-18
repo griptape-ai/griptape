@@ -300,7 +300,7 @@ workflow = Workflow(
 workflow.run()
 ```
 
-## Insert Parallel Tasks
+### Insert Parallel Tasks
 
 `Workflow.insert_tasks()` provides a convenient way to insert parallel tasks between parents and children.
 
