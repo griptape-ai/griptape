@@ -28,7 +28,7 @@ class MockPromptDriver(BasePromptDriver):
     mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> PromptStackElement:
-        output = self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output
+        output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
         return PromptStackElement(
             content=[TextPromptStackContent(TextArtifact(output))],
@@ -37,7 +37,7 @@ class MockPromptDriver(BasePromptDriver):
         )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackElement | BaseDeltaPromptStackContent]:
-        output = self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output
+        output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
         yield DeltaTextPromptStackContent(output)
         yield DeltaPromptStackElement(
