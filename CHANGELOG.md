@@ -46,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `SagemakerHuggingfaceEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: Removed `SagemakerTensorflowHubEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: `AmazonSageMakerJumpstartPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
+- **BREAKING**: Removed parameter `template_generator` on `PromptSummaryEngine` and added parameters `system_template_generator` and `user_template_generator`.
+- **BREAKING**: Removed template `engines/summary/prompt_summary.j2` and added templates `engines/summary/system.j2` and `engines/summary/user.j2`.
 - `ToolkitTask.RESPONSE_STOP_SEQUENCE` is now only added when using `ToolkitTask`.
 - Updated Prompt Drivers to use `BasePromptDriver.max_tokens` instead of using `BasePromptDriver.max_output_tokens()`.
 - Improved error message when `GriptapeCloudKnowledgeBaseClient` does not have a description set.
@@ -55,6 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `HuggingFacePipelinePromptDriver` to use chat features of `transformers.TextGenerationPipeline`.
 - Updated `CoherePromptDriver` to use Cohere's latest SDK.
 - Moved Task reset logic for all Structures to `Structure.before_run`.
+- Updated default prompt templates for `PromptSummaryEngine`.
+- Updated template `templates/tasks/tool_task/system.j2`.
 
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
@@ -66,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 - Structure run args not being set immediately.
+- Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
 
 ## [0.26.0] - 2024-06-04
 
@@ -97,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Extra fields being excluded when using `SerializableMixin.from_dict`.
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.25.1] - 2024-05-15
 
