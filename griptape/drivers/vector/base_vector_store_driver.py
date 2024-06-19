@@ -27,11 +27,8 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         def from_dict(data: dict[str, Any]) -> BaseVectorStoreDriver.Entry:
             return BaseVectorStoreDriver.Entry(**data)
 
-        def to_artifact(self) -> Optional[BaseArtifact]:
-            try:
-                return BaseArtifact.from_json(self.meta["artifact"])
-            except Exception:
-                return None
+        def to_artifact(self) -> BaseArtifact:
+            return BaseArtifact.from_json(self.meta["artifact"])
 
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
