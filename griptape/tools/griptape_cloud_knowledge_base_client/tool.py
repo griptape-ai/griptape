@@ -51,7 +51,10 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
                 artifacts: list[BaseArtifact] = []
                 for query_result in response_body.get("query_results", []):
                     artifact_dict = json.loads(query_result["meta"]["artifact"])
-                    del artifact_dict["value"]["Keywords"]
+                    try:
+                        del artifact_dict["value"]["Keywords"]
+                    except KeyError:
+                        pass
                     artifact_dict["value"] |= query_result["meta"]["bonus"]
                     artifacts.append(BaseArtifact.from_dict(artifact_dict))
 
