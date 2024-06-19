@@ -101,7 +101,13 @@ class ActionsSubtask(BaseTextInputTask):
             else:
                 results = self.execute_actions(self.actions)
 
-                self.output = ListArtifact([TextArtifact(name=f"{r[0]} output", value=r[1].to_text()) for r in results])
+                actions_output = []
+                for result in results:
+                    tag, output = result
+                    output.name = f"{tag} output"
+
+                    actions_output.append(output)
+                self.output = ListArtifact(actions_output)
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
@@ -171,24 +177,6 @@ class ActionsSubtask(BaseTextInputTask):
 
     def actions_to_json(self) -> str:
         return json.dumps(self.actions_to_dicts())
-
-    def add_child(self, child: ActionsSubtask) -> ActionsSubtask:
-        if child.id not in self.child_ids:
-            self.child_ids.append(child.id)
-
-        if self.id not in child.parent_ids:
-            child.parent_ids.append(self.id)
-
-        return child
-
-    def add_parent(self, parent: ActionsSubtask) -> ActionsSubtask:
-        if parent.id not in self.parent_ids:
-            self.parent_ids.append(parent.id)
-
-        if self.id not in parent.child_ids:
-            parent.child_ids.append(self.id)
-
-        return parent
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)

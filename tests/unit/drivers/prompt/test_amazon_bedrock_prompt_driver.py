@@ -1,117 +1,83 @@
-from botocore.response import StreamingBody
-from griptape.artifacts import TextArtifact
-from griptape.drivers import AmazonBedrockPromptDriver
-from griptape.drivers import BedrockClaudePromptModelDriver, BedrockTitanPromptModelDriver
-from griptape.tokenizers import AnthropicTokenizer, BedrockTitanTokenizer
-from io import StringIO
-from unittest.mock import Mock
-import json
 import pytest
+
+from griptape.utils import PromptStack
+from griptape.drivers import AmazonBedrockPromptDriver
 
 
 class TestAmazonBedrockPromptDriver:
     @pytest.fixture
-    def mock_prompt_model_driver(self):
-        mock_prompt_model_driver = Mock()
-        mock_prompt_model_driver.prompt_stack_to_model_params.return_value = {"model-param-key": "model-param-value"}
-        mock_prompt_model_driver.process_output.return_value = TextArtifact("model-output")
-        return mock_prompt_model_driver
+    def mock_converse(self, mocker):
+        mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
 
-    @pytest.fixture(autouse=True)
-    def mock_client(self, mocker):
-        return mocker.patch("boto3.Session").return_value.client.return_value
+        mock_converse.return_value = {"output": {"message": {"content": [{"text": "model-output"}]}}}
 
-    def test_init(self):
-        assert AmazonBedrockPromptDriver(model="anthropic.claude", prompt_model_driver=BedrockClaudePromptModelDriver())
+        return mock_converse
 
-    def test_custom_tokenizer(self):
-        assert isinstance(
-            AmazonBedrockPromptDriver(
-                model="anthropic.claude", prompt_model_driver=BedrockClaudePromptModelDriver()
-            ).tokenizer,
-            AnthropicTokenizer,
-        )
+    @pytest.fixture
+    def mock_converse_stream(self, mocker):
+        mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
 
-        assert isinstance(
-            AmazonBedrockPromptDriver(
-                model="titan",
-                tokenizer=BedrockTitanTokenizer(model="amazon"),
-                prompt_model_driver=BedrockTitanPromptModelDriver(),
-            ).tokenizer,
-            BedrockTitanTokenizer,
-        )
+        mock_converse_stream.return_value = {"stream": [{"contentBlockDelta": {"delta": {"text": "model-output"}}}]}
 
-    @pytest.mark.parametrize("model_inputs", [{"model-input-key": "model-input-value"}, "not-a-dict"])
-    def test_try_run(self, model_inputs, mock_prompt_model_driver, mock_client):
+        return mock_converse_stream
+
+    @pytest.fixture
+    def prompt_stack(self):
+        prompt_stack = PromptStack()
+        prompt_stack.add_generic_input("generic-input")
+        prompt_stack.add_system_input("system-input")
+        prompt_stack.add_user_input("user-input")
+        prompt_stack.add_assistant_input("assistant-input")
+
+        return prompt_stack
+
+    @pytest.fixture
+    def messages(self):
+        return [
+            {"role": "user", "content": [{"text": "generic-input"}]},
+            {"role": "system", "content": [{"text": "system-input"}]},
+            {"role": "user", "content": [{"text": "user-input"}]},
+            {"role": "assistant", "content": [{"text": "assistant-input"}]},
+        ]
+
+    def test_try_run(self, mock_converse, prompt_stack, messages):
         # Given
-        driver = AmazonBedrockPromptDriver(model="model", prompt_model_driver=mock_prompt_model_driver)
-        prompt_stack = "prompt-stack"
-        response_body = "invoke-model-response-body"
-        mock_prompt_model_driver.prompt_stack_to_model_input.return_value = model_inputs
-        mock_client.invoke_model.return_value = {"body": to_streaming_body(response_body)}
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
 
         # When
         text_artifact = driver.try_run(prompt_stack)
 
         # Then
-        mock_prompt_model_driver.prompt_stack_to_model_input.assert_called_once_with(prompt_stack)
-        mock_prompt_model_driver.prompt_stack_to_model_params.assert_called_once_with(prompt_stack)
-        mock_client.invoke_model.assert_called_once_with(
+        mock_converse.assert_called_once_with(
             modelId=driver.model,
-            contentType="application/json",
-            accept="application/json",
-            body=json.dumps(
-                {
-                    **mock_prompt_model_driver.prompt_stack_to_model_params.return_value,
-                    **(model_inputs if isinstance(model_inputs, dict) else {}),
-                }
-            ),
+            messages=[
+                {"role": "user", "content": [{"text": "generic-input"}]},
+                {"role": "user", "content": [{"text": "user-input"}]},
+                {"role": "assistant", "content": [{"text": "assistant-input"}]},
+            ],
+            system=[{"text": "system-input"}],
+            inferenceConfig={"temperature": driver.temperature},
+            additionalModelRequestFields={},
         )
-        mock_prompt_model_driver.process_output.assert_called_once_with(response_body)
-        assert text_artifact == mock_prompt_model_driver.process_output.return_value
+        assert text_artifact.value == "model-output"
 
-    @pytest.mark.parametrize("model_inputs", [{"model-input-key": "model-input-value"}, "not-a-dict"])
-    def test_try_stream_run(self, model_inputs, mock_prompt_model_driver, mock_client):
+    def test_try_stream_run(self, mock_converse_stream, prompt_stack, messages):
         # Given
-        driver = AmazonBedrockPromptDriver(model="model", prompt_model_driver=mock_prompt_model_driver, stream=True)
-        prompt_stack = "prompt-stack"
-        model_response = "invoke-model-response-body"
-        response_body = [{"chunk": {"bytes": model_response}}]
-        mock_prompt_model_driver.prompt_stack_to_model_input.return_value = model_inputs
-        mock_client.invoke_model_with_response_stream.return_value = {"body": response_body}
+        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
 
         # When
         text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-        mock_prompt_model_driver.prompt_stack_to_model_input.assert_called_once_with(prompt_stack)
-        mock_prompt_model_driver.prompt_stack_to_model_params.assert_called_once_with(prompt_stack)
-        mock_client.invoke_model_with_response_stream.assert_called_once_with(
+        mock_converse_stream.assert_called_once_with(
             modelId=driver.model,
-            contentType="application/json",
-            accept="application/json",
-            body=json.dumps(
-                {
-                    **mock_prompt_model_driver.prompt_stack_to_model_params.return_value,
-                    **(model_inputs if isinstance(model_inputs, dict) else {}),
-                }
-            ),
+            messages=[
+                {"role": "user", "content": [{"text": "generic-input"}]},
+                {"role": "user", "content": [{"text": "user-input"}]},
+                {"role": "assistant", "content": [{"text": "assistant-input"}]},
+            ],
+            system=[{"text": "system-input"}],
+            inferenceConfig={"temperature": driver.temperature},
+            additionalModelRequestFields={},
         )
-        mock_prompt_model_driver.process_output.assert_called_once_with(model_response)
-        assert text_artifact.value == mock_prompt_model_driver.process_output.return_value.value
-
-    def test_try_run_throws_on_empty_response(self, mock_prompt_model_driver, mock_client):
-        # Given
-        driver = AmazonBedrockPromptDriver(model="model", prompt_model_driver=mock_prompt_model_driver)
-        mock_client.invoke_model.return_value = {"body": to_streaming_body("")}
-
-        # When
-        with pytest.raises(Exception) as e:
-            driver.try_run("prompt-stack")
-
-        # Then
-        assert e.value.args[0] == "model response is empty"
-
-
-def to_streaming_body(text: str) -> StreamingBody:
-    return StreamingBody(StringIO(text), len(text))
+        assert text_artifact.value == "model-output"

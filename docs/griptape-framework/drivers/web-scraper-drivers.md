@@ -4,7 +4,7 @@ Web Scraper Drivers can be used to scrape text from the web. They are used by [W
 
 * `scrape_url()` scrapes text from a website and returns a [TextArtifact](../../reference/griptape/artifacts/text_artifact.md). The format of the scrapped text is determined by the Driver.
 
-## Markdownify Web Scraper Driver
+## Markdownify
 
 !!! info
     This driver requires the `drivers-web-scraper-markdownify` [extra](../index.md#extras) and the
@@ -64,7 +64,7 @@ agent = Agent(
 agent.run("List all email addresses on griptape.ai in a flat numbered markdown list.")
 ```
 
-## Trafilatura Web Scraper Driver
+## Trafilatura
 
 !!! info
     This driver requires the `drivers-web-scraper-trafilatura` [extra](../index.md#extras).

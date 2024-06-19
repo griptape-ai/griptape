@@ -39,7 +39,7 @@ engine.run(
 )
 ```
 
-### Prompt Image Generation Engine 
+### Prompt Image
 
 This Engine facilitates generating images from text prompts.
 
@@ -65,7 +65,7 @@ engine.run(
 )
 ```
 
-### Variation Image Generation Engine 
+### Variation
 
 This Engine facilitates generating variations of an input image according to a text prompt. The input image is used as a reference for the model's generation.
 
@@ -95,7 +95,7 @@ engine.run(
 )
 ```
 
-### Inpainting Image Generation Engine
+### Inpainting
 
 This Engine facilitates inpainting, or modifying an input image according to a text prompt within the bounds of a mask defined by mask image. After inpainting, the area specified by the mask is replaced with the model's generation, while the rest of the input image remains the same.
 
@@ -130,7 +130,7 @@ engine.run(
 )
 ```
 
-### Outpainting Image Generation Engine
+### Outpainting
 
 This Engine facilitates outpainting, or modifying an input image according to a text prompt outside the bounds of a mask defined by a mask image. After outpainting, the area of the input image specified by the mask remains the same, while the rest is replaced with the model's generation.
 

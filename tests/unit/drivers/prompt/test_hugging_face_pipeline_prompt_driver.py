@@ -13,13 +13,15 @@ class TestHuggingFacePipelinePromptDriver:
     def mock_generator(self, mock_pipeline):
         mock_generator = mock_pipeline.return_value
         mock_generator.task = "text-generation"
-        mock_generator.return_value = [{"generated_text": "model-output"}]
+        mock_generator.return_value = [{"generated_text": [{"content": "model-output"}]}]
         return mock_generator
 
     @pytest.fixture(autouse=True)
     def mock_autotokenizer(self, mocker):
         mock_autotokenizer = mocker.patch("transformers.AutoTokenizer.from_pretrained").return_value
         mock_autotokenizer.model_max_length = 42
+        mock_autotokenizer.apply_chat_template.return_value = [1, 2, 3]
+        mock_autotokenizer.decode.return_value = "model-output"
         return mock_autotokenizer
 
     @pytest.fixture
@@ -44,6 +46,16 @@ class TestHuggingFacePipelinePromptDriver:
         # Then
         assert text_artifact.value == "model-output"
 
+    def test_try_stream(self, prompt_stack):
+        # Given
+        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
+
+        # When
+        with pytest.raises(Exception) as e:
+            driver.try_stream(prompt_stack)
+
+        assert e.value.args[0] == "streaming is not supported"
+
     @pytest.mark.parametrize("choices", [[], [1, 2]])
     def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_generator, prompt_stack):
         # Given
@@ -55,16 +67,26 @@ class TestHuggingFacePipelinePromptDriver:
             driver.try_run(prompt_stack)
 
         # Then
-        e.value.args[0] == "completion with more than one choice is not supported yet"
+        assert e.value.args[0] == "completion with more than one choice is not supported yet"
 
-    def test_try_run_throws_when_unsupported_task_returned(self, prompt_stack, mock_generator):
+    def test_try_run_throws_when_non_list(self, mock_generator, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
-        mock_generator.task = "obviously-an-unsupported-task"
+        mock_generator.return_value = {}
 
         # When
         with pytest.raises(Exception) as e:
             driver.try_run(prompt_stack)
 
         # Then
-        assert e.value.args[0].startswith("only models with the following tasks are supported: ")
+        assert e.value.args[0] == "invalid output format"
+
+    def test_prompt_stack_to_string(self, prompt_stack):
+        # Given
+        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
+
+        # When
+        result = driver.prompt_stack_to_string(prompt_stack)
+
+        # Then
+        assert result == "model-output"

@@ -125,38 +125,6 @@ agent = Agent(
 agent.run("Artificial intelligence is a technology with great promise.")
 ```
 
-### Azure OpenAI Completion
-
-The [AzureOpenAiCompletionPromptDriver](../../reference/griptape/drivers/prompt/azure_openai_completion_prompt_driver.md) connects to Azure OpenAI [Text Completion](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/reference) API.
-
-```python
-import os
-from griptape.structures import Agent
-from griptape.drivers import AzureOpenAiCompletionPromptDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AzureOpenAiCompletionPromptDriver(
-            api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
-            model="text-davinci-003",
-            azure_deployment=os.environ["AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID"],
-            azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
-            temperature=1
-        )
-    )
-)
-
-agent.run(
-    """
-    Write a product launch email for new AI-powered headphones that are priced at $79.99 and available at Best Buy, Target and Amazon.com. The target audience is tech-savvy music lovers and the tone is friendly and exciting.
-
-    1. What should be the subject line of the email?
-    2. What should be the body of the email?
-    """
-)
-```
-
 ### Cohere
 
 The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Generate](https://docs.cohere.ai/reference/generate) API.
@@ -232,57 +200,96 @@ agent = Agent(
 agent.run('Briefly explain how a computer works to a young child.')
 ```
 
+### Amazon Bedrock
+
+!!! info
+    This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
+
+The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
+
+All models supported by the Converse API are available for use with this driver.
+
+```python
+from griptape.structures import Agent
+from griptape.drivers import AmazonBedrockPromptDriver
+from griptape.rules import Rule
+from griptape.config import StructureConfig
+
+agent = Agent(
+    config=StructureConfig(
+        prompt_driver=AmazonBedrockPromptDriver(
+            model="anthropic.claude-3-sonnet-20240229-v1:0",
+        )
+    ),
+    rules=[
+        Rule(
+            value="You are a customer service agent that is classifying emails by type. I want you to give your answer and then explain it."
+        )
+    ],
+)
+agent.run(
+    """How would you categorize this email?
+    <email>
+    Can I use my Mixmaster 4000 to mix paint, or is it only meant for mixing food?
+    </email>
+
+    Categories are:
+    (A) Pre-sale question
+    (B) Broken or defective item
+    (C) Billing question
+    (D) Other (please explain)"""
+)
+```
+
+### Ollama
+
+!!! info
+    This driver requires the `drivers-prompt-ollama` [extra](../index.md#extras).
+
+The [OllamaPromptDriver](../../reference/griptape/drivers/prompt/ollama_prompt_driver.md) connects to the [Ollama Chat Completion API](https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion).
+
+```python
+from griptape.config import StructureConfig
+from griptape.drivers import OllamaPromptDriver
+from griptape.structures import Agent
+
+
+agent = Agent(
+    config=StructureConfig(
+        prompt_driver=OllamaPromptDriver(
+            model="llama3",
+        ),
+    ),
+)
+agent.run("What color is the sky at different times of the day?")
+```
+
 ### Hugging Face Hub
 
 !!! info
     This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
 
-The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api). It supports models with the following tasks:
+The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api).
 
-- text2text-generation
-- text-generation
 
 !!! warning
     Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by
     [Hugging Face serverless inference](https://huggingface.co/docs/api-inference/en/index) will not work with this driver.
     Due to the limitations of Hugging Face serverless inference, only models that are than 10GB are supported.
 
-!!! info
-    The `prompt_stack_to_string_converter` function is intended to convert a `PromptStack` to model specific input. You
-    should consult the model's documentation to determine the correct format.
-
-Let's recreate the [Falcon-7B-Instruct](https://huggingface.co/tiiuae/falcon-7b-instruct) example using Griptape:
-
 ```python
 import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFaceHubPromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.utils import PromptStack
 from griptape.config import StructureConfig
-
-
-def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
-    prompt_lines = []
-
-    for i in prompt_stack.inputs:
-        if i.is_user():
-            prompt_lines.append(f"User: {i.content}")
-        elif i.is_assistant():
-            prompt_lines.append(f"Girafatron: {i.content}")
-        else:
-            prompt_lines.append(f"Instructions: {i.content}")
-    prompt_lines.append("Girafatron:")
-
-    return "\n".join(prompt_lines)
 
 
 agent = Agent(
     config=StructureConfig(
         prompt_driver=HuggingFaceHubPromptDriver(
-            model="tiiuae/falcon-7b-instruct",
+            model="HuggingFaceH4/zephyr-7b-beta",
             api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
-            prompt_stack_to_string=prompt_stack_to_string_converter,
         )
     ),
     rulesets=[
@@ -294,7 +301,7 @@ agent = Agent(
                     "Girafatron is obsessed with giraffes, the most glorious animal on the face of this Earth. "
                     "Giraftron believes all other animals are irrelevant when compared to the glorious majesty of the giraffe."
                 )
-            ]
+            ],
         )
     ],
 )
@@ -330,262 +337,68 @@ agent.run("Write the code for a snake game.")
 !!! info
     This driver requires the `drivers-prompt-huggingface-pipeline` [extra](../index.md#extras).
 
-The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally. It supports models with the following tasks:
-
-- text2text-generation
-- text-generation
+The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally.
 
 !!! warning
     Running a model locally can be a computationally expensive process.
 
 ```python
-import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.utils import PromptStack
 from griptape.config import StructureConfig
-
-
-# Override the default Prompt Stack to string converter
-# to format the prompt in a way that is easier for this model to understand.
-def prompt_stack_to_string_converter(prompt_stack: PromptStack) -> str:
-    prompt_lines = []
-
-    for i in prompt_stack.inputs:
-        if i.is_user():
-            prompt_lines.append(f"User: {i.content}")
-        elif i.is_assistant():
-            prompt_lines.append(f"Girafatron: {i.content}")
-        else:
-            prompt_lines.append(f"Instructions: {i.content}")
-    prompt_lines.append("Girafatron:")
-
-    return "\n".join(prompt_lines)
 
 
 agent = Agent(
     config=StructureConfig(
         prompt_driver=HuggingFacePipelinePromptDriver(
-            model="TinyLlama/TinyLlama-1.1B-Chat-v0.6",
-            prompt_stack_to_string=prompt_stack_to_string_converter,
+            model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
         )
     ),
     rulesets=[
         Ruleset(
-            name="Girafatron",
+            name="Pirate",
             rules=[
                 Rule(
-                    value="You are Girafatron, a giraffe-obsessed robot. You are talking to a human. "
-                    "Girafatron is obsessed with giraffes, the most glorious animal on the face of this Earth. "
-                    "Giraftron believes all other animals are irrelevant when compared to the glorious majesty of the giraffe."
+                    value="You are a pirate chatbot who always responds in pirate speak!"
                 )
-            ]
+            ],
         )
     ],
 )
 
-agent.run("Hello Girafatron, what is your favorite animal?")
+agent.run("How many helicopters can a human eat in one sitting?")
 ```
 
-### Multi Model Prompt Drivers
-Certain LLM providers such as Amazon SageMaker and Amazon Bedrock supports many types of models, each with their own slight differences in prompt structure and parameters. To support this variation across models, these Prompt Drivers takes a [Prompt Model Driver](../../reference/griptape/drivers/prompt_model/base_prompt_model_driver.md)
-through the [prompt_model_driver](../../reference/griptape/drivers/prompt/base_multi_model_prompt_driver.md#griptape.drivers.prompt.base_multi_model_prompt_driver.BaseMultiModelPromptDriver.prompt_model_driver) parameter.
-[Prompt Model Driver](../../reference/griptape/drivers/prompt_model/base_prompt_model_driver.md)s allows for model-specific customization for Prompt Drivers. 
-
-
-#### Amazon SageMaker
+### Amazon SageMaker Jumpstart
 
 !!! info
     This driver requires the `drivers-prompt-amazon-sagemaker` [extra](../index.md#extras).
 
-The [AmazonSageMakerPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_prompt_driver.md) uses [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) for inference on AWS.
+The [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_jumpstart_prompt_driver.md) uses [Amazon SageMaker Jumpstart](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html) for inference on AWS.
 
-!!! info
-    For single model endpoints, the `model` parameter does not need to be specified.  
-    For multi-model endpoints, the `model` parameter should be the inference component name.
-
-!!! warning
-    Make sure that the selected prompt model driver is compatible with the selected model. Note that even the same
-    logical model can require different prompt model drivers depending on how it is bundled in the endpoint. For
-    example, the reponse format are different for `Meta-Llama-3-8B-Instruct` when deployed via
-    "Amazon SageMaker JumpStart" and "Hugging Face on Amazon SageMaker".
-
-##### Llama
-
-!!! info
-    `SageMakerLlamaPromptModelDriver` requires a tokenizer corresponding to a [Gated Model](https://huggingface.co/docs/hub/en/models-gated) on Hugging Face.
+Amazon Sagemaker Jumpstart provides a wide range of models with varying capabilities.
+This Driver has been primarily _chat-optimized_ models that have a [Huggingface Chat Template](https://huggingface.co/docs/transformers/en/chat_templating) available.
+If your model does not fit this use-case, we suggest sub-classing [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_jumpstart_prompt_driver.md) and overriding the `_to_model_input` and `_to_model_params` methods.
     
-    Make sure to request access to the [Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model on Hugging Face and configure your environment for hugging face use.
 
 ```python title="PYTEST_IGNORE"
 import os
 from griptape.structures import Agent
 from griptape.drivers import (
-    AmazonSageMakerPromptDriver,
-    SageMakerLlamaPromptModelDriver,
-)
-from griptape.rules import Rule
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonSageMakerPromptDriver(
-            endpoint=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME"],
-            model=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_INFERENCE_COMPONENT_NAME"],
-            prompt_model_driver=SageMakerLlamaPromptModelDriver(),
-            temperature=0.75,
-        )
-    ),
-    rules=[
-        Rule(
-            value="You are a helpful, respectful and honest assistant who is also a swarthy pirate."
-            "You only speak like a pirate and you never break character."
-        )
-    ],
-)
-
-agent.run("Hello!")
-```
-
-##### Falcon
-
-```python title="PYTEST_IGNORE"
-import os
-from griptape.structures import Agent
-from griptape.drivers import (
-    AmazonSageMakerPromptDriver,
+    AmazonSageMakerJumpstartPromptDriver,
     SageMakerFalconPromptModelDriver,
 )
 from griptape.config import StructureConfig
 
 agent = Agent(
     config=StructureConfig(
-        prompt_driver=AmazonSageMakerPromptDriver(
-            endpoint=os.environ["SAGEMAKER_FALCON_ENDPOINT_NAME"],
-            model=os.environ["SAGEMAKER_FALCON_INFERENCE_COMPONENT_NAME"],
-            prompt_model_driver=SageMakerFalconPromptModelDriver(),
+        prompt_driver=AmazonSageMakerJumpstartPromptDriver(
+            endpoint=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME"],
+            model="meta-llama/Meta-Llama-3-8B-Instruct",
         )
     )
 )
 
 agent.run("What is a good lasagna recipe?")
-
-```
-
-#### Amazon Bedrock
-
-!!! info
-    This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
-
-The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/) for inference on AWS.
-
-##### Amazon Titan
-
-To use this model with Amazon Bedrock, use the [BedrockTitanPromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_titan_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockTitanPromptModelDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="amazon.titan-text-express-v1",
-            prompt_model_driver=BedrockTitanPromptModelDriver(
-                top_p=1,
-            )
-        )
-    )
-)
-agent.run(
-    "Write an informational article for children about how birds fly."
-    "Compare how birds fly to how airplanes fly."
-    'Make sure to use the word "Thrust" at least three times.'
-)
-```
-
-##### Anthropic Claude
-
-To use this model with Amazon Bedrock, use the [BedrockClaudePromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_claude_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockClaudePromptModelDriver
-from griptape.rules import Rule
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="anthropic.claude-3-sonnet-20240229-v1:0",
-            prompt_model_driver=BedrockClaudePromptModelDriver(
-                top_p=1,
-            )
-        )
-    ),
-    rules=[
-        Rule(
-            value="You are a customer service agent that is classifying emails by type. I want you to give your answer and then explain it."
-        )
-    ],
-)
-agent.run(
-    """How would you categorize this email?
-    <email>
-    Can I use my Mixmaster 4000 to mix paint, or is it only meant for mixing food?
-    </email>
-
-    Categories are:
-    (A) Pre-sale question
-    (B) Broken or defective item
-    (C) Billing question
-    (D) Other (please explain)"""
-)
-```
-##### Meta Llama 2
-
-To use this model with Amazon Bedrock, use the [BedrockLlamaPromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_llama_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockLlamaPromptModelDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="meta.llama2-13b-chat-v1",
-            prompt_model_driver=BedrockLlamaPromptModelDriver(),
-        )
-    )
-)
-agent.run(
-    "Write an article about impact of high inflation to GDP of a country"
-)
-```
-
-##### Ai21 Jurassic
-
-To use this model with Amazon Bedrock, use the [BedrockJurassicPromptModelDriver](../../reference/griptape/drivers/prompt_model/bedrock_jurassic_prompt_model_driver.md).
-
-```python
-from griptape.structures import Agent
-from griptape.drivers import AmazonBedrockPromptDriver, BedrockJurassicPromptModelDriver
-from griptape.config import StructureConfig
-
-agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="ai21.j2-ultra-v1",
-            prompt_model_driver=BedrockJurassicPromptModelDriver(top_p=0.95),
-            temperature=0.7,
-        )
-    )
-)
-agent.run(
-    "Suggest an outline for a blog post based on a title. "
-    "Title: How I put the pro in prompt engineering."
-)
 ```

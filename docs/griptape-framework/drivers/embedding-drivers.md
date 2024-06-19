@@ -10,7 +10,7 @@ You can optionally provide a [Tokenizer](../misc/tokenizers.md) via the [tokeniz
 
 ## Embedding Drivers
 
-### OpenAI Embeddings
+### OpenAI
 
 The [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md) uses the [OpenAI Embeddings API](https://platform.openai.com/docs/guides/embeddings).
 
@@ -27,12 +27,12 @@ print(embeddings[:3])
 [0.0017853748286142945, 0.006118456833064556, -0.005811543669551611]
 ```
 
-### Azure OpenAI Embeddings
+### Azure OpenAI
 
 The [AzureOpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/azure_openai_embedding_driver.md) uses the same parameters as [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md)
 with updated defaults.
 
-### Bedrock Titan Embeddings
+### Bedrock Titan
 
 !!! info
     This driver requires the `drivers-embedding-amazon-bedrock` [extra](../index.md#extras).
@@ -51,7 +51,7 @@ print(embeddings[:3])
 [-0.234375, -0.024902344, -0.14941406]
 ```
 
-### Google Embeddings
+### Google
 !!! info
     This driver requires the `drivers-embedding-google` [extra](../index.md#extras).
 
@@ -69,7 +69,7 @@ print(embeddings[:3])
 [0.0588633, 0.0033929371, -0.072810836]
 ```
 
-### Hugging Face Hub Embeddings
+### Hugging Face Hub
 
 !!! info
     This driver requires the `drivers-embedding-huggingface` [extra](../index.md#extras).
@@ -88,10 +88,8 @@ driver = HuggingFaceHubEmbeddingDriver(
     api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
     model="sentence-transformers/all-MiniLM-L6-v2",
     tokenizer=HuggingFaceTokenizer(
+        model="sentence-transformers/all-MiniLM-L6-v2",
         max_output_tokens=512,
-        tokenizer=AutoTokenizer.from_pretrained(
-            "sentence-transformers/all-MiniLM-L6-v2"
-        )
     ),
 )
 
@@ -99,27 +97,21 @@ embeddings = driver.embed_string("Hello world!")
 
 # display the first 3 embeddings
 print(embeddings[:3])
+
 ```
-### Multi Model Embedding Drivers
-Certain embeddings providers such as Amazon SageMaker support many types of models, each with their own slight differences in parameters and response formats. To support this variation across models, these Embedding Drivers takes a [Embedding Model Driver](../../reference/griptape/drivers/embedding_model/base_embedding_model_driver.md)
-through the [embedding_model_driver](../../reference/griptape/drivers/embedding/base_multi_model_embedding_driver.md#griptape.drivers.embedding.base_multi_model_embedding_driver.BaseMultiModelEmbeddingDriver.embedding_model_driver) parameter.
-[Embedding Model Driver](../../reference/griptape/drivers/embedding_model/base_embedding_model_driver.md)s allows for model-specific customization for Embedding Drivers. 
+### Amazon SageMaker Jumpstart
 
-#### SageMaker Embeddings
-
-The [AmazonSageMakerEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_sagemaker_embedding_driver.md) uses the [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) to generate embeddings on AWS.
+The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_sagemaker_jumpstart_embedding_driver.md) uses the [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) to generate embeddings on AWS.
 
 !!! info
     This driver requires the `drivers-embedding-amazon-sagemaker` [extra](../index.md#extras).
 
-##### TensorFlow Hub Models
 ```python title="PYTEST_IGNORE"
 import os
-from griptape.drivers import AmazonSageMakerEmbeddingDriver, SageMakerTensorFlowHubEmbeddingModelDriver
+from griptape.drivers import AmazonSageMakerJumpstartEmbeddingDriver, SageMakerTensorFlowHubEmbeddingModelDriver
 
-driver = AmazonSageMakerEmbeddingDriver(
+driver = AmazonSageMakerJumpstartEmbeddingDriver(
     model=os.environ["SAGEMAKER_TENSORFLOW_HUB_MODEL"],
-    embedding_model_driver=SageMakerTensorFlowHubEmbeddingModelDriver(),
 )
 
 embeddings = driver.embed_string("Hello world!")
@@ -128,23 +120,7 @@ embeddings = driver.embed_string("Hello world!")
 print(embeddings[:3])
 ```
 
-##### HuggingFace Models
-```python title="PYTEST_IGNORE"
-import os
-from griptape.drivers import AmazonSageMakerEmbeddingDriver, SageMakerHuggingFaceEmbeddingModelDriver
-
-driver = AmazonSageMakerEmbeddingDriver(
-    model=os.environ["SAGEMAKER_HUGGINGFACE_MODEL"],
-    embedding_model_driver=SageMakerHuggingFaceEmbeddingModelDriver(),
-)
-
-embeddings = driver.embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
-```
-
-### VoyageAI Embeddings
+### VoyageAI
 The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyageai_embedding_driver.md) uses the [VoyageAI Embeddings API](https://www.voyageai.com/).
 
 !!! info
@@ -159,6 +135,29 @@ driver = VoyageAiEmbeddingDriver(
 )
 
 embeddings = driver.embed_string("Hello world!")
+
+# display the first 3 embeddings
+print(embeddings[:3])
+```
+
+### Cohere
+
+The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_embedding_driver.md) uses the [Cohere Embeddings API](https://docs.cohere.com/docs/embeddings).
+
+!!! info
+    This driver requires the `drivers-embedding-cohere` [extra](../index.md#extras).
+
+```python
+import os
+from griptape.drivers import CohereEmbeddingDriver
+
+embedding_driver=CohereEmbeddingDriver(
+    model="embed-english-v3.0",
+    api_key=os.environ["COHERE_API_KEY"],
+    input_type="search_document",
+)
+
+embeddings = embedding_driver.embed_string("Hello world!")
 
 # display the first 3 embeddings
 print(embeddings[:3])

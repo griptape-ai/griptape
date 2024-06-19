@@ -13,10 +13,15 @@ from tests.mocks.mock_tokenizer import MockTokenizer
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
-    mock_output: str | Callable[[], str] = field(default="mock output", kw_only=True)
+    mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
+    mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        return TextArtifact(value=self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output)
+        return TextArtifact(
+            value=self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
+        )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
-        yield TextArtifact(value=self.mock_output() if isinstance(self.mock_output, Callable) else self.mock_output)
+        yield TextArtifact(
+            value=self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
+        )

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 from rich.logging import RichHandler
 
-from griptape.artifacts import BlobArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -128,12 +128,16 @@ class Structure(ABC):
         return self.tasks[-1] if self.tasks else None
 
     @property
+    def output(self) -> Optional[BaseArtifact]:
+        return self.output_task.output if self.output_task is not None else None
+
+    @property
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
 
     @property
     def default_config(self) -> BaseStructureConfig:
-        if self.prompt_driver is not None or self.embedding_driver is not None:
+        if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
 
             if self.prompt_driver is None:
@@ -209,12 +213,38 @@ class Structure(ABC):
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
 
-    def before_run(self) -> None:
+    def resolve_relationships(self) -> None:
+        task_by_id = {task.id: task for task in self.tasks}
+
+        for task in self.tasks:
+            # Ensure parents include this task as a child
+            for parent_id in task.parent_ids:
+                if parent_id not in task_by_id:
+                    raise ValueError(f"Task with id {parent_id} doesn't exist.")
+                parent = task_by_id[parent_id]
+                if task.id not in parent.child_ids:
+                    parent.child_ids.append(task.id)
+
+            # Ensure children include this task as a parent
+            for child_id in task.child_ids:
+                if child_id not in task_by_id:
+                    raise ValueError(f"Task with id {child_id} doesn't exist.")
+                child = task_by_id[child_id]
+                if task.id not in child.parent_ids:
+                    child.parent_ids.append(task.id)
+
+    def before_run(self, args: Any) -> None:
+        self._execution_args = args
+
+        [task.reset() for task in self.tasks]
+
         self.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id, input_task_input=self.input_task.input, input_task_output=self.input_task.output
             )
         )
+
+        self.resolve_relationships()
 
     def after_run(self) -> None:
         self.publish_event(
@@ -230,7 +260,7 @@ class Structure(ABC):
     def add_task(self, task: BaseTask) -> BaseTask: ...
 
     def run(self, *args) -> Structure:
-        self.before_run()
+        self.before_run(args)
 
         result = self.try_run(*args)
 

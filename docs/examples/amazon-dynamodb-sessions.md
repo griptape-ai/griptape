@@ -1,8 +1,8 @@
 Griptape provides [Conversation Memory](../griptape-framework/structures/conversation-memory.md) as a means of persisting conversation context across multiple Structure runs.
 If you provide it with a suitable Driver, the memory of the previous conversation can be preserved between run of a Structure, giving it additional context for how to respond.
-While we can use the [LocalConversationMemoryDriver](../griptape-framework/drivers/conversation-memory-drivers.md#localconversationmemorydriver) to store the conversation history in a local file, this may not be suitable for production use cases.
+While we can use the [LocalConversationMemoryDriver](../griptape-framework/drivers/conversation-memory-drivers.md#local) to store the conversation history in a local file, in production use-cases we may want to store in a proper database.
 
-In this example, we will show you how to use the [AmazonDynamoDbConversationMemoryDriver](../griptape-framework/drivers/conversation-memory-drivers.md#amazondynamodbconversationmemorydriver) to persist the memory in an [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) table. Please refer to the [Amazon DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-1.html) for information on setting up DynamoDB. 
+In this example, we will show you how to use the [AmazonDynamoDbConversationMemoryDriver](../griptape-framework/drivers/conversation-memory-drivers.md#amazon-dynamodb) to persist the memory in an [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) table. Please refer to the [Amazon DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-1.html) for information on setting up DynamoDB. 
 
 This code implements the idea of a generic "Session" that represents a Conversation Memory entry. For example, a "Session" could be used to represent an individual user's conversation, or a group conversation thread.
 

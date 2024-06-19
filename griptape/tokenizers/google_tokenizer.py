@@ -18,11 +18,8 @@ class GoogleTokenizer(BaseTokenizer):
         default=Factory(lambda self: self._default_model_client(), takes_self=True), kw_only=True
     )
 
-    def count_tokens(self, text: str | list) -> int:
-        if isinstance(text, str) or isinstance(text, list):
-            return self.model_client.count_tokens(text).total_tokens
-        else:
-            raise ValueError("Text must be a string or a list.")
+    def count_tokens(self, text: str) -> int:
+        return self.model_client.count_tokens(text).total_tokens
 
     def _default_model_client(self) -> GenerativeModel:
         genai = import_optional_dependency("google.generativeai")

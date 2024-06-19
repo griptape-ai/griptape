@@ -1,7 +1,7 @@
 In this example we implement a multi-agent Workflow. We have a single "Researcher" Agent that conducts research on a topic, and then fans out to multiple "Writer" Agents to write blog posts based on the research.
 
 By splitting up our workloads across multiple Structures, we can parallelize the work and leverage the strengths of each Agent. The Researcher can focus on gathering data and insights, while the Writers can focus on crafting engaging narratives.
-Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run on a separate machine, allowing us to scale our Workflow as needed 🤯.
+Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run completely independently, allowing us to scale our Workflow as needed 🤯. To try out how this would work, you can deploy this example as multiple structures from our [Sample Structures](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape-multi-agent-workflows) repo.
 
 
 ```python
@@ -155,35 +155,33 @@ if __name__ == "__main__":
             ),
         ),
     )
-    end_task = team.add_task(
-        PromptTask(
-            'State "All Done!"',
-        )
-    )
-    team.insert_tasks(
-        research_task,
-        [
-            StructureRunTask(
-                (
-                    """Using insights provided, develop an engaging blog
+    writer_tasks = team.add_tasks(*[
+        StructureRunTask(
+            (
+                """Using insights provided, develop an engaging blog
                 post that highlights the most significant AI advancements.
                 Your post should be informative yet accessible, catering to a tech-savvy audience.
                 Make it sound cool, avoid complex words so it doesn't sound like AI.
 
                 Insights:
                 {{ parent_outputs["research"] }}""",
-                ),
-                driver=LocalStructureRunDriver(
-                    structure_factory_fn=lambda: build_writer(
-                        role=writer["role"],
-                        goal=writer["goal"],
-                        backstory=writer["backstory"],
-                    )
-                ),
-            )
-            for writer in WRITERS
-        ],
-        end_task,
+            ),
+            driver=LocalStructureRunDriver(
+                structure_factory_fn=lambda: build_writer(
+                    role=writer["role"],
+                    goal=writer["goal"],
+                    backstory=writer["backstory"],
+                )
+            ),
+            parent_ids=[research_task.id],
+        )
+        for writer in WRITERS
+    ])
+    end_task = team.add_task(
+        PromptTask(
+            'State "All Done!"',
+            parent_ids=[writer_task.id for writer_task in writer_tasks],
+        )
     )
 
     team.run()

@@ -13,5 +13,8 @@ class WebLoader(BaseTextLoader):
     )
 
     def load(self, source: str, *args, **kwargs) -> ErrorArtifact | list[TextArtifact]:
-        single_chunk_text_artifact = self.web_scraper_driver.scrape_url(source)
-        return self._text_to_artifacts(single_chunk_text_artifact.value)
+        try:
+            single_chunk_text_artifact = self.web_scraper_driver.scrape_url(source)
+            return self._text_to_artifacts(single_chunk_text_artifact.value)
+        except Exception as e:
+            return ErrorArtifact(f"Error loading from source: {source}", exception=e)

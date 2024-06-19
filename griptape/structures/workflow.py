@@ -1,7 +1,7 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
-from typing import Any
+from typing import Any, Optional
 from attrs import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
@@ -13,12 +13,12 @@ from griptape.memory.structure import Run
 class Workflow(Structure):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
 
+    @property
+    def output_task(self) -> Optional[BaseTask]:
+        return self.order_tasks()[-1] if self.tasks else None
+
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
-
-        if self.output_task:
-            self.output_task.child_ids.append(task.id)
-            task.parent_ids.append(self.output_task.id)
 
         self.tasks.append(task)
 
@@ -77,6 +77,7 @@ class Workflow(Structure):
                     if parent_task.id in child_task.parent_ids:
                         child_task.parent_ids.remove(parent_task.id)
 
+        last_parent_index = -1
         for parent_task in parent_tasks:
             # Link the new task to the parent task
             if parent_task.id not in task.parent_ids:
@@ -85,17 +86,20 @@ class Workflow(Structure):
                 parent_task.child_ids.append(task.id)
 
             parent_index = self.tasks.index(parent_task)
-            self.tasks.insert(parent_index + 1, task)
+            if parent_index > last_parent_index:
+                last_parent_index = parent_index
+
+        # Insert the new task once, just after the last parent task
+        self.tasks.insert(last_parent_index + 1, task)
 
         return task
 
     def try_run(self, *args) -> Workflow:
-        self._execution_args = args
-        ordered_tasks = self.order_tasks()
         exit_loop = False
 
         while not self.is_finished() and not exit_loop:
             futures_list = {}
+            ordered_tasks = self.order_tasks()
 
             for task in ordered_tasks:
                 if task.can_execute():
@@ -109,7 +113,7 @@ class Workflow(Structure):
 
                     break
 
-        if self.conversation_memory:
+        if self.conversation_memory and self.output is not None:
             if isinstance(self.input_task.input, tuple):
                 input_text = self.input_task.input[0].to_text()
             else:
@@ -126,9 +130,8 @@ class Workflow(Structure):
 
         context.update(
             {
-                "parent_outputs": {
-                    parent.id: parent.output.to_text() if parent.output else "" for parent in task.parents
-                },
+                "parent_outputs": task.parent_outputs,
+                "parents_output_text": task.parents_output_text,
                 "parents": {parent.id: parent for parent in task.parents},
                 "children": {child.id: child for child in task.children},
             }

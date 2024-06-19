@@ -106,3 +106,7 @@ class TestTextChunker:
         assert chunks[5].value.endswith("? foo-12?")
         assert chunks[6].value.endswith(" foo-5")
         assert chunks[7].value.endswith(" foo-16")
+
+    def test_chunk_with_max_tokens(self, chunker):
+        with pytest.raises(ValueError):
+            TextChunker(max_tokens=-1)

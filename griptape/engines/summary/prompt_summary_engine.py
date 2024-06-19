@@ -13,7 +13,8 @@ from griptape.rules import Ruleset
 class PromptSummaryEngine(BaseSummaryEngine):
     chunk_joiner: str = field(default="\n\n", kw_only=True)
     max_token_multiplier: float = field(default=0.5, kw_only=True)
-    template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/prompt_summary.j2")), kw_only=True)
+    system_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/system.j2")), kw_only=True)
+    user_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/user.j2")), kw_only=True)
     prompt_driver: BasePromptDriver = field(kw_only=True)
     chunker: BaseChunker = field(
         default=Factory(
@@ -49,25 +50,38 @@ class PromptSummaryEngine(BaseSummaryEngine):
     ) -> TextArtifact:
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 
-        full_text = self.template_generator.render(
-            summary=summary, text=artifacts_text, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets)
+        system_prompt = self.system_template_generator.render(
+            summary=summary, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets)
         )
 
-        if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
+        user_prompt = self.user_template_generator.render(text=artifacts_text)
+
+        if (
+            self.prompt_driver.tokenizer.count_input_tokens_left(user_prompt + system_prompt)
+            >= self.min_response_tokens
+        ):
             return self.prompt_driver.run(
-                PromptStack(inputs=[PromptStack.Input(full_text, role=PromptStack.USER_ROLE)])
+                PromptStack(
+                    inputs=[
+                        PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
+                        PromptStack.Input(user_prompt, role=PromptStack.USER_ROLE),
+                    ]
+                )
             )
         else:
             chunks = self.chunker.chunk(artifacts_text)
 
-            partial_text = self.template_generator.render(
-                summary=summary, text=chunks[0].value, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets)
-            )
+            partial_text = self.user_template_generator.render(text=chunks[0].value)
 
             return self.summarize_artifacts_rec(
                 chunks[1:],
                 self.prompt_driver.run(
-                    PromptStack(inputs=[PromptStack.Input(partial_text, role=PromptStack.USER_ROLE)])
+                    PromptStack(
+                        inputs=[
+                            PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
+                            PromptStack.Input(partial_text, role=PromptStack.USER_ROLE),
+                        ]
+                    )
                 ).value,
                 rulesets=rulesets,
             )

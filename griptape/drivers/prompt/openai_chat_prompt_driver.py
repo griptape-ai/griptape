@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Any, Literal
+from typing import Optional, Literal
 from collections.abc import Iterator
 import openai
 from attrs import define, field, Factory
@@ -7,8 +7,6 @@ from griptape.artifacts import TextArtifact
 from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
-import dateparser
-from datetime import datetime, timedelta
 
 
 @define
@@ -25,12 +23,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         response_format: An optional OpenAi Chat Completion response format. Currently only supports `json_object` which will enable OpenAi's JSON mode.
         seed: An optional OpenAi Chat Completion seed.
         ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
-        _ratelimit_request_limit: The maximum number of requests allowed in the current rate limit window.
-        _ratelimit_requests_remaining: The number of requests remaining in the current rate limit window.
-        _ratelimit_requests_reset_at: The time at which the current rate limit window resets.
-        _ratelimit_token_limit: The maximum number of tokens allowed in the current rate limit window.
-        _ratelimit_tokens_remaining: The number of tokens remaining in the current rate limit window.
-        _ratelimit_tokens_reset_at: The time at which the current rate limit window resets.
     """
 
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -64,22 +56,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
-    _ratelimit_request_limit: Optional[int] = field(init=False, default=None)
-    _ratelimit_requests_remaining: Optional[int] = field(init=False, default=None)
-    _ratelimit_requests_reset_at: Optional[datetime] = field(init=False, default=None)
-    _ratelimit_token_limit: Optional[int] = field(init=False, default=None)
-    _ratelimit_tokens_remaining: Optional[int] = field(init=False, default=None)
-    _ratelimit_tokens_reset_at: Optional[datetime] = field(init=False, default=None)
 
     def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
-        result = self.client.chat.completions.with_raw_response.create(**self._base_params(prompt_stack))
+        result = self.client.chat.completions.create(**self._base_params(prompt_stack))
 
-        self._extract_ratelimit_metadata(result)
-
-        parsed_result = result.parse()
-
-        if len(parsed_result.choices) == 1:
-            return TextArtifact(value=parsed_result.choices[0].message.content.strip())
+        if len(result.choices) == 1:
+            return TextArtifact(value=result.choices[0].message.content.strip())
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
@@ -97,14 +79,15 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
                 yield TextArtifact(value=delta_content)
 
-    def token_count(self, prompt_stack: PromptStack) -> int:
-        if isinstance(self.tokenizer, OpenAiTokenizer):
-            return self.tokenizer.count_tokens(self._prompt_stack_to_messages(prompt_stack))
-        else:
-            return self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack))
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        content = prompt_input.content
 
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict[str, Any]]:
-        return [{"role": self.__to_openai_role(i), "content": i.content} for i in prompt_stack.inputs]
+        if prompt_input.is_system():
+            return {"role": "system", "content": content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": content}
+        else:
+            return {"role": "user", "content": content}
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -120,7 +103,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             # JSON mode still requires a system input instructing the LLM to output JSON.
             prompt_stack.add_system_input("Provide your response as a valid JSON object.")
 
-        messages = self._prompt_stack_to_messages(prompt_stack)
+        messages = [self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs]
 
         if self.max_tokens is not None:
             params["max_tokens"] = self.max_tokens
@@ -128,41 +111,3 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         params["messages"] = messages
 
         return params
-
-    def __to_openai_role(self, prompt_input: PromptStack.Input) -> str:
-        if prompt_input.is_system():
-            return "system"
-        elif prompt_input.is_assistant():
-            return "assistant"
-        else:
-            return "user"
-
-    def _extract_ratelimit_metadata(self, response):
-        # The OpenAI SDK's requestssession variable is global, so this hook will fire for all API requests.
-        # The following headers are not reliably returned in every API call, so we check for the presence of the
-        # headers before reading and parsing their values to prevent other SDK users from encountering KeyErrors.
-        reset_requests_at = response.headers.get("x-ratelimit-reset-requests")
-        if reset_requests_at is not None:
-            self._ratelimit_requests_reset_at = dateparser.parse(
-                reset_requests_at, settings={"PREFER_DATES_FROM": "future"}
-            )
-
-            # The dateparser utility doesn't handle sub-second durations as are sometimes returned by OpenAI's API.
-            # If the API returns, for example, "13ms", dateparser.parse() returns None. In this case, we will set
-            # the time value to the current time plus a one second buffer.
-            if self._ratelimit_requests_reset_at is None:
-                self._ratelimit_requests_reset_at = datetime.now() + timedelta(seconds=1)
-
-        reset_tokens_at = response.headers.get("x-ratelimit-reset-tokens")
-        if reset_tokens_at is not None:
-            self._ratelimit_tokens_reset_at = dateparser.parse(
-                reset_tokens_at, settings={"PREFER_DATES_FROM": "future"}
-            )
-
-            if self._ratelimit_tokens_reset_at is None:
-                self._ratelimit_tokens_reset_at = datetime.now() + timedelta(seconds=1)
-
-        self._ratelimit_request_limit = response.headers.get("x-ratelimit-limit-requests")
-        self._ratelimit_requests_remaining = response.headers.get("x-ratelimit-remaining-requests")
-        self._ratelimit_token_limit = response.headers.get("x-ratelimit-limit-tokens")
-        self._ratelimit_tokens_remaining = response.headers.get("x-ratelimit-remaining-tokens")

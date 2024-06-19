@@ -7,7 +7,8 @@ A [Workflow](../../reference/griptape/structures/workflow.md) is a non-sequentia
 
 Workflows have access to the following [context](../../reference/griptape/structures/workflow.md#griptape.structures.workflow.Workflow.context) variables in addition to the [base context](./tasks.md#context):
 
-* `parent_outputs`: outputs into the current task referenceable by parent task IDs.
+* `parent_outputs`: dictionary containing mapping of parent IDs to their outputs.
+* `parents_output_text`: string containing the concatenated outputs of all parent tasks.
 * `parents`: parent tasks referenceable by IDs.
 * `children`: child tasks referenceable by IDs.
 
@@ -17,17 +18,8 @@ Let's build a simple workflow. Let's say, we want to write a story in a fantasy 
 ```python
 from griptape.tasks import PromptTask
 from griptape.structures import Workflow
+from griptape.utils import StructureVisualizer
 
-workflow = Workflow()
-
-def character_task(task_id, character_name) -> PromptTask:
-    return PromptTask(
-        "Based on the following world description create a character named {{ name }}:\n{{ parent_outputs['world'] }}",
-        context={
-            "name": character_name
-        },
-        id=task_id
-    )
 
 world_task = PromptTask(
     "Create a fictional world based on the following key words {{ keywords|join(', ') }}",
@@ -36,24 +28,36 @@ world_task = PromptTask(
     },
     id="world"
 )
-workflow.add_task(world_task)
+
+def character_task(task_id, character_name) -> PromptTask:
+    return PromptTask(
+        "Based on the following world description create a character named {{ name }}:\n{{ parent_outputs['world'] }}",
+        context={
+            "name": character_name
+        },
+        id=task_id,
+        parent_ids=["world"]
+    )
+
+scotty_task = character_task("scotty", "Scotty")
+annie_task = character_task("annie", "Annie")
 
 story_task = PromptTask(
     "Based on the following description of the world and characters, write a short story:\n{{ parent_outputs['world'] }}\n{{ parent_outputs['scotty'] }}\n{{ parent_outputs['annie'] }}",
-    id="story"
+    id="story",
+    parent_ids=["world", "scotty", "annie"]
 )
-workflow.add_task(story_task)
 
-character_task_1 = character_task("scotty", "Scotty")
-character_task_2 = character_task("annie", "Annie")
+workflow = Workflow(tasks=[world_task, story_task, scotty_task, annie_task, story_task])
 
-# Note the preserve_relationship flag. This ensures that world_task remains a parent of
-# story_task so its output can be referenced in the story_task prompt.
-workflow.insert_tasks(world_task, [character_task_1, character_task_2], story_task, preserve_relationship=True)
+print(StructureVisualizer(workflow).to_url())
 
 workflow.run()
 ```
 
+Note that we use the `StructureVisualizer` to get a visual representation of the workflow. If we visit the printed url, it should look like this:
+
+![Workflow](https://mermaid.ink/img/Z3JhcGggVEQ7OwoJd29ybGQtLT4gc3RvcnkgJiBzY290dHkgJiBhbm5pZTsKCXNjb3R0eS0tPiBzdG9yeTsKCWFubmllLS0+IHN0b3J5Ow==)
 
 !!! Info
     Output edited for brevity
@@ -147,3 +151,208 @@ workflow.run()
                              unity and harmony that can exist in diversity.
 ```
 
+### Declarative vs Imperative Syntax
+
+The above example showed how to create a workflow using the declarative syntax via the `parent_ids` init param, but there are a number of declarative and imperative options for you to choose between. There is no functional difference, they merely exist to allow you to structure your code as is most readable for your use case. Possibilities are illustrated below.
+
+Declaratively specify parents (same as above example):
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    tasks=[
+        PromptTask("Name an animal", id="animal"),
+        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"]),
+        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal", parent_ids=["adjective"]),
+    ],
+    rules=[Rule("output a single lowercase word")]
+)
+
+workflow.run()
+```
+
+Declaratively specify children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    tasks=[
+        PromptTask("Name an animal", id="animal", child_ids=["adjective"]),
+        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", child_ids=["new-animal"]),
+        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal"),
+    ],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Declaratively specifying a mix of parents and children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    tasks=[
+        PromptTask("Name an animal", id="animal"),
+        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"], child_ids=["new-animal"]),
+        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal"),
+    ],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Imperatively specify parents:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+
+adjective_task.add_parent(animal_task)
+new_animal_task.add_parent(adjective_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Imperatively specify children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+
+animal_task.add_child(adjective_task)
+adjective_task.add_child(new_animal_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Imperatively specify a mix of parents and children:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+
+adjective_task.add_parent(animal_task)
+adjective_task.add_child(new_animal_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+Or even mix imperative and declarative:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"])
+
+
+new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
+new_animal_task.add_parent(adjective_task)
+
+workflow = Workflow(
+    tasks=[animal_task, adjective_task, new_animal_task],
+    rules=[Rule("output a single lowercase word")],
+)
+
+workflow.run()
+```
+
+### Insert Parallel Tasks
+
+`Workflow.insert_tasks()` provides a convenient way to insert parallel tasks between parents and children.
+
+!!! info
+    By default, all children are removed from the parent task and all parent tasks are removed from the child task. If you want to keep these parent-child relationships, then set the `preserve_relationship` parameter to `True`.
+
+Imperatively insert parallel tasks between a parent and child:
+
+```python
+from griptape.tasks import PromptTask
+from griptape.structures import Workflow
+from griptape.rules import Rule
+
+workflow = Workflow(
+    rules=[Rule("output a single lowercase word")],
+)
+
+animal_task = PromptTask("Name an animal", id="animal")
+adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
+color_task = PromptTask("Describe {{ parent_outputs['animal'] }} with a color", id="color")
+new_animal_task = PromptTask("Name an animal described as: \n{{ parents_output_text }}", id="new-animal")
+
+# The following workflow runs animal_task, then (adjective_task, and color_task)
+# in parallel, then finally new_animal_task.
+#
+# In other words, the output of animal_task is passed to both adjective_task and color_task
+# and the outputs of adjective_task and color_task are then passed to new_animal_task.
+workflow.add_task(animal_task)
+workflow.add_task(new_animal_task)
+workflow.insert_tasks(animal_task, [adjective_task, color_task], new_animal_task)
+
+workflow.run()
+```
+
+output:
+```
+[06/18/24 09:52:21] INFO     PromptTask animal
+                             Input: Name an animal
+[06/18/24 09:52:22] INFO     PromptTask animal
+                             Output: elephant
+                    INFO     PromptTask adjective
+                             Input: Describe elephant with an adjective
+                    INFO     PromptTask color
+                             Input: Describe elephant with a color
+                    INFO     PromptTask color
+                             Output: gray
+                    INFO     PromptTask adjective
+                             Output: majestic
+                    INFO     PromptTask new-animal
+                             Input: Name an animal described as:
+                             majestic
+                             gray
+[06/18/24 09:52:23] INFO     PromptTask new-animal
+                             Output: elephant
+```

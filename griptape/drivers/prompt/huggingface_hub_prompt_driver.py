@@ -42,11 +42,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     )
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(
-                tokenizer=import_optional_dependency("transformers").AutoTokenizer.from_pretrained(self.model),
-                max_output_tokens=self.max_tokens,
-            ),
-            takes_self=True,
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
         ),
         kw_only=True,
     )
@@ -55,7 +51,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_output_tokens(prompt), **self.params
+            prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
         )
 
         return TextArtifact(value=response)
@@ -64,8 +60,26 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_output_tokens(prompt), stream=True, **self.params
+            prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
         )
 
         for token in response:
             yield TextArtifact(value=token)
+
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        return {"role": prompt_input.role, "content": prompt_input.content}
+
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+
+    def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
+        tokens = self.tokenizer.tokenizer.apply_chat_template(
+            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
+            add_generation_prompt=True,
+            tokenize=True,
+        )
+
+        if isinstance(tokens, list):
+            return tokens
+        else:
+            raise ValueError("Invalid output type.")
