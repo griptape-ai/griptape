@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.common import DeltaTextPromptStackContent, PromptStack
+from griptape.common import TextDeltaPromptStackContent, PromptStack
 from griptape.drivers import CoherePromptDriver
 
 
@@ -55,5 +55,5 @@ class TestCoherePromptDriver:
         text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-        if isinstance(text_artifact, DeltaTextPromptStackContent):
+        if isinstance(text_artifact, TextDeltaPromptStackContent):
             assert text_artifact.text == "model-output"

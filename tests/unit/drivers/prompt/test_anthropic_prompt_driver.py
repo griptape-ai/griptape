@@ -1,4 +1,4 @@
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from griptape.drivers import AnthropicPromptDriver
 from griptape.common import PromptStack
 from unittest.mock import Mock
@@ -114,7 +114,7 @@ class TestAnthropicPromptDriver:
             top_k=250,
             **{"system": "system-input"} if system_enabled else {},
         )
-        if isinstance(text_artifact, DeltaTextPromptStackContent):
+        if isinstance(text_artifact, TextDeltaPromptStackContent):
             assert text_artifact.text == "model-output"
 
     def test_try_run_throws_when_prompt_stack_is_string(self):

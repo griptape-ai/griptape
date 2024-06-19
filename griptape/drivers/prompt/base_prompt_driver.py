@@ -10,7 +10,7 @@ from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import (
     BaseDeltaPromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     PromptStack,
     PromptStackMessage,
     TextPromptStackContent,
@@ -119,25 +119,25 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def __process_stream(self, prompt_stack: PromptStack) -> PromptStackMessage:
         delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
-        delta_usage = DeltaPromptStackMessage.DeltaUsage()
+        usage = DeltaPromptStackMessage.Usage()
 
         deltas = self.try_stream(prompt_stack)
 
         for delta in deltas:
             if isinstance(delta, DeltaPromptStackMessage):
-                delta_usage += delta.delta_usage
+                usage += delta.usage
             elif isinstance(delta, BaseDeltaPromptStackContent):
                 if delta.index in delta_contents:
                     delta_contents[delta.index].append(delta)
                 else:
                     delta_contents[delta.index] = [delta]
 
-                if isinstance(delta, DeltaTextPromptStackContent):
+                if isinstance(delta, TextDeltaPromptStackContent):
                     self.structure.publish_event(CompletionChunkEvent(token=delta.text))
 
         content = []
         for index, deltas in delta_contents.items():
-            text_deltas = [delta for delta in deltas if isinstance(delta, DeltaTextPromptStackContent)]
+            text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaPromptStackContent)]
             if text_deltas:
                 content.append(TextPromptStackContent.from_deltas(text_deltas))
 
@@ -145,7 +145,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             content=content,
             role=PromptStackMessage.ASSISTANT_ROLE,
             usage=PromptStackMessage.Usage(
-                input_tokens=delta_usage.input_tokens or 0, output_tokens=delta_usage.output_tokens or 0
+                input_tokens=usage.input_tokens or 0, output_tokens=usage.output_tokens or 0
             ),
         )
 

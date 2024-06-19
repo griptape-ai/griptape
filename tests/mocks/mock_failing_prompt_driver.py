@@ -8,7 +8,7 @@ from griptape.common import (
     PromptStackMessage,
     TextPromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     BaseDeltaPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -41,6 +41,6 @@ class MockFailingPromptDriver(BasePromptDriver):
             raise Exception("failed attempt")
         else:
             yield DeltaPromptStackMessage(
-                delta_content=DeltaTextPromptStackContent("success"),
-                delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=100, output_tokens=100),
+                delta_content=TextDeltaPromptStackContent("success"),
+                usage=DeltaPromptStackMessage.Usage(input_tokens=100, output_tokens=100),
             )

@@ -10,7 +10,7 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
     PromptStackMessage,
@@ -68,11 +68,11 @@ class AnthropicPromptDriver(BasePromptDriver):
                 yield self.__message_content_delta_to_prompt_stack_content_delta(event)
             elif event.type == "message_start":
                 yield DeltaPromptStackMessage(
-                    delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=event.message.usage.input_tokens)
+                    usage=DeltaPromptStackMessage.Usage(input_tokens=event.message.usage.input_tokens)
                 )
             elif event.type == "message_delta":
                 yield DeltaPromptStackMessage(
-                    delta_usage=DeltaPromptStackMessage.DeltaUsage(output_tokens=event.usage.output_tokens)
+                    usage=DeltaPromptStackMessage.Usage(output_tokens=event.usage.output_tokens)
                 )
 
     def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
@@ -135,6 +135,6 @@ class AnthropicPromptDriver(BasePromptDriver):
         index = content_delta.index
 
         if content_delta.delta.type == "text_delta":
-            return DeltaTextPromptStackContent(content_delta.delta.text, index=index)
+            return TextDeltaPromptStackContent(content_delta.delta.text, index=index)
         else:
             raise ValueError(f"Unsupported message content delta type : {content_delta.delta.type}")

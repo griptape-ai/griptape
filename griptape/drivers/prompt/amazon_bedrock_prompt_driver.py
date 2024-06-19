@@ -10,7 +10,7 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     DeltaPromptStackMessage,
     PromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     BasePromptStackContent,
     TextPromptStackContent,
     ImagePromptStackContent,
@@ -56,13 +56,13 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             for event in stream:
                 if "contentBlockDelta" in event:
                     content_block_delta = event["contentBlockDelta"]
-                    yield DeltaTextPromptStackContent(
+                    yield TextDeltaPromptStackContent(
                         content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
                     )
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
                     yield DeltaPromptStackMessage(
-                        delta_usage=DeltaPromptStackMessage.DeltaUsage(
+                        usage=DeltaPromptStackMessage.Usage(
                             input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]
                         )
                     )

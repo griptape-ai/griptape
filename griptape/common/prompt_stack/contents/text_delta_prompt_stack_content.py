@@ -5,5 +5,5 @@ from griptape.common import BaseDeltaPromptStackContent
 
 
 @define
-class DeltaTextPromptStackContent(BaseDeltaPromptStackContent):
+class TextDeltaPromptStackContent(BaseDeltaPromptStackContent):
     text: str = field(metadata={"serializable": True})

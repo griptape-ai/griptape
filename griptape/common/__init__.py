@@ -1,6 +1,6 @@
 from .prompt_stack.contents.base_prompt_stack_content import BasePromptStackContent
 from .prompt_stack.contents.base_delta_prompt_stack_content import BaseDeltaPromptStackContent
-from .prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from .prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from .prompt_stack.contents.text_prompt_stack_content import TextPromptStackContent
 from .prompt_stack.contents.image_prompt_stack_content import ImagePromptStackContent
 
@@ -16,7 +16,7 @@ __all__ = [
     "BasePromptStackContent",
     "DeltaPromptStackMessage",
     "PromptStackMessage",
-    "DeltaTextPromptStackContent",
+    "TextDeltaPromptStackContent",
     "TextPromptStackContent",
     "ImagePromptStackContent",
     "PromptStack",

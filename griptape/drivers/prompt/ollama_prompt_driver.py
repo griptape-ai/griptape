@@ -12,7 +12,7 @@ from griptape.common import (
     PromptStackMessage,
     BaseDeltaPromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
 )
 
 if TYPE_CHECKING:
@@ -69,7 +69,7 @@ class OllamaPromptDriver(BasePromptDriver):
 
         if isinstance(stream, Iterator):
             for chunk in stream:
-                yield DeltaTextPromptStackContent(chunk["message"]["content"])
+                yield TextDeltaPromptStackContent(chunk["message"]["content"])
         else:
             raise Exception("invalid model response")
 
