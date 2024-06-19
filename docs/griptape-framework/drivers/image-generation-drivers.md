@@ -23,6 +23,8 @@ agent = Agent(tools=[
 agent.run("Generate a watercolor painting of a dog riding a skateboard")
 ```
 
+## Image Generation Drivers
+
 ### Amazon Bedrock
 
 The [Amazon Bedrock Image Generation Driver](../../reference/griptape/drivers/image_generation/amazon_bedrock_image_generation_driver.md) provides multi-model access to image generation models hosted by Amazon Bedrock. This Driver manages API calls to the Bedrock API, while the specific Model Drivers below format the API requests and parse the responses.
