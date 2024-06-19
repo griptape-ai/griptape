@@ -14,10 +14,10 @@ web_search_tool = WebSearch(
         api_key=os.environ["GOOGLE_API_KEY"],
         search_id=os.environ["GOOGLE_API_SEARCH_ID"],
         results_count=5,
+        language="en",
+        country="us",
     ),
-    language="en",
-    country="us",
-),
+)
 
 # Set up an agent using the WebSearch tool
 agent = Agent(
