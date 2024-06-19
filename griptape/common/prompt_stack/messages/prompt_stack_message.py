@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any, Optional
 from collections.abc import Sequence
 
@@ -62,8 +63,19 @@ class PromptStackMessage(BasePromptStackMessage):
 
         text_output = "".join([content.artifact.value for content in text_contents])
         if action_call_contents:
-            actions_output = [str(action.artifact.value) for action in action_call_contents]
-            output = "Actions: [" + ", ".join(actions_output) + "]"
+            action_call_dicts = []
+            for action_call_content in action_call_contents:
+                action_call = action_call_content.artifact.value
+
+                # Some LLMs don't support nested parameters and therefore won't generate "values"
+                if "values" in action_call.input:
+                    action_call_dict = action_call.to_dict()
+                else:
+                    action_call_dict = {**action_call.to_dict(), **{"input": {"values": action_call.input}}}
+                action_call_dicts.append(action_call_dict)
+
+            actions_output = json.dumps(action_call_dicts, indent=2)
+            output = f"Actions: {actions_output}"
 
             if text_output:
                 output = f"Thought: {text_output}\n{output}"

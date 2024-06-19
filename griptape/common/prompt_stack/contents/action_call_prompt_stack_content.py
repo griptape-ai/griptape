@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from attrs import define, field
-from typing import Sequence
+import json
+from collections.abc import Sequence
 
-from griptape.artifacts.action_call_artifact import ActionCallArtifact
-from griptape.common import BasePromptStackContent, BaseDeltaPromptStackContent
-from griptape.common import DeltaActionCallPromptStackContent
+from attrs import define, field
+
+from griptape.artifacts import ActionArtifact
+from griptape.common import BaseDeltaPromptStackContent, BasePromptStackContent, DeltaActionCallPromptStackContent
 
 
 @define
 class ActionCallPromptStackContent(BasePromptStackContent):
-    artifact: ActionCallArtifact = field(metadata={"serializable": True})
+    artifact: ActionArtifact = field(metadata={"serializable": True})
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> ActionCallPromptStackContent:
@@ -32,10 +33,14 @@ class ActionCallPromptStackContent(BasePromptStackContent):
                 input += delta.delta_input
 
         if tag is not None and name is not None and path is not None:
-            action = ActionCallArtifact.ActionCall(tag=tag, name=name, path=path, input=input)
+            try:
+                parsed_input = json.loads(input)
+            except json.JSONDecodeError:
+                raise ValueError("Invalid JSON input for ActionCallArtifact.Action")
+            action = ActionArtifact.Action(tag=tag, name=name, path=path, input=parsed_input)
         else:
             raise ValueError("Missing required fields for ActionCallArtifact.Action")
 
-        artifact = ActionCallArtifact(value=action)
+        artifact = ActionArtifact(value=action)
 
         return cls(artifact=artifact)

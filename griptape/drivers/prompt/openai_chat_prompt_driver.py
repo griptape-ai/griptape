@@ -8,8 +8,7 @@ import openai
 from attrs import Factory, define, field
 from schema import Schema
 
-from griptape.artifacts import TextArtifact
-from griptape.artifacts.action_call_artifact import ActionCallArtifact
+from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.common import (
     ActionCallPromptStackContent,
     ActionResultPromptStackContent,
@@ -90,7 +89,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             message = result.choices[0].message
 
             return PromptStackMessage(
-                content=self.__message_to_prompt_stack_content(message),
+                content=self.__response_to_prompt_stack_content(message),
                 role=PromptStackMessage.ASSISTANT_ROLE,
                 usage=PromptStackMessage.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
@@ -132,7 +131,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                             {
                                 "role": self.__to_role(message),
                                 "content": self.__prompt_stack_content_message_content(action_result),
-                                "tool_call_id": action_result.action_tag,
+                                "tool_call_id": action_result.action.tag,
                             }
                         )
             else:
@@ -207,7 +206,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         return [
             {
                 "function": {
-                    "name": f"{tool.name}-{tool.activity_name(activity)}",
+                    "name": f"{tool.name}_{tool.activity_name(activity)}",
                     "description": tool.activity_description(activity),
                     "parameters": (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema"),
                 },
@@ -231,32 +230,32 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return {
                 "type": "function",
                 "id": action.tag,
-                "function": {"name": f"{action.name}-{action.path}", "arguments": json.dumps(action.input)},
+                "function": {"name": f"{action.name}_{action.path}", "arguments": json.dumps(action.input)},
             }
         elif isinstance(content, ActionResultPromptStackContent):
             return content.artifact.to_text()
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __message_to_prompt_stack_content(self, message: ChatCompletionMessage) -> list[BasePromptStackContent]:
-        if message.content is not None:
-            return [TextPromptStackContent(TextArtifact(message.content))]
-        elif message.tool_calls is not None:
+    def __response_to_prompt_stack_content(self, response: ChatCompletionMessage) -> list[BasePromptStackContent]:
+        if response.content is not None:
+            return [TextPromptStackContent(TextArtifact(response.content))]
+        elif response.tool_calls is not None:
             return [
                 ActionCallPromptStackContent(
-                    ActionCallArtifact(
-                        ActionCallArtifact.ActionCall(
+                    ActionArtifact(
+                        ActionArtifact.Action(
                             tag=tool_call.id,
-                            name=tool_call.function.name.split("-")[0],
-                            path=tool_call.function.name.split("-")[1],
-                            input=tool_call.function.arguments,
+                            name=tool_call.function.name.split("_", 1)[0],
+                            path=tool_call.function.name.split("_", 1)[1],
+                            input=json.loads(tool_call.function.arguments),
                         )
                     )
                 )
-                for tool_call in message.tool_calls
+                for tool_call in response.tool_calls
             ]
         else:
-            raise ValueError(f"Unsupported message type: {message}")
+            raise ValueError(f"Unsupported message type: {response}")
 
     def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> TextDeltaPromptStackContent:
         if content_delta.content is None:
@@ -277,8 +276,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     return DeltaActionCallPromptStackContent(
                         index=index,
                         tag=tool_call.id,
-                        name=tool_call.function.name.split("-")[0],
-                        path=tool_call.function.name.split("-")[1],
+                        name=tool_call.function.name.split("_", 1)[0],
+                        path=tool_call.function.name.split("_", 1)[1],
                     )
                 else:
                     return DeltaActionCallPromptStackContent(index=index, delta_input=tool_call.function.arguments)

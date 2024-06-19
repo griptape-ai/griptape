@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional
 
@@ -8,7 +7,7 @@ from attrs import Factory, define, field
 from schema import Schema
 
 from griptape.artifacts import (
-    ActionCallArtifact,
+    ActionArtifact,
     BaseArtifact,
     ErrorArtifact,
     ImageArtifact,
@@ -146,11 +145,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         if all(isinstance(content, TextPromptStackContent) for content in message.content):
             return message.to_text_artifact().to_text()
         else:
-            content = [self.__prompt_stack_content_to_message_content(content) for content in message.content]
-            sorted_content = sorted(
-                content, key=lambda message_content: -1 if message_content["type"] == "tool_result" else 1
-            )  # Tool results must come first in the content list
-            return sorted_content
+            return [self.__prompt_stack_content_to_message_content(content) for content in message.content]
 
     def __prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):
@@ -160,21 +155,19 @@ class AnthropicPromptDriver(BasePromptDriver):
         elif isinstance(content, ActionCallPromptStackContent):
             action = content.artifact.value
 
-            return {
-                "type": "tool_use",
-                "id": action.tag,
-                "name": f"{action.name}_{action.path}",
-                "input": json.loads(action.input),
-            }
+            return {"type": "tool_use", "id": action.tag, "name": f"{action.name}_{action.path}", "input": action.input}
         elif isinstance(content, ActionResultPromptStackContent):
             artifact = content.artifact
 
+            if isinstance(artifact, ListArtifact):
+                message_content = [self.__artifact_to_message_content(artifact) for artifact in artifact.value]
+            else:
+                message_content = [self.__artifact_to_message_content(artifact)]
+
             return {
                 "type": "tool_result",
-                "tool_use_id": content.action_tag,
-                "content": [self.__artifact_to_message_content(artifact) for artifact in artifact.value]
-                if isinstance(artifact, ListArtifact)
-                else [self.__artifact_to_message_content(artifact)],
+                "tool_use_id": content.action.tag,
+                "content": message_content,
                 "is_error": isinstance(artifact, ErrorArtifact),
             }
         else:
@@ -204,10 +197,8 @@ class AnthropicPromptDriver(BasePromptDriver):
             name, path = content.name.split("_", 1)
 
             return ActionCallPromptStackContent(
-                artifact=ActionCallArtifact(
-                    value=ActionCallArtifact.ActionCall(
-                        tag=content.id, name=name, path=path, input=json.dumps(content.input)
-                    )
+                artifact=ActionArtifact(
+                    value=ActionArtifact.Action(tag=content.id, name=name, path=path, input=content.input)  # pyright: ignore[reportArgumentType]
                 )
             )
         else:

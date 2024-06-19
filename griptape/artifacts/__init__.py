@@ -9,6 +9,7 @@ from .media_artifact import MediaArtifact
 from .image_artifact import ImageArtifact
 from .audio_artifact import AudioArtifact
 from .action_call_artifact import ActionCallArtifact
+from .action_artifact import ActionArtifact
 
 
 __all__ = [
@@ -23,4 +24,5 @@ __all__ = [
     "ImageArtifact",
     "AudioArtifact",
     "ActionCallArtifact",
+    "ActionArtifact",
 ]

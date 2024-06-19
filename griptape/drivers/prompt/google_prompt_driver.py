@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, Optional
-import json
 
 from attrs import Factory, define, field
 
@@ -17,7 +16,7 @@ from griptape.common import (
     ActionCallPromptStackContent,
     ActionResultPromptStackContent,
 )
-from griptape.artifacts import TextArtifact, ActionCallArtifact
+from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency, remove_key_in_dict_recursively
@@ -77,6 +76,7 @@ class GooglePromptDriver(BasePromptDriver):
 
         prompt_token_count = None
         for chunk in response:
+            print(chunk.parts)
             usage_metadata = chunk.usage_metadata
 
             # Only want to output the prompt token count once since it is static each chunk
@@ -102,11 +102,7 @@ class GooglePromptDriver(BasePromptDriver):
 
         return {
             "generation_config": GenerationConfig(
-                stop_sequences=self.tokenizer.stop_sequences,
-                max_output_tokens=self.max_tokens,
-                temperature=self.temperature,
-                top_p=self.top_p,
-                top_k=self.top_k,
+                max_output_tokens=self.max_tokens, temperature=self.temperature, top_p=self.top_p, top_k=self.top_k
             ),
             **self._prompt_stack_to_tools(prompt_stack),
         }
@@ -154,9 +150,9 @@ class GooglePromptDriver(BasePromptDriver):
             name, path = function_call["name"].split("_", 1)
 
             return ActionCallPromptStackContent(
-                artifact=ActionCallArtifact(
-                    value=ActionCallArtifact.ActionCall(
-                        tag=function_call["name"], name=name, path=path, input=json.dumps(function_call["args"])
+                artifact=ActionArtifact(
+                    value=ActionArtifact.Action(
+                        tag=function_call["name"], name=name, path=path, input=function_call["args"]
                     )
                 )
             )
@@ -176,13 +172,13 @@ class GooglePromptDriver(BasePromptDriver):
         elif isinstance(content, ActionCallPromptStackContent):
             action = content.artifact.value
 
-            return Part(function_call=FunctionCall(name=action.tag, args=json.loads(action.input)))
+            return Part(function_call=FunctionCall(name=action.tag, args=action.input))
         elif isinstance(content, ActionResultPromptStackContent):
             artifact = content.artifact
 
             return Part(
                 function_response=FunctionResponse(
-                    name=f"{content.action_name}_{content.action_path}", response=artifact.to_dict()
+                    name=f"{content.action.name}_{content.action.path}", response=artifact.to_dict()
                 )
             )
 

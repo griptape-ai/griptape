@@ -10,7 +10,7 @@ from griptape.common.prompt_stack.contents.delta_action_call_prompt_stack_conten
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
-from griptape.artifacts import ActionCallArtifact
+from griptape.artifacts import ActionArtifact
 from griptape.common import (
     ActionCallPromptStackContent,
     BaseDeltaPromptStackContent,
@@ -59,7 +59,7 @@ class CoherePromptDriver(BasePromptDriver):
         usage = result.meta.tokens
 
         return PromptStackMessage(
-            content=self.__message_to_prompt_stack_content(result),
+            content=self.__response_to_prompt_stack_content(result),
             role=PromptStackMessage.ASSISTANT_ROLE,
             usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
@@ -158,39 +158,42 @@ class CoherePromptDriver(BasePromptDriver):
         elif isinstance(content, ActionCallPromptStackContent):
             action = content.artifact.value
 
-            return {"call": {"name": f"{action.name}_{action.path}", "parameters": json.loads(action.input)}}
+            return {"call": {"name": f"{action.name}_{action.path}", "parameters": action.input}}
         elif isinstance(content, ActionResultPromptStackContent):
             artifact = content.artifact
 
+            if isinstance(artifact, ListArtifact):
+                message_content = [{"text": artifact.to_text()} for artifact in artifact.value]
+            else:
+                message_content = [{"text": artifact.to_text()}]
+
             return {
-                "call": {"name": f"{content.action_name}_{content.action_path}", "parameters": content.action_input},
-                "outputs": [{"text": artifact.to_text()} for artifact in artifact.value]
-                if isinstance(artifact, ListArtifact)
-                else [{"text": artifact.to_text()}],
+                "call": {"name": f"{content.action.name}_{content.action.path}", "parameters": content.action.input},
+                "outputs": message_content,
             }
         elif isinstance(content, ActionResultPromptStackContent):
             return {"text": content.artifact.to_text()}
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __message_to_prompt_stack_content(self, message: NonStreamedChatResponse) -> list[BasePromptStackContent]:
+    def __response_to_prompt_stack_content(self, response: NonStreamedChatResponse) -> list[BasePromptStackContent]:
         content = []
-        if message.text:
-            content.append(TextPromptStackContent(TextArtifact(message.text)))
-        if message.tool_calls:
+        if response.text:
+            content.append(TextPromptStackContent(TextArtifact(response.text)))
+        if response.tool_calls:
             content.extend(
                 [
                     ActionCallPromptStackContent(
-                        ActionCallArtifact(
-                            ActionCallArtifact.ActionCall(
+                        ActionArtifact(
+                            ActionArtifact.Action(
                                 tag=tool_call.name,
                                 name=tool_call.name.split("_")[0],
                                 path=tool_call.name.split("_")[1],
-                                input=json.dumps(tool_call.parameters),
+                                input=tool_call.parameters,
                             )
                         )
                     )
-                    for tool_call in message.tool_calls
+                    for tool_call in response.tool_calls
                 ]
             )
 
@@ -254,4 +257,5 @@ class CoherePromptDriver(BasePromptDriver):
                     }
                 )
 
+        print(json.dumps(tool_definitions, indent=2))
         return tool_definitions

@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
-import json
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import TextArtifact, ActionCallArtifact, ImageArtifact
+from griptape.artifacts import TextArtifact, ActionArtifact, ImageArtifact
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.artifacts.info_artifact import InfoArtifact
@@ -47,7 +46,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
     use_native_tools: bool = field(default=True, kw_only=True)
-    tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": False})
+    tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
+    tool_schema_id: str = field(
+        default="https://griptape.ai",
+        kw_only=True,
+        metadata={"serializable": True},  # Amazon Bedrock requires that this be a valid URL.
+    )
 
     def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
@@ -121,12 +125,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         elif "toolUse" in content:
             name, path = content["toolUse"]["name"].split("_", 1)
             return ActionCallPromptStackContent(
-                artifact=ActionCallArtifact(
-                    value=ActionCallArtifact.ActionCall(
-                        tag=content["toolUse"]["toolUseId"],
-                        name=name,
-                        path=path,
-                        input=json.dumps(content["toolUse"]["input"]),
+                artifact=ActionArtifact(
+                    value=ActionArtifact.Action(
+                        tag=content["toolUse"]["toolUseId"], name=name, path=path, input=content["toolUse"]["input"]
                     )
                 )
             )
@@ -181,18 +182,21 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 "toolUse": {
                     "toolUseId": action_call.tag,
                     "name": f"{action_call.name}_{action_call.path}",
-                    "input": json.loads(action_call.input),
+                    "input": action_call.input,
                 }
             }
         elif isinstance(content, ActionResultPromptStackContent):
             artifact = content.artifact
 
+            if isinstance(artifact, ListArtifact):
+                message_content = [self.__artifact_to_message_content(artifact) for artifact in artifact.value]
+            else:
+                message_content = [self.__artifact_to_message_content(artifact)]
+
             return {
                 "toolResult": {
-                    "toolUseId": content.action_tag,
-                    "content": [self.__artifact_to_message_content(artifact) for artifact in artifact.value]
-                    if isinstance(artifact, ListArtifact)
-                    else [self.__artifact_to_message_content(artifact)],
+                    "toolUseId": content.action.tag,
+                    "content": message_content,
                     "status": "error" if isinstance(artifact, ErrorArtifact) else "success",
                 }
             }
@@ -228,9 +232,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "name": f"{tool.name}_{tool.activity_name(activity)}",
                     "description": tool.activity_description(activity),
                     "inputSchema": {
-                        "json": (tool.activity_schema(activity) or Schema({})).json_schema(
-                            "https://griptape.ai"
-                        )  # TODO: Allow for non-griptape ids
+                        "json": (tool.activity_schema(activity) or Schema({})).json_schema(self.tool_schema_id)
                     },
                 }
             }
