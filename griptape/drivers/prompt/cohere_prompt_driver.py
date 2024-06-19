@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-import json
 from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -257,5 +256,4 @@ class CoherePromptDriver(BasePromptDriver):
                     }
                 )
 
-        print(json.dumps(tool_definitions, indent=2))
         return tool_definitions

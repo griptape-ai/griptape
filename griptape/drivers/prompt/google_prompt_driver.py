@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+import json
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
@@ -15,6 +16,7 @@ from griptape.common import (
     TextPromptStackContent,
     ActionCallPromptStackContent,
     ActionResultPromptStackContent,
+    DeltaActionCallPromptStackContent,
 )
 from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
@@ -76,8 +78,10 @@ class GooglePromptDriver(BasePromptDriver):
 
         prompt_token_count = None
         for chunk in response:
-            print(chunk.parts)
             usage_metadata = chunk.usage_metadata
+
+            for part in chunk.parts:
+                yield self.__message_content_delta_to_prompt_stack_content_delta(part)
 
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None:
@@ -185,6 +189,23 @@ class GooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
+    def __message_content_delta_to_prompt_stack_content_delta(self, content: Part) -> BaseDeltaPromptStackContent:
+        MessageToDict = import_optional_dependency("google.protobuf.json_format").MessageToDict
+        # https://stackoverflow.com/questions/64403737/attribute-error-descriptor-while-trying-to-convert-google-vision-response-to-dic
+        content_dict = MessageToDict(content._pb)
+        if "text" in content_dict:
+            return DeltaTextPromptStackContent(content_dict["text"])
+        elif "functionCall" in content_dict:
+            function_call = content_dict["functionCall"]
+
+            name, path = function_call["name"].split("_", 1)
+
+            return DeltaActionCallPromptStackContent(
+                tag=function_call["name"], name=name, path=path, delta_input=json.dumps(function_call["args"])
+            )
+        else:
+            raise ValueError(f"Unsupported message content type {content_dict}")
+
     def __to_role(self, message: PromptStackMessage) -> str:
         if message.is_assistant():
             return "model"
@@ -197,7 +218,9 @@ class GooglePromptDriver(BasePromptDriver):
         tool_declarations = []
         for tool in tools:
             for activity in tool.activities():
-                schema = (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema")
+                schema = (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema")["properties"][
+                    "values"
+                ]
 
                 schema = remove_key_in_dict_recursively(schema, "additionalProperties")
                 tool_declaration = FunctionDeclaration(
