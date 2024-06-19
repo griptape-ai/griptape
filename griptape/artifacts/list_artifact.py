@@ -3,14 +3,11 @@ from typing import Optional
 from collections.abc import Sequence
 from attrs import field, define
 from griptape.artifacts import BaseArtifact
-from typing import TypeVar, Generic
-
-T = TypeVar("T", bound=BaseArtifact)
 
 
 @define
-class ListArtifact(BaseArtifact, Generic[T]):
-    value: Sequence[T] = field(factory=list, metadata={"serializable": True})
+class ListArtifact(BaseArtifact):
+    value: Sequence[BaseArtifact] = field(factory=list, metadata={"serializable": True})
     item_separator: str = field(default="\n\n", kw_only=True, metadata={"serializable": True})
     validate_uniform_types: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
