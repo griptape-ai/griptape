@@ -4,7 +4,7 @@ import json
 from typing import Any, Optional
 from collections.abc import Sequence
 
-from attrs import define, field
+from attrs import define, field, Factory
 
 from griptape.artifacts import TextArtifact
 from griptape.common import BasePromptStackContent, TextPromptStackContent

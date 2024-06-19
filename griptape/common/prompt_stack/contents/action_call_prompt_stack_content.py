@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from attrs import define, field
 
 from griptape.artifacts import ActionArtifact
-from griptape.common import BaseDeltaPromptStackContent, BasePromptStackContent, DeltaActionCallPromptStackContent
+from griptape.common import BaseDeltaPromptStackContent, BasePromptStackContent, ActionCallDeltaPromptStackContent
 
 
 @define
@@ -15,7 +15,7 @@ class ActionCallPromptStackContent(BasePromptStackContent):
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> ActionCallPromptStackContent:
-        action_call_deltas = [delta for delta in deltas if isinstance(delta, DeltaActionCallPromptStackContent)]
+        action_call_deltas = [delta for delta in deltas if isinstance(delta, ActionCallDeltaPromptStackContent)]
 
         tag = None
         name = None
@@ -36,10 +36,10 @@ class ActionCallPromptStackContent(BasePromptStackContent):
             try:
                 parsed_input = json.loads(input)
             except json.JSONDecodeError:
-                raise ValueError("Invalid JSON input for ActionCallArtifact.Action")
+                raise ValueError("Invalid JSON input for ActionArtifact.Action")
             action = ActionArtifact.Action(tag=tag, name=name, path=path, input=parsed_input)
         else:
-            raise ValueError("Missing required fields for ActionCallArtifact.Action")
+            raise ValueError("Missing required fields for ActionArtifact.Action")
 
         artifact = ActionArtifact(value=action)
 

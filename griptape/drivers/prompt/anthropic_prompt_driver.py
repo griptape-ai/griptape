@@ -20,9 +20,9 @@ from griptape.common import (
     ActionResultPromptStackContent,
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaActionCallPromptStackContent,
+    ActionCallDeltaPromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
     PromptStackMessage,
@@ -213,18 +213,18 @@ class AnthropicPromptDriver(BasePromptDriver):
             if content_block.type == "tool_use":
                 name, path = content_block.name.split("_", 1)
 
-                return DeltaActionCallPromptStackContent(index=event.index, tag=content_block.id, name=name, path=path)
+                return ActionCallDeltaPromptStackContent(index=event.index, tag=content_block.id, name=name, path=path)
             elif content_block.type == "text":
-                return DeltaTextPromptStackContent(content_block.text, index=event.index)
+                return TextDeltaPromptStackContent(content_block.text, index=event.index)
             else:
                 raise ValueError(f"Unsupported content block type: {content_block.type}")
         elif event.type == "content_block_delta":
             content_block_delta = event.delta
 
             if content_block_delta.type == "text_delta":
-                return DeltaTextPromptStackContent(content_block_delta.text, index=event.index)
+                return TextDeltaPromptStackContent(content_block_delta.text, index=event.index)
             elif content_block_delta.type == "input_json_delta":
-                return DeltaActionCallPromptStackContent(
+                return ActionCallDeltaPromptStackContent(
                     index=event.index, delta_input=content_block_delta.partial_json
                 )
             else:

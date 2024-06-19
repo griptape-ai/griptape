@@ -3,7 +3,7 @@ from .prompt_stack.contents.base_delta_prompt_stack_content import BaseDeltaProm
 from .prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from .prompt_stack.contents.text_prompt_stack_content import TextPromptStackContent
 from .prompt_stack.contents.image_prompt_stack_content import ImagePromptStackContent
-from .prompt_stack.contents.delta_action_call_prompt_stack_content import DeltaActionCallPromptStackContent
+from .prompt_stack.contents.action_call_delta_prompt_stack_content import ActionCallDeltaPromptStackContent
 from .prompt_stack.contents.action_call_prompt_stack_content import ActionCallPromptStackContent
 from .prompt_stack.contents.action_result_prompt_stack_content import ActionResultPromptStackContent
 
@@ -22,7 +22,7 @@ __all__ = [
     "TextDeltaPromptStackContent",
     "TextPromptStackContent",
     "ImagePromptStackContent",
-    "DeltaActionCallPromptStackContent",
+    "ActionCallDeltaPromptStackContent",
     "ActionCallPromptStackContent",
     "ActionResultPromptStackContent",
     "PromptStack",

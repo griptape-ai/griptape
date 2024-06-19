@@ -6,7 +6,7 @@ from griptape.common import BaseDeltaPromptStackContent
 
 
 @define
-class DeltaActionCallPromptStackContent(BaseDeltaPromptStackContent):
+class ActionCallDeltaPromptStackContent(BaseDeltaPromptStackContent):
     tag: Optional[str] = field(default=None, metadata={"serializable": True})
     name: Optional[str] = field(default=None, metadata={"serializable": True})
     path: Optional[str] = field(default=None, metadata={"serializable": True})

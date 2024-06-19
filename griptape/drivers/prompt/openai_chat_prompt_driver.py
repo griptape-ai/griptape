@@ -14,9 +14,9 @@ from griptape.common import (
     ActionResultPromptStackContent,
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaActionCallPromptStackContent,
+    ActionCallDeltaPromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
     PromptStackMessage,
@@ -257,13 +257,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message type: {response}")
 
-    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> TextDeltaPromptStackContent:
-        if content_delta.content is None:
-            return TextDeltaPromptStackContent("")
-        else:
-            delta_content = content_delta.content
-
-            return DeltaTextPromptStackContent(delta_content, role=content_delta.role)
+    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> BaseDeltaPromptStackContent:
+        if content_delta.content is not None:
+            return TextDeltaPromptStackContent(content_delta.content)
         elif content_delta.tool_calls is not None:
             tool_calls = content_delta.tool_calls
 
@@ -273,15 +269,15 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
                 # Tool call delta either contains the function header or the partial input.
                 if tool_call.id is not None:
-                    return DeltaActionCallPromptStackContent(
+                    return ActionCallDeltaPromptStackContent(
                         index=index,
                         tag=tool_call.id,
                         name=tool_call.function.name.split("_", 1)[0],
                         path=tool_call.function.name.split("_", 1)[1],
                     )
                 else:
-                    return DeltaActionCallPromptStackContent(index=index, delta_input=tool_call.function.arguments)
+                    return ActionCallDeltaPromptStackContent(index=index, delta_input=tool_call.function.arguments)
             else:
                 raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
         else:
-            return DeltaTextPromptStackContent("", role=content_delta.role)
+            return TextDeltaPromptStackContent("")

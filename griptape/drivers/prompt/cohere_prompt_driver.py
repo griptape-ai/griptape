@@ -4,8 +4,8 @@ from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
-from griptape.common.prompt_stack.contents.delta_action_call_prompt_stack_content import (
-    DeltaActionCallPromptStackContent,
+from griptape.common.prompt_stack.contents.action_call_delta_prompt_stack_content import (
+    ActionCallDeltaPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
@@ -15,7 +15,7 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     PromptStack,
     PromptStackMessage,
     TextPromptStackContent,
@@ -72,9 +72,9 @@ class CoherePromptDriver(BasePromptDriver):
 
                 return DeltaPromptStackMessage(
                     role=PromptStackMessage.ASSISTANT_ROLE,
-                    delta_usage=DeltaPromptStackMessage.DeltaUsage(
+                    usage=DeltaPromptStackMessage.Usage(
                         input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
-                    )
+                    ),
                 )
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
                 yield self.__message_delta_to_prompt_stack_content(event.dict())
@@ -200,19 +200,19 @@ class CoherePromptDriver(BasePromptDriver):
 
     def __message_delta_to_prompt_stack_content(self, event: dict) -> BaseDeltaPromptStackContent:
         if event["event_type"] == "text-generation":
-            return DeltaTextPromptStackContent(event["text"], index=0)
+            return TextDeltaPromptStackContent(event["text"], index=0)
         elif event["event_type"] == "tool-calls-chunk":
             if "tool_call_delta" in event:
                 tool_call_delta = event["tool_call_delta"]
                 if "name" in tool_call_delta:
                     name, path = tool_call_delta["name"].split("_", 1)
 
-                    return DeltaActionCallPromptStackContent(tag=tool_call_delta["name"], name=name, path=path)
+                    return ActionCallDeltaPromptStackContent(tag=tool_call_delta["name"], name=name, path=path)
                 else:
-                    return DeltaActionCallPromptStackContent(delta_input=tool_call_delta["parameters"])
+                    return ActionCallDeltaPromptStackContent(delta_input=tool_call_delta["parameters"])
 
             else:
-                return DeltaTextPromptStackContent(event["text"])
+                return TextDeltaPromptStackContent(event["text"])
         else:
             raise ValueError(f"Unsupported event type: {event['event_type']}")
 

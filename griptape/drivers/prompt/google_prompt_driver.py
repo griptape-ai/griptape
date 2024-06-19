@@ -16,7 +16,7 @@ from griptape.common import (
     TextPromptStackContent,
     ActionCallPromptStackContent,
     ActionResultPromptStackContent,
-    DeltaActionCallPromptStackContent,
+    ActionCallDeltaPromptStackContent,
 )
 from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
@@ -194,13 +194,13 @@ class GooglePromptDriver(BasePromptDriver):
         # https://stackoverflow.com/questions/64403737/attribute-error-descriptor-while-trying-to-convert-google-vision-response-to-dic
         content_dict = MessageToDict(content._pb)
         if "text" in content_dict:
-            return DeltaTextPromptStackContent(content_dict["text"])
+            return TextDeltaPromptStackContent(content_dict["text"])
         elif "functionCall" in content_dict:
             function_call = content_dict["functionCall"]
 
             name, path = function_call["name"].split("_", 1)
 
-            return DeltaActionCallPromptStackContent(
+            return ActionCallDeltaPromptStackContent(
                 tag=function_call["name"], name=name, path=path, delta_input=json.dumps(function_call["args"])
             )
         else:

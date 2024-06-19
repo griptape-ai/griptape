@@ -4,35 +4,38 @@ from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
+from schema import Schema
 
-from griptape.artifacts import TextArtifact, ActionArtifact, ImageArtifact
-from griptape.artifacts.base_artifact import BaseArtifact
-from griptape.artifacts.error_artifact import ErrorArtifact
-from griptape.artifacts.info_artifact import InfoArtifact
-from griptape.artifacts.list_artifact import ListArtifact
+from griptape.artifacts import (
+    ActionArtifact,
+    BaseArtifact,
+    ErrorArtifact,
+    ImageArtifact,
+    InfoArtifact,
+    ListArtifact,
+    TextArtifact,
+)
 from griptape.common import (
+    ActionCallDeltaPromptStackContent,
+    ActionCallPromptStackContent,
+    ActionResultPromptStackContent,
+    BaseDeltaPromptStackContent,
+    BasePromptStackContent,
     DeltaPromptStackMessage,
+    ImagePromptStackContent,
     PromptStackMessage,
     TextDeltaPromptStackContent,
-    BasePromptStackContent,
     TextPromptStackContent,
-    ImagePromptStackContent,
-)
-from griptape.common import ActionCallPromptStackContent
-from griptape.common.prompt_stack.contents.action_result_prompt_stack_content import ActionResultPromptStackContent
-from griptape.common.prompt_stack.contents.delta_action_call_prompt_stack_content import (
-    DeltaActionCallPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
-from schema import Schema
 
 if TYPE_CHECKING:
     import boto3
 
-    from griptape.tools import BaseTool
     from griptape.common import PromptStack
+    from griptape.tools import BaseTool
 
 
 @define
@@ -141,14 +144,14 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             if "toolUse" in content_block:
                 name, path = content_block["toolUse"]["name"].split("_", 1)
 
-                return DeltaActionCallPromptStackContent(
+                return ActionCallDeltaPromptStackContent(
                     index=event["contentBlockStart"]["contentBlockIndex"],
                     tag=content_block["toolUse"]["toolUseId"],
                     name=name,
                     path=path,
                 )
             elif "text" in content_block:
-                return DeltaTextPromptStackContent(
+                return TextDeltaPromptStackContent(
                     content_block["text"], index=event["contentBlockStart"]["contentBlockIndex"]
                 )
             else:
@@ -157,11 +160,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             content_block_delta = event["contentBlockDelta"]
 
             if "text" in content_block_delta["delta"]:
-                return DeltaTextPromptStackContent(
+                return TextDeltaPromptStackContent(
                     content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
                 )
             elif "toolUse" in content_block_delta["delta"]:
-                return DeltaActionCallPromptStackContent(
+                return ActionCallDeltaPromptStackContent(
                     index=content_block_delta["contentBlockIndex"],
                     delta_input=content_block_delta["delta"]["toolUse"]["input"],
                 )
