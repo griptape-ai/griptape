@@ -167,9 +167,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported message type: {message}")
 
     def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> BaseDeltaPromptStackContent:
-        if content_delta.content is not None:
+        if content_delta.content is None:
+            return DeltaTextPromptStackContent("")
+        else:
             delta_content = content_delta.content
 
-            return DeltaTextPromptStackContent(delta_content, role=content_delta.role)
-        else:
-            return DeltaTextPromptStackContent("", role=content_delta.role)
+            return DeltaTextPromptStackContent(delta_content)

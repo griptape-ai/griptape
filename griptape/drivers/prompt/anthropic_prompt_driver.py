@@ -54,7 +54,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         return PromptStackMessage(
             content=[self.__message_content_to_prompt_stack_content(content) for content in response.content],
-            role=response.role,
+            role=PromptStackMessage.ASSISTANT_ROLE,
             usage=PromptStackMessage.Usage(
                 input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens
             ),
@@ -68,8 +68,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                 yield self.__message_content_delta_to_prompt_stack_content_delta(event)
             elif event.type == "message_start":
                 yield DeltaPromptStackMessage(
-                    role=event.message.role,
-                    delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=event.message.usage.input_tokens),
+                    delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=event.message.usage.input_tokens)
                 )
             elif event.type == "message_delta":
                 yield DeltaPromptStackMessage(

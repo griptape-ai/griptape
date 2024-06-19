@@ -85,8 +85,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
         yield DeltaPromptStackMessage(
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=input_tokens, output_tokens=output_tokens),
+            delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=input_tokens, output_tokens=output_tokens)
         )
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
