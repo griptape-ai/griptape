@@ -61,10 +61,9 @@ class CoherePromptDriver(BasePromptDriver):
                 usage = event.response.meta.tokens
 
                 yield DeltaPromptStackMessage(
-                    role=PromptStackMessage.ASSISTANT_ROLE,
                     delta_usage=DeltaPromptStackMessage.DeltaUsage(
                         input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
-                    ),
+                    )
                 )
 
     def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:

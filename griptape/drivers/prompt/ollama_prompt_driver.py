@@ -69,7 +69,7 @@ class OllamaPromptDriver(BasePromptDriver):
 
         if isinstance(stream, Iterator):
             for chunk in stream:
-                yield DeltaTextPromptStackContent(chunk["message"]["content"], role=PromptStackMessage.ASSISTANT_ROLE)
+                yield DeltaTextPromptStackContent(chunk["message"]["content"])
         else:
             raise Exception("invalid model response")
 

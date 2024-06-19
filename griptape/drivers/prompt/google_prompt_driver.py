@@ -94,10 +94,9 @@ class GooglePromptDriver(BasePromptDriver):
 
             # TODO: Only yield the first one
             yield DeltaPromptStackMessage(
-                role=PromptStackMessage.ASSISTANT_ROLE,
                 delta_usage=DeltaPromptStackMessage.DeltaUsage(
                     input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
-                ),
+                )
             )
 
     def _default_model_client(self) -> GenerativeModel:

@@ -54,9 +54,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         stream = response.get("stream")
         if stream is not None:
             for event in stream:
-                if "messageStart" in event:
-                    yield DeltaPromptStackMessage(role=event["messageStart"]["role"])
-                elif "contentBlockDelta" in event:
+                if "contentBlockDelta" in event:
                     content_block_delta = event["contentBlockDelta"]
                     yield DeltaTextPromptStackContent(
                         content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
