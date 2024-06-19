@@ -10,9 +10,9 @@ class MetadataGenerationRagModule(BaseBeforeGenerationRagModule):
     metadata: Optional[str] = field(default=None)
 
     def run(self, context: RagContext) -> RagContext:
-        metadata = self.metadata or context.metadata
+        metadata = context.metadata if self.metadata is None else self.metadata
 
-        if metadata:
+        if metadata is not None:
             context.before_query.append(
                 J2("engines/rag/modules/metadata_generation/system.j2").render(metadata=metadata)
             )
