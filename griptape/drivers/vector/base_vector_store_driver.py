@@ -52,8 +52,8 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         vector_id: Optional[str] = None,
         **kwargs,
     ) -> str:
-        meta = meta if meta else {}
-        vector_id = vector_id if vector_id else artifact.id
+        meta = {} if meta is None else meta
+        vector_id = artifact.id if vector_id is None else vector_id
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id
@@ -92,10 +92,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             )
 
     def does_entry_exist(self, vector_id: str, namespace: Optional[str] = None) -> bool:
-        if self.load_entry(vector_id, namespace):
-            return True
-        else:
-            return False
+        return self.load_entry(vector_id, namespace) is not None
 
     def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
         result = self.load_entries(namespace)

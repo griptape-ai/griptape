@@ -18,7 +18,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
 
     def __attrs_post_init__(self) -> None:
-        if self.persist_file:
+        if self.persist_file is not None:
             directory = os.path.dirname(self.persist_file)
 
             if directory and not os.path.exists(directory):
@@ -60,8 +60,9 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
                 id=vector_id, vector=vector, meta=meta, namespace=namespace
             )
 
-        if self.persist_file:
-            # TODO: optimize as this is hugely inefficient but is okay for local development
+        if self.persist_file is not None:
+            # TODO: optimize later since it reserializes all entries from memory and stores them in the JSON file
+            #  every time a new vector is inserted
             with open(self.persist_file, "w") as file:
                 self.save_entries_to_file(file)
 
