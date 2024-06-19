@@ -639,6 +639,15 @@ class TestWorkflow:
 
         assert task4 == workflow.output_task
 
+        task4.add_parents([task2, task3])
+        task1.add_children([task2, task3])
+
+        # task4 is the final task, but its defined at index 0
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task4, task1, task2, task3])
+
+        # ouput_task topologically should be task4
+        assert task4 == workflow.output_task
+
     def test_to_graph(self):
         task1 = PromptTask("prompt1", id="task1")
         task2 = PromptTask("prompt2", id="task2")

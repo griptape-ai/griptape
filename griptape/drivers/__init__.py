@@ -9,6 +9,7 @@ from .prompt.amazon_sagemaker_jumpstart_prompt_driver import AmazonSageMakerJump
 from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.google_prompt_driver import GooglePromptDriver
 from .prompt.dummy_prompt_driver import DummyPromptDriver
+from .prompt.ollama_prompt_driver import OllamaPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
@@ -112,6 +113,7 @@ __all__ = [
     "AmazonBedrockPromptDriver",
     "GooglePromptDriver",
     "DummyPromptDriver",
+    "OllamaPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
