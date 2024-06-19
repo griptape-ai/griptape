@@ -7,7 +7,7 @@ Additionally, this architecture opens us up to using services such as [Griptape 
 ```python
 import os
 
-from griptape.drivers import WebhookEventListenerDriver, LocalStructureRunDriver
+from griptape.drivers import WebhookEventListenerDriver, LocalStructureRunDriver, GoogleWebSearchDriver
 from griptape.events import EventListener, FinishStructureRunEvent
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Workflow
@@ -38,8 +38,10 @@ def build_researcher():
         id="researcher",
         tools=[
             WebSearch(
-                google_api_key=os.environ["GOOGLE_API_KEY"],
-                google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                web_search_driver=GoogleWebSearchDriver(
+                    api_key=os.environ["GOOGLE_API_KEY"],
+                    search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                ),
             ),
             WebScraper(
                 off_prompt=True,
