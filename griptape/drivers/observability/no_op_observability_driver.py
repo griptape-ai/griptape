@@ -1,7 +1,9 @@
+from attrs import define
 from typing import Any, Callable, Optional
 from griptape.drivers.observability.base_observability_driver import BaseObservabilityDriver
 
 
+@define
 class NoOpObservabilityDriver(BaseObservabilityDriver):
     def invoke_observable(
         self,
