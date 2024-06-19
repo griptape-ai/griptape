@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.common import PromptStack
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from griptape.drivers import AmazonBedrockPromptDriver
 
 
@@ -83,5 +83,5 @@ class TestAmazonBedrockPromptDriver:
             additionalModelRequestFields={},
         )
 
-        if isinstance(text_artifact, DeltaTextPromptStackContent):
+        if isinstance(text_artifact, TextDeltaPromptStackContent):
             assert text_artifact.text == "model-output"

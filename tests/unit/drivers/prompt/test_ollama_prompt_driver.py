@@ -1,4 +1,4 @@
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from griptape.drivers import OllamaPromptDriver
 from griptape.common import PromptStack
 import pytest
@@ -80,7 +80,7 @@ class TestOllamaPromptDriver:
             options={"temperature": driver.temperature, "stop": [], "num_predict": driver.max_tokens},
             stream=True,
         )
-        if isinstance(text_artifact, DeltaTextPromptStackContent):
+        if isinstance(text_artifact, TextDeltaPromptStackContent):
             assert text_artifact.text == "model-output"
 
     def test_try_stream_bad_response(self, mock_stream_client):

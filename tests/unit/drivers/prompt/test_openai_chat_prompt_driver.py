@@ -1,5 +1,5 @@
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.common import PromptStack, DeltaTextPromptStackContent
+from griptape.common import PromptStack, TextDeltaPromptStackContent
 from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
 from tests.mocks.mock_tokenizer import MockTokenizer
@@ -131,7 +131,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream_options={"include_usage": True},
         )
 
-        if isinstance(text_artifact, DeltaTextPromptStackContent):
+        if isinstance(text_artifact, TextDeltaPromptStackContent):
             assert text_artifact.text == "model-output"
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):

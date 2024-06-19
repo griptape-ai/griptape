@@ -10,7 +10,7 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaPromptStackMessage,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
     PromptStackMessage,
@@ -90,11 +90,11 @@ class GooglePromptDriver(BasePromptDriver):
         for chunk in response:
             usage_metadata = chunk.usage_metadata
 
-            yield DeltaTextPromptStackContent(chunk.text)
+            yield TextDeltaPromptStackContent(chunk.text)
 
             # TODO: Only yield the first one
             yield DeltaPromptStackMessage(
-                delta_usage=DeltaPromptStackMessage.DeltaUsage(
+                usage=DeltaPromptStackMessage.Usage(
                     input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
                 )
             )

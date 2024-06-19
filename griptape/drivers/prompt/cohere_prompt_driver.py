@@ -12,7 +12,7 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     TextPromptStackContent,
     BasePromptStackContent,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
 )
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
@@ -56,12 +56,12 @@ class CoherePromptDriver(BasePromptDriver):
 
         for event in result:
             if event.event_type == "text-generation":
-                yield DeltaTextPromptStackContent(event.text, index=0)
+                yield TextDeltaPromptStackContent(event.text, index=0)
             if event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
                 yield DeltaPromptStackMessage(
-                    delta_usage=DeltaPromptStackMessage.DeltaUsage(
+                    usage=DeltaPromptStackMessage.Usage(
                         input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
                     )
                 )

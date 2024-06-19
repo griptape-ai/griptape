@@ -3,7 +3,7 @@ from typing import Optional
 
 from attrs import define, field
 
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 
 
 from .base_prompt_stack_message import BasePromptStackMessage
@@ -11,23 +11,5 @@ from .base_prompt_stack_message import BasePromptStackMessage
 
 @define
 class DeltaPromptStackMessage(BasePromptStackMessage):
-    @define
-    class DeltaUsage:
-        input_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
-        output_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
-
-        @property
-        def total_tokens(self) -> float:
-            return (self.input_tokens or 0) + (self.output_tokens or 0)
-
-        def __add__(self, other: DeltaPromptStackMessage.DeltaUsage) -> DeltaPromptStackMessage.DeltaUsage:
-            return DeltaPromptStackMessage.DeltaUsage(
-                input_tokens=(self.input_tokens or 0) + (other.input_tokens or 0),
-                output_tokens=(self.output_tokens or 0) + (other.output_tokens or 0),
-            )
-
     role: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    delta_content: Optional[DeltaTextPromptStackContent] = field(
-        kw_only=True, default=None, metadata={"serializable": True}
-    )
-    delta_usage: DeltaUsage = field(kw_only=True, default=DeltaUsage(), metadata={"serializable": True})
+    content: Optional[TextDeltaPromptStackContent] = field(kw_only=True, default=None, metadata={"serializable": True})

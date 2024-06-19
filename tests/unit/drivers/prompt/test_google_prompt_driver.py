@@ -1,5 +1,5 @@
 from google.generativeai.types import GenerationConfig
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from griptape.drivers import GooglePromptDriver
 from griptape.common import PromptStack
 from unittest.mock import Mock
@@ -69,5 +69,5 @@ class TestGooglePromptDriver:
             stream=True,
             generation_config=GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]),
         )
-        if isinstance(text_artifact, DeltaTextPromptStackContent):
+        if isinstance(text_artifact, TextDeltaPromptStackContent):
             assert text_artifact.text == "model-output"

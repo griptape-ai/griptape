@@ -4,7 +4,7 @@ from attrs import define, field
 from collections.abc import Sequence
 
 from griptape.artifacts import TextArtifact
-from griptape.common import BasePromptStackContent, BaseDeltaPromptStackContent, DeltaTextPromptStackContent
+from griptape.common import BasePromptStackContent, BaseDeltaPromptStackContent, TextDeltaPromptStackContent
 
 
 @define
@@ -13,7 +13,7 @@ class TextPromptStackContent(BasePromptStackContent):
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> TextPromptStackContent:
-        text_deltas = [delta for delta in deltas if isinstance(delta, DeltaTextPromptStackContent)]
+        text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaPromptStackContent)]
 
         artifact = TextArtifact(value="".join(delta.text for delta in text_deltas))
 

@@ -13,7 +13,7 @@ from griptape.common import (
     DeltaPromptStackMessage,
     BaseDeltaPromptStackContent,
     TextPromptStackContent,
-    DeltaTextPromptStackContent,
+    TextDeltaPromptStackContent,
 )
 from griptape.utils import import_optional_dependency
 
@@ -81,11 +81,11 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         full_text = ""
         for token in response:
             full_text += token
-            yield DeltaTextPromptStackContent(token, index=0)
+            yield TextDeltaPromptStackContent(token, index=0)
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
         yield DeltaPromptStackMessage(
-            delta_usage=DeltaPromptStackMessage.DeltaUsage(input_tokens=input_tokens, output_tokens=output_tokens)
+            usage=DeltaPromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens)
         )
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:

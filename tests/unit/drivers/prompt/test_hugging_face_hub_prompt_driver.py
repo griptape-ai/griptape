@@ -1,4 +1,4 @@
-from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
+from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from griptape.drivers import HuggingFaceHubPromptDriver
 from griptape.common import PromptStack
 import pytest
@@ -60,5 +60,5 @@ class TestHuggingFaceHubPromptDriver:
         text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-        if isinstance(text_artifact, DeltaTextPromptStackContent):
+        if isinstance(text_artifact, TextDeltaPromptStackContent):
             assert text_artifact.text == "model-output"
