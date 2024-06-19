@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.27.0] - 2024-06-19
+
 ### Added
 - `BaseTask.add_child()` to add a child task to a parent task.
 - `BaseTask.add_children()` to add multiple child tasks to a parent task.
@@ -23,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
 - `parents_output_text` to Workflow context.
 - `OllamaPromptModelDriver` for using models with Ollama.
+- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
@@ -72,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 - Structure run args not being set immediately.
 - Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.26.0] - 2024-06-04
 
@@ -83,7 +87,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
 - `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
-- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
