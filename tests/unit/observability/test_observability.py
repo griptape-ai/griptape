@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, Mock
 import pytest
 
-from griptape.drivers.observability.dummy_observability_driver import DummyObservabilityDriver
+from griptape.drivers.observability.no_op_observability_driver import NoOpObservabilityDriver
 import griptape.observability.observability as observability
 from griptape.observability.observability import Observability
 
@@ -14,14 +14,14 @@ class TestObservability:
     def test_init(self, mock_observability_driver):
         assert observability._global_observability_driver is None
 
-        Observability(driver=mock_observability_driver)
+        Observability(observability_driver=mock_observability_driver)
 
         assert observability._global_observability_driver is None
 
     def test_context_manager(self, mock_observability_driver):
         assert observability._global_observability_driver is None
 
-        with Observability(driver=mock_observability_driver):
+        with Observability(observability_driver=mock_observability_driver):
             assert observability._global_observability_driver is mock_observability_driver
             mock_observability_driver.__enter__.assert_called_once_with()
 
@@ -33,7 +33,7 @@ class TestObservability:
         assert observability._global_observability_driver is None
 
         with pytest.raises(Exception, match="Boom") as e:
-            with Observability(driver=mock_observability_driver):
+            with Observability(observability_driver=mock_observability_driver):
                 assert observability._global_observability_driver is mock_observability_driver
                 mock_observability_driver.__enter__.assert_called_once_with()
                 raise Exception("Boom")

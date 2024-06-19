@@ -2,16 +2,17 @@
 
 Observability Drivers are used by [Observability](../structures/observability.md) to send telemetry (metrics and traces) related to the execution of an LLM application. The telemetry can be used to monitor the application and to diagnose and troubleshoot issues. All Observability Drivers implement the following methods:
 
-* `__enter__()` sets up the driver.
-* `__exit__()` tears down the driver.
-* `invoke_observable()` wraps all functions and methods marked with the `@observable` decorator. At a bare minimum, implementations invoke the wrapped function and return its result (a no-op). This enables drivers to generate telemetry related to the invocation's call arguments, return values, exceptions, latency, etc.
+* `__enter__()` sets up the Driver.
+* `__exit__()` tears down the Driver.
+* `invoke_observable()` wraps all functions and methods marked with the `@observable` decorator. At a bare minimum, implementations invoke the wrapped function and return its result (a no-op). This enables the Driver to generate telemetry related to the invocation's call arguments, return values, exceptions, latency, etc.
 
 ## Griptape Cloud
 
 The Griptape Cloud Observability Driver instruments `@observable` functions and methods with metrics and traces for use with the Griptape Cloud.
 
 !!! note
-    This Driver is required when using the Griptape Cloud Managed Structures feature. For local development, you can use the [Skatepark Emulator](https://github.com/griptape-ai/griptape-cli?tab=readme-ov-file#skatepark-emulator).
+    For the Griptape Cloud Observability Driver to function as intended, it must be run from within either a Managed Structure on Griptape Cloud,
+    or locally via the [Skatepark Emulator](https://github.com/griptape-ai/griptape-cli?tab=readme-ov-file#skatepark-emulator).
 
 Here is an example of how to use the `GriptapeCloudObservabilityDriver` with the `Observability` context manager to send the telemetry to Griptape Cloud:
 
@@ -22,11 +23,11 @@ from griptape.rules import Rule
 from griptape.structures import Agent
 from griptape.observability import Observability
 
-driver = GriptapeCloudObservabilityDriver(
+observability_driver = GriptapeCloudObservabilityDriver(
     service_name="my-gt-app",
 )
 
-with Observability(driver=driver):
+with Observability(observability_driver=observability_driver):
     agent = Agent(rules=[Rule("Output one word")])
     agent.run("Name an animal")
 ```
@@ -34,7 +35,7 @@ with Observability(driver=driver):
 
 ## OpenTelemetry
 
-The [OpenTelemetry](https://opentelemetry.io/) Observability Driver instruments `@observable` functions and methods with metrics and traces for use with OpenTelemetry. You must configure a destination for the telemetry by providing a `SpanProcessor` to the driver.
+The [OpenTelemetry](https://opentelemetry.io/) Observability Driver instruments `@observable` functions and methods with metrics and traces for use with OpenTelemetry. You must configure a destination for the telemetry by providing a `SpanProcessor` to the Driver.
 
 Here is an example of how to use the `OpenTelemetryObservabilityDriver` with the `Observability` context manager to output the telemetry directly to the console:
 
@@ -45,12 +46,12 @@ from griptape.structures import Agent
 from griptape.observability import Observability
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter, BatchSpanProcessor
 
-driver = OpenTelemetryObservabilityDriver(
+observability_driver = OpenTelemetryObservabilityDriver(
     service_name="my-gt-app",
     span_processor=BatchSpanProcessor(ConsoleSpanExporter())
 )
 
-with Observability(driver=driver):
+with Observability(observability_driver=observability_driver):
     agent = Agent(rules=[Rule("Output one word")])
     agent.run("Name an animal")
 ```

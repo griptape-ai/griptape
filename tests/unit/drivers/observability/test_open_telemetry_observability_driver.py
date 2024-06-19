@@ -156,7 +156,7 @@ class TestOpenTelemetryObservabilityDriver:
             ]
         )
 
-        with Observability(driver=driver):
+        with Observability(observability_driver=driver):
             agent = Agent(prompt_driver=MockPromptDriver())
             agent.run("Hi")
 
