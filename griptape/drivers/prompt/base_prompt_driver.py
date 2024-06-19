@@ -121,8 +121,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
         usage = DeltaPromptStackMessage.Usage()
 
+        # Aggregate all content deltas from the stream
         deltas = self.try_stream(prompt_stack)
-
         for delta in deltas:
             if isinstance(delta, DeltaPromptStackMessage):
                 usage += delta.usage
@@ -135,6 +135,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 if isinstance(delta, TextDeltaPromptStackContent):
                     self.structure.publish_event(CompletionChunkEvent(token=delta.text))
 
+        # Build a complete content from the content deltas
         content = []
         for index, deltas in delta_contents.items():
             text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaPromptStackContent)]
@@ -144,9 +145,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         result = PromptStackMessage(
             content=content,
             role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(
-                input_tokens=usage.input_tokens or 0, output_tokens=usage.output_tokens or 0
-            ),
+            usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
         return result
