@@ -5,8 +5,15 @@ from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers.base_tokenizer import BaseTokenizer
-from griptape.utils import PromptStack, import_optional_dependency
+from griptape.common import PromptStack, TextPromptStackContent
+from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
+from griptape.common import (
+    PromptStackMessage,
+    BaseDeltaPromptStackContent,
+    DeltaPromptStackMessage,
+    DeltaTextPromptStackContent,
+)
 
 if TYPE_CHECKING:
     from ollama import Client
@@ -46,24 +53,29 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         response = self.client.chat(**self._base_params(prompt_stack))
 
         if isinstance(response, dict):
-            return TextArtifact(value=response["message"]["content"])
+            return PromptStackMessage(
+                content=[TextPromptStackContent(TextArtifact(value=response["message"]["content"]))],
+                role=PromptStackMessage.ASSISTANT_ROLE,
+            )
         else:
             raise Exception("invalid model response")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
         stream = self.client.chat(**self._base_params(prompt_stack), stream=True)
 
         if isinstance(stream, Iterator):
             for chunk in stream:
-                yield TextArtifact(value=chunk["message"]["content"])
+                yield DeltaTextPromptStackContent(chunk["message"]["content"], role=PromptStackMessage.ASSISTANT_ROLE)
         else:
             raise Exception("invalid model response")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        messages = [{"role": input.role, "content": input.content} for input in prompt_stack.inputs]
+        messages = [
+            {"role": message.role, "content": message.to_text_artifact().to_text()} for message in prompt_stack.messages
+        ]
 
         return {"messages": messages, "model": self.model, "options": self.options}

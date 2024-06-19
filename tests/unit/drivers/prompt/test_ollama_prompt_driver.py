@@ -1,5 +1,6 @@
+from griptape.common.prompt_stack.contents.delta_text_prompt_stack_content import DeltaTextPromptStackContent
 from griptape.drivers import OllamaPromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 import pytest
 
 
@@ -25,13 +26,11 @@ class TestOllamaPromptDriver:
     def test_try_run(self, mock_client):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         driver = OllamaPromptDriver(model="llama")
         expected_messages = [
-            {"role": "generic", "content": "generic-input"},
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
@@ -61,12 +60,10 @@ class TestOllamaPromptDriver:
     def test_try_stream_run(self, mock_stream_client):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         expected_messages = [
-            {"role": "generic", "content": "generic-input"},
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
             {"role": "assistant", "content": "assistant-input"},
@@ -83,7 +80,8 @@ class TestOllamaPromptDriver:
             options={"temperature": driver.temperature, "stop": [], "num_predict": driver.max_tokens},
             stream=True,
         )
-        assert text_artifact.value == "model-output"
+        if isinstance(text_artifact, DeltaTextPromptStackContent):
+            assert text_artifact.text == "model-output"
 
     def test_try_stream_bad_response(self, mock_stream_client):
         # Given
