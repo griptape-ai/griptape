@@ -28,7 +28,7 @@ For example:
 
 ```python title="PYTEST_IGNORE"
 import time
-from griptape.drivers import BaseObservabilityDriver
+from griptape.drivers import GriptapeCloudObservabilityDriver
 from griptape.rules import Rule
 from griptape.structures import Agent
 from griptape.observability import Observability
