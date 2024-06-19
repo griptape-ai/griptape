@@ -87,17 +87,27 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
+        prompt_token_count = None
         for chunk in response:
             usage_metadata = chunk.usage_metadata
 
             yield TextDeltaPromptStackContent(chunk.text)
 
-            # TODO: Only yield the first one
-            yield DeltaPromptStackMessage(
-                usage=DeltaPromptStackMessage.Usage(
-                    input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
+            # Only want to output the prompt token count once since it is static each chunk
+            if prompt_token_count is None:
+                prompt_token_count = usage_metadata.prompt_token_count
+                yield DeltaPromptStackMessage(
+                    role=PromptStackMessage.ASSISTANT_ROLE,
+                    usage=DeltaPromptStackMessage.Usage(
+                        input_tokens=usage_metadata.prompt_token_count,
+                        output_tokens=usage_metadata.candidates_token_count,
+                    ),
                 )
-            )
+            else:
+                yield DeltaPromptStackMessage(
+                    role=PromptStackMessage.ASSISTANT_ROLE,
+                    usage=DeltaPromptStackMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
+                )
 
     def _default_model_client(self) -> GenerativeModel:
         genai = import_optional_dependency("google.generativeai")

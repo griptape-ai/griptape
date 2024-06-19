@@ -35,7 +35,7 @@ class BaseSchema(Schema):
             cls._resolve_types(attrs_cls)
             return SubSchema.from_dict(
                 {
-                    a.alias or a.name: cls._get_field_for_type(a.type)
+                    a.name: cls._get_field_for_type(a.type)
                     for a in attrs.fields(attrs_cls)
                     if a.metadata.get("serializable")
                 },
