@@ -3,12 +3,12 @@ from attrs import define, field, Factory
 from griptape import utils
 from griptape.drivers import BasePromptDriver
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseQueryModule
+from griptape.engines.rag.modules import BaseQueryRagModule
 from griptape.utils import J2
 
 
 @define(kw_only=True)
-class RelatedQueryGenerationModule(BaseQueryModule):
+class RelatedQueryGenerationRagModule(BaseQueryRagModule):
     query_count: int = field(default=5)
     prompt_driver: BasePromptDriver = field()
     generate_system_template: Callable[[str], str] = field(

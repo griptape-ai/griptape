@@ -13,10 +13,10 @@ from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDr
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
-    TextRetrievalModule,
-    RulesetsGenerationModule,
-    PromptGenerationModule,
-    MetadataGenerationModule,
+    TextRetrievalRagModule,
+    RulesetsGenerationRagModule,
+    PromptGenerationRagModule,
+    MetadataGenerationRagModule,
 )
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
 from griptape.events import BaseEvent, EventListener
@@ -173,11 +173,11 @@ class Structure(ABC):
     def default_rag_engine(self) -> RagEngine:
         return RagEngine(
             retrieval_stage=RetrievalStage(
-                retrieval_modules=[TextRetrievalModule(vector_store_driver=self.config.vector_store_driver)]
+                retrieval_modules=[TextRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
             ),
             generation_stage=GenerationStage(
-                before_generator_modules=[RulesetsGenerationModule(rulesets=self.rulesets), MetadataGenerationModule()],
-                generation_module=PromptGenerationModule(prompt_driver=self.config.prompt_driver),
+                before_generator_modules=[RulesetsGenerationRagModule(rulesets=self.rulesets), MetadataGenerationRagModule()],
+                generation_module=PromptGenerationRagModule(prompt_driver=self.config.prompt_driver),
             ),
         )
 

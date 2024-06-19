@@ -1,12 +1,12 @@
 from typing import Optional
 from attrs import define, field
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseBeforeGenerationModule
+from griptape.engines.rag.modules import BaseBeforeGenerationRagModule
 from griptape.utils import J2
 
 
 @define(kw_only=True)
-class MetadataGenerationModule(BaseBeforeGenerationModule):
+class MetadataGenerationRagModule(BaseBeforeGenerationRagModule):
     metadata: Optional[str] = field(default=None)
 
     def run(self, context: RagContext) -> RagContext:

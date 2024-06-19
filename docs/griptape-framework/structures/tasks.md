@@ -361,7 +361,7 @@ from griptape.tasks import RagTask
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalModule, PromptGenerationModule
+from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
 
 # Initialize Embedding Driver and Vector Store Driver
@@ -381,7 +381,7 @@ agent.add_task(
         rag_engine=RagEngine(
             retrieval_stage=RetrievalStage(
                 retrieval_modules=[
-                    TextRetrievalModule(
+                    TextRetrievalRagModule(
                         namespace="griptape",
                         vector_store_driver=vector_store_driver,
                         top_n=20
@@ -389,7 +389,7 @@ agent.add_task(
                 ]
             ),
             generation_stage=GenerationStage(
-                generation_module=PromptGenerationModule()
+                generation_module=PromptGenerationRagModule()
             )
         ),
     )

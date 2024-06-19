@@ -4,15 +4,15 @@ from typing import Optional
 from attrs import define, field
 from griptape import utils
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseRerankModule
-from griptape.engines.rag.modules.retrieval import BaseRetrievalModule
+from griptape.engines.rag.modules import BaseRerankRagModule
+from griptape.engines.rag.modules import BaseRetrievalRagModule
 from griptape.engines.rag.stages import BaseStage
 
 
 @define(kw_only=True)
 class RetrievalStage(BaseStage):
-    retrieval_modules: list[BaseRetrievalModule] = field()
-    rerank_module: Optional[BaseRerankModule] = field(default=None)
+    retrieval_modules: list[BaseRetrievalRagModule] = field()
+    rerank_module: Optional[BaseRerankRagModule] = field(default=None)
     max_chunks: Optional[int] = field(default=None)
 
     def run(self, context: RagContext) -> RagContext:

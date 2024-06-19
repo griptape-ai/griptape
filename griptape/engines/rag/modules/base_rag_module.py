@@ -6,7 +6,7 @@ from griptape.utils import PromptStack
 
 
 @define(kw_only=True)
-class BaseModule(ABC):
+class BaseRagModule(ABC):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()))
 
     def generate_query_prompt_stack(self, system_prompt: str, query: str) -> PromptStack:

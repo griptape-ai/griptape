@@ -1,6 +1,6 @@
 import pytest
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import PromptGenerationModule
+from griptape.engines.rag.modules import PromptGenerationRagModule
 from griptape.engines.rag.stages import GenerationStage
 from griptape.structures import Agent
 from griptape.tasks import RagTask
@@ -14,7 +14,7 @@ class TestRagTask:
             input="test",
             rag_engine=RagEngine(
                 generation_stage=GenerationStage(
-                    generation_module=PromptGenerationModule(prompt_driver=MockPromptDriver())
+                    generation_module=PromptGenerationRagModule(prompt_driver=MockPromptDriver())
                 )
             ),
         )

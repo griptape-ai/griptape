@@ -2,13 +2,13 @@ from typing import Callable
 from attrs import define, field, Factory
 from griptape.drivers import BasePromptDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseGenerationModule
+from griptape.engines.rag.modules import BaseGenerationRagModule
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.utils import J2
 
 
 @define(kw_only=True)
-class PromptGenerationModule(BaseGenerationModule):
+class PromptGenerationRagModule(BaseGenerationRagModule):
     answer_token_offset: int = field(default=400)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL))

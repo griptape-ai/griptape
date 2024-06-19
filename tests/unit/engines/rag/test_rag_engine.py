@@ -1,7 +1,7 @@
 import pytest
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines.rag import RagEngine, RagContext
-from griptape.engines.rag.modules import TextRetrievalModule, PromptGenerationModule
+from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -13,13 +13,13 @@ class TestRagEngine:
         return RagEngine(
             retrieval_stage=RetrievalStage(
                 retrieval_modules=[
-                    TextRetrievalModule(
+                    TextRetrievalRagModule(
                         vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
                     )
                 ]
             ),
             generation_stage=GenerationStage(
-                generation_module=PromptGenerationModule(prompt_driver=MockPromptDriver())
+                generation_module=PromptGenerationRagModule(prompt_driver=MockPromptDriver())
             ),
         )
 

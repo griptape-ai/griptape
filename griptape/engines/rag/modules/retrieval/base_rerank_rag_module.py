@@ -3,11 +3,11 @@ from attrs import define, field
 from griptape.artifacts import BaseArtifact
 from griptape.drivers import BaseRerankDriver
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseModule
+from griptape.engines.rag.modules import BaseRagModule
 
 
 @define(kw_only=True)
-class BaseRerankModule(BaseModule, ABC):
+class BaseRerankRagModule(BaseRagModule, ABC):
     rerank_driver: BaseRerankDriver = field()
 
     @abstractmethod

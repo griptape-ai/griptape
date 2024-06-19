@@ -2,7 +2,7 @@ from griptape.artifacts import TextArtifact, BlobArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalModule, PromptGenerationModule
+from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
 from griptape.engines.rag.stages import RetrievalStage, GenerationStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage, BlobArtifactStorage
@@ -31,7 +31,7 @@ def text_task_memory(name):
 def rag_engine(prompt_driver, vector_store_driver):
     return RagEngine(
         retrieval_stage=RetrievalStage(
-            retrieval_modules=[TextRetrievalModule(vector_store_driver=vector_store_driver)]
+            retrieval_modules=[TextRetrievalRagModule(vector_store_driver=vector_store_driver)]
         ),
-        generation_stage=GenerationStage(generation_module=PromptGenerationModule(prompt_driver=prompt_driver)),
+        generation_stage=GenerationStage(generation_module=PromptGenerationRagModule(prompt_driver=prompt_driver)),
     )

@@ -5,14 +5,14 @@ from attrs import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules.retrieval import BaseRetrievalModule
+from griptape.engines.rag.modules import BaseRetrievalRagModule
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseVectorStoreDriver
 
 
 @define(kw_only=True)
-class TextRetrievalModule(BaseRetrievalModule):
+class TextRetrievalRagModule(BaseRetrievalRagModule):
     vector_store_driver: BaseVectorStoreDriver = field()
     namespace: Optional[str] = field(default=None)
     top_n: Optional[int] = field(default=None)
