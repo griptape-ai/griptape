@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Optional
+from collections.abc import Sequence
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact
 from griptape.common import PromptStack
-from griptape.tasks import BaseTextInputTask
+from griptape.tasks import BaseTask
 from griptape.utils import J2
+from griptape.artifacts import TextArtifact, ListArtifact
+from griptape.mixins import RuleMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
@@ -15,11 +18,29 @@ if TYPE_CHECKING:
 
 
 @define
-class PromptTask(BaseTextInputTask):
+class PromptTask(RuleMixin, BaseTask):
     _prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True, alias="prompt_driver")
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
     )
+    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+        default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
+        alias="input",
+    )
+
+    @property
+    def input(self) -> BaseArtifact:
+        if isinstance(self._input, list) or isinstance(self._input, tuple):
+            artifacts = [self._process_task_input(input) for input in self._input]
+            flattened_artifacts = self.__flatten_artifacts(artifacts)
+
+            return ListArtifact(flattened_artifacts)
+        else:
+            return self._process_task_input(self._input)
+
+    @input.setter
+    def input(self, value: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> None:
+        self._input = value
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
 
@@ -66,3 +87,32 @@ class PromptTask(BaseTextInputTask):
         self.output = self.prompt_driver.run(self.prompt_stack)
 
         return self.output
+
+    def _process_task_input(
+        self, task_input: str | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
+    ) -> BaseArtifact:
+        if isinstance(task_input, TextArtifact):
+            task_input.value = J2().render_from_string(task_input.value, **self.full_context)
+
+            return task_input
+        elif isinstance(task_input, Callable):
+            return self._process_task_input(task_input(self))
+        elif isinstance(task_input, str):
+            return self._process_task_input(TextArtifact(task_input))
+        elif isinstance(task_input, BaseArtifact):
+            return task_input
+        elif isinstance(task_input, list):
+            return ListArtifact([self._process_task_input(elem) for elem in task_input])
+        else:
+            raise ValueError(f"Invalid input type: {type(task_input)} ")
+
+    def __flatten_artifacts(self, artifacts: Sequence[BaseArtifact]) -> Sequence[BaseArtifact]:
+        result = []
+
+        for elem in artifacts:
+            if isinstance(elem, ListArtifact):
+                result.extend(self.__flatten_artifacts(elem.value))
+            else:
+                result.append(elem)
+
+        return result
