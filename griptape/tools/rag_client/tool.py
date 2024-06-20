@@ -36,9 +36,9 @@ class RagClient(BaseTool):
         try:
             result = self.rag_engine.process_query(query)
 
-            if result.output:
-                return result.output
-            else:
+            if result.output is None:
                 return ErrorArtifact("query output is empty")
+            else:
+                return result.output
         except Exception as e:
             return ErrorArtifact(f"error querying: {e}")
