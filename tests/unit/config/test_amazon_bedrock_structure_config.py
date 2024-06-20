@@ -49,6 +49,7 @@ class TestAmazonBedrockStructureConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
+            "region": None,
             "type": "AmazonBedrockStructureConfig",
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
