@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- `GoogleWebSearchDriver` to web search with the Google Customsearch API.
+- `DuckDuckGoWebSearchDriver` to web search with the DuckDuckGo search SDK.
+
+### Changed
+- **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
+
+## [0.27.0] - 2024-06-19
+
+### Added
 - `BaseTask.add_child()` to add a child task to a parent task.
 - `BaseTask.add_children()` to add multiple child tasks to a parent task.
 - `BaseTask.add_parent()` to add a parent task to a child task.
@@ -22,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.parents_outputs` to get the textual output of all parent tasks. 
 - `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
 - `parents_output_text` to Workflow context.
+- `OllamaPromptModelDriver` for using models with Ollama.
+- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
@@ -46,6 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `SagemakerHuggingfaceEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: Removed `SagemakerTensorflowHubEmbeddingModelDriver`, use `AmazonSageMakerJumpstartEmbeddingDriver` instead.
 - **BREAKING**: `AmazonSageMakerJumpstartPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
+- **BREAKING**: Removed parameter `template_generator` on `PromptSummaryEngine` and added parameters `system_template_generator` and `user_template_generator`.
+- **BREAKING**: Removed template `engines/summary/prompt_summary.j2` and added templates `engines/summary/system.j2` and `engines/summary/user.j2`.
 - `ToolkitTask.RESPONSE_STOP_SEQUENCE` is now only added when using `ToolkitTask`.
 - Updated Prompt Drivers to use `BasePromptDriver.max_tokens` instead of using `BasePromptDriver.max_output_tokens()`.
 - Improved error message when `GriptapeCloudKnowledgeBaseClient` does not have a description set.
@@ -54,7 +67,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `HuggingFaceHubPromptDriver` to use `transformers`'s `apply_chat_template`.
 - Updated `HuggingFacePipelinePromptDriver` to use chat features of `transformers.TextGenerationPipeline`.
 - Updated `CoherePromptDriver` to use Cohere's latest SDK.
-- Updated `GriptapeCloudKnowledgeBaseClient.query()` to optionally return raw query responses from the Knowledge Base.
+- Moved Task reset logic for all Structures to `Structure.before_run`.
+- Updated default prompt templates for `PromptSummaryEngine`.
+- Updated template `templates/tasks/tool_task/system.j2`.
 
 ### Fixed
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
@@ -62,6 +77,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Streaming not working when using deprecated `Structure.stream` field.
 - Raw Tool output being lost when being executed by ActionsSubtask.
 - Re-order Workflow tasks on every task execution wave.
+- Web Loader to catch Exceptions and properly return an ErrorArtifact.
+- Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
+- `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
+- Structure run args not being set immediately.
+- Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.26.0] - 2024-06-04
 
@@ -72,7 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AudioTranscriptionTask` and `AudioTranscriptionClient` for transcribing audio content in Structures.
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
-- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket. 
+- `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
@@ -92,6 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Extra fields being excluded when using `SerializableMixin.from_dict`.
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.25.1] - 2024-05-15
 

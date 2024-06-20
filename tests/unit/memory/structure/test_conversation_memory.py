@@ -93,7 +93,7 @@ class TestConversationMemory:
 
         assert len(prompt_stack.inputs) == 12
 
-    def test_add_to_prompt_stack_autopruing_enabled(self):
+    def test_add_to_prompt_stack_autopruning_enabled(self):
         # All memory is pruned.
         agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=0)))
         memory = ConversationMemory(

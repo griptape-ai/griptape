@@ -1,7 +1,7 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
-from typing import Any
+from typing import Any, Optional
 from attrs import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
@@ -12,6 +12,10 @@ from griptape.memory.structure import Run
 @define
 class Workflow(Structure):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
+
+    @property
+    def output_task(self) -> Optional[BaseTask]:
+        return self.order_tasks()[-1] if self.tasks else None
 
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
@@ -91,7 +95,6 @@ class Workflow(Structure):
         return task
 
     def try_run(self, *args) -> Workflow:
-        self._execution_args = args
         exit_loop = False
 
         while not self.is_finished() and not exit_loop:
@@ -110,7 +113,7 @@ class Workflow(Structure):
 
                     break
 
-        if self.conversation_memory:
+        if self.conversation_memory and self.output is not None:
             if isinstance(self.input_task.input, tuple):
                 input_text = self.input_task.input[0].to_text()
             else:

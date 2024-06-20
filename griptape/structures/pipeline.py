@@ -43,19 +43,15 @@ class Pipeline(Structure):
         return task
 
     def try_run(self, *args) -> Pipeline:
-        self._execution_args = args
-
-        [task.reset() for task in self.tasks]
-
         self.__run_from_task(self.input_task)
 
-        if self.conversation_memory:
+        if self.conversation_memory and self.output is not None:
             if isinstance(self.input_task.input, tuple):
                 input_text = self.input_task.input[0].to_text()
             else:
                 input_text = self.input_task.input.to_text()
 
-            run = Run(input=input_text, output=self.output_task.output.to_text())
+            run = Run(input=input_text, output=self.output.to_text())
 
             self.conversation_memory.add_run(run)
 

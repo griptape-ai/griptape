@@ -1,9 +1,10 @@
 from unittest.mock import Mock
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, AudioArtifact
 from griptape.engines import TextToSpeechEngine
-from griptape.structures import Agent
+from griptape.structures import Agent, Pipeline
 from griptape.tasks import BaseTask, TextToSpeechTask
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_structure_config import MockStructureConfig
 
 
@@ -28,3 +29,19 @@ class TestTextToSpeechTask:
         Agent(config=MockStructureConfig()).add_task(task)
 
         assert isinstance(task.text_to_speech_engine, TextToSpeechEngine)
+
+    def test_calls(self):
+        text_to_speech_engine = Mock()
+        text_to_speech_engine.run.return_value = AudioArtifact(b"audio content", format="mp3")
+
+        assert TextToSpeechTask("test", text_to_speech_engine=text_to_speech_engine).run().value == b"audio content"
+
+    def test_run(self):
+        text_to_speech_engine = Mock()
+        text_to_speech_engine.run.return_value = AudioArtifact(b"audio content", format="mp3")
+
+        task = TextToSpeechTask("some text", text_to_speech_engine=text_to_speech_engine)
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline.add_task(task)
+
+        assert isinstance(pipeline.run().output, AudioArtifact)

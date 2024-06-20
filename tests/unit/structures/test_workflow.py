@@ -1,16 +1,34 @@
+import time
 import pytest
 
+from pytest import fixture
 from griptape.memory.task.storage import TextArtifactStorage
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask
+from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask
 from griptape.structures import Workflow
+from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestWorkflow:
+    @fixture
+    def waiting_task(self):
+        def fn(task):
+            time.sleep(10)
+            return TextArtifact("done")
+
+        return CodeExecutionTask(run_fn=fn)
+
+    @fixture
+    def error_artifact_task(self):
+        def fn(task):
+            return ErrorArtifact("error")
+
+        return CodeExecutionTask(run_fn=fn)
+
     def test_init(self):
         driver = MockPromptDriver()
         workflow = Workflow(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
@@ -619,6 +637,15 @@ class TestWorkflow:
 
         assert task4 == workflow.output_task
 
+        task4.add_parents([task2, task3])
+        task1.add_children([task2, task3])
+
+        # task4 is the final task, but its defined at index 0
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task4, task1, task2, task3])
+
+        # ouput_task topologically should be task4
+        assert task4 == workflow.output_task
+
     def test_to_graph(self):
         task1 = PromptTask("prompt1", id="task1")
         task2 = PromptTask("prompt2", id="task2")
@@ -690,6 +717,14 @@ class TestWorkflow:
 
         with pytest.deprecated_call():
             Workflow(stream=True)
+
+    def test_run_with_error_artifact(self, error_artifact_task, waiting_task):
+        end_task = PromptTask("end")
+        end_task.add_parents([error_artifact_task, waiting_task])
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task])
+        workflow.run()
+
+        assert workflow.output is None
 
     @staticmethod
     def _validate_topology_1(workflow):
