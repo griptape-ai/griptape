@@ -1,6 +1,6 @@
 import pytest
 from requests import exceptions
-from griptape.artifacts import TextArtifact, ErrorArtifact, ListArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact
 
 
 class TestGriptapeCloudKnowledgeBaseClient:
@@ -17,19 +17,6 @@ class TestGriptapeCloudKnowledgeBaseClient:
         mock_response.status_code = 200
         mock_response.json.return_value = {"description": "fizz buzz"}
         mocker.patch("requests.get", return_value=mock_response)
-
-        return GriptapeCloudKnowledgeBaseClient(
-            base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
-        )
-
-    @pytest.fixture
-    def client_raw(self, mocker):
-        from griptape.tools import GriptapeCloudKnowledgeBaseClient
-
-        mock_response = mocker.Mock()
-        mock_response.status_code = 201
-        mock_response.json.return_value = {"result": []}
-        mocker.patch("requests.post", return_value=mock_response)
 
         return GriptapeCloudKnowledgeBaseClient(
             base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
@@ -74,20 +61,10 @@ class TestGriptapeCloudKnowledgeBaseClient:
         )
 
     def test_query(self, client):
-        assert isinstance(client.query({"values": {"query": "foo bar", "raw": False}}), TextArtifact)
+        assert isinstance(client.query({"values": {"query": "foo bar"}}), TextArtifact)
 
     def test_query_error(self, client_kb_error):
         assert isinstance(client_kb_error.query({"values": {"query": "foo bar"}}), ErrorArtifact)
-        assert client_kb_error.query({"values": {"query": "foo bar"}}).value == "error"
-
-    def test_query_raw_default(self, client):
-        assert isinstance(client.query({"values": {"query": "foo bar"}}), TextArtifact)
-
-    def test_query_raw(self, client_raw):
-        assert isinstance(client_raw.query({"values": {"query": "foo bar", "raw": True}}), ListArtifact)
-
-    def test_query_raw_error(self, client_kb_error):
-        assert isinstance(client_kb_error.query({"values": {"query": "foo bar", "raw": True}}), ErrorArtifact)
         assert client_kb_error.query({"values": {"query": "foo bar"}}).value == "error"
 
     def test_get_knowledge_base_description(self, client):

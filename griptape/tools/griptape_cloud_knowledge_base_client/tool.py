@@ -3,10 +3,9 @@ from typing import Optional
 from urllib.parse import urljoin
 from schema import Schema, Literal
 from attrs import define, field
-import json
 from griptape.tools.base_griptape_cloud_client import BaseGriptapeCloudClient
 from griptape.utils.decorators import activity
-from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact
 
 
 @define
@@ -24,43 +23,20 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
         config={
             "description": "Can be used to search a knowledge base with the following description: {{ _self._get_knowledge_base_description() }}",
             "schema": Schema(
-                {
-                    Literal(
-                        "query", description="A natural language search query to run against the knowledge base"
-                    ): str,
-                    Literal(
-                        "raw",
-                        description="Return the raw artifacts from the knowledge base instead of a natural language response",
-                    ): bool,
-                }
+                {Literal("query", description="A natural language search query to run against the knowledge base"): str}
             ),
         }
     )
-    def query(self, params: dict) -> TextArtifact | ListArtifact | ErrorArtifact:
+    def query(self, params: dict) -> TextArtifact | ErrorArtifact:
         from requests import post, exceptions
 
         query = params["values"]["query"]
-        raw = params["values"].get("raw", False)
         url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
 
         try:
-            response = post(url, json={"query": query, "raw": raw}, headers=self.headers)
+            response = post(url, json={"query": query}, headers=self.headers)
 
-            if raw:
-                response_body = response.json()
-                artifacts: list[BaseArtifact] = []
-                for query_result in response_body.get("query_results", []):
-                    artifact_dict = json.loads(query_result["meta"]["artifact"])
-                    try:
-                        del artifact_dict["value"]["Keywords"]
-                    except KeyError:
-                        pass
-                    artifact_dict["value"] |= query_result["meta"]["bonus"]
-                    artifacts.append(BaseArtifact.from_dict(artifact_dict))
-
-                return ListArtifact(artifacts)
-            else:
-                return TextArtifact(response.text)
+            return TextArtifact(response.text)
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
