@@ -75,9 +75,9 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         self,
         query: str,
         count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
-        namespace: Optional[str] = None,  # TODO: Remove this
-        include_vectors: bool = False,
-        distance_metric: str = "cosine_distance",
+        namespace: Optional[str] = None,
+        include_vectors: Optional[bool] = False,
+        distance_metric: Optional[str] = "cosine_distance",
         # GriptapeCloudVectorStoreDriver-specific params:
         filter: Optional[dict] = None,
         **kwargs,
@@ -89,14 +89,12 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
 
         request = {
             "query": query,
-            "filters": {},
             "count": count,
-            "include_vectors": include_vectors,
             "distance_metric": distance_metric,
             "filter": filter,
+            "include_vectors": include_vectors,
         }
-        response_body = post(url, json=request, headers=self.headers).json()
-        return response_body["query_results"]
+        return post(url, json=request, headers=self.headers).json()["query_results"]
 
     def default_vector_model(self) -> Any:
         Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
