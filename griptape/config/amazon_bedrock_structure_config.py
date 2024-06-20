@@ -23,14 +23,16 @@ if TYPE_CHECKING:
     import boto3
 
 
-@define()
+@define
 class AmazonBedrockStructureConfig(StructureConfig):
-    region: Optional[str] = field(default=os.environ.get("AWS_DEFAULT_REGION", None), metadata={"serializable": True})
+    region: Optional[str] = field(
+        default=Factory(lambda: os.environ.get("AWS_DEFAULT_REGION")), metadata={"serializable": True}, kw_only=True
+    )
     access_key_id: Optional[str] = field(
-        default=os.environ.get("AWS_ACCESS_KEY_ID", None), metadata={"serializable": False}
+        default=Factory(lambda: os.environ.get("AWS_ACCESS_KEY_ID")), metadata={"serializable": False}, kw_only=True
     )
     secret_access_key: Optional[str] = field(
-        default=os.environ.get("AWS_SECRET_ACCESS_KEY", None), metadata={"serializable": False}
+        default=Factory(lambda: os.environ.get("AWS_SECRET_ACCESS_KEY")), metadata={"serializable": False}, kw_only=True
     )
     session: Optional[boto3.Session] = field(
         default=Factory(

@@ -95,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
 - `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
+- Parameters `region`, `access_key_id`, `secret_access_key`, and `session` on `AmazonBedrockStructureConfig`.
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
