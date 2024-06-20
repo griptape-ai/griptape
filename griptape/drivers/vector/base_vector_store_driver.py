@@ -28,7 +28,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             return BaseVectorStoreDriver.Entry(**data)
 
         def to_artifact(self) -> BaseArtifact:
-            return BaseArtifact.from_json(self.meta["artifact"]) # pyright: ignore[reportOptionalSubscript]
+            return BaseArtifact.from_json(self.meta["artifact"])  # pyright: ignore[reportOptionalSubscript]
 
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)

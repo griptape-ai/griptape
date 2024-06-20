@@ -44,6 +44,6 @@ class RetrievalRagStage(BaseRagStage):
             context.text_chunks = [a for a in self.rerank_module.run(context) if isinstance(a, TextArtifact)]
 
         if self.max_chunks:
-            context.text_chunks = context.text_chunks[:self.max_chunks]
+            context.text_chunks = context.text_chunks[: self.max_chunks]
 
         return context
