@@ -9,7 +9,6 @@ from griptape.common import (
     PromptStack,
     PromptStackMessage,
     DeltaPromptStackMessage,
-    BaseDeltaPromptStackContent,
     TextPromptStackContent,
     BasePromptStackContent,
     TextDeltaPromptStackContent,
@@ -51,13 +50,13 @@ class CoherePromptDriver(BasePromptDriver):
             usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         result = self.client.chat_stream(**self._base_params(prompt_stack))
 
         for event in result:
             if event.event_type == "text-generation":
-                yield TextDeltaPromptStackContent(event.text, index=0)
-            if event.event_type == "stream-end":
+                yield DeltaPromptStackMessage(content=TextDeltaPromptStackContent(event.text, index=0))
+            elif event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
                 yield DeltaPromptStackMessage(

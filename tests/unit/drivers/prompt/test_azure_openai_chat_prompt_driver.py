@@ -1,6 +1,5 @@
 import pytest
 from unittest.mock import Mock
-from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from griptape.drivers import AzureOpenAiChatPromptDriver
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
@@ -9,20 +8,22 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.fixture
     def mock_chat_completion_create(self, mocker):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
-        mock_choice = Mock()
-        mock_choice.message.content = "model-output"
-        mock_chat_create.return_value.headers = {}
-        mock_chat_create.return_value.choices = [mock_choice]
+        mock_chat_create.return_value = Mock(
+            headers={},
+            choices=[Mock(message=Mock(content="model-output"))],
+            usage=Mock(prompt_tokens=5, completion_tokens=10),
+        )
         return mock_chat_create
 
     @pytest.fixture
     def mock_chat_completion_stream_create(self, mocker):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
-        mock_chunk = Mock()
-        mock_choice = Mock()
-        mock_choice.delta.content = "model-output"
-        mock_chunk.choices = [mock_choice]
-        mock_chat_create.return_value = iter([mock_chunk])
+        mock_chat_create.return_value = iter(
+            [
+                Mock(choices=[Mock(delta=Mock(content="model-output"))], usage=None),
+                Mock(choices=None, usage=Mock(prompt_tokens=5, completion_tokens=10)),
+            ]
+        )
         return mock_chat_create
 
     def test_init(self):
@@ -41,6 +42,8 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=driver.model, temperature=driver.temperature, user=driver.user, messages=messages
         )
         assert text_artifact.value == "model-output"
+        assert text_artifact.usage.input_tokens == 5
+        assert text_artifact.usage.output_tokens == 10
 
     def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
         # Given
@@ -49,7 +52,8 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        text_artifact = next(driver.try_stream(prompt_stack))
+        stream = driver.try_stream(prompt_stack)
+        event = next(stream)
 
         # Then
         mock_chat_completion_stream_create.assert_called_once_with(
@@ -61,5 +65,8 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream_options={"include_usage": True},
         )
 
-        if isinstance(text_artifact, TextDeltaPromptStackContent):
-            assert text_artifact == "model-output"
+        assert event.content.text == "model-output"
+
+        event = next(stream)
+        assert event.usage.input_tokens == 5
+        assert event.usage.output_tokens == 10

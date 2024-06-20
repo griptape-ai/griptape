@@ -7,13 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import (
-    PromptStack,
-    PromptStackMessage,
-    TextPromptStackContent,
-    DeltaPromptStackMessage,
-    BaseDeltaPromptStackContent,
-)
+from griptape.common import PromptStack, PromptStackMessage, TextPromptStackContent, DeltaPromptStackMessage
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -84,7 +78,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         raise NotImplementedError("streaming is not supported")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:

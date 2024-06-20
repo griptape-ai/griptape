@@ -8,7 +8,6 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import (
-    BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaPromptStackMessage,
     TextDeltaPromptStackContent,
@@ -90,7 +89,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         result = self.client.chat.completions.create(
             **self._base_params(prompt_stack), stream=True, stream_options={"include_usage": True}
         )
@@ -107,7 +106,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     choice = chunk.choices[0]
                     delta = choice.delta
 
-                    yield self.__message_delta_to_prompt_stack_content_delta(delta)
+                    yield DeltaPromptStackMessage(content=self.__message_delta_to_prompt_stack_content_delta(delta))
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
@@ -166,7 +165,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message type: {message}")
 
-    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> BaseDeltaPromptStackContent:
+    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> TextDeltaPromptStackContent:
         if content_delta.content is None:
             return TextDeltaPromptStackContent("")
         else:

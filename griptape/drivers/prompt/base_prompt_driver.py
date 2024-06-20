@@ -108,9 +108,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage: ...
 
     @abstractmethod
-    def try_stream(
-        self, prompt_stack: PromptStack
-    ) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]: ...
 
     def __process_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         result = self.try_run(prompt_stack)
@@ -126,6 +124,16 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         for delta in deltas:
             if isinstance(delta, DeltaPromptStackMessage):
                 usage += delta.usage
+
+                if delta.content is not None:
+                    if delta.content.index in delta_contents:
+                        delta_contents[delta.content.index].append(delta.content)
+                    else:
+                        delta_contents[delta.content.index] = [delta.content]
+
+                if isinstance(delta, TextDeltaPromptStackContent):
+                    self.structure.publish_event(CompletionChunkEvent(token=delta.text))
+
             elif isinstance(delta, BaseDeltaPromptStackContent):
                 if delta.index in delta_contents:
                     delta_contents[delta.index].append(delta)

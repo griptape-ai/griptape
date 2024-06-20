@@ -19,7 +19,8 @@ class TestAmazonSageMakerJumpstartPromptDriver:
     def tokenizer(self, mocker):
         from_pretrained = mocker.patch("transformers.AutoTokenizer").from_pretrained
         from_pretrained.return_value.decode.return_value = "foo\n\nUser: bar"
-        from_pretrained.return_value.apply_chat_template.return_value = ["foo", "\nbar"]
+        from_pretrained.return_value.apply_chat_template.return_value = [1, 2, 3]
+        from_pretrained.return_value.encode.return_value = [1, 2, 3]
         from_pretrained.return_value.model_max_length = 8000
         from_pretrained.return_value.eos_token_id = 1
 
@@ -65,6 +66,8 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         )
 
         assert text_artifact.value == "foobar"
+        assert text_artifact.usage.input_tokens == 3
+        assert text_artifact.usage.output_tokens == 3
 
         # When
         response_body = {"generated_text": "foobar"}

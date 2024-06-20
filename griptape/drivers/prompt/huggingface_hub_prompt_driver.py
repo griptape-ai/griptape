@@ -11,7 +11,6 @@ from griptape.common import (
     PromptStack,
     PromptStackMessage,
     DeltaPromptStackMessage,
-    BaseDeltaPromptStackContent,
     TextPromptStackContent,
     TextDeltaPromptStackContent,
 )
@@ -69,7 +68,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
@@ -81,7 +80,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         full_text = ""
         for token in response:
             full_text += token
-            yield TextDeltaPromptStackContent(token, index=0)
+            yield DeltaPromptStackMessage(content=TextDeltaPromptStackContent(token, index=0))
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
         yield DeltaPromptStackMessage(

@@ -7,7 +7,6 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import (
-    BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaPromptStackMessage,
     TextDeltaPromptStackContent,
@@ -60,12 +59,12 @@ class AnthropicPromptDriver(BasePromptDriver):
             ),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         events = self.client.messages.create(**self._base_params(prompt_stack), stream=True)
 
         for event in events:
             if event.type == "content_block_delta":
-                yield self.__message_content_delta_to_prompt_stack_content_delta(event)
+                yield DeltaPromptStackMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(event))
             elif event.type == "message_start":
                 yield DeltaPromptStackMessage(
                     usage=DeltaPromptStackMessage.Usage(input_tokens=event.message.usage.input_tokens)
@@ -99,9 +98,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         }
 
     def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_system():
-            return "system"
-        elif input.is_assistant():
+        if input.is_assistant():
             return "assistant"
         else:
             return "user"
@@ -131,7 +128,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def __message_content_delta_to_prompt_stack_content_delta(
         self, content_delta: ContentBlockDeltaEvent
-    ) -> BaseDeltaPromptStackContent:
+    ) -> TextDeltaPromptStackContent:
         index = content_delta.index
 
         if content_delta.delta.type == "text_delta":
