@@ -16,7 +16,9 @@ Each vector driver takes a [BaseEmbeddingDriver](../../reference/griptape/driver
 !!! info
     More vector drivers are coming soon.
 
-## Local
+## Vector Store Drivers
+
+### Local
 
 The [LocalVectorStoreDriver](../../reference/griptape/drivers/vector/local_vector_store_driver.md) can be used to load and query data from memory. Here is a complete example of how the driver can be used to load a webpage into the driver and query it later:
 
@@ -47,7 +49,7 @@ print("\n\n".join(values))
 
 ```
 
-## Pinecone
+### Pinecone
 
 !!! info
     This driver requires the `drivers-vector-pinecone` [extra](../index.md#extras).
@@ -103,7 +105,7 @@ result = vector_store_driver.query(
 )
 ```
 
-## Marqo
+### Marqo
 
 !!! info
     This driver requires the `drivers-vector-marqo` [extra](../index.md#extras).
@@ -157,7 +159,7 @@ result = vector_store.query(query="What is griptape?")
 print(result)
 ```
 
-## Mongodb Atlas
+### Mongodb Atlas
 
 !!! info
     This driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
@@ -225,7 +227,7 @@ The format for creating a vector index should look similar to the following:
 ```
 Replace `path_to_vector` with the expected field name where the vector content will be.
 
-## Azure MongoDB
+### Azure MongoDB
 
 !!! info
     This driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
@@ -274,7 +276,7 @@ result = vector_store.query(query="What is griptape?")
 print(result)
 ```
 
-## Redis
+### Redis
 
 !!! info
     This driver requires the `drivers-vector-redis` [extra](../index.md#extras).
@@ -319,7 +321,7 @@ The format for creating a vector index should be similar to the following:
 FT.CREATE idx:griptape ON hash PREFIX 1 "griptape:" SCHEMA namespace TAG vector VECTOR FLAT 6 TYPE FLOAT32 DIM 1536 DISTANCE_METRIC COSINE
 ```
 
-## OpenSearch
+### OpenSearch
 
 !!! info
     This driver requires the `drivers-vector-opensearch` [extra](../index.md#extras).
@@ -372,7 +374,7 @@ The body mappings for creating a vector index should look similar to the followi
 }
 ```
 
-## PGVector
+### PGVector
 
 !!! info
     This driver requires the `drivers-vector-postgresql` [extra](../index.md#extras).

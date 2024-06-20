@@ -74,6 +74,10 @@ from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
 from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
 
+from .web_search.base_web_search_driver import BaseWebSearchDriver
+from .web_search.google_web_search_driver import GoogleWebSearchDriver
+from .web_search.duck_duck_go_web_search_driver import DuckDuckGoWebSearchDriver
+
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
 from .event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
@@ -166,6 +170,9 @@ __all__ = [
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",
+    "BaseWebSearchDriver",
+    "GoogleWebSearchDriver",
+    "DuckDuckGoWebSearchDriver",
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",

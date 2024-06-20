@@ -685,7 +685,7 @@ import os
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
-from griptape.drivers import LocalStructureRunDriver
+from griptape.drivers import LocalStructureRunDriver, GoogleWebSearchDriver
 from griptape.tools import (
     TaskMemoryClient,
     WebScraper,
@@ -697,8 +697,10 @@ def build_researcher():
     researcher = Agent(
         tools=[
             WebSearch(
-                google_api_key=os.environ["GOOGLE_API_KEY"],
-                google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                web_search_driver=GoogleWebSearchDriver(
+                    api_key=os.environ["GOOGLE_API_KEY"],
+                    search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                ),
             ),
             WebScraper(
                 off_prompt=True,
