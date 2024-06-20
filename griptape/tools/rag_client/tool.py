@@ -8,7 +8,7 @@ from griptape.utils.decorators import activity
 
 
 @define(kw_only=True)
-class RagEngineClient(BaseTool):
+class RagClient(BaseTool):
     """
     Attributes:
         description: LLM-friendly RAG engine description.
