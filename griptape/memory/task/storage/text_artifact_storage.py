@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class TextArtifactStorage(BaseArtifactStorage):
     vector_store_driver: BaseVectorStoreDriver = field()
     rag_engine: Optional[RagEngine] = field(default=None)
-    summary_engine: Optional[BaseSummaryEngine] = field( default=None)
+    summary_engine: Optional[BaseSummaryEngine] = field(default=None)
     csv_extraction_engine: Optional[CsvExtractionEngine] = field(default=None)
     json_extraction_engine: Optional[JsonExtractionEngine] = field(default=None)
 
@@ -41,9 +41,5 @@ class TextArtifactStorage(BaseArtifactStorage):
             raise ValueError("RAG engine is not set.")
 
         return self.rag_engine.process(
-            RagContext(
-                initial_query=query,
-                namespace=namespace,
-                metadata=None if metadata is None else str(metadata)
-            )
+            RagContext(initial_query=query, namespace=namespace, metadata=None if metadata is None else str(metadata))
         ).output

@@ -1,7 +1,11 @@
 import logging
 from attrs import define, field
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseGenerationRagModule, BaseBeforeGenerationRagModule, BaseAfterGenerationRagModule
+from griptape.engines.rag.modules import (
+    BaseGenerationRagModule,
+    BaseBeforeGenerationRagModule,
+    BaseAfterGenerationRagModule,
+)
 from griptape.engines.rag.stages import BaseRagStage
 
 

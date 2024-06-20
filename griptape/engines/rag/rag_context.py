@@ -18,6 +18,7 @@ class RagContext:
         text_chunks: A list of text chunks to pass around from the retrieval stage to the generation stage.
         output: Final output from the generation stage.
     """
+
     initial_query: str = field()
     namespace: Optional[str] = field(default=None)
     metadata: Optional[str] = field(default=None)

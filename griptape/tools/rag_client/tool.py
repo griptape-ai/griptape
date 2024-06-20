@@ -21,13 +21,7 @@ class RagClient(BaseTool):
     @activity(
         config={
             "description": "{{ _self.description }}",
-            "schema": Schema(
-                {
-                    Literal(
-                        "query", description="A natural language search query"
-                    ): str
-                }
-            ),
+            "schema": Schema({Literal("query", description="A natural language search query"): str}),
         }
     )
     def search(self, params: dict) -> TextArtifact | ErrorArtifact:

@@ -176,7 +176,10 @@ class Structure(ABC):
                 retrieval_modules=[TextRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
             ),
             generation_stage=GenerationRagStage(
-                before_generator_modules=[RulesetsGenerationRagModule(rulesets=self.rulesets), MetadataGenerationRagModule()],
+                before_generator_modules=[
+                    RulesetsGenerationRagModule(rulesets=self.rulesets),
+                    MetadataGenerationRagModule(),
+                ],
                 generation_module=PromptGenerationRagModule(prompt_driver=self.config.prompt_driver),
             ),
         )
