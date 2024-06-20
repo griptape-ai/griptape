@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `GoogleWebSearchDriver` to web search with the Google Customsearch API.
 - `DuckDuckGoWebSearchDriver` to web search with the DuckDuckGo search SDK.
-- `GriptapeCloudVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
+- `GriptapeCloudVectorStoreDriver` to query Griptape Cloud Knowledge Bases and Data Connectors.
 
 ### Changed
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
