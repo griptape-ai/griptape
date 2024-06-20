@@ -3,6 +3,7 @@ import logging
 from typing import Optional
 from attrs import define, field
 from griptape import utils
+from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRerankRagModule
 from griptape.engines.rag.modules import BaseRetrievalRagModule
@@ -23,24 +24,26 @@ class RetrievalRagStage(BaseRagStage):
         )
 
         # flatten the list of lists
-        context.text_chunks = list(itertools.chain.from_iterable(results))
+        results = list(itertools.chain.from_iterable(results))
 
         # deduplicate the list
-        chunks_before_dedup = len(context.text_chunks)
-        context.text_chunks = list({str(c.value): c for c in context.text_chunks}.values())
-        chunks_after_dedup = len(context.text_chunks)
+        chunks_before_dedup = len(results)
+        results = list({str(c.value): c for c in results}.values())
+        chunks_after_dedup = len(results)
 
         logging.info(
             f"RetrievalStage: deduplicated {chunks_before_dedup - chunks_after_dedup} "
             f"chunks ({chunks_before_dedup} - {chunks_after_dedup})"
         )
 
+        context.text_chunks = [a for a in results if isinstance(a, TextArtifact)]
+
         if self.rerank_module:
             logging.info(f"RetrievalStage: running rerank module on {chunks_after_dedup} chunks")
 
-            context.text_chunks = self.rerank_module.run(context)
+            context.text_chunks = [a for a in self.rerank_module.run(context) if isinstance(a, TextArtifact)]
 
         if self.max_chunks:
-            context.text_chunks = context.text_chunks[0 : self.max_chunks]
+            context.text_chunks = context.text_chunks[:self.max_chunks]
 
         return context

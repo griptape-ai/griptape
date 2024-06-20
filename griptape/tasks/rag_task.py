@@ -1,5 +1,6 @@
+from __future__ import annotations
 from attrs import define, field
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.engines.rag import RagEngine
 from griptape.tasks import BaseTextInputTask
 
@@ -21,5 +22,10 @@ class RagTask(BaseTextInputTask):
     def rag_engine(self, value: RagEngine) -> None:
         self._rag_engine = value
 
-    def run(self) -> TextArtifact:
-        return self.rag_engine.process_query(self.input.to_text()).output
+    def run(self) -> TextArtifact | ErrorArtifact:
+        result = self.rag_engine.process_query(self.input.to_text()).output
+
+        if result is None:
+            return ErrorArtifact("empty output")
+        else:
+            return result

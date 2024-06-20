@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from typing import Sequence
+
 from attrs import define, field
 from griptape.artifacts import BaseArtifact
 from griptape.drivers import BaseRerankDriver
@@ -11,4 +13,4 @@ class BaseRerankRagModule(BaseRagModule, ABC):
     rerank_driver: BaseRerankDriver = field()
 
     @abstractmethod
-    def run(self, context: RagContext) -> list[BaseArtifact]: ...
+    def run(self, context: RagContext) -> Sequence[BaseArtifact]: ...

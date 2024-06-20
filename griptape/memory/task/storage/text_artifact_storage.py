@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Optional
 from attrs import define, field
-from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact, InfoArtifact
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.engines.rag import RagEngine, RagContext
 from griptape.memory.task.storage import BaseArtifactStorage
@@ -36,10 +36,15 @@ class TextArtifactStorage(BaseArtifactStorage):
 
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
-    def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact:
+    def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact | InfoArtifact:
         if self.rag_engine is None:
             raise ValueError("RAG engine is not set.")
 
-        return self.rag_engine.process(
+        result = self.rag_engine.process(
             RagContext(initial_query=query, namespace=namespace, metadata=None if metadata is None else str(metadata))
         ).output
+
+        if result is None:
+            return InfoArtifact("Empty output")
+        else:
+            return result
