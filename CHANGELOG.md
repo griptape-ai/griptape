@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
-- `GriptapeCloudKnowledgeBaseClient` migrated to `/chat` api.
+- `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
 
 ## [0.27.0] - 2024-06-19
 
