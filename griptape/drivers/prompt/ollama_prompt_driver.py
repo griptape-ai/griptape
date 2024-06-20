@@ -9,6 +9,7 @@ from griptape.common import PromptStack, TextPromptStackContent
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
 from griptape.common import PromptStackMessage, DeltaPromptStackMessage, TextDeltaPromptStackContent
+from griptape.common import ImagePromptStackContent
 
 if TYPE_CHECKING:
     from ollama import Client
@@ -69,8 +70,26 @@ class OllamaPromptDriver(BasePromptDriver):
             raise Exception("invalid model response")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        messages = [
-            {"role": message.role, "content": message.to_text_artifact().to_text()} for message in prompt_stack.messages
-        ]
+        messages = self._prompt_stack_to_messages(prompt_stack)
 
         return {"messages": messages, "model": self.model, "options": self.options}
+
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+        return [
+            {
+                "role": message.role,
+                "content": message.to_text_artifact().to_text(),
+                **(
+                    {
+                        "images": [
+                            content.artifact.base64
+                            for content in message.content
+                            if isinstance(content, ImagePromptStackContent)
+                        ]
+                    }
+                    if any(isinstance(content, ImagePromptStackContent) for content in message.content)
+                    else {}
+                ),
+            }
+            for message in prompt_stack.messages
+        ]
