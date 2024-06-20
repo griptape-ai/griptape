@@ -10,13 +10,13 @@ if TYPE_CHECKING:
     from griptape.engines import BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 
 
-@define
+@define(kw_only=True)
 class TextArtifactStorage(BaseArtifactStorage):
-    vector_store_driver: BaseVectorStoreDriver = field(kw_only=True)
-    rag_engine: RagEngine = field(kw_only=True)
-    summary_engine: Optional[BaseSummaryEngine] = field(kw_only=True, default=None)
-    csv_extraction_engine: Optional[CsvExtractionEngine] = field(kw_only=True, default=None)
-    json_extraction_engine: Optional[JsonExtractionEngine] = field(kw_only=True, default=None)
+    vector_store_driver: BaseVectorStoreDriver = field()
+    rag_engine: Optional[RagEngine] = field(default=None)
+    summary_engine: Optional[BaseSummaryEngine] = field( default=None)
+    csv_extraction_engine: Optional[CsvExtractionEngine] = field(default=None)
+    json_extraction_engine: Optional[JsonExtractionEngine] = field(default=None)
 
     def can_store(self, artifact: BaseArtifact) -> bool:
         return isinstance(artifact, TextArtifact)
@@ -33,9 +33,17 @@ class TextArtifactStorage(BaseArtifactStorage):
     def summarize(self, namespace: str) -> TextArtifact:
         if self.summary_engine is None:
             raise ValueError("Summary engine is not set.")
+
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
     def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact:
+        if self.rag_engine is None:
+            raise ValueError("RAG engine is not set.")
+
         return self.rag_engine.process(
-            RagContext(initial_query=query, namespace=namespace, metadata=str(metadata) if metadata else None)
+            RagContext(
+                initial_query=query,
+                namespace=namespace,
+                metadata=None if metadata is None else str(metadata)
+            )
         ).output
