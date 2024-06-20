@@ -131,17 +131,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     else:
                         delta_contents[delta.content.index] = [delta.content]
 
-                if isinstance(delta, TextDeltaPromptStackContent):
-                    self.structure.publish_event(CompletionChunkEvent(token=delta.text))
-
-            elif isinstance(delta, BaseDeltaPromptStackContent):
-                if delta.index in delta_contents:
-                    delta_contents[delta.index].append(delta)
-                else:
-                    delta_contents[delta.index] = [delta]
-
-                if isinstance(delta, TextDeltaPromptStackContent):
-                    self.structure.publish_event(CompletionChunkEvent(token=delta.text))
+                if isinstance(delta.content, TextDeltaPromptStackContent):
+                    self.structure.publish_event(CompletionChunkEvent(token=delta.content.text))
 
         # Build a complete content from the content deltas
         content = []
