@@ -1,14 +1,12 @@
-from attrs import define, field, Factory
+from attrs import define, field
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagEngine
-from griptape.loaders import TextLoader
 from griptape.tasks import BaseTextInputTask
 
 
 @define
 class RagTask(BaseTextInputTask):
     _rag_engine: RagEngine = field(kw_only=True, default=None, alias="rag_engine")
-    loader: TextLoader = field(default=Factory(lambda: TextLoader()), kw_only=True)
 
     @property
     def rag_engine(self) -> RagEngine:
