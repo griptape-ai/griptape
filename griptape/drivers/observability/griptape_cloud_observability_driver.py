@@ -22,7 +22,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
         default=Factory(
             lambda self: BatchSpanProcessor(
                 OTLPSpanExporter(
-                    endpoint=urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/spans"),
+                    endpoint=urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/traces"),
                     headers=self.headers,
                 )
             ),
