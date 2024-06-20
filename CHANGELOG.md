@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.27.1] - 2024-06-20
+
+### Changed
+- Base Tool schema so that `input` is optional when no Tool Activity schema is set.
+- Tool Task system prompt for better results with lower-end models. 
+
 ## [0.27.0] - 2024-06-19
 
 ### Added
