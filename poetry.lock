@@ -3851,7 +3851,7 @@ testing = ["google-api-core[grpc] (>=1.31.5)"]
 name = "protobuf"
 version = "4.25.3"
 description = ""
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "protobuf-4.25.3-cp310-abi3-win32.whl", hash = "sha256:d4198877797a83cbfe9bffa3803602bbe1625dc30d8a097365dbc762e5790faa"},
@@ -6350,7 +6350,7 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "duckduckgo-search", "elevenlabs", "filetype", "google-generativeai", "mail-parser", "markdownify", "marqo", "ollama", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pusher", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "torch", "trafilatura", "transformers", "voyageai"]
+all = ["anthropic", "beautifulsoup4", "boto3", "cohere", "duckduckgo-search", "elevenlabs", "filetype", "google-generativeai", "mail-parser", "markdownify", "marqo", "ollama", "opensearch-py", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "protobuf", "psycopg2-binary", "pusher", "pymongo", "pypdf", "redis", "snowflake-sqlalchemy", "sqlalchemy-redshift", "torch", "trafilatura", "transformers", "voyageai"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-cohere = ["cohere"]
@@ -6366,7 +6366,7 @@ drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-cohere = ["cohere"]
-drivers-prompt-google = ["google-generativeai"]
+drivers-prompt-google = ["google-generativeai", "protobuf"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-huggingface-pipeline = ["huggingface-hub", "torch", "transformers"]
 drivers-prompt-ollama = ["ollama"]
@@ -6392,4 +6392,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "584f05b52935d6e3bbcafc7b4eae7d1b14fe3a28f4e292e37bd307f3202cd4ff"
+content-hash = "ff312765389c5cd6a53b9fe70b91e0337ce857e953966c1c689fe14b2f249415"
