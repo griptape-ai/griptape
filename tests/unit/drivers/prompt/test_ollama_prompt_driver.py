@@ -1,6 +1,7 @@
 from griptape.common.prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
 from griptape.drivers import OllamaPromptDriver
 from griptape.common import PromptStack
+from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 import pytest
 
 
@@ -28,11 +29,17 @@ class TestOllamaPromptDriver:
         prompt_stack = PromptStack()
         prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
+            )
+        )
         prompt_stack.add_assistant_message("assistant-input")
         driver = OllamaPromptDriver(model="llama")
         expected_messages = [
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
+            {"role": "user", "content": "user-input", "images": ["aW1hZ2UtZGF0YQ=="]},
             {"role": "assistant", "content": "assistant-input"},
         ]
 
@@ -64,10 +71,16 @@ class TestOllamaPromptDriver:
         prompt_stack = PromptStack()
         prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
+            )
+        )
         prompt_stack.add_assistant_message("assistant-input")
         expected_messages = [
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
+            {"role": "user", "content": "user-input", "images": ["aW1hZ2UtZGF0YQ=="]},
             {"role": "assistant", "content": "assistant-input"},
         ]
         driver = OllamaPromptDriver(model="llama", stream=True)

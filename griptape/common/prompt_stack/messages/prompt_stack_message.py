@@ -33,9 +33,8 @@ class PromptStackMessage(BasePromptStackMessage):
         return self.to_text_artifact().to_text()
 
     def to_text_artifact(self) -> TextArtifact:
-        artifact = TextArtifact(value="")
-
-        for content in self.content:
-            artifact.value += content.artifact.to_text()
-
-        return artifact
+        return TextArtifact(
+            "".join(
+                [content.artifact.to_text() for content in self.content if isinstance(content, TextPromptStackContent)]
+            )
+        )
