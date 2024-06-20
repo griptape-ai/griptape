@@ -7,7 +7,6 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import (
-    BaseDeltaPromptStackContent,
     DeltaPromptStackMessage,
     PromptStackMessage,
     TextDeltaPromptStackContent,
@@ -48,7 +47,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             usage=PromptStackMessage.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
 
         stream = response.get("stream")
@@ -56,8 +55,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             for event in stream:
                 if "contentBlockDelta" in event:
                     content_block_delta = event["contentBlockDelta"]
-                    yield TextDeltaPromptStackContent(
-                        content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
+                    yield DeltaPromptStackMessage(
+                        content=TextDeltaPromptStackContent(
+                            content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
+                        )
                     )
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
@@ -104,9 +105,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported content type: {type(content)}")
 
     def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_system():
-            return "system"
-        elif input.is_assistant():
+        if input.is_assistant():
             return "assistant"
         else:
             return "user"

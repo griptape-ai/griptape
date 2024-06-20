@@ -9,7 +9,6 @@ from griptape.common import (
     TextPromptStackContent,
     DeltaPromptStackMessage,
     TextDeltaPromptStackContent,
-    BaseDeltaPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -34,13 +33,13 @@ class MockFailingPromptDriver(BasePromptDriver):
                 usage=PromptStackMessage.Usage(input_tokens=100, output_tokens=100),
             )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
             raise Exception("failed attempt")
         else:
             yield DeltaPromptStackMessage(
-                delta_content=TextDeltaPromptStackContent("success"),
+                content=TextDeltaPromptStackContent("success"),
                 usage=DeltaPromptStackMessage.Usage(input_tokens=100, output_tokens=100),
             )

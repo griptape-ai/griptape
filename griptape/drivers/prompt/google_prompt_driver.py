@@ -7,7 +7,6 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import (
-    BaseDeltaPromptStackContent,
     BasePromptStackContent,
     DeltaPromptStackMessage,
     TextDeltaPromptStackContent,
@@ -71,7 +70,7 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -91,12 +90,11 @@ class GooglePromptDriver(BasePromptDriver):
         for chunk in response:
             usage_metadata = chunk.usage_metadata
 
-            yield TextDeltaPromptStackContent(chunk.text)
-
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None:
                 prompt_token_count = usage_metadata.prompt_token_count
                 yield DeltaPromptStackMessage(
+                    content=TextDeltaPromptStackContent(chunk.text),
                     role=PromptStackMessage.ASSISTANT_ROLE,
                     usage=DeltaPromptStackMessage.Usage(
                         input_tokens=usage_metadata.prompt_token_count,
@@ -105,6 +103,7 @@ class GooglePromptDriver(BasePromptDriver):
                 )
             else:
                 yield DeltaPromptStackMessage(
+                    content=TextDeltaPromptStackContent(chunk.text),
                     role=PromptStackMessage.ASSISTANT_ROLE,
                     usage=DeltaPromptStackMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
                 )

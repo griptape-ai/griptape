@@ -10,7 +10,6 @@ from griptape.common import (
     PromptStack,
     PromptStackMessage,
     DeltaPromptStackMessage,
-    BaseDeltaPromptStackContent,
     TextPromptStackContent,
     TextDeltaPromptStackContent,
 )
@@ -36,8 +35,10 @@ class MockPromptDriver(BasePromptDriver):
             usage=PromptStackMessage.Usage(input_tokens=100, output_tokens=100),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
-        yield TextDeltaPromptStackContent(output)
-        yield DeltaPromptStackMessage(usage=DeltaPromptStackMessage.Usage(input_tokens=100, output_tokens=100))
+        yield DeltaPromptStackMessage(
+            content=TextDeltaPromptStackContent(output),
+            usage=DeltaPromptStackMessage.Usage(input_tokens=100, output_tokens=100),
+        )

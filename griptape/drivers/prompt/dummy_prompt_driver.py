@@ -3,7 +3,7 @@ from collections.abc import Iterator
 
 from attrs import Factory, define, field
 
-from griptape.common import PromptStack, PromptStackMessage, DeltaPromptStackMessage, BaseDeltaPromptStackContent
+from griptape.common import PromptStack, PromptStackMessage, DeltaPromptStackMessage
 from griptape.drivers import BasePromptDriver
 from griptape.exceptions import DummyException
 from griptape.tokenizers import DummyTokenizer
@@ -17,5 +17,5 @@ class DummyPromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
         raise DummyException(__class__.__name__, "try_run")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         raise DummyException(__class__.__name__, "try_stream")

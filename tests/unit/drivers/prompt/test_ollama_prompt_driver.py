@@ -37,7 +37,7 @@ class TestOllamaPromptDriver:
         ]
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        message = driver.try_run(prompt_stack)
 
         # Then
         mock_client.return_value.chat.assert_called_once_with(
@@ -45,7 +45,9 @@ class TestOllamaPromptDriver:
             model=driver.model,
             options={"temperature": driver.temperature, "stop": [], "num_predict": driver.max_tokens},
         )
-        assert text_artifact.value == "model-output"
+        assert message.value == "model-output"
+        assert message.usage.input_tokens is None
+        assert message.usage.output_tokens is None
 
     def test_try_run_bad_response(self, mock_client):
         # Given

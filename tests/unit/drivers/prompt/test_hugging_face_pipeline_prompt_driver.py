@@ -22,6 +22,7 @@ class TestHuggingFacePipelinePromptDriver:
         mock_autotokenizer.model_max_length = 42
         mock_autotokenizer.apply_chat_template.return_value = [1, 2, 3]
         mock_autotokenizer.decode.return_value = "model-output"
+        mock_autotokenizer.encode.return_value = [1, 2, 3]
         return mock_autotokenizer
 
     @pytest.fixture
@@ -40,10 +41,12 @@ class TestHuggingFacePipelinePromptDriver:
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        message = driver.try_run(prompt_stack)
 
         # Then
-        assert text_artifact.value == "model-output"
+        assert message.value == "model-output"
+        assert message.usage.input_tokens == 3
+        assert message.usage.output_tokens == 3
 
     def test_try_stream(self, prompt_stack):
         # Given
