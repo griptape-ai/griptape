@@ -5,7 +5,7 @@ from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)
-class BaseStage(ABC):
+class BaseRagStage(ABC):
     futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()))
 
     @abstractmethod

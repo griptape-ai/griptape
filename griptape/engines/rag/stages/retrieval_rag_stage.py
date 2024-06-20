@@ -6,11 +6,11 @@ from griptape import utils
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRerankRagModule
 from griptape.engines.rag.modules import BaseRetrievalRagModule
-from griptape.engines.rag.stages import BaseStage
+from griptape.engines.rag.stages import BaseRagStage
 
 
 @define(kw_only=True)
-class RetrievalStage(BaseStage):
+class RetrievalRagStage(BaseRagStage):
     retrieval_modules: list[BaseRetrievalRagModule] = field()
     rerank_module: Optional[BaseRerankRagModule] = field(default=None)
     max_chunks: Optional[int] = field(default=None)

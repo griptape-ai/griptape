@@ -4,11 +4,11 @@ from attrs import define, field
 from griptape import utils
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseQueryRagModule
-from griptape.engines.rag.stages import BaseStage
+from griptape.engines.rag.stages import BaseRagStage
 
 
 @define(kw_only=True)
-class QueryStage(BaseStage):
+class QueryRagStage(BaseRagStage):
     query_generation_modules: list[BaseQueryRagModule] = field()
 
     def run(self, context: RagContext) -> RagContext:

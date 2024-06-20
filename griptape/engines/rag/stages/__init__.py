@@ -1,6 +1,6 @@
-from .base_stage import BaseStage
-from .retrieval_stage import RetrievalStage
-from .query_stage import QueryStage
-from .generation_stage import GenerationStage
+from .base_rag_stage import BaseRagStage
+from .retrieval_rag_stage import RetrievalRagStage
+from .query_rag_stage import QueryRagStage
+from .generation_rag_stage import GenerationRagStage
 
-__all__ = ["BaseStage", "RetrievalStage", "QueryStage", "GenerationStage"]
+__all__ = ["BaseRagStage", "RetrievalRagStage", "QueryRagStage", "GenerationRagStage"]
