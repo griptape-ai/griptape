@@ -83,6 +83,16 @@ class PromptTask(RuleMixin, BaseTask):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets)
         )
 
+    def before_run(self) -> None:
+        super().before_run()
+
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {self.input.to_text()}")
+
+    def after_run(self) -> None:
+        super().after_run()
+
+        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")
+
     def run(self) -> BaseArtifact:
         self.output = self.prompt_driver.run(self.prompt_stack)
 
