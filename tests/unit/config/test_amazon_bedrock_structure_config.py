@@ -41,13 +41,13 @@ class TestAmazonBedrockStructureConfig:
             },
             "image_query_driver": {
                 "type": "AmazonBedrockImageQueryDriver",
-                "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+                "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
                 "max_tokens": 256,
                 "image_query_model_driver": {"type": "BedrockClaudeImageQueryModelDriver"},
             },
             "prompt_driver": {
                 "max_tokens": None,
-                "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+                "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
                 "stream": False,
                 "temperature": 0.1,
                 "type": "AmazonBedrockPromptDriver",

@@ -33,7 +33,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda self: AmazonBedrockPromptDriver(
-                session=self.session, model="anthropic.claude-3-sonnet-20240229-v1:0"
+                session=self.session, model="anthropic.claude-3-5-sonnet-20240620-v1:0"
             ),
             takes_self=True,
         ),
@@ -64,7 +64,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
         default=Factory(
             lambda self: AmazonBedrockImageQueryDriver(
                 session=self.session,
-                model="anthropic.claude-3-sonnet-20240229-v1:0",
+                model="anthropic.claude-3-5-sonnet-20240620-v1:0",
                 image_query_model_driver=BedrockClaudeImageQueryModelDriver(),
             ),
             takes_self=True,
