@@ -63,6 +63,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description", "const": "test_list_output"},
+                    "input": {"additionalProperties": False, "properties": {}, "required": [], "type": "object"},
                 },
                 "required": ["name", "path"],
                 "additionalProperties": False,
@@ -72,6 +73,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description", "const": "test_no_schema"},
+                    "input": {"additionalProperties": False, "properties": {}, "required": [], "type": "object"},
                 },
                 "required": ["name", "path"],
                 "additionalProperties": False,
