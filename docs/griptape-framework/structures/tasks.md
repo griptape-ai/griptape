@@ -403,7 +403,7 @@ agent.run("Give me information about Griptape")
 
 ## Code Execution Task
 
-To execute an arbitrary Python function, use the [CodeExecutionTask](../../reference/griptape/tasks/text_query_task.md).
+To execute an arbitrary Python function, use the [CodeExecutionTask](../../reference/griptape/tasks/code_execution_task.md).
 This task takes a python function, and authors can elect to return a custom artifact.
 
 ```python 

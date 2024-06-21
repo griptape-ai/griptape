@@ -1,7 +1,7 @@
 ## RAG Engines
 
 !!! note
-    RAG Engine docs are a work in progress.
+    This section is a work in progress.
 
 `RagEngine` is an abstraction for implementing modular RAG pipelines.
 
