@@ -22,6 +22,7 @@ vector_store = MarqoVectorStoreDriver(
 vector_store_tool = VectorStoreClient(
     description="Contains information about the Griptape Framework from www.griptape.ai",
     namespace=namespace,
+    vector_store_driver=vector_store
 )
 
 # Load artifacts from the web
