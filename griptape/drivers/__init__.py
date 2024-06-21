@@ -39,6 +39,7 @@ from .vector.amazon_opensearch_vector_store_driver import AmazonOpenSearchVector
 from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDriver
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
+from .vector.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -142,6 +143,7 @@ __all__ = [
     "AmazonOpenSearchVectorStoreDriver",
     "PgVectorVectorStoreDriver",
     "DummyVectorStoreDriver",
+    "GriptapeCloudKnowledgeBaseVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
