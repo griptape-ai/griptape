@@ -12,7 +12,7 @@ from requests import post
 
 
 @define
-class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
+class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     """A vector store driver for Griptape Cloud Knowledge Bases and Data Connectors.
 
     Attributes:
@@ -78,7 +78,7 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: Optional[bool] = False,
         distance_metric: Optional[str] = "cosine_distance",
-        # GriptapeCloudVectorStoreDriver-specific params:
+        # GriptapeCloudKnowledgeBaseVectorStoreDriver-specific params:
         filter: Optional[dict] = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
