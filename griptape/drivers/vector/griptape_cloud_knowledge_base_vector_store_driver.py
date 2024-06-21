@@ -1,14 +1,14 @@
 from urllib.parse import urljoin
+import requests
 import uuid
 from typing import Optional, Any
 from attrs import Factory, define, field
 from dataclasses import dataclass
-from griptape.drivers import BaseVectorStoreDriver
+from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.utils import import_optional_dependency
 from sqlalchemy import Column, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
-from requests import post
 
 
 @define
@@ -27,6 +27,12 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
+    )
+    embedding_driver: BaseEmbeddingDriver = field(
+        default=Factory(lambda: OpenAiEmbeddingDriver(model="text-embedding-ada-002")),
+        metadata={"serializable": True},
+        kw_only=True,
+        init=False,
     )
 
     def upsert_vector(
@@ -72,7 +78,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
             "filter": filter,
             "include_vectors": include_vectors,
         }
-        return post(url, json=request, headers=self.headers).json()["query_results"]
+        return requests.post(url, json=request, headers=self.headers).json()["entries"]
 
     def default_vector_model(self) -> Any:
         Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
