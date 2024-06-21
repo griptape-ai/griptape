@@ -78,9 +78,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         ]
 
     def _base_params(self, message_stack: MessageStack) -> dict:
-        system_messages = [
-            {"text": message.to_text_artifact().to_text()} for message in message_stack.messages if message.is_system()
-        ]
+        system_messages = [{"text": message.to_text_artifact().to_text()} for message in message_stack.system_messages]
 
         messages = self._message_stack_messages_to_messages(
             [message for message in message_stack.messages if not message.is_system()]

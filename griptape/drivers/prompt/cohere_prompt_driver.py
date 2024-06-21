@@ -80,11 +80,11 @@ class CoherePromptDriver(BasePromptDriver):
             [message for message in message_stack.messages[:-1] if not message.is_system()]
         )
 
-        system_message = next((message for message in message_stack.messages if message.is_system()), None)
-        if system_message is None:
-            preamble = None
+        system_messages = message_stack.system_messages
+        if system_messages:
+            preamble = system_messages[0].to_text_artifact().to_text()
         else:
-            preamble = system_message.to_text_artifact().to_text()
+            preamble = None
 
         return {
             "message": user_message,

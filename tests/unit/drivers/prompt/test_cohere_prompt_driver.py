@@ -32,10 +32,11 @@ class TestCoherePromptDriver:
     def mock_tokenizer(self, mocker):
         return mocker.patch("griptape.tokenizers.CohereTokenizer").return_value
 
-    @pytest.fixture
-    def message_stack(self):
+    @pytest.fixture(params=[True, False])
+    def message_stack(self, request):
         message_stack = MessageStack()
-        message_stack.add_system_message("system-input")
+        if request.param:
+            message_stack.add_system_message("system-input")
         message_stack.add_user_message("user-input")
         message_stack.add_assistant_message("assistant-input")
         message_stack.add_user_message("user-input")
@@ -45,7 +46,7 @@ class TestCoherePromptDriver:
     def test_init(self):
         assert CoherePromptDriver(model="command", api_key="foobar")
 
-    def test_try_run(self, mock_client, message_stack):  # pyright: ignore
+    def test_try_run(self, mock_client, message_stack):
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key")
 
@@ -61,7 +62,7 @@ class TestCoherePromptDriver:
             ],
             max_tokens=None,
             message="assistant-input",
-            preamble="system-input",
+            **({"preamble": "system-input"} if message_stack.system_messages else {}),
             stop_sequences=[],
             temperature=0.1,
         )
@@ -88,7 +89,7 @@ class TestCoherePromptDriver:
             ],
             max_tokens=None,
             message="assistant-input",
-            preamble="system-input",
+            **({"preamble": "system-input"} if message_stack.system_messages else {}),
             stop_sequences=[],
             temperature=0.1,
         )

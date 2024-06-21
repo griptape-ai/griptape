@@ -76,9 +76,9 @@ class AnthropicPromptDriver(BasePromptDriver):
             [message for message in message_stack.messages if not message.is_system()]
         )
 
-        system_message = next((message for message in message_stack.messages if message.is_system()), None)
-        if system_message:
-            system_message = system_message.to_text_artifact().to_text()
+        system_messages = message_stack.system_messages
+        if system_messages:
+            system_message = system_messages[0].to_text_artifact().to_text()
         else:
             system_message = None
 

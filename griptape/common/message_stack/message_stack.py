@@ -10,6 +10,18 @@ from griptape.common import Message, TextMessageContent, BaseMessageContent, Ima
 class MessageStack(SerializableMixin):
     messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
 
+    @property
+    def system_messages(self) -> list[Message]:
+        return [message for message in self.messages if message.is_system()]
+
+    @property
+    def user_messages(self) -> list[Message]:
+        return [message for message in self.messages if message.is_user()]
+
+    @property
+    def assistant_messages(self) -> list[Message]:
+        return [message for message in self.messages if message.is_assistant()]
+
     def add_message(self, artifact: str | BaseArtifact, role: str) -> Message:
         new_content = self.__process_artifact(artifact)
 

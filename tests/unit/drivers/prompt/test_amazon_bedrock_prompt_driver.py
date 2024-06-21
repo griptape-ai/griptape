@@ -30,10 +30,11 @@ class TestAmazonBedrockPromptDriver:
 
         return mock_converse_stream
 
-    @pytest.fixture
-    def message_stack(self):
+    @pytest.fixture(params=[True, False])
+    def message_stack(self, request):
         message_stack = MessageStack()
-        message_stack.add_system_message("system-input")
+        if request.param:
+            message_stack.add_system_message("system-input")
         message_stack.add_user_message("user-input")
         message_stack.add_user_message(TextArtifact("user-input"))
         message_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
@@ -61,7 +62,7 @@ class TestAmazonBedrockPromptDriver:
         mock_converse.assert_called_once_with(
             modelId=driver.model,
             messages=messages,
-            system=[{"text": "system-input"}],
+            **({"system": [{"text": "system-input"}]} if message_stack.system_messages else {"system": []}),
             inferenceConfig={"temperature": driver.temperature},
             additionalModelRequestFields={},
         )
@@ -81,7 +82,7 @@ class TestAmazonBedrockPromptDriver:
         mock_converse_stream.assert_called_once_with(
             modelId=driver.model,
             messages=messages,
-            system=[{"text": "system-input"}],
+            **({"system": [{"text": "system-input"}]} if message_stack.system_messages else {"system": []}),
             inferenceConfig={"temperature": driver.temperature},
             additionalModelRequestFields={},
         )
