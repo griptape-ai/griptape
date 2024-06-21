@@ -1,0 +1,5 @@
+version: "v1"
+name: RAG Client
+description: Tool for querying RAG engines
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal
