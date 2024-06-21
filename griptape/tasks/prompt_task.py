@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Optional
-from collections.abc import Sequence
 
 from attrs import Factory, define, field
 
@@ -30,13 +29,7 @@ class PromptTask(RuleMixin, BaseTask):
 
     @property
     def input(self) -> BaseArtifact:
-        if isinstance(self._input, list) or isinstance(self._input, tuple):
-            artifacts = [self._process_task_input(input) for input in self._input]
-            flattened_artifacts = self.__flatten_artifacts(artifacts)
-
-            return ListArtifact(flattened_artifacts)
-        else:
-            return self._process_task_input(self._input)
+        return self._process_task_input(self._input)
 
     @input.setter
     def input(self, value: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> None:
@@ -98,7 +91,9 @@ class PromptTask(RuleMixin, BaseTask):
 
         return self.output
 
-    def _process_task_input(self, task_input: str | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> BaseArtifact:
+    def _process_task_input(
+        self, task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
+    ) -> BaseArtifact:
         if isinstance(task_input, TextArtifact):
             task_input.value = J2().render_from_string(task_input.value, **self.full_context)
 
@@ -109,16 +104,7 @@ class PromptTask(RuleMixin, BaseTask):
             return self._process_task_input(TextArtifact(task_input))
         elif isinstance(task_input, BaseArtifact):
             return task_input
+        elif isinstance(task_input, list) or isinstance(task_input, tuple):
+            return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             raise ValueError(f"Invalid input type: {type(task_input)} ")
-
-    def __flatten_artifacts(self, artifacts: Sequence[BaseArtifact]) -> Sequence[BaseArtifact]:
-        result = []
-
-        for elem in artifacts:
-            if isinstance(elem, ListArtifact):
-                result.extend(self.__flatten_artifacts(elem.value))
-            else:
-                result.append(elem)
-
-        return result
