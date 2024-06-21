@@ -74,15 +74,17 @@ class AnthropicPromptDriver(BasePromptDriver):
                     usage=DeltaPromptStackMessage.Usage(output_tokens=event.usage.output_tokens)
                 )
 
-    def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
-        return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in elements]
+    def _prompt_stack_messages_to_messages(self, messages: list[PromptStackMessage]) -> list[dict]:
+        return [{"role": self.__to_role(message), "content": self.__to_content(message)} for message in messages]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        messages = self._prompt_stack_messages_to_messages([i for i in prompt_stack.messages if not i.is_system()])
+        messages = self._prompt_stack_messages_to_messages(
+            [message for message in prompt_stack.messages if not message.is_system()]
+        )
 
-        system_element = next((i for i in prompt_stack.messages if i.is_system()), None)
-        if system_element:
-            system_message = system_element.to_text_artifact().to_text()
+        system_message = next((message for message in prompt_stack.messages if message.is_system()), None)
+        if system_message:
+            system_message = system_message.to_text_artifact().to_text()
         else:
             system_message = None
 
@@ -97,17 +99,17 @@ class AnthropicPromptDriver(BasePromptDriver):
             **({"system": system_message} if system_message else {}),
         }
 
-    def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_assistant():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_assistant():
             return "assistant"
         else:
             return "user"
 
-    def __to_content(self, input: PromptStackMessage) -> str | list[dict]:
-        if all(isinstance(content, TextPromptStackContent) for content in input.content):
-            return input.to_text_artifact().to_text()
+    def __to_content(self, message: PromptStackMessage) -> str | list[dict]:
+        if all(isinstance(content, TextPromptStackContent) for content in message.content):
+            return message.to_text_artifact().to_text()
         else:
-            return [self.__prompt_stack_content_message_content(content) for content in input.content]
+            return [self.__prompt_stack_content_message_content(content) for content in message.content]
 
     def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):

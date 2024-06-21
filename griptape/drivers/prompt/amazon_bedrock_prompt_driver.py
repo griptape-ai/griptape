@@ -70,22 +70,22 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, messages: list[PromptStackMessage]) -> list[dict]:
         return [
             {
-                "role": self.__to_role(input),
-                "content": [self.__prompt_stack_content_message_content(content) for content in input.content],
+                "role": self.__to_role(message),
+                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
             }
-            for input in elements
+            for message in messages
         ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [
-            {"text": input.to_text_artifact().to_text()} for input in prompt_stack.messages if input.is_system()
+            {"text": message.to_text_artifact().to_text()} for message in prompt_stack.messages if message.is_system()
         ]
 
         messages = self._prompt_stack_messages_to_messages(
-            [input for input in prompt_stack.messages if not input.is_system()]
+            [message for message in prompt_stack.messages if not message.is_system()]
         )
 
         return {
@@ -104,8 +104,8 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_assistant():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_assistant():
             return "assistant"
         else:
             return "user"

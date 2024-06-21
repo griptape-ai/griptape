@@ -111,7 +111,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     raise Exception("Completion with more than one choice is not supported yet.")
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
-        return [{"role": self.__to_role(input), "content": self.__to_content(input)} for input in prompt_stack.messages]
+        return [
+            {"role": self.__to_role(message), "content": self.__to_content(message)}
+            for message in prompt_stack.messages
+        ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -125,7 +128,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if self.response_format == "json_object":
             params["response_format"] = {"type": "json_object"}
-            # JSON mode still requires a system input instructing the LLM to output JSON.
+            # JSON mode still requires a system message instructing the LLM to output JSON.
             prompt_stack.add_system_message("Provide your response as a valid JSON object.")
 
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -134,19 +137,19 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return params
 
-    def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_system():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_system():
             return "system"
-        elif input.is_assistant():
+        elif message.is_assistant():
             return "assistant"
         else:
             return "user"
 
-    def __to_content(self, input: PromptStackMessage) -> str | list[dict]:
-        if all(isinstance(content, TextPromptStackContent) for content in input.content):
-            return input.to_text_artifact().to_text()
+    def __to_content(self, message: PromptStackMessage) -> str | list[dict]:
+        if all(isinstance(content, TextPromptStackContent) for content in message.content):
+            return message.to_text_artifact().to_text()
         else:
-            return [self.__prompt_stack_content_message_content(content) for content in input.content]
+            return [self.__prompt_stack_content_message_content(content) for content in message.content]
 
     def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
         if isinstance(content, TextPromptStackContent):

@@ -112,7 +112,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        element = driver.try_run(prompt_stack)
+        message = driver.try_run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -123,9 +123,9 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             seed=driver.seed,
             response_format={"type": "json_object"},
         )
-        assert element.value == "model-output"
-        assert element.usage.input_tokens == 5
-        assert element.usage.output_tokens == 10
+        assert message.value == "model-output"
+        assert message.usage.input_tokens == 5
+        assert message.usage.output_tokens == 10
 
     def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
         # Given

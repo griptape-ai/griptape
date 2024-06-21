@@ -65,13 +65,13 @@ class CoherePromptDriver(BasePromptDriver):
                     )
                 )
 
-    def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, messages: list[PromptStackMessage]) -> list[dict]:
         return [
             {
-                "role": self.__to_role(input),
-                "content": [self.__prompt_stack_content_message_content(content) for content in input.content],
+                "role": self.__to_role(message),
+                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
             }
-            for input in elements
+            for message in messages
         ]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
@@ -79,18 +79,18 @@ class CoherePromptDriver(BasePromptDriver):
         if last_input is not None and len(last_input.content) == 1:
             user_message = last_input.content[0].artifact.to_text()
         else:
-            raise ValueError("User element must have exactly one content.")
+            raise ValueError("User message must have exactly one content.")
 
         history_messages = self._prompt_stack_messages_to_messages(
-            [input for input in prompt_stack.messages[:-1] if not input.is_system()]
+            [message for message in prompt_stack.messages[:-1] if not message.is_system()]
         )
 
-        system_element = next((input for input in prompt_stack.messages if input.is_system()), None)
-        if system_element is not None:
-            if len(system_element.content) == 1:
-                preamble = system_element.content[0].artifact.to_text()
+        system_message = next((message for message in prompt_stack.messages if message.is_system()), None)
+        if system_message is not None:
+            if len(system_message.content) == 1:
+                preamble = system_message.content[0].artifact.to_text()
             else:
-                raise ValueError("System element must have exactly one content.")
+                raise ValueError("System message must have exactly one content.")
         else:
             preamble = None
 
@@ -109,10 +109,10 @@ class CoherePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __to_role(self, input: PromptStackMessage) -> str:
-        if input.is_system():
+    def __to_role(self, message: PromptStackMessage) -> str:
+        if message.is_system():
             return "SYSTEM"
-        elif input.is_user():
+        elif message.is_user():
             return "USER"
         else:
             return "CHATBOT"
