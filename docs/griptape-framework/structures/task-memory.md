@@ -204,16 +204,19 @@ from griptape.config import (
     OpenAiStructureConfig,
 )
 from griptape.drivers import (
-    AmazonBedrockPromptDriver,
-    AmazonBedrockTitanEmbeddingDriver,
     LocalVectorStoreDriver,
-    OpenAiChatPromptDriver,
+    OpenAiChatPromptDriver, OpenAiEmbeddingDriver,
 )
-from griptape.engines import VectorQueryEngine
+from griptape.engines.rag import RagEngine
+from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
+from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
 from griptape.tools import FileManager, TaskMemoryClient, WebScraper
+
+
+vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
 agent = Agent(
     config=OpenAiStructureConfig(
@@ -222,22 +225,30 @@ agent = Agent(
     task_memory=TaskMemory(
         artifact_storages={
             TextArtifact: TextArtifactStorage(
-                rag_engine=VectorQueryEngine(
-                    prompt_driver=AmazonBedrockPromptDriver(
-                        model="amazon.titan-text-express-v1",
+                rag_engine=RagEngine(
+                    retrieval_stage=RetrievalRagStage(
+                        retrieval_modules=[
+                            TextRetrievalRagModule(
+                                namespace="griptape",
+                                vector_store_driver=vector_store_driver,
+                                top_n=20
+                            )
+                        ]
                     ),
-                    vector_store_driver=LocalVectorStoreDriver(
-                        embedding_driver=AmazonBedrockTitanEmbeddingDriver()
-                    ),
+                    generation_stage=GenerationRagStage(
+                        generation_module=PromptGenerationRagModule(
+                            prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
+                        )
+                    )
                 ),
-            ),
+                vector_store_driver=vector_store_driver
+            )
         }
     ),
     tools=[
         WebScraper(off_prompt=True),
         TaskMemoryClient(off_prompt=True, allowlist=["query"]),
         FileManager(off_prompt=True),
-        # FileManager returns an InfoArtifact which will not be stored in Task Memory regardless of the off_prompt setting
     ],
 )
 
@@ -247,27 +258,61 @@ agent.run(
 ```
 
 ```
-[04/30/24 16:36:45] INFO     ToolkitTask 3d3c5f5a98a44f32ad9533621c036604
-                             Input: According to this page https://en.wikipedia.org/wiki/Elden_Ring, find how many copies of Elden Ring have been sold and then save the
-                             result to a file.
-[04/30/24 16:36:52] INFO     Subtask 61ec822bfe49472c9ed874fad07d13a1
-                             Thought: First, I need to scrape the content of the provided URL. Then, I will search the scraped content for the number of copies of Elden Ring that have been sold. Finally, I will save this information to a file.
-
-                             Actions: [{"name": "WebScraper", "path": "get_content", "input": {"values": {"url": "https://en.wikipedia.org/wiki/Elden_Ring"}}, "tag": "scrape_elden_ring"}]
-[04/30/24 16:37:04] INFO     Subtask 61ec822bfe49472c9ed874fad07d13a1
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace "c7a01e8202e24869b7be559e0daff110"
-[04/30/24 16:37:10] INFO     Subtask 32f9cb73d8944e5ca36bd68a90e4f4b2
-                             Thought: Now that the webpage content is stored in memory, I need to query this memory to find the number of copies of Elden Ring that have been sold.
-                             Actions: [{"tag": "query_sales", "name": "TaskMemoryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "c7a01e8202e24869b7be559e0daff110", "query": "How many copies of Elden Ring have been sold?"}}}]
-[04/30/24 16:37:18] INFO     Subtask 32f9cb73d8944e5ca36bd68a90e4f4b2
-                             Response: Output of "TaskMemoryClient.query" was stored in memory with memory_name "TaskMemory" and artifact_namespace "f8dd40fb302a47d7862c8b76eeaf61c2"
-[04/30/24 16:37:25] INFO     Subtask 74a5fd392b044956842a56b76d09183e
-                             Thought: Now that I have the number of copies sold stored in memory, I need to save this information to a file.
-                             Actions: [{"tag": "save_sales", "name": "FileManager", "path": "save_memory_artifacts_to_disk", "input": {"values": {"dir_name": "sales_data", "file_name": "elden_ring_sales.txt", "memory_name": "TaskMemory", "artifact_namespace": "f8dd40fb302a47d7862c8b76eeaf61c2"}}}]
-                    INFO     Subtask 74a5fd392b044956842a56b76d09183e
-                             Response: Successfully saved memory artifacts to disk
-[04/30/24 16:37:27] INFO     ToolkitTask 3d3c5f5a98a44f32ad9533621c036604
-                             Output: The number of copies of Elden Ring sold has been successfully saved to the file "elden_ring_sales.txt" in the "sales_data" directory.
+[06/21/24 16:00:01] INFO     ToolkitTask 17f30ac14701490c8ef71508f420ea9f       
+                             Input: Use this page                               
+                             https://en.wikipedia.org/wiki/Elden_Ring to find   
+                             how many copies of Elden Ring have been sold, and  
+                             then save the result to a file.                    
+[06/21/24 16:00:05] INFO     Subtask cb06889205334ec9afd7e97f7f231ab5           
+                             Thought: First, I need to scrape the content of the
+                             provided URL to find the information about how many
+                             copies of Elden Ring have been sold. Then, I will  
+                             save this information to a file.                   
+                                                                                
+                             Actions: [{"name": "WebScraper", "path":           
+                             "get_content", "input": {"values": {"url":         
+                             "https://en.wikipedia.org/wiki/Elden_Ring"}},      
+                             "tag": "scrape_elden_ring"}]                       
+[06/21/24 16:00:12] INFO     Subtask cb06889205334ec9afd7e97f7f231ab5           
+                             Response: Output of "WebScraper.get_content" was   
+                             stored in memory with memory_name "TaskMemory" and 
+                             artifact_namespace                                 
+                             "7e48bcff0da94ad3b06aa4e173f8f37b"                 
+[06/21/24 16:00:17] INFO     Subtask 56102d42475d413299ce52a0230506b7           
+                             Thought: Now that the webpage content is stored in 
+                             memory, I need to query this memory to find the    
+                             information about how many copies of Elden Ring    
+                             have been sold.                                    
+                             Actions: [{"tag": "query_sales", "name":           
+                             "TaskMemoryClient", "path": "query", "input":      
+                             {"values": {"memory_name": "TaskMemory",           
+                             "artifact_namespace":                              
+                             "7e48bcff0da94ad3b06aa4e173f8f37b", "query": "How  
+                             many copies of Elden Ring have been sold?"}}}]     
+[06/21/24 16:00:19] INFO     Subtask 56102d42475d413299ce52a0230506b7           
+                             Response: Output of "TaskMemoryClient.query" was   
+                             stored in memory with memory_name "TaskMemory" and 
+                             artifact_namespace                                 
+                             "9ecf4d7b7d0c46149dfc46ba236f178e"                 
+[06/21/24 16:00:25] INFO     Subtask ed2921791dcf46b68c9d8d2f8dbeddbd           
+                             Thought: Now that I have the sales information     
+                             stored in memory, I need to save this information  
+                             to a file.                                         
+                             Actions: [{"tag": "save_sales_info", "name":       
+                             "FileManager", "path":                             
+                             "save_memory_artifacts_to_disk", "input":          
+                             {"values": {"dir_name": "sales_info", "file_name": 
+                             "elden_ring_sales.txt", "memory_name":             
+                             "TaskMemory", "artifact_namespace":                
+                             "9ecf4d7b7d0c46149dfc46ba236f178e"}}}]             
+                    INFO     Subtask ed2921791dcf46b68c9d8d2f8dbeddbd           
+                             Response: Successfully saved memory artifacts to   
+                             disk                                               
+[06/21/24 16:00:27] INFO     ToolkitTask 17f30ac14701490c8ef71508f420ea9f       
+                             Output: The information about how many copies of   
+                             Elden Ring have been sold has been successfully    
+                             saved to the file "elden_ring_sales.txt" in the    
+                             "sales_info" directory.
 ```
 
 ## Tools That Can Read From Task Memory

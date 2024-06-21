@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
 - **BREAKING**: Removed `VectorQueryEngine` in favor of `RagEngine`.
-- **BREAKING**: Removed `TaskQueryTask` in favor of `RagTask`.
+- **BREAKING**: Removed `TextQueryTask` in favor of `RagTask`.
 - **BREAKING**: `TextArtifactStorage` now requires `vector_store_driver` and `rag_engine` in place of `vector_query_engine`.
 - **BREAKING**: Moved `load_artifacts()` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
 - **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
