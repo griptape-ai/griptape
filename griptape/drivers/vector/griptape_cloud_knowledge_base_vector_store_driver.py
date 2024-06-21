@@ -4,7 +4,7 @@ import uuid
 from typing import Optional, Any
 from attrs import Factory, define, field
 from dataclasses import dataclass
-from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
 from griptape.utils import import_optional_dependency
 from sqlalchemy import Column, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
@@ -29,10 +29,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
     embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: OpenAiEmbeddingDriver(model="text-embedding-ada-002")),
-        metadata={"serializable": True},
-        kw_only=True,
-        init=False,
+        default=Factory(lambda: DummyEmbeddingDriver()), metadata={"serializable": True}, kw_only=True, init=False
     )
 
     def upsert_vector(
