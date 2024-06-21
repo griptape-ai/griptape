@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RagTask` task for including `RagEngines` in any structure.
 - Rerank drivers:
   - `CohereRerankDriver` for using the Cohere rerank API.
-- `utils.execute_futures_list` for executing a list of futures.
+- `utils.execute_futures_list()` for executing a list of futures.
 - `LocalVectorStoreDriver.persist_file` for persisting vectors and chunks in a text file.
 - `Entry.to_artifact()` for easy vector store entry conversions into Griptape artifacts.
 - `BaseVectorStoreDriver.does_entry_exist()` to check if an entry exists in the vector store.
@@ -37,11 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameter `session` on `AmazonBedrockStructureConfig`.
 
 ### Changed
-- `BaseVectorStoreDriver.upsert_text_artifact` and `BaseVectorStoreDriver.upsert_text` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
 - **BREAKING**: Removed `VectorQueryEngine` in favor of `RagEngine`.
 - **BREAKING**: Removed `TaskQueryTask` in favor of `RagTask`.
 - **BREAKING**: `TextArtifactStorage` now requires `vector_store_driver` and `rag_engine` in place of `vector_query_engine`.
-- **BREAKING**: Moved `load_artifacts` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
+- **BREAKING**: Moved `load_artifacts()` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
 - **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
 - **BREAKING**: Replaced `query_engine` with `vector_store_driver` in `VectorStoreClient`.
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
