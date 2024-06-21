@@ -14,7 +14,7 @@ agent = Agent(
     config=StructureConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.3),
     ),
-    input_template="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
+    input="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
     rules=[
         Rule(
             value="Output only the sentiment."
@@ -80,7 +80,7 @@ agent = Agent(
             seed=42,
         )
     ),
-    input_template="You will be provided with a description of a mood, and your task is to generate the CSS code for a color that matches it. Description: {{ args[0] }}",
+    input="You will be provided with a description of a mood, and your task is to generate the CSS code for a color that matches it. Description: {{ args[0] }}",
     rules=[
         Rule(
             value='Write your output in json with a single key called "css_code".'
