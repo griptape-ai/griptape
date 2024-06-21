@@ -1,3 +1,4 @@
+import boto3
 from pytest import fixture
 from griptape.config import AmazonBedrockStructureConfig
 from tests.utils.aws import mock_aws_credentials
@@ -16,7 +17,9 @@ class TestAmazonBedrockStructureConfig:
     @fixture
     def config_with_values(self):
         return AmazonBedrockStructureConfig(
-            region="testing", access_key_id="access_key_id", secret_access_key="secret_access_key"
+            session=boto3.Session(
+                aws_access_key_id="testing", aws_secret_access_key="testing", region_name="region-value"
+            )
         )
 
     def test_to_dict(self, config):
@@ -56,7 +59,6 @@ class TestAmazonBedrockStructureConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "region": "testing",
             "type": "AmazonBedrockStructureConfig",
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
@@ -108,8 +110,8 @@ class TestAmazonBedrockStructureConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "region": "testing",
             "type": "AmazonBedrockStructureConfig",
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
+        assert config_with_values.session.region_name == "region-value"
