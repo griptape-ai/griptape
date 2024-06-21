@@ -29,7 +29,7 @@ class PromptGenerationRagModule(BaseGenerationRagModule):
                 text_chunks.append(artifact.value)
 
                 system_prompt = self.generate_system_template(text_chunks, before_query, after_query)
-                message_token_count = self.prompt_driver.tokenizer.count_input_tokens_left(
+                message_token_count = self.prompt_driver.tokenizer.count_tokens(
                     self.prompt_driver.prompt_stack_to_string(self.generate_query_prompt_stack(system_prompt, query))
                 )
 
