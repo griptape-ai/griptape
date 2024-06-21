@@ -79,16 +79,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
             request["include_vectors"] = include_vectors
 
         results = requests.post(url, json=request, headers=self.headers).json()
-        return [
-            BaseVectorStoreDriver.QueryResult(
-                id=result[0].id,
-                vector=result[0].vector,
-                score=result[0].score,
-                meta=result[0].meta,
-                namespace=result[0].namespace,
-            )
-            for result in results
-        ]
+        return [BaseVectorStoreDriver.QueryResult(**result) for result in results]
 
     def default_vector_model(self) -> Any:
         Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
