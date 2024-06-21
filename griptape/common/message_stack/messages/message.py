@@ -4,7 +4,7 @@ from typing import Any
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import BaseMessageContent, TextMessageContent
 
 from .base_message import BaseMessage
@@ -21,18 +21,18 @@ class Message(BaseMessage):
 
     @property
     def value(self) -> Any:
-        if len(self.content) == 1:
-            return self.content[0].artifact.value
-        else:
-            return [content.artifact for content in self.content]
+        return self.to_artifact().value
 
     def __str__(self) -> str:
         return self.to_text()
 
     def to_text(self) -> str:
-        return self.to_text_artifact().to_text()
-
-    def to_text_artifact(self) -> TextArtifact:
-        return TextArtifact(
-            "".join([content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)])
+        return "".join(
+            [content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)]
         )
+
+    def to_artifact(self) -> BaseArtifact:
+        if len(self.content) == 1:
+            return self.content[0].artifact
+        else:
+            return ListArtifact([content.artifact for content in self.content])

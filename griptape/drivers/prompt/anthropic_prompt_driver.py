@@ -78,7 +78,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         system_messages = message_stack.system_messages
         if system_messages:
-            system_message = system_messages[0].to_text_artifact().to_text()
+            system_message = system_messages[0].to_text()
         else:
             system_message = None
 
@@ -101,7 +101,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def __to_content(self, message: Message) -> str | list[dict]:
         if all(isinstance(content, TextMessageContent) for content in message.content):
-            return message.to_text_artifact().to_text()
+            return message.to_text()
         else:
             return [self.__message_stack_content_message_content(content) for content in message.content]
 

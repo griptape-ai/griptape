@@ -87,9 +87,9 @@ class PromptTask(RuleMixin, BaseTask):
         self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")
 
     def run(self) -> BaseArtifact:
-        self.output = self.prompt_driver.run(self.message_stack)
+        message = self.prompt_driver.run(self.message_stack)
 
-        return self.output
+        return message.to_artifact()
 
     def _process_task_input(
         self, task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]

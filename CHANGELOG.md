@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BasePromptEvent.token_count` in favor of `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
 - **BREAKING**: Removed `StartPromptEvent.prompt`. Use `StartPromptEvent.message_stack` instead.
 - **BREAKING**: Removed `Agent.input_template` in favor of `Agent.input`.
+- **BREAKING**: `BasePromptDriver.run` now returns a `Message` instead of a `TextArtifact`. For compatibility, `Message.value` contains the Message's Artifact value
 - Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
 
 

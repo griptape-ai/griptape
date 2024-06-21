@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import (
     BaseDeltaMessageContent,
     DeltaMessage,
@@ -63,7 +62,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 )
             )
 
-    def run(self, message_stack: MessageStack) -> TextArtifact:
+    def run(self, message_stack: MessageStack) -> Message:
         for attempt in self.retrying():
             with attempt:
                 self.before_run(message_stack)
@@ -75,7 +74,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                 self.after_run(result)
 
-                return result.to_text_artifact()
+                return result
         else:
             raise Exception("prompt driver failed after all retry attempts")
 
@@ -92,7 +91,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         prompt_lines = []
 
         for i in message_stack.messages:
-            content = i.to_text_artifact().to_text()
+            content = i.to_text()
             if i.is_user():
                 prompt_lines.append(f"User: {content}")
             elif i.is_assistant():

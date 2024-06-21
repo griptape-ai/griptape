@@ -1,3 +1,4 @@
+from griptape.common.message_stack.messages.message import Message
 from griptape.events import FinishPromptEvent, StartPromptEvent
 from griptape.common import MessageStack
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -37,12 +38,12 @@ class TestBasePromptDriver:
         assert instance_count(events, FinishPromptEvent) == 1
 
     def test_run(self):
-        assert isinstance(MockPromptDriver().run(MessageStack(messages=[])), TextArtifact)
+        assert isinstance(MockPromptDriver().run(MessageStack(messages=[])), Message)
 
     def test_run_with_stream(self):
         pipeline = Pipeline()
         result = MockPromptDriver(stream=True, structure=pipeline).run(MessageStack(messages=[]))
-        assert isinstance(result, TextArtifact)
+        assert isinstance(result, Message)
         assert result.value == "mock output"
 
 

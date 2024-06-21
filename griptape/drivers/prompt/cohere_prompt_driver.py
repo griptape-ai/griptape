@@ -74,7 +74,7 @@ class CoherePromptDriver(BasePromptDriver):
 
     def _base_params(self, message_stack: MessageStack) -> dict:
         last_input = message_stack.messages[-1]
-        user_message = last_input.to_text_artifact().to_text()
+        user_message = last_input.to_text()
 
         history_messages = self._message_stack_messages_to_messages(
             [message for message in message_stack.messages[:-1] if not message.is_system()]
@@ -82,7 +82,7 @@ class CoherePromptDriver(BasePromptDriver):
 
         system_messages = message_stack.system_messages
         if system_messages:
-            preamble = system_messages[0].to_text_artifact().to_text()
+            preamble = system_messages[0].to_text()
         else:
             preamble = None
 

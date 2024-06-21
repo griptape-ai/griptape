@@ -79,7 +79,7 @@ class VectorQueryEngine(BaseQueryEngine):
                     Message(user_message, role=Message.USER_ROLE),
                 ]
             )
-        )
+        ).to_artifact()
 
         if isinstance(result, TextArtifact):
             return result

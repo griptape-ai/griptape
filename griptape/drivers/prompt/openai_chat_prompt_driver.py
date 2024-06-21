@@ -147,7 +147,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     def __to_content(self, message: Message) -> str | list[dict]:
         if all(isinstance(content, TextMessageContent) for content in message.content):
-            return message.to_text_artifact().to_text()
+            return message.to_text()
         else:
             return [self.__message_stack_content_message_content(content) for content in message.content]
 
