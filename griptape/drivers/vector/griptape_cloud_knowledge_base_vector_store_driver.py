@@ -1,4 +1,5 @@
 from urllib.parse import urljoin
+import json
 import requests
 import uuid
 from typing import Optional, Any
@@ -79,7 +80,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
             request["include_vectors"] = include_vectors
 
         results = requests.post(url, json=request, headers=self.headers).json()
-        return [BaseVectorStoreDriver.QueryResult(**result) for result in results]
+        return [BaseVectorStoreDriver.QueryResult(**json.loads(result)) for result in results]
 
     def default_vector_model(self) -> Any:
         Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
