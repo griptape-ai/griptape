@@ -48,11 +48,16 @@ agent = Agent(
 The [Amazon Bedrock Structure Config](../../reference/griptape/config/amazon_bedrock_structure_config.md) provides default Drivers for Amazon Bedrock's APIs.
 
 ```python
+import os
 from griptape.structures import Agent
 from griptape.config import AmazonBedrockStructureConfig
 
 agent = Agent(
-    config=AmazonBedrockStructureConfig()
+    config=AmazonBedrockStructureConfig(
+        region=os.environ["AWS_DEFAULT_REGION"]
+        access_key_id=os.environ["AWS_ACCESS_KEY_ID"]
+        secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"]
+    )
 )
 ```
 
