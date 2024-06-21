@@ -80,6 +80,8 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
             request["include_vectors"] = include_vectors
 
         results = requests.post(url, json=request, headers=self.headers).json()
+        print(results[0])
+        print(type(results[0]))
         return [BaseVectorStoreDriver.QueryResult(**json.loads(result)) for result in results]
 
     def default_vector_model(self) -> Any:
