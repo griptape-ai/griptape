@@ -74,10 +74,7 @@ class CoherePromptDriver(BasePromptDriver):
 
     def _base_params(self, message_stack: MessageStack) -> dict:
         last_input = message_stack.messages[-1]
-        if last_input is not None and len(last_input.content) == 1:
-            user_message = last_input.content[0].artifact.to_text()
-        else:
-            raise ValueError("User message must have exactly one content.")
+        user_message = last_input.to_text_artifact().to_text()
 
         history_messages = self._message_stack_messages_to_messages(
             [message for message in message_stack.messages[:-1] if not message.is_system()]
