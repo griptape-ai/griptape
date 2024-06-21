@@ -9,8 +9,8 @@ from griptape.drivers import BaseWebScraperDriver
 
 @define
 class ProxyWebScraperDriver(BaseWebScraperDriver):
-    proxies: dict = field(default=Factory(dict), metadata={"serializable": False})
-    params: dict = field(default=Factory(dict), metadata={"serializable": True})
+    proxies: dict = field(kw_only=True, metadata={"serializable": False})
+    params: dict = field(default=Factory(dict), kw_only=True, metadata={"serializable": True})
 
     def scrape_url(self, url: str) -> TextArtifact:
         response = requests.get(url, proxies=self.proxies, **self.params)
