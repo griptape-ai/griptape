@@ -57,8 +57,8 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         query: str,
         count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
-        include_vectors: Optional[bool] = False,
-        distance_metric: Optional[str] = "cosine_distance",
+        include_vectors: Optional[bool] = None,
+        distance_metric: Optional[str] = None,
         # GriptapeCloudKnowledgeBaseVectorStoreDriver-specific params:
         filter: Optional[dict] = None,
         **kwargs,
@@ -68,13 +68,16 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         """
         url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
 
-        request = {
-            "query": query,
-            "count": count,
-            "distance_metric": distance_metric,
-            "filter": filter,
-            "include_vectors": include_vectors,
-        }
+        request: dict[str, Any] = {"query": query}
+        if count is not None:
+            request["count"] = count
+        if distance_metric is not None:
+            request["distance_metric"] = distance_metric
+        if filter is not None:
+            request["filter"] = filter
+        if include_vectors is not None:
+            request["include_vectors"] = include_vectors
+
         return requests.post(url, json=request, headers=self.headers).json()
 
     def default_vector_model(self) -> Any:
