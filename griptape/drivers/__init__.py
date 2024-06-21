@@ -73,6 +73,7 @@ from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQue
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
 from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
+from .web_scraper.proxy_web_scraper_driver import ProxyWebScraperDriver
 
 from .web_search.base_web_search_driver import BaseWebSearchDriver
 from .web_search.google_web_search_driver import GoogleWebSearchDriver
@@ -167,6 +168,7 @@ __all__ = [
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",
+    "ProxyWebScraperDriver",
     "BaseWebSearchDriver",
     "GoogleWebSearchDriver",
     "DuckDuckGoWebSearchDriver",
