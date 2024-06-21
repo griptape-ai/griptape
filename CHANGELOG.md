@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GoogleWebSearchDriver` to web search with the Google Customsearch API.
 - `DuckDuckGoWebSearchDriver` to web search with the DuckDuckGo search SDK.
 - `ProxyWebScraperDriver` to web scrape using proxies.
+- Parameter `session` on `AmazonBedrockStructureConfig`.
 
 ### Changed
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
@@ -95,7 +96,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
 - `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
-- Parameters `region`, `access_key_id`, `secret_access_key`, and `session` on `AmazonBedrockStructureConfig`.
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
