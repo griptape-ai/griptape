@@ -67,7 +67,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         **kwargs,
     ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a search on the Knowledge Base to find vectors similar to the provided input vector,
-        optionally filtering to only those that match the provided namespace.
+        optionally filtering to only those that match the provided filter(s).
         """
         url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
 
