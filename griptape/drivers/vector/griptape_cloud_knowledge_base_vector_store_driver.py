@@ -78,11 +78,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         if include_vectors is not None:
             request["include_vectors"] = include_vectors
 
-        response = requests.post(url, json=request, headers=self.headers)
-        print(response)
-        json_response = response.json()
-        print(json_response)
-        return json_response
+        return requests.post(url, json=request, headers=self.headers).json()
 
     def default_vector_model(self) -> Any:
         Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
