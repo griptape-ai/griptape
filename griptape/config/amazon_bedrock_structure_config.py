@@ -1,5 +1,9 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
+from griptape.drivers import BasePromptDriver
+from griptape.utils import import_optional_dependency
 from griptape.config import StructureConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
@@ -8,49 +12,68 @@ from griptape.drivers import (
     AmazonBedrockTitanEmbeddingDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
-    BasePromptDriver,
     BaseVectorStoreDriver,
     BedrockClaudeImageQueryModelDriver,
     BedrockTitanImageGenerationModelDriver,
     LocalVectorStoreDriver,
 )
 
+if TYPE_CHECKING:
+    import boto3
 
-@define()
+
+@define
 class AmazonBedrockStructureConfig(StructureConfig):
+    session: boto3.Session = field(
+        default=Factory(lambda: import_optional_dependency("boto3").Session()),
+        kw_only=True,
+        metadata={"serializable": False},
+    )
+
     prompt_driver: BasePromptDriver = field(
         default=Factory(
-            lambda: AmazonBedrockPromptDriver(model="anthropic.claude-3-sonnet-20240229-v1:0", stream=False)
+            lambda self: AmazonBedrockPromptDriver(
+                session=self.session, model="anthropic.claude-3-sonnet-20240229-v1:0"
+            ),
+            takes_self=True,
         ),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    embedding_driver: BaseEmbeddingDriver = field(
+        default=Factory(
+            lambda self: AmazonBedrockTitanEmbeddingDriver(session=self.session, model="amazon.titan-embed-text-v1"),
+            takes_self=True,
+        ),
+        kw_only=True,
         metadata={"serializable": True},
     )
     image_generation_driver: BaseImageGenerationDriver = field(
         default=Factory(
-            lambda: AmazonBedrockImageGenerationDriver(
+            lambda self: AmazonBedrockImageGenerationDriver(
+                session=self.session,
                 model="amazon.titan-image-generator-v1",
                 image_generation_model_driver=BedrockTitanImageGenerationModelDriver(),
-            )
+            ),
+            takes_self=True,
         ),
+        kw_only=True,
         metadata={"serializable": True},
     )
     image_query_driver: BaseImageGenerationDriver = field(
         default=Factory(
-            lambda: AmazonBedrockImageQueryDriver(
+            lambda self: AmazonBedrockImageQueryDriver(
+                session=self.session,
                 model="anthropic.claude-3-sonnet-20240229-v1:0",
                 image_query_model_driver=BedrockClaudeImageQueryModelDriver(),
-            )
+            ),
+            takes_self=True,
         ),
-        metadata={"serializable": True},
-    )
-    embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1")),
+        kw_only=True,
         metadata={"serializable": True},
     )
     vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(
-            lambda: LocalVectorStoreDriver(
-                embedding_driver=AmazonBedrockTitanEmbeddingDriver(model="amazon.titan-embed-text-v1")
-            )
-        ),
+        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding_driver), takes_self=True),
+        kw_only=True,
         metadata={"serializable": True},
     )
