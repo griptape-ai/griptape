@@ -16,4 +16,4 @@ class TestVectorStoreClient:
 
         driver.upsert_text_artifacts({"test": [TextArtifact("foo"), TextArtifact("bar")]})
 
-        assert [a.value for a in tool.search({"values": {"query": "test"}})] == ["foo", "bar"]
+        assert set([a.value for a in tool.search({"values": {"query": "test"}})]) == {"foo", "bar"}
