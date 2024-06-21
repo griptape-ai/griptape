@@ -5,12 +5,12 @@ from typing import Optional, Union
 from attrs import Factory, define, field
 
 
-from griptape.common import BasePromptStackContent, BaseDeltaPromptStackContent
+from griptape.common import BaseMessageContent, BaseDeltaMessageContent
 from griptape.mixins import SerializableMixin
 
 
 @define
-class BasePromptStackMessage(ABC, SerializableMixin):
+class BaseMessage(ABC, SerializableMixin):
     @define
     class Usage(SerializableMixin):
         input_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
@@ -20,8 +20,8 @@ class BasePromptStackMessage(ABC, SerializableMixin):
         def total_tokens(self) -> float:
             return (self.input_tokens or 0) + (self.output_tokens or 0)
 
-        def __add__(self, other: BasePromptStackMessage.Usage) -> BasePromptStackMessage.Usage:
-            return BasePromptStackMessage.Usage(
+        def __add__(self, other: BaseMessage.Usage) -> BaseMessage.Usage:
+            return BaseMessage.Usage(
                 input_tokens=(self.input_tokens or 0) + (other.input_tokens or 0),
                 output_tokens=(self.output_tokens or 0) + (other.output_tokens or 0),
             )
@@ -30,11 +30,9 @@ class BasePromptStackMessage(ABC, SerializableMixin):
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    content: list[Union[BasePromptStackContent, BaseDeltaPromptStackContent]] = field(metadata={"serializable": True})
+    content: list[Union[BaseMessageContent, BaseDeltaMessageContent]] = field(metadata={"serializable": True})
     role: str = field(kw_only=True, metadata={"serializable": True})
-    usage: Usage = field(
-        kw_only=True, default=Factory(lambda: BasePromptStackMessage.Usage()), metadata={"serializable": True}
-    )
+    usage: Usage = field(kw_only=True, default=Factory(lambda: BaseMessage.Usage()), metadata={"serializable": True})
 
     def is_system(self) -> bool:
         return self.role == self.SYSTEM_ROLE

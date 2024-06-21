@@ -2,8 +2,8 @@ from typing import Optional, cast
 from attrs import define, Factory, field
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.common import PromptStack
-from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from griptape.common import MessageStack
+from griptape.common.message_stack.messages.message import Message
 from griptape.drivers import BasePromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
@@ -62,10 +62,10 @@ class PromptSummaryEngine(BaseSummaryEngine):
             >= self.min_response_tokens
         ):
             return self.prompt_driver.run(
-                PromptStack(
+                MessageStack(
                     messages=[
-                        PromptStackMessage(system_prompt, role=PromptStackMessage.SYSTEM_ROLE),
-                        PromptStackMessage(user_prompt, role=PromptStackMessage.USER_ROLE),
+                        Message(system_prompt, role=Message.SYSTEM_ROLE),
+                        Message(user_prompt, role=Message.USER_ROLE),
                     ]
                 )
             )
@@ -77,10 +77,10 @@ class PromptSummaryEngine(BaseSummaryEngine):
             return self.summarize_artifacts_rec(
                 chunks[1:],
                 self.prompt_driver.run(
-                    PromptStack(
+                    MessageStack(
                         messages=[
-                            PromptStackMessage(system_prompt, role=PromptStackMessage.SYSTEM_ROLE),
-                            PromptStackMessage(partial_text, role=PromptStackMessage.USER_ROLE),
+                            Message(system_prompt, role=Message.SYSTEM_ROLE),
+                            Message(partial_text, role=Message.USER_ROLE),
                         ]
                     )
                 ).value,

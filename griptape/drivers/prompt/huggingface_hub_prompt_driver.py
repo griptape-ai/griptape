@@ -7,13 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import (
-    PromptStack,
-    PromptStackMessage,
-    DeltaPromptStackMessage,
-    TextPromptStackContent,
-    TextDeltaPromptStackContent,
-)
+from griptape.common import MessageStack, Message, DeltaMessage, TextMessageContent, TextDeltaMessageContent
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -53,55 +47,53 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
-        prompt = self.prompt_stack_to_string(prompt_stack)
+    def try_run(self, message_stack: MessageStack) -> Message:
+        prompt = self.message_stack_to_string(message_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
         )
-        input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
+        input_tokens = len(self.__message_stack_to_tokens(message_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
 
-        return PromptStackMessage(
+        return Message(
             content=response,
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
-        prompt = self.prompt_stack_to_string(prompt_stack)
+    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
+        prompt = self.message_stack_to_string(message_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
         )
 
-        input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
+        input_tokens = len(self.__message_stack_to_tokens(message_stack))
 
         full_text = ""
         for token in response:
             full_text += token
-            yield DeltaPromptStackMessage(content=TextDeltaPromptStackContent(token, index=0))
+            yield DeltaMessage(content=TextDeltaMessageContent(token, index=0))
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
-        yield DeltaPromptStackMessage(
-            usage=DeltaPromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens)
-        )
+        yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens))
 
-    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
-        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+    def message_stack_to_string(self, message_stack: MessageStack) -> str:
+        return self.tokenizer.tokenizer.decode(self.__message_stack_to_tokens(message_stack))
 
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+    def _message_stack_to_messages(self, message_stack: MessageStack) -> list[dict]:
         messages = []
-        for i in prompt_stack.messages:
+        for i in message_stack.messages:
             if len(i.content) == 1:
-                messages.append({"role": i.role, "content": TextPromptStackContent(i.to_text_artifact())})
+                messages.append({"role": i.role, "content": TextMessageContent(i.to_text_artifact())})
             else:
                 raise ValueError("Invalid input content length.")
 
         return messages
 
-    def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
-        messages = self._prompt_stack_to_messages(prompt_stack)
+    def __message_stack_to_tokens(self, message_stack: MessageStack) -> list[int]:
+        messages = self._message_stack_to_messages(message_stack)
         tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):

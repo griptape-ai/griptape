@@ -3,10 +3,10 @@ from typing import Optional, cast
 import json
 from attrs import field, Factory, define
 from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
-from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from griptape.common.message_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
-from griptape.common import PromptStack
+from griptape.common import MessageStack
 from griptape.rules import Ruleset
 
 
@@ -59,9 +59,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             extractions.extend(
                 self.json_to_text_artifacts(
-                    self.prompt_driver.run(
-                        PromptStack(messages=[PromptStackMessage(full_text, role=PromptStackMessage.USER_ROLE)])
-                    ).value
+                    self.prompt_driver.run(MessageStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value
                 )
             )
 
@@ -76,9 +74,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
 
             extractions.extend(
                 self.json_to_text_artifacts(
-                    self.prompt_driver.run(
-                        PromptStack(messages=[PromptStackMessage(partial_text, role=PromptStackMessage.USER_ROLE)])
-                    ).value
+                    self.prompt_driver.run(MessageStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value
                 )
             )
 

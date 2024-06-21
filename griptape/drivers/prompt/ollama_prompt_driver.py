@@ -5,11 +5,11 @@ from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers.base_tokenizer import BaseTokenizer
-from griptape.common import PromptStack, TextPromptStackContent
+from griptape.common import MessageStack, TextMessageContent
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
-from griptape.common import PromptStackMessage, DeltaPromptStackMessage, TextDeltaPromptStackContent
-from griptape.common import ImagePromptStackContent
+from griptape.common import Message, DeltaMessage, TextDeltaMessageContent
+from griptape.common import ImageMessageContent
 
 if TYPE_CHECKING:
     from ollama import Client
@@ -49,32 +49,32 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
-        response = self.client.chat(**self._base_params(prompt_stack))
+    def try_run(self, message_stack: MessageStack) -> Message:
+        response = self.client.chat(**self._base_params(message_stack))
 
         if isinstance(response, dict):
-            return PromptStackMessage(
-                content=[TextPromptStackContent(TextArtifact(value=response["message"]["content"]))],
-                role=PromptStackMessage.ASSISTANT_ROLE,
+            return Message(
+                content=[TextMessageContent(TextArtifact(value=response["message"]["content"]))],
+                role=Message.ASSISTANT_ROLE,
             )
         else:
             raise Exception("invalid model response")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
-        stream = self.client.chat(**self._base_params(prompt_stack), stream=True)
+    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
+        stream = self.client.chat(**self._base_params(message_stack), stream=True)
 
         if isinstance(stream, Iterator):
             for chunk in stream:
-                yield DeltaPromptStackMessage(content=TextDeltaPromptStackContent(chunk["message"]["content"]))
+                yield DeltaMessage(content=TextDeltaMessageContent(chunk["message"]["content"]))
         else:
             raise Exception("invalid model response")
 
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
-        messages = self._prompt_stack_to_messages(prompt_stack)
+    def _base_params(self, message_stack: MessageStack) -> dict:
+        messages = self._message_stack_to_messages(message_stack)
 
         return {"messages": messages, "model": self.model, "options": self.options}
 
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+    def _message_stack_to_messages(self, message_stack: MessageStack) -> list[dict]:
         return [
             {
                 "role": message.role,
@@ -84,12 +84,12 @@ class OllamaPromptDriver(BasePromptDriver):
                         "images": [
                             content.artifact.base64
                             for content in message.content
-                            if isinstance(content, ImagePromptStackContent)
+                            if isinstance(content, ImageMessageContent)
                         ]
                     }
-                    if any(isinstance(content, ImagePromptStackContent) for content in message.content)
+                    if any(isinstance(content, ImageMessageContent) for content in message.content)
                     else {}
                 ),
             }
-            for message in prompt_stack.messages
+            for message in message_stack.messages
         ]

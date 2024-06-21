@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import Mock
-from griptape.common import PromptStack
-from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from griptape.common import MessageStack
+from griptape.common.message_stack.messages.message import Message
 from griptape.tokenizers import GoogleTokenizer
 
 
@@ -20,9 +20,7 @@ class TestGoogleTokenizer:
     @pytest.mark.parametrize("tokenizer,expected", [("gemini-pro", 5)], indirect=["tokenizer"])
     def test_token_count(self, tokenizer, expected):
         assert tokenizer.count_tokens("foo bar huzzah") == expected
-        assert (
-            tokenizer.count_tokens(PromptStack(messages=[PromptStackMessage(content="foo", role="user")])) == expected
-        )
+        assert tokenizer.count_tokens(MessageStack(messages=[Message(content="foo", role="user")])) == expected
         assert tokenizer.count_tokens(["foo", "bar", "huzzah"]) == expected
 
     @pytest.mark.parametrize("tokenizer,expected", [("gemini-pro", 30715)], indirect=["tokenizer"])

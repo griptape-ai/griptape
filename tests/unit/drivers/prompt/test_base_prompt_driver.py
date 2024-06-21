@@ -1,5 +1,5 @@
 from griptape.events import FinishPromptEvent, StartPromptEvent
-from griptape.common import PromptStack
+from griptape.common import MessageStack
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
 from griptape.artifacts import ErrorArtifact, TextArtifact
@@ -37,7 +37,7 @@ class TestBasePromptDriver:
         assert instance_count(events, FinishPromptEvent) == 1
 
     def test_run(self):
-        assert isinstance(MockPromptDriver().run(PromptStack(messages=[])), TextArtifact)
+        assert isinstance(MockPromptDriver().run(MessageStack(messages=[])), TextArtifact)
 
 
 def instance_count(instances, clazz):

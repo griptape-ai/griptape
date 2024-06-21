@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.common import PromptStack
+from griptape.common import MessageStack
 from griptape.drivers import CoherePromptDriver
 
 
@@ -33,22 +33,22 @@ class TestCoherePromptDriver:
         return mocker.patch("griptape.tokenizers.CohereTokenizer").return_value
 
     @pytest.fixture
-    def prompt_stack(self):
-        prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
-        prompt_stack.add_user_message("user-input")
-        prompt_stack.add_assistant_message("assistant-input")
-        return prompt_stack
+    def message_stack(self):
+        message_stack = MessageStack()
+        message_stack.add_system_message("system-input")
+        message_stack.add_user_message("user-input")
+        message_stack.add_assistant_message("assistant-input")
+        return message_stack
 
     def test_init(self):
         assert CoherePromptDriver(model="command", api_key="foobar")
 
-    def test_try_run(self, mock_client, prompt_stack):  # pyright: ignore
+    def test_try_run(self, mock_client, message_stack):  # pyright: ignore
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key")
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = driver.try_run(message_stack)
 
         # Then
         mock_client.chat.assert_called_once_with(
@@ -64,12 +64,12 @@ class TestCoherePromptDriver:
         assert text_artifact.usage.input_tokens == 5
         assert text_artifact.usage.output_tokens == 10
 
-    def test_try_stream_run(self, mock_stream_client, prompt_stack):  # pyright: ignore
+    def test_try_stream_run(self, mock_stream_client, message_stack):  # pyright: ignore
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key", stream=True)
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.try_stream(message_stack)
         event = next(stream)
 
         # Then

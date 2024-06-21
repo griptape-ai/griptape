@@ -5,19 +5,19 @@ from typing import Any
 from attrs import define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import BasePromptStackContent, TextPromptStackContent
+from griptape.common import BaseMessageContent, TextMessageContent
 
-from .base_prompt_stack_message import BasePromptStackMessage
+from .base_message import BaseMessage
 
 
 @define
-class PromptStackMessage(BasePromptStackMessage):
-    def __init__(self, content: str | list[BasePromptStackContent], **kwargs: Any):
+class Message(BaseMessage):
+    def __init__(self, content: str | list[BaseMessageContent], **kwargs: Any):
         if isinstance(content, str):
-            content = [TextPromptStackContent(TextArtifact(value=content))]
+            content = [TextMessageContent(TextArtifact(value=content))]
         self.__attrs_init__(content, **kwargs)  # pyright: ignore[reportAttributeAccessIssue]
 
-    content: list[BasePromptStackContent] = field(metadata={"serializable": True})
+    content: list[BaseMessageContent] = field(metadata={"serializable": True})
 
     @property
     def value(self) -> Any:
@@ -34,7 +34,5 @@ class PromptStackMessage(BasePromptStackMessage):
 
     def to_text_artifact(self) -> TextArtifact:
         return TextArtifact(
-            "".join(
-                [content.artifact.to_text() for content in self.content if isinstance(content, TextPromptStackContent)]
-            )
+            "".join([content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)])
         )

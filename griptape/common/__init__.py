@@ -1,23 +1,23 @@
-from .prompt_stack.contents.base_prompt_stack_content import BasePromptStackContent
-from .prompt_stack.contents.base_delta_prompt_stack_content import BaseDeltaPromptStackContent
-from .prompt_stack.contents.text_delta_prompt_stack_content import TextDeltaPromptStackContent
-from .prompt_stack.contents.text_prompt_stack_content import TextPromptStackContent
-from .prompt_stack.contents.image_prompt_stack_content import ImagePromptStackContent
+from .message_stack.contents.base_message_content import BaseMessageContent
+from .message_stack.contents.base_delta_message_content import BaseDeltaMessageContent
+from .message_stack.contents.text_delta_message_content import TextDeltaMessageContent
+from .message_stack.contents.text_message_content import TextMessageContent
+from .message_stack.contents.image_message_content import ImageMessageContent
 
-from .prompt_stack.messages.base_prompt_stack_message import BasePromptStackMessage
-from .prompt_stack.messages.delta_prompt_stack_message import DeltaPromptStackMessage
-from .prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from .message_stack.messages.base_message import BaseMessage
+from .message_stack.messages.delta_message import DeltaMessage
+from .message_stack.messages.message import Message
 
-from .prompt_stack.prompt_stack import PromptStack
+from .message_stack.message_stack import MessageStack
 
 __all__ = [
-    "BasePromptStackMessage",
-    "BaseDeltaPromptStackContent",
-    "BasePromptStackContent",
-    "DeltaPromptStackMessage",
-    "PromptStackMessage",
-    "TextDeltaPromptStackContent",
-    "TextPromptStackContent",
-    "ImagePromptStackContent",
-    "PromptStack",
+    "BaseMessage",
+    "BaseDeltaMessageContent",
+    "BaseMessageContent",
+    "DeltaMessage",
+    "Message",
+    "TextDeltaMessageContent",
+    "TextMessageContent",
+    "ImageMessageContent",
+    "MessageStack",
 ]

@@ -8,5 +8,5 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 
 
 @define
-class BaseDeltaPromptStackContent(ABC, SerializableMixin):
+class BaseDeltaMessageContent(ABC, SerializableMixin):
     index: int = field(kw_only=True, default=0, metadata={"serializable": True})

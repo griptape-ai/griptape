@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import ImageArtifact, TextArtifact
-from griptape.common import PromptStack
+from griptape.common import MessageStack
 from griptape.drivers import AmazonBedrockPromptDriver
 
 
@@ -31,15 +31,15 @@ class TestAmazonBedrockPromptDriver:
         return mock_converse_stream
 
     @pytest.fixture
-    def prompt_stack(self):
-        prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
-        prompt_stack.add_user_message("user-input")
-        prompt_stack.add_user_message(TextArtifact("user-input"))
-        prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
-        prompt_stack.add_assistant_message("assistant-input")
+    def message_stack(self):
+        message_stack = MessageStack()
+        message_stack.add_system_message("system-input")
+        message_stack.add_user_message("user-input")
+        message_stack.add_user_message(TextArtifact("user-input"))
+        message_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
+        message_stack.add_assistant_message("assistant-input")
 
-        return prompt_stack
+        return message_stack
 
     @pytest.fixture
     def messages(self):
@@ -50,12 +50,12 @@ class TestAmazonBedrockPromptDriver:
             {"role": "assistant", "content": [{"text": "assistant-input"}]},
         ]
 
-    def test_try_run(self, mock_converse, prompt_stack, messages):
+    def test_try_run(self, mock_converse, message_stack, messages):
         # Given
         driver = AmazonBedrockPromptDriver(model="ai21.j2")
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = driver.try_run(message_stack)
 
         # Then
         mock_converse.assert_called_once_with(
@@ -69,12 +69,12 @@ class TestAmazonBedrockPromptDriver:
         assert text_artifact.usage.input_tokens == 5
         assert text_artifact.usage.output_tokens == 10
 
-    def test_try_stream_run(self, mock_converse_stream, prompt_stack, messages):
+    def test_try_stream_run(self, mock_converse_stream, message_stack, messages):
         # Given
         driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.try_stream(message_stack)
         event = next(stream)
 
         # Then

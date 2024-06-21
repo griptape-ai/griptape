@@ -32,22 +32,22 @@ class TestBaseEvent:
             "id": "917298d4bf894b0a824a8fdb26717a0c",
             "timestamp": 123,
             "model": "foo bar",
-            "prompt_stack": {
-                "type": "PromptStack",
+            "message_stack": {
+                "type": "MessageStack",
                 "messages": [
                     {
-                        "type": "PromptStackMessage",
+                        "type": "Message",
                         "role": "user",
                         "content": [
-                            {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
+                            {"type": "TextMessageContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
                         ],
                         "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
                     },
                     {
-                        "type": "PromptStackMessage",
+                        "type": "Message",
                         "role": "system",
                         "content": [
-                            {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "bar"}}
+                            {"type": "TextMessageContent", "artifact": {"type": "TextArtifact", "value": "bar"}}
                         ],
                         "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
                     },
@@ -59,10 +59,10 @@ class TestBaseEvent:
 
         assert isinstance(event, StartPromptEvent)
         assert event.timestamp == 123
-        assert event.prompt_stack.messages[0].content[0].artifact.value == "foo"
-        assert event.prompt_stack.messages[0].role == "user"
-        assert event.prompt_stack.messages[1].content[0].artifact.value == "bar"
-        assert event.prompt_stack.messages[1].role == "system"
+        assert event.message_stack.messages[0].content[0].artifact.value == "foo"
+        assert event.message_stack.messages[0].role == "user"
+        assert event.message_stack.messages[1].content[0].artifact.value == "bar"
+        assert event.message_stack.messages[1].role == "system"
         assert event.model == "foo bar"
 
     def test_finish_prompt_event_from_dict(self):

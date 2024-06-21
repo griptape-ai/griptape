@@ -1,7 +1,7 @@
 from google.generativeai.types import GenerationConfig
 from griptape.artifacts import TextArtifact, ImageArtifact
 from griptape.drivers import GooglePromptDriver
-from griptape.common import PromptStack
+from griptape.common import MessageStack
 from unittest.mock import Mock
 import pytest
 
@@ -34,16 +34,16 @@ class TestGooglePromptDriver:
 
     def test_try_run(self, mock_generative_model):
         # Given
-        prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
-        prompt_stack.add_user_message("user-input")
-        prompt_stack.add_user_message(TextArtifact("user-input"))
-        prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
-        prompt_stack.add_assistant_message("assistant-input")
+        message_stack = MessageStack()
+        message_stack.add_system_message("system-input")
+        message_stack.add_user_message("user-input")
+        message_stack.add_user_message(TextArtifact("user-input"))
+        message_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
+        message_stack.add_assistant_message("assistant-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50)
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = driver.try_run(message_stack)
 
         # Then
         mock_generative_model.return_value.generate_content.assert_called_once_with(
@@ -63,16 +63,16 @@ class TestGooglePromptDriver:
 
     def test_try_stream(self, mock_stream_generative_model):
         # Given
-        prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
-        prompt_stack.add_user_message("user-input")
-        prompt_stack.add_user_message(TextArtifact("user-input"))
-        prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
-        prompt_stack.add_assistant_message("assistant-input")
+        message_stack = MessageStack()
+        message_stack.add_system_message("system-input")
+        message_stack.add_user_message("user-input")
+        message_stack.add_user_message(TextArtifact("user-input"))
+        message_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
+        message_stack.add_assistant_message("assistant-input")
         driver = GooglePromptDriver(model="gemini-pro", api_key="api-key", stream=True, top_p=0.5, top_k=50)
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.try_stream(message_stack)
 
         # Then
         event = next(stream)

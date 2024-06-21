@@ -28,23 +28,23 @@ agent.run("I loved the new Batman movie!")
 Or use them independently:
 
 ```python
-from griptape.common import PromptStack
+from griptape.common import MessageStack
 from griptape.drivers import OpenAiChatPromptDriver
 
-stack = PromptStack()
+stack = MessageStack()
 
 stack.add_system_input(
     "You will be provided with Python code, and your task is to calculate its time complexity."
 )
 stack.add_user_input(
-"""
-def foo(n, k):
-    accum = 0
-    for i in range(n):
-        for l in range(k):
-            accum += i
-    return accum
-"""
+    """
+    def foo(n, k):
+        accum = 0
+        for i in range(n):
+            for l in range(k):
+                accum += i
+        return accum
+    """
 )
 
 result = OpenAiChatPromptDriver(model="gpt-3.5-turbo-16k", temperature=0).run(stack)

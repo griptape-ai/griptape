@@ -30,12 +30,12 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert AzureOpenAiChatPromptDriver(azure_endpoint="foobar", azure_deployment="foobar", model="gpt-4")
         assert AzureOpenAiChatPromptDriver(azure_endpoint="foobar", model="gpt-4").azure_deployment == "gpt-4"
 
-    def test_try_run(self, mock_chat_completion_create, prompt_stack, messages):
+    def test_try_run(self, mock_chat_completion_create, message_stack, messages):
         # Given
         driver = AzureOpenAiChatPromptDriver(azure_endpoint="endpoint", azure_deployment="deployment-id", model="gpt-4")
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = driver.try_run(message_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -45,14 +45,14 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert text_artifact.usage.input_tokens == 5
         assert text_artifact.usage.output_tokens == 10
 
-    def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
+    def test_try_stream_run(self, mock_chat_completion_stream_create, message_stack, messages):
         # Given
         driver = AzureOpenAiChatPromptDriver(
             azure_endpoint="endpoint", azure_deployment="deployment-id", model="gpt-4", stream=True
         )
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.try_stream(message_stack)
         event = next(stream)
 
         # Then

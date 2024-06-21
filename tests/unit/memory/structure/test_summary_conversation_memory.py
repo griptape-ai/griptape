@@ -53,15 +53,15 @@ class TestSummaryConversationMemory:
         assert memory.to_dict()["type"] == "SummaryConversationMemory"
         assert memory.to_dict()["runs"][0]["input"]["value"] == "foo"
 
-    def test_to_prompt_stack(self):
+    def test_to_message_stack(self):
         memory = SummaryConversationMemory(summary="foobar")
         memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
 
-        prompt_stack = memory.to_prompt_stack()
+        message_stack = memory.to_message_stack()
 
-        assert prompt_stack.messages[0].content[0].artifact.value == "Summary of the conversation so far: foobar"
-        assert prompt_stack.messages[1].content[0].artifact.value == "foo"
-        assert prompt_stack.messages[2].content[0].artifact.value == "bar"
+        assert message_stack.messages[0].content[0].artifact.value == "Summary of the conversation so far: foobar"
+        assert message_stack.messages[1].content[0].artifact.value == "foo"
+        assert message_stack.messages[2].content[0].artifact.value == "bar"
 
     def test_from_dict(self):
         memory = SummaryConversationMemory()

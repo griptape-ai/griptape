@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import DeltaPromptStackMessage, PromptStack, PromptStackMessage, TextPromptStackContent
+from griptape.common import DeltaMessage, MessageStack, Message, TextMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -42,8 +42,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         )
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
-        messages = self._prompt_stack_to_messages(prompt_stack)
+    def try_run(self, message_stack: MessageStack) -> Message:
+        messages = self._message_stack_to_messages(message_stack)
 
         result = self.pipe(
             messages, max_new_tokens=self.max_tokens, temperature=self.temperature, do_sample=True, **self.params
@@ -53,35 +53,35 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
             if len(result) == 1:
                 generated_text = result[0]["generated_text"][-1]["content"]
 
-                input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
+                input_tokens = len(self.__message_stack_to_tokens(message_stack))
                 output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
-                return PromptStackMessage(
-                    content=[TextPromptStackContent(TextArtifact(generated_text))],
-                    role=PromptStackMessage.ASSISTANT_ROLE,
-                    usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+                return Message(
+                    content=[TextMessageContent(TextArtifact(generated_text))],
+                    role=Message.ASSISTANT_ROLE,
+                    usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
                 )
             else:
                 raise Exception("completion with more than one choice is not supported yet")
         else:
             raise Exception("invalid output format")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 
-    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
-        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+    def message_stack_to_string(self, message_stack: MessageStack) -> str:
+        return self.tokenizer.tokenizer.decode(self.__message_stack_to_tokens(message_stack))
 
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+    def _message_stack_to_messages(self, message_stack: MessageStack) -> list[dict]:
         messages = []
 
-        for i in prompt_stack.messages:
+        for i in message_stack.messages:
             messages.append({"role": i.role, "content": i.to_text_artifact().to_text()})
 
         return messages
 
-    def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
-        messages = self._prompt_stack_to_messages(prompt_stack)
+    def __message_stack_to_tokens(self, message_stack: MessageStack) -> list[int]:
+        messages = self._message_stack_to_messages(message_stack)
         tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):

@@ -235,7 +235,7 @@ total tokens: 273
 
 ## Inspecting Payloads
 
-You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Prompt Stack and final prompt string before it is sent to the LLM. 
+You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Message Stack and final prompt string before it is sent to the LLM. 
 
 ```python
 from griptape.structures import Agent
@@ -244,8 +244,8 @@ from griptape.events import BaseEvent, StartPromptEvent, EventListener
 
 def handler(event: BaseEvent):
     if isinstance(event, StartPromptEvent):
-        print("Prompt Stack Messages:")
-        for message in event.prompt_stack.messages:
+        print("Message Stack MessageStack:")
+        for message in event.message_stack.messages:
             print(f"{message.role}: {message.content}")
         print("Final Prompt String:")
         print(event.prompt)
@@ -259,7 +259,7 @@ agent.run("Write me a poem.")
 ```
 ```
 ...
-Prompt Stack Messages:
+Message Stack Messages:
 system:
 user: Write me a poem.
 Final Prompt String:

@@ -105,7 +105,7 @@ class BaseSchema(Schema):
         # These modules are required to avoid `NameError`s when resolving types.
         from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
         from griptape.structures import Structure
-        from griptape.common import PromptStack, PromptStackMessage
+        from griptape.common import MessageStack, Message
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
         from typing import Any
 
@@ -115,8 +115,8 @@ class BaseSchema(Schema):
         attrs.resolve_types(
             attrs_cls,
             localns={
-                "PromptStack": PromptStack,
-                "Usage": PromptStackMessage.Usage,
+                "MessageStack": MessageStack,
+                "Usage": Message.Usage,
                 "Structure": Structure,
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BasePromptDriver": BasePromptDriver,

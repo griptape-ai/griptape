@@ -8,12 +8,12 @@ from attrs import Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import (
-    BaseDeltaPromptStackContent,
-    DeltaPromptStackMessage,
-    TextDeltaPromptStackContent,
-    PromptStack,
-    PromptStackMessage,
-    TextPromptStackContent,
+    BaseDeltaMessageContent,
+    DeltaMessage,
+    TextDeltaMessageContent,
+    MessageStack,
+    Message,
+    TextMessageContent,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
@@ -31,7 +31,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         temperature: The temperature to use for the completion.
         max_tokens: The maximum number of tokens to generate. If not specified, the value will be automatically generated based by the tokenizer.
         structure: An optional `Structure` to publish events to.
-        prompt_stack_to_string: A function that converts a `PromptStack` to a string.
+        message_stack_to_string: A function that converts a `MessageStack` to a string.
         ignored_exception_types: A tuple of exception types to ignore.
         model: The model name.
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
@@ -48,11 +48,11 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
-    def before_run(self, prompt_stack: PromptStack) -> None:
+    def before_run(self, message_stack: MessageStack) -> None:
         if self.structure:
-            self.structure.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
+            self.structure.publish_event(StartPromptEvent(model=self.model, message_stack=message_stack))
 
-    def after_run(self, result: PromptStackMessage) -> None:
+    def after_run(self, result: Message) -> None:
         if self.structure:
             self.structure.publish_event(
                 FinishPromptEvent(
@@ -63,15 +63,15 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 )
             )
 
-    def run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def run(self, message_stack: MessageStack) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:
-                self.before_run(prompt_stack)
+                self.before_run(message_stack)
 
                 if self.stream:
-                    result = self.__process_stream(prompt_stack)
+                    result = self.__process_stream(message_stack)
                 else:
-                    result = self.__process_run(prompt_stack)
+                    result = self.__process_run(message_stack)
 
                 self.after_run(result)
 
@@ -79,19 +79,19 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         else:
             raise Exception("prompt driver failed after all retry attempts")
 
-    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
-        """Converts a Prompt Stack to a string for token counting or model input.
+    def message_stack_to_string(self, message_stack: MessageStack) -> str:
+        """Converts a Message Stack to a string for token counting or model input.
         This base implementation is only a rough approximation, and should be overridden by subclasses with model-specific tokens.
 
         Args:
-            prompt_stack: The Prompt Stack to convert to a string.
+            message_stack: The Message Stack to convert to a string.
 
         Returns:
-            A single string representation of the Prompt Stack.
+            A single string representation of the Message Stack.
         """
         prompt_lines = []
 
-        for i in prompt_stack.messages:
+        for i in message_stack.messages:
             content = i.to_text_artifact().to_text()
             if i.is_user():
                 prompt_lines.append(f"User: {content}")
@@ -105,22 +105,22 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage: ...
+    def try_run(self, message_stack: MessageStack) -> Message: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]: ...
+    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]: ...
 
-    def __process_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
-        result = self.try_run(prompt_stack)
+    def __process_run(self, message_stack: MessageStack) -> Message:
+        result = self.try_run(message_stack)
 
         return result
 
-    def __process_stream(self, prompt_stack: PromptStack) -> PromptStackMessage:
-        delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
-        usage = DeltaPromptStackMessage.Usage()
+    def __process_stream(self, message_stack: MessageStack) -> Message:
+        delta_contents: dict[int, list[BaseDeltaMessageContent]] = {}
+        usage = DeltaMessage.Usage()
 
         # Aggregate all content deltas from the stream
-        deltas = self.try_stream(prompt_stack)
+        deltas = self.try_stream(message_stack)
         for delta in deltas:
             usage += delta.usage
 
@@ -130,20 +130,20 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 else:
                     delta_contents[delta.content.index] = [delta.content]
 
-            if isinstance(delta.content, TextDeltaPromptStackContent):
+            if isinstance(delta.content, TextDeltaMessageContent):
                 self.structure.publish_event(CompletionChunkEvent(token=delta.content.text))
 
         # Build a complete content from the content deltas
         content = []
         for index, deltas in delta_contents.items():
-            text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaPromptStackContent)]
+            text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaMessageContent)]
             if text_deltas:
-                content.append(TextPromptStackContent.from_deltas(text_deltas))
+                content.append(TextMessageContent.from_deltas(text_deltas))
 
-        result = PromptStackMessage(
+        result = Message(
             content=content,
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
         return result

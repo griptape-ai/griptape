@@ -1,5 +1,5 @@
 from griptape.drivers import HuggingFacePipelinePromptDriver
-from griptape.common import PromptStack
+from griptape.common import MessageStack
 import pytest
 
 
@@ -26,69 +26,69 @@ class TestHuggingFacePipelinePromptDriver:
         return mock_autotokenizer
 
     @pytest.fixture
-    def prompt_stack(self):
-        prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
-        prompt_stack.add_user_message("user-input")
-        prompt_stack.add_assistant_message("assistant-input")
-        return prompt_stack
+    def message_stack(self):
+        message_stack = MessageStack()
+        message_stack.add_system_message("system-input")
+        message_stack.add_user_message("user-input")
+        message_stack.add_assistant_message("assistant-input")
+        return message_stack
 
     def test_init(self):
         assert HuggingFacePipelinePromptDriver(model="gpt2", max_tokens=42)
 
-    def test_try_run(self, prompt_stack):
+    def test_try_run(self, message_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.try_run(message_stack)
 
         # Then
         assert message.value == "model-output"
         assert message.usage.input_tokens == 3
         assert message.usage.output_tokens == 3
 
-    def test_try_stream(self, prompt_stack):
+    def test_try_stream(self, message_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_stream(prompt_stack)
+            driver.try_stream(message_stack)
 
         assert e.value.args[0] == "streaming is not supported"
 
     @pytest.mark.parametrize("choices", [[], [1, 2]])
-    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_generator, prompt_stack):
+    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_generator, message_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
         mock_generator.return_value = choices
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
+            driver.try_run(message_stack)
 
         # Then
         assert e.value.args[0] == "completion with more than one choice is not supported yet"
 
-    def test_try_run_throws_when_non_list(self, mock_generator, prompt_stack):
+    def test_try_run_throws_when_non_list(self, mock_generator, message_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
         mock_generator.return_value = {}
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
+            driver.try_run(message_stack)
 
         # Then
         assert e.value.args[0] == "invalid output format"
 
-    def test_prompt_stack_to_string(self, prompt_stack):
+    def test_message_stack_to_string(self, message_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
 
         # When
-        result = driver.prompt_stack_to_string(prompt_stack)
+        result = driver.message_stack_to_string(message_stack)
 
         # Then
         assert result == "model-output"
