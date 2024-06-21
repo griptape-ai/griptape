@@ -77,7 +77,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 if "messageStart" in event:
                     yield DeltaPromptStackMessage(role=PromptStackMessage.ASSISTANT_ROLE)
                 elif "contentBlockDelta" in event or "contentBlockStart" in event:
-                    yield self.__message_content_delta_to_prompt_stack_content_delta(event)
+                    yield DeltaPromptStackMessage(
+                        content=self.__message_content_delta_to_prompt_stack_content_delta(event)
+                    )
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
                     yield DeltaPromptStackMessage(

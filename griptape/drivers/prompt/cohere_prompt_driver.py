@@ -70,14 +70,14 @@ class CoherePromptDriver(BasePromptDriver):
             if event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
-                return DeltaPromptStackMessage(
+                yield DeltaPromptStackMessage(
                     role=PromptStackMessage.ASSISTANT_ROLE,
                     usage=DeltaPromptStackMessage.Usage(
                         input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
                     ),
                 )
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
-                yield self.__message_delta_to_prompt_stack_content(event.dict())
+                yield DeltaPromptStackMessage(content=self.__message_delta_to_prompt_stack_content(event.dict()))
 
     def _prompt_stack_messages_to_messages(self, messages: list[PromptStackMessage]) -> list[dict]:
         new_messages = []

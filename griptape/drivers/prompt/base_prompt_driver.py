@@ -126,16 +126,16 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         # Aggregate all content deltas from the stream
         deltas = self.try_stream(prompt_stack)
         for delta in deltas:
-            if isinstance(delta, DeltaPromptStackMessage):
-                usage += delta.usage
+            usage += delta.usage
+            content = delta.content
 
-                if isinstance(delta, TextDeltaPromptStackContent):
-                    self.structure.publish_event(CompletionChunkEvent(token=delta.text))
-                elif isinstance(delta, ActionCallDeltaPromptStackContent):
-                    if delta.tag is not None and delta.name is not None and delta.path is not None:
-                        self.structure.publish_event(CompletionChunkEvent(token=str(delta)))
-                    elif delta.delta_input is not None:
-                        self.structure.publish_event(CompletionChunkEvent(token=delta.delta_input))
+            if isinstance(content, TextDeltaPromptStackContent):
+                self.structure.publish_event(CompletionChunkEvent(token=content.text))
+            elif isinstance(content, ActionCallDeltaPromptStackContent):
+                if content.tag is not None and content.name is not None and content.path is not None:
+                    self.structure.publish_event(CompletionChunkEvent(token=str(delta)))
+                elif content.delta_input is not None:
+                    self.structure.publish_event(CompletionChunkEvent(token=content.delta_input))
 
         # Build a complete content from the content deltas
         content = []

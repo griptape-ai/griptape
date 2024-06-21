@@ -81,7 +81,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         for event in events:
             if event.type == "content_block_delta" or event.type == "content_block_start":
-                yield self.__message_content_delta_to_prompt_stack_content_delta(event)
+                yield DeltaPromptStackMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(event))
             elif event.type == "message_start":
                 yield DeltaPromptStackMessage(
                     usage=DeltaPromptStackMessage.Usage(input_tokens=event.message.usage.input_tokens)

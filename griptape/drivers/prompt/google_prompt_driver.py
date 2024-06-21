@@ -17,6 +17,7 @@ from griptape.common import (
     ActionCallPromptStackContent,
     ActionResultPromptStackContent,
     ActionCallDeltaPromptStackContent,
+    BaseDeltaPromptStackContent,
 )
 from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
@@ -70,7 +71,7 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage | BaseDeltaPromptStackContent]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
         messages = self._prompt_stack_to_messages(prompt_stack)
         response: Iterator[GenerateContentResponse] = self.model_client.generate_content(
             messages, **self._base_params(prompt_stack), stream=True
@@ -80,8 +81,9 @@ class GooglePromptDriver(BasePromptDriver):
         for chunk in response:
             usage_metadata = chunk.usage_metadata
 
+            # TODO: Only emit one event
             for part in chunk.parts:
-                yield self.__message_content_delta_to_prompt_stack_content_delta(part)
+                yield DeltaPromptStackMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(part))
 
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None:
