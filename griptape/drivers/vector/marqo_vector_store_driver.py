@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Any, TYPE_CHECKING
+from griptape import utils
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact
@@ -85,7 +86,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         artifact_json = artifact.to_json()
-        vector_id = artifact.id if vector_id is None else vector_id
+        vector_id = utils.str_to_hash(artifact.value) if vector_id is None else vector_id
 
         doc = {
             "_id": vector_id,

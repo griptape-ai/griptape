@@ -53,7 +53,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         **kwargs,
     ) -> str:
         meta = {} if meta is None else meta
-        vector_id = artifact.id if vector_id is None else vector_id
+        vector_id = utils.str_to_hash(artifact.value) if vector_id is None else vector_id
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id
@@ -78,7 +78,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        vector_id = vector_id if vector_id else utils.str_to_hash(string)
+        vector_id = utils.str_to_hash(string) if vector_id is None else vector_id
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id
