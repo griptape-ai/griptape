@@ -10,10 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GoogleWebSearchDriver` to web search with the Google Customsearch API.
 - `DuckDuckGoWebSearchDriver` to web search with the DuckDuckGo search SDK.
 - `ProxyWebScraperDriver` to web scrape using proxies.
+- Parameter `session` on `AmazonBedrockStructureConfig`.
 
 ### Changed
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
 - `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
+
+## [0.27.1] - 2024-06-20
+
+### Added
+- Support for Claude 3.5 Sonnet in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver`.
+
+### Changed
+- Base Tool schema so that `input` is optional when no Tool Activity schema is set.
+- Tool Task system prompt for better results with lower-end models. 
+- Default Prompt Driver model to Claude 3.5 Sonnet in `AnthropicStructureConfig` and `AmazonBedrockStructureConfig.`
 
 ## [0.27.0] - 2024-06-19
 

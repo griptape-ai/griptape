@@ -1,5 +1,5 @@
 import pytest
-from schema import Schema, Literal
+from schema import Schema, Literal, Optional
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -79,4 +79,4 @@ class TestActivityMixin:
         )
 
         input = tool.activity_to_input(tool.test_no_schema)
-        assert input == {}
+        assert input == {Optional("input"): {}}
