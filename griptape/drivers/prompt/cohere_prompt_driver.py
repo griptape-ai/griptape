@@ -84,13 +84,10 @@ class CoherePromptDriver(BasePromptDriver):
         )
 
         system_message = next((message for message in message_stack.messages if message.is_system()), None)
-        if system_message is not None:
-            if len(system_message.content) == 1:
-                preamble = system_message.content[0].artifact.to_text()
-            else:
-                raise ValueError("System message must have exactly one content.")
-        else:
+        if system_message is None:
             preamble = None
+        else:
+            preamble = system_message.to_text_artifact().to_text()
 
         return {
             "message": user_message,

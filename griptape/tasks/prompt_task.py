@@ -98,9 +98,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         return self.output
 
-    def _process_task_input(
-        self, task_input: str | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
-    ) -> BaseArtifact:
+    def _process_task_input(self, task_input: str | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> BaseArtifact:
         if isinstance(task_input, TextArtifact):
             task_input.value = J2().render_from_string(task_input.value, **self.full_context)
 
@@ -111,8 +109,6 @@ class PromptTask(RuleMixin, BaseTask):
             return self._process_task_input(TextArtifact(task_input))
         elif isinstance(task_input, BaseArtifact):
             return task_input
-        elif isinstance(task_input, list):
-            return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             raise ValueError(f"Invalid input type: {type(task_input)} ")
 

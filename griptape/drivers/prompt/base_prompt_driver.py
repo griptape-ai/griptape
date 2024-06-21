@@ -135,7 +135,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
         # Build a complete content from the content deltas
         content = []
-        for index, deltas in delta_contents.items():
+        for deltas in delta_contents.values():
             text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaMessageContent)]
             if text_deltas:
                 content.append(TextMessageContent.from_deltas(text_deltas))

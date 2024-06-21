@@ -1,6 +1,6 @@
 from griptape.drivers import AnthropicPromptDriver
 from griptape.common import MessageStack
-from griptape.artifacts import TextArtifact, ImageArtifact
+from griptape.artifacts import TextArtifact, ImageArtifact, ListArtifact
 from unittest.mock import Mock
 import pytest
 
@@ -119,18 +119,21 @@ class TestAnthropicPromptDriver:
         if system_enabled:
             message_stack.add_system_message("system-input")
         message_stack.add_user_message("user-input")
-        message_stack.add_user_message(TextArtifact("user-input"))
-        message_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
+        message_stack.add_user_message(
+            ListArtifact(
+                [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
+            )
+        )
         message_stack.add_assistant_message("assistant-input")
         expected_messages = [
             {"role": "user", "content": "user-input"},
-            {"role": "user", "content": "user-input"},
             {
                 "content": [
+                    {"type": "text", "text": "user-input"},
                     {
                         "source": {"data": "aW1hZ2UtZGF0YQ==", "media_type": "image/png", "type": "base64"},
                         "type": "image",
-                    }
+                    },
                 ],
                 "role": "user",
             },

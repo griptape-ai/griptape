@@ -39,6 +39,12 @@ class TestBasePromptDriver:
     def test_run(self):
         assert isinstance(MockPromptDriver().run(MessageStack(messages=[])), TextArtifact)
 
+    def test_run_with_stream(self):
+        pipeline = Pipeline()
+        result = MockPromptDriver(stream=True, structure=pipeline).run(MessageStack(messages=[]))
+        assert isinstance(result, TextArtifact)
+        assert result.value == "mock output"
+
 
 def instance_count(instances, clazz):
     return len([instance for instance in instances if isinstance(instance, clazz)])

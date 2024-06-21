@@ -38,6 +38,8 @@ class TestCoherePromptDriver:
         message_stack.add_system_message("system-input")
         message_stack.add_user_message("user-input")
         message_stack.add_assistant_message("assistant-input")
+        message_stack.add_user_message("user-input")
+        message_stack.add_assistant_message("assistant-input")
         return message_stack
 
     def test_init(self):
@@ -52,7 +54,11 @@ class TestCoherePromptDriver:
 
         # Then
         mock_client.chat.assert_called_once_with(
-            chat_history=[{"content": [{"text": "user-input"}], "role": "USER"}],
+            chat_history=[
+                {"content": [{"text": "user-input"}], "role": "USER"},
+                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
+                {"content": [{"text": "user-input"}], "role": "USER"},
+            ],
             max_tokens=None,
             message="assistant-input",
             preamble="system-input",
@@ -75,7 +81,11 @@ class TestCoherePromptDriver:
         # Then
 
         mock_stream_client.chat_stream.assert_called_once_with(
-            chat_history=[{"content": [{"text": "user-input"}], "role": "USER"}],
+            chat_history=[
+                {"content": [{"text": "user-input"}], "role": "USER"},
+                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
+                {"content": [{"text": "user-input"}], "role": "USER"},
+            ],
             max_tokens=None,
             message="assistant-input",
             preamble="system-input",
