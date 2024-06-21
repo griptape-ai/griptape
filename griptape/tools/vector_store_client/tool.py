@@ -42,7 +42,7 @@ class VectorStoreClient(BaseTool):
         query = params["values"]["query"]
 
         try:
-            entries = self.vector_store_driver.query(query, namespace=self.namespace, top_n=self.top_n)
+            entries = self.vector_store_driver.query(query, namespace=self.namespace, count=self.top_n)
 
             return ListArtifact([e.to_artifact() for e in entries])
         except Exception as e:
