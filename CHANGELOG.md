@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ProxyWebScraperDriver` to web scrape using proxies.
 - Parameter `session` on `AmazonBedrockStructureConfig`.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
+- Parameter `meta` on `TextArtifact`.
 
 ### Changed
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
