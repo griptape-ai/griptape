@@ -27,6 +27,9 @@ driver = ProxyWebScraperDriver(
     proxies={
         "http": proxy_url,
         "https": proxy_url,
+    },
+    params={
+        "verify": False
     }
 )
 
