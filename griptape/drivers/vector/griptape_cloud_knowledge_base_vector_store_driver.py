@@ -18,38 +18,16 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     Attributes:
         api_key: API Key for Griptape Cloud.
         knowledge_base_id: Knowledge Base ID for Griptape Cloud.
-        data_connector_ids: List of Data Connectors ID for Griptape Cloud.
         base_url: Base URL for Griptape Cloud.
         headers: Headers for Griptape Cloud.
     """
 
     api_key: str = field(kw_only=True, metadata={"serializable": True})
     knowledge_base_id: str = field(kw_only=True, metadata={"serializable": True})
-    data_connector_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
     base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
-
-    @knowledge_base_id.validator  # pyright: ignore
-    def validate_knowledge_base_id(self, _, knowledge_base_id: Optional[str]) -> None:
-        # If data_connector_ids is provided, knowledge_base_id does not need to be provided.
-        if self.data_connector_ids is not None:
-            return
-
-        # If data_connector_ids is not provided, knowledge_base_id is required.
-        if knowledge_base_id is None:
-            raise ValueError("An knowledge_base_id or data_connector_ids is required")
-
-    @data_connector_ids.validator  # pyright: ignore
-    def validate_data_connector_ids(self, _, data_connector_ids: Optional[list[str]]) -> None:
-        # If knowledge_base_id is provided, data_connector_ids do not need to be provided.
-        if self.knowledge_base_id is not None:
-            return
-
-        # data_connector_ids must be populated if provided.
-        if (data_connector_ids is not None) and (len(data_connector_ids) == 0):
-            raise ValueError("data_connector_ids must be populated if provided")
 
     def upsert_vector(
         self,
