@@ -5,6 +5,7 @@ from attrs import define, field
 from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+import traceback
 
 
 @define
@@ -42,4 +43,6 @@ class VectorStoreClient(BaseTool):
         try:
             return self.query_engine.query(query, top_n=self.top_n, namespace=self.namespace)
         except Exception as e:
+            print(e)
+            print(traceback.format_exc())
             return ErrorArtifact(f"error querying vector store: {e}")
