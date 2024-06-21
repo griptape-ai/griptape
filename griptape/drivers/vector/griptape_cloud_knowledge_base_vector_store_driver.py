@@ -4,6 +4,7 @@ import uuid
 from typing import Optional, Any
 from attrs import Factory, define, field
 from dataclasses import dataclass
+from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
 from griptape.utils import import_optional_dependency
 from sqlalchemy import Column, String, JSON
@@ -41,6 +42,21 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support vector upsert.")
+
+    def upsert_text_artifact(
+        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+    ) -> str:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support text artifact upsert.")
+
+    def upsert_text(
+        self,
+        string: str,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs,
+    ) -> str:
+        raise NotImplementedError(f"{self.__class__.__name__} does not support text upsert.")
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
