@@ -44,7 +44,7 @@ redis = { version = "^4.6.0", optional = true }
 opensearch-py = { version = "^2.3.1", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
-google-generativeai = { version = "^0.6.0", optional = true }
+google-generativeai = { version = "^0.7.0", optional = true }
 trafilatura = {version = "^1.6", optional = true}
 playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
@@ -103,6 +103,8 @@ drivers-web-search-duckduckgo = ["duckduckgo-search"]
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-pusher = ["pusher"]
+
+drivers-rerank-cohere = ["cohere"]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]

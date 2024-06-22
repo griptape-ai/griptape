@@ -29,7 +29,7 @@ class MediaArtifact(BlobArtifact):
     model: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     prompt: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         # Generating the name string requires attributes set by child classes.
         # This waits until all attributes are available before generating a name.
         if self.name == self.id:

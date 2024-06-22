@@ -31,7 +31,7 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
         from requests import post, exceptions
 
         query = params["values"]["query"]
-        url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
+        url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/search")
 
         try:
             response = post(url, json={"query": query}, headers=self.headers)

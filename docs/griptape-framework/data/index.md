@@ -14,7 +14,17 @@ Griptape provides several abstractions for working with data.
 
 **Tokenizers** are used to tokenize and detokenize text in order to track LLM token limits.
 
-[Query Engines](../engines/query-engines.md) are used to search text storages.
+[Audio Engines](../engines/audio-engines.md) are used for working with audio.
+
+[Extraction Engines](../engines/extraction-engines.md) are used for extracting structured content.
+
+[Image Query Engines](../engines/image-query-engines.md) are used for querying images with text.
+
+[Image Generation Engines](../engines/image-generation-engines.md) are used for generating images.
+
+[Summary Engines](../engines/summary-engines.md) are used for summarizing text content.
+
+[RAG Engines](../engines/rag-engines.md) are used for implementing modular RAG pipelines.
 
 [Vector Store Drivers](../drivers/vector-store-drivers.md) are used to store and query vector databases.
 

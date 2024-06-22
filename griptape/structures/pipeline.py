@@ -69,7 +69,7 @@ class Pipeline(Structure):
         if task is None:
             return
         else:
-            if isinstance(task.execute(), ErrorArtifact):
+            if isinstance(task.execute(), ErrorArtifact) and self.fail_fast:
                 return
             else:
                 self.__run_from_task(next(iter(task.children), None))

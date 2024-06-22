@@ -40,8 +40,8 @@ class TestAzureMongoDbVectorStoreDriver:
 
     def test_query(self, driver, monkeypatch):
         mock_query_result = [
-            BaseVectorStoreDriver.QueryResult("foo", [0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
-            BaseVectorStoreDriver.QueryResult("foo", vector=[0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
+            BaseVectorStoreDriver.Entry("foo", [0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
+            BaseVectorStoreDriver.Entry("foo", vector=[0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
         ]
 
         monkeypatch.setattr(AzureMongoDbVectorStoreDriver, "query", lambda *args, **kwargs: mock_query_result)
@@ -52,7 +52,7 @@ class TestAzureMongoDbVectorStoreDriver:
         for result, expected in zip(results, mock_query_result):
             assert result.id == expected.id
             assert result.vector == expected.vector
-            assert isinstance(result, BaseVectorStoreDriver.QueryResult)
+            assert isinstance(result, BaseVectorStoreDriver.Entry)
 
     def test_load_entry(self, driver):
         vector_id_str = "123"

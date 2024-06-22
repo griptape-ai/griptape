@@ -141,7 +141,7 @@ from griptape.config import StructureConfig
 agent = Agent(
     config=StructureConfig(
         prompt_driver=CoherePromptDriver(
-            model="command",
+            model="command-r",
             api_key=os.environ['COHERE_API_KEY'],
         )
     )

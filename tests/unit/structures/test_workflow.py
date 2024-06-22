@@ -17,7 +17,7 @@ class TestWorkflow:
     @fixture
     def waiting_task(self):
         def fn(task):
-            time.sleep(10)
+            time.sleep(2)
             return TextArtifact("done")
 
         return CodeExecutionTask(run_fn=fn)
@@ -108,7 +108,9 @@ class TestWorkflow:
 
         storage = list(workflow.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
+            0
+        ].vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -725,6 +727,16 @@ class TestWorkflow:
         workflow.run()
 
         assert workflow.output is None
+
+    def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
+        end_task = PromptTask("end")
+        end_task.add_parents([error_artifact_task, waiting_task])
+        workflow = Workflow(
+            prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False
+        )
+        workflow.run()
+
+        assert workflow.output is not None
 
     @staticmethod
     def _validate_topology_1(workflow):

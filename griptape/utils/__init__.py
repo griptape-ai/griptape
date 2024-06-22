@@ -6,6 +6,7 @@ from .python_runner import PythonRunner
 from .command_runner import CommandRunner
 from .chat import Chat
 from .futures import execute_futures_dict
+from .futures import execute_futures_list
 from .token_counter import TokenCounter
 from .dict_utils import remove_null_values_in_dict_recursively, dict_merge
 from .file_utils import load_file, load_files
@@ -34,6 +35,7 @@ __all__ = [
     "import_optional_dependency",
     "is_dependency_installed",
     "execute_futures_dict",
+    "execute_futures_list",
     "TokenCounter",
     "remove_null_values_in_dict_recursively",
     "dict_merge",
