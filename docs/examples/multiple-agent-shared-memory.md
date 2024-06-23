@@ -8,13 +8,9 @@ The `MongoDbAtlasVectorStoreDriver` assumes that you have a vector index configu
 
 ```python
 import os
-from griptape.tools import WebScraper, VectorStoreClient, TaskMemoryClient
+from griptape.tools import WebScraper, TaskMemoryClient
 from griptape.structures import Agent
 from griptape.drivers import AzureOpenAiEmbeddingDriver, AzureMongoDbVectorStoreDriver
-from griptape.engines import VectorQueryEngine, PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
-from griptape.memory import TaskMemory 
-from griptape.artifacts import TextArtifact
-from griptape.memory.task.storage import TextArtifactStorage
 from griptape.config import AzureOpenAiStructureConfig
 
 

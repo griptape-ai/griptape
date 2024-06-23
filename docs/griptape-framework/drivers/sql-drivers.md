@@ -8,7 +8,9 @@ SQL drivers can be used to make SQL queries and load table schemas. They are use
 !!! info
     More database-specific SQL drivers are coming soon.
 
-## SQL
+## SQL Drivers
+
+### SQL
 
 This is a basic SQL loader based on [SQLAlchemy 1.x](https://docs.sqlalchemy.org/en/14/). Here is an example of how to use it:
 
@@ -22,7 +24,7 @@ driver = SqlDriver(
 driver.execute_query("select 'foo', 'bar';")
 ```
 
-## Amazon Redshift
+### Amazon Redshift
 
 !!! info
     This driver requires the `drivers-sql-redshift` [extra](../index.md#extras).
@@ -46,7 +48,7 @@ driver = AmazonRedshiftSqlDriver(
 driver.execute_query("select * from people;")
 ```
 
-## Snowflake
+### Snowflake
 
 !!! info
     This driver requires the `drivers-sql-snowflake` [extra](../index.md#extras).

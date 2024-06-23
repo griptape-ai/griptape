@@ -1,19 +1,24 @@
 from __future__ import annotations
-
 import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import TYPE_CHECKING, Any, Optional
-
 from attrs import Factory, define, field
 from rich.logging import RichHandler
-
 from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
-from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
+from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
+from griptape.engines.rag import RagEngine
+from griptape.engines.rag.modules import (
+    TextRetrievalRagModule,
+    RulesetsGenerationRagModule,
+    PromptGenerationRagModule,
+    MetadataGenerationRagModule,
+)
+from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
@@ -52,7 +57,8 @@ class Structure(ABC):
         ),
         kw_only=True,
     )
-    task_memory: Optional[TaskMemory] = field(
+    rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
+    task_memory: TaskMemory = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
@@ -164,13 +170,27 @@ class Structure(ABC):
         return config
 
     @property
+    def default_rag_engine(self) -> RagEngine:
+        return RagEngine(
+            retrieval_stage=RetrievalRagStage(
+                retrieval_modules=[TextRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
+            ),
+            generation_stage=GenerationRagStage(
+                before_generator_modules=[
+                    RulesetsGenerationRagModule(rulesets=self.rulesets),
+                    MetadataGenerationRagModule(),
+                ],
+                generation_module=PromptGenerationRagModule(prompt_driver=self.config.prompt_driver),
+            ),
+        )
+
+    @property
     def default_task_memory(self) -> TaskMemory:
         return TaskMemory(
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
-                    query_engine=VectorQueryEngine(
-                        prompt_driver=self.config.prompt_driver, vector_store_driver=self.config.vector_store_driver
-                    ),
+                    rag_engine=self.rag_engine,
+                    vector_store_driver=self.config.vector_store_driver,
                     summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
                     csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),
                     json_extraction_engine=JsonExtractionEngine(prompt_driver=self.config.prompt_driver),
