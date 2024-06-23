@@ -76,11 +76,32 @@ class TestQdrantVectorVectorStoreDriver:
         )
 
     def test_upsert_vector(self, driver, embedding_driver):
+        mock_batch = MagicMock()
         vector = embedding_driver.embed_string("foo")
         vector_id = 1
         meta = {"meta_key": "meta_value"}
         content = {"content_string"}
+
+        # When vector, vector_id, meta and content are populated
         assert driver.upsert_vector(vector=vector, vector_id=vector_id, meta=meta, content=content) == vector_id
+
+        mock_batch.reset_mock()
+        driver.client.upsert.reset_mock()
+
+        # When vector_id is None and rest are populated
+        assert driver.upsert_vector(vector=vector, vector_id=[None], meta=meta, content=content) == vector_id
+
+        mock_batch.reset_mock()
+        driver.client.upsert.reset_mock()
+
+        # When meta is None and rest are populated
+        assert driver.upsert_vector(vector=vector, vector_id=vector_id, meta=None, content=content) == vector_id
+
+        mock_batch.reset_mock()
+        driver.client.upsert.reset_mock()
+
+        # When content is None and rest are populated
+        assert driver.upsert_vector(vector=vector, vector_id=vector_id, meta=meta, content=None) == vector_id
 
     def test_upsert_text(self, driver):
         assert driver.upsert_text("foo", vector_id=2) == 2

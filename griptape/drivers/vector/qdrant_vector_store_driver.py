@@ -192,12 +192,12 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             List of points.
         """
-        ids = kwargs.get("ids", [])
-        with_payload = kwargs.get("with_payload", True)
-        with_vectors = kwargs.get("with_vectors", True)
 
         results = self.client.retrieve(
-            collection_name=self.collection_name, ids=ids, with_payload=with_payload, with_vectors=with_vectors
+            collection_name=self.collection_name,
+            ids=kwargs.get("ids", []),
+            with_payload=kwargs.get("with_payload", True),
+            with_vectors=kwargs.get("with_vectors", True),
         )
         if not results:
             print("An error occurred or no results found.")
@@ -205,7 +205,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         return [
             BaseVectorStoreDriver.Entry(
                 id=entry.id,
-                vector=entry.vector if with_vectors else [],
+                vector=entry.vector if kwargs.get("with_vectors", True) else [],
                 meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
             )
             for entry in results
