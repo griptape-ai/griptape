@@ -10,12 +10,12 @@ class TestQdrantVectorVectorStoreDriver:
     def embedding_driver(self):
         return MockEmbeddingDriver()
 
-    @pytest.fixture
+    @pytest.fixture(autouse=True)
     def driver(self, mocker):
         # Mock the QdrantVectorStoreDriver class
         qdrant_mock = mocker.patch("griptape.drivers.QdrantVectorStoreDriver")
         qdrant_instance = qdrant_mock.return_value
-        qdrant_instance.upsert_vector.return_value = 1
+        qdrant_instance.upsert_vector.return_value = "foo"
         qdrant_instance.upsert_text.return_value = 2
         qdrant_instance.query.return_value = [
             {"id": "foo", "vector": [0, 1, 0], "score": 42, "payload": {"foo": "bar"}}
@@ -75,33 +75,25 @@ class TestQdrantVectorVectorStoreDriver:
             timeout=5,
         )
 
-    def test_upsert_vector(self, driver, embedding_driver):
-        mock_batch = MagicMock()
-        vector = embedding_driver.embed_string("foo")
-        vector_id = 1
+    def test_upsert_vector(self, driver):
+        vector = [0, 1, 2]
+        vector_id = "foo"
         meta = {"meta_key": "meta_value"}
-        content = {"content_string"}
+        content = "content_string"
 
-        # When vector, vector_id, meta and content are populated
+        # Test when all parameters are provided
         assert driver.upsert_vector(vector=vector, vector_id=vector_id, meta=meta, content=content) == vector_id
 
-        mock_batch.reset_mock()
-        driver.client.upsert.reset_mock()
+        # Test when vector_id is None
+        generated_id = driver.upsert_vector(vector=vector)
+        assert isinstance(generated_id, str)
 
-        # When vector_id is None and rest are populated
-        assert driver.upsert_vector(vector=vector, vector_id=[None], meta=meta, content=content) == vector_id
+        # Test when meta is None
+        new_generated_id = driver.upsert_vector(vector=vector, vector_id=vector_id)
+        assert new_generated_id == vector_id
 
-        mock_batch.reset_mock()
-        driver.client.upsert.reset_mock()
-
-        # When meta is None and rest are populated
-        assert driver.upsert_vector(vector=vector, vector_id=vector_id, meta=None, content=content) == vector_id
-
-        mock_batch.reset_mock()
-        driver.client.upsert.reset_mock()
-
-        # When content is None and rest are populated
-        assert driver.upsert_vector(vector=vector, vector_id=vector_id, meta=meta, content=None) == vector_id
+        # Test when content is provided without meta
+        assert driver.upsert_vector(vector=vector, vector_id=vector_id, content=content) == vector_id
 
     def test_upsert_text(self, driver):
         assert driver.upsert_text("foo", vector_id=2) == 2
