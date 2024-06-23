@@ -91,7 +91,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.Entry]:
         """
         Query the Qdrant collection based on a query vector.
 
@@ -102,7 +102,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             include_vectors (bool): Whether to include vectors in the results.
 
         Returns:
-            list[BaseVectorStoreDriver.QueryResult]: List of QueryResult objects.
+            list[BaseVectorStoreDriver.Entry]: List of Entry objects.
         """
         query_vector = self.embedding_driver.embed_string(query)
 
@@ -111,7 +111,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
 
         # Convert results to QueryResult objects
         query_results = [
-            BaseVectorStoreDriver.QueryResult(
+            BaseVectorStoreDriver.Entry(
                 id=result.id,
                 vector=result.vector if include_vectors else [],
                 score=result.score,
