@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional
 from attrs import define, field
 from griptape.drivers import BaseVectorStoreDriver
-from griptape.utils import import_optional_dependency
+from griptape.utils import import_optional_dependency, str_to_hash
 import uuid
 
 VECTOR_NAME = None
@@ -145,7 +145,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         if vector_id is None:
-            vector_id = vector_id if vector_id else str(uuid.uuid4())
+            vector_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, str_to_hash(str(vector))))
 
         if meta is None:
             meta = {}
