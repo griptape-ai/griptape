@@ -39,7 +39,7 @@ test_entries = {
 
 class TestGriptapeCloudKnowledgeBaseVectorStoreDriver:
     def mock_requests_post(*args, **kwargs):
-        return MockResponse({"entries": test_entries}, 404)
+        return MockResponse(test_entries, 404)
 
     @patch("requests.post", side_effect=mock_requests_post)
     def test_query(self, mock_post):
@@ -47,13 +47,13 @@ class TestGriptapeCloudKnowledgeBaseVectorStoreDriver:
 
         result = driver.query("some query", include_vectors=True)
 
-        assert result["entries"][0]["id"] == test_ids[0]
-        assert result["entries"][1]["id"] == test_ids[1]
-        assert result["entries"][0]["vector"] == test_vecs[0]
-        assert result["entries"][1]["vector"] == test_vecs[1]
-        assert result["entries"][0]["namespace"] == test_namespaces[0]
-        assert result["entries"][1]["namespace"] == test_namespaces[1]
-        assert result["entries"][0]["meta"] == test_metas[0]
-        assert result["entries"][1]["meta"] == test_metas[1]
-        assert result["entries"][0]["score"] == test_scores[0]
-        assert result["entries"][1]["score"] == test_scores[1]
+        assert result[0].id == test_ids[0]
+        assert result[1].id == test_ids[1]
+        assert result[0].vector == test_vecs[0]
+        assert result[1].vector == test_vecs[1]
+        assert result[0].namespace == test_namespaces[0]
+        assert result[1].namespace == test_namespaces[1]
+        assert result[0].meta == test_metas[0]
+        assert result[1].meta == test_metas[1]
+        assert result[0].score == test_scores[0]
+        assert result[1].score == test_scores[1]
