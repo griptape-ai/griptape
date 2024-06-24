@@ -4,7 +4,7 @@ import uuid
 from typing import Optional, Any
 from attrs import Factory, define, field
 from dataclasses import dataclass
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
 from griptape.utils import import_optional_dependency
 from sqlalchemy import Column, String, JSON
@@ -44,7 +44,12 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         raise NotImplementedError(f"{self.__class__.__name__} does not support vector upsert.")
 
     def upsert_text_artifact(
-        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+        self,
+        artifact: TextArtifact,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        vector_id: Optional[str] = None,
+        **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support text artifact upsert.")
 
@@ -68,6 +73,12 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not support entry loading.")
 
+    def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
+        """Retrieves all Artifacts from the collection, optionally filtering to only
+        those that match the provided namespace.
+        """
+        raise NotImplementedError(f"{self.__class__.__name__} does not support Artifact loading.")
+
     def query(
         self,
         query: str,
@@ -78,7 +89,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         # GriptapeCloudKnowledgeBaseVectorStoreDriver-specific params:
         filter: Optional[dict] = None,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.Entry]:
         """Performs a search on the Knowledge Base to find vectors similar to the provided input vector,
         optionally filtering to only those that match the provided filter(s).
         """
@@ -96,7 +107,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
 
         response = requests.post(url, json=request, headers=self.headers).json()
         entries = response.get("entries", [])
-        return [BaseVectorStoreDriver.QueryResult(**entry) for entry in entries]
+        return [BaseVectorStoreDriver.Entry.from_dict(entry) for entry in entries]
 
     def default_vector_model(self) -> Any:
         Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
