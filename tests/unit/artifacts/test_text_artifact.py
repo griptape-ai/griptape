@@ -61,3 +61,11 @@ class TestTextArtifact:
 
         assert artifact.name == artifact.id
         assert TextArtifact("foo", name="bar").name == "bar"
+
+    def test_meta(self):
+        artifact = TextArtifact("foo")
+
+        assert artifact.meta == {}
+
+        meta = {"foo": "bar"}
+        assert TextArtifact("foo", meta=meta).meta == meta
