@@ -1,6 +1,6 @@
 ## Overview
 
-Image Query Drivers are used by [Image Query Engines](../engines/query-engines.md#image) to execute natural language queries on the contents of images. You can specify the provider and model used to query the image by providing the Engine with a particular Image Query Driver.
+Image Query Drivers are used by [Image Query Engines](../engines/image-query-engines.md) to execute natural language queries on the contents of images. You can specify the provider and model used to query the image by providing the Engine with a particular Image Query Driver.
 
 !!! info
     All Image Query Drivers default to a `max_tokens` of 256. It is recommended that you set this value to correspond to the desired response length. 

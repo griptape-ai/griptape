@@ -104,6 +104,8 @@ drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-pusher = ["pusher"]
 
+drivers-rerank-cohere = ["cohere"]
+
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]

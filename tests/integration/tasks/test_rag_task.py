@@ -1,8 +1,10 @@
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.utils.defaults import rag_engine
 from tests.utils.structure_tester import StructureTester
 import pytest
 
 
-class TestTextQueryTask:
+class TestRagTask:
     @pytest.fixture(
         autouse=True,
         params=StructureTester.TEXT_SUMMARY_TASK_CAPABLE_PROMPT_DRIVERS,
@@ -10,22 +12,18 @@ class TestTextQueryTask:
     )
     def structure_tester(self, request):
         from griptape.structures import Agent
-        from griptape.tasks import TextQueryTask
+        from griptape.tasks import RagTask
         from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
-        from griptape.engines import VectorQueryEngine
         from griptape.artifacts import TextArtifact
 
         vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
-
         artifact = TextArtifact("John Doe works as as software engineer at Griptape.")
+        rag_engine_instance = rag_engine(MockPromptDriver(), vector_store_driver)
 
-        vector_query_engine = VectorQueryEngine(prompt_driver=request.param, vector_store_driver=vector_store_driver)
-        vector_query_engine.upsert_text_artifact(artifact=artifact)
+        vector_store_driver.upsert_text_artifact(artifact=artifact)
 
         agent = Agent(prompt_driver=request.param)
-        agent.add_task(
-            TextQueryTask("Respond to the users following query: {{ args[0] }}", query_engine=vector_query_engine)
-        )
+        agent.add_task(RagTask("Respond to the users following query: {{ args[0] }}", rag_engine=rag_engine_instance))
 
         return StructureTester(agent)
 
