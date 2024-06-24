@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
 - **BREAKING**: Replaced `query_engine` with `vector_store_driver` in `VectorStoreClient`.
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
+- `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
 
 ## [0.27.1] - 2024-06-20
 
