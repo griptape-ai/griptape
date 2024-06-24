@@ -67,12 +67,12 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             timeout=self.timeout,
         )
 
-    def delete_vector(self, vector_id: str) -> None:
+    def delete_vector(self, vector_id: str | int) -> None:
         """
         Delete a vector from the Qdrant collection based on its ID.
 
         Parameters:
-            vector_id (str): ID of the vector to delete.
+            vector_id (str | id): ID of the vector to delete.
         """
         # rest = import_optional_dependency("qdrant_client.http.models")
         deletion_response = self.client.delete(
@@ -124,7 +124,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: Optional[str] = None,
+        vector_id: Optional[str | int] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         content: Optional[str] = None,
@@ -145,7 +145,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """
 
         if vector_id is None:
-            vector_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, str_to_hash(str(vector))))
+            vector_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, str(vector)))
 
         if meta is None:
             meta = {}
@@ -160,7 +160,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self.client.upsert(collection_name=self.collection_name, points=points)
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str | int, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """
         Load a vector entry from the Qdrant collection based on its ID.
 
