@@ -92,7 +92,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             )
 
     def does_entry_exist(self, vector_id: str, namespace: Optional[str] = None) -> bool:
-        return self.load_entry(vector_id, namespace) is not None
+        try:
+            return self.load_entry(vector_id, namespace) is not None
+        except Exception:
+            return False
 
     def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
         result = self.load_entries(namespace)
