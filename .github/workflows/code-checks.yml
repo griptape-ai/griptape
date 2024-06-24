@@ -2,9 +2,9 @@ name: Code Checks
 
 on:
   push:
-    branches: [ "main", "dev", "feature/qdrant_vector_store_driver" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main", "dev", "feature/qdrant_vector_store_driver" ]
+    branches: [ "main", "dev" ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
