@@ -13,7 +13,6 @@ class TextArtifact(BaseArtifact):
     value: str = field(converter=str, metadata={"serializable": True})
     encoding: str = field(default="utf-8", kw_only=True)
     encoding_error_handler: str = field(default="strict", kw_only=True)
-    meta: dict[str, str] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     _embedding: list[float] = field(factory=list, kw_only=True)
 
     @property
