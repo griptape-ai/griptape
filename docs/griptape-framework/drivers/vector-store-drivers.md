@@ -414,7 +414,7 @@ print(result)
 
 The QdrantVectorStoreDriver supports the [Qdrant vector database](https://qdrant.tech/).
 
-Here is an example of how the driver can be used to query information in a Qdrant VectorDB:
+Here is an example of how the driver can be used to query information in a Qdrant collection:
 
 ```python
 import os
