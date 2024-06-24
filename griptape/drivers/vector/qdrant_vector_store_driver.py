@@ -2,8 +2,9 @@ from __future__ import annotations
 from typing import Optional
 from attrs import define, field
 from griptape.drivers import BaseVectorStoreDriver
-from griptape.utils import import_optional_dependency, str_to_hash
+from griptape.utils import import_optional_dependency
 import uuid
+import logging
 
 VECTOR_NAME = None
 DEFAULT_DISTANCE = "COSINE"
@@ -67,7 +68,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             timeout=self.timeout,
         )
 
-    def delete_vector(self, vector_id: str | int) -> None:
+    def delete_vector(self, vector_id: str) -> None:
         """
         Delete a vector from the Qdrant collection based on its ID.
 
@@ -80,9 +81,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(points=[vector_id]),
         )
         if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
-            print(f"ID {vector_id} is successfully deleted")
+            logging.info(f"ID {vector_id} is successfully deleted")
         else:
-            print(f"Failed to delete ID {vector_id}. Status: {deletion_response.status}")
+            logging.error(f"Failed to delete ID {vector_id}. Status: {deletion_response.status}")
 
     def query(
         self,
@@ -124,7 +125,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: Optional[str | int] = None,
+        vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         content: Optional[str] = None,
@@ -160,7 +161,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self.client.upsert(collection_name=self.collection_name, points=points)
         return vector_id
 
-    def load_entry(self, vector_id: str | int, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """
         Load a vector entry from the Qdrant collection based on its ID.
 
@@ -200,7 +201,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             with_vectors=kwargs.get("with_vectors", True),
         )
         if not results:
-            print("An error occurred or no results found.")
+            logging.error("An error occurred or no results found.")
             return []
         return [
             BaseVectorStoreDriver.Entry(

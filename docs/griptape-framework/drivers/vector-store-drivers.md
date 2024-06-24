@@ -407,7 +407,7 @@ result = vector_store_driver.query("What is griptape?")
 print(result)
 ```
 
-## Qdrant Vector Store Driver
+### Qdrant
 
 !!! info
     This driver requires the `drivers-vector-qdrant` [extra](../index.md#extras).
