@@ -21,7 +21,7 @@ vector_store_driver.upsert_text_artifacts(
 vector_db = VectorStoreClient(
     description="This DB has information about the Griptape Python framework",
     vector_store_driver=vector_store_driver,
-    namespace="griptape",
+    query_params={"namespace": "griptape"},
     off_prompt=True
 )
 
