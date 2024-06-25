@@ -1,5 +1,6 @@
 import pytest
-from griptape.drivers.observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
+from griptape.common import Observable
+from griptape.drivers import GriptapeCloudObservabilityDriver
 from opentelemetry.trace import StatusCode
 from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 
@@ -26,7 +27,7 @@ class TestGriptapeCloudObservabilityDriver:
 
         assert mock_span_exporter_class.call_count == 1
         mock_span_exporter_class.assert_called_once_with(
-            endpoint="http://base-url:1234/api/structure-runs/structure-run-id/spans",
+            endpoint="http://base-url:1234/api/structure-runs/structure-run-id/traces",
             headers={"Authorization": "Bearer api-key"},
         )
 
@@ -70,7 +71,7 @@ class TestGriptapeCloudObservabilityDriver:
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
 
-    def test_invoke_observable_exception(self, driver, mock_span_exporter):
+    def test_observe_exception(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(
             spans=[
                 ExpectedSpan(name="main", parent=None, status_code=StatusCode.OK),
@@ -89,8 +90,8 @@ class TestGriptapeCloudObservabilityDriver:
         instance = Klass()
 
         with driver:
-            driver.invoke_observable(func, None, ["Hi"], {}, {}, {}) == "Hi you"
-            driver.invoke_observable(instance.method, instance, ["Bye"], {}, {}, {}) == "Bye yous"
+            driver.observe(Observable.Call(func=func, instance=None, args=["Hi"])) == "Hi you"
+            driver.observe(Observable.Call(func=instance.method, instance=instance, args=["Bye"])) == "Bye yous"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
@@ -98,14 +99,14 @@ class TestGriptapeCloudObservabilityDriver:
 
         # Works second time too
         with driver:
-            driver.invoke_observable(func, None, ["Hi"], {}, {}, {}) == "Hi you"
-            driver.invoke_observable(instance.method, instance, ["Bye"], {}, {}, {}) == "Bye yous"
+            driver.observe(Observable.Call(func=func, instance=None, args=["Hi"])) == "Hi you"
+            driver.observe(Observable.Call(func=instance.method, instance=instance, args=["Bye"])) == "Bye yous"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
 
-    def test_context_manager_invoke_observable(self, driver, mock_span_exporter):
+    def test_context_manager_observe(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(
             spans=[
                 ExpectedSpan(name="main", parent=None, status_code=StatusCode.OK),
@@ -124,8 +125,8 @@ class TestGriptapeCloudObservabilityDriver:
         instance = Klass()
 
         with driver:
-            driver.invoke_observable(func, None, ["Hi"], {}, {}, {}) == "Hi you"
-            driver.invoke_observable(instance.method, instance, ["Bye"], {}, {}, {}) == "Bye yous"
+            driver.observe(Observable.Call(func=func, instance=None, args=["Hi"])) == "Hi you"
+            driver.observe(Observable.Call(func=instance.method, instance=instance, args=["Bye"])) == "Bye yous"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
@@ -133,8 +134,8 @@ class TestGriptapeCloudObservabilityDriver:
 
         # Works second time too
         with driver:
-            driver.invoke_observable(func, None, ["Hi"], {}, {}, {}) == "Hi you"
-            driver.invoke_observable(instance.method, instance, ["Bye"], {}, {}, {}) == "Bye yous"
+            driver.observe(Observable.Call(func=func, instance=None, args=["Hi"])) == "Hi you"
+            driver.observe(Observable.Call(func=instance.method, instance=instance, args=["Bye"])) == "Bye yous"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)

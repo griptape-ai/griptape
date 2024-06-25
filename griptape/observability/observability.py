@@ -1,8 +1,8 @@
 from types import TracebackType
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 from attrs import define, field
-from griptape.drivers.observability.base_observability_driver import BaseObservabilityDriver
-from griptape.drivers.observability.no_op_observability_driver import NoOpObservabilityDriver
+from griptape.common import Observable
+from griptape.drivers import BaseObservabilityDriver, NoOpObservabilityDriver
 
 _no_op_observability_driver = NoOpObservabilityDriver()
 _global_observability_driver: Optional[BaseObservabilityDriver] = None
@@ -11,6 +11,13 @@ _global_observability_driver: Optional[BaseObservabilityDriver] = None
 @define
 class Observability:
     observability_driver: BaseObservabilityDriver = field(kw_only=True)
+
+    @staticmethod
+    def get_no_op_driver() -> NoOpObservabilityDriver:
+        global _no_op_observability_driver
+        if _no_op_observability_driver is None:
+            _no_op_observability_driver = NoOpObservabilityDriver()
+        return _no_op_observability_driver
 
     @staticmethod
     def get_global_driver() -> Optional[BaseObservabilityDriver]:
@@ -23,16 +30,9 @@ class Observability:
         _global_observability_driver = driver
 
     @staticmethod
-    def invoke_observable(
-        func: Callable,
-        instance: Optional[Any],
-        args: tuple[Any, ...],
-        kwargs: dict[str, Any],
-        decorator_args: tuple[Any, ...],
-        decorator_kwargs: dict[str, Any],
-    ) -> Any:
-        driver = Observability.get_global_driver() or _no_op_observability_driver
-        return driver.invoke_observable(func, instance, args, kwargs, decorator_args, decorator_kwargs)
+    def observe(call: Observable.Call) -> Any:
+        driver = Observability.get_global_driver() or Observability.get_no_op_driver()
+        return driver.observe(call)
 
     def __enter__(self):
         if Observability.get_global_driver() is not None:

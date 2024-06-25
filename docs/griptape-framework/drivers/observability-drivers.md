@@ -4,7 +4,7 @@ Observability Drivers are used by [Observability](../structures/observability.md
 
 * `__enter__()` sets up the Driver.
 * `__exit__()` tears down the Driver.
-* `invoke_observable()` wraps all functions and methods marked with the `@observable` decorator. At a bare minimum, implementations invoke the wrapped function and return its result (a no-op). This enables the Driver to generate telemetry related to the invocation's call arguments, return values, exceptions, latency, etc.
+* `observe()` wraps all functions and methods marked with the `@observable` decorator. At a bare minimum, implementations call the wrapped function and return its result (a no-op). This enables the Driver to generate telemetry related to the invocation's call arguments, return values, exceptions, latency, etc.
 
 ## Griptape Cloud
 

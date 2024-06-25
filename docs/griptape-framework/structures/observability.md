@@ -32,7 +32,7 @@ from griptape.drivers import GriptapeCloudObservabilityDriver
 from griptape.rules import Rule
 from griptape.structures import Agent
 from griptape.observability import Observability
-from griptape.utils.decorators import observable
+from griptape.common import observable
 
 # Decorate a function
 @observable

@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from types import TracebackType
 from attrs import define
-from typing import Any, Callable, Optional
+from griptape.common import Observable
+from types import TracebackType
+from typing import Any, Optional
 
 
 @define
@@ -18,12 +19,4 @@ class BaseObservabilityDriver(ABC):
         return False
 
     @abstractmethod
-    def invoke_observable(
-        self,
-        func: Callable,
-        instance: Optional[Any],
-        args: tuple[Any, ...],
-        kwargs: dict[str, Any],
-        decorator_args: tuple[Any, ...],
-        decorator_kwargs: dict[str, Any],
-    ) -> Any: ...
+    def observe(self, call: Observable.Call) -> Any: ...

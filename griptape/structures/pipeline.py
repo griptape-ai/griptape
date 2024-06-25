@@ -4,7 +4,7 @@ from attrs import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
 from griptape.structures import Structure
-from griptape.utils.decorators import observable
+from griptape.common import observable
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask

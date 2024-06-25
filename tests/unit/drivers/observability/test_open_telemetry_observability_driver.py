@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 import pytest
-from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
+from griptape.common import Observable
+from griptape.drivers import OpenTelemetryObservabilityDriver
 from opentelemetry.trace import StatusCode
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from griptape.observability.observability import Observability
@@ -65,7 +66,7 @@ class TestOpenTelemetryObservabilityDriver:
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
 
-    def test_context_manager_invoke_observable(self, driver, mock_span_exporter):
+    def test_context_manager_observe(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(
             spans=[
                 ExpectedSpan(name="main", parent=None, status_code=StatusCode.OK),
@@ -84,8 +85,8 @@ class TestOpenTelemetryObservabilityDriver:
         instance = Klass()
 
         with driver:
-            driver.invoke_observable(func, None, ["Hi"], {}, {}, {}) == "Hi you"
-            driver.invoke_observable(instance.method, instance, ["Bye"], {}, {}, {}) == "Bye yous"
+            driver.observe(Observable.Call(func=func, instance=None, args=["Hi"])) == "Hi you"
+            driver.observe(Observable.Call(func=instance.method, instance=instance, args=["Bye"])) == "Bye yous"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
@@ -93,14 +94,14 @@ class TestOpenTelemetryObservabilityDriver:
 
         # Works second time too
         with driver:
-            driver.invoke_observable(func, None, ["Hi"], {}, {}, {}) == "Hi you"
-            driver.invoke_observable(instance.method, instance, ["Bye"], {}, {}, {}) == "Bye yous"
+            driver.observe(Observable.Call(func=func, instance=None, args=["Hi"])) == "Hi you"
+            driver.observe(Observable.Call(func=instance.method, instance=instance, args=["Bye"])) == "Bye yous"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
 
-    def test_context_manager_invoke_observable_exception_function(self, driver, mock_span_exporter):
+    def test_context_manager_observe_exception_function(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(
             spans=[
                 ExpectedSpan(name="main", parent=None, status_code=StatusCode.ERROR, exception=Exception("Boom func")),
@@ -115,12 +116,12 @@ class TestOpenTelemetryObservabilityDriver:
 
         with pytest.raises(Exception, match="Boom func"):
             with driver:
-                driver.invoke_observable(func, None, ["Hi"], {}, {}, {}) == "Hi you"
+                driver.observe(Observable.Call(func=func, instance=None, args=["Hi"])) == "Hi you"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
 
-    def test_context_manager_invoke_observable_exception_method(self, driver, mock_span_exporter):
+    def test_context_manager_observe_exception_method(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(
             spans=[
                 ExpectedSpan(name="main", parent=None, status_code=StatusCode.ERROR, exception=Exception("Boom meth")),
@@ -139,7 +140,7 @@ class TestOpenTelemetryObservabilityDriver:
         # Works second time too
         with pytest.raises(Exception, match="Boom meth"):
             with driver:
-                driver.invoke_observable(instance.method, instance, ["Bye"], {}, {}, {}) == "Bye yous"
+                driver.observe(Observable.Call(func=instance.method, instance=instance, args=["Bye"])) == "Bye yous"
 
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
