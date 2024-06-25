@@ -103,7 +103,10 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         entries = response.get("entries", [])
         entry_list = []
         for entry in entries:
-            entry["meta"]["artifact"]["value"] |= entry["meta"]["artifact"]["meta"]
+            print(entry)
+            print(entry["meta"]["artifact"]["meta"])
+            print(entry["meta"]["artifact"]["value"])
+            # entry["meta"]["artifact"]["value"] |= entry["meta"]["artifact"]["meta"]
             entry_list.append(BaseVectorStoreDriver.Entry.from_dict(entry))
         return entry_list
 
