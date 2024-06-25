@@ -52,12 +52,18 @@ class CoherePromptDriver(BasePromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         user_message = prompt_stack.inputs[-1].content
 
-        history_messages = [self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs[:-1]]
+        history_messages = [
+            self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs[:-1] if input.content
+        ]
 
-        return {
+        params = {
             "message": user_message,
-            "chat_history": history_messages,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
         }
+
+        if history_messages:
+            params["chat_history"] = history_messages
+
+        return params
