@@ -13,13 +13,6 @@ class Observability:
     observability_driver: BaseObservabilityDriver = field(kw_only=True)
 
     @staticmethod
-    def get_no_op_driver() -> NoOpObservabilityDriver:
-        global _no_op_observability_driver
-        if _no_op_observability_driver is None:
-            _no_op_observability_driver = NoOpObservabilityDriver()
-        return _no_op_observability_driver
-
-    @staticmethod
     def get_global_driver() -> Optional[BaseObservabilityDriver]:
         global _global_observability_driver
         return _global_observability_driver
@@ -31,7 +24,7 @@ class Observability:
 
     @staticmethod
     def observe(call: Observable.Call) -> Any:
-        driver = Observability.get_global_driver() or Observability.get_no_op_driver()
+        driver = Observability.get_global_driver() or _no_op_observability_driver
         return driver.observe(call)
 
     def __enter__(self):
