@@ -1,4 +1,3 @@
-from __future__ import annotations
 import functools
 import schema
 from schema import Schema
