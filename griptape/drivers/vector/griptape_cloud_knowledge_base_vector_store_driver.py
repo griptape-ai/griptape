@@ -1,15 +1,9 @@
 from urllib.parse import urljoin
 import requests
-import uuid
 from typing import Optional, Any
 from attrs import Factory, define, field
-from dataclasses import dataclass
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
-from griptape.utils import import_optional_dependency
-from sqlalchemy import Column, String, JSON
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.dialects.postgresql import UUID
 
 
 @define
@@ -108,21 +102,6 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         response = requests.post(url, json=request, headers=self.headers).json()
         entries = response.get("entries", [])
         return [BaseVectorStoreDriver.Entry.from_dict(entry) for entry in entries]
-
-    def default_vector_model(self) -> Any:
-        Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
-        Base = declarative_base()
-
-        @dataclass
-        class VectorModel(Base):
-            __tablename__ = "embeddings"
-
-            id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-            vector = Column(Vector())
-            namespace = Column(String)
-            meta = Column(JSON)
-
-        return VectorModel
 
     def delete_vector(self, vector_id: str):
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
