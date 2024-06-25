@@ -12,7 +12,7 @@ from griptape.observability import Observability
 observability_driver = GriptapeCloudObservabilityDriver(service_name="hot-fire")
 
 with Observability(observability_driver=observability_driver):
-    # Important! Only code within this block be subject to observability
+    # Important! Only code within this block is subject to observability
     agent = Agent()
     agent.run("Name the five greatest rappers of all time")
 ```
