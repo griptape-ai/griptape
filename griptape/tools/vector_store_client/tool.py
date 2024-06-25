@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Callable, Any
-from attr import Factory
-from attrs import define, field
+from attrs import define, field, Factory
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, BaseArtifact
 from griptape.artifacts import ListArtifact
