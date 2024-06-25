@@ -95,6 +95,21 @@ agent = Agent(
 )
 ```
 
+#### Cohere
+
+The [Cohere Structure Config](../../reference/griptape/config/cohere_structure_config.md) provides default Drivers for Cohere's APIs.
+
+
+```python
+import os
+from griptape.config import CohereStructureConfig
+from griptape.structures import Agent
+
+load_dotenv()
+
+agent = Agent(config=CohereStructureConfig(api_key=os.environ["COHERE_API_KEY"]))
+```
+
 ### Custom Configs
 
 You can create your own [StructureConfig](../../reference/griptape/config/structure_config.md) by overriding relevant Drivers.
