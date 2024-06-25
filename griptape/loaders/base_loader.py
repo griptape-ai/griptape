@@ -29,10 +29,7 @@ class BaseLoader(ABC):
 
         with self.futures_executor as executor:
             return execute_futures_dict(
-                {
-                    key: executor.submit(self.load, source, *args, **kwargs)
-                    for key, source in sources_by_key.items()
-                }
+                {key: executor.submit(self.load, source, *args, **kwargs) for key, source in sources_by_key.items()}
             )
 
     def to_key(self, source: Any, *args, **kwargs) -> str:

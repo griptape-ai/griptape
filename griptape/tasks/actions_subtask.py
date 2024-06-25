@@ -120,9 +120,7 @@ class ActionsSubtask(BaseTextInputTask):
 
     def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
         with self.futures_executor as executor:
-            results = utils.execute_futures_dict(
-                {a.tag: executor.submit(self.execute_action, a) for a in actions}
-            )
+            results = utils.execute_futures_dict({a.tag: executor.submit(self.execute_action, a) for a in actions})
 
         return [r for r in results.values()]
 
