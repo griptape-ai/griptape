@@ -101,13 +101,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
 
         response = requests.post(url, json=request, headers=self.headers).json()
         entries = response.get("entries", [])
-        entry_list = []
-        for entry in entries:
-            print(f"Baker: {entry['meta']}")
-            print(entry["meta"]["artifact"]["meta"])
-            print(entry["meta"]["artifact"]["value"])
-            # entry["meta"]["artifact"]["value"] |= entry["meta"]["artifact"]["meta"]
-            entry_list.append(BaseVectorStoreDriver.Entry.from_dict(entry))
+        entry_list = [BaseVectorStoreDriver.Entry.from_dict(entry) for entry in entries]
         return entry_list
 
     def delete_vector(self, vector_id: str):
