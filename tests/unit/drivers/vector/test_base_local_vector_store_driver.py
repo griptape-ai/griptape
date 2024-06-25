@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import pytest
-from griptape.artifacts import TextArtifact, BaseArtifact
+from unittest.mock import patch
+from griptape.artifacts import TextArtifact
 
 
 class BaseLocalVectorStoreDriver(ABC):
@@ -65,3 +66,7 @@ class BaseLocalVectorStoreDriver(ABC):
         assert len(driver.load_artifacts()) == 3
         assert len(driver.load_artifacts("test-namespace-1")) == 2
         assert len(driver.load_artifacts("test-namespace-2")) == 1
+
+    def test_does_entry_exist_exception(self, driver):
+        with patch.object(driver, "load_entry", side_effect=Exception):
+            assert driver.does_entry_exist("does_not_exist") is False
