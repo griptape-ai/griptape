@@ -76,7 +76,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+        count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: Optional[bool] = None,
         distance_metric: Optional[str] = None,
