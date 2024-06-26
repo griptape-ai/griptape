@@ -81,8 +81,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         )
         if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
             logging.info(f"ID {vector_id} is successfully deleted")
-        else:
-            logging.error(f"Failed to delete ID {vector_id}. Status: {deletion_response.status}")
 
     def query(
         self,
