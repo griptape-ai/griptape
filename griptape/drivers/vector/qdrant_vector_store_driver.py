@@ -75,7 +75,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Parameters:
             vector_id (str | id): ID of the vector to delete.
         """
-        # rest = import_optional_dependency("qdrant_client.http.models")
         deletion_response = self.client.delete(
             collection_name=self.collection_name,
             points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(points=[vector_id]),
