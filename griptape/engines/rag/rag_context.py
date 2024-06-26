@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, Any
 from attrs import define, field
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, BaseArtifact
 
 
 @define(kw_only=True)
@@ -9,7 +9,7 @@ class RagContext:
     method.
 
     Attributes:
-        initial_query: Query provided by the user.
+        query: Query provided by the user.
         namespace: Optional namespace override for modules with an explicit namespace parameter.
         metadata: Optional metadata override for modules with an explicit metadata parameter.
         alternative_queries: Optional queries to expand retrieval results.
@@ -19,11 +19,12 @@ class RagContext:
         output: Final output from the generation stage.
     """
 
-    initial_query: str = field()
+    query: str = field()
+    module_params: dict[str, Any] = field(factory=dict)
     namespace: Optional[str] = field(default=None)
     metadata: Optional[str] = field(default=None)
     alternative_queries: list[str] = field(factory=list)
     before_query: list[str] = field(factory=list)
     after_query: list[str] = field(factory=list)
     text_chunks: list[TextArtifact] = field(factory=list)
-    output: Optional[TextArtifact] = field(default=None)
+    output: Optional[BaseArtifact] = field(default=None)

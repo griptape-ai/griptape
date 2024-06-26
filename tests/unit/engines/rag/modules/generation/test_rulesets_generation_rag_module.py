@@ -7,4 +7,4 @@ class TestRulesetsGenerationRagModule:
     def test_run(self):
         module = RulesetsGenerationRagModule(rulesets=[Ruleset(name="test ruleset", rules=[Rule("test rule")])])
 
-        assert "test rule" in module.run(RagContext(initial_query="test")).before_query[0]
+        assert "test rule" in module.run(RagContext(query="test")).before_query[0]

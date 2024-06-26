@@ -27,4 +27,4 @@ class TestRagEngine:
         assert engine.process_query("test").output.value == "mock output"
 
     def test_process(self, engine):
-        assert engine.process(RagContext(initial_query="test")).output.value == "mock output"
+        assert engine.process(RagContext(query="test")).output.value == "mock output"

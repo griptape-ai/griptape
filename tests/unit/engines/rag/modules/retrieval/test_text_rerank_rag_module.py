@@ -15,6 +15,6 @@ class TestTextRerankRagModule:
 
     def test_run(self, mock_client):
         module = TextRerankRagModule(rerank_driver=CohereRerankDriver(api_key="api-key"))
-        result = module.run(RagContext(initial_query="test"))
+        result = module.run(RagContext(query="test"))
 
         assert len(result) == 2

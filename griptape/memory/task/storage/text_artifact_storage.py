@@ -41,7 +41,7 @@ class TextArtifactStorage(BaseArtifactStorage):
             raise ValueError("RAG engine is not set.")
 
         result = self.rag_engine.process(
-            RagContext(initial_query=query, namespace=namespace, metadata=None if metadata is None else str(metadata))
+            RagContext(query=query, namespace=namespace, metadata=None if metadata is None else str(metadata))
         ).output
 
         if result is None:

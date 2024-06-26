@@ -24,7 +24,7 @@ class TestOpenSearchVectorStoreDriver:
             entry = driver.load_entry("foo2", namespace="company")
             assert entry.id == "foo2"
             assert np.allclose(entry.vector, [2, 3, 4], atol=1e-6)
-            assert entry.meta == {"foo": "bar"}
+            assert entry.module_params == {"foo": "bar"}
 
     def test_load_entries(self, driver):
         mock_entry = Mock()
@@ -37,7 +37,7 @@ class TestOpenSearchVectorStoreDriver:
             assert len(entries) == 1
             assert entries[0].id == "try_load"
             assert np.allclose(entries[0].vector, [0.7, 0.8, 0.9], atol=1e-6)
-            assert entries[0].meta is None
+            assert entries[0].module_params is None
 
     def test_query(self, driver):
         mock_result = Mock()

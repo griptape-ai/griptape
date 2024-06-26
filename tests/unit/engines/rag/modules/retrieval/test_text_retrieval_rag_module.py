@@ -13,7 +13,7 @@ class TestTextRetrievalRagModule:
         vector_store_driver.upsert_text_artifact(TextArtifact("foobar1"), namespace="test")
         vector_store_driver.upsert_text_artifact(TextArtifact("foobar2"), namespace="test")
 
-        result = module.run(RagContext(initial_query="test"))
+        result = module.run(RagContext(query="test"))
 
         assert len(result) == 2
         assert result[0].value == "foobar1"

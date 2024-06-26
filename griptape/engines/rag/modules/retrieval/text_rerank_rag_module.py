@@ -9,4 +9,4 @@ from griptape.engines.rag.modules import BaseRerankRagModule
 @define(kw_only=True)
 class TextRerankRagModule(BaseRerankRagModule):
     def run(self, context: RagContext) -> Sequence[BaseArtifact]:
-        return self.rerank_driver.run(context.initial_query, context.text_chunks)
+        return self.rerank_driver.run(context.query, context.text_chunks)

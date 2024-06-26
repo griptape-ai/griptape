@@ -167,7 +167,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                     id=str(result[0].id),
                     vector=result[0].vector if include_vectors else None,
                     score=result[1],
-                    meta=result[0].meta,
+                    meta=result[0].module_params,
                     namespace=result[0].namespace,
                 )
                 for result in results
