@@ -197,9 +197,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             with_payload=kwargs.get("with_payload", True),
             with_vectors=kwargs.get("with_vectors", True),
         )
-        if not results:
-            logging.error("An error occurred or no results found.")
-            return []
+
         return [
             BaseVectorStoreDriver.Entry(
                 id=entry.id,
