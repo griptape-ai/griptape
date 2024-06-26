@@ -18,14 +18,15 @@ class RelatedQueryGenerationRagModule(BaseQueryRagModule):
     def run(self, context: RagContext) -> list[str]:
         system_prompt = self.generate_system_template(context.initial_query)
 
-        results = utils.execute_futures_list(
-            [
-                self.futures_executor.submit(
-                    self.prompt_driver.run, self.generate_query_prompt_stack(system_prompt, "Alternative query: ")
-                )
-                for _ in range(self.query_count)
-            ]
-        )
+        with self.futures_executor as executor:
+            results = utils.execute_futures_list(
+                [
+                    executor.submit(
+                        self.prompt_driver.run, self.generate_query_prompt_stack(system_prompt, "Alternative query: ")
+                    )
+                    for _ in range(self.query_count)
+                ]
+            )
 
         return [r.value for r in results]
 

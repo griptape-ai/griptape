@@ -36,13 +36,14 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     def upsert_text_artifacts(
         self, artifacts: dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
     ) -> None:
-        utils.execute_futures_dict(
-            {
-                namespace: self.futures_executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
-                for namespace, artifact_list in artifacts.items()
-                for a in artifact_list
-            }
-        )
+        with self.futures_executor as executor:
+            utils.execute_futures_dict(
+                {
+                    namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
+                    for namespace, artifact_list in artifacts.items()
+                    for a in artifact_list
+                }
+            )
 
     def upsert_text_artifact(
         self,
@@ -92,7 +93,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             )
 
     def does_entry_exist(self, vector_id: str, namespace: Optional[str] = None) -> bool:
-        return self.load_entry(vector_id, namespace) is not None
+        try:
+            return self.load_entry(vector_id, namespace) is not None
+        except Exception:
+            return False
 
     def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
         result = self.load_entries(namespace)
