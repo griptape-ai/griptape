@@ -8,7 +8,7 @@ from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEm
 
 @define
 class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
-    """A vector store driver for Griptape Cloud Knowledge Bases and Data Connectors.
+    """A vector store driver for Griptape Cloud Knowledge Bases.
 
     Attributes:
         api_key: API Key for Griptape Cloud.
