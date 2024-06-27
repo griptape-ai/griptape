@@ -54,7 +54,11 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         **kwargs,
     ) -> str:
         meta = {} if meta is None else meta
-        vector_id = utils.str_to_hash(artifact.value) if vector_id is None else vector_id
+
+        # Properly handle CSVs
+        artifact_value_string = artifact.value if isinstance(artifact.value, str) else str(artifact.value)
+
+        vector_id = utils.str_to_hash(artifact_value_string) if vector_id is None else vector_id
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id
