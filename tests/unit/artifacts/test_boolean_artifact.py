@@ -2,7 +2,7 @@ import pytest
 from griptape.artifacts import BooleanArtifact
 
 
-class TestInfoArtifact:
+class TestBooleanArtifact:
     def test_parse_bool(self):
         assert BooleanArtifact.parse_bool("true").value is True
         assert BooleanArtifact.parse_bool("false").value is False
