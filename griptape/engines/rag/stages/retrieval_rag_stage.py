@@ -19,7 +19,7 @@ class RetrievalRagStage(BaseRagStage):
     def run(self, context: RagContext) -> RagContext:
         logging.info(f"RetrievalStage: running {len(self.retrieval_modules)} retrieval modules in parallel")
 
-        with self.futures_executor as executor:
+        with self.futures_executor_fn() as executor:
             results = utils.execute_futures_list([executor.submit(r.run, context) for r in self.retrieval_modules])
 
         # flatten the list of lists

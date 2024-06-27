@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Callable
 from typing import Optional
 from attrs import define, field, Factory
 from griptape import utils
@@ -31,12 +31,14 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             return BaseArtifact.from_json(self.meta["artifact"])  # pyright: ignore[reportOptionalSubscript]
 
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
-    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+    )
 
     def upsert_text_artifacts(
         self, artifacts: dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
     ) -> None:
-        with self.futures_executor as executor:
+        with self.futures_executor_fn() as executor:
             utils.execute_futures_dict(
                 {
                     namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
