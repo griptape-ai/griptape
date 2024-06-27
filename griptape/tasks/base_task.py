@@ -34,8 +34,7 @@ class BaseTask(ABC):
     structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
 
     @property

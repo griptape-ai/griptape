@@ -15,8 +15,7 @@ from griptape.utils.hash import bytes_to_hash, str_to_hash
 @define
 class BaseLoader(ABC):
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
     encoding: Optional[str] = field(default=None, kw_only=True)
 
