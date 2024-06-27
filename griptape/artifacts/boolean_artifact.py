@@ -23,3 +23,6 @@ class BooleanArtifact(BaseArtifact):
 
     def __add__(self, other: BaseArtifact) -> BooleanArtifact:
         raise ValueError("Cannot add BooleanArtifact with other artifacts")
+
+    def __eq__(self, value: object) -> bool:
+        return self.value is value
