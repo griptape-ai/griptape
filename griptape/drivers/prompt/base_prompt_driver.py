@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from griptape.structures import Structure
 
 
-@define
+@define(kw_only=True)
 class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """Base class for Prompt Drivers.
 
@@ -29,15 +29,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
     """
 
-    temperature: float = field(default=0.1, kw_only=True, metadata={"serializable": True})
-    max_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    structure: Optional[Structure] = field(default=None, kw_only=True)
-    ignored_exception_types: tuple[type[Exception], ...] = field(
-        default=Factory(lambda: (ImportError, ValueError)), kw_only=True
-    )
+    temperature: float = field(default=0.1, metadata={"serializable": True})
+    max_tokens: Optional[int] = field(default=None, metadata={"serializable": True})
+    structure: Optional[Structure] = field(default=None)
+    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
-    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    stream: bool = field(default=False, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:

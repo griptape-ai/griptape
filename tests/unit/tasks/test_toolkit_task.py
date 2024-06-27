@@ -1,11 +1,6 @@
-import pytest
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
 from tests.utils import defaults
@@ -71,6 +66,7 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_list_output"},
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                        "input": {"additionalProperties": False, "properties": {}, "required": [], "type": "object"},
                     },
                     "required": ["name", "path", "tag"],
                     "additionalProperties": False,
@@ -81,6 +77,7 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_no_schema"},
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                        "input": {"additionalProperties": False, "properties": {}, "required": [], "type": "object"},
                     },
                     "required": ["name", "path", "tag"],
                     "additionalProperties": False,
@@ -138,13 +135,6 @@ class TestToolkitSubtask:
         "$id": "Actions Schema",
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
-
-    @pytest.fixture
-    def query_engine(self):
-        return VectorQueryEngine(
-            prompt_driver=MockPromptDriver(),
-            vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver()),
-        )
 
     def test_init(self):
         assert len(ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]).tools) == 2
@@ -277,7 +267,7 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_memory(self, query_engine):
+    def test_find_memory(self):
         m1 = defaults.text_task_memory("Memory1")
         m2 = defaults.text_task_memory("Memory2")
 
@@ -289,7 +279,7 @@ class TestToolkitSubtask:
         assert task.find_memory("Memory1") == m1
         assert task.find_memory("Memory2") == m2
 
-    def test_memory(self, query_engine):
+    def test_memory(self):
         tool1 = MockTool(
             name="Tool1",
             output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},

@@ -141,7 +141,7 @@ from griptape.config import StructureConfig
 agent = Agent(
     config=StructureConfig(
         prompt_driver=CoherePromptDriver(
-            model="command",
+            model="command-r",
             api_key=os.environ['COHERE_API_KEY'],
         )
     )
@@ -239,6 +239,29 @@ agent.run(
     (C) Billing question
     (D) Other (please explain)"""
 )
+```
+
+### Ollama
+
+!!! info
+    This driver requires the `drivers-prompt-ollama` [extra](../index.md#extras).
+
+The [OllamaPromptDriver](../../reference/griptape/drivers/prompt/ollama_prompt_driver.md) connects to the [Ollama Chat Completion API](https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion).
+
+```python
+from griptape.config import StructureConfig
+from griptape.drivers import OllamaPromptDriver
+from griptape.structures import Agent
+
+
+agent = Agent(
+    config=StructureConfig(
+        prompt_driver=OllamaPromptDriver(
+            model="llama3",
+        ),
+    ),
+)
+agent.run("What color is the sky at different times of the day?")
 ```
 
 ### Hugging Face Hub

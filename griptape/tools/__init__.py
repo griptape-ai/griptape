@@ -26,6 +26,7 @@ from .outpainting_image_generation_client.tool import OutpaintingImageGeneration
 from .griptape_cloud_knowledge_base_client.tool import GriptapeCloudKnowledgeBaseClient
 from .structure_run_client.tool import StructureRunClient
 from .image_query_client.tool import ImageQueryClient
+from .rag_client.tool import RagClient
 from .text_to_speech_client.tool import TextToSpeechClient
 from .audio_transcription_client.tool import AudioTranscriptionClient
 
@@ -58,6 +59,7 @@ __all__ = [
     "GriptapeCloudKnowledgeBaseClient",
     "StructureRunClient",
     "ImageQueryClient",
+    "RagClient",
     "TextToSpeechClient",
     "AudioTranscriptionClient",
 ]

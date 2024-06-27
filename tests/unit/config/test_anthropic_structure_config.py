@@ -20,7 +20,7 @@ class TestAnthropicStructureConfig:
                 "temperature": 0.1,
                 "max_tokens": 1000,
                 "stream": False,
-                "model": "claude-3-opus-20240229",
+                "model": "claude-3-5-sonnet-20240620",
                 "top_p": 0.999,
                 "top_k": 250,
             },

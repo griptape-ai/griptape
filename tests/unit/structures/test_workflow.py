@@ -108,7 +108,9 @@ class TestWorkflow:
 
         storage = list(workflow.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
+            0
+        ].vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -676,6 +678,15 @@ class TestWorkflow:
         workflow + task4
         workflow.insert_tasks(task1, [task2, task3], task4)
 
+        assert task4 == workflow.output_task
+
+        task4.add_parents([task2, task3])
+        task1.add_children([task2, task3])
+
+        # task4 is the final task, but its defined at index 0
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task4, task1, task2, task3])
+
+        # ouput_task topologically should be task4
         assert task4 == workflow.output_task
 
     def test_to_graph(self):

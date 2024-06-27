@@ -7,7 +7,7 @@ version: ## Bump version and push to release branch.
 
 .PHONY: publish
 publish: ## Push git tag and publish version to PyPI.
-	@git tag v$$(poetry version -s)
+	@git tag $$(poetry version -s)
 	@git push --tags
 	@poetry build
 	@poetry publish

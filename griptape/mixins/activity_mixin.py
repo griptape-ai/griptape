@@ -2,6 +2,7 @@ import inspect
 from typing import Optional, Callable
 from attrs import define, field
 from jinja2 import Template
+import schema
 from schema import Schema, Literal
 
 
@@ -89,7 +90,7 @@ class ActivityMixin:
         if self.activity_schema(activity):
             return {Literal("input"): {"values": getattr(activity, "config")["schema"]}}
         else:
-            return {}
+            return {schema.Optional("input"): {}}
 
     def _validate_tool_activity(self, activity_name):
         tool = self.__class__

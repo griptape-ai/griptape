@@ -7,6 +7,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- `RagEngine` is an abstraction for implementing modular RAG pipelines.
+  - `RagContext` is a container object for passing around RAG context. 
+  - RAG stages:
+    - `QueryRagStage` for parsing and expanding queries.
+    - `RetrievalRagStage` for retrieving content.
+    - `GenerationRagStage` for augmenting and generating outputs.
+  - RAG modules:
+    - Query:
+      - `RelatedQueryGenerationRagModule` for generating related queries.
+    - Retrieval:
+      - `TextRetrievalRagModule` for retrieving text chunks.
+      - `TextRerankRagModule` for re-ranking retrieved results.
+    - Generation:
+      - `MetadataGenerationRagModule` for appending metadata.
+      - `RulesetsGenerationRagModule` for appending rulesets.
+      - `PromptGenerationRagModule` for generating responses based on retrieved text chunks.
+- `RagClient` tool for exposing `RagEngines` to LLM agents.
+- `RagTask` task for including `RagEngines` in any structure.
+- Rerank drivers:
+  - `CohereRerankDriver` for using the Cohere rerank API.
+- `utils.execute_futures_list()` for executing a list of futures.
+- `LocalVectorStoreDriver.persist_file` for persisting vectors and chunks in a text file.
+- `Entry.to_artifact()` for easy vector store entry conversions into Griptape artifacts.
+- `BaseVectorStoreDriver.does_entry_exist()` to check if an entry exists in the vector store.
+- `GoogleWebSearchDriver` to web search with the Google Customsearch API.
+- `DuckDuckGoWebSearchDriver` to web search with the DuckDuckGo search SDK.
+- `ProxyWebScraperDriver` to web scrape using proxies.
+- Parameter `session` on `AmazonBedrockStructureConfig`.
+- Parameter `meta` on `TextArtifact`.
+- `VectorStoreClient` improvements:
+  - `VectorStoreClient.query_params` dict for custom query params.
+  - `VectorStoreClient.process_query_output_fn` for custom query output processing logic.
+
+### Changed
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
+- **BREAKING**: Removed `VectorQueryEngine` in favor of `RagEngine`.
+- **BREAKING**: Removed `TextQueryTask` in favor of `RagTask`.
+- **BREAKING**: `TextArtifactStorage` now requires `vector_store_driver` and `rag_engine` in place of `vector_query_engine`.
+- **BREAKING**: Moved `load_artifacts()` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
+- **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
+- **BREAKING**: Replaced `query_engine` with `vector_store_driver` in `VectorStoreClient`.
+- **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
+- **BREAKING**: removed `VectorStoreClient.top_n` and `VectorStoreClient.namespace` in favor of `VectorStoreClient.query_params`.
+- `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
+- Wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
+
+### Fixed
+- `CoherePromptDriver` to properly handle empty history.
+- `StructureVisualizer.to_url()` by wrapping task IDs in single quotes. 
+
+## [0.27.1] - 2024-06-20
+
+### Added
+- Support for Claude 3.5 Sonnet in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver`.
+
+### Changed
+- Base Tool schema so that `input` is optional when no Tool Activity schema is set.
+- Tool Task system prompt for better results with lower-end models. 
+- Default Prompt Driver model to Claude 3.5 Sonnet in `AnthropicStructureConfig` and `AmazonBedrockStructureConfig.`
+
+## [0.27.0] - 2024-06-19
+
+### Added
 - `BaseTask.add_child()` to add a child task to a parent task.
 - `BaseTask.add_children()` to add multiple child tasks to a parent task.
 - `BaseTask.add_parent()` to add a parent task to a child task.
@@ -22,6 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.parents_outputs` to get the textual output of all parent tasks. 
 - `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
 - `parents_output_text` to Workflow context.
+- `OllamaPromptModelDriver` for using models with Ollama.
+- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
@@ -72,6 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 - Structure run args not being set immediately.
 - Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.26.0] - 2024-06-04
 
@@ -83,7 +149,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
 - `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
-- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
@@ -103,6 +168,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Extra fields being excluded when using `SerializableMixin.from_dict`.
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.25.1] - 2024-05-15
 

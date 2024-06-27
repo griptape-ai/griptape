@@ -72,7 +72,7 @@ from griptape.structures import Agent
 agent = Agent()
 agent.add_task(
     # take the first argument from the agent `run` method
-    PromptTask("Respond to the users following request: {{ args[0] }}"),
+    PromptTask("Respond to the following request: {{ args[0] }}"),
 )
 
 agent.run("Write me a haiku")
@@ -80,7 +80,7 @@ agent.run("Write me a haiku")
 
 ```
 [10/20/23 15:27:26] INFO     PromptTask f5025c6352914e9f80ef730e5269985a        
-                             Input: Respond to the users following request:     
+                             Input: Respond to the following request:     
                              Write me a haiku                                   
 [10/20/23 15:27:28] INFO     PromptTask f5025c6352914e9f80ef730e5269985a        
                              Output: Gentle morning dew,                        
@@ -350,40 +350,50 @@ agent.run(
                              senses, bringing a revolution in technology.   
 ```
 
-## Text Query Task
+## RAG Task
 
-To query text, use the [TextQueryTask](../../reference/griptape/tasks/text_query_task.md).
-This Task takes a [Query Engine](../../griptape-framework/engines/query-engines.md), and a set of arguments specific to the engine.
+To query text, use the [RagTask](../../reference/griptape/tasks/rag_task.md).
+This task takes a [RAG Engine](../../griptape-framework/engines/rag-engines.md), and a set of arguments specific to the engine.
 
 ```python
-from griptape.drivers import OpenAiChatPromptDriver
 from griptape.structures import Agent
-from griptape.tasks import TextQueryTask
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
-from griptape.engines import VectorQueryEngine
+from griptape.tasks import RagTask
+from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.artifacts import TextArtifact
+from griptape.engines.rag import RagEngine
+from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
+from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
 
 # Initialize Embedding Driver and Vector Store Driver
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
-artifact = TextArtifact(
-    "Griptape builds AI-powered applications that connect securely to your enterprise data and APIs."
-    "Griptape Agents provide incredible power and flexibility when working with large language models."
-)
+artifacts = [
+    TextArtifact("Griptape builds AI-powered applications that connect securely to your enterprise data and APIs."),
+    TextArtifact("Griptape Agents provide incredible power and flexibility when working with large language models.")
+]
+vector_store_driver.upsert_text_artifacts({"griptape": artifacts})
 
-# Create a VectorQueryEngine using the LocalVectorStoreDriver
-vector_query_engine = VectorQueryEngine(
-    vector_store_driver=vector_store_driver,
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo")
-)
-vector_query_engine.upsert_text_artifact(artifact=artifact)
-
-# Instantiate the agent and add TextQueryTask with the VectorQueryEngine
+# Instantiate the agent and add RagTask with the RagEngine
 agent = Agent()
 agent.add_task(
-    TextQueryTask(
-        "Respond to the users following query: {{ args[0] }}",
-        query_engine=vector_query_engine,
+    RagTask(
+        "Respond to the following query: {{ args[0] }}",
+        rag_engine=RagEngine(
+            retrieval_stage=RetrievalRagStage(
+                retrieval_modules=[
+                    TextRetrievalRagModule(
+                        namespace="griptape",
+                        vector_store_driver=vector_store_driver,
+                        top_n=20
+                    )
+                ]
+            ),
+            generation_stage=GenerationRagStage(
+                generation_module=PromptGenerationRagModule(
+                    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
+                )
+            )
+        ),
     )
 )
 
@@ -391,21 +401,9 @@ agent.add_task(
 agent.run("Give me information about Griptape")
 ```
 
-```
-[10/20/23 15:32:39] INFO     TextQueryTask a1d2eceab9204679b3f701f6ea821606     
-                             Input: Respond to the users following query: Give
-                             me information about Griptape                      
-[10/20/23 15:32:41] INFO     TextQueryTask a1d2eceab9204679b3f701f6ea821606     
-                             Output: Griptape builds AI-powered applications    
-                             that connect securely to your enterprise data and  
-                             APIs. Griptape Agents provide incredible power and 
-                             flexibility when working with large language       
-                             models.
-```
-
 ## Code Execution Task
 
-To execute an arbitrary Python function, use the [CodeExecutionTask](../../reference/griptape/tasks/text_query_task.md).
+To execute an arbitrary Python function, use the [CodeExecutionTask](../../reference/griptape/tasks/code_execution_task.md).
 This task takes a python function, and authors can elect to return a custom artifact.
 
 ```python 
@@ -627,7 +625,7 @@ pipeline.run("An image of a mountain shrouded by clouds")
 
 ## Image Query Task
 
-The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) executes a natural language query on one or more input images. This Task uses an [Image Query Engine](../engines/query-engines.md#image) configured with an [Image Query Driver](../drivers/image-query-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
+The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) performs a natural language query on one or more input images. This Task uses an [Image Query Engine](../engines/image-query-engines.md) configured with an [Image Query Driver](../drivers/image-query-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
 
 This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#textartifact)) and a list of [Image Artifacts](../data/artifacts.md#imageartifact) or a Callable returning these two values.
 
@@ -668,7 +666,7 @@ pipeline.run("Describe the weather in the image")
 ```
 
 ## Structure Run Task
-The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) executes another Structure with a given input.
+The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) runs another Structure with a given input.
 This Task is useful for orchestrating multiple specialized Structures in a single run. Note that the input to the Task is a tuple of arguments that will be passed to the Structure.
 
 ```python
@@ -677,7 +675,7 @@ import os
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
-from griptape.drivers import LocalStructureRunDriver
+from griptape.drivers import LocalStructureRunDriver, GoogleWebSearchDriver
 from griptape.tools import (
     TaskMemoryClient,
     WebScraper,
@@ -689,8 +687,10 @@ def build_researcher():
     researcher = Agent(
         tools=[
             WebSearch(
-                google_api_key=os.environ["GOOGLE_API_KEY"],
-                google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                web_search_driver=GoogleWebSearchDriver(
+                    api_key=os.environ["GOOGLE_API_KEY"],
+                    search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                ),
             ),
             WebScraper(
                 off_prompt=True,

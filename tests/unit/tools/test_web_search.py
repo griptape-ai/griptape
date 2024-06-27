@@ -1,34 +1,32 @@
-from griptape.artifacts import BaseArtifact, ErrorArtifact
+import pytest
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import WebSearch
-from pytest import fixture
-import json
 
 
 class TestWebSearch:
-    @fixture
+    @pytest.fixture
     def websearch_tool(self, mocker):
-        mock_response = mocker.Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"items": [{"title": "foo", "link": "bar", "snippet": "baz"}]}
-        mocker.patch("requests.get", return_value=mock_response)
+        mock_response = TextArtifact("test_response")
+        driver = mocker.Mock()
+        mocker.patch.object(driver, "search", return_value=mock_response)
 
-        return WebSearch(google_api_key="foo", google_api_search_id="bar")
+        return WebSearch(web_search_driver=driver)
 
-    @fixture
+    @pytest.fixture
     def websearch_tool_with_error(self, mocker):
-        mock_response = mocker.Mock()
-        mock_response.status_code = 500
-        mocker.patch("requests.get", return_value=mock_response)
+        mock_response = Exception("test_error")
+        driver = mocker.Mock()
+        mocker.patch.object(driver, "search", side_effect=mock_response)
 
-        return WebSearch(google_api_key="foo", google_api_search_id="bar")
+        return WebSearch(web_search_driver=driver)
 
     def test_search(self, websearch_tool):
         assert isinstance(websearch_tool.search({"values": {"query": "foo bar"}}), BaseArtifact)
-        assert json.loads(websearch_tool.search({"values": {"query": "foo bar"}}).value[0].value) == {
-            "title": "foo",
-            "url": "bar",
-            "description": "baz",
-        }
+        assert websearch_tool.search({"values": {"query": "foo bar"}}).value == "test_response"
 
     def test_search_with_error(self, websearch_tool_with_error):
         assert isinstance(websearch_tool_with_error.search({"values": {"query": "foo bar"}}), ErrorArtifact)
+        assert (
+            websearch_tool_with_error.search({"values": {"query": "foo bar"}}).value
+            == "Error searching 'foo bar' with Mock: test_error"
+        )
