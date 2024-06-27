@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from concurrent import futures
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 from collections.abc import Mapping, Sequence
 
 from attrs import define, field, Factory
@@ -14,7 +14,9 @@ from griptape.utils.hash import bytes_to_hash, str_to_hash
 
 @define
 class BaseLoader(ABC):
-    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+    )
     encoding: Optional[str] = field(default=None, kw_only=True)
 
     @abstractmethod
@@ -27,7 +29,7 @@ class BaseLoader(ABC):
         # to avoid duplicate work.
         sources_by_key = {self.to_key(source): source for source in sources}
 
-        with self.futures_executor as executor:
+        with self.futures_executor_fn() as executor:
             return execute_futures_dict(
                 {key: executor.submit(self.load, source, *args, **kwargs) for key, source in sources_by_key.items()}
             )

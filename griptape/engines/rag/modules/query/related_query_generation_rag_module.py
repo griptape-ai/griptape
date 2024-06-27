@@ -18,7 +18,7 @@ class RelatedQueryGenerationRagModule(BaseQueryRagModule):
     def run(self, context: RagContext) -> list[str]:
         system_prompt = self.generate_system_template(context.query)
 
-        with self.futures_executor as executor:
+        with self.futures_executor_fn() as executor:
             results = utils.execute_futures_list(
                 [
                     executor.submit(

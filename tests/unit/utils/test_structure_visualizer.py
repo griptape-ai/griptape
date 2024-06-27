@@ -11,7 +11,7 @@ class TestStructureVisualizer:
         visualizer = StructureVisualizer(agent)
         result = visualizer.to_url()
 
-        assert result == "https://mermaid.ink/svg/Z3JhcGggVEQ7Cgl0YXNrMTs="
+        assert result == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgkndGFzazEnOw=="
 
     def test_pipeline(self):
         pipeline = Pipeline(
@@ -29,7 +29,7 @@ class TestStructureVisualizer:
 
         assert (
             result
-            == "https://mermaid.ink/svg/Z3JhcGggVEQ7Cgl0YXNrMS0tPiB0YXNrMjsKCXRhc2syLS0+IHRhc2szOwoJdGFzazMtLT4gdGFzazQ7Cgl0YXNrNDs="
+            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgkndGFzazEnLS0+ICd0YXNrMic7CgkndGFzazInLS0+ICd0YXNrMyc7CgkndGFzazMnLS0+ICd0YXNrNCc7CgkndGFzazQnOw=="
         )
 
     def test_workflow(self):
@@ -48,5 +48,5 @@ class TestStructureVisualizer:
 
         assert (
             result
-            == "https://mermaid.ink/svg/Z3JhcGggVEQ7Cgl0YXNrMS0tPiB0YXNrMiAmIHRhc2szOwoJdGFzazItLT4gdGFzazQ7Cgl0YXNrMy0tPiB0YXNrNDsKCXRhc2s0Ow=="
+            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgkndGFzazEnLS0+ICd0YXNrMicgJiAndGFzazMnOwoJJ3Rhc2syJy0tPiAndGFzazQnOwoJJ3Rhc2szJy0tPiAndGFzazQnOwoJJ3Rhc2s0Jzs="
         )

@@ -21,7 +21,7 @@ class TextRetrievalRagModule(BaseRetrievalRagModule):
         all_queries = [context.query] + context.alternative_queries
         namespace = self.namespace or context.namespace
 
-        with self.futures_executor as executor:
+        with self.futures_executor_fn() as executor:
             results = utils.execute_futures_list(
                 [
                     executor.submit(self.vector_store_driver.query, query, self.top_n, namespace, False)
