@@ -15,6 +15,9 @@ class TestBooleanArtifact:
         with pytest.raises(ValueError):
             BooleanArtifact.parse_bool(None)
 
+        assert BooleanArtifact.parse_bool(True).value is True
+        assert BooleanArtifact.parse_bool(False).value is False
+
     def test_add(self):
         with pytest.raises(ValueError):
             BooleanArtifact(True) + BooleanArtifact(True)
