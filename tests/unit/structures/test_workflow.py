@@ -363,7 +363,7 @@ class TestWorkflow:
         with pytest.raises(ValueError):
             workflow.insert_tasks(task1, [task2, task3], task4)
 
-    def test_run_topology_1_missing_child(self):
+    def test_run_topology_1_id_equality(self):
         task1 = PromptTask("test1", id="task1")
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
@@ -377,7 +377,7 @@ class TestWorkflow:
         with pytest.raises(ValueError):
             workflow.run()
 
-    def test_run_topology_1_task_id_equality(self):
+    def test_run_topology_1_object_equality(self):
         task1 = PromptTask("test1", id="task1")
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
@@ -386,11 +386,8 @@ class TestWorkflow:
 
         workflow + task1
         workflow + task4
-        workflow.insert_tasks(PromptTask("test1", id="task1"), [task2, task3], task4)
-
-        workflow.run()
-
-        self._validate_topology_1(workflow)
+        with pytest.raises(ValueError):
+            workflow.insert_tasks(PromptTask("test1", id="task1"), [task2, task3], task4)
 
     def test_run_topology_2_declarative_parents(self):
         workflow = Workflow(

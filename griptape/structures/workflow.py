@@ -85,8 +85,9 @@ class Workflow(Structure):
             if task.id not in parent_task.child_ids:
                 parent_task.child_ids.append(task.id)
 
-            parent_index = next((index for index, task in enumerate(self.tasks) if task.id == parent_task.id), None)
-            if parent_index is None:
+            try:
+                parent_index = self.tasks.index(parent_task)
+            except ValueError:
                 raise ValueError(f"Parent task {parent_task.id} not found in workflow.")
             else:
                 if parent_index > last_parent_index:
