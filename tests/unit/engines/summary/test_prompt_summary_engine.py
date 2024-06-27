@@ -9,7 +9,7 @@ import os
 class TestPromptSummaryEngine:
     @pytest.fixture
     def engine(self):
-        return PromptSummaryEngine(prompt_driver=MockPromptDriver())
+        return PromptSummaryEngine(prompt_driver=MockPromptDriver(), context={"foo": "bar"})
 
     def test_summarize_text(self, engine):
         assert engine.summarize_text("foobar") == "mock output"
@@ -27,10 +27,9 @@ class TestPromptSummaryEngine:
             PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=10000)
 
     def test_chunked_summary(self, engine):
-        def smaller_input(prompt_stack: PromptStack):
-            return prompt_stack.inputs[0].content[: (len(prompt_stack.inputs[0].content) // 2)]
-
-        engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(mock_output="smaller_input"))
+        engine = PromptSummaryEngine(
+            prompt_driver=MockPromptDriver(mock_output="smaller_input"), context={"foo": "bar"}
+        )
 
         def copy_test_resource(resource_path: str):
             file_dir = os.path.dirname(__file__)

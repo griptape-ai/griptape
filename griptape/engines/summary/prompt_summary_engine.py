@@ -51,10 +51,10 @@ class PromptSummaryEngine(BaseSummaryEngine):
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 
         system_prompt = self.system_template_generator.render(
-            summary=summary, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets)
+            summary=summary, rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets), context=self.context
         )
 
-        user_prompt = self.user_template_generator.render(text=artifacts_text)
+        user_prompt = self.user_template_generator.render(text=artifacts_text, context=self.context)
 
         if (
             self.prompt_driver.tokenizer.count_input_tokens_left(user_prompt + system_prompt)
@@ -71,7 +71,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         else:
             chunks = self.chunker.chunk(artifacts_text)
 
-            partial_text = self.user_template_generator.render(text=chunks[0].value)
+            partial_text = self.user_template_generator.render(text=chunks[0].value, context=self.context)
 
             return self.summarize_artifacts_rec(
                 chunks[1:],
