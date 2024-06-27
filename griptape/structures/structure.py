@@ -62,6 +62,7 @@ class Structure(ABC):
         default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
+    fail_fast: bool = field(default=True, kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 

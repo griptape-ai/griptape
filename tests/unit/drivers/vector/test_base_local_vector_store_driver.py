@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 import pytest
 from unittest.mock import patch
 from griptape.artifacts import TextArtifact
+from griptape.artifacts.csv_row_artifact import CsvRowArtifact
 
 
 class BaseLocalVectorStoreDriver(ABC):
@@ -20,6 +21,20 @@ class BaseLocalVectorStoreDriver(ABC):
         assert len(driver.entries) == 1
 
         driver.upsert_text_artifact(TextArtifact(id="foo2", value="foobar2"))
+
+        assert len(driver.entries) == 2
+
+    def test_upsert_csv_row(self, driver):
+        namespace = driver.upsert_text_artifact(CsvRowArtifact(id="foo1", value={"col": "value"}))
+
+        assert len(driver.entries) == 1
+        assert list(driver.entries.keys())[0] == namespace
+
+        driver.upsert_text_artifact(CsvRowArtifact(id="foo1", value={"col": "value"}))
+
+        assert len(driver.entries) == 1
+
+        driver.upsert_text_artifact(CsvRowArtifact(id="foo2", value={"col": "value2"}))
 
         assert len(driver.entries) == 2
 

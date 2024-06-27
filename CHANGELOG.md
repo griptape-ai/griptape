@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `VectorStoreClient` improvements:
   - `VectorStoreClient.query_params` dict for custom query params.
   - `VectorStoreClient.process_query_output_fn` for custom query output processing logic.
+- Parameter `fail_fast` to `Structure`.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
 
 ### Changed
@@ -53,7 +54,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: removed `VectorStoreClient.top_n` and `VectorStoreClient.namespace` in favor of `VectorStoreClient.query_params`.
 - `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
 - Wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
-- Fixed bug in `CoherePromptDriver` to properly handle empty history
+
+### Fixed
+- `CoherePromptDriver` to properly handle empty history.
+- `StructureVisualizer.to_url()` by wrapping task IDs in single quotes. 
 
 ## [0.27.1] - 2024-06-20
 

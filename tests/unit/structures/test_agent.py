@@ -267,3 +267,7 @@ class TestAgent:
         agent.run("hello")
 
         assert len(agent.finished_tasks) == 1
+
+    def test_fail_fast(self):
+        with pytest.raises(ValueError):
+            Agent(prompt_driver=MockPromptDriver(), fail_fast=True)
