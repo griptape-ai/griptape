@@ -49,7 +49,7 @@ class VectorQueryEngine(BaseQueryEngine):
             )
             user_message = self.user_template_generator.render(query=query)
 
-            message_token_count = self.prompt_driver.tokenizer.count_input_tokens_left(
+            message_token_count = self.prompt_driver.tokenizer.count_tokens(
                 self.prompt_driver.prompt_stack_to_string(
                     PromptStack(
                         inputs=[
