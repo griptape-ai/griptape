@@ -130,7 +130,9 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         self.subtasks.clear()
 
-        self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
+        if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
+            self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
+
         subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
 
         while True:
