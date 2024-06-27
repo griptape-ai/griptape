@@ -15,6 +15,12 @@ class Agent(Structure):
     input_template: str = field(default=PromptTask.DEFAULT_INPUT_TEMPLATE)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    fail_fast: bool = field(default=False, kw_only=True)
+
+    @fail_fast.validator  # pyright: ignore
+    def validate_fail_fast(self, _, fail_fast: bool) -> None:
+        if fail_fast:
+            raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()

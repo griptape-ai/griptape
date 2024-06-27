@@ -108,7 +108,7 @@ class Workflow(Structure):
 
             # Wait for all tasks to complete
             for future in futures.as_completed(futures_list):
-                if isinstance(future.result(), ErrorArtifact):
+                if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
                     exit_loop = True
 
                     break
