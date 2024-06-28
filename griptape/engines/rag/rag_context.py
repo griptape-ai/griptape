@@ -10,8 +10,7 @@ class RagContext:
 
     Attributes:
         query: Query provided by the user.
-        namespace: Optional namespace override for modules with an explicit namespace parameter.
-        metadata: Optional metadata override for modules with an explicit metadata parameter.
+        module_params: Dictionary of parameters to be used by modules.
         alternative_queries: Optional queries to expand retrieval results.
         before_query: An optional list of strings to add before the query in generation modules.
         after_query: An optional list of strings to add after the query in generation modules.
@@ -21,8 +20,6 @@ class RagContext:
 
     query: str = field()
     module_params: dict[str, Any] = field(factory=dict)
-    namespace: Optional[str] = field(default=None)
-    metadata: Optional[str] = field(default=None)
     alternative_queries: list[str] = field(factory=list)
     before_query: list[str] = field(factory=list)
     after_query: list[str] = field(factory=list)

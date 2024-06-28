@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 @define
 class TaskMemory(ActivityMixin):
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
     artifact_storages: dict[type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)

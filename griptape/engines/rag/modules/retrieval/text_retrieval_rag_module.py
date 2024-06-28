@@ -19,7 +19,7 @@ class TextRetrievalRagModule(BaseRetrievalRagModule):
 
     def run(self, context: RagContext) -> Sequence[TextArtifact]:
         all_queries = [context.query] + context.alternative_queries
-        namespace = self.namespace or context.namespace
+        namespace = context.module_params.get("namespace") if self.namespace is None else self.namespace
 
         with self.futures_executor_fn() as executor:
             results = utils.execute_futures_list(

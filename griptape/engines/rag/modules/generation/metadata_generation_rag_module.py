@@ -10,7 +10,7 @@ class MetadataGenerationRagModule(BaseBeforeGenerationRagModule):
     metadata: Optional[str] = field(default=None)
 
     def run(self, context: RagContext) -> RagContext:
-        metadata = context.metadata if self.metadata is None else self.metadata
+        metadata = context.module_params.get("metadata") if self.metadata is None else self.metadata
 
         if metadata is not None:
             context.before_query.append(
