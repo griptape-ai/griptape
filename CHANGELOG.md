@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Query:
       - `RelatedQueryGenerationRagModule` for generating related queries.
     - Retrieval:
-      - `TextRetrievalRagModule` for retrieving text chunks.
+      - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
       - `TextRerankRagModule` for re-ranking retrieved results.
     - Generation:
       - `MetadataGenerationRagModule` for appending metadata.

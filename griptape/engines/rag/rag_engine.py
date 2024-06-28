@@ -10,6 +10,23 @@ class RagEngine:
     retrieval_stage: Optional[RetrievalRagStage] = field(default=None)
     generation_stage: Optional[GenerationRagStage] = field(default=None)
 
+    def __attrs_post_init__(self) -> None:
+        modules = []
+
+        if self.query_stage is not None:
+            modules.extend(self.query_stage.modules)
+
+        if self.retrieval_stage is not None:
+            modules.extend(self.retrieval_stage.modules)
+
+        if self.generation_stage is not None:
+            modules.extend(self.generation_stage.modules)
+
+        module_names = [m.name for m in modules]
+
+        if len(module_names) > len(set(module_names)):
+            raise ValueError("module names have to be unique")
+
     def process_query(self, query: str) -> RagContext:
         return self.process(RagContext(query=query))
 
