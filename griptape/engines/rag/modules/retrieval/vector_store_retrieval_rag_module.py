@@ -22,12 +22,10 @@ class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
         query_params = self.query_params if context_query_params is None else context_query_params
 
         with self.futures_executor_fn() as executor:
-            futures_list = []
-
-            for query in all_queries:
-                futures_list.append(
-                    executor.submit(self.vector_store_driver.query, query, **query_params)
-                )
+            futures_list = [
+                executor.submit(self.vector_store_driver.query, query, **query_params)
+                for query in all_queries
+            ]
 
             results = utils.execute_futures_list(futures_list)
 
