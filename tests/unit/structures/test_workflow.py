@@ -447,7 +447,7 @@ class TestWorkflow:
         taskb.add_child(taskd)
         taskc.add_children([taskd, taske])
         taskd.add_child(taske)
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska])
 
         workflow.run()
 

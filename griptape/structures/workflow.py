@@ -100,6 +100,31 @@ class Workflow(Structure):
 
         return task
 
+    def before_run(self, args: Any) -> None:
+        # find tasks that are in the parents and children of the
+        # tasks that are already in self.tasks, and add them to 
+        # self.tasks if they are not already in self.tasks
+        # recursively 
+        for task in self.tasks:
+            self._insert_task_rec(task)
+        super().before_run(args)
+
+    def _insert_task_rec(self, task: BaseTask) -> None:
+        if task is None:
+            return
+
+        for parent in task.parents:
+            if parent not in self.tasks:
+                self._insert_task_rec(parent)
+
+        if task not in self.tasks:
+            self.tasks.append(task)
+
+        for child in task.children:
+            if child not in self.tasks:
+                self._insert_task_rec(child)
+
+
     def try_run(self, *args) -> Workflow:
         exit_loop = False
 

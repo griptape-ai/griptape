@@ -36,6 +36,7 @@ class BaseTask(ABC):
     futures_executor_fn: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
+    tasks: list[BaseTask] = field(factory=list, kw_only=True)
 
     @property
     @abstractmethod
@@ -43,11 +44,11 @@ class BaseTask(ABC):
 
     @property
     def parents(self) -> list[BaseTask]:
-        return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
+        return [self.structure.find_task(parent_id) if  or self.find_task(parent_id) for parent_id in [self.parent_ids]]
 
     @property
     def children(self) -> list[BaseTask]:
-        return [self.structure.find_task(child_id) for child_id in self.child_ids]
+        return [self.structure.find_task(child_id) or self.find_task(child_id) for child_id in self.child_ids]
 
     @property
     def parent_outputs(self) -> dict[str, str]:
@@ -75,7 +76,12 @@ class BaseTask(ABC):
             self.add_parent(parent)
 
     def add_parent(self, parent: str | BaseTask) -> None:
-        parent_id = parent if isinstance(parent, str) else parent.id
+        if isinstance(parent, str):
+            parent_id = parent
+        else:
+            parent_id = parent.id
+            if parent not in self.tasks:
+                self.tasks.append(parent)
 
         if parent_id not in self.parent_ids:
             self.parent_ids.append(parent_id)
@@ -85,10 +91,25 @@ class BaseTask(ABC):
             self.add_child(child)
 
     def add_child(self, child: str | BaseTask) -> None:
-        child_id = child if isinstance(child, str) else child.id
+        if isinstance(child, str):
+            child_id = child
+        else:
+            child_id = child.id
+            if child not in self.tasks:
+                self.tasks.append(child)
 
         if child_id not in self.child_ids:
             self.child_ids.append(child_id)
+
+    def find_task(self, task_id: str) -> Optional[BaseTask]:
+        if self.id == task_id:
+            return self
+
+        for task in self.tasks:
+            if task.id == task_id:
+                return task
+
+        return None
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure

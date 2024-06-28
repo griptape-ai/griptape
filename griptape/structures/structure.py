@@ -211,6 +211,11 @@ class Structure(ABC):
         for task in self.tasks:
             if task.id == task_id:
                 return task
+            task = task.find_task(task_id)
+            if task is not None:
+                self.tasks.append(task)
+                return task
+        return None
         raise ValueError(f"Task with id {task_id} doesn't exist.")
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
