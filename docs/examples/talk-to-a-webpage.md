@@ -3,7 +3,7 @@ This example demonstrates how to vectorize a webpage and setup a Griptape agent 
 ```python
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
 from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
 from griptape.loaders import WebLoader
 from griptape.rules import Ruleset, Rule
@@ -18,7 +18,7 @@ vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDri
 engine = RagEngine(
     retrieval_stage=RetrievalRagStage(
         retrieval_modules=[
-            TextRetrievalRagModule(
+            VectorStoreRetrievalRagModule(
                 namespace=namespace,
                 vector_store_driver=vector_store_driver,
                 top_n=20
@@ -39,7 +39,6 @@ artifacts = WebLoader().load(
 vector_store_driver.upsert_text_artifacts(
     {namespace: artifacts}
 )
-
 
 vector_store_tool = RagClient(
     description="Contains information about physics. "

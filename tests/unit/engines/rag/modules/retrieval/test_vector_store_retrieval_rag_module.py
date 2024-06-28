@@ -1,14 +1,14 @@
 from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import TextRetrievalRagModule
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestTextRetrievalRagModule:
+class TestVectorStoreRetrievalRagModule:
     def test_run(self):
         vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
-        module = TextRetrievalRagModule(vector_store_driver=vector_store_driver)
+        module = VectorStoreRetrievalRagModule(vector_store_driver=vector_store_driver)
 
         vector_store_driver.upsert_text_artifact(TextArtifact("foobar1"), namespace="test")
         vector_store_driver.upsert_text_artifact(TextArtifact("foobar2"), namespace="test")

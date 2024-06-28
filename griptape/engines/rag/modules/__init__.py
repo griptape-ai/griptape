@@ -4,7 +4,7 @@ from .query.related_query_generation_rag_module import RelatedQueryGenerationRag
 from .retrieval.base_retrieval_rag_module import BaseRetrievalRagModule
 from .retrieval.base_rerank_rag_module import BaseRerankRagModule
 from .retrieval.text_rerank_rag_module import TextRerankRagModule
-from .retrieval.text_retrieval_rag_module import TextRetrievalRagModule
+from .retrieval.vector_store_retrieval_rag_module import VectorStoreRetrievalRagModule
 from .generation.base_before_generation_rag_module import BaseBeforeGenerationRagModule
 from .generation.base_after_generation_rag_module import BaseAfterGenerationRagModule
 from .generation.base_generation_rag_module import BaseGenerationRagModule
@@ -19,7 +19,7 @@ __all__ = [
     "BaseRetrievalRagModule",
     "BaseRerankRagModule",
     "TextRerankRagModule",
-    "TextRetrievalRagModule",
+    "VectorStoreRetrievalRagModule",
     "BaseBeforeGenerationRagModule",
     "BaseAfterGenerationRagModule",
     "BaseGenerationRagModule",

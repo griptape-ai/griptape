@@ -32,7 +32,7 @@
 from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
 from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
 
 vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
@@ -46,7 +46,7 @@ vector_store.upsert_text_artifacts({"griptape": artifacts})
 engine = RagEngine(
     retrieval_stage=RetrievalRagStage(
         retrieval_modules=[
-            TextRetrievalRagModule(
+            VectorStoreRetrievalRagModule(
                 namespace="griptape",
                 vector_store_driver=vector_store,
                 top_n=20

@@ -208,13 +208,12 @@ from griptape.drivers import (
     OpenAiChatPromptDriver, OpenAiEmbeddingDriver,
 )
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
 from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
 from griptape.tools import FileManager, TaskMemoryClient, WebScraper
-
 
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
@@ -228,7 +227,7 @@ agent = Agent(
                 rag_engine=RagEngine(
                     retrieval_stage=RetrievalRagStage(
                         retrieval_modules=[
-                            TextRetrievalRagModule(
+                            VectorStoreRetrievalRagModule(
                                 namespace="griptape",
                                 vector_store_driver=vector_store_driver,
                                 top_n=20
