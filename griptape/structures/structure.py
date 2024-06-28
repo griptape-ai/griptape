@@ -191,6 +191,7 @@ class Structure(ABC):
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     rag_engine=self.rag_engine,
+                    retrieval_rag_module_name="VectorStoreRetrievalRagModule",
                     vector_store_driver=self.config.vector_store_driver,
                     summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
                     csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),

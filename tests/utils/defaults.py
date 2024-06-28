@@ -16,6 +16,7 @@ def text_tool_artifact_storage():
     return TextArtifactStorage(
         rag_engine=rag_engine(MockPromptDriver(), vector_store_driver),
         vector_store_driver=vector_store_driver,
+        retrieval_rag_module_name="VectorStoreRetrievalRagModule",
         summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver()),
         csv_extraction_engine=CsvExtractionEngine(prompt_driver=MockPromptDriver()),
         json_extraction_engine=JsonExtractionEngine(prompt_driver=MockPromptDriver()),

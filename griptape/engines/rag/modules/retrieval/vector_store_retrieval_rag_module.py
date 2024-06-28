@@ -1,6 +1,6 @@
 from __future__ import annotations
 import itertools
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Sequence, Any
 from attrs import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact
@@ -14,20 +14,22 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
     vector_store_driver: BaseVectorStoreDriver = field()
-    namespace: Optional[str] = field(default=None)
-    top_n: Optional[int] = field(default=None)
+    query_params: dict[str, Any] = field(factory=dict)
 
     def run(self, context: RagContext) -> Sequence[TextArtifact]:
         all_queries = [context.query] + context.alternative_queries
-        namespace = context.module_params.get("namespace") if self.namespace is None else self.namespace
+        context_query_params = self.context_param(context, "query_params")
+        query_params = self.query_params if context_query_params is None else context_query_params
 
         with self.futures_executor_fn() as executor:
-            results = utils.execute_futures_list(
-                [
-                    executor.submit(self.vector_store_driver.query, query, self.top_n, namespace, False)
-                    for query in all_queries
-                ]
-            )
+            futures_list = []
+
+            for query in all_queries:
+                futures_list.append(
+                    executor.submit(self.vector_store_driver.query, query, **query_params)
+                )
+
+            results = utils.execute_futures_list(futures_list)
 
         return [
             artifact

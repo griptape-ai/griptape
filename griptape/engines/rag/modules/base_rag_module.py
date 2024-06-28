@@ -1,13 +1,14 @@
 from abc import ABC
 from concurrent import futures
-from typing import Callable
+from typing import Callable, Any, Optional
 from attrs import define, field, Factory
+from griptape.engines.rag import RagContext
 from griptape.utils import PromptStack
 
 
 @define(kw_only=True)
 class BaseRagModule(ABC):
-    name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
+    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     futures_executor_fn: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor())
     )
@@ -19,3 +20,6 @@ class BaseRagModule(ABC):
                 PromptStack.Input(query, role=PromptStack.USER_ROLE),
             ]
         )
+
+    def context_param(self, context: RagContext, key: str) -> Optional[Any]:
+        return context.module_params.get(self.name, {}).get(key)

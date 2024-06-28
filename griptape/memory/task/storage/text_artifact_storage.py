@@ -14,9 +14,15 @@ if TYPE_CHECKING:
 class TextArtifactStorage(BaseArtifactStorage):
     vector_store_driver: BaseVectorStoreDriver = field()
     rag_engine: Optional[RagEngine] = field(default=None)
+    retrieval_rag_module_name: Optional[str] = field(default=None)
     summary_engine: Optional[BaseSummaryEngine] = field(default=None)
     csv_extraction_engine: Optional[CsvExtractionEngine] = field(default=None)
     json_extraction_engine: Optional[JsonExtractionEngine] = field(default=None)
+
+    @rag_engine.validator  # pyright: ignore
+    def validate_rag_engine(self, _, rag_engine: str) -> None:
+        if self.rag_engine is not None and self.retrieval_rag_module_name is None:
+            raise ValueError("You have to set retrieval_rag_module_name if rag_engine is set")
 
     def can_store(self, artifact: BaseArtifact) -> bool:
         return isinstance(artifact, TextArtifact)
@@ -44,8 +50,12 @@ class TextArtifactStorage(BaseArtifactStorage):
             RagContext(
                 query=query,
                 module_params={
-                    "namespace": namespace,
-                    "metadata": None if metadata is None else str(metadata)
+                    self.retrieval_rag_module_name: {
+                        "query_params": {
+                            "namespace": namespace,
+                            "metadata": None if metadata is None else str(metadata)
+                        }
+                    }
                 }
             )
         ).output

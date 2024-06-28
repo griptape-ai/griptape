@@ -23,7 +23,7 @@ class PromptGenerationRagModule(BaseGenerationRagModule):
         if query:
             tokenizer = self.prompt_driver.tokenizer
             text_chunks = []
-            system_prompt = ""
+            system_prompt = self.generate_system_template(text_chunks, before_query, after_query)
 
             for artifact in text_artifact_chunks:
                 text_chunks.append(artifact.value)
