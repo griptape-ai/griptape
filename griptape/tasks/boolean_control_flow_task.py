@@ -23,11 +23,13 @@ class BooleanControlFlowTask(BaseControlFlowTask):
             raise ValueError(f"BooleanControlFlowTask {self.id} has invalid true_tasks or false_tasks")
 
         inputs = [task.output for task in self.parents]
-        for input in inputs:
-            if self.coerce_inputs_to_bool:
-                input = BooleanArtifact(input.value if input is not None else None)
-            elif not isinstance(input, BooleanArtifact):
-                raise ValueError(f"Task {self.id} received a non-boolean input")
+
+        if self.coerce_inputs_to_bool:
+            inputs = [BooleanArtifact(input) for input in inputs]
+        else:
+            if not all(isinstance(input, BooleanArtifact) for input in inputs):
+                raise ValueError(f"BooleanControlFlowTask {self.id} has non-BooleanArtifact inputs")
+
         if self.operator == "and":
             self.output = BooleanArtifact(all(inputs))
         elif self.operator == "or":
@@ -36,6 +38,7 @@ class BooleanControlFlowTask(BaseControlFlowTask):
             self.output = BooleanArtifact(sum([int(input.value) for input in inputs]) == 1)
         else:
             raise ValueError(f"BooleanControlFlowTask {self.id} has invalid operator {self.operator}")
+
         for task in self.true_tasks if self.output.value else self.false_tasks:
             task = self._get_task(task)
             self._cancel_children_rec(self, task)

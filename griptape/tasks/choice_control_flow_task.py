@@ -47,14 +47,18 @@ class ChoiceControlFlowTask(BaseControlFlowTask):
         for task in tasks:
             if task.id not in self.child_ids:
                 self.output = ErrorArtifact(f"ControlFlowTask {self.id} did not return a valid child task")
-            else:
-                self.output = (
-                    ListArtifact(
-                        [parent.output for parent in filter(lambda parent: parent.output is not None, self.input.value)]  # pyright: ignore
-                    )
-                    if isinstance(self.input, ListArtifact)
-                    else self.input.value.output
+                return self.output
+
+            self.output = (
+                ListArtifact(
+                    [
+                        parent.value.output
+                        for parent in filter(lambda parent: parent.value.output is not None, self.input.value)
+                    ]  # pyright: ignore
                 )
+                if isinstance(self.input, ListArtifact)
+                else self.input.value.output
+            )
             self._cancel_children_rec(self, task)
 
         return self.output  # pyright: ignore
