@@ -136,6 +136,7 @@ class ActionsSubtask(BaseTextInputTask):
         return action.tag, output
 
     def after_run(self) -> None:
+        super().after_run()
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
 
         self.structure.publish_event(

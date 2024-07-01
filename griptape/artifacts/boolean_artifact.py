@@ -10,11 +10,13 @@ class BooleanArtifact(BaseArtifact):
     meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     @classmethod
-    def parse_bool(cls, value: Union[str, bool]) -> BooleanArtifact:
+    def parse_bool(cls, value: Union[str, bool, BaseArtifact]) -> BooleanArtifact:
         """
         Convert a string literal or bool to a BooleanArtifact. The string must be either "true" or "false" with any casing.
         """
         if value is not None:
+            if isinstance(value, BaseArtifact):
+                value = str(value)
             if isinstance(value, str):
                 if value.lower() == "true":
                     return BooleanArtifact(True)
