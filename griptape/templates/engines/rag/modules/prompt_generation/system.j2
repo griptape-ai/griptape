@@ -2,7 +2,7 @@
 {{ before_system_prompt }}
 
 {% endif %}
-You can answer questions by searching through text chunks. Always be truthful. Don't make up facts. Use the below list of text chunks to respond. If the answer cannot be found in the chunks or there are no chunks available, say "I could not find an answer."
+Always be truthful. Don't make up facts. You can answer questions by searching through text chunks. Use the following list of text chunks to respond. If there are no text chunks available or text chunks don't have relevant information respond with "I could not find an answer."
 
 {% if text_chunks and text_chunks|length > 0 %}
 {% for chunk in text_chunks %}
