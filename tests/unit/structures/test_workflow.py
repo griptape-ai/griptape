@@ -683,7 +683,7 @@ class TestWorkflow:
         # task4 is the final task, but its defined at index 0
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task4, task1, task2, task3])
 
-        # ouput_task topologically should be task4
+        # output_task topologically should be task4
         assert task4 == workflow.output_task
 
     def test_to_graph(self):
