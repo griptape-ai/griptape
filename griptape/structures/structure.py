@@ -143,6 +143,10 @@ class Structure(ABC):
         return [s for s in self.tasks if s.is_finished()]
 
     @property
+    def task_ids(self) -> list[str]:
+        return [s.id for s in self.tasks]
+
+    @property
     def default_config(self) -> BaseStructureConfig:
         if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
@@ -211,11 +215,6 @@ class Structure(ABC):
         for task in self.tasks:
             if task.id == task_id:
                 return task
-            task = task.find_task(task_id)
-            if task is not None:
-                self.tasks.append(task)
-                return task
-        return None
         raise ValueError(f"Task with id {task_id} doesn't exist.")
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
@@ -242,6 +241,8 @@ class Structure(ABC):
 
     def resolve_relationships(self) -> None:
         task_by_id = {task.id: task for task in self.tasks}
+        # print the task ids
+        print(self.task_ids)
 
         for task in self.tasks:
             # Ensure parents include this task as a child

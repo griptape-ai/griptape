@@ -450,6 +450,8 @@ class TestWorkflow:
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska])
 
         workflow.run()
+        # print workflow task ids
+        print([task.id for task in workflow.tasks])
 
         self._validate_topology_2(workflow)
 
@@ -810,8 +812,8 @@ class TestWorkflow:
         assert len(workflow.tasks) == 5
         assert workflow.input_task.id == "taska"
         assert workflow.output_task.id == "taske"
-        assert workflow.input_task.id == workflow.tasks[0].id
-        assert workflow.output_task.id == workflow.tasks[-1].id
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         taska = workflow.find_task("taska")
         assert taska.state == BaseTask.State.FINISHED

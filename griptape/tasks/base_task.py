@@ -26,8 +26,10 @@ class BaseTask(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     state: State = field(default=State.PENDING, kw_only=True)
-    parent_ids: list[str] = field(factory=list, kw_only=True)
-    child_ids: list[str] = field(factory=list, kw_only=True)
+    parent_ids: list[str] = field(factory=list, kw_only=True)  # remove this
+    child_ids: list[str] = field(factory=list, kw_only=True)  # remove this
+    parents: list[BaseTask] = field(factory=list, kw_only=True)
+    children: list[BaseTask] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
@@ -36,19 +38,23 @@ class BaseTask(ABC):
     futures_executor_fn: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
-    tasks: list[BaseTask] = field(factory=list, kw_only=True)
+
+    def __attrs_post_init__(self) -> None:
+        # add parents and children to parent_ids and child_ids to the existing lists
+        self.parent_ids.extend([parent.id for parent in self.parents])
+        self.child_ids.extend([child.id for child in self.children])
 
     @property
     @abstractmethod
     def input(self) -> BaseArtifact: ...
 
-    @property
-    def parents(self) -> list[BaseTask]:
-        return [self.structure.find_task(parent_id) if  or self.find_task(parent_id) for parent_id in [self.parent_ids]]
+    # @property
+    # def parent_ids(self) -> list[str]:
+    #     return [parent.id for parent in self.parents]
 
-    @property
-    def children(self) -> list[BaseTask]:
-        return [self.structure.find_task(child_id) or self.find_task(child_id) for child_id in self.child_ids]
+    # @property
+    # def child_ids(self) -> list[str]:
+    #     return [child.id for child in self.children]
 
     @property
     def parent_outputs(self) -> dict[str, str]:
@@ -71,43 +77,34 @@ class BaseTask(ABC):
     def __str__(self) -> str:
         return str(self.output.value)
 
-    def add_parents(self, parents: list[str | BaseTask]) -> None:
+    def add_parents(self, parents: list[BaseTask]) -> None:
         for parent in parents:
             self.add_parent(parent)
 
-    def add_parent(self, parent: str | BaseTask) -> None:
-        if isinstance(parent, str):
-            parent_id = parent
-        else:
-            parent_id = parent.id
-            if parent not in self.tasks:
-                self.tasks.append(parent)
+    def add_parent(self, parent: BaseTask) -> None:
+        if parent not in self.parents:
+            self.parents.append(parent)
 
-        if parent_id not in self.parent_ids:
-            self.parent_ids.append(parent_id)
+        if parent.id not in self.parent_ids:
+            self.parent_ids.append(parent.id)
 
-    def add_children(self, children: list[str | BaseTask]) -> None:
+    def add_children(self, children: list[BaseTask]) -> None:
         for child in children:
             self.add_child(child)
 
-    def add_child(self, child: str | BaseTask) -> None:
-        if isinstance(child, str):
-            child_id = child
-        else:
-            child_id = child.id
-            if child not in self.tasks:
-                self.tasks.append(child)
+    def add_child(self, child: BaseTask) -> None:
+        if child not in self.children:
+            self.children.append(child)
 
-        if child_id not in self.child_ids:
-            self.child_ids.append(child_id)
+        if child.id not in self.child_ids:
+            self.child_ids.append(child.id)
 
     def find_task(self, task_id: str) -> Optional[BaseTask]:
         if self.id == task_id:
             return self
 
-        for task in self.tasks:
-            if task.id == task_id:
-                return task
+        for task in [*self.parents, *self.children]:
+            return task.find_task(task_id)
 
         return None
 
