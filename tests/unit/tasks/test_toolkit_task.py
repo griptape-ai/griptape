@@ -2,6 +2,7 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
 from tests.mocks.mock_tool.tool import MockTool
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils import defaults
 
 
