@@ -87,9 +87,13 @@ class Workflow(Structure):
             if task.id not in parent_task.child_ids:
                 parent_task.child_ids.append(task.id)
 
-            parent_index = self.tasks.index(parent_task)
-            if parent_index > last_parent_index:
-                last_parent_index = parent_index
+            try:
+                parent_index = self.tasks.index(parent_task)
+            except ValueError:
+                raise ValueError(f"Parent task {parent_task.id} not found in workflow.")
+            else:
+                if parent_index > last_parent_index:
+                    last_parent_index = parent_index
 
         # Insert the new task once, just after the last parent task
         self.tasks.insert(last_parent_index + 1, task)
