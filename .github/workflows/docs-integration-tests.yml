@@ -121,6 +121,7 @@ jobs:
       PUSHER_CLUSTER: ${{ secrets.INTEG_PUSHER_CLUSTER }}
       ZENROWS_API_KEY: ${{ secrets.INTEG_ZENROWS_API_KEY }}
       QDRANT_CLUSTER_ENDPOINT: ${{ secrets.INTEG_QDRANT_CLUSTER_ENDPOINT }}
+      QDRANT_CLUSTER_API_KEY: ${{ secrets.INTEG_QDRANT_CLUSTER_API_KEY }}
     services:
       postgres:
         image: ankane/pgvector:v0.5.0
