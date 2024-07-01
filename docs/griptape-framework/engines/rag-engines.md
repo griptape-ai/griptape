@@ -15,7 +15,8 @@
 ### RAG Modules
 
 #### Query
-- `RelatedQueryGenerationRagModule` is for generating related queries.
+
+No modules implemented yet.
 
 #### Retrieval
 - `TextRetrievalRagModule` is for retrieving text chunks.

@@ -1,6 +1,5 @@
 from .base_rag_module import BaseRagModule
 from .query.base_query_rag_module import BaseQueryRagModule
-from .query.related_query_generation_rag_module import RelatedQueryGenerationRagModule
 from .retrieval.base_retrieval_rag_module import BaseRetrievalRagModule
 from .retrieval.base_rerank_rag_module import BaseRerankRagModule
 from .retrieval.text_rerank_rag_module import TextRerankRagModule
@@ -15,7 +14,6 @@ from .generation.metadata_generation_rag_module import MetadataGenerationRagModu
 __all__ = [
     "BaseRagModule",
     "BaseQueryRagModule",
-    "RelatedQueryGenerationRagModule",
     "BaseRetrievalRagModule",
     "BaseRerankRagModule",
     "TextRerankRagModule",

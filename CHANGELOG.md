@@ -14,8 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `RetrievalRagStage` for retrieving content.
     - `GenerationRagStage` for augmenting and generating outputs.
   - RAG modules:
-    - Query:
-      - `RelatedQueryGenerationRagModule` for generating related queries.
     - Retrieval:
       - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
       - `TextRerankRagModule` for re-ranking retrieved results.
