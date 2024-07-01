@@ -19,6 +19,16 @@ class TestBaseTask:
 
         return agent.task
 
+    @pytest.fixture
+    def task_output_fn(self):
+        agent = Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tools=[MockTool()])
+
+        agent.add_task(
+            MockTask("foobar", max_meta_memory_entries=2, process_output_fn=lambda x: TextArtifact("processed_output"))
+        )
+
+        return agent.task
+
     def test_meta_memories(self, task):
         subtask = ActionsSubtask()
 
@@ -68,3 +78,7 @@ class TestBaseTask:
         parent_2.output = None
 
         assert child.parents_output_text == "foobar1\nfoobar3"
+
+    def test_process_output_fn(self, task_output_fn):
+        task_output_fn.structure.run()
+        assert task_output_fn.output.to_text() == "processed_output"
