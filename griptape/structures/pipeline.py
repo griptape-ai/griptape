@@ -7,6 +7,7 @@ from attrs import define
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
 from griptape.structures import Structure
+from griptape.common import observable
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -45,6 +46,7 @@ class Pipeline(Structure):
 
         return task
 
+    @observable
     def try_run(self, *args) -> Pipeline:
         self.__run_from_task(self.input_task)
 

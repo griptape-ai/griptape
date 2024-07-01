@@ -29,6 +29,7 @@ from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.utils import deprecation_warn
+from griptape.common import observable
 
 if TYPE_CHECKING:
     from griptape.events import BaseEvent, EventListener
@@ -255,6 +256,7 @@ class Structure(ABC):
                 if task.id not in child.parent_ids:
                     child.parent_ids.append(task.id)
 
+    @observable
     def before_run(self, args: Any) -> None:
         self._execution_args = args
 
@@ -270,6 +272,7 @@ class Structure(ABC):
 
         self.resolve_relationships()
 
+    @observable
     def after_run(self) -> None:
         self.publish_event(
             FinishStructureRunEvent(
@@ -283,6 +286,7 @@ class Structure(ABC):
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask: ...
 
+    @observable
     def run(self, *args) -> Structure:
         self.before_run(args)
 
