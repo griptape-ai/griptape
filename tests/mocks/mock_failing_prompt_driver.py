@@ -3,7 +3,7 @@ from collections.abc import Iterator
 from attrs import define
 
 from griptape.artifacts import TextArtifact
-from griptape.common import MessageStack, Message, TextMessageContent, DeltaMessage, TextDeltaMessageContent
+from griptape.common import PromptStack, Message, TextMessageContent, DeltaMessage, TextDeltaMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
@@ -15,7 +15,7 @@ class MockFailingPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
-    def try_run(self, message_stack: MessageStack) -> Message:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
@@ -27,7 +27,7 @@ class MockFailingPromptDriver(BasePromptDriver):
                 usage=Message.Usage(input_tokens=100, output_tokens=100),
             )
 
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 

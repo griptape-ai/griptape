@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 from griptape.memory.structure import Run
-from griptape.common import MessageStack
+from griptape.common import PromptStack
 from griptape.mixins import SerializableMixin
 from abc import ABC, abstractmethod
 
@@ -44,40 +44,40 @@ class BaseConversationMemory(SerializableMixin, ABC):
     def try_add_run(self, run: Run) -> None: ...
 
     @abstractmethod
-    def to_message_stack(self, last_n: Optional[int] = None) -> MessageStack: ...
+    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack: ...
 
-    def add_to_message_stack(self, message_stack: MessageStack, index: Optional[int] = None) -> MessageStack:
-        """Add the Conversation Memory runs to the Message Stack by modifying the messages in place.
+    def add_to_prompt_stack(self, prompt_stack: PromptStack, index: Optional[int] = None) -> PromptStack:
+        """Add the Conversation Memory runs to the Prompt Stack by modifying the messages in place.
 
-        If autoprune is enabled, this will fit as many Conversation Memory runs into the Message Stack
+        If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack
         as possible without exceeding the token limit.
 
         Args:
-            message_stack: The Message Stack to add the Conversation Memory to.
+            prompt_stack: The Prompt Stack to add the Conversation Memory to.
             index: Optional index to insert the Conversation Memory runs at.
-                   Defaults to appending to the end of the Message Stack.
+                   Defaults to appending to the end of the Prompt Stack.
         """
         num_runs_to_fit_in_prompt = len(self.runs)
 
         if self.autoprune and hasattr(self, "structure"):
             should_prune = True
             prompt_driver = self.structure.config.prompt_driver
-            temp_stack = MessageStack()
+            temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can
-            # fit into the Message Stack without exceeding the token limit.
+            # fit into the Prompt Stack without exceeding the token limit.
             while should_prune and num_runs_to_fit_in_prompt > 0:
-                temp_stack.messages = message_stack.messages.copy()
+                temp_stack.messages = prompt_stack.messages.copy()
 
                 # Add n runs from Conversation Memory.
-                # Where we insert into the Message Stack doesn't matter here
+                # Where we insert into the Prompt Stack doesn't matter here
                 # since we only care about the total token count.
-                memory_inputs = self.to_message_stack(num_runs_to_fit_in_prompt).messages
+                memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).messages
                 temp_stack.messages.extend(memory_inputs)
 
-                # Convert the Message Stack into tokens left.
+                # Convert the Prompt Stack into tokens left.
                 tokens_left = prompt_driver.tokenizer.count_input_tokens_left(
-                    prompt_driver.message_stack_to_string(temp_stack)
+                    prompt_driver.prompt_stack_to_string(temp_stack)
                 )
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.
@@ -87,10 +87,10 @@ class BaseConversationMemory(SerializableMixin, ABC):
                     num_runs_to_fit_in_prompt -= 1
 
         if num_runs_to_fit_in_prompt:
-            memory_inputs = self.to_message_stack(num_runs_to_fit_in_prompt).messages
+            memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).messages
             if index:
-                message_stack.messages[index:index] = memory_inputs
+                prompt_stack.messages[index:index] = memory_inputs
             else:
-                message_stack.messages.extend(memory_inputs)
+                prompt_stack.messages.extend(memory_inputs)
 
-        return message_stack
+        return prompt_stack

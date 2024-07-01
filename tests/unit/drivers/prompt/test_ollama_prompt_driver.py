@@ -1,6 +1,6 @@
-from griptape.common.message_stack.contents.text_delta_message_content import TextDeltaMessageContent
+from griptape.common.prompt_stack.contents.text_delta_message_content import TextDeltaMessageContent
 from griptape.drivers import OllamaPromptDriver
-from griptape.common import MessageStack
+from griptape.common import PromptStack
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 import pytest
 
@@ -26,15 +26,15 @@ class TestOllamaPromptDriver:
 
     def test_try_run(self, mock_client):
         # Given
-        message_stack = MessageStack()
-        message_stack.add_system_message("system-input")
-        message_stack.add_user_message("user-input")
-        message_stack.add_user_message(
+        prompt_stack = PromptStack()
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_user_message(
             ListArtifact(
                 [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
             )
         )
-        message_stack.add_assistant_message("assistant-input")
+        prompt_stack.add_assistant_message("assistant-input")
         driver = OllamaPromptDriver(model="llama")
         expected_messages = [
             {"role": "system", "content": "system-input"},
@@ -44,7 +44,7 @@ class TestOllamaPromptDriver:
         ]
 
         # When
-        message = driver.try_run(message_stack)
+        message = driver.try_run(prompt_stack)
 
         # Then
         mock_client.return_value.chat.assert_called_once_with(
@@ -58,25 +58,25 @@ class TestOllamaPromptDriver:
 
     def test_try_run_bad_response(self, mock_client):
         # Given
-        message_stack = MessageStack()
+        prompt_stack = PromptStack()
         driver = OllamaPromptDriver(model="llama")
         mock_client.return_value.chat.return_value = "bad-response"
 
         # When/Then
         with pytest.raises(Exception, match="invalid model response"):
-            driver.try_run(message_stack)
+            driver.try_run(prompt_stack)
 
     def test_try_stream_run(self, mock_stream_client):
         # Given
-        message_stack = MessageStack()
-        message_stack.add_system_message("system-input")
-        message_stack.add_user_message("user-input")
-        message_stack.add_user_message(
+        prompt_stack = PromptStack()
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_user_message(
             ListArtifact(
                 [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
             )
         )
-        message_stack.add_assistant_message("assistant-input")
+        prompt_stack.add_assistant_message("assistant-input")
         expected_messages = [
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
@@ -86,7 +86,7 @@ class TestOllamaPromptDriver:
         driver = OllamaPromptDriver(model="llama", stream=True)
 
         # When
-        text_artifact = next(driver.try_stream(message_stack))
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
         mock_stream_client.return_value.chat.assert_called_once_with(
@@ -100,10 +100,10 @@ class TestOllamaPromptDriver:
 
     def test_try_stream_bad_response(self, mock_stream_client):
         # Given
-        message_stack = MessageStack()
+        prompt_stack = PromptStack()
         driver = OllamaPromptDriver(model="llama", stream=True)
         mock_stream_client.return_value.chat.return_value = "bad-response"
 
         # When/Then
         with pytest.raises(Exception, match="invalid model response"):
-            next(driver.try_stream(message_stack))
+            next(driver.try_stream(prompt_stack))

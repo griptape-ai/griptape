@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.common import MessageStack
+from griptape.common import PromptStack
 from griptape.drivers import CoherePromptDriver
 
 
@@ -33,25 +33,25 @@ class TestCoherePromptDriver:
         return mocker.patch("griptape.tokenizers.CohereTokenizer").return_value
 
     @pytest.fixture(params=[True, False])
-    def message_stack(self, request):
-        message_stack = MessageStack()
+    def prompt_stack(self, request):
+        prompt_stack = PromptStack()
         if request.param:
-            message_stack.add_system_message("system-input")
-        message_stack.add_user_message("user-input")
-        message_stack.add_assistant_message("assistant-input")
-        message_stack.add_user_message("user-input")
-        message_stack.add_assistant_message("assistant-input")
-        return message_stack
+            prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
+        return prompt_stack
 
     def test_init(self):
         assert CoherePromptDriver(model="command", api_key="foobar")
 
-    def test_try_run(self, mock_client, message_stack):
+    def test_try_run(self, mock_client, prompt_stack):
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key")
 
         # When
-        text_artifact = driver.try_run(message_stack)
+        text_artifact = driver.try_run(prompt_stack)
 
         # Then
         mock_client.chat.assert_called_once_with(
@@ -62,7 +62,7 @@ class TestCoherePromptDriver:
             ],
             max_tokens=None,
             message="assistant-input",
-            **({"preamble": "system-input"} if message_stack.system_messages else {}),
+            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
             stop_sequences=[],
             temperature=0.1,
         )
@@ -71,12 +71,12 @@ class TestCoherePromptDriver:
         assert text_artifact.usage.input_tokens == 5
         assert text_artifact.usage.output_tokens == 10
 
-    def test_try_stream_run(self, mock_stream_client, message_stack):  # pyright: ignore
+    def test_try_stream_run(self, mock_stream_client, prompt_stack):  # pyright: ignore
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key", stream=True)
 
         # When
-        stream = driver.try_stream(message_stack)
+        stream = driver.try_stream(prompt_stack)
         event = next(stream)
 
         # Then
@@ -89,7 +89,7 @@ class TestCoherePromptDriver:
             ],
             max_tokens=None,
             message="assistant-input",
-            **({"preamble": "system-input"} if message_stack.system_messages else {}),
+            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
             stop_sequences=[],
             temperature=0.1,
         )

@@ -21,7 +21,7 @@ class TestConversation:
         assert lines[2] == "Q: question 1"
         assert lines[3] == "A: mock output"
 
-    def test_message_stack_conversation_memory(self):
+    def test_prompt_stack_conversation_memory(self):
         pipeline = Pipeline(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         pipeline.add_tasks(PromptTask("question 1"))
@@ -29,12 +29,12 @@ class TestConversation:
         pipeline.run()
         pipeline.run()
 
-        lines = Conversation(pipeline.conversation_memory).message_stack()
+        lines = Conversation(pipeline.conversation_memory).prompt_stack()
 
         assert lines[0] == "user: question 1"
         assert lines[1] == "assistant: mock output"
 
-    def test_message_stack_summary_conversation_memory(self):
+    def test_prompt_stack_summary_conversation_memory(self):
         pipeline = Pipeline(
             prompt_driver=MockPromptDriver(),
             conversation_memory=SummaryConversationMemory(summary="foobar", prompt_driver=MockPromptDriver()),
@@ -45,7 +45,7 @@ class TestConversation:
         pipeline.run()
         pipeline.run()
 
-        lines = Conversation(pipeline.conversation_memory).message_stack()
+        lines = Conversation(pipeline.conversation_memory).prompt_stack()
 
         assert lines[0] == "user: Summary of the conversation so far: mock output"
         assert lines[1] == "user: question 1"

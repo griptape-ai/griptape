@@ -3,7 +3,7 @@ from typing import Optional
 
 from attrs import define, field
 
-from griptape.common.message_stack.contents.text_delta_message_content import TextDeltaMessageContent
+from griptape.common.prompt_stack.contents.text_delta_message_content import TextDeltaMessageContent
 
 
 from .base_message import BaseMessage

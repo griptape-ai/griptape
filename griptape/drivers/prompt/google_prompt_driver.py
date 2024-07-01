@@ -11,7 +11,7 @@ from griptape.common import (
     DeltaMessage,
     TextDeltaMessageContent,
     ImageMessageContent,
-    MessageStack,
+    PromptStack,
     Message,
     TextMessageContent,
 )
@@ -45,10 +45,10 @@ class GooglePromptDriver(BasePromptDriver):
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def try_run(self, message_stack: MessageStack) -> Message:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
-        messages = self._message_stack_to_messages(message_stack)
+        messages = self._prompt_stack_to_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(
             messages,
             generation_config=GenerationConfig(
@@ -70,10 +70,10 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
-        messages = self._message_stack_to_messages(message_stack)
+        messages = self._prompt_stack_to_messages(prompt_stack)
         response: Iterator[GenerateContentResponse] = self.model_client.generate_content(
             messages,
             stream=True,
@@ -114,21 +114,21 @@ class GooglePromptDriver(BasePromptDriver):
 
         return genai.GenerativeModel(self.model)
 
-    def _message_stack_to_messages(self, message_stack: MessageStack) -> list[dict]:
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         inputs = [
             {"role": self.__to_role(message), "parts": self.__to_content(message)}
-            for message in message_stack.messages
+            for message in prompt_stack.messages
             if not message.is_system()
         ]
 
         # Gemini does not have the notion of a system message, so we insert it as part of the first message in the history.
-        system_messages = message_stack.system_messages
+        system_messages = prompt_stack.system_messages
         if system_messages:
             inputs[0]["parts"].insert(0, system_messages[0].to_text())
 
         return inputs
 
-    def __message_stack_content_message_content(self, content: BaseMessageContent) -> ContentDict | str:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> ContentDict | str:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
 
         if isinstance(content, TextMessageContent):
@@ -145,4 +145,4 @@ class GooglePromptDriver(BasePromptDriver):
             return "user"
 
     def __to_content(self, message: Message) -> list[ContentDict | str]:
-        return [self.__message_stack_content_message_content(content) for content in message.content]
+        return [self.__prompt_stack_content_message_content(content) for content in message.content]

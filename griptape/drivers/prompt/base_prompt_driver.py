@@ -10,7 +10,7 @@ from griptape.common import (
     BaseDeltaMessageContent,
     DeltaMessage,
     TextDeltaMessageContent,
-    MessageStack,
+    PromptStack,
     Message,
     TextMessageContent,
 )
@@ -30,7 +30,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         temperature: The temperature to use for the completion.
         max_tokens: The maximum number of tokens to generate. If not specified, the value will be automatically generated based by the tokenizer.
         structure: An optional `Structure` to publish events to.
-        message_stack_to_string: A function that converts a `MessageStack` to a string.
+        prompt_stack_to_string: A function that converts a `PromptStack` to a string.
         ignored_exception_types: A tuple of exception types to ignore.
         model: The model name.
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
@@ -45,9 +45,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, metadata={"serializable": True})
 
-    def before_run(self, message_stack: MessageStack) -> None:
+    def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
-            self.structure.publish_event(StartPromptEvent(model=self.model, message_stack=message_stack))
+            self.structure.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     def after_run(self, result: Message) -> None:
         if self.structure:
@@ -60,15 +60,15 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 )
             )
 
-    def run(self, message_stack: MessageStack) -> Message:
+    def run(self, prompt_stack: PromptStack) -> Message:
         for attempt in self.retrying():
             with attempt:
-                self.before_run(message_stack)
+                self.before_run(prompt_stack)
 
                 if self.stream:
-                    result = self.__process_stream(message_stack)
+                    result = self.__process_stream(prompt_stack)
                 else:
-                    result = self.__process_run(message_stack)
+                    result = self.__process_run(prompt_stack)
 
                 self.after_run(result)
 
@@ -76,19 +76,19 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         else:
             raise Exception("prompt driver failed after all retry attempts")
 
-    def message_stack_to_string(self, message_stack: MessageStack) -> str:
-        """Converts a Message Stack to a string for token counting or model input.
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        """Converts a Prompt Stack to a string for token counting or model input.
         This base implementation is only a rough approximation, and should be overridden by subclasses with model-specific tokens.
 
         Args:
-            message_stack: The Message Stack to convert to a string.
+            prompt_stack: The Prompt Stack to convert to a string.
 
         Returns:
-            A single string representation of the Message Stack.
+            A single string representation of the Prompt Stack.
         """
         prompt_lines = []
 
-        for i in message_stack.messages:
+        for i in prompt_stack.messages:
             content = i.to_text()
             if i.is_user():
                 prompt_lines.append(f"User: {content}")
@@ -102,22 +102,22 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, message_stack: MessageStack) -> Message: ...
+    def try_run(self, prompt_stack: PromptStack) -> Message: ...
 
     @abstractmethod
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
 
-    def __process_run(self, message_stack: MessageStack) -> Message:
-        result = self.try_run(message_stack)
+    def __process_run(self, prompt_stack: PromptStack) -> Message:
+        result = self.try_run(prompt_stack)
 
         return result
 
-    def __process_stream(self, message_stack: MessageStack) -> Message:
+    def __process_stream(self, prompt_stack: PromptStack) -> Message:
         delta_contents: dict[int, list[BaseDeltaMessageContent]] = {}
         usage = DeltaMessage.Usage()
 
         # Aggregate all content deltas from the stream
-        deltas = self.try_stream(message_stack)
+        deltas = self.try_stream(prompt_stack)
         for delta in deltas:
             usage += delta.usage
 

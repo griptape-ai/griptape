@@ -159,39 +159,39 @@ class TestAgent:
         except ValueError:
             assert True
 
-    def test_message_stack_without_memory(self):
+    def test_prompt_stack_without_memory(self):
         agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None)
 
         task1 = PromptTask("test")
 
         agent.add_task(task1)
 
-        assert len(task1.message_stack.messages) == 2
+        assert len(task1.prompt_stack.messages) == 2
 
         agent.run()
 
-        assert len(task1.message_stack.messages) == 3
+        assert len(task1.prompt_stack.messages) == 3
 
         agent.run()
 
-        assert len(task1.message_stack.messages) == 3
+        assert len(task1.prompt_stack.messages) == 3
 
-    def test_message_stack_with_memory(self):
+    def test_prompt_stack_with_memory(self):
         agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
 
         task1 = PromptTask("test")
 
         agent.add_task(task1)
 
-        assert len(task1.message_stack.messages) == 2
+        assert len(task1.prompt_stack.messages) == 2
 
         agent.run()
 
-        assert len(task1.message_stack.messages) == 5
+        assert len(task1.prompt_stack.messages) == 5
 
         agent.run()
 
-        assert len(task1.message_stack.messages) == 7
+        assert len(task1.prompt_stack.messages) == 7
 
     def test_run(self):
         task = PromptTask("test")

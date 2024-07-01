@@ -7,7 +7,7 @@ from griptape.common import Message, TextMessageContent, BaseMessageContent, Ima
 
 
 @define
-class MessageStack(SerializableMixin):
+class PromptStack(SerializableMixin):
     messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
 
     @property

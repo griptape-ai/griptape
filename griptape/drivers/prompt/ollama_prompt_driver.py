@@ -5,7 +5,7 @@ from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers.base_tokenizer import BaseTokenizer
-from griptape.common import MessageStack, TextMessageContent
+from griptape.common import PromptStack, TextMessageContent
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
 from griptape.common import Message, DeltaMessage, TextDeltaMessageContent
@@ -49,8 +49,8 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, message_stack: MessageStack) -> Message:
-        response = self.client.chat(**self._base_params(message_stack))
+    def try_run(self, prompt_stack: PromptStack) -> Message:
+        response = self.client.chat(**self._base_params(prompt_stack))
 
         if isinstance(response, dict):
             return Message(
@@ -60,8 +60,8 @@ class OllamaPromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid model response")
 
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
-        stream = self.client.chat(**self._base_params(message_stack), stream=True)
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        stream = self.client.chat(**self._base_params(prompt_stack), stream=True)
 
         if isinstance(stream, Iterator):
             for chunk in stream:
@@ -69,12 +69,12 @@ class OllamaPromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid model response")
 
-    def _base_params(self, message_stack: MessageStack) -> dict:
-        messages = self._message_stack_to_messages(message_stack)
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        messages = self._prompt_stack_to_messages(prompt_stack)
 
         return {"messages": messages, "model": self.model, "options": self.options}
 
-    def _message_stack_to_messages(self, message_stack: MessageStack) -> list[dict]:
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         return [
             {
                 "role": message.role,
@@ -91,5 +91,5 @@ class OllamaPromptDriver(BasePromptDriver):
                     else {}
                 ),
             }
-            for message in message_stack.messages
+            for message in prompt_stack.messages
         ]

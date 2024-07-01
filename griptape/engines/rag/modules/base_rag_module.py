@@ -4,7 +4,7 @@ from typing import Callable
 
 from attrs import define, field, Factory
 
-from griptape.common import MessageStack, Message
+from griptape.common import PromptStack, Message
 
 
 @define(kw_only=True)
@@ -13,7 +13,7 @@ class BaseRagModule(ABC):
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor())
     )
 
-    def generate_query_prompt_stack(self, system_prompt: str, query: str) -> MessageStack:
-        return MessageStack(
+    def generate_query_prompt_stack(self, system_prompt: str, query: str) -> PromptStack:
+        return PromptStack(
             messages=[Message(system_prompt, role=Message.SYSTEM_ROLE), Message(query, role=Message.USER_ROLE)]
         )

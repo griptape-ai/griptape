@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import DeltaMessage, MessageStack, Message, TextMessageContent
+from griptape.common import DeltaMessage, PromptStack, Message, TextMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -42,8 +42,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         )
     )
 
-    def try_run(self, message_stack: MessageStack) -> Message:
-        messages = self._message_stack_to_messages(message_stack)
+    def try_run(self, prompt_stack: PromptStack) -> Message:
+        messages = self._prompt_stack_to_messages(prompt_stack)
 
         result = self.pipe(
             messages, max_new_tokens=self.max_tokens, temperature=self.temperature, do_sample=True, **self.params
@@ -53,7 +53,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
             if len(result) == 1:
                 generated_text = result[0]["generated_text"][-1]["content"]
 
-                input_tokens = len(self.__message_stack_to_tokens(message_stack))
+                input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
                 output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
                 return Message(
@@ -66,22 +66,22 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid output format")
 
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 
-    def message_stack_to_string(self, message_stack: MessageStack) -> str:
-        return self.tokenizer.tokenizer.decode(self.__message_stack_to_tokens(message_stack))
+    def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
+        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
-    def _message_stack_to_messages(self, message_stack: MessageStack) -> list[dict]:
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []
 
-        for message in message_stack.messages:
+        for message in prompt_stack.messages:
             messages.append({"role": message.role, "content": message.to_text()})
 
         return messages
 
-    def __message_stack_to_tokens(self, message_stack: MessageStack) -> list[int]:
-        messages = self._message_stack_to_messages(message_stack)
+    def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
+        messages = self._prompt_stack_to_messages(prompt_stack)
         tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):

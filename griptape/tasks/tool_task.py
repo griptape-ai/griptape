@@ -48,7 +48,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         return self._actions_schema_for_tools([self.tool])
 
     def run(self) -> BaseArtifact:
-        prompt_output = self.prompt_driver.run(message_stack=self.message_stack).to_text()
+        prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
         action_matches = re.findall(self.ACTION_PATTERN, prompt_output, re.DOTALL)
 
         if action_matches:

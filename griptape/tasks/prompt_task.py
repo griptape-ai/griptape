@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact
-from griptape.common import MessageStack
+from griptape.common import PromptStack
 from griptape.tasks import BaseTask
 from griptape.utils import J2
 from griptape.artifacts import TextArtifact, ListArtifact
@@ -38,8 +38,8 @@ class PromptTask(RuleMixin, BaseTask):
     output: Optional[BaseArtifact] = field(default=None, init=False)
 
     @property
-    def message_stack(self) -> MessageStack:
-        stack = MessageStack()
+    def prompt_stack(self) -> PromptStack:
+        stack = PromptStack()
         memory = self.structure.conversation_memory
 
         stack.add_system_message(self.generate_system_template(self))
@@ -51,7 +51,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
-            memory.add_to_message_stack(stack, 1)
+            memory.add_to_prompt_stack(stack, 1)
 
         return stack
 
@@ -87,7 +87,7 @@ class PromptTask(RuleMixin, BaseTask):
         self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")
 
     def run(self) -> BaseArtifact:
-        message = self.prompt_driver.run(self.message_stack)
+        message = self.prompt_driver.run(self.prompt_stack)
 
         return message.to_artifact()
 

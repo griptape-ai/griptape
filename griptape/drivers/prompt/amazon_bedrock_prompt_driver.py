@@ -21,7 +21,7 @@ from griptape.utils import import_optional_dependency
 if TYPE_CHECKING:
     import boto3
 
-    from griptape.common import MessageStack
+    from griptape.common import PromptStack
 
 
 @define
@@ -35,8 +35,8 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
-    def try_run(self, message_stack: MessageStack) -> Message:
-        response = self.bedrock_client.converse(**self._base_params(message_stack))
+    def try_run(self, prompt_stack: PromptStack) -> Message:
+        response = self.bedrock_client.converse(**self._base_params(prompt_stack))
 
         usage = response["usage"]
         output_message = response["output"]["message"]
@@ -47,8 +47,8 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
 
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
-        response = self.bedrock_client.converse_stream(**self._base_params(message_stack))
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
 
         stream = response.get("stream")
         if stream is not None:
@@ -68,20 +68,20 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def _message_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
         return [
             {
                 "role": self.__to_role(message),
-                "content": [self.__message_stack_content_message_content(content) for content in message.content],
+                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
             }
             for message in messages
         ]
 
-    def _base_params(self, message_stack: MessageStack) -> dict:
-        system_messages = [{"text": message.to_text()} for message in message_stack.system_messages]
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
 
-        messages = self._message_stack_messages_to_messages(
-            [message for message in message_stack.messages if not message.is_system()]
+        messages = self._prompt_stack_messages_to_messages(
+            [message for message in prompt_stack.messages if not message.is_system()]
         )
 
         return {
@@ -92,7 +92,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "additionalModelRequestFields": self.additional_model_request_fields,
         }
 
-    def __message_stack_content_message_content(self, content: BaseMessageContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
         if isinstance(content, TextMessageContent):
             return {"text": content.artifact.to_text()}
         elif isinstance(content, ImageMessageContent):

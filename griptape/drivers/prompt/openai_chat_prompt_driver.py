@@ -12,7 +12,7 @@ from griptape.common import (
     DeltaMessage,
     TextDeltaMessageContent,
     ImageMessageContent,
-    MessageStack,
+    PromptStack,
     Message,
     TextMessageContent,
 )
@@ -73,14 +73,14 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, message_stack: MessageStack) -> Message:
-        result = self.client.chat.completions.create(**self._base_params(message_stack))
+    def try_run(self, prompt_stack: PromptStack) -> Message:
+        result = self.client.chat.completions.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
             message = result.choices[0].message
 
             return Message(
-                content=[self.__message_to_message_stack_content(message)],
+                content=[self.__message_to_prompt_stack_content(message)],
                 role=message.role,
                 usage=Message.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
@@ -89,9 +89,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         result = self.client.chat.completions.create(
-            **self._base_params(message_stack), stream=True, stream_options={"include_usage": True}
+            **self._base_params(prompt_stack), stream=True, stream_options={"include_usage": True}
         )
 
         for chunk in result:
@@ -106,17 +106,17 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     choice = chunk.choices[0]
                     delta = choice.delta
 
-                    yield DeltaMessage(content=self.__message_delta_to_message_stack_content_delta(delta))
+                    yield DeltaMessage(content=self.__message_delta_to_prompt_stack_content_delta(delta))
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
-    def _message_stack_to_messages(self, message_stack: MessageStack) -> list[dict]:
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         return [
             {"role": self.__to_role(message), "content": self.__to_content(message)}
-            for message in message_stack.messages
+            for message in prompt_stack.messages
         ]
 
-    def _base_params(self, message_stack: MessageStack) -> dict:
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
             "model": self.model,
             "temperature": self.temperature,
@@ -129,9 +129,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         if self.response_format == "json_object":
             params["response_format"] = {"type": "json_object"}
             # JSON mode still requires a system message instructing the LLM to output JSON.
-            message_stack.add_system_message("Provide your response as a valid JSON object.")
+            prompt_stack.add_system_message("Provide your response as a valid JSON object.")
 
-        messages = self._message_stack_to_messages(message_stack)
+        messages = self._prompt_stack_to_messages(prompt_stack)
 
         params["messages"] = messages
 
@@ -149,9 +149,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         if all(isinstance(content, TextMessageContent) for content in message.content):
             return message.to_text()
         else:
-            return [self.__message_stack_content_message_content(content) for content in message.content]
+            return [self.__prompt_stack_content_message_content(content) for content in message.content]
 
-    def __message_stack_content_message_content(self, content: BaseMessageContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
         if isinstance(content, TextMessageContent):
             return {"type": "text", "text": content.artifact.to_text()}
         elif isinstance(content, ImageMessageContent):
@@ -162,13 +162,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __message_to_message_stack_content(self, message: ChatCompletionMessage) -> BaseMessageContent:
+    def __message_to_prompt_stack_content(self, message: ChatCompletionMessage) -> BaseMessageContent:
         if message.content is not None:
             return TextMessageContent(TextArtifact(message.content))
         else:
             raise ValueError(f"Unsupported message type: {message}")
 
-    def __message_delta_to_message_stack_content_delta(self, content_delta: ChoiceDelta) -> TextDeltaMessageContent:
+    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> TextDeltaMessageContent:
         if content_delta.content is None:
             return TextDeltaMessageContent("")
         else:

@@ -6,7 +6,7 @@ from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
 from griptape.common import (
-    MessageStack,
+    PromptStack,
     Message,
     DeltaMessage,
     TextMessageContent,
@@ -38,8 +38,8 @@ class CoherePromptDriver(BasePromptDriver):
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True)
     )
 
-    def try_run(self, message_stack: MessageStack) -> Message:
-        result = self.client.chat(**self._base_params(message_stack))
+    def try_run(self, prompt_stack: PromptStack) -> Message:
+        result = self.client.chat(**self._base_params(prompt_stack))
         usage = result.meta.tokens
 
         return Message(
@@ -48,8 +48,8 @@ class CoherePromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
-    def try_stream(self, message_stack: MessageStack) -> Iterator[DeltaMessage]:
-        result = self.client.chat_stream(**self._base_params(message_stack))
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        result = self.client.chat_stream(**self._base_params(prompt_stack))
 
         for event in result:
             if event.event_type == "text-generation":
@@ -61,24 +61,24 @@ class CoherePromptDriver(BasePromptDriver):
                     usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens)
                 )
 
-    def _message_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
         return [
             {
                 "role": self.__to_role(message),
-                "content": [self.__message_stack_content_message_content(content) for content in message.content],
+                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
             }
             for message in messages
         ]
 
-    def _base_params(self, message_stack: MessageStack) -> dict:
-        last_input = message_stack.messages[-1]
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        last_input = prompt_stack.messages[-1]
         user_message = last_input.to_text()
 
-        history_messages = self._message_stack_messages_to_messages(
-            [message for message in message_stack.messages[:-1] if not message.is_system()]
+        history_messages = self._prompt_stack_messages_to_messages(
+            [message for message in prompt_stack.messages[:-1] if not message.is_system()]
         )
 
-        system_messages = message_stack.system_messages
+        system_messages = prompt_stack.system_messages
         if system_messages:
             preamble = system_messages[0].to_text()
         else:
@@ -93,7 +93,7 @@ class CoherePromptDriver(BasePromptDriver):
             **({"preamble": preamble} if preamble else {}),
         }
 
-    def __message_stack_content_message_content(self, content: BaseMessageContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
         if isinstance(content, TextMessageContent):
             return {"text": content.artifact.to_text()}
         else:
