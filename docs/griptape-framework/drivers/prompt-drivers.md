@@ -33,7 +33,7 @@ from griptape.drivers import OpenAiChatPromptDriver
 
 stack = PromptStack()
 
-stack.add_system_input(
+stack.add_system_message(
     "You will be provided with Python code, and your task is to calculate its time complexity."
 )
 stack.add_user_input(

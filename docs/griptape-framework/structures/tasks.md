@@ -95,7 +95,7 @@ from griptape.structures import Agent
 from griptape.loaders import ImageLoader
 
 agent = Agent()
-with open("assets/mountain.jpg", "rb") as f:
+with open("tests/resources/mountain.jpg", "rb") as f:
     image_artifact = ImageLoader().load(f.read())
 
 agent.run(["What's in this image?", image_artifact])
