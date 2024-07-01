@@ -7,6 +7,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
 from griptape.tasks import BaseTask
 from griptape.memory.structure import Run
+from griptape.common import observable
 
 
 @define
@@ -96,6 +97,7 @@ class Workflow(Structure):
 
         return task
 
+    @observable
     def try_run(self, *args) -> Workflow:
         exit_loop = False
 
