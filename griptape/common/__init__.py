@@ -12,6 +12,8 @@ from .prompt_stack.prompt_stack import PromptStack
 
 from .reference import Reference
 
+from .observable import observable, Observable
+
 __all__ = [
     "BaseMessage",
     "BaseDeltaMessageContent",
@@ -23,4 +25,6 @@ __all__ = [
     "ImageMessageContent",
     "PromptStack",
     "Reference",
+    "observable",
+    "Observable"
 ]

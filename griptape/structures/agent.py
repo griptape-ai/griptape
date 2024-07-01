@@ -7,6 +7,7 @@ from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
 from griptape.artifacts import BaseArtifact
+from griptape.common import observable
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -54,6 +55,7 @@ class Agent(Structure):
             raise ValueError("Agents can only have one task.")
         return super().add_tasks(*tasks)
 
+    @observable
     def try_run(self, *args) -> Agent:
         self.task.execute()
 

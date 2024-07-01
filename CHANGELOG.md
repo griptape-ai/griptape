@@ -119,6 +119,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `parents_output_text` to Workflow context.
 - `OllamaPromptModelDriver` for using models with Ollama.
 - Parameter `output` on `Structure` as a convenience for `output_task.output`
+- `BaseObservabilityDriver` as the base class for all Observability Drivers.
+- `DummyObservabilityDriver` as a no-op Observability Driver.
+- `OpenTelemetryObservabilityDriver` for sending observability data to an open telemetry collector or vendor.
+- `GriptapeCloudObservabilityDriver` for sending observability data to Griptape Cloud.
+- `Observability` context manager for enabling observability and configuring which Observability Driver to use.
+- `@observable` decorator for selecting which functions/methods to provide observability for.
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
