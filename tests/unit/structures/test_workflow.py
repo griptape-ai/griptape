@@ -5,7 +5,7 @@ from pytest import fixture
 from griptape.memory.task.storage import TextArtifactStorage
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask, ControlFlowTask
+from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask, ChoiceControlFlowTask
 from griptape.structures import Workflow
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
@@ -35,7 +35,7 @@ class TestWorkflow:
         task2 = PromptTask("prompt2", id="task2")
         task3 = PromptTask("prompt3", id="task3")
         task4 = PromptTask("prompt4", id="end")
-        control_flow_task = ControlFlowTask(id="control_flow_task", control_flow_fn=lambda x: task2)
+        control_flow_task = ChoiceControlFlowTask(id="control_flow_task", control_flow_fn=lambda x: task2)
         control_flow_task.add_parent(task1)
         control_flow_task.add_children([task2, task3])
         task4.add_parents([task2, task3])
@@ -62,10 +62,10 @@ class TestWorkflow:
         task4 = PromptTask("prompt4", id="task4")
         task5 = PromptTask("prompt5", id="task5")
         task6 = PromptTask("prompt6", id="task6")
-        control_flow_task1 = ControlFlowTask(id="control_flow_task1", control_flow_fn=lambda x: task3)
+        control_flow_task1 = ChoiceControlFlowTask(id="control_flow_task1", control_flow_fn=lambda x: task3)
         control_flow_task1.add_parent(task1)
         control_flow_task1.add_children([task2, task3])
-        control_flow_task2 = ControlFlowTask(id="control_flow_task2", control_flow_fn=lambda x: task5)
+        control_flow_task2 = ChoiceControlFlowTask(id="control_flow_task2", control_flow_fn=lambda x: task5)
         control_flow_task2.add_parent(task2)
         control_flow_task2.add_children([task4, task5])
         task6.add_parents([task3, task4, task5])
@@ -101,7 +101,7 @@ class TestWorkflow:
         def test(parents) -> tuple:
             return "task3" if parents[0].output.value == "3" else "task4"
 
-        control_flow_task = ControlFlowTask(id="control_flow_task", control_flow_fn=test)
+        control_flow_task = ChoiceControlFlowTask(id="control_flow_task", control_flow_fn=test)
         control_flow_task.add_parents([task1, task2])
         control_flow_task.add_children([task3, task4])
         task5.add_parents([task3, task4])
@@ -127,7 +127,7 @@ class TestWorkflow:
         task3 = PromptTask(id="task3")
         task4 = PromptTask("prompt4", id="task4")
         task5 = PromptTask("prompt5", id="task5")
-        control_flow_task = ControlFlowTask(id="control_flow_task", control_flow_fn=lambda x: task3)
+        control_flow_task = ChoiceControlFlowTask(id="control_flow_task", control_flow_fn=lambda x: task3)
         task2.add_parent(task1)
         task2.add_child(task3)
         control_flow_task.add_parent(task1)

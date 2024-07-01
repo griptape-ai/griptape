@@ -30,7 +30,6 @@ class BaseTask(ABC):
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
-    process_output_fn: Optional[Callable[[BaseArtifact], BaseArtifact]] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
@@ -125,9 +124,6 @@ class BaseTask(ABC):
             )
 
     def after_run(self) -> None:
-        if self.process_output_fn is not None:
-            self.output = self.process_output_fn(self.output)
-
         if self.structure:
             self.structure.publish_event(
                 FinishTaskEvent(
@@ -158,9 +154,8 @@ class BaseTask(ABC):
             return self.output
 
     def can_execute(self) -> bool:
-        return (
-            self.is_pending()
-            and (
+        return self.is_pending() and (
+            (
                 all(parent.is_complete() for parent in self.parents)
                 and any(parent.is_finished() for parent in self.parents)
             )

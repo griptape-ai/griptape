@@ -8,7 +8,7 @@ from griptape.tasks import BaseControlFlowTask
 
 
 @define
-class ControlFlowTask(BaseControlFlowTask):
+class ChoiceControlFlowTask(BaseControlFlowTask):
     control_flow_fn: Callable[[list[BaseTask] | BaseTask], list[BaseTask | str] | BaseTask | str] = field(
         metadata={"serializable": False}
     )
@@ -35,16 +35,26 @@ class ControlFlowTask(BaseControlFlowTask):
             if isinstance(self.input, ListArtifact)
             else self.input.value
         )
-        if tasks is None or tasks == []:
-            self.output = ErrorArtifact(f"ControlFlowTask {self.id} did not return any tasks")
-            return self.output
 
         if not isinstance(tasks, list):
             tasks = [tasks]
 
-        tasks = [self.structure.find_task(task) if isinstance(task, str) else task for task in tasks]
+        if tasks is None:
+            tasks = []
+
+        tasks = [self._get_task(task) for task in tasks]
 
         for task in tasks:
-            self.output = TaskArtifact(task)
+            if task.id not in self.child_ids:
+                self.output = ErrorArtifact(f"ControlFlowTask {self.id} did not return a valid child task")
+            else:
+                self.output = (
+                    ListArtifact(
+                        [parent.output for parent in filter(lambda parent: parent.output is not None, self.input.value)]  # pyright: ignore
+                    )
+                    if isinstance(self.input, ListArtifact)
+                    else self.input.value.output
+                )
             self._cancel_children_rec(self, task)
-        return self.output
+
+        return self.output  # pyright: ignore

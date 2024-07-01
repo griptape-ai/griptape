@@ -34,6 +34,9 @@ class BooleanControlFlowTask(BaseControlFlowTask):
             self.output = BooleanArtifact(any(inputs))
         elif self.operator == "xor":
             self.output = BooleanArtifact(sum([int(input.value) for input in inputs]) == 1)
+        else:
+            raise ValueError(f"BooleanControlFlowTask {self.id} has invalid operator {self.operator}")
         for task in self.true_tasks if self.output.value else self.false_tasks:
+            task = self._get_task(task)
             self._cancel_children_rec(self, task)
         return self.output
