@@ -18,7 +18,7 @@ from griptape.engines.rag.modules import (
     PromptGenerationRagModule,
     MetadataGenerationRagModule,
 )
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
@@ -176,7 +176,7 @@ class Structure(ABC):
             retrieval_stage=RetrievalRagStage(
                 retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
             ),
-            generation_stage=GenerationRagStage(
+            response_stage=ResponseRagStage(
                 before_generator_modules=[
                     RulesetsGenerationRagModule(rulesets=self.rulesets),
                     MetadataGenerationRagModule(),

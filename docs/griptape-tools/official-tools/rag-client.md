@@ -9,7 +9,7 @@ from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, Open
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 
 # Initialize Embedding Driver and Vector Store Driver
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
@@ -35,7 +35,7 @@ agent.add_task(
                     )
                 ]
             ),
-            generation_stage=GenerationRagStage(
+            response_stage=ResponseRagStage(
                 generation_module=PromptGenerationRagModule(
                     prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
                 )

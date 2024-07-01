@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RAG stages:
     - `QueryRagStage` for parsing and expanding queries.
     - `RetrievalRagStage` for retrieving content.
-    - `GenerationRagStage` for augmenting and generating outputs.
+    - `ResponseRagStage` for augmenting and generating outputs.
   - RAG modules:
     - Retrieval:
       - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.

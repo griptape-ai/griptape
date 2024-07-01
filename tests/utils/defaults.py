@@ -3,7 +3,7 @@ from griptape.drivers import LocalVectorStoreDriver
 from griptape.engines import PromptSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage, BlobArtifactStorage
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -34,5 +34,5 @@ def rag_engine(prompt_driver, vector_store_driver):
         retrieval_stage=RetrievalRagStage(
             retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=vector_store_driver)]
         ),
-        generation_stage=GenerationRagStage(generation_module=PromptGenerationRagModule(prompt_driver=prompt_driver)),
+        response_stage=ResponseRagStage(generation_module=PromptGenerationRagModule(prompt_driver=prompt_driver)),
     )

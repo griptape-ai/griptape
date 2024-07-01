@@ -10,7 +10,7 @@ from griptape.engines.rag.stages import BaseRagStage
 
 
 @define(kw_only=True)
-class GenerationRagStage(BaseRagStage):
+class ResponseRagStage(BaseRagStage):
     before_generator_modules: list[BaseBeforeGenerationRagModule] = field(factory=list)
     generation_module: BaseGenerationRagModule = field()
     after_generator_modules: list[BaseAfterGenerationRagModule] = field(factory=list)

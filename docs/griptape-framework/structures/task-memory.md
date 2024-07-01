@@ -209,7 +209,7 @@ from griptape.drivers import (
 )
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
@@ -237,7 +237,7 @@ agent = Agent(
                             )
                         ]
                     ),
-                    generation_stage=GenerationRagStage(
+                    response_stage=ResponseRagStage(
                         generation_module=PromptGenerationRagModule(
                             prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
                         )

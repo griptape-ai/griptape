@@ -4,7 +4,7 @@ This example demonstrates how to vectorize a webpage and setup a Griptape agent 
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.loaders import WebLoader
 from griptape.rules import Ruleset, Rule
 from griptape.structures import Agent
@@ -25,7 +25,7 @@ engine = RagEngine(
             )
         ]
     ),
-    generation_stage=GenerationRagStage(
+    response_stage=ResponseRagStage(
         generation_module=PromptGenerationRagModule(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
         )
