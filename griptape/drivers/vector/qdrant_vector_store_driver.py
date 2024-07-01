@@ -6,7 +6,6 @@ from griptape.utils import import_optional_dependency
 import uuid
 import logging
 
-VECTOR_NAME = None
 DEFAULT_DISTANCE = "Cosine"
 CONTENT_PAYLOAD_KEY = "data"
 
@@ -49,7 +48,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     timeout: Optional[int] = field(default=5, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
-    vector_name: Optional[str] = VECTOR_NAME
+    vector_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     content_payload_key: str = field(default=CONTENT_PAYLOAD_KEY, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
