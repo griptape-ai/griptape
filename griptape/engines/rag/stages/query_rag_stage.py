@@ -1,4 +1,3 @@
-import itertools
 import logging
 from attrs import define, field
 from griptape import utils
