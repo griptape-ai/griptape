@@ -27,6 +27,11 @@ class Observability:
         driver = Observability.get_global_driver() or _no_op_observability_driver
         return driver.observe(call)
 
+    @staticmethod
+    def get_span_id() -> Optional[str]:
+        driver = Observability.get_global_driver() or _no_op_observability_driver
+        return driver.get_span_id()
+
     def __enter__(self):
         if Observability.get_global_driver() is not None:
             raise ValueError("Observability driver already set.")
