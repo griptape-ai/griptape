@@ -4,7 +4,7 @@ import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Callable
 
 from attrs import define, field, Factory
 
@@ -33,7 +33,9 @@ class BaseTask(ABC):
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
-    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+    )
 
     @property
     @abstractmethod

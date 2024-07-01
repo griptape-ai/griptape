@@ -17,7 +17,7 @@ class TestWorkflow:
     @fixture
     def waiting_task(self):
         def fn(task):
-            time.sleep(10)
+            time.sleep(2)
             return TextArtifact("done")
 
         return CodeExecutionTask(run_fn=fn)
@@ -765,6 +765,16 @@ class TestWorkflow:
         workflow.run()
 
         assert workflow.output is None
+
+    def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
+        end_task = PromptTask("end")
+        end_task.add_parents([error_artifact_task, waiting_task])
+        workflow = Workflow(
+            prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False
+        )
+        workflow.run()
+
+        assert workflow.output is not None
 
     @staticmethod
     def _validate_topology_1(workflow):

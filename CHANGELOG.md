@@ -39,6 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `VectorStoreClient` improvements:
   - `VectorStoreClient.query_params` dict for custom query params.
   - `VectorStoreClient.process_query_output_fn` for custom query output processing logic.
+- Parameter `fail_fast` to `Structure`.
+- `BooleanArtifact` for handling boolean values.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
@@ -51,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
 - **BREAKING**: removed `VectorStoreClient.top_n` and `VectorStoreClient.namespace` in favor of `VectorStoreClient.query_params`.
 - `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
-- Wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
+- **BREAKING**: All `futures_executor` fields renamed to `futures_executor_fn` and now accept callables instead of futures; wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
 
 ### Fixed
 - `CoherePromptDriver` to properly handle empty history.

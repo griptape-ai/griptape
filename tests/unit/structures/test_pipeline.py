@@ -1,10 +1,11 @@
 import pytest
+import time
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, ErrorArtifact
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask
+from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask
 from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
@@ -13,6 +14,21 @@ from tests.unit.structures.test_agent import MockEmbeddingDriver
 
 
 class TestPipeline:
+    @pytest.fixture
+    def waiting_task(self):
+        def fn(task):
+            time.sleep(2)
+            return TextArtifact("done")
+
+        return CodeExecutionTask(run_fn=fn)
+
+    @pytest.fixture
+    def error_artifact_task(self):
+        def fn(task):
+            return ErrorArtifact("error")
+
+        return CodeExecutionTask(run_fn=fn)
+
     def test_init(self):
         driver = MockPromptDriver()
         pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
@@ -357,3 +373,19 @@ class TestPipeline:
 
         with pytest.deprecated_call():
             Pipeline(stream=True)
+
+    def test_run_with_error_artifact(self, error_artifact_task, waiting_task):
+        end_task = PromptTask("end")
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task])
+        pipeline.run()
+
+        assert pipeline.output is None
+
+    def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
+        end_task = PromptTask("end")
+        pipeline = Pipeline(
+            prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False
+        )
+        pipeline.run()
+
+        assert pipeline.output is not None
