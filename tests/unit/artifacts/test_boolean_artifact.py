@@ -1,5 +1,5 @@
 import pytest
-from griptape.artifacts import BooleanArtifact
+from griptape.artifacts import BooleanArtifact, TextArtifact
 
 
 class TestBooleanArtifact:
@@ -17,6 +17,12 @@ class TestBooleanArtifact:
 
         assert BooleanArtifact.parse_bool(True).value is True
         assert BooleanArtifact.parse_bool(False).value is False
+
+        assert BooleanArtifact.parse_bool(BooleanArtifact(True)).value is True
+        assert BooleanArtifact.parse_bool(BooleanArtifact(False)).value is False
+
+        assert BooleanArtifact.parse_bool(TextArtifact("true")).value is True
+        assert BooleanArtifact.parse_bool(TextArtifact("false")).value is False
 
     def test_add(self):
         with pytest.raises(ValueError):
