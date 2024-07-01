@@ -35,15 +35,16 @@ class TestWorkflow:
         task2 = PromptTask("prompt2", id="task2")
         task3 = PromptTask("prompt3", id="task3")
         task4 = PromptTask("prompt4", id="end")
-        control_flow_task = ControlFlowTask(
-            id="control_flow_task", control_flow_fn=lambda x: (task2, TextArtifact("task2 is chosen"))
-        )
+        control_flow_task = ControlFlowTask(id="control_flow_task", control_flow_fn=lambda x: task2)
         control_flow_task.add_parent(task1)
         control_flow_task.add_children([task2, task3])
         task4.add_parents([task2, task3])
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4, control_flow_task])
         workflow.resolve_relationships()
         workflow.run()
+        from griptape.utils import StructureVisualizer
+
+        print(StructureVisualizer(workflow).to_url())
 
         assert task1.state == BaseTask.State.FINISHED
         assert task2.state == BaseTask.State.FINISHED
@@ -61,14 +62,10 @@ class TestWorkflow:
         task4 = PromptTask("prompt4", id="task4")
         task5 = PromptTask("prompt5", id="task5")
         task6 = PromptTask("prompt6", id="task6")
-        control_flow_task1 = ControlFlowTask(
-            id="control_flow_task1", control_flow_fn=lambda x: (task3, TextArtifact("task3 is chosen"))
-        )
+        control_flow_task1 = ControlFlowTask(id="control_flow_task1", control_flow_fn=lambda x: task3)
         control_flow_task1.add_parent(task1)
         control_flow_task1.add_children([task2, task3])
-        control_flow_task2 = ControlFlowTask(
-            id="control_flow_task2", control_flow_fn=lambda x: (task5, TextArtifact("task5 is chosen"))
-        )
+        control_flow_task2 = ControlFlowTask(id="control_flow_task2", control_flow_fn=lambda x: task5)
         control_flow_task2.add_parent(task2)
         control_flow_task2.add_children([task4, task5])
         task6.add_parents([task3, task4, task5])
@@ -78,15 +75,18 @@ class TestWorkflow:
         )
         workflow.resolve_relationships()
         workflow.run()
+        from griptape.utils import StructureVisualizer
+
+        print(StructureVisualizer(workflow).to_url())
 
         assert task1.state == BaseTask.State.FINISHED
         assert task2.state == BaseTask.State.CANCELLED
         assert task3.state == BaseTask.State.FINISHED
         assert task4.state == BaseTask.State.CANCELLED
-        assert task5.state == BaseTask.State.FINISHED
+        assert task5.state == BaseTask.State.CANCELLED
         assert task6.state == BaseTask.State.FINISHED
         assert control_flow_task1.state == BaseTask.State.FINISHED
-        assert control_flow_task2.state == BaseTask.State.FINISHED
+        assert control_flow_task2.state == BaseTask.State.CANCELLED
 
     def test_workflow_with_control_flow_task_multiple_input_parents(self):
         # control_flow_task should branch to task3 but
@@ -99,7 +99,7 @@ class TestWorkflow:
         task5 = PromptTask("prompt5", id="task5")
 
         def test(parents) -> tuple:
-            return ("task3" if parents[0].output.value == "3" else "task4", TextArtifact("task3 is chosen"))
+            return "task3" if parents[0].output.value == "3" else "task4"
 
         control_flow_task = ControlFlowTask(id="control_flow_task", control_flow_fn=test)
         control_flow_task.add_parents([task1, task2])
@@ -115,6 +115,7 @@ class TestWorkflow:
         assert task2.state == BaseTask.State.FINISHED
         assert task3.state == BaseTask.State.FINISHED
         assert task4.state == BaseTask.State.CANCELLED
+        assert task5.state == BaseTask.State.FINISHED
         assert control_flow_task.state == BaseTask.State.FINISHED
 
     def test_workflow_with_control_flow_task_multiple_child_parents(self):
@@ -126,9 +127,7 @@ class TestWorkflow:
         task3 = PromptTask(id="task3")
         task4 = PromptTask("prompt4", id="task4")
         task5 = PromptTask("prompt5", id="task5")
-        control_flow_task = ControlFlowTask(
-            id="control_flow_task", control_flow_fn=lambda x: (task3, TextArtifact("task3 is chosen"))
-        )
+        control_flow_task = ControlFlowTask(id="control_flow_task", control_flow_fn=lambda x: task3)
         task2.add_parent(task1)
         task2.add_child(task3)
         control_flow_task.add_parent(task1)
@@ -144,6 +143,7 @@ class TestWorkflow:
         assert task2.state == BaseTask.State.FINISHED
         assert task3.state == BaseTask.State.FINISHED
         assert task4.state == BaseTask.State.CANCELLED
+        assert task5.state == BaseTask.State.FINISHED
         assert control_flow_task.state == BaseTask.State.FINISHED
 
         for task in [task1, task2, task3, task4, task5, control_flow_task]:
@@ -153,7 +153,7 @@ class TestWorkflow:
 
         # this time control_flow_task should branch to task4
         # and task3 should still be executed because it has another parent
-        control_flow_task.control_flow_fn = lambda x: (task4, TextArtifact("task4 is chosen"))
+        control_flow_task.control_flow_fn = lambda x: task4
         workflow.run()
 
         assert task1.state == BaseTask.State.FINISHED

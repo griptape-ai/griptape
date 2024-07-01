@@ -30,6 +30,7 @@ class BaseTask(ABC):
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    process_output_fn: Optional[Callable[[BaseArtifact], BaseArtifact]] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
@@ -100,10 +101,16 @@ class BaseTask(ABC):
         return self.state == BaseTask.State.PENDING
 
     def is_finished(self) -> bool:
-        return self.state == BaseTask.State.FINISHED or self.state == BaseTask.State.CANCELLED
+        return self.state == BaseTask.State.FINISHED
+
+    def is_cancelled(self) -> bool:
+        return self.state == BaseTask.State.CANCELLED
 
     def is_executing(self) -> bool:
         return self.state == BaseTask.State.EXECUTING
+
+    def is_complete(self) -> bool:
+        return self.is_finished() or self.is_cancelled()
 
     def before_run(self) -> None:
         if self.structure:
@@ -118,6 +125,9 @@ class BaseTask(ABC):
             )
 
     def after_run(self) -> None:
+        if self.process_output_fn is not None:
+            self.output = self.process_output_fn(self.output)
+
         if self.structure:
             self.structure.publish_event(
                 FinishTaskEvent(
@@ -148,7 +158,14 @@ class BaseTask(ABC):
             return self.output
 
     def can_execute(self) -> bool:
-        return self.state == BaseTask.State.PENDING and all([parent.is_finished() for parent in self.parents])
+        return (
+            self.is_pending()
+            and (
+                all(parent.is_complete() for parent in self.parents)
+                and any(parent.is_finished() for parent in self.parents)
+            )
+            or len(self.parents) == 0
+        )
 
     def reset(self) -> BaseTask:
         self.state = BaseTask.State.PENDING

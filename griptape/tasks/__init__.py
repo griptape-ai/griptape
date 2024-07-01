@@ -21,6 +21,7 @@ from .base_audio_generation_task import BaseAudioGenerationTask
 from .text_to_speech_task import TextToSpeechTask
 from .structure_run_task import StructureRunTask
 from .audio_transcription_task import AudioTranscriptionTask
+from .base_control_flow_task import BaseControlFlowTask
 from .control_flow_task import ControlFlowTask
 
 __all__ = [
@@ -47,5 +48,6 @@ __all__ = [
     "TextToSpeechTask",
     "StructureRunTask",
     "AudioTranscriptionTask",
+    "BaseControlFlowTask",
     "ControlFlowTask",
 ]
