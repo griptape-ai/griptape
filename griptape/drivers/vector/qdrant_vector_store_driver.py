@@ -7,7 +7,7 @@ import uuid
 import logging
 
 VECTOR_NAME = None
-DEFAULT_DISTANCE = "COSINE"
+DEFAULT_DISTANCE = "Cosine"
 CONTENT_PAYLOAD_KEY = "data"
 
 
@@ -19,18 +19,18 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         url: An optional Qdrant API URL.
         host: An optional Qdrant host.
         path: Persistence path for QdrantLocal. Default: None
-        port: The port number for the Qdrant client. Defaults to 6333.
-        grpc_port: The gRPC port number for the Qdrant client. Defaults to 6334.
-        prefer_grpc: A boolean indicating whether to prefer gRPC over HTTP. Defaults to False.
+        port: The port number for the Qdrant client. Defaults: 6333.
+        grpc_port: The gRPC port number for the Qdrant client. Defaults: 6334.
+        prefer_grpc: A boolean indicating whether to prefer gRPC over HTTP. Defaults: False.
         force_disable_check_same_thread: For QdrantLocal, force disable check_same_thread. Default: False Only use this if you can guarantee that you can resolve the thread safety outside QdrantClient.
         timeout: Timeout for REST and gRPC API requests. Default: 5 seconds for REST and unlimited for gRPC
-        api_key: API key for authentication in Qdrant Cloud. Defaults to False
+        api_key: API key for authentication in Qdrant Cloud. Defaults: False
         https: If true - use HTTPS(SSL) protocol. Default: None
-        prefix: Add prefix to the REST URL path. Example: service/v1 will result in Example: service/v1 will result in http://localhost:6333/service/v1/{qdrant-endpoint} for REST API. Defaults to None
-        distance: The distance metric to be used for the vectors. Defaults to 'COSINE'.
+        prefix: Add prefix to the REST URL path. Example: service/v1 will result in Example: service/v1 will result in http://localhost:6333/service/v1/{qdrant-endpoint} for REST API. Defaults: None
+        distance: The distance metric to be used for the vectors. Defaults: 'COSINE'.
         collection_name: The name of the Qdrant collection.
         vector_name: An optional name for the vectors.
-        content_payload_key: The key for the content payload in the metadata. Defaults to 'data'.
+        content_payload_key: The key for the content payload in the metadata. Defaults: 'data'.
     """
 
     location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})

@@ -418,100 +418,56 @@ Here is an example of how the driver can be used to query information in a Qdran
 
 ```python
 import os
-import logging
-from transformers import AutoTokenizer
 from sentence_transformers import SentenceTransformer
 from griptape.drivers import QdrantVectorStoreDriver, HuggingFaceHubEmbeddingDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.loaders import PdfLoader
-from griptape.chunkers import TextChunker
+from griptape.loaders import WebLoader
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Set up environment variables
+embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
+host = os.environ["QDRANT_CLUSTER_ENDPOINT"]
+huggingface_token = os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"]
 
-# Setting the models
-embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
-qdrant_model = SentenceTransformer("all-MiniLM-L6-v2")
-file_name = "linux_bible.pdf"
-HUGGINGFACE_TOKEN = os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"]
+# Initialize embedding model
+embedding_model = SentenceTransformer(embedding_model_name)
 
+# Initialize HuggingFace embedding driver
+embedding_driver = HuggingFaceHubEmbeddingDriver(
+    api_token=huggingface_token,
+    model=embedding_model_name,
+    tokenizer=HuggingFaceTokenizer(model=embedding_model_name, max_output_tokens=512),
+)
 
-# Using HuggingFaceTokenizer
-def create_tokenizer(embedding_model):
-    tokenizer = HuggingFaceTokenizer(max_output_tokens=1024, tokenizer=AutoTokenizer.from_pretrained(embedding_model))
-    return tokenizer
+# Initialize Qdrant vector store driver
+vector_store_driver = QdrantVectorStoreDriver(
+    url=host,
+    collection_name="griptape",
+    content_payload_key="content",
+    embedding_driver=embedding_driver
+)
 
+# Load data from the website
+artifacts = WebLoader().load("https://www.griptape.ai")
 
-def create_embedding_driver(embedding_model, tokenizer):
-    embedding_driver = HuggingFaceHubEmbeddingDriver(
-        api_token=HUGGINGFACE_TOKEN, model=embedding_model, tokenizer=tokenizer
-    )
-    return embedding_driver
+# Encode text to get embeddings
+embeddings = embedding_model.encode(artifacts[0].value)
 
+# Recreate Qdrant collection
+vector_store_driver.client.recreate_collection(
+    collection_name=vector_store_driver.collection_name,
+    vectors_config={
+        "size": embedding_model.get_sentence_embedding_dimension(),
+        "distance": vector_store_driver.distance
+    },
+)
 
-# Instantiating QdrantVectorStoreDriver
-def create_vector_store_driver(url, collection_name, embedding_driver):
-    vector_store_driver = QdrantVectorStoreDriver(
-        url=url, collection_name=collection_name, content_payload_key="content", embedding_driver=embedding_driver
-    )
-    return vector_store_driver
+# Upsert vector into Qdrant
+vector_store_driver.upsert_vector(
+    vector=embeddings.tolist(),
+    vector_id=str(artifacts[0].id),
+    content=artifacts[0].value
+)
 
-
-# Opening the file
-def load_pdf(file_name, tokenizer):
-    with open(file_name, "rb") as f:
-        loader = PdfLoader(tokenizer=tokenizer, chunker=TextChunker(tokenizer=tokenizer, max_tokens=1024)).load(
-            f.read()
-        )
-    return loader
-
-
-def main():
-    tokenizer = create_tokenizer(embedding_model)
-    embedding_driver = create_embedding_driver(embedding_model, tokenizer)
-    vector_store_driver = create_vector_store_driver(
-        url="http://localhost:6333", collection_name="linux_bible", embedding_driver=embedding_driver
-    )
-
-    # Loading the data
-    loader = load_pdf(file_name, tokenizer=tokenizer)
-
-    # Generate metadata for each chunk (example metadata)
-    metadata = [{"source": file_name, "page": i + 1} for i in range(len(loader))]
-
-    # Upserting the vector
-    try:
-        for i, l in enumerate(loader):
-            content = str(l)
-            meta = metadata[i] if metadata else None
-            vector_store_driver.upsert_vector(embedding_driver.try_embed_chunk(content), meta=meta, content=content)
-        logging.info("Successfully upserted vectors with metadata.")
-    except Exception as e:
-        logging.error(f"Error during upsert_vector: {e}")
-
-    # Querying the data
-    query_string = "Who created linux?"
-    query_results = vector_store_driver.query(query_string, count=6, include_vectors=True)
-    for result in query_results:
-       print(f"ID: {result.id}, Score: {result.score}, Vector: {result.vector}, Metadata: {result.meta}")
-
-    # Retrieving single entries
-    single_entry = vector_store_driver.load_entry(vector_id="00499354-9362-49c7-97b6-0220b9de84e7")
-    if single_entry:
-        print(f"Vector ID: {single_entry.id}")
-        print(f"Vector: {single_entry.vector}")
-        print(f"Metadata: {single_entry.meta}")
-    else:
-        print("Vector with ID 00499354-9362-49c7-97b6-0220b9de84e7 was not found.")
-
-    # Retrieving multiple entries
-    multiple_entries = vector_store_driver.load_entries(ids=["707a004c-23bc-476c-a097-e527977777f3"])
-    print(multiple_entries)
-
-    # Deleting the vector
-    vector_store_driver.delete_vector(vector_id="00499354-9362-49c7-97b6-0220b9de84e7")
-        
-if __name__ == "__main__":
-    main()
+print("Vectors successfully inserted into Qdrant.")
 
 ```
