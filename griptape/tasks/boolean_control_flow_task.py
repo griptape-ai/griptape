@@ -33,7 +33,7 @@ class BooleanControlFlowTask(BaseControlFlowTask):
         elif self.operator == "or":
             self.output = BooleanArtifact(any(inputs))
         elif self.operator == "xor":
-            self.output = BooleanArtifact(sum(inputs) == 1)
+            self.output = BooleanArtifact(sum([int(input.value) for input in inputs]) == 1)
         for task in self.true_tasks if self.output.value else self.false_tasks:
             self._cancel_children_rec(self, task)
         return self.output
