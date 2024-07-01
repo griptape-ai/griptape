@@ -12,7 +12,7 @@ from griptape.tasks import BaseTask
 
 @define
 class BaseAudioInputTask(RuleMixin, BaseTask, ABC):
-    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field(alias="input")
+    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field(kw_only=True, alias="input")
 
     @property
     def input(self) -> AudioArtifact:
