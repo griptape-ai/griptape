@@ -1,7 +1,9 @@
+from datetime import datetime
 import pytest
 from griptape.common import Observable
 from griptape.drivers import GriptapeCloudObservabilityDriver
-from opentelemetry.trace import StatusCode
+from opentelemetry.trace import StatusCode, SpanContext, Status
+from opentelemetry.sdk.trace import ReadableSpan, Event
 from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 
 
@@ -14,7 +16,9 @@ class TestGriptapeCloudObservabilityDriver:
 
     @pytest.fixture(autouse=True)
     def mock_span_exporter_class(self, mocker):
-        return mocker.patch("griptape.drivers.observability.griptape_cloud_observability_driver.OTLPSpanExporter")
+        return mocker.patch(
+            "griptape.drivers.observability.griptape_cloud_observability_driver.GriptapeCloudObservabilityDriver.SpanExporter"
+        )
 
     @pytest.fixture
     def mock_span_exporter(self, mock_span_exporter_class):
@@ -27,8 +31,10 @@ class TestGriptapeCloudObservabilityDriver:
 
         assert mock_span_exporter_class.call_count == 1
         mock_span_exporter_class.assert_called_once_with(
-            endpoint="http://base-url:1234/api/structure-runs/structure-run-id/traces",
+            base_url="http://base-url:1234",
+            api_key="api-key",
             headers={"Authorization": "Bearer api-key"},
+            structure_run_id="structure-run-id",
         )
 
         mock_span_exporter.export.assert_not_called()
@@ -140,3 +146,107 @@ class TestGriptapeCloudObservabilityDriver:
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
+
+
+class TestGriptapeCloudObservabilityDriverSpanExporter:
+    @pytest.fixture
+    def mock_post(self, mocker):
+        return mocker.patch("requests.post")
+
+    def test_span_exporter_export(self, mock_post):
+        exporter = GriptapeCloudObservabilityDriver.SpanExporter(
+            base_url="http://base-url:1234",
+            api_key="api-key",
+            headers={"Authorization": "Bearer api-key"},
+            structure_run_id="structure-run-id",
+        )
+
+        exporter.export(
+            [
+                ReadableSpan(
+                    name="main",
+                    parent=None,
+                    context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+                    start_time=3000,
+                    end_time=4000,
+                    attributes={"key": "value"},
+                ),
+                ReadableSpan(
+                    name="thing-1",
+                    parent=SpanContext(trace_id=1, span_id=2, is_remote=False),
+                    context=SpanContext(trace_id=1, span_id=3, is_remote=False),
+                    start_time=8000,
+                    end_time=9000,
+                    status=Status(status_code=StatusCode.OK),
+                ),
+                ReadableSpan(
+                    name="thing-2",
+                    parent=SpanContext(trace_id=1, span_id=2, is_remote=False),
+                    context=SpanContext(trace_id=1, span_id=3, is_remote=False),
+                    start_time=8000,
+                    end_time=9000,
+                    status=Status(status_code=StatusCode.ERROR),
+                    events=[
+                        Event(
+                            timestamp=10000,
+                            name="exception",
+                            attributes={
+                                "exception.type": "Exception",
+                                "exception.message": "Boom",
+                                "exception.stacktrace": "Traceback (most recent call last) ...",
+                            },
+                        )
+                    ],
+                ),
+            ]
+        )
+
+        mock_post.assert_called_once_with(
+            url="http://base-url:1234/api/structure-runs/structure-run-id/spans",
+            json=[
+                {
+                    "trace_id": "00000000000000000000000000000001",
+                    "span_id": "0000000000000002",
+                    "parent_id": None,
+                    "name": "main",
+                    "start_time": "1970-01-01T00:00:00.000003Z",
+                    "end_time": "1970-01-01T00:00:00.000004Z",
+                    "status": "UNSET",
+                    "attributes": {"key": "value"},
+                    "events": [],
+                },
+                {
+                    "trace_id": "00000000000000000000000000000001",
+                    "span_id": "0000000000000003",
+                    "parent_id": "0000000000000002",
+                    "name": "thing-1",
+                    "start_time": "1970-01-01T00:00:00.000008Z",
+                    "end_time": "1970-01-01T00:00:00.000009Z",
+                    "status": "OK",
+                    "attributes": {},
+                    "events": [],
+                },
+                {
+                    "trace_id": "00000000000000000000000000000001",
+                    "span_id": "0000000000000003",
+                    "parent_id": "0000000000000002",
+                    "name": "thing-2",
+                    "start_time": "1970-01-01T00:00:00.000008Z",
+                    "end_time": "1970-01-01T00:00:00.000009Z",
+                    "status": "ERROR",
+                    "attributes": {},
+                    "events": [
+                        {
+                            "timestamp": "1970-01-01T00:00:00.000010Z",
+                            "name": "exception",
+                            "attributes": {
+                                "exception.type": "Exception",
+                                "exception.message": "Boom",
+                                "exception.stacktrace": "Traceback (most recent call last) ...",
+                            },
+                        }
+                    ],
+                },
+            ],
+            headers={"Authorization": "Bearer api-key"},
+        )
