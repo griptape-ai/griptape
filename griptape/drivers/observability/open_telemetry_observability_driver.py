@@ -2,6 +2,7 @@ from attrs import define, Factory, field
 from griptape.common import Observable
 from griptape.drivers import BaseObservabilityDriver
 from opentelemetry import trace
+from opentelemetry.trace import format_span_id
 from opentelemetry.instrumentation.threading import ThreadingInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
@@ -68,3 +69,6 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
                 span.set_status(Status(StatusCode.ERROR))
                 span.record_exception(e)
                 raise e
+
+    def get_span_id(self) -> Optional[str]:
+        return format_span_id(trace.get_current_span().get_span_context().span_id)
