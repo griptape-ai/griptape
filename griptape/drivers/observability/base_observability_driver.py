@@ -20,3 +20,6 @@ class BaseObservabilityDriver(ABC):
 
     @abstractmethod
     def observe(self, call: Observable.Call) -> Any: ...
+
+    @abstractmethod
+    def get_span_id(self) -> Optional[str]: ...
