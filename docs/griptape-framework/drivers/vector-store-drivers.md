@@ -443,7 +443,8 @@ vector_store_driver = QdrantVectorStoreDriver(
     url=host,
     collection_name="griptape",
     content_payload_key="content",
-    embedding_driver=embedding_driver
+    embedding_driver=embedding_driver,
+    api_key=os.environ["QDRANT_CLUSTER_API_KEY"],
 )
 
 # Load data from the website
