@@ -1,6 +1,6 @@
 from __future__ import annotations
 from attrs import define, field, Factory
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING, Any, Union
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import BaseConversationMemory
@@ -16,6 +16,8 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     partition_key: str = field(kw_only=True, metadata={"serializable": True})
     value_attribute_key: str = field(kw_only=True, metadata={"serializable": True})
     partition_key_value: str = field(kw_only=True, metadata={"serializable": True})
+    sort_key: Optional[str] = field(default=None, metadata={"serializable": True})
+    sort_key_value: Optional[Union[str, int]] = field(default=None, metadata={"serializable": True})
 
     table: Any = field(init=False)
 
@@ -26,14 +28,14 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
 
     def store(self, memory: BaseConversationMemory) -> None:
         self.table.update_item(
-            Key={self.partition_key: self.partition_key_value},
+            Key=self._get_key(),
             UpdateExpression="set #attr = :value",
             ExpressionAttributeNames={"#attr": self.value_attribute_key},
             ExpressionAttributeValues={":value": memory.to_json()},
         )
 
     def load(self) -> Optional[BaseConversationMemory]:
-        response = self.table.get_item(Key={self.partition_key: self.partition_key_value})
+        response = self.table.get_item(Key=self._get_key())
 
         if "Item" in response and self.value_attribute_key in response["Item"]:
             memory_value = response["Item"][self.value_attribute_key]
@@ -45,3 +47,11 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
             return memory
         else:
             return None
+
+    def _get_key(self) -> dict[str, Any]:
+        key = {self.partition_key: self.partition_key_value}
+
+        if self.sort_key is not None:
+            key[self.sort_key] = self.sort_key_value
+
+        return key
