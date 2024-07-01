@@ -120,9 +120,6 @@ class BaseTask(ABC):
             )
 
     def after_run(self) -> None:
-        if self.process_output_fn is not None:
-            self.output = self.process_output_fn(self.output)
-
         if self.structure:
             self.structure.publish_event(
                 FinishTaskEvent(
@@ -143,6 +140,10 @@ class BaseTask(ABC):
             self.output = self.run()
 
             self.after_run()
+
+            if self.process_output_fn is not None:
+                self.output = self.process_output_fn(self.output)
+
         except Exception as e:
             self.structure.logger.error(f"{self.__class__.__name__} {self.id}\n{e}", exc_info=True)
 
