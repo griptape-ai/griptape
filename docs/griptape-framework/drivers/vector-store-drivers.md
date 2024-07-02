@@ -418,7 +418,6 @@ Here is an example of how the driver can be used to query information in a Qdran
 
 ```python
 import os
-from sentence_transformers import SentenceTransformer
 from griptape.drivers import QdrantVectorStoreDriver, HuggingFaceHubEmbeddingDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.loaders import WebLoader
@@ -427,9 +426,6 @@ from griptape.loaders import WebLoader
 embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
 host = os.environ["QDRANT_CLUSTER_ENDPOINT"]
 huggingface_token = os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"]
-
-# Initialize embedding model
-embedding_model = SentenceTransformer(embedding_model_name)
 
 # Initialize HuggingFace embedding driver
 embedding_driver = HuggingFaceHubEmbeddingDriver(
@@ -451,20 +447,20 @@ vector_store_driver = QdrantVectorStoreDriver(
 artifacts = WebLoader().load("https://www.griptape.ai")
 
 # Encode text to get embeddings
-embeddings = embedding_model.encode(artifacts[0].value)
+embeddings = embedding_driver.embed_text_artifact(artifacts[0])
 
 # Recreate Qdrant collection
 vector_store_driver.client.recreate_collection(
     collection_name=vector_store_driver.collection_name,
     vectors_config={
-        "size": embedding_model.get_sentence_embedding_dimension(),
+        "size": len(embeddings),
         "distance": vector_store_driver.distance
     },
 )
 
 # Upsert vector into Qdrant
 vector_store_driver.upsert_vector(
-    vector=embeddings.tolist(),
+    vector=embeddings,
     vector_id=str(artifacts[0].id),
     content=artifacts[0].value
 )
