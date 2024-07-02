@@ -2,7 +2,7 @@ from .base_rag_module import BaseRagModule
 from .query.base_query_rag_module import BaseQueryRagModule
 from .retrieval.base_retrieval_rag_module import BaseRetrievalRagModule
 from .retrieval.base_rerank_rag_module import BaseRerankRagModule
-from .retrieval.text_rerank_rag_module import TextRerankRagModule
+from .retrieval.text_chunks_rerank_rag_module import TextChunksRerankRagModule
 from .retrieval.vector_store_retrieval_rag_module import VectorStoreRetrievalRagModule
 from .response.base_before_response_rag_module import BaseBeforeResponseRagModule
 from .response.base_after_response_rag_module import BaseAfterResponseRagModule
@@ -17,7 +17,7 @@ __all__ = [
     "BaseQueryRagModule",
     "BaseRetrievalRagModule",
     "BaseRerankRagModule",
-    "TextRerankRagModule",
+    "TextChunksRerankRagModule",
     "VectorStoreRetrievalRagModule",
     "BaseBeforeResponseRagModule",
     "BaseAfterResponseRagModule",

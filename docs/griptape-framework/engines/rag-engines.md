@@ -20,7 +20,7 @@ No modules implemented yet.
 
 #### Retrieval
 - `TextRetrievalRagModule` is for retrieving text chunks.
-- `TextRerankRagModule` is for re-ranking retrieved results.
+- `TextChunksRerankRagModule` is for re-ranking retrieved results.
 
 #### Response
 - `MetadataBeforeResponseRagModule` is for appending metadata.

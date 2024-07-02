@@ -2,10 +2,10 @@ from unittest.mock import Mock
 import pytest
 from griptape.drivers import CohereRerankDriver
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import TextRerankRagModule
+from griptape.engines.rag.modules import TextChunksRerankRagModule
 
 
-class TestTextRerankRagModule:
+class TestTextChunksRerankRagModule:
     @pytest.fixture
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
@@ -14,7 +14,7 @@ class TestTextRerankRagModule:
         return mock_client
 
     def test_run(self, mock_client):
-        module = TextRerankRagModule(rerank_driver=CohereRerankDriver(api_key="api-key"))
+        module = TextChunksRerankRagModule(rerank_driver=CohereRerankDriver(api_key="api-key"))
         result = module.run(RagContext(query="test"))
 
         assert len(result) == 2

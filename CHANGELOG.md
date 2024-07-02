@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RAG modules:
     - Retrieval:
       - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
-      - `TextRerankRagModule` for re-ranking retrieved results.
+      - `TextChunksRerankRagModule` for re-ranking retrieved results.
     - Response:
       - `MetadataBeforeResponseRagModule` for appending metadata.
       - `RulesetsBeforeResponseRagModule` for appending rulesets.
