@@ -86,6 +86,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CoherePromptDriver` to properly handle empty history.
 - `StructureVisualizer.to_url()` by wrapping task IDs in single quotes. 
 
+## [0.27.2] - 2024-06-27
+
+### Fixed
+- Avoid adding duplicate Tokenizer stop sequences in a `ToolkitTask`.
+- Fixed token count calculation in `VectorQueryEngine`.
+
 ## [0.27.1] - 2024-06-20
 
 ### Added
