@@ -4,7 +4,7 @@ from typing import Callable
 
 from attrs import define, field, Factory
 
-from griptape.utils import PromptStack
+from griptape.common import PromptStack, Message
 
 
 @define(kw_only=True)
@@ -15,8 +15,5 @@ class BaseRagModule(ABC):
 
     def generate_query_prompt_stack(self, system_prompt: str, query: str) -> PromptStack:
         return PromptStack(
-            inputs=[
-                PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
-                PromptStack.Input(query, role=PromptStack.USER_ROLE),
-            ]
+            messages=[Message(system_prompt, role=Message.SYSTEM_ROLE), Message(query, role=Message.USER_ROLE)]
         )

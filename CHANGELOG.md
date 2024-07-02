@@ -5,6 +5,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- `Message` for storing messages in a `PromptStack`. Messages consist of a role, content, and usage.
+- `DeltaMessage` for storing partial messages in a `PromptStack`. Multiple `DeltaMessage` can be combined to form a `Message`.
+- `TextMessageContent` for storing textual content in a `Message`.
+- `ImageMessageContent` for storing image content in a `Message`.
+- Support for adding `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s to `PromptStack`.
+- Support for image inputs to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AmazonBedrockPromptDriver`, `AnthropicPromptDriver`, and `GooglePromptDriver`.
+- Input/output token usage metrics to all Prompt Drivers. 
+- `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- Support for storing Artifacts as inputs/outputs in Conversation Memory Runs.
+- `Agent.input` for passing Artifacts as input.
+- Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
+
+### Changed
+- **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.
+- **BREAKING**: Renamed `PromptStack.inputs` to `PromptStack.messages`.
+- **BREAKING**: Moved `PromptStack.USER_ROLE`, `PromptStack.ASSISTANT_ROLE`, and `PromptStack.SYSTEM_ROLE` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_run` from `TextArtifact` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_stream` from `Iterator[TextArtifact]` to `Iterator[DeltaMessage]`.
+- **BREAKING**: Removed `BasePromptEvent.token_count` in favor of `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- **BREAKING**: Removed `StartPromptEvent.prompt`. Use `StartPromptEvent.prompt_stack` instead.
+- **BREAKING**: Removed `Agent.input_template` in favor of `Agent.input`.
+- **BREAKING**: `BasePromptDriver.run` now returns a `Message` instead of a `TextArtifact`. For compatibility, `Message.value` contains the Message's Artifact value
+- Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
+
+
 
 ### Added
 - `RagEngine` is an abstraction for implementing modular RAG pipelines.
