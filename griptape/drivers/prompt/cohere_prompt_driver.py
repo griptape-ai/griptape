@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+import json
 from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -71,7 +72,7 @@ class CoherePromptDriver(BasePromptDriver):
                     usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
                 )
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
-                yield DeltaMessage(content=self.__message_delta_to_message_content(event.dict()))
+                yield DeltaMessage(content=self.__message_delta_to_message_content(event))
 
     def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
         new_messages = []
@@ -87,11 +88,12 @@ class CoherePromptDriver(BasePromptDriver):
                 ]
             else:
                 new_message["message"] = message.to_text()
-                new_message["tool_calls"] = [
-                    self.__prompt_stack_content_message_content(action_call)
-                    for action_call in message.content
-                    if isinstance(action_call, ActionCallMessageContent)
-                ]
+                if message.has_action_calls():
+                    new_message["tool_calls"] = [
+                        self.__prompt_stack_content_message_content(action_call)
+                        for action_call in message.content
+                        if isinstance(action_call, ActionCallMessageContent)
+                    ]
 
             new_messages.append(new_message)
 
@@ -131,6 +133,10 @@ class CoherePromptDriver(BasePromptDriver):
         else:
             preamble = None
 
+        for message in history_messages:
+            print(json.dumps(message, indent=2))
+        print(user_message)
+        print(json.dumps(tool_results, indent=2))
         return {
             "message": user_message,
             "chat_history": history_messages,
@@ -142,13 +148,13 @@ class CoherePromptDriver(BasePromptDriver):
             **({"preamble": preamble} if preamble else {}),
         }
 
-    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> str | dict:
         if isinstance(content, TextMessageContent):
-            return {"text": content.artifact.to_text()}
+            return content.artifact.to_text()
         elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
-            return {"call": {"name": f"{action.name}_{action.path}", "parameters": action.input}}
+            return {"name": f"{action.name}_{action.path}", "parameters": action.input}
         elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
@@ -170,7 +176,7 @@ class CoherePromptDriver(BasePromptDriver):
         content = []
         if response.text:
             content.append(TextMessageContent(TextArtifact(response.text)))
-        if response.tool_calls:
+        if response.tool_calls is not None:
             content.extend(
                 [
                     ActionCallMessageContent(
@@ -189,23 +195,23 @@ class CoherePromptDriver(BasePromptDriver):
 
         return content
 
-    def __message_delta_to_message_content(self, event: dict) -> BaseDeltaMessageContent:
-        if event["event_type"] == "text-generation":
-            return TextDeltaMessageContent(event["text"], index=0)
-        elif event["event_type"] == "tool-calls-chunk":
-            if "tool_call_delta" in event:
-                tool_call_delta = event["tool_call_delta"]
-                if "name" in tool_call_delta:
-                    name, path = tool_call_delta["name"].split("_", 1)
+    def __message_delta_to_message_content(self, event: Any) -> BaseDeltaMessageContent:
+        if event.event_type == "text-generation":
+            return TextDeltaMessageContent(event.text, index=0)
+        elif event.event_type == "tool-calls-chunk":
+            if event.tool_call_delta is not None:
+                tool_call_delta = event.tool_call_delta
+                if tool_call_delta.name is not None:
+                    name, path = tool_call_delta.name.split("_", 1)
 
-                    return ActionCallDeltaMessageContent(tag=tool_call_delta["name"], name=name, path=path)
+                    return ActionCallDeltaMessageContent(tag=tool_call_delta.name, name=name, path=path)
                 else:
-                    return ActionCallDeltaMessageContent(partial_input=tool_call_delta["parameters"])
+                    return ActionCallDeltaMessageContent(partial_input=tool_call_delta.parameters)
 
             else:
-                return TextDeltaMessageContent(event["text"])
+                return TextDeltaMessageContent(event.text)
         else:
-            raise ValueError(f"Unsupported event type: {event['event_type']}")
+            raise ValueError(f"Unsupported event type: {event.event_type}")
 
     def __to_role(self, message: Message) -> str:
         if message.is_system():

@@ -1,5 +1,5 @@
 from griptape.drivers import AnthropicPromptDriver
-from griptape.common import PromptStack
+from griptape.common import PromptStack, TextDeltaMessageContent
 from griptape.artifacts import TextArtifact, ImageArtifact, ListArtifact
 from unittest.mock import Mock
 import pytest
@@ -160,6 +160,7 @@ class TestAnthropicPromptDriver:
         assert event.usage.input_tokens == 5
 
         event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 
         event = next(stream)

@@ -8,7 +8,7 @@ from attrs import define, field
 from griptape import utils
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
-from griptape.tasks import BaseTextInputTask, BaseTask
+from griptape.tasks import BaseTask
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact, ActionArtifact
 from griptape.events import StartActionsSubtaskEvent, FinishActionsSubtaskEvent
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ActionsSubtask(BaseTextInputTask):
+class ActionsSubtask(BaseTask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -26,20 +26,18 @@ class ActionsSubtask(BaseTextInputTask):
     thought: Optional[str] = field(default=None, kw_only=True)
     actions: list[ActionArtifact.Action] = field(factory=list, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
-
+    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+        default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
+        alias="input",
+    )
     _memory: Optional[TaskMemory] = None
 
     @property
-    def input(self) -> TextArtifact:
-        if isinstance(self._input, TextArtifact):
-            return self._input
-        elif isinstance(self._input, Callable):
-            return self._input(self)
-        else:
-            return TextArtifact(self._input)
+    def input(self) -> TextArtifact | ListArtifact:
+        return self._process_task_input(self._input)
 
     @input.setter
-    def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
+    def input(self, value: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> None:
         self._input = value
 
     @property
@@ -66,7 +64,11 @@ class ActionsSubtask(BaseTextInputTask):
     def attach_to(self, parent_task: BaseTask):
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
-        self.__init_from_prompt(self.input.to_text())
+
+        if isinstance(self.input, TextArtifact):
+            self.__init_from_prompt(self.input.to_text())
+        else:
+            self.__init_from_artifacts(self.input)
 
     def before_run(self) -> None:
         self.structure.publish_event(
@@ -169,12 +171,26 @@ class ActionsSubtask(BaseTextInputTask):
     def actions_to_json(self) -> str:
         return json.dumps(self.actions_to_dicts(), indent=2)
 
+    def _process_task_input(
+        self, task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
+    ) -> TextArtifact | ListArtifact:
+        if isinstance(task_input, TextArtifact) or isinstance(task_input, ListArtifact):
+            return task_input
+        elif isinstance(task_input, Callable):
+            return self._process_task_input(task_input(self))
+        elif isinstance(task_input, str):
+            return self._process_task_input(TextArtifact(task_input))
+        elif isinstance(task_input, list) or isinstance(task_input, tuple):
+            return ListArtifact([self._process_task_input(elem) for elem in task_input])
+        else:
+            raise ValueError(f"Invalid input type: {type(task_input)} ")
+
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
         actions_matches = re.findall(self.ACTIONS_PATTERN, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
-        if self.thought is None and len(thought_matches) > 0:
+        if self.thought is None and len(thought_matches) > 1:
             self.thought = thought_matches[-1]
 
         self.__parse_actions(actions_matches)
@@ -182,6 +198,17 @@ class ActionsSubtask(BaseTextInputTask):
         # If there are no actions to take but an answer is provided, set the answer as the output.
         if len(self.actions) == 0 and self.output is None and len(answer_matches) > 0:
             self.output = TextArtifact(answer_matches[-1])
+
+    def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
+        self.actions = [
+            self.__process_action_object(artifact.value.to_dict())
+            for artifact in artifacts.value
+            if isinstance(artifact, ActionArtifact)
+        ]
+
+        thoughts = [artifact.value for artifact in artifacts.value if isinstance(artifact, TextArtifact)]
+        if thoughts:
+            self.thought = thoughts[0]
 
     def __parse_actions(self, actions_matches: list[str]) -> None:
         if len(actions_matches) == 0:
@@ -208,6 +235,11 @@ class ActionsSubtask(BaseTextInputTask):
 
         # Load optional input value; don't throw exceptions if key is not present
         if "input" in action_object:
+            # Some LLMs don't support nested parameters and therefore won't generate "values".
+            # So we need to manually add it here.
+            if "values" not in action_object["input"]:
+                action_object["input"] = {"values": action_object["input"]}
+
             # The schema library has a bug, where something like `Or(str, None)` doesn't get
             # correctly translated into JSON schema. For some optional input fields LLMs sometimes
             # still provide null value, which trips up the validator. The temporary solution that
@@ -222,15 +254,15 @@ class ActionsSubtask(BaseTextInputTask):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
-        new_action = ActionArtifact.Action(
+        action = ActionArtifact.Action(
             tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool
         )
 
-        if new_action.tool:
-            if new_action.input:
-                self.__validate_action(new_action)
+        if action.tool:
+            if action.input:
+                self.__validate_action(action)
 
-        return new_action
+        return action
 
     def __validate_action(self, action: ActionArtifact.Action) -> None:
         try:

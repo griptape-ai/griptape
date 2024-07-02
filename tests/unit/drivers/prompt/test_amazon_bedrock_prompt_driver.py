@@ -2,6 +2,7 @@ import pytest
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.common import PromptStack
+from griptape.common.prompt_stack.contents.text_delta_message_content import TextDeltaMessageContent
 from griptape.drivers import AmazonBedrockPromptDriver
 
 
@@ -87,6 +88,7 @@ class TestAmazonBedrockPromptDriver:
             additionalModelRequestFields={},
         )
 
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 
         event = next(stream)

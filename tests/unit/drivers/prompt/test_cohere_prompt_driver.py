@@ -4,6 +4,7 @@ import pytest
 
 from griptape.common import PromptStack
 from griptape.drivers import CoherePromptDriver
+from griptape.common import TextDeltaMessageContent
 
 
 class TestCoherePromptDriver:
@@ -11,7 +12,7 @@ class TestCoherePromptDriver:
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
         mock_client.chat.return_value = Mock(
-            text="model-output", meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10))
+            text="model-output", meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10)), tool_calls=None
         )
 
         return mock_client
@@ -56,9 +57,9 @@ class TestCoherePromptDriver:
         # Then
         mock_client.chat.assert_called_once_with(
             chat_history=[
-                {"content": [{"text": "user-input"}], "role": "USER"},
-                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
-                {"content": [{"text": "user-input"}], "role": "USER"},
+                {"message": "user-input", "role": "USER"},
+                {"message": "assistant-input", "role": "CHATBOT"},
+                {"message": "user-input", "role": "USER"},
             ],
             max_tokens=None,
             message="assistant-input",
@@ -83,9 +84,9 @@ class TestCoherePromptDriver:
 
         mock_stream_client.chat_stream.assert_called_once_with(
             chat_history=[
-                {"content": [{"text": "user-input"}], "role": "USER"},
-                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
-                {"content": [{"text": "user-input"}], "role": "USER"},
+                {"message": "user-input", "role": "USER"},
+                {"message": "assistant-input", "role": "CHATBOT"},
+                {"message": "user-input", "role": "USER"},
             ],
             max_tokens=None,
             message="assistant-input",
@@ -94,6 +95,7 @@ class TestCoherePromptDriver:
             temperature=0.1,
         )
 
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 
         event = next(stream)

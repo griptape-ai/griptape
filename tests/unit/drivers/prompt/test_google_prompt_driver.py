@@ -1,5 +1,6 @@
 from google.generativeai.types import GenerationConfig
 from griptape.artifacts import TextArtifact, ImageArtifact
+from griptape.common.prompt_stack.contents.text_delta_message_content import TextDeltaMessageContent
 from griptape.drivers import GooglePromptDriver
 from griptape.common import PromptStack
 from unittest.mock import Mock
@@ -11,7 +12,7 @@ class TestGooglePromptDriver:
     def mock_generative_model(self, mocker):
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
         mock_generative_model.return_value.generate_content.return_value = Mock(
-            text="model-output", usage_metadata=Mock(prompt_token_count=5, candidates_token_count=10)
+            parts=[Mock(text="model-output")], usage_metadata=Mock(prompt_token_count=5, candidates_token_count=10)
         )
 
         return mock_generative_model
@@ -100,6 +101,7 @@ class TestGooglePromptDriver:
             stream=True,
             generation_config=GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]),
         )
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 5

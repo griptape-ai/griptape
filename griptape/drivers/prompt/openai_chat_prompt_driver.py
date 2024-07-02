@@ -123,7 +123,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         messages = []
 
         for message in prompt_stack.messages:
-            if message.has_action_results():
+            if message.is_text():
+                messages.append({"role": message.role, "content": message.to_text()})
+            elif message.has_action_results():
                 # Action results need to be expanded into separate messages.
                 for action_result in message.content:
                     if isinstance(action_result, ActionResultMessageContent):

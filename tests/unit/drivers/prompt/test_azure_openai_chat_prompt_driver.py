@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import Mock
 from griptape.drivers import AzureOpenAiChatPromptDriver
+from griptape.common import TextDeltaMessageContent
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
 
@@ -65,6 +66,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream_options={"include_usage": True},
         )
 
+        assert isinstance(event, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 
         event = next(stream)

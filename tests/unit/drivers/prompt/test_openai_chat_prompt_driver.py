@@ -1,7 +1,7 @@
 from griptape.artifacts import ImageArtifact, ListArtifact
 from griptape.artifacts import TextArtifact
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.common import PromptStack
+from griptape.common import PromptStack, TextDeltaMessageContent
 from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
 from tests.mocks.mock_tokenizer import MockTokenizer
@@ -16,6 +16,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             headers={},
             choices=[Mock(message=Mock(content="model-output"))],
             usage=Mock(prompt_tokens=5, completion_tokens=10),
+            tool_calls=[],
         )
 
         return mock_chat_create
@@ -25,9 +26,9 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
         mock_chat_create.return_value = iter(
             [
-                Mock(choices=[Mock(delta=Mock(content="model-output"))], usage=None),
+                Mock(choices=[Mock(delta=Mock(content="model-output", tool_calls=None))], usage=None),
                 Mock(choices=None, usage=Mock(prompt_tokens=5, completion_tokens=10)),
-                Mock(choices=[Mock(delta=Mock(content=None))], usage=None),
+                Mock(choices=[Mock(delta=Mock(content=None, tool_calls=None))], usage=None),
             ]
         )
         return mock_chat_create
@@ -152,12 +153,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream_options={"include_usage": True},
         )
 
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
         event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == ""
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
@@ -177,17 +180,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             seed=driver.seed,
         )
         assert event.value == "model-output"
-
-    def test_try_run_throws_when_prompt_stack_is_string(self):
-        # Given
-        driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
-
-        # When
-        with pytest.raises(Exception) as e:
-            driver.try_run("prompt-stack")  # pyright: ignore
-
-        # Then
-        assert e.value.args[0] == "'str' object has no attribute 'messages'"
 
     def test_try_run_throws_when_multiple_choices_returned(self, mock_chat_completion_create, prompt_stack):
         # Given

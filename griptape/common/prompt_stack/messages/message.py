@@ -32,8 +32,13 @@ class Message(BaseMessage):
     def has_action_calls(self) -> bool:
         return any(isinstance(content, ActionCallMessageContent) for content in self.content)
 
+    def is_text(self) -> bool:
+        return all(isinstance(content, TextMessageContent) for content in self.content)
+
     def to_text(self) -> str:
-        return self.to_artifact().to_text()
+        return "".join(
+            [content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)]
+        )
 
     def to_artifact(self) -> BaseArtifact:
         if len(self.content) == 1:
