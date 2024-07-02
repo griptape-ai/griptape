@@ -263,6 +263,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
 - `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models. 
 - `AnthropicStructureConfig` for providing Structures with Anthropic Prompt and VoyageAi Embedding Driver configuration.
+- `QdrantVectorStoreDriver` to integrate with Qdrant vector databases.
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
