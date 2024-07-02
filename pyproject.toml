@@ -52,6 +52,7 @@ markdownify = {version = "^0.11.6", optional = true}
 voyageai = {version = "^0.2.1", optional = true}
 elevenlabs = {version = "^1.1.2", optional = true}
 torch = {version = "^2.3.0", optional = true}
+qdrant-client = { version = ">=1.9.1", optional = true }
 pusher = {version = "^3.3.2", optional = true}
 ollama = {version = "^0.2.1", optional = true} 
 duckduckgo-search = {version = "^6.1.6", optional = true}
@@ -87,6 +88,7 @@ drivers-vector-redis = ["redis"]
 drivers-vector-opensearch = ["opensearch-py"]
 drivers-vector-amazon-opensearch = ["opensearch-py", "boto3"]
 drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
+drivers-vector-qdrant = ["qdrant-client"]
 
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
@@ -124,6 +126,7 @@ all = [
     "snowflake",
     "marqo",
     "pinecone-client",
+    "qdrant-client",
     "pymongo",
     "redis",
     "opensearch-py",
