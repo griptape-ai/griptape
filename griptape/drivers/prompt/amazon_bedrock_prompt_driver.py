@@ -88,13 +88,13 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def _messages_to_messages(self, elements: list[Message]) -> list[dict]:
+    def _messages_to_messages(self, messages: list[Message]) -> list[dict]:
         return [
             {
                 "role": self.__to_role(message),
                 "content": [self.__message_content_to_bedrock_message_content(content) for content in message.content],
             }
-            for message in elements
+            for message in messages
         ]
 
     def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
@@ -105,9 +105,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        system_messages = [
-            {"text": message.to_text_artifact().to_text()} for message in prompt_stack.messages if message.is_system()
-        ]
+        system_messages = [{"text": message.to_text()} for message in prompt_stack.messages if message.is_system()]
 
         messages = self._messages_to_messages([message for message in prompt_stack.messages if not message.is_system()])
 

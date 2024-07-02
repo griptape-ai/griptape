@@ -78,7 +78,7 @@ class OllamaPromptDriver(BasePromptDriver):
         return [
             {
                 "role": message.role,
-                "content": message.to_text_artifact().to_text(),
+                "content": message.to_text(),
                 **(
                     {
                         "images": [

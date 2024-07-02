@@ -85,8 +85,8 @@ class AnthropicPromptDriver(BasePromptDriver):
             elif event.type == "message_delta":
                 yield DeltaMessage(usage=DeltaMessage.Usage(output_tokens=event.usage.output_tokens))
 
-    def _messages_to_messages(self, elements: list[Message]) -> list[dict]:
-        return [{"role": self.__to_role(message), "content": self.__to_content(message)} for message in elements]
+    def _messages_to_messages(self, messages: list[Message]) -> list[dict]:
+        return [{"role": self.__to_role(message), "content": self.__to_content(message)} for message in messages]
 
     def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
         return (
@@ -100,7 +100,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         system_element = next((i for i in prompt_stack.messages if i.is_system()), None)
         if system_element:
-            system_message = system_element.to_text_artifact().to_text()
+            system_message = system_element.to_text()
         else:
             system_message = None
 
@@ -137,7 +137,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     def __to_content(self, message: Message) -> str | list[dict]:
         if all(isinstance(content, TextMessageContent) for content in message.content):
-            return message.to_text_artifact().to_text()
+            return message.to_text()
         else:
             return [self.__message_content_to_anthropic_message_content(content) for content in message.content]
 

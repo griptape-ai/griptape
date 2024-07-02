@@ -86,7 +86,7 @@ class CoherePromptDriver(BasePromptDriver):
                     if isinstance(action_call, ActionResultMessageContent)
                 ]
             else:
-                new_message["message"] = message.to_text_artifact().to_text()
+                new_message["message"] = message.to_text()
                 new_message["tool_calls"] = [
                     self.__message_content_message_content(action_call)
                     for action_call in message.content

@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import PromptStack, Message, DeltaMessage, TextMessageContent, TextDeltaMessageContent
+from griptape.common import PromptStack, Message, DeltaMessage, TextDeltaMessageContent
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -86,7 +86,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         messages = []
         for i in prompt_stack.messages:
             if len(i.content) == 1:
-                messages.append({"role": i.role, "content": TextMessageContent(i.to_text_artifact())})
+                messages.append({"role": i.role, "content": i.to_text()})
             else:
                 raise ValueError("Invalid input content length.")
 

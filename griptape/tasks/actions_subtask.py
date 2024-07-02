@@ -110,9 +110,8 @@ class ActionsSubtask(BaseTextInputTask):
                 return ErrorArtifact("no tool output")
 
     def execute_actions(self, actions: list[ActionArtifact.Action]) -> list[tuple[str, BaseArtifact]]:
-        results = utils.execute_futures_dict(
-            {a.tag: self.futures_executor.submit(self.execute_action, a) for a in actions}
-        )
+        with self.futures_executor_fn() as executor:
+            results = utils.execute_futures_dict({a.tag: executor.submit(self.execute_action, a) for a in actions})
 
         return [r for r in results.values()]
 

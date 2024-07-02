@@ -1,16 +1,11 @@
 from __future__ import annotations
 
-import json
-from typing import Any, Optional
-from collections.abc import Sequence
+from typing import Any
 
-from attrs import define, field, Factory
+from attrs import define, field
 
-from griptape.artifacts import TextArtifact
-from griptape.common import BaseMessageContent, TextMessageContent
-from griptape.common.prompt_stack.contents.action_call_message_content import ActionCallMessageContent
-from griptape.common.prompt_stack.contents.action_result_message_content import ActionResultMessageContent
-from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.artifacts import TextArtifact, ListArtifact, BaseArtifact
+from griptape.common import BaseMessageContent, TextMessageContent, ActionResultMessageContent, ActionCallMessageContent
 
 from .base_message import BaseMessage
 
@@ -31,10 +26,14 @@ class Message(BaseMessage):
     def __str__(self) -> str:
         return self.to_text()
 
+    def has_action_results(self) -> bool:
+        return any(isinstance(content, ActionResultMessageContent) for content in self.content)
+
+    def has_action_calls(self) -> bool:
+        return any(isinstance(content, ActionCallMessageContent) for content in self.content)
+
     def to_text(self) -> str:
-        return "".join(
-            [content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)]
-        )
+        return self.to_artifact().to_text()
 
     def to_artifact(self) -> BaseArtifact:
         if len(self.content) == 1:
