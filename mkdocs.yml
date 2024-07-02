@@ -93,7 +93,8 @@ nav:
           - Overview: "griptape-framework/tools/index.md"
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
       - Engines:
-          - Query Engines: "griptape-framework/engines/query-engines.md"
+          - RAG Engines: "griptape-framework/engines/rag-engines.md"
+          - Image Query Engines: "griptape-framework/engines/image-query-engines.md"
           - Extraction Engines: "griptape-framework/engines/extraction-engines.md"
           - Summary Engines: "griptape-framework/engines/summary-engines.md"
           - Image Generation Engines: "griptape-framework/engines/image-generation-engines.md"
@@ -111,6 +112,7 @@ nav:
           - Structure Run Drivers: "griptape-framework/drivers/structure-run-drivers.md"
           - Text to Speech Drivers: "griptape-framework/drivers/text-to-speech-drivers.md"
           - Audio Transcription Drivers: "griptape-framework/drivers/audio-transcription-drivers.md"
+          - Web Search Drivers: "griptape-framework/drivers/web-search-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
@@ -149,6 +151,7 @@ nav:
           - TextToSpeechClient: "griptape-tools/official-tools/text-to-speech-client.md"
           - AudioTranscriptionClient: "griptape-tools/official-tools/audio-transcription-client.md"
           - GriptapeCloudKnowledgeBaseClient: "griptape-tools/official-tools/griptape-cloud-knowledge-base-client.md"
+          - RagClient: "griptape-tools/official-tools/rag-client.md"
       - Custom Tools:
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
   - Recipes:

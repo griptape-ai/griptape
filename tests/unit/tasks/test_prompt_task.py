@@ -37,20 +37,24 @@ class TestPromptTask:
             task.prompt_driver
 
     def test_input(self):
+        # Str
         task = PromptTask("test")
 
         assert task.input.value == "test"
 
+        # List of strs
         task = PromptTask(["test1", "test2"])
 
         assert task.input.value[0].value == "test1"
         assert task.input.value[1].value == "test2"
 
+        # Tuple of strs
         task = PromptTask(("test1", "test2"))
 
         assert task.input.value[0].value == "test1"
         assert task.input.value[1].value == "test2"
 
+        # Image artifact
         task = PromptTask(ImageArtifact(b"image-data", format="png", width=100, height=100))
 
         assert isinstance(task.input, ImageArtifact)
@@ -59,6 +63,7 @@ class TestPromptTask:
         assert task.input.width == 100
         assert task.input.height == 100
 
+        # List of str and image artifact
         task = PromptTask(["foo", ImageArtifact(b"image-data", format="png", width=100, height=100)])
 
         assert isinstance(task.input, ListArtifact)
@@ -68,6 +73,27 @@ class TestPromptTask:
         assert task.input.value[1].format == "png"
         assert task.input.value[1].width == 100
 
+        # List of str and nested image artifact
+        task = PromptTask(["foo", [ImageArtifact(b"image-data", format="png", width=100, height=100)]])
+        assert isinstance(task.input, ListArtifact)
+        assert task.input.value[0].value == "foo"
+        assert isinstance(task.input.value[1], ListArtifact)
+        assert isinstance(task.input.value[1].value[0], ImageArtifact)
+        assert task.input.value[1].value[0].value == b"image-data"
+        assert task.input.value[1].value[0].format == "png"
+        assert task.input.value[1].value[0].width == 100
+
+        # Tuple of str and image artifact
+        task = PromptTask(("foo", ImageArtifact(b"image-data", format="png", width=100, height=100)))
+
+        assert isinstance(task.input, ListArtifact)
+        assert task.input.value[0].value == "foo"
+        assert isinstance(task.input.value[1], ImageArtifact)
+        assert task.input.value[1].value == b"image-data"
+        assert task.input.value[1].format == "png"
+        assert task.input.value[1].width == 100
+
+        # Lambda returning list of str and image artifact
         task = PromptTask(
             ListArtifact([TextArtifact("foo"), ImageArtifact(b"image-data", format="png", width=100, height=100)])
         )
@@ -79,6 +105,7 @@ class TestPromptTask:
         assert task.input.value[1].format == "png"
         assert task.input.value[1].width == 100
 
+        # Lambda returning list of str and image artifact
         task = PromptTask(
             lambda _: ListArtifact(
                 [TextArtifact("foo"), ImageArtifact(b"image-data", format="png", width=100, height=100)]

@@ -32,10 +32,13 @@ class TestCoherePromptDriver:
     def mock_tokenizer(self, mocker):
         return mocker.patch("griptape.tokenizers.CohereTokenizer").return_value
 
-    @pytest.fixture
-    def prompt_stack(self):
+    @pytest.fixture(params=[True, False])
+    def prompt_stack(self, request):
         prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
+        if request.param:
+            prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_assistant_message("assistant-input")
         return prompt_stack
@@ -43,7 +46,7 @@ class TestCoherePromptDriver:
     def test_init(self):
         assert CoherePromptDriver(model="command", api_key="foobar")
 
-    def test_try_run(self, mock_client, prompt_stack):  # pyright: ignore
+    def test_try_run(self, mock_client, prompt_stack):
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key")
 
@@ -52,10 +55,14 @@ class TestCoherePromptDriver:
 
         # Then
         mock_client.chat.assert_called_once_with(
-            chat_history=[{"content": [{"text": "user-input"}], "role": "USER"}],
+            chat_history=[
+                {"content": [{"text": "user-input"}], "role": "USER"},
+                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
+                {"content": [{"text": "user-input"}], "role": "USER"},
+            ],
             max_tokens=None,
             message="assistant-input",
-            preamble="system-input",
+            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
             stop_sequences=[],
             temperature=0.1,
         )
@@ -75,10 +82,14 @@ class TestCoherePromptDriver:
         # Then
 
         mock_stream_client.chat_stream.assert_called_once_with(
-            chat_history=[{"content": [{"text": "user-input"}], "role": "USER"}],
+            chat_history=[
+                {"content": [{"text": "user-input"}], "role": "USER"},
+                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
+                {"content": [{"text": "user-input"}], "role": "USER"},
+            ],
             max_tokens=None,
             message="assistant-input",
-            preamble="system-input",
+            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
             stop_sequences=[],
             temperature=0.1,
         )

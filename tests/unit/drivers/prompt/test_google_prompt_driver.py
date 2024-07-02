@@ -32,10 +32,12 @@ class TestGooglePromptDriver:
         driver = GooglePromptDriver(model="gemini-pro", api_key="1234")
         assert driver
 
-    def test_try_run(self, mock_generative_model):
+    @pytest.mark.parametrize("system_enabled", [True, False])
+    def test_try_run(self, mock_generative_model, system_enabled):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
+        if system_enabled:
+            prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_user_message(TextArtifact("user-input"))
         prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
@@ -46,13 +48,18 @@ class TestGooglePromptDriver:
         text_artifact = driver.try_run(prompt_stack)
 
         # Then
+        messages = [
+            *(
+                [{"parts": ["system-input", "user-input"], "role": "user"}]
+                if system_enabled
+                else [{"parts": ["user-input"], "role": "user"}]
+            ),
+            {"parts": ["user-input"], "role": "user"},
+            {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
+            {"parts": ["assistant-input"], "role": "model"},
+        ]
         mock_generative_model.return_value.generate_content.assert_called_once_with(
-            [
-                {"parts": ["system-input", "user-input"], "role": "user"},
-                {"parts": ["user-input"], "role": "user"},
-                {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
-                {"parts": ["assistant-input"], "role": "model"},
-            ],
+            messages,
             generation_config=GenerationConfig(
                 max_output_tokens=None, temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]
             ),
@@ -61,10 +68,12 @@ class TestGooglePromptDriver:
         assert text_artifact.usage.input_tokens == 5
         assert text_artifact.usage.output_tokens == 10
 
-    def test_try_stream(self, mock_stream_generative_model):
+    @pytest.mark.parametrize("system_enabled", [True, False])
+    def test_try_stream(self, mock_stream_generative_model, system_enabled):
         # Given
         prompt_stack = PromptStack()
-        prompt_stack.add_system_message("system-input")
+        if system_enabled:
+            prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_user_message(TextArtifact("user-input"))
         prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
@@ -76,13 +85,18 @@ class TestGooglePromptDriver:
 
         # Then
         event = next(stream)
+        messages = [
+            *(
+                [{"parts": ["system-input", "user-input"], "role": "user"}]
+                if system_enabled
+                else [{"parts": ["user-input"], "role": "user"}]
+            ),
+            {"parts": ["user-input"], "role": "user"},
+            {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
+            {"parts": ["assistant-input"], "role": "model"},
+        ]
         mock_stream_generative_model.return_value.generate_content.assert_called_once_with(
-            [
-                {"parts": ["system-input", "user-input"], "role": "user"},
-                {"parts": ["user-input"], "role": "user"},
-                {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
-                {"parts": ["assistant-input"], "role": "model"},
-            ],
+            messages,
             stream=True,
             generation_config=GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]),
         )

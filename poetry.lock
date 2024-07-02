@@ -123,13 +123,13 @@ frozenlist = ">=1.1.0"
 
 [[package]]
 name = "anthropic"
-version = "0.28.1"
+version = "0.29.0"
 description = "The official Python library for the anthropic API"
 optional = true
 python-versions = ">=3.7"
 files = [
-    {file = "anthropic-0.28.1-py3-none-any.whl", hash = "sha256:c4773ae2b42951a6b747bed328b0d03fa412938c95c3a8b9dce70d69badb710b"},
-    {file = "anthropic-0.28.1.tar.gz", hash = "sha256:e3a6d595bde241141bdc685edc393903ec95c7fa378013a71186cfb8f32b1793"},
+    {file = "anthropic-0.29.0-py3-none-any.whl", hash = "sha256:d16010715129c8bc3295b74fbf4da73cfb156618bf0abb2d007255983266b76a"},
+    {file = "anthropic-0.29.0.tar.gz", hash = "sha256:3eb558a232d83bdf7cdedb75663bf7ff7a8b50cc10acaa9ce6494ff295b8506a"},
 ]
 
 [package.dependencies]
@@ -1591,13 +1591,13 @@ grpcio-gcp = ["grpcio-gcp (>=0.2.2,<1.0.dev0)"]
 
 [[package]]
 name = "google-api-python-client"
-version = "2.132.0"
+version = "2.134.0"
 description = "Google API Client Library for Python"
 optional = true
 python-versions = ">=3.7"
 files = [
-    {file = "google-api-python-client-2.132.0.tar.gz", hash = "sha256:d6340dc83b72d72333cee5d50f7dcfecbff66a8783164090e945f985ec4c374d"},
-    {file = "google_api_python_client-2.132.0-py2.py3-none-any.whl", hash = "sha256:cde87700bd4d37f39f5e940292c1c6cd0910990b5b01f50b1332a8cea38e8595"},
+    {file = "google-api-python-client-2.134.0.tar.gz", hash = "sha256:4a8f0bea651a212997cc83c0f271fc86f80ef93d1cee9d84de7dfaeef2a858b6"},
+    {file = "google_api_python_client-2.134.0-py2.py3-none-any.whl", hash = "sha256:ba05d60f6239990b7994f6328f17bb154c602d31860fb553016dc9f8ce886945"},
 ]
 
 [package.dependencies]
@@ -5978,6 +5978,25 @@ files = [
 ]
 
 [[package]]
+name = "typos"
+version = "1.22.9"
+description = "Source Code Spelling Correction"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "typos-1.22.9-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:6221400b82554f853e1d1a0f26bcfddf9f36008114d3441c566e1b5edf20d27d"},
+    {file = "typos-1.22.9-py3-none-macosx_11_0_arm64.whl", hash = "sha256:a57b5f0acd1596034fdc333f94d4713adbc181c545fb526cf2119d2af4c007ec"},
+    {file = "typos-1.22.9-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:77e2d9dfee24cccf177b09d8ace6d6012fa8c453aa092d869426bfef3dd8c67e"},
+    {file = "typos-1.22.9-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c38886031f4570d546b63ec112aed6b323762022ca5cc64d52537724a1529257"},
+    {file = "typos-1.22.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8577b482256538822f76c9825d36f76b7b1e7cbccf2842279a7b46f0494796a5"},
+    {file = "typos-1.22.9-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:63f7ae86eb7dccc43845bf0ef72a3746b1022889a178809c028f809081c6f20d"},
+    {file = "typos-1.22.9-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:5f290b85f1dddc875d4efa0b22802413f86532b99fa0ac2cb8d2e70eda68acfd"},
+    {file = "typos-1.22.9-py3-none-win32.whl", hash = "sha256:76a58b1d54ee00ef8d90c3166b149e70d84b0414617a34abf5ded1db76feecef"},
+    {file = "typos-1.22.9-py3-none-win_amd64.whl", hash = "sha256:53f31a9c0d321132f680ab92d80f7c520e163c53c9042fb009feaa91d9b4a7c4"},
+    {file = "typos-1.22.9.tar.gz", hash = "sha256:c7b5feada41ce26e34eea1145141887257e59384d0ceea00f0f03349335ff688"},
+]
+
+[[package]]
 name = "tzdata"
 version = "2024.1"
 description = "Provider of IANA time zone data"
@@ -6370,6 +6389,7 @@ drivers-prompt-google = ["google-generativeai", "protobuf"]
 drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-huggingface-pipeline = ["huggingface-hub", "torch", "transformers"]
 drivers-prompt-ollama = ["ollama"]
+drivers-rerank-cohere = ["cohere"]
 drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
 drivers-sql-redshift = ["boto3", "sqlalchemy-redshift"]
 drivers-sql-snowflake = ["snowflake-sqlalchemy"]
@@ -6392,4 +6412,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "ff312765389c5cd6a53b9fe70b91e0337ce857e953966c1c689fe14b2f249415"
+content-hash = "937d5e870407a493038178b3060c663feb9a1b6e6fc16e55fa380a18d02b0c80"

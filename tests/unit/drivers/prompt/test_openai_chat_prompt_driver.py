@@ -1,5 +1,5 @@
-from griptape.artifacts.image_artifact import ImageArtifact
-from griptape.artifacts.text_artifact import TextArtifact
+from griptape.artifacts import ImageArtifact, ListArtifact
+from griptape.artifacts import TextArtifact
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.common import PromptStack
 from griptape.tokenizers import OpenAiTokenizer
@@ -27,6 +27,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             [
                 Mock(choices=[Mock(delta=Mock(content="model-output"))], usage=None),
                 Mock(choices=None, usage=Mock(prompt_tokens=5, completion_tokens=10)),
+                Mock(choices=[Mock(delta=Mock(content=None))], usage=None),
             ]
         )
         return mock_chat_create
@@ -36,8 +37,11 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack = PromptStack()
         prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
-        prompt_stack.add_user_message(TextArtifact("user-input"))
-        prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
+            )
+        )
         prompt_stack.add_assistant_message("assistant-input")
         return prompt_stack
 
@@ -46,10 +50,12 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         return [
             {"role": "system", "content": "system-input"},
             {"role": "user", "content": "user-input"},
-            {"role": "user", "content": "user-input"},
             {
                 "role": "user",
-                "content": [{"type": "image_url", "image_url": {"url": "data:image/png;base64,aW1hZ2UtZGF0YQ=="}}],
+                "content": [
+                    {"type": "text", "text": "user-input"},
+                    {"type": "image_url", "image_url": {"url": "data:image/png;base64,aW1hZ2UtZGF0YQ=="}},
+                ],
             },
             {"role": "assistant", "content": "assistant-input"},
         ]
@@ -112,7 +118,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        element = driver.try_run(prompt_stack)
+        message = driver.try_run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -123,9 +129,9 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             seed=driver.seed,
             response_format={"type": "json_object"},
         )
-        assert element.value == "model-output"
-        assert element.usage.input_tokens == 5
-        assert element.usage.output_tokens == 10
+        assert message.value == "model-output"
+        assert message.usage.input_tokens == 5
+        assert message.usage.output_tokens == 10
 
     def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages):
         # Given
@@ -151,6 +157,8 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
+        event = next(stream)
+        assert event.content.text == ""
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given

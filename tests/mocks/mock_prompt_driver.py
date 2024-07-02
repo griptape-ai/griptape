@@ -32,6 +32,6 @@ class MockPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
-        yield DeltaMessage(
-            content=TextDeltaMessageContent(output), usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100)
-        )
+        yield DeltaMessage(content=TextDeltaMessageContent(output))
+
+        yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100))

@@ -75,7 +75,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
                 memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).messages
                 temp_stack.messages.extend(memory_inputs)
 
-                # Convert the prompt stack into tokens left.
+                # Convert the Prompt Stack into tokens left.
                 tokens_left = prompt_driver.tokenizer.count_input_tokens_left(
                     prompt_driver.prompt_stack_to_string(temp_stack)
                 )

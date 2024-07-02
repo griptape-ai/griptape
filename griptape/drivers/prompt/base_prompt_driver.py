@@ -25,9 +25,9 @@ if TYPE_CHECKING:
     from griptape.structures import Structure
 
 
-@define
+@define(kw_only=True)
 class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
-    """Base class for Prompt Drivers.
+    """Base class for the Prompt Drivers.
 
     Attributes:
         temperature: The temperature to use for the completion.
@@ -41,12 +41,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         use_native_tools: Whether to use LLM's native function calling capabilities. Must be supported by the model.
     """
 
-    temperature: float = field(default=0.1, kw_only=True, metadata={"serializable": True})
-    max_tokens: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    structure: Optional[Structure] = field(default=None, kw_only=True)
-    ignored_exception_types: tuple[type[Exception], ...] = field(
-        default=Factory(lambda: (ImportError, ValueError)), kw_only=True
-    )
+    temperature: float = field(default=0.1, metadata={"serializable": True})
+    max_tokens: Optional[int] = field(default=None, metadata={"serializable": True})
+    structure: Optional[Structure] = field(default=None)
+    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
@@ -67,7 +65,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 )
             )
 
-    def run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def run(self, prompt_stack: PromptStack) -> Message:
         for attempt in self.retrying():
             with attempt:
                 self.before_run(prompt_stack)

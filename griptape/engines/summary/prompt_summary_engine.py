@@ -61,14 +61,19 @@ class PromptSummaryEngine(BaseSummaryEngine):
             self.prompt_driver.tokenizer.count_input_tokens_left(user_prompt + system_prompt)
             >= self.min_response_tokens
         ):
-            return self.prompt_driver.run(
+            result = self.prompt_driver.run(
                 PromptStack(
                     messages=[
                         Message(system_prompt, role=Message.SYSTEM_ROLE),
                         Message(user_prompt, role=Message.USER_ROLE),
                     ]
                 )
-            )
+            ).to_artifact()
+
+            if isinstance(result, TextArtifact):
+                return result
+            else:
+                raise ValueError("Prompt driver did not return a TextArtifact")
         else:
             chunks = self.chunker.chunk(artifacts_text)
 

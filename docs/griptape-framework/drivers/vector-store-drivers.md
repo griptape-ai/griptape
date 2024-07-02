@@ -43,7 +43,7 @@ results = vector_store_driver.query(
     namespace="griptape"
 )
 
-values = [BaseArtifact.from_json(r.meta["artifact"]).value for r in results]
+values = [r.to_artifact().value for r in results]
 
 print("\n\n".join(values))
 
@@ -117,9 +117,7 @@ Here is an example of how the driver can be used to load and query information i
 ```python
 import os
 from griptape.drivers import MarqoVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
-from griptape.engines import VectorQueryEngine
 from griptape.loaders import WebLoader
-from griptape.tools import VectorStoreClient
 
 # Initialize an embedding driver
 embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
@@ -136,25 +134,16 @@ vector_store = MarqoVectorStoreDriver(
     embedding_driver=embedding_driver,
 )
 
-# Initialize the query engine
-query_engine = VectorQueryEngine(vector_store_driver=vector_store, prompt_driver=prompt_driver)
-
-# Initialize the knowledge base tool
-VectorStoreClient(
-    description="Contains information about the Griptape Framework from www.griptape.ai",
-    query_engine=query_engine,
-    namespace=namespace,
-)
-
 # Load artifacts from the web
 artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
 
 # Upsert the artifacts into the vector store
 vector_store.upsert_text_artifacts(
     {
-        namespace: artifacts,
+        "griptape": artifacts,
     }
 )
+
 result = vector_store.query(query="What is griptape?")
 print(result)
 ```

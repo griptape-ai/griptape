@@ -23,7 +23,7 @@ class Conversation:
         lines = []
 
         for stack in self.memory.to_prompt_stack().messages:
-            lines.append(f"{stack.role}: {stack.to_text_artifact().to_text()}")
+            lines.append(f"{stack.role}: {stack.to_text()}")
 
         return lines
 

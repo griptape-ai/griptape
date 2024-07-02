@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "griptape"
-version = "0.27.0"
+version = "0.27.2"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
@@ -31,7 +31,7 @@ requests = "^2"
 
 # drivers
 cohere = { version = "^5.5.4", optional = true }
-anthropic = { version = "^0.28.1", optional = true }
+anthropic = { version = "^0.29.0", optional = true }
 transformers = { version = "^4.39.3", optional = true }
 huggingface-hub = { version = ">=0.13", optional = true }
 boto3 = { version = "^1.34.119", optional = true }
@@ -45,7 +45,6 @@ opensearch-py = { version = "^2.3.1", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
 google-generativeai = { version = "^0.7.0", optional = true }
-protobuf = { version = "4.25.3", optional = true }
 trafilatura = {version = "^1.6", optional = true}
 playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
@@ -104,6 +103,8 @@ drivers-web-search-duckduckgo = ["duckduckgo-search"]
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-pusher = ["pusher"]
+
+drivers-rerank-cohere = ["cohere"]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
@@ -174,6 +175,7 @@ ruff = "^0.4.6"
 pyright = "^1.1.363"
 pre-commit = "^3.7.1"
 boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], version = "^1.34.105"}
+typos = "^1.22.9"
 
 
 [tool.poetry.group.docs]

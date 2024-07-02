@@ -160,7 +160,7 @@ class TestConversationMemory:
         prompt_stack.add_assistant_message("bar")
         memory.add_to_prompt_stack(prompt_stack, 1)
 
-        # We expect one run (2 prompt stack inputs) to be pruned.
+        # We expect one run (2 Prompt Stack inputs) to be pruned.
         assert len(prompt_stack.messages) == 11
         assert prompt_stack.messages[0].content[0].artifact.value == "fizz"
         assert prompt_stack.messages[1].content[0].artifact.value == "foo2"

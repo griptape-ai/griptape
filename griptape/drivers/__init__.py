@@ -73,6 +73,7 @@ from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQue
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
 from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
+from .web_scraper.proxy_web_scraper_driver import ProxyWebScraperDriver
 
 from .web_search.base_web_search_driver import BaseWebSearchDriver
 from .web_search.google_web_search_driver import GoogleWebSearchDriver
@@ -88,6 +89,9 @@ from .event_listener.pusher_event_listener_driver import PusherEventListenerDriv
 from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
+
+from .rerank.base_rerank_driver import BaseRerankDriver
+from .rerank.cohere_rerank_driver import CohereRerankDriver
 
 from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
@@ -167,6 +171,7 @@ __all__ = [
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",
+    "ProxyWebScraperDriver",
     "BaseWebSearchDriver",
     "GoogleWebSearchDriver",
     "DuckDuckGoWebSearchDriver",
@@ -179,6 +184,8 @@ __all__ = [
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
+    "BaseRerankDriver",
+    "CohereRerankDriver",
     "BaseTextToSpeechDriver",
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",

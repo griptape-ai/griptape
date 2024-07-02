@@ -12,7 +12,7 @@ class BaseFileManagerDriver(ABC):
 
     Attributes:
         default_loader: The default loader to use for loading file contents into artifacts.
-        loaders: Dictionary of file extension specifc loaders to use for loading file contents into artifacts.
+        loaders: Dictionary of file extension specific loaders to use for loading file contents into artifacts.
     """
 
     default_loader: loaders.BaseLoader = field(default=Factory(lambda: loaders.BlobLoader()), kw_only=True)
