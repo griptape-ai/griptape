@@ -29,9 +29,11 @@ agent.add_task(
             retrieval_stage=RetrievalRagStage(
                 retrieval_modules=[
                     VectorStoreRetrievalRagModule(
-                        namespace="griptape",
                         vector_store_driver=vector_store_driver,
-                        top_n=20
+                        query_params={
+                            "namespace": "griptape",
+                            "top_n": 20
+                        }
                     )
                 ]
             ),
