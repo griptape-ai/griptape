@@ -6,7 +6,7 @@ from typing import Callable
 from attrs import define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, DeltaMessage, TextPromptStackContent, TextDeltaPromptStackContent
+from griptape.common import PromptStack, Message, DeltaMessage, TextMessageContent, TextDeltaMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer
 
@@ -24,7 +24,7 @@ class MockPromptDriver(BasePromptDriver):
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
         return Message(
-            content=[TextPromptStackContent(TextArtifact(output))],
+            content=[TextMessageContent(TextArtifact(output))],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=100, output_tokens=100),
         )
@@ -33,5 +33,5 @@ class MockPromptDriver(BasePromptDriver):
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
         yield DeltaMessage(
-            content=TextDeltaPromptStackContent(output), usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100)
+            content=TextDeltaMessageContent(output), usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100)
         )

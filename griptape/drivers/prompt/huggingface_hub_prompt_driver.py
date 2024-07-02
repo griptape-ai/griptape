@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import PromptStack, Message, DeltaMessage, TextPromptStackContent, TextDeltaPromptStackContent
+from griptape.common import PromptStack, Message, DeltaMessage, TextMessageContent, TextDeltaMessageContent
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -74,7 +74,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         full_text = ""
         for token in response:
             full_text += token
-            yield DeltaMessage(content=TextDeltaPromptStackContent(token, index=0))
+            yield DeltaMessage(content=TextDeltaMessageContent(token, index=0))
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
         yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens))
@@ -86,7 +86,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         messages = []
         for i in prompt_stack.messages:
             if len(i.content) == 1:
-                messages.append({"role": i.role, "content": TextPromptStackContent(i.to_text_artifact())})
+                messages.append({"role": i.role, "content": TextMessageContent(i.to_text_artifact())})
             else:
                 raise ValueError("Invalid input content length.")
 

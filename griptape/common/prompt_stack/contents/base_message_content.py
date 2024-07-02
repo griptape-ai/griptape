@@ -8,11 +8,11 @@ from attrs import define, field
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.mixins import SerializableMixin
 
-from .base_delta_prompt_stack_content import BaseDeltaPromptStackContent
+from .base_delta_message_content import BaseDeltaMessageContent
 
 
 @define
-class BasePromptStackContent(ABC, SerializableMixin):
+class BaseMessageContent(ABC, SerializableMixin):
     artifact: BaseArtifact = field(metadata={"serializable": True})
 
     def to_text(self) -> str:
@@ -29,4 +29,4 @@ class BasePromptStackContent(ABC, SerializableMixin):
 
     @classmethod
     @abstractmethod
-    def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> BasePromptStackContent: ...
+    def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> BaseMessageContent: ...

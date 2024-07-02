@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import DeltaMessage, PromptStack, Message, TextPromptStackContent
+from griptape.common import DeltaMessage, PromptStack, Message, TextMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -57,7 +57,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
                 output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
                 return Message(
-                    content=[TextPromptStackContent(TextArtifact(generated_text))],
+                    content=[TextMessageContent(TextArtifact(generated_text))],
                     role=Message.ASSISTANT_ROLE,
                     usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
                 )

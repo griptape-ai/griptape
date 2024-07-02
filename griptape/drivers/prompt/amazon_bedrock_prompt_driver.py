@@ -16,16 +16,16 @@ from griptape.artifacts import (
     TextArtifact,
 )
 from griptape.common import (
-    ActionCallDeltaPromptStackContent,
-    ActionCallPromptStackContent,
-    ActionResultPromptStackContent,
-    BaseDeltaPromptStackContent,
-    BasePromptStackContent,
+    ActionCallDeltaMessageContent,
+    ActionCallMessageContent,
+    ActionResultMessageContent,
+    BaseDeltaMessageContent,
+    BaseMessageContent,
     DeltaMessage,
-    ImagePromptStackContent,
+    ImageMessageContent,
     Message,
-    TextDeltaPromptStackContent,
-    TextPromptStackContent,
+    TextDeltaMessageContent,
+    TextMessageContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
@@ -63,7 +63,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         output_message = response["output"]["message"]
 
         return Message(
-            content=[self.__message_content_to_prompt_stack_content(content) for content in output_message["content"]],
+            content=[
+                self.__bedrock_message_content_to_message_content(content) for content in output_message["content"]
+            ],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
@@ -77,7 +79,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 if "messageStart" in event:
                     yield DeltaMessage(role=Message.ASSISTANT_ROLE)
                 elif "contentBlockDelta" in event or "contentBlockStart" in event:
-                    yield DeltaMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(event))
+                    yield DeltaMessage(content=self.__bedrock_message_content_delta_to_message_content_delta(event))
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
                     yield DeltaMessage(
@@ -90,7 +92,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         return [
             {
                 "role": self.__to_role(message),
-                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
+                "content": [self.__message_content_to_bedrock_message_content(content) for content in message.content],
             }
             for message in elements
         ]
@@ -118,12 +120,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             **self._prompt_stack_to_tools(prompt_stack),
         }
 
-    def __message_content_to_prompt_stack_content(self, content: dict) -> BasePromptStackContent:
+    def __bedrock_message_content_to_message_content(self, content: dict) -> BaseMessageContent:
         if "text" in content:
-            return TextPromptStackContent(TextArtifact(content["text"]))
+            return TextMessageContent(TextArtifact(content["text"]))
         elif "toolUse" in content:
             name, path = content["toolUse"]["name"].split("_", 1)
-            return ActionCallPromptStackContent(
+            return ActionCallMessageContent(
                 artifact=ActionArtifact(
                     value=ActionArtifact.Action(
                         tag=content["toolUse"]["toolUseId"], name=name, path=path, input=content["toolUse"]["input"]
@@ -133,21 +135,21 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type: {content}")
 
-    def __message_content_delta_to_prompt_stack_content_delta(self, event: dict) -> BaseDeltaPromptStackContent:
+    def __bedrock_message_content_delta_to_message_content_delta(self, event: dict) -> BaseDeltaMessageContent:
         if "contentBlockStart" in event:
             content_block = event["contentBlockStart"]["start"]
 
             if "toolUse" in content_block:
                 name, path = content_block["toolUse"]["name"].split("_", 1)
 
-                return ActionCallDeltaPromptStackContent(
+                return ActionCallDeltaMessageContent(
                     index=event["contentBlockStart"]["contentBlockIndex"],
                     tag=content_block["toolUse"]["toolUseId"],
                     name=name,
                     path=path,
                 )
             elif "text" in content_block:
-                return TextDeltaPromptStackContent(
+                return TextDeltaMessageContent(
                     content_block["text"], index=event["contentBlockStart"]["contentBlockIndex"]
                 )
             else:
@@ -156,11 +158,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             content_block_delta = event["contentBlockDelta"]
 
             if "text" in content_block_delta["delta"]:
-                return TextDeltaPromptStackContent(
+                return TextDeltaMessageContent(
                     content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
                 )
             elif "toolUse" in content_block_delta["delta"]:
-                return ActionCallDeltaPromptStackContent(
+                return ActionCallDeltaMessageContent(
                     index=content_block_delta["contentBlockIndex"],
                     delta_input=content_block_delta["delta"]["toolUse"]["input"],
                 )
@@ -169,12 +171,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type: {event}")
 
-    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
-        if isinstance(content, TextPromptStackContent):
+    def __message_content_to_bedrock_message_content(self, content: BaseMessageContent) -> dict:
+        if isinstance(content, TextMessageContent):
             return self.__artifact_to_message_content(content.artifact)
-        elif isinstance(content, ImagePromptStackContent):
+        elif isinstance(content, ImageMessageContent):
             return self.__artifact_to_message_content(content.artifact)
-        elif isinstance(content, ActionCallPromptStackContent):
+        elif isinstance(content, ActionCallMessageContent):
             action_call = content.artifact.value
 
             return {
@@ -184,7 +186,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "input": action_call.input,
                 }
             }
-        elif isinstance(content, ActionResultPromptStackContent):
+        elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             if isinstance(artifact, ListArtifact):

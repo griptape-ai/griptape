@@ -5,7 +5,7 @@ from typing import Optional, Union
 from attrs import Factory, define, field
 
 
-from griptape.common import BasePromptStackContent, BaseDeltaPromptStackContent
+from griptape.common import BaseMessageContent, BaseDeltaMessageContent
 from griptape.mixins import SerializableMixin
 
 
@@ -30,7 +30,7 @@ class BaseMessage(ABC, SerializableMixin):
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    content: list[Union[BasePromptStackContent, BaseDeltaPromptStackContent]] = field(metadata={"serializable": True})
+    content: list[Union[BaseMessageContent, BaseDeltaMessageContent]] = field(metadata={"serializable": True})
     role: str = field(kw_only=True, metadata={"serializable": True})
     usage: Usage = field(kw_only=True, default=Factory(lambda: BaseMessage.Usage()), metadata={"serializable": True})
 

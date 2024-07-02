@@ -8,14 +8,14 @@ from attrs import Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import (
-    ActionCallPromptStackContent,
-    BaseDeltaPromptStackContent,
-    ActionCallDeltaPromptStackContent,
+    ActionCallMessageContent,
+    BaseDeltaMessageContent,
+    ActionCallDeltaMessageContent,
     DeltaMessage,
-    TextDeltaPromptStackContent,
+    TextDeltaMessageContent,
     PromptStack,
     Message,
-    TextPromptStackContent,
+    TextMessageContent,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
@@ -120,7 +120,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return result
 
     def __process_stream(self, prompt_stack: PromptStack) -> Message:
-        delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
+        delta_contents: dict[int, list[BaseDeltaMessageContent]] = {}
         usage = DeltaMessage.Usage()
 
         # Aggregate all content deltas from the stream
@@ -129,9 +129,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             usage += delta.usage
             content = delta.content
 
-            if isinstance(content, TextDeltaPromptStackContent):
+            if isinstance(content, TextDeltaMessageContent):
                 self.structure.publish_event(CompletionChunkEvent(token=content.text))
-            elif isinstance(content, ActionCallDeltaPromptStackContent):
+            elif isinstance(content, ActionCallDeltaMessageContent):
                 if content.tag is not None and content.name is not None and content.path is not None:
                     self.structure.publish_event(CompletionChunkEvent(token=str(delta)))
                 elif content.delta_input is not None:
@@ -140,13 +140,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         # Build a complete content from the content deltas
         content = []
         for index, delta_content in delta_contents.items():
-            text_deltas = [delta for delta in delta_content if isinstance(delta, TextDeltaPromptStackContent)]
-            action_deltas = [delta for delta in delta_content if isinstance(delta, ActionCallDeltaPromptStackContent)]
+            text_deltas = [delta for delta in delta_content if isinstance(delta, TextDeltaMessageContent)]
+            action_deltas = [delta for delta in delta_content if isinstance(delta, ActionCallDeltaMessageContent)]
 
             if text_deltas:
-                content.append(TextPromptStackContent.from_deltas(text_deltas))
+                content.append(TextMessageContent.from_deltas(text_deltas))
             if action_deltas:
-                content.append(ActionCallPromptStackContent.from_deltas(action_deltas))
+                content.append(ActionCallMessageContent.from_deltas(action_deltas))
 
         result = Message(
             content=content,

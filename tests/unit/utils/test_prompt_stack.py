@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
-from griptape.common import ImagePromptStackContent, PromptStack, TextPromptStackContent
+from griptape.common import ImageMessageContent, PromptStack, TextMessageContent
 
 
 class TestPromptStack:
@@ -19,21 +19,21 @@ class TestPromptStack:
         prompt_stack.add_message(ListArtifact([TextArtifact("foo"), TextArtifact("bar")]), "role")
 
         assert prompt_stack.messages[0].role == "role"
-        assert isinstance(prompt_stack.messages[0].content[0], TextPromptStackContent)
+        assert isinstance(prompt_stack.messages[0].content[0], TextMessageContent)
         assert prompt_stack.messages[0].content[0].artifact.value == "foo"
 
         assert prompt_stack.messages[1].role == "role"
-        assert isinstance(prompt_stack.messages[1].content[0], TextPromptStackContent)
+        assert isinstance(prompt_stack.messages[1].content[0], TextMessageContent)
         assert prompt_stack.messages[1].content[0].artifact.value == "foo"
 
         assert prompt_stack.messages[2].role == "role"
-        assert isinstance(prompt_stack.messages[2].content[0], ImagePromptStackContent)
+        assert isinstance(prompt_stack.messages[2].content[0], ImageMessageContent)
         assert prompt_stack.messages[2].content[0].artifact.value == b"foo"
 
         assert prompt_stack.messages[3].role == "role"
-        assert isinstance(prompt_stack.messages[3].content[0], TextPromptStackContent)
+        assert isinstance(prompt_stack.messages[3].content[0], TextMessageContent)
         assert prompt_stack.messages[3].content[0].artifact.value == "foo"
-        assert isinstance(prompt_stack.messages[3].content[1], TextPromptStackContent)
+        assert isinstance(prompt_stack.messages[3].content[1], TextMessageContent)
         assert prompt_stack.messages[3].content[1].artifact.value == "bar"
 
     def test_add_system_message(self, prompt_stack):

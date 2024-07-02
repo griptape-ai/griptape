@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, TextPromptStackContent, DeltaMessage
+from griptape.common import PromptStack, Message, TextMessageContent, DeltaMessage
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -73,7 +73,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
         return Message(
-            content=[TextPromptStackContent(TextArtifact(generated_text))],
+            content=[TextMessageContent(TextArtifact(generated_text))],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
@@ -98,7 +98,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         messages = []
 
         for message in prompt_stack.messages:
-            messages.append({"role": message.role, "content": TextPromptStackContent(message.to_text_artifact())})
+            messages.append({"role": message.role, "content": TextMessageContent(message.to_text_artifact())})
 
         return messages
 

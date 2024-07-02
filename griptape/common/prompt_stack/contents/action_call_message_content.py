@@ -6,16 +6,16 @@ from collections.abc import Sequence
 from attrs import define, field
 
 from griptape.artifacts import ActionArtifact
-from griptape.common import BaseDeltaPromptStackContent, BasePromptStackContent, ActionCallDeltaPromptStackContent
+from griptape.common import BaseDeltaMessageContent, BaseMessageContent, ActionCallDeltaMessageContent
 
 
 @define
-class ActionCallPromptStackContent(BasePromptStackContent):
+class ActionCallMessageContent(BaseMessageContent):
     artifact: ActionArtifact = field(metadata={"serializable": True})
 
     @classmethod
-    def from_deltas(cls, deltas: Sequence[BaseDeltaPromptStackContent]) -> ActionCallPromptStackContent:
-        action_call_deltas = [delta for delta in deltas if isinstance(delta, ActionCallDeltaPromptStackContent)]
+    def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> ActionCallMessageContent:
+        action_call_deltas = [delta for delta in deltas if isinstance(delta, ActionCallDeltaMessageContent)]
 
         tag = None
         name = None

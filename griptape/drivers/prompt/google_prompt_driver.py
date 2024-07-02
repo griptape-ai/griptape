@@ -7,17 +7,17 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.common import (
-    BasePromptStackContent,
+    BaseMessageContent,
     DeltaMessage,
-    TextDeltaPromptStackContent,
-    ImagePromptStackContent,
+    TextDeltaMessageContent,
+    ImageMessageContent,
     PromptStack,
     Message,
-    TextPromptStackContent,
-    ActionCallPromptStackContent,
-    ActionResultPromptStackContent,
-    ActionCallDeltaPromptStackContent,
-    BaseDeltaPromptStackContent,
+    TextMessageContent,
+    ActionCallMessageContent,
+    ActionResultMessageContent,
+    ActionCallDeltaMessageContent,
+    BaseDeltaMessageContent,
 )
 from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
@@ -64,7 +64,7 @@ class GooglePromptDriver(BasePromptDriver):
         usage_metadata = response.usage_metadata
 
         return Message(
-            content=[self.__message_content_to_prompt_stack_content(part) for part in response.parts],
+            content=[self.__google_message_content_to_message_content(part) for part in response.parts],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(
                 input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
@@ -83,13 +83,13 @@ class GooglePromptDriver(BasePromptDriver):
 
             # TODO: Only emit one event
             for part in chunk.parts:
-                yield DeltaMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(part))
+                yield DeltaMessage(content=self.__google_message_content_delta_to_message_content_delta(part))
 
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None:
                 prompt_token_count = usage_metadata.prompt_token_count
                 yield DeltaMessage(
-                    content=TextDeltaPromptStackContent(chunk.text),
+                    content=TextDeltaMessageContent(chunk.text),
                     role=Message.ASSISTANT_ROLE,
                     usage=DeltaMessage.Usage(
                         input_tokens=usage_metadata.prompt_token_count,
@@ -98,7 +98,7 @@ class GooglePromptDriver(BasePromptDriver):
                 )
             else:
                 yield DeltaMessage(
-                    content=TextDeltaPromptStackContent(chunk.text),
+                    content=TextDeltaMessageContent(chunk.text),
                     role=Message.ASSISTANT_ROLE,
                     usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
                 )
@@ -143,19 +143,19 @@ class GooglePromptDriver(BasePromptDriver):
             else {}
         )
 
-    def __message_content_to_prompt_stack_content(self, content: Part) -> BasePromptStackContent:
+    def __google_message_content_to_message_content(self, content: Part) -> BaseMessageContent:
         MessageToDict = import_optional_dependency("google.protobuf.json_format").MessageToDict
         # https://stackoverflow.com/questions/64403737/attribute-error-descriptor-while-trying-to-convert-google-vision-response-to-dic
         content_dict = MessageToDict(content._pb)
 
         if "text" in content_dict:
-            return TextPromptStackContent(TextArtifact(content_dict["text"]))
+            return TextMessageContent(TextArtifact(content_dict["text"]))
         elif "functionCall" in content_dict:
             function_call = content_dict["functionCall"]
 
             name, path = function_call["name"].split("_", 1)
 
-            return ActionCallPromptStackContent(
+            return ActionCallMessageContent(
                 artifact=ActionArtifact(
                     value=ActionArtifact.Action(
                         tag=function_call["name"], name=name, path=path, input=function_call["args"]
@@ -165,21 +165,21 @@ class GooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type {content_dict}")
 
-    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> ContentDict | Part | str:
+    def __message_content_to_google_message_content(self, content: BaseMessageContent) -> ContentDict | Part | str:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
         Part = import_optional_dependency("google.generativeai.protos").Part
         FunctionCall = import_optional_dependency("google.generativeai.protos").FunctionCall
         FunctionResponse = import_optional_dependency("google.generativeai.protos").FunctionResponse
 
-        if isinstance(content, TextPromptStackContent):
+        if isinstance(content, TextMessageContent):
             return content.artifact.to_text()
-        elif isinstance(content, ImagePromptStackContent):
+        elif isinstance(content, ImageMessageContent):
             return ContentDict(mime_type=content.artifact.mime_type, data=content.artifact.value)
-        elif isinstance(content, ActionCallPromptStackContent):
+        elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
             return Part(function_call=FunctionCall(name=action.tag, args=action.input))
-        elif isinstance(content, ActionResultPromptStackContent):
+        elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             return Part(
@@ -191,18 +191,18 @@ class GooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
-    def __message_content_delta_to_prompt_stack_content_delta(self, content: Part) -> BaseDeltaPromptStackContent:
+    def __google_message_content_delta_to_message_content_delta(self, content: Part) -> BaseDeltaMessageContent:
         MessageToDict = import_optional_dependency("google.protobuf.json_format").MessageToDict
         # https://stackoverflow.com/questions/64403737/attribute-error-descriptor-while-trying-to-convert-google-vision-response-to-dic
         content_dict = MessageToDict(content._pb)
         if "text" in content_dict:
-            return TextDeltaPromptStackContent(content_dict["text"])
+            return TextDeltaMessageContent(content_dict["text"])
         elif "functionCall" in content_dict:
             function_call = content_dict["functionCall"]
 
             name, path = function_call["name"].split("_", 1)
 
-            return ActionCallDeltaPromptStackContent(
+            return ActionCallDeltaMessageContent(
                 tag=function_call["name"], name=name, path=path, delta_input=json.dumps(function_call["args"])
             )
         else:
@@ -240,4 +240,4 @@ class GooglePromptDriver(BasePromptDriver):
         return tool_declarations
 
     def __to_content(self, message: Message) -> list[ContentDict | str | Part]:
-        return [self.__prompt_stack_content_message_content(content) for content in message.content]
+        return [self.__message_content_to_google_message_content(content) for content in message.content]

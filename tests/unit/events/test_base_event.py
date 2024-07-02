@@ -39,7 +39,7 @@ class TestBaseEvent:
                         "type": "Message",
                         "role": "user",
                         "content": [
-                            {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
+                            {"type": "TextMessageContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
                         ],
                         "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
                     },
@@ -47,7 +47,7 @@ class TestBaseEvent:
                         "type": "Message",
                         "role": "system",
                         "content": [
-                            {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "bar"}}
+                            {"type": "TextMessageContent", "artifact": {"type": "TextArtifact", "value": "bar"}}
                         ],
                         "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
                     },

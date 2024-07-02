@@ -3,7 +3,7 @@ from collections.abc import Iterator
 from attrs import define
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, TextPromptStackContent, DeltaMessage, TextDeltaPromptStackContent
+from griptape.common import PromptStack, Message, TextMessageContent, DeltaMessage, TextDeltaMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
@@ -22,7 +22,7 @@ class MockFailingPromptDriver(BasePromptDriver):
             raise Exception("failed attempt")
         else:
             return Message(
-                content=[TextPromptStackContent(TextArtifact("success"))],
+                content=[TextMessageContent(TextArtifact("success"))],
                 role=Message.ASSISTANT_ROLE,
                 usage=Message.Usage(input_tokens=100, output_tokens=100),
             )
@@ -34,6 +34,6 @@ class MockFailingPromptDriver(BasePromptDriver):
             raise Exception("failed attempt")
         else:
             yield DeltaMessage(
-                content=TextDeltaPromptStackContent("success"),
+                content=TextDeltaMessageContent("success"),
                 usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100),
             )

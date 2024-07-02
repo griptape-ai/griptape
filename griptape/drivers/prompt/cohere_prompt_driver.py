@@ -4,22 +4,20 @@ from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
-from griptape.common.prompt_stack.contents.action_call_delta_prompt_stack_content import (
-    ActionCallDeltaPromptStackContent,
-)
+from griptape.common.prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import CohereTokenizer
 from griptape.artifacts import ActionArtifact
 from griptape.common import (
-    ActionCallPromptStackContent,
-    BaseDeltaPromptStackContent,
-    BasePromptStackContent,
+    ActionCallMessageContent,
+    BaseDeltaMessageContent,
+    BaseMessageContent,
     DeltaMessage,
-    TextDeltaPromptStackContent,
+    TextDeltaMessageContent,
     PromptStack,
     Message,
-    TextPromptStackContent,
-    ActionResultPromptStackContent,
+    TextMessageContent,
+    ActionResultMessageContent,
 )
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
@@ -58,7 +56,7 @@ class CoherePromptDriver(BasePromptDriver):
         usage = result.meta.tokens
 
         return Message(
-            content=self.__response_to_prompt_stack_content(result),
+            content=self.__response_to_message_content(result),
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
@@ -75,7 +73,7 @@ class CoherePromptDriver(BasePromptDriver):
                     usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
                 )
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
-                yield DeltaMessage(content=self.__message_delta_to_prompt_stack_content(event.dict()))
+                yield DeltaMessage(content=self.__message_delta_to_message_content(event.dict()))
 
     def _messages_to_messages(self, messages: list[Message]) -> list[dict]:
         new_messages = []
@@ -85,16 +83,16 @@ class CoherePromptDriver(BasePromptDriver):
 
             if message.has_action_results():
                 new_message["tool_results"] = [
-                    self.__prompt_stack_content_message_content(action_call)
+                    self.__message_content_message_content(action_call)
                     for action_call in message.content
-                    if isinstance(action_call, ActionResultPromptStackContent)
+                    if isinstance(action_call, ActionResultMessageContent)
                 ]
             else:
                 new_message["message"] = message.to_text_artifact().to_text()
                 new_message["tool_calls"] = [
-                    self.__prompt_stack_content_message_content(action_call)
+                    self.__message_content_message_content(action_call)
                     for action_call in message.content
-                    if isinstance(action_call, ActionCallPromptStackContent)
+                    if isinstance(action_call, ActionCallMessageContent)
                 ]
 
             new_messages.append(new_message)
@@ -149,14 +147,14 @@ class CoherePromptDriver(BasePromptDriver):
             **({"preamble": preamble} if preamble else {}),
         }
 
-    def __prompt_stack_content_message_content(self, content: BasePromptStackContent) -> dict:
-        if isinstance(content, TextPromptStackContent):
+    def __message_content_message_content(self, content: BaseMessageContent) -> dict:
+        if isinstance(content, TextMessageContent):
             return {"text": content.artifact.to_text()}
-        elif isinstance(content, ActionCallPromptStackContent):
+        elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
             return {"call": {"name": f"{action.name}_{action.path}", "parameters": action.input}}
-        elif isinstance(content, ActionResultPromptStackContent):
+        elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             if isinstance(artifact, ListArtifact):
@@ -168,19 +166,19 @@ class CoherePromptDriver(BasePromptDriver):
                 "call": {"name": f"{content.action.name}_{content.action.path}", "parameters": content.action.input},
                 "outputs": message_content,
             }
-        elif isinstance(content, ActionResultPromptStackContent):
+        elif isinstance(content, ActionResultMessageContent):
             return {"text": content.artifact.to_text()}
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __response_to_prompt_stack_content(self, response: NonStreamedChatResponse) -> list[BasePromptStackContent]:
+    def __response_to_message_content(self, response: NonStreamedChatResponse) -> list[BaseMessageContent]:
         content = []
         if response.text:
-            content.append(TextPromptStackContent(TextArtifact(response.text)))
+            content.append(TextMessageContent(TextArtifact(response.text)))
         if response.tool_calls:
             content.extend(
                 [
-                    ActionCallPromptStackContent(
+                    ActionCallMessageContent(
                         ActionArtifact(
                             ActionArtifact.Action(
                                 tag=tool_call.name,
@@ -196,21 +194,21 @@ class CoherePromptDriver(BasePromptDriver):
 
         return content
 
-    def __message_delta_to_prompt_stack_content(self, event: dict) -> BaseDeltaPromptStackContent:
+    def __message_delta_to_message_content(self, event: dict) -> BaseDeltaMessageContent:
         if event["event_type"] == "text-generation":
-            return TextDeltaPromptStackContent(event["text"], index=0)
+            return TextDeltaMessageContent(event["text"], index=0)
         elif event["event_type"] == "tool-calls-chunk":
             if "tool_call_delta" in event:
                 tool_call_delta = event["tool_call_delta"]
                 if "name" in tool_call_delta:
                     name, path = tool_call_delta["name"].split("_", 1)
 
-                    return ActionCallDeltaPromptStackContent(tag=tool_call_delta["name"], name=name, path=path)
+                    return ActionCallDeltaMessageContent(tag=tool_call_delta["name"], name=name, path=path)
                 else:
-                    return ActionCallDeltaPromptStackContent(delta_input=tool_call_delta["parameters"])
+                    return ActionCallDeltaMessageContent(delta_input=tool_call_delta["parameters"])
 
             else:
-                return TextDeltaPromptStackContent(event["text"])
+                return TextDeltaMessageContent(event["text"])
         else:
             raise ValueError(f"Unsupported event type: {event['event_type']}")
 

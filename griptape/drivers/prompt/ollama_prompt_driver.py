@@ -5,11 +5,11 @@ from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers.base_tokenizer import BaseTokenizer
-from griptape.common import PromptStack, TextPromptStackContent
+from griptape.common import PromptStack, TextMessageContent
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
-from griptape.common import Message, DeltaMessage, TextDeltaPromptStackContent
-from griptape.common import ImagePromptStackContent
+from griptape.common import Message, DeltaMessage, TextDeltaMessageContent
+from griptape.common import ImageMessageContent
 
 if TYPE_CHECKING:
     from ollama import Client
@@ -54,7 +54,7 @@ class OllamaPromptDriver(BasePromptDriver):
 
         if isinstance(response, dict):
             return Message(
-                content=[TextPromptStackContent(TextArtifact(value=response["message"]["content"]))],
+                content=[TextMessageContent(TextArtifact(value=response["message"]["content"]))],
                 role=Message.ASSISTANT_ROLE,
             )
         else:
@@ -65,7 +65,7 @@ class OllamaPromptDriver(BasePromptDriver):
 
         if isinstance(stream, Iterator):
             for chunk in stream:
-                yield DeltaMessage(content=TextDeltaPromptStackContent(chunk["message"]["content"]))
+                yield DeltaMessage(content=TextDeltaMessageContent(chunk["message"]["content"]))
         else:
             raise Exception("invalid model response")
 
@@ -84,10 +84,10 @@ class OllamaPromptDriver(BasePromptDriver):
                         "images": [
                             content.artifact.base64
                             for content in message.content
-                            if isinstance(content, ImagePromptStackContent)
+                            if isinstance(content, ImageMessageContent)
                         ]
                     }
-                    if any(isinstance(content, ImagePromptStackContent) for content in message.content)
+                    if any(isinstance(content, ImageMessageContent) for content in message.content)
                     else {}
                 ),
             }

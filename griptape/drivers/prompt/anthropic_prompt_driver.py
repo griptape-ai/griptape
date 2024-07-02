@@ -16,17 +16,17 @@ from griptape.artifacts import (
     TextArtifact,
 )
 from griptape.common import (
-    ActionCallPromptStackContent,
-    ActionResultPromptStackContent,
-    BaseDeltaPromptStackContent,
-    BasePromptStackContent,
-    ActionCallDeltaPromptStackContent,
+    ActionCallMessageContent,
+    ActionResultMessageContent,
+    BaseDeltaMessageContent,
+    BaseMessageContent,
+    ActionCallDeltaMessageContent,
     DeltaMessage,
-    TextDeltaPromptStackContent,
-    ImagePromptStackContent,
+    TextDeltaMessageContent,
+    ImageMessageContent,
     PromptStack,
     Message,
-    TextPromptStackContent,
+    TextMessageContent,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
@@ -69,7 +69,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
         return Message(
-            content=[self.__message_content_to_prompt_stack_content(content) for content in response.content],
+            content=[self.__anthropic_message_content_to_message_content(content) for content in response.content],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens),
         )
@@ -79,7 +79,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         for event in events:
             if event.type == "content_block_delta" or event.type == "content_block_start":
-                yield DeltaMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(event))
+                yield DeltaMessage(content=self.__message_content_delta_to_message_content_delta(event))
             elif event.type == "message_start":
                 yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=event.message.usage.input_tokens))
             elif event.type == "message_delta":
@@ -136,21 +136,21 @@ class AnthropicPromptDriver(BasePromptDriver):
         ]
 
     def __to_content(self, message: Message) -> str | list[dict]:
-        if all(isinstance(content, TextPromptStackContent) for content in message.content):
+        if all(isinstance(content, TextMessageContent) for content in message.content):
             return message.to_text_artifact().to_text()
         else:
-            return [self.__prompt_stack_content_to_message_content(content) for content in message.content]
+            return [self.__message_content_to_anthropic_message_content(content) for content in message.content]
 
-    def __prompt_stack_content_to_message_content(self, content: BasePromptStackContent) -> dict:
-        if isinstance(content, TextPromptStackContent):
+    def __message_content_to_anthropic_message_content(self, content: BaseMessageContent) -> dict:
+        if isinstance(content, TextMessageContent):
             return self.__artifact_to_message_content(content.artifact)
-        elif isinstance(content, ImagePromptStackContent):
+        elif isinstance(content, ImageMessageContent):
             return self.__artifact_to_message_content(content.artifact)
-        elif isinstance(content, ActionCallPromptStackContent):
+        elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
             return {"type": "tool_use", "id": action.tag, "name": f"{action.name}_{action.path}", "input": action.input}
-        elif isinstance(content, ActionResultPromptStackContent):
+        elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             if isinstance(artifact, ListArtifact):
@@ -184,13 +184,13 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
-    def __message_content_to_prompt_stack_content(self, content: ContentBlock) -> BasePromptStackContent:
+    def __anthropic_message_content_to_message_content(self, content: ContentBlock) -> BaseMessageContent:
         if content.type == "text":
-            return TextPromptStackContent(TextArtifact(content.text))
+            return TextMessageContent(TextArtifact(content.text))
         elif content.type == "tool_use":
             name, path = content.name.split("_", 1)
 
-            return ActionCallPromptStackContent(
+            return ActionCallMessageContent(
                 artifact=ActionArtifact(
                     value=ActionArtifact.Action(tag=content.id, name=name, path=path, input=content.input)  # pyright: ignore[reportArgumentType]
                 )
@@ -198,29 +198,27 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type: {content.type}")
 
-    def __message_content_delta_to_prompt_stack_content_delta(
+    def __message_content_delta_to_message_content_delta(
         self, event: ContentBlockDeltaEvent | ContentBlockStartEvent
-    ) -> BaseDeltaPromptStackContent:
+    ) -> BaseDeltaMessageContent:
         if event.type == "content_block_start":
             content_block = event.content_block
 
             if content_block.type == "tool_use":
                 name, path = content_block.name.split("_", 1)
 
-                return ActionCallDeltaPromptStackContent(index=event.index, tag=content_block.id, name=name, path=path)
+                return ActionCallDeltaMessageContent(index=event.index, tag=content_block.id, name=name, path=path)
             elif content_block.type == "text":
-                return TextDeltaPromptStackContent(content_block.text, index=event.index)
+                return TextDeltaMessageContent(content_block.text, index=event.index)
             else:
                 raise ValueError(f"Unsupported content block type: {content_block.type}")
         elif event.type == "content_block_delta":
             content_block_delta = event.delta
 
             if content_block_delta.type == "text_delta":
-                return TextDeltaPromptStackContent(content_block_delta.text, index=event.index)
+                return TextDeltaMessageContent(content_block_delta.text, index=event.index)
             elif content_block_delta.type == "input_json_delta":
-                return ActionCallDeltaPromptStackContent(
-                    index=event.index, delta_input=content_block_delta.partial_json
-                )
+                return ActionCallDeltaMessageContent(index=event.index, delta_input=content_block_delta.partial_json)
             else:
                 raise ValueError(f"Unsupported message content type: {event}")
         else:

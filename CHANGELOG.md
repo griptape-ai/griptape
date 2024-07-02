@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `Message` for storing messages in a `PromptStack`. Messages consist of a role, content, and usage.
 - `DeltaMessage` for storing partial messages in a `PromptStack`. Multiple `DeltaMessage` can be combined to form a `Message`.
-- `TextPromptStackContent` for storing textual content in a `Message`.
-- `ImagePromptStackContent` for storing image content in a `Message`.
+- `TextMessageContent` for storing textual content in a `Message`.
+- `ImageMessageContent` for storing image content in a `Message`.
 - Support for adding `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s to `PromptStack`.
 - Support for image inputs to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AmazonBedrockPromptDriver`, `AnthropicPromptDriver`, and `GooglePromptDriver`.
 - Input/output token usage metrics to all Prompt Drivers. 
@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `PromptStack.inputs` to `PromptStack.messages`.
 - **BREAKING**: Moved `PromptStack.USER_ROLE`, `PromptStack.ASSISTANT_ROLE`, and `PromptStack.SYSTEM_ROLE` to `Message`.
 - **BREAKING**: Updated return type of `PromptDriver.try_run` from `TextArtifact` to `Message`.
-- **BREAKING**: Updated return type of `PromptDriver.try_stream` from `Iterator[TextArtifact]` to `Iterator[DeltaMessage | BaseDeltaPromptStackContent]`.
+- **BREAKING**: Updated return type of `PromptDriver.try_stream` from `Iterator[TextArtifact]` to `Iterator[DeltaMessage | BaseDeltaMessageContent]`.
 - **BREAKING**: Removed `BasePromptEvent.token_count` in favor of `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
 - **BREAKING**: Removed `StartPromptEvent.prompt`. Use `StartPromptEvent.prompt_stack` instead.
 - **BREAKING**: Removed `Agent.input_template` in favor of `Agent.input`.

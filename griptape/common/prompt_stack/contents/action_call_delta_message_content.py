@@ -2,11 +2,11 @@ from __future__ import annotations
 from attrs import define, field
 from typing import Optional
 
-from griptape.common import BaseDeltaPromptStackContent
+from griptape.common import BaseDeltaMessageContent
 
 
 @define
-class ActionCallDeltaPromptStackContent(BaseDeltaPromptStackContent):
+class ActionCallDeltaMessageContent(BaseDeltaMessageContent):
     tag: Optional[str] = field(default=None, metadata={"serializable": True})
     name: Optional[str] = field(default=None, metadata={"serializable": True})
     path: Optional[str] = field(default=None, metadata={"serializable": True})
