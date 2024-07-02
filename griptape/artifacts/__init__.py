@@ -9,6 +9,8 @@ from .list_artifact import ListArtifact
 from .media_artifact import MediaArtifact
 from .image_artifact import ImageArtifact
 from .audio_artifact import AudioArtifact
+from .control_flow_artifact import ControlFlowArtifact
+from .task_artifact import TaskArtifact
 
 
 __all__ = [
@@ -23,4 +25,6 @@ __all__ = [
     "MediaArtifact",
     "ImageArtifact",
     "AudioArtifact",
+    "ControlFlowArtifact",
+    "TaskArtifact",
 ]
