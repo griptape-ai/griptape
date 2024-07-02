@@ -92,7 +92,7 @@ from griptape.structures import Agent
 from griptape.tools import WebScraper, FileManager, TaskMemoryClient
 
 agent = Agent(
-    input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
+    input="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
         WebScraper(off_prompt=True),
         TaskMemoryClient(off_prompt=True),

@@ -1,7 +1,7 @@
 import pytest
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.engines import PromptSummaryEngine
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 import os
 
@@ -28,7 +28,7 @@ class TestPromptSummaryEngine:
 
     def test_chunked_summary(self, engine):
         def smaller_input(prompt_stack: PromptStack):
-            return prompt_stack.inputs[0].content[: (len(prompt_stack.inputs[0].content) // 2)]
+            return prompt_stack.messages[0].content[: (len(prompt_stack.messages[0].content) // 2)]
 
         engine = PromptSummaryEngine(prompt_driver=MockPromptDriver(mock_output="smaller_input"))
 

@@ -1,9 +1,9 @@
 import json
 
-import pytest
 
 from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
+from griptape.artifacts import TextArtifact
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_structure_config import MockStructureConfig
@@ -41,36 +41,36 @@ class TestSummaryConversationMemory:
 
     def test_to_json(self):
         memory = SummaryConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
 
         assert json.loads(memory.to_json())["type"] == "SummaryConversationMemory"
-        assert json.loads(memory.to_json())["runs"][0]["input"] == "foo"
+        assert json.loads(memory.to_json())["runs"][0]["input"]["value"] == "foo"
 
     def test_to_dict(self):
         memory = SummaryConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
 
         assert memory.to_dict()["type"] == "SummaryConversationMemory"
-        assert memory.to_dict()["runs"][0]["input"] == "foo"
+        assert memory.to_dict()["runs"][0]["input"]["value"] == "foo"
 
     def test_to_prompt_stack(self):
         memory = SummaryConversationMemory(summary="foobar")
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
 
         prompt_stack = memory.to_prompt_stack()
 
-        assert prompt_stack.inputs[0].content == "Summary of the conversation so far: foobar"
-        assert prompt_stack.inputs[1].content == "foo"
-        assert prompt_stack.inputs[2].content == "bar"
+        assert prompt_stack.messages[0].content[0].artifact.value == "Summary of the conversation so far: foobar"
+        assert prompt_stack.messages[1].content[0].artifact.value == "foo"
+        assert prompt_stack.messages[2].content[0].artifact.value == "bar"
 
     def test_from_dict(self):
         memory = SummaryConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
         memory_dict = memory.to_dict()
 
         assert isinstance(memory.from_dict(memory_dict), SummaryConversationMemory)
-        assert memory.from_dict(memory_dict).runs[0].input == "foo"
-        assert memory.from_dict(memory_dict).runs[0].output == "bar"
+        assert memory.from_dict(memory_dict).runs[0].input.value == "foo"
+        assert memory.from_dict(memory_dict).runs[0].output.value == "bar"
         assert memory.from_dict(memory_dict).offset == memory.offset
         assert memory.from_dict(memory_dict).summary == memory.summary
         assert memory.from_dict(memory_dict).summary_index == memory.summary_index
@@ -78,11 +78,11 @@ class TestSummaryConversationMemory:
 
     def test_from_json(self):
         memory = SummaryConversationMemory()
-        memory.add_run(Run(input="foo", output="bar"))
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
         memory_dict = memory.to_dict()
 
         assert isinstance(memory.from_dict(memory_dict), SummaryConversationMemory)
-        assert memory.from_dict(memory_dict).runs[0].input == "foo"
+        assert memory.from_dict(memory_dict).runs[0].input.value == "foo"
 
     def test_config_prompt_driver(self):
         memory = SummaryConversationMemory()

@@ -2,7 +2,7 @@ from typing import Any
 from botocore.response import StreamingBody
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.drivers.prompt.amazon_sagemaker_jumpstart_prompt_driver import AmazonSageMakerJumpstartPromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from io import BytesIO
 import json
 import pytest
@@ -18,7 +18,9 @@ class TestAmazonSageMakerJumpstartPromptDriver:
     @pytest.fixture(autouse=True)
     def tokenizer(self, mocker):
         from_pretrained = mocker.patch("transformers.AutoTokenizer").from_pretrained
-        from_pretrained.return_value.apply_chat_template.return_value = "foo\n\nUser: bar"
+        from_pretrained.return_value.decode.return_value = "foo\n\nUser: bar"
+        from_pretrained.return_value.apply_chat_template.return_value = [1, 2, 3]
+        from_pretrained.return_value.encode.return_value = [1, 2, 3]
         from_pretrained.return_value.model_max_length = 8000
         from_pretrained.return_value.eos_token_id = 1
 
@@ -35,7 +37,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         # Given
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input("prompt-stack")
+        prompt_stack.add_user_message("prompt-stack")
 
         # When
         response_body = [{"generated_text": "foobar"}]
@@ -64,6 +66,8 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         )
 
         assert text_artifact.value == "foobar"
+        assert text_artifact.usage.input_tokens == 3
+        assert text_artifact.usage.output_tokens == 3
 
         # When
         response_body = {"generated_text": "foobar"}
@@ -97,7 +101,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         # Given
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input("prompt-stack")
+        prompt_stack.add_user_message("prompt-stack")
 
         # When
         with pytest.raises(NotImplementedError) as e:
@@ -122,7 +126,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         mock_client.invoke_endpoint.return_value = {"Body": to_streaming_body([])}
         prompt_stack = PromptStack()
-        prompt_stack.add_user_input("prompt-stack")
+        prompt_stack.add_user_message("prompt-stack")
 
         # When
         with pytest.raises(Exception) as e:

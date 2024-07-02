@@ -5,6 +5,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- `Message` for storing messages in a `PromptStack`. Messages consist of a role, content, and usage.
+- `DeltaMessage` for storing partial messages in a `PromptStack`. Multiple `DeltaMessage` can be combined to form a `Message`.
+- `TextMessageContent` for storing textual content in a `Message`.
+- `ImageMessageContent` for storing image content in a `Message`.
+- Support for adding `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s to `PromptStack`.
+- Support for image inputs to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AmazonBedrockPromptDriver`, `AnthropicPromptDriver`, and `GooglePromptDriver`.
+- Input/output token usage metrics to all Prompt Drivers. 
+- `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- Support for storing Artifacts as inputs/outputs in Conversation Memory Runs.
+- `Agent.input` for passing Artifacts as input.
+- Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
+
+### Changed
+- **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.
+- **BREAKING**: Renamed `PromptStack.inputs` to `PromptStack.messages`.
+- **BREAKING**: Moved `PromptStack.USER_ROLE`, `PromptStack.ASSISTANT_ROLE`, and `PromptStack.SYSTEM_ROLE` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_run` from `TextArtifact` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_stream` from `Iterator[TextArtifact]` to `Iterator[DeltaMessage]`.
+- **BREAKING**: Removed `BasePromptEvent.token_count` in favor of `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- **BREAKING**: Removed `StartPromptEvent.prompt`. Use `StartPromptEvent.prompt_stack` instead.
+- **BREAKING**: Removed `Agent.input_template` in favor of `Agent.input`.
+- **BREAKING**: `BasePromptDriver.run` now returns a `Message` instead of a `TextArtifact`. For compatibility, `Message.value` contains the Message's Artifact value
+- Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
+
+
 
 ### Added
 - `RagEngine` is an abstraction for implementing modular RAG pipelines.
@@ -39,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `VectorStoreClient.process_query_output_fn` for custom query output processing logic.
 - Parameter `fail_fast` to `Structure`.
 - `BooleanArtifact` for handling boolean values.
+- `typos` to dev dependencies to catch typos in code/docs.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
@@ -56,6 +83,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `CoherePromptDriver` to properly handle empty history.
 - `StructureVisualizer.to_url()` by wrapping task IDs in single quotes. 
+
+## [0.27.2] - 2024-06-27
+
+### Fixed
+- Avoid adding duplicate Tokenizer stop sequences in a `ToolkitTask`.
+- Fixed token count calculation in `VectorQueryEngine`.
 
 ## [0.27.1] - 2024-06-20
 
@@ -131,6 +164,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Streaming not working when using deprecated `Structure.stream` field.
 - Raw Tool output being lost when being executed by ActionsSubtask.
 - Re-order Workflow tasks on every task execution wave.
+- `Workflow.insert_task()` enumerates by parent id equality, opposed to object equality.
 - Web Loader to catch Exceptions and properly return an ErrorArtifact.
 - Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
@@ -259,6 +293,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
 - `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models. 
 - `AnthropicStructureConfig` for providing Structures with Anthropic Prompt and VoyageAi Embedding Driver configuration.
+- `QdrantVectorStoreDriver` to integrate with Qdrant vector databases.
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.
