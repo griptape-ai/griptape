@@ -111,10 +111,14 @@ class TestPromptTask:
                 [TextArtifact("foo"), ImageArtifact(b"image-data", format="png", width=100, height=100)]
             )
         )
-
         assert isinstance(task.input, ListArtifact)
         assert task.input.value[0].value == "foo"
         assert isinstance(task.input.value[1], ImageArtifact)
         assert task.input.value[1].value == b"image-data"
         assert task.input.value[1].format == "png"
         assert task.input.value[1].width == 100
+
+        # default case
+        task = PromptTask({"default": "test"})
+
+        assert task.input.value == str({"default": "test"})
