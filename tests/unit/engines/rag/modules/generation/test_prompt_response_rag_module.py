@@ -1,13 +1,13 @@
 import pytest
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import PromptGenerationRagModule
+from griptape.engines.rag.modules import PromptResponseRagModule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-class TestPromptGenerationRagModule:
+class TestPromptResponseRagModule:
     @pytest.fixture
     def module(self):
-        return PromptGenerationRagModule(prompt_driver=MockPromptDriver())
+        return PromptResponseRagModule(prompt_driver=MockPromptDriver())
 
     def test_run(self, module):
         assert module.run(RagContext(query="test")).output.value == "mock output"

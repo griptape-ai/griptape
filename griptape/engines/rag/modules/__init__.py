@@ -4,12 +4,12 @@ from .retrieval.base_retrieval_rag_module import BaseRetrievalRagModule
 from .retrieval.base_rerank_rag_module import BaseRerankRagModule
 from .retrieval.text_rerank_rag_module import TextRerankRagModule
 from .retrieval.vector_store_retrieval_rag_module import VectorStoreRetrievalRagModule
-from .generation.base_before_generation_rag_module import BaseBeforeGenerationRagModule
-from .generation.base_after_generation_rag_module import BaseAfterGenerationRagModule
-from .generation.base_generation_rag_module import BaseGenerationRagModule
-from .generation.prompt_generation_rag_module import PromptGenerationRagModule
-from .generation.rulesets_generation_rag_module import RulesetsGenerationRagModule
-from .generation.metadata_generation_rag_module import MetadataGenerationRagModule
+from .response.base_before_response_rag_module import BaseBeforeResponseRagModule
+from .response.base_after_response_rag_module import BaseAfterResponseRagModule
+from .response.base_response_rag_module import BaseResponseRagModule
+from .response.prompt_response_rag_module import PromptResponseRagModule
+from .response.rulesets_before_response_rag_module import RulesetsBeforeResponseRagModule
+from .response.metadata_before_response_rag_module import MetadataBeforeResponseRagModule
 
 __all__ = [
     "BaseRagModule",
@@ -18,10 +18,10 @@ __all__ = [
     "BaseRerankRagModule",
     "TextRerankRagModule",
     "VectorStoreRetrievalRagModule",
-    "BaseBeforeGenerationRagModule",
-    "BaseAfterGenerationRagModule",
-    "BaseGenerationRagModule",
-    "PromptGenerationRagModule",
-    "RulesetsGenerationRagModule",
-    "MetadataGenerationRagModule",
+    "BaseBeforeResponseRagModule",
+    "BaseAfterResponseRagModule",
+    "BaseResponseRagModule",
+    "PromptResponseRagModule",
+    "RulesetsBeforeResponseRagModule",
+    "MetadataBeforeResponseRagModule",
 ]

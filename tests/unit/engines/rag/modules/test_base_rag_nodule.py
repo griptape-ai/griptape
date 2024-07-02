@@ -6,13 +6,13 @@ class TestBaseRagModule:
     def test_generate_query_prompt_stack(self):
         prompt_stack = MockRagModule().generate_query_prompt_stack("test system", "test query")
 
-        assert len(prompt_stack.inputs) == 2
-        assert prompt_stack.inputs[0].is_system()
-        assert prompt_stack.inputs[1].is_user()
+        assert len(prompt_stack.messages) == 2
+        assert prompt_stack.messages[0].is_system()
+        assert prompt_stack.messages[1].is_user()
 
     def test_context_param(self):
         module = MockRagModule(name="boo")
-        context = RagContext(query=["test"])
+        context = RagContext(query="test")
 
         context.module_params["boo"] = {"foo": "bar"}
 
@@ -20,7 +20,7 @@ class TestBaseRagModule:
 
     def test_set_context_param(self):
         module = MockRagModule(name="boo")
-        context = RagContext(query=["test"])
+        context = RagContext(query="test")
 
         module.set_context_param(context, "foo", "bar")
 

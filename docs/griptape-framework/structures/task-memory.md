@@ -208,7 +208,7 @@ from griptape.drivers import (
     OpenAiChatPromptDriver, OpenAiEmbeddingDriver,
 )
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptGenerationRagModule
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
 from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage
@@ -228,7 +228,7 @@ agent = Agent(
                     retrieval_stage=RetrievalRagStage(
                         retrieval_modules=[
                             VectorStoreRetrievalRagModule(
-                                
+
                                 vector_store_driver=vector_store_driver,
                                 query_params={
                                     "namespace": "griptape",
@@ -238,7 +238,7 @@ agent = Agent(
                         ]
                     ),
                     response_stage=ResponseRagStage(
-                        generation_module=PromptGenerationRagModule(
+                        response_module=PromptResponseRagModule(
                             prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
                         )
                     )
