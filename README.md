@@ -11,6 +11,8 @@
 Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
 
 
+
+
 ## 🛠️ Core Components
 
 ### 🏗️ Structures
