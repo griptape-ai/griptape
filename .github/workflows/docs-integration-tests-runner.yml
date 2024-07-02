@@ -1,8 +1,9 @@
 name: Docs Integration Tests
 
 on:
-  pull_request_review:
-    types: [submitted]
+  workflow_run:
+    workflows:
+      - Docs Integration Tests Approval
   push:
     branches:
       - main
@@ -14,7 +15,6 @@ concurrency:
 
 jobs:
   test:
-    if: github.event.review.state == 'APPROVED' || github.event_name == 'push'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
