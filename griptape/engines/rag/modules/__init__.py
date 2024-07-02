@@ -10,6 +10,7 @@ from .response.base_response_rag_module import BaseResponseRagModule
 from .response.prompt_response_rag_module import PromptResponseRagModule
 from .response.rulesets_before_response_rag_module import RulesetsBeforeResponseRagModule
 from .response.metadata_before_response_rag_module import MetadataBeforeResponseRagModule
+from .response.text_chunks_response_rag_module import TextChunksResponseRagModule
 
 __all__ = [
     "BaseRagModule",
@@ -24,4 +25,5 @@ __all__ = [
     "PromptResponseRagModule",
     "RulesetsBeforeResponseRagModule",
     "MetadataBeforeResponseRagModule",
+    "TextChunksResponseRagModule"
 ]

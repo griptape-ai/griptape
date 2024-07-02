@@ -22,10 +22,11 @@ No modules implemented yet.
 - `TextRetrievalRagModule` is for retrieving text chunks.
 - `TextRerankRagModule` is for re-ranking retrieved results.
 
-#### Generation
-- `MetadataGenerationRagModule` is for appending metadata.
-- `RulesetsGenerationRagModule` is for appending rulesets.
-- `PromptGenerationRagModule` is for generating responses based on retrieved text chunks.
+#### Response
+- `MetadataBeforeResponseRagModule` is for appending metadata.
+- `RulesetsBeforeResponseRagModule` is for appending rulesets.
+- `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
+- `TextChunksResponseRagModule` for responding with retrieved text chunks.
 
 ### Example
 

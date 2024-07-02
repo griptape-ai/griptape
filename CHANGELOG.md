@@ -43,10 +43,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Retrieval:
       - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
       - `TextRerankRagModule` for re-ranking retrieved results.
-    - Generation:
-      - `MetadataGenerationRagModule` for appending metadata.
-      - `RulesetsGenerationRagModule` for appending rulesets.
-      - `PromptGenerationRagModule` for generating responses based on retrieved text chunks.
+    - Response:
+      - `MetadataBeforeResponseRagModule` for appending metadata.
+      - `RulesetsBeforeResponseRagModule` for appending rulesets.
+      - `PromptResponseRagModule` for generating responses based on retrieved text chunks.
+      - `TextChunksResponseRagModule` for responding with retrieved text chunks.
 - `RagClient` tool for exposing `RagEngines` to LLM agents.
 - `RagTask` task for including `RagEngines` in any structure.
 - Rerank drivers:
