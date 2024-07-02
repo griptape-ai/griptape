@@ -541,7 +541,7 @@ engine = VariationImageGenerationEngine(
 with open("tests/resources/mountain.png", "rb") as f:
     image_artifact = ImageLoader().load(f.read())
 
-# Instatiate a pipeline.
+# Instantiate a pipeline.
 pipeline = Pipeline()
 
 # Add a VariationImageGenerationTask to the pipeline.

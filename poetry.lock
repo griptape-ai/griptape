@@ -5978,6 +5978,25 @@ files = [
 ]
 
 [[package]]
+name = "typos"
+version = "1.22.9"
+description = "Source Code Spelling Correction"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "typos-1.22.9-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:6221400b82554f853e1d1a0f26bcfddf9f36008114d3441c566e1b5edf20d27d"},
+    {file = "typos-1.22.9-py3-none-macosx_11_0_arm64.whl", hash = "sha256:a57b5f0acd1596034fdc333f94d4713adbc181c545fb526cf2119d2af4c007ec"},
+    {file = "typos-1.22.9-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:77e2d9dfee24cccf177b09d8ace6d6012fa8c453aa092d869426bfef3dd8c67e"},
+    {file = "typos-1.22.9-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c38886031f4570d546b63ec112aed6b323762022ca5cc64d52537724a1529257"},
+    {file = "typos-1.22.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8577b482256538822f76c9825d36f76b7b1e7cbccf2842279a7b46f0494796a5"},
+    {file = "typos-1.22.9-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:63f7ae86eb7dccc43845bf0ef72a3746b1022889a178809c028f809081c6f20d"},
+    {file = "typos-1.22.9-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:5f290b85f1dddc875d4efa0b22802413f86532b99fa0ac2cb8d2e70eda68acfd"},
+    {file = "typos-1.22.9-py3-none-win32.whl", hash = "sha256:76a58b1d54ee00ef8d90c3166b149e70d84b0414617a34abf5ded1db76feecef"},
+    {file = "typos-1.22.9-py3-none-win_amd64.whl", hash = "sha256:53f31a9c0d321132f680ab92d80f7c520e163c53c9042fb009feaa91d9b4a7c4"},
+    {file = "typos-1.22.9.tar.gz", hash = "sha256:c7b5feada41ce26e34eea1145141887257e59384d0ceea00f0f03349335ff688"},
+]
+
+[[package]]
 name = "tzdata"
 version = "2024.1"
 description = "Provider of IANA time zone data"
@@ -6393,4 +6412,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "ce26764ee2c4a9a99d24ef4afc7efa6aa894a7560a725388ff24db15f6014e9a"
+content-hash = "937d5e870407a493038178b3060c663feb9a1b6e6fc16e55fa380a18d02b0c80"

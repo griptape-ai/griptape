@@ -67,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `VectorStoreClient.process_query_output_fn` for custom query output processing logic.
 - Parameter `fail_fast` to `Structure`.
 - `BooleanArtifact` for handling boolean values.
+- `typos` to dev dependencies to catch typos in code/docs.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
