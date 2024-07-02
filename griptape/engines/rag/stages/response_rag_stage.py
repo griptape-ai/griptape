@@ -4,7 +4,8 @@ from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import (
     BaseResponseRagModule,
     BaseBeforeResponseRagModule,
-    BaseAfterResponseRagModule, BaseRagModule,
+    BaseAfterResponseRagModule,
+    BaseRagModule,
 )
 from griptape.engines.rag.stages import BaseRagStage
 

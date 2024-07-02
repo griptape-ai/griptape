@@ -25,5 +25,5 @@ __all__ = [
     "PromptResponseRagModule",
     "RulesetsBeforeResponseRagModule",
     "MetadataBeforeResponseRagModule",
-    "TextChunksResponseRagModule"
+    "TextChunksResponseRagModule",
 ]

@@ -17,5 +17,4 @@ class BaseRagStage(ABC):
 
     @property
     @abstractmethod
-    def modules(self) -> list[BaseRagModule]:
-        ...
+    def modules(self) -> list[BaseRagModule]: ...

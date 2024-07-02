@@ -14,8 +14,6 @@ class MetadataBeforeResponseRagModule(BaseBeforeResponseRagModule):
         metadata = self.metadata if context_metadata is None else context_metadata
 
         if metadata is not None:
-            context.before_query.append(
-                J2("engines/rag/modules/response/metadata/system.j2").render(metadata=metadata)
-            )
+            context.before_query.append(J2("engines/rag/modules/response/metadata/system.j2").render(metadata=metadata))
 
         return context

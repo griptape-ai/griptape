@@ -42,7 +42,7 @@ class TextArtifactStorage(BaseArtifactStorage):
 
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
-    def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact | InfoArtifact:
+    def query(self, namespace: str, query: str, metadata: Any = None) -> BaseArtifact:
         if self.rag_engine is None:
             raise ValueError("RAG engine is not set.")
 
@@ -50,13 +50,13 @@ class TextArtifactStorage(BaseArtifactStorage):
             RagContext(
                 query=query,
                 module_params={
-                    self.retrieval_rag_module_name: {
+                    self.retrieval_rag_module_name: {  # pyright: ignore
                         "query_params": {
                             "namespace": namespace,
-                            "metadata": None if metadata is None else str(metadata)
+                            "metadata": None if metadata is None else str(metadata),
                         }
                     }
-                }
+                },
             )
         ).output
 

@@ -18,9 +18,7 @@ class TestRagEngine:
                     )
                 ]
             ),
-            response_stage=ResponseRagStage(
-                response_module=PromptResponseRagModule(prompt_driver=MockPromptDriver())
-            ),
+            response_stage=ResponseRagStage(response_module=PromptResponseRagModule(prompt_driver=MockPromptDriver())),
         )
 
     def test_module_name_uniqueness(self):
@@ -30,14 +28,8 @@ class TestRagEngine:
             RagEngine(
                 retrieval_stage=RetrievalRagStage(
                     retrieval_modules=[
-                        VectorStoreRetrievalRagModule(
-                            name="test",
-                            vector_store_driver=vector_store_driver
-                        ),
-                        VectorStoreRetrievalRagModule(
-                            name="test",
-                            vector_store_driver=vector_store_driver
-                        )
+                        VectorStoreRetrievalRagModule(name="test", vector_store_driver=vector_store_driver),
+                        VectorStoreRetrievalRagModule(name="test", vector_store_driver=vector_store_driver),
                     ]
                 )
             )
@@ -45,14 +37,8 @@ class TestRagEngine:
         assert RagEngine(
             retrieval_stage=RetrievalRagStage(
                 retrieval_modules=[
-                    VectorStoreRetrievalRagModule(
-                        name="test1",
-                        vector_store_driver=vector_store_driver
-                    ),
-                    VectorStoreRetrievalRagModule(
-                        name="test2",
-                        vector_store_driver=vector_store_driver
-                    )
+                    VectorStoreRetrievalRagModule(name="test1", vector_store_driver=vector_store_driver),
+                    VectorStoreRetrievalRagModule(name="test2", vector_store_driver=vector_store_driver),
                 ]
             )
         )

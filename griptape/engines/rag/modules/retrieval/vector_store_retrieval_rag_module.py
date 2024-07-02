@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Sequence, Any, Callable
 from attrs import define, field, Factory
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRetrievalRagModule
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
     vector_store_driver: BaseVectorStoreDriver = field()
     query_params: dict[str, Any] = field(factory=dict)
-    process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], BaseArtifact] = field(
+    process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
         default=Factory(lambda: lambda es: [e.to_artifact() for e in es])
     )
 

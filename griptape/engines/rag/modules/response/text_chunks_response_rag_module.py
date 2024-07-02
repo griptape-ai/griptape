@@ -6,7 +6,6 @@ from griptape.engines.rag.modules import BaseResponseRagModule
 
 @define(kw_only=True)
 class TextChunksResponseRagModule(BaseResponseRagModule):
-
     def run(self, context: RagContext) -> RagContext:
         context.output = ListArtifact(context.text_chunks)
 

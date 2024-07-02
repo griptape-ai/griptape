@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional
 from attrs import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact
 
