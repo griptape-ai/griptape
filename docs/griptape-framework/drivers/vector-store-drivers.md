@@ -397,11 +397,10 @@ vector_store_driver.setup()
 
 web_loader = WebLoader()
 artifacts = web_loader.load("https://www.griptape.ai")
-vector_store_driver.upsert_text_artifacts(
-    {
-        "griptape": artifacts,
-    }
-)
+[
+    vector_store_driver.upsert_text_artifact(artifact=artifact, namespace="griptape", vector_id=artifact.id)
+    for artifact in artifacts
+]
 
 result = vector_store_driver.query("What is griptape?")
 print(result)
