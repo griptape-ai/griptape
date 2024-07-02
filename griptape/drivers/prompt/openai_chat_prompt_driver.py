@@ -1,14 +1,20 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Iterator
-from typing import Literal, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, Optional
 
 import openai
 from attrs import Factory, define, field
+from schema import Schema
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.common import (
+    ActionCallMessageContent,
+    ActionResultMessageContent,
+    BaseDeltaMessageContent,
     BaseMessageContent,
+    ActionCallDeltaMessageContent,
     DeltaMessage,
     TextDeltaMessageContent,
     ImageMessageContent,
@@ -19,10 +25,11 @@ from griptape.common import (
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
-
 if TYPE_CHECKING:
-    from openai.types.chat.chat_completion_message import ChatCompletionMessage
     from openai.types.chat.chat_completion_chunk import ChoiceDelta
+    from openai.types.chat.chat_completion_message import ChatCompletionMessage
+
+    from griptape.tools import BaseTool
 
 
 @define
@@ -59,6 +66,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         default=None, kw_only=True, metadata={"serializable": True}
     )
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
             lambda: (
@@ -80,8 +89,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             message = result.choices[0].message
 
             return Message(
-                content=[self.__message_to_prompt_stack_content(message)],
-                role=message.role,
+                content=self.__response_to_message_content(message),
+                role=Message.ASSISTANT_ROLE,
                 usage=Message.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
                 ),
@@ -106,15 +115,59 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     choice = chunk.choices[0]
                     delta = choice.delta
 
-                    yield DeltaMessage(content=self.__message_delta_to_prompt_stack_content_delta(delta))
+                    yield DeltaMessage(content=self.__message_delta_to_message_content_delta(delta))
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
-        return [
-            {"role": self.__to_role(message), "content": self.__to_content(message)}
-            for message in prompt_stack.messages
-        ]
+        messages = []
+
+        for message in prompt_stack.messages:
+            if message.has_action_results():
+                # Action results need to be expanded into separate messages.
+                for action_result in message.content:
+                    if isinstance(action_result, ActionResultMessageContent):
+                        messages.append(
+                            {
+                                "role": self.__to_role(message),
+                                "content": self.__message_content_to_openai_message_content(action_result),
+                                "tool_call_id": action_result.action.tag,
+                            }
+                        )
+            else:
+                # Action calls are attached to the assistant message that originally generated them.
+                messages.append(
+                    {
+                        "role": self.__to_role(message),
+                        "content": [
+                            self.__message_content_to_openai_message_content(content)
+                            for content in message.content
+                            if not isinstance(  # Action calls do not belong in the content
+                                content, ActionCallMessageContent
+                            )
+                        ],
+                        **(
+                            {
+                                "tool_calls": [
+                                    self.__message_content_to_openai_message_content(action_call)
+                                    for action_call in message.content
+                                    if isinstance(action_call, ActionCallMessageContent)
+                                ]
+                            }
+                            if message.has_action_calls()
+                            else {}
+                        ),
+                    }
+                )
+
+        return messages
+
+    def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
+        return (
+            {"tools": self.__to_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
+            if prompt_stack.actions and self.use_native_tools
+            else {}
+        )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -122,13 +175,14 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "user": self.user,
             "seed": self.seed,
+            **self._prompt_stack_to_tools(prompt_stack),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
         }
 
         if self.response_format == "json_object":
             params["response_format"] = {"type": "json_object"}
-            # JSON mode still requires a system message instructing the LLM to output JSON.
+            # JSON mode still requires a system input instructing the LLM to output JSON.
             prompt_stack.add_system_message("Provide your response as a valid JSON object.")
 
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -143,15 +197,26 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         elif message.is_assistant():
             return "assistant"
         else:
-            return "user"
+            if message.has_action_results():
+                return "tool"
+            else:
+                return "user"
 
-    def __to_content(self, message: Message) -> str | list[dict]:
-        if all(isinstance(content, TextMessageContent) for content in message.content):
-            return message.to_text()
-        else:
-            return [self.__prompt_stack_content_message_content(content) for content in message.content]
+    def __to_tools(self, tools: list[BaseTool]) -> list[dict]:
+        return [
+            {
+                "function": {
+                    "name": f"{tool.name}_{tool.activity_name(activity)}",
+                    "description": tool.activity_description(activity),
+                    "parameters": (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema"),
+                },
+                "type": "function",
+            }
+            for tool in tools
+            for activity in tool.activities()
+        ]
 
-    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
+    def __message_content_to_openai_message_content(self, content: BaseMessageContent) -> str | dict:
         if isinstance(content, TextMessageContent):
             return {"type": "text", "text": content.artifact.to_text()}
         elif isinstance(content, ImageMessageContent):
@@ -159,19 +224,60 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 "type": "image_url",
                 "image_url": {"url": f"data:{content.artifact.mime_type};base64,{content.artifact.base64}"},
             }
+        elif isinstance(content, ActionCallMessageContent):
+            action = content.artifact.value
+
+            return {
+                "type": "function",
+                "id": action.tag,
+                "function": {"name": f"{action.name}_{action.path}", "arguments": json.dumps(action.input)},
+            }
+        elif isinstance(content, ActionResultMessageContent):
+            return content.artifact.to_text()
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __message_to_prompt_stack_content(self, message: ChatCompletionMessage) -> BaseMessageContent:
-        if message.content is not None:
-            return TextMessageContent(TextArtifact(message.content))
+    def __response_to_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
+        if response.content is not None:
+            return [TextMessageContent(TextArtifact(response.content))]
+        elif response.tool_calls is not None:
+            return [
+                ActionCallMessageContent(
+                    ActionArtifact(
+                        ActionArtifact.Action(
+                            tag=tool_call.id,
+                            name=tool_call.function.name.split("_", 1)[0],
+                            path=tool_call.function.name.split("_", 1)[1],
+                            input=json.loads(tool_call.function.arguments),
+                        )
+                    )
+                )
+                for tool_call in response.tool_calls
+            ]
         else:
-            raise ValueError(f"Unsupported message type: {message}")
+            raise ValueError(f"Unsupported message type: {response}")
 
-    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> TextDeltaMessageContent:
-        if content_delta.content is None:
+    def __message_delta_to_message_content_delta(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent:
+        if content_delta.content is not None:
+            return TextDeltaMessageContent(content_delta.content)
+        elif content_delta.tool_calls is not None:
+            tool_calls = content_delta.tool_calls
+
+            if len(tool_calls) == 1:
+                tool_call = tool_calls[0]
+                index = tool_call.index
+
+                # Tool call delta either contains the function header or the partial input.
+                if tool_call.id is not None:
+                    return ActionCallDeltaMessageContent(
+                        index=index,
+                        tag=tool_call.id,
+                        name=tool_call.function.name.split("_", 1)[0],
+                        path=tool_call.function.name.split("_", 1)[1],
+                    )
+                else:
+                    return ActionCallDeltaMessageContent(index=index, delta_input=tool_call.function.arguments)
+            else:
+                raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
+        else:
             return TextDeltaMessageContent("")
-        else:
-            delta_content = content_delta.content
-
-            return TextDeltaMessageContent(delta_content)

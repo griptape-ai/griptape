@@ -70,7 +70,7 @@ drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-huggingface-pipeline = ["huggingface-hub", "transformers", "torch"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
-drivers-prompt-google = ["google-generativeai"]
+drivers-prompt-google = ["google-generativeai", "protobuf"]
 drivers-prompt-ollama = ["ollama"]
 
 drivers-sql-redshift = ["sqlalchemy-redshift", "boto3"]
@@ -130,6 +130,7 @@ all = [
     "pgvector",
     "psycopg2-binary",
     "google-generativeai",
+    "protobuf",
     "trafilatura",
     "playwright",
     "beautifulsoup4",

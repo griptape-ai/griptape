@@ -6,8 +6,11 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
+from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import (
+    ActionCallMessageContent,
     BaseDeltaMessageContent,
+    ActionCallDeltaMessageContent,
     DeltaMessage,
     TextDeltaMessageContent,
     PromptStack,
@@ -35,6 +38,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         model: The model name.
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
+        use_native_tools: Whether to use LLM's native function calling capabilities. Must be supported by the model.
     """
 
     temperature: float = field(default=0.1, metadata={"serializable": True})
@@ -43,7 +47,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
-    stream: bool = field(default=False, metadata={"serializable": True})
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
@@ -72,7 +77,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
                 self.after_run(result)
 
-                return result
+                return result.to_text_artifact()
         else:
             raise Exception("prompt driver failed after all retry attempts")
 
@@ -89,7 +94,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         prompt_lines = []
 
         for i in prompt_stack.messages:
-            content = i.to_text()
+            content = i.to_text_artifact().to_text()
             if i.is_user():
                 prompt_lines.append(f"User: {content}")
             elif i.is_assistant():
@@ -120,22 +125,26 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         deltas = self.try_stream(prompt_stack)
         for delta in deltas:
             usage += delta.usage
+            content = delta.content
 
-            if delta.content is not None:
-                if delta.content.index in delta_contents:
-                    delta_contents[delta.content.index].append(delta.content)
-                else:
-                    delta_contents[delta.content.index] = [delta.content]
-
-            if isinstance(delta.content, TextDeltaMessageContent):
-                self.structure.publish_event(CompletionChunkEvent(token=delta.content.text))
+            if isinstance(content, TextDeltaMessageContent):
+                self.structure.publish_event(CompletionChunkEvent(token=content.text))
+            elif isinstance(content, ActionCallDeltaMessageContent):
+                if content.tag is not None and content.name is not None and content.path is not None:
+                    self.structure.publish_event(CompletionChunkEvent(token=str(delta)))
+                elif content.delta_input is not None:
+                    self.structure.publish_event(CompletionChunkEvent(token=content.delta_input))
 
         # Build a complete content from the content deltas
         content = []
-        for deltas in delta_contents.values():
-            text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaMessageContent)]
+        for index, delta_content in delta_contents.items():
+            text_deltas = [delta for delta in delta_content if isinstance(delta, TextDeltaMessageContent)]
+            action_deltas = [delta for delta in delta_content if isinstance(delta, ActionCallDeltaMessageContent)]
+
             if text_deltas:
                 content.append(TextMessageContent.from_deltas(text_deltas))
+            if action_deltas:
+                content.append(ActionCallMessageContent.from_deltas(action_deltas))
 
         result = Message(
             content=content,

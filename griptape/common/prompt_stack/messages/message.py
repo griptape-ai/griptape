@@ -1,11 +1,16 @@
 from __future__ import annotations
 
-from typing import Any
+import json
+from typing import Any, Optional
+from collections.abc import Sequence
 
-from attrs import define, field
+from attrs import define, field, Factory
 
-from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import TextArtifact
 from griptape.common import BaseMessageContent, TextMessageContent
+from griptape.common.prompt_stack.contents.action_call_message_content import ActionCallMessageContent
+from griptape.common.prompt_stack.contents.action_result_message_content import ActionResultMessageContent
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 from .base_message import BaseMessage
 
