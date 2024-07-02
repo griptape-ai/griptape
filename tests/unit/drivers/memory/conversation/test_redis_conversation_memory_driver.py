@@ -5,7 +5,7 @@ from griptape.drivers.memory.conversation.redis_conversation_memory_driver impor
 
 TEST_CONVERSATION = '{"type": "ConversationMemory", "runs": [{"type": "Run", "id": "729ca6be5d79433d9762eb06dfd677e2", "input": "Hi There, Hello", "output": "Hello! How can I assist you today?"}], "max_runs": 2}'
 CONVERSATION_ID = "117151897f344ff684b553d0655d8f39"
-INDEX = "griptape_converstaion"
+INDEX = "griptape_conversation"
 HOST = "127.0.0.1"
 PORT = 6379
 PASSWORD = ""

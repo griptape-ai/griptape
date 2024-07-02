@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
-    """Base class for Prompt Drivers.
+    """Base class for the Prompt Drivers.
 
     Attributes:
         temperature: The temperature to use for the completion.
