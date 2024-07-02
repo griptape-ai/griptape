@@ -3,7 +3,7 @@ from attrs import define, Factory, field
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.common import PromptStack
-from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from griptape.common.prompt_stack.messages.message import Message
 from griptape.drivers import BasePromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
@@ -64,8 +64,8 @@ class PromptSummaryEngine(BaseSummaryEngine):
             return self.prompt_driver.run(
                 PromptStack(
                     messages=[
-                        PromptStackMessage(system_prompt, role=PromptStackMessage.SYSTEM_ROLE),
-                        PromptStackMessage(user_prompt, role=PromptStackMessage.USER_ROLE),
+                        Message(system_prompt, role=Message.SYSTEM_ROLE),
+                        Message(user_prompt, role=Message.USER_ROLE),
                     ]
                 )
             )
@@ -79,8 +79,8 @@ class PromptSummaryEngine(BaseSummaryEngine):
                 self.prompt_driver.run(
                     PromptStack(
                         messages=[
-                            PromptStackMessage(system_prompt, role=PromptStackMessage.SYSTEM_ROLE),
-                            PromptStackMessage(partial_text, role=PromptStackMessage.USER_ROLE),
+                            Message(system_prompt, role=Message.SYSTEM_ROLE),
+                            Message(partial_text, role=Message.USER_ROLE),
                         ]
                     )
                 ).value,

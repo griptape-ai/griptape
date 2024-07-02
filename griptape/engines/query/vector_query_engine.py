@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
 from griptape.common import PromptStack
-from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseQueryEngine
 from griptape.utils.j2 import J2
 from griptape.rules import Ruleset
@@ -54,8 +54,8 @@ class VectorQueryEngine(BaseQueryEngine):
                 self.prompt_driver.prompt_stack_to_string(
                     PromptStack(
                         messages=[
-                            PromptStackMessage(system_message, role=PromptStackMessage.SYSTEM_ROLE),
-                            PromptStackMessage(user_message, role=PromptStackMessage.USER_ROLE),
+                            Message(system_message, role=Message.SYSTEM_ROLE),
+                            Message(user_message, role=Message.USER_ROLE),
                         ]
                     )
                 )
@@ -75,8 +75,8 @@ class VectorQueryEngine(BaseQueryEngine):
         result = self.prompt_driver.run(
             PromptStack(
                 messages=[
-                    PromptStackMessage(system_message, role=PromptStackMessage.SYSTEM_ROLE),
-                    PromptStackMessage(user_message, role=PromptStackMessage.USER_ROLE),
+                    Message(system_message, role=Message.SYSTEM_ROLE),
+                    Message(user_message, role=Message.USER_ROLE),
                 ]
             )
         )

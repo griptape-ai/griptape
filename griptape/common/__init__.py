@@ -7,18 +7,18 @@ from .prompt_stack.contents.action_call_delta_prompt_stack_content import Action
 from .prompt_stack.contents.action_call_prompt_stack_content import ActionCallPromptStackContent
 from .prompt_stack.contents.action_result_prompt_stack_content import ActionResultPromptStackContent
 
-from .prompt_stack.messages.base_prompt_stack_message import BasePromptStackMessage
-from .prompt_stack.messages.delta_prompt_stack_message import DeltaPromptStackMessage
-from .prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from .prompt_stack.messages.base_message import BaseMessage
+from .prompt_stack.messages.delta_message import DeltaMessage
+from .prompt_stack.messages.message import Message
 
 from .prompt_stack.prompt_stack import PromptStack
 
 __all__ = [
-    "BasePromptStackMessage",
+    "BaseMessage",
     "BaseDeltaPromptStackContent",
     "BasePromptStackContent",
-    "DeltaPromptStackMessage",
-    "PromptStackMessage",
+    "DeltaMessage",
+    "Message",
     "TextDeltaPromptStackContent",
     "TextPromptStackContent",
     "ImagePromptStackContent",

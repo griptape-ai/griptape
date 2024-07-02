@@ -12,11 +12,11 @@ from griptape.common.prompt_stack.contents.action_call_prompt_stack_content impo
 from griptape.common.prompt_stack.contents.action_result_prompt_stack_content import ActionResultPromptStackContent
 from griptape.mixins.serializable_mixin import SerializableMixin
 
-from .base_prompt_stack_message import BasePromptStackMessage
+from .base_message import BaseMessage
 
 
 @define
-class PromptStackMessage(BasePromptStackMessage):
+class Message(BaseMessage):
     @define
     class Usage(SerializableMixin):
         input_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
@@ -32,9 +32,7 @@ class PromptStackMessage(BasePromptStackMessage):
         self.__attrs_init__(content, **kwargs)  # pyright: ignore[reportAttributeAccessIssue]
 
     content: Sequence[BasePromptStackContent] = field(metadata={"serializable": True})
-    usage: Usage = field(
-        kw_only=True, default=Factory(lambda: PromptStackMessage.Usage()), metadata={"serializable": True}
-    )
+    usage: Usage = field(kw_only=True, default=Factory(lambda: Message.Usage()), metadata={"serializable": True})
 
     @property
     def value(self) -> Any:

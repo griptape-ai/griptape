@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import DeltaPromptStackMessage, PromptStack, PromptStackMessage, TextPromptStackContent
+from griptape.common import DeltaMessage, PromptStack, Message, TextPromptStackContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -42,7 +42,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         )
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
         result = self.pipe(
@@ -56,17 +56,17 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
                 input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
                 output_tokens = len(self.tokenizer.tokenizer.encode(generated_text))
 
-                return PromptStackMessage(
+                return Message(
                     content=[TextPromptStackContent(TextArtifact(generated_text))],
-                    role=PromptStackMessage.ASSISTANT_ROLE,
-                    usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+                    role=Message.ASSISTANT_ROLE,
+                    usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
                 )
             else:
                 raise Exception("completion with more than one choice is not supported yet")
         else:
             raise Exception("invalid output format")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:

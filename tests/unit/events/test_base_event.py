@@ -36,7 +36,7 @@ class TestBaseEvent:
                 "type": "PromptStack",
                 "messages": [
                     {
-                        "type": "PromptStackMessage",
+                        "type": "Message",
                         "role": "user",
                         "content": [
                             {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
@@ -44,7 +44,7 @@ class TestBaseEvent:
                         "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
                     },
                     {
-                        "type": "PromptStackMessage",
+                        "type": "Message",
                         "role": "system",
                         "content": [
                             {"type": "TextPromptStackContent", "artifact": {"type": "TextArtifact", "value": "bar"}}

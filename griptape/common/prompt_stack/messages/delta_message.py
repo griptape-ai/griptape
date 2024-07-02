@@ -6,10 +6,10 @@ from attrs import define, field
 
 from griptape.common import BaseDeltaPromptStackContent
 
-from .base_prompt_stack_message import BasePromptStackMessage
+from .base_message import BaseMessage
 
 
 @define
-class DeltaPromptStackMessage(BasePromptStackMessage):
+class DeltaMessage(BaseMessage):
     role: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     content: Optional[BaseDeltaPromptStackContent] = field(kw_only=True, default=None, metadata={"serializable": True})

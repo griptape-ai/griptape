@@ -3,13 +3,7 @@ from collections.abc import Iterator
 from attrs import define
 
 from griptape.artifacts import TextArtifact
-from griptape.common import (
-    PromptStack,
-    PromptStackMessage,
-    TextPromptStackContent,
-    DeltaPromptStackMessage,
-    TextDeltaPromptStackContent,
-)
+from griptape.common import PromptStack, Message, TextPromptStackContent, DeltaMessage, TextDeltaPromptStackContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
@@ -21,25 +15,25 @@ class MockFailingPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
             raise Exception("failed attempt")
         else:
-            return PromptStackMessage(
+            return Message(
                 content=[TextPromptStackContent(TextArtifact("success"))],
-                role=PromptStackMessage.ASSISTANT_ROLE,
-                usage=PromptStackMessage.Usage(input_tokens=100, output_tokens=100),
+                role=Message.ASSISTANT_ROLE,
+                usage=Message.Usage(input_tokens=100, output_tokens=100),
             )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
             raise Exception("failed attempt")
         else:
-            yield DeltaPromptStackMessage(
+            yield DeltaMessage(
                 content=TextDeltaPromptStackContent("success"),
-                usage=DeltaPromptStackMessage.Usage(input_tokens=100, output_tokens=100),
+                usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100),
             )

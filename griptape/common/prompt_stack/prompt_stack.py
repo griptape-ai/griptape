@@ -10,7 +10,7 @@ from griptape.common import (
     ActionResultPromptStackContent,
     BasePromptStackContent,
     ImagePromptStackContent,
-    PromptStackMessage,
+    Message,
     TextPromptStackContent,
 )
 from griptape.mixins import SerializableMixin
@@ -21,43 +21,37 @@ if TYPE_CHECKING:
 
 @define
 class PromptStack(SerializableMixin):
-    messages: list[PromptStackMessage] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
     actions: list[BaseTool] = field(factory=list, kw_only=True)
 
-    def add_message(self, artifact: str | BaseArtifact, role: str) -> PromptStackMessage:
+    def add_message(self, artifact: str | BaseArtifact, role: str) -> Message:
         content = self.__process_artifact(artifact)
 
-        self.messages.append(PromptStackMessage(content=content, role=role))
+        self.messages.append(Message(content=content, role=role))
 
         return self.messages[-1]
 
-    def add_system_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
-        return self.add_message(artifact, PromptStackMessage.SYSTEM_ROLE)
+    def add_system_message(self, artifact: str | BaseArtifact) -> Message:
+        return self.add_message(artifact, Message.SYSTEM_ROLE)
 
-    def add_user_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
-        return self.add_message(artifact, PromptStackMessage.USER_ROLE)
+    def add_user_message(self, artifact: str | BaseArtifact) -> Message:
+        return self.add_message(artifact, Message.USER_ROLE)
 
-    def add_assistant_message(self, artifact: str | BaseArtifact) -> PromptStackMessage:
-        return self.add_message(artifact, PromptStackMessage.ASSISTANT_ROLE)
+    def add_assistant_message(self, artifact: str | BaseArtifact) -> Message:
+        return self.add_message(artifact, Message.ASSISTANT_ROLE)
 
-    def add_action_call_message(
-        self, thought: Optional[str], actions: list[ActionArtifact.Action]
-    ) -> PromptStackMessage:
+    def add_action_call_message(self, thought: Optional[str], actions: list[ActionArtifact.Action]) -> Message:
         thought_content = self.__process_artifact(thought) if thought else []
 
         action_calls_content = [ActionCallPromptStackContent(ActionArtifact(action)) for action in actions]
 
-        self.messages.append(
-            PromptStackMessage(
-                content=[*thought_content, *action_calls_content], role=PromptStackMessage.ASSISTANT_ROLE
-            )
-        )
+        self.messages.append(Message(content=[*thought_content, *action_calls_content], role=Message.ASSISTANT_ROLE))
 
         return self.messages[-1]
 
     def add_action_result_message(
         self, instructions: Optional[str | BaseArtifact], actions: list[ActionArtifact.Action]
-    ) -> PromptStackMessage:
+    ) -> Message:
         instructions_content = self.__process_artifact(instructions) if instructions else []
 
         action_results_content = [
@@ -66,11 +60,7 @@ class PromptStack(SerializableMixin):
             if action.output is not None
         ]
 
-        self.messages.append(
-            PromptStackMessage(
-                content=[*action_results_content, *instructions_content], role=PromptStackMessage.USER_ROLE
-            )
-        )
+        self.messages.append(Message(content=[*action_results_content, *instructions_content], role=Message.USER_ROLE))
 
         return self.messages[-1]
 

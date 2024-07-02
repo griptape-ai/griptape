@@ -8,11 +8,11 @@ from attrs import Factory, define, field
 
 from griptape.common import (
     BasePromptStackContent,
-    DeltaPromptStackMessage,
+    DeltaMessage,
     TextDeltaPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
-    PromptStackMessage,
+    Message,
     TextPromptStackContent,
     ActionCallPromptStackContent,
     ActionResultPromptStackContent,
@@ -55,7 +55,7 @@ class GooglePromptDriver(BasePromptDriver):
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(
             messages, **self._base_params(prompt_stack)
@@ -63,15 +63,15 @@ class GooglePromptDriver(BasePromptDriver):
 
         usage_metadata = response.usage_metadata
 
-        return PromptStackMessage(
+        return Message(
             content=[self.__message_content_to_prompt_stack_content(part) for part in response.parts],
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(
                 input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
             ),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         messages = self._prompt_stack_to_messages(prompt_stack)
         response: Iterator[GenerateContentResponse] = self.model_client.generate_content(
             messages, **self._base_params(prompt_stack), stream=True
@@ -83,24 +83,24 @@ class GooglePromptDriver(BasePromptDriver):
 
             # TODO: Only emit one event
             for part in chunk.parts:
-                yield DeltaPromptStackMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(part))
+                yield DeltaMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(part))
 
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None:
                 prompt_token_count = usage_metadata.prompt_token_count
-                yield DeltaPromptStackMessage(
+                yield DeltaMessage(
                     content=TextDeltaPromptStackContent(chunk.text),
-                    role=PromptStackMessage.ASSISTANT_ROLE,
-                    usage=DeltaPromptStackMessage.Usage(
+                    role=Message.ASSISTANT_ROLE,
+                    usage=DeltaMessage.Usage(
                         input_tokens=usage_metadata.prompt_token_count,
                         output_tokens=usage_metadata.candidates_token_count,
                     ),
                 )
             else:
-                yield DeltaPromptStackMessage(
+                yield DeltaMessage(
                     content=TextDeltaPromptStackContent(chunk.text),
-                    role=PromptStackMessage.ASSISTANT_ROLE,
-                    usage=DeltaPromptStackMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
+                    role=Message.ASSISTANT_ROLE,
+                    usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
                 )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
@@ -208,7 +208,7 @@ class GooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type {content_dict}")
 
-    def __to_role(self, message: PromptStackMessage) -> str:
+    def __to_role(self, message: Message) -> str:
         if message.is_assistant():
             return "model"
         else:
@@ -239,5 +239,5 @@ class GooglePromptDriver(BasePromptDriver):
 
         return tool_declarations
 
-    def __to_content(self, message: PromptStackMessage) -> list[ContentDict | str | Part]:
+    def __to_content(self, message: Message) -> list[ContentDict | str | Part]:
         return [self.__prompt_stack_content_message_content(content) for content in message.content]

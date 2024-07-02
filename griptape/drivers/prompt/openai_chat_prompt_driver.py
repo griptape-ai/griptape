@@ -15,11 +15,11 @@ from griptape.common import (
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
     ActionCallDeltaPromptStackContent,
-    DeltaPromptStackMessage,
+    DeltaMessage,
     TextDeltaPromptStackContent,
     ImagePromptStackContent,
     PromptStack,
-    PromptStackMessage,
+    Message,
     TextPromptStackContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -82,31 +82,31 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack))
 
         if len(result.choices) == 1:
             message = result.choices[0].message
 
-            return PromptStackMessage(
+            return Message(
                 content=self.__response_to_prompt_stack_content(message),
-                role=PromptStackMessage.ASSISTANT_ROLE,
-                usage=PromptStackMessage.Usage(
+                role=Message.ASSISTANT_ROLE,
+                usage=Message.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
                 ),
             )
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         result = self.client.chat.completions.create(
             **self._base_params(prompt_stack), stream=True, stream_options={"include_usage": True}
         )
 
         for chunk in result:
             if chunk.usage is not None:
-                yield DeltaPromptStackMessage(
-                    usage=DeltaPromptStackMessage.Usage(
+                yield DeltaMessage(
+                    usage=DeltaMessage.Usage(
                         input_tokens=chunk.usage.prompt_tokens, output_tokens=chunk.usage.completion_tokens
                     )
                 )
@@ -115,7 +115,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     choice = chunk.choices[0]
                     delta = choice.delta
 
-                    yield DeltaPromptStackMessage(content=self.__message_delta_to_prompt_stack_content_delta(delta))
+                    yield DeltaMessage(content=self.__message_delta_to_prompt_stack_content_delta(delta))
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
@@ -191,7 +191,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return params
 
-    def __to_role(self, message: PromptStackMessage) -> str:
+    def __to_role(self, message: Message) -> str:
         if message.is_system():
             return "system"
         elif message.is_assistant():

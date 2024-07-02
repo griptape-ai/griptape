@@ -14,10 +14,10 @@ from griptape.common import (
     ActionCallPromptStackContent,
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaPromptStackMessage,
+    DeltaMessage,
     TextDeltaPromptStackContent,
     PromptStack,
-    PromptStackMessage,
+    Message,
     TextPromptStackContent,
     ActionResultPromptStackContent,
 )
@@ -53,33 +53,31 @@ class CoherePromptDriver(BasePromptDriver):
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         result = self.client.chat(**self._base_params(prompt_stack))
         usage = result.meta.tokens
 
-        return PromptStackMessage(
+        return Message(
             content=self.__response_to_prompt_stack_content(result),
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         result = self.client.chat_stream(**self._base_params(prompt_stack))
 
         for event in result:
             if event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
-                yield DeltaPromptStackMessage(
-                    role=PromptStackMessage.ASSISTANT_ROLE,
-                    usage=DeltaPromptStackMessage.Usage(
-                        input_tokens=usage.input_tokens, output_tokens=usage.output_tokens
-                    ),
+                yield DeltaMessage(
+                    role=Message.ASSISTANT_ROLE,
+                    usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
                 )
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
-                yield DeltaPromptStackMessage(content=self.__message_delta_to_prompt_stack_content(event.dict()))
+                yield DeltaMessage(content=self.__message_delta_to_prompt_stack_content(event.dict()))
 
-    def _prompt_stack_messages_to_messages(self, messages: list[PromptStackMessage]) -> list[dict]:
+    def _messages_to_messages(self, messages: list[Message]) -> list[dict]:
         new_messages = []
 
         for message in messages:
@@ -116,7 +114,7 @@ class CoherePromptDriver(BasePromptDriver):
         user_message = ""
         tool_results = []
         if last_input is not None:
-            message = self._prompt_stack_messages_to_messages([prompt_stack.messages[-1]])
+            message = self._messages_to_messages([prompt_stack.messages[-1]])
 
             if "message" in message[0]:
                 user_message = message[0]["message"]
@@ -126,7 +124,7 @@ class CoherePromptDriver(BasePromptDriver):
                 raise ValueError("Unsupported message type")
 
         # History messages
-        history_messages = self._prompt_stack_messages_to_messages(
+        history_messages = self._messages_to_messages(
             [message for message in prompt_stack.messages[:-1] if not message.is_system()]
         )
 
@@ -216,7 +214,7 @@ class CoherePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported event type: {event['event_type']}")
 
-    def __to_role(self, message: PromptStackMessage) -> str:
+    def __to_role(self, message: Message) -> str:
         if message.is_system():
             return "SYSTEM"
         elif message.is_assistant():

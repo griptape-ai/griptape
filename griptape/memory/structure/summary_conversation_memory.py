@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
-from griptape.common.prompt_stack.messages.prompt_stack_message import PromptStackMessage
+from griptape.common.prompt_stack.messages.message import Message
 from griptape.utils import J2
 from griptape.common import PromptStack
 from griptape.memory.structure import ConversationMemory
@@ -75,7 +75,7 @@ class SummaryConversationMemory(ConversationMemory):
             if len(runs) > 0:
                 summary = self.summarize_conversation_template_generator.render(summary=previous_summary, runs=runs)
                 return self.prompt_driver.run(
-                    prompt_stack=PromptStack(messages=[PromptStackMessage(summary, role=PromptStackMessage.USER_ROLE)])
+                    prompt_stack=PromptStack(messages=[Message(summary, role=Message.USER_ROLE)])
                 ).to_text()
             else:
                 return previous_summary

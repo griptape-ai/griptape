@@ -21,9 +21,9 @@ from griptape.common import (
     ActionResultPromptStackContent,
     BaseDeltaPromptStackContent,
     BasePromptStackContent,
-    DeltaPromptStackMessage,
+    DeltaMessage,
     ImagePromptStackContent,
-    PromptStackMessage,
+    Message,
     TextDeltaPromptStackContent,
     TextPromptStackContent,
 )
@@ -56,41 +56,37 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         metadata={"serializable": True},  # Amazon Bedrock requires that this be a valid URL.
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
 
         usage = response["usage"]
         output_message = response["output"]["message"]
 
-        return PromptStackMessage(
+        return Message(
             content=[self.__message_content_to_prompt_stack_content(content) for content in output_message["content"]],
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
 
         stream = response.get("stream")
         if stream is not None:
             for event in stream:
                 if "messageStart" in event:
-                    yield DeltaPromptStackMessage(role=PromptStackMessage.ASSISTANT_ROLE)
+                    yield DeltaMessage(role=Message.ASSISTANT_ROLE)
                 elif "contentBlockDelta" in event or "contentBlockStart" in event:
-                    yield DeltaPromptStackMessage(
-                        content=self.__message_content_delta_to_prompt_stack_content_delta(event)
-                    )
+                    yield DeltaMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(event))
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
-                    yield DeltaPromptStackMessage(
-                        usage=DeltaPromptStackMessage.Usage(
-                            input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]
-                        )
+                    yield DeltaMessage(
+                        usage=DeltaMessage.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"])
                     )
         else:
             raise Exception("model response is empty")
 
-    def _prompt_stack_messages_to_messages(self, elements: list[PromptStackMessage]) -> list[dict]:
+    def _messages_to_messages(self, elements: list[Message]) -> list[dict]:
         return [
             {
                 "role": self.__to_role(message),
@@ -111,9 +107,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             {"text": message.to_text_artifact().to_text()} for message in prompt_stack.messages if message.is_system()
         ]
 
-        messages = self._prompt_stack_messages_to_messages(
-            [message for message in prompt_stack.messages if not message.is_system()]
-        )
+        messages = self._messages_to_messages([message for message in prompt_stack.messages if not message.is_system()])
 
         return {
             "modelId": self.model,
@@ -222,7 +216,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
-    def __to_role(self, message: PromptStackMessage) -> str:
+    def __to_role(self, message: Message) -> str:
         if message.is_system():
             return "system"
         elif message.is_assistant():

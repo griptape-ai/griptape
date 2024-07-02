@@ -11,10 +11,10 @@ from griptape.common import (
     ActionCallPromptStackContent,
     BaseDeltaPromptStackContent,
     ActionCallDeltaPromptStackContent,
-    DeltaPromptStackMessage,
+    DeltaMessage,
     TextDeltaPromptStackContent,
     PromptStack,
-    PromptStackMessage,
+    Message,
     TextPromptStackContent,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
@@ -56,7 +56,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         if self.structure:
             self.structure.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
-    def after_run(self, result: PromptStackMessage) -> None:
+    def after_run(self, result: Message) -> None:
         if self.structure:
             self.structure.publish_event(
                 FinishPromptEvent(
@@ -109,19 +109,19 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage: ...
+    def try_run(self, prompt_stack: PromptStack) -> Message: ...
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
 
-    def __process_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def __process_run(self, prompt_stack: PromptStack) -> Message:
         result = self.try_run(prompt_stack)
 
         return result
 
-    def __process_stream(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def __process_stream(self, prompt_stack: PromptStack) -> Message:
         delta_contents: dict[int, list[BaseDeltaPromptStackContent]] = {}
-        usage = DeltaPromptStackMessage.Usage()
+        usage = DeltaMessage.Usage()
 
         # Aggregate all content deltas from the stream
         deltas = self.try_stream(prompt_stack)
@@ -148,10 +148,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             if action_deltas:
                 content.append(ActionCallPromptStackContent.from_deltas(action_deltas))
 
-        result = PromptStackMessage(
+        result = Message(
             content=content,
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
         return result

@@ -7,13 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import (
-    PromptStack,
-    PromptStackMessage,
-    DeltaPromptStackMessage,
-    TextPromptStackContent,
-    TextDeltaPromptStackContent,
-)
+from griptape.common import PromptStack, Message, DeltaMessage, TextPromptStackContent, TextDeltaPromptStackContent
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -53,7 +47,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> PromptStackMessage:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
@@ -62,13 +56,13 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
 
-        return PromptStackMessage(
+        return Message(
             content=response,
-            role=PromptStackMessage.ASSISTANT_ROLE,
-            usage=PromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaPromptStackMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
@@ -80,12 +74,10 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         full_text = ""
         for token in response:
             full_text += token
-            yield DeltaPromptStackMessage(content=TextDeltaPromptStackContent(token, index=0))
+            yield DeltaMessage(content=TextDeltaPromptStackContent(token, index=0))
 
         output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
-        yield DeltaPromptStackMessage(
-            usage=DeltaPromptStackMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens)
-        )
+        yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens))
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
