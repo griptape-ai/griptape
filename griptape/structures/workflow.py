@@ -100,6 +100,30 @@ class Workflow(Structure):
 
         return task
 
+    def before_run(self, args: Any) -> None:
+        for task in self.tasks:
+            self._insert_task_rec(task)
+        super().before_run(args)
+
+    def _insert_task_rec(self, task: BaseTask) -> None:
+        if task is None:
+            return
+
+        if task not in self.tasks:
+            self.add_task(task)
+
+        for parent_id in task.parent_ids:
+            if parent_id not in self.task_ids:
+                parent = task.find_task(parent_id)
+                if parent is not None:
+                    self._insert_task_rec(parent)
+
+        for child_id in task.child_ids:
+            if child_id not in self.task_ids:
+                child = task.find_task(child_id)
+                if child is not None:
+                    self._insert_task_rec(child)
+
     def try_run(self, *args) -> Workflow:
         exit_loop = False
 

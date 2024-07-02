@@ -35,8 +35,8 @@ class StructureVisualizer:
         return url
 
     def __render_task(self, task: BaseTask) -> str:
-        if task.children:
-            children = " & ".join([f"'{child.id}'" for child in task.children])
+        if task.child_ids:
+            children = " & ".join([f"'{child_id}'" for child_id in task.child_ids])
             return f"'{task.id}'--> {children};"
         else:
             return f"'{task.id}';"

@@ -143,6 +143,10 @@ class Structure(ABC):
         return [s for s in self.tasks if s.is_finished()]
 
     @property
+    def task_ids(self) -> list[str]:
+        return [s.id for s in self.tasks]
+
+    @property
     def default_config(self) -> BaseStructureConfig:
         if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
