@@ -241,8 +241,6 @@ class Structure(ABC):
 
     def resolve_relationships(self) -> None:
         task_by_id = {task.id: task for task in self.tasks}
-        # print the task ids
-        print(self.task_ids)
 
         for task in self.tasks:
             # Ensure parents include this task as a child

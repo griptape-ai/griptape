@@ -82,7 +82,7 @@ class BaseTask(ABC):
             self.add_parent(parent)
 
     def add_parent(self, parent: BaseTask) -> None:
-        if parent not in self.parents:
+        if parent.id not in [parent.id for parent in self.parents]:
             self.parents.append(parent)
 
         if parent.id not in self.parent_ids:
@@ -93,7 +93,7 @@ class BaseTask(ABC):
             self.add_child(child)
 
     def add_child(self, child: BaseTask) -> None:
-        if child not in self.children:
+        if child.id not in [child.id for child in self.children]:
             self.children.append(child)
 
         if child.id not in self.child_ids:
@@ -102,9 +102,10 @@ class BaseTask(ABC):
     def find_task(self, task_id: str) -> Optional[BaseTask]:
         if self.id == task_id:
             return self
-
-        for task in [*self.parents, *self.children]:
-            return task.find_task(task_id)
+        for task in self.parents + self.children:
+            found = task.find_task(task_id)
+            if found is not None and found.id == task_id:
+                return found
 
         return None
 
