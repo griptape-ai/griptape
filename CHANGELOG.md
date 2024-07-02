@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `VectorStoreClient.process_query_output_fn` for custom query output processing logic.
 - Parameter `fail_fast` to `Structure`.
 - `BooleanArtifact` for handling boolean values.
+- `typos` to dev dependencies to catch typos in code/docs.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
@@ -133,6 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Streaming not working when using deprecated `Structure.stream` field.
 - Raw Tool output being lost when being executed by ActionsSubtask.
 - Re-order Workflow tasks on every task execution wave.
+- `Workflow.insert_task()` enumerates by parent id equality, opposed to object equality.
 - Web Loader to catch Exceptions and properly return an ErrorArtifact.
 - Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.

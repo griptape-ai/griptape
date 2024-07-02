@@ -2,7 +2,7 @@
 
 Web Search Drivers can be used to search for links from a search query. They are used by [WebSearch](../../reference/griptape/tools/web_search/tool.md) to provide its functionality. All Web Search Drivers implement the following methods:
 
-* `search()` searchs the web and returns a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md) that contains JSON-serializable [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s with the search results.
+* `search()` searches the web and returns a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md) that contains JSON-serializable [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s with the search results.
 
 ## Google
 
