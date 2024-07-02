@@ -100,11 +100,9 @@ class PromptTask(RuleMixin, BaseTask):
             return task_input
         elif isinstance(task_input, Callable):
             return self._process_task_input(task_input(self))
-        elif isinstance(task_input, str):
-            return self._process_task_input(TextArtifact(task_input))
         elif isinstance(task_input, BaseArtifact):
             return task_input
         elif isinstance(task_input, list) or isinstance(task_input, tuple):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
-            raise ValueError(f"Invalid input type: {type(task_input)} ")
+            return self._process_task_input(TextArtifact(task_input))

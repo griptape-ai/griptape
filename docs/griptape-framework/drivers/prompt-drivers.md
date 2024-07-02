@@ -36,7 +36,7 @@ stack = PromptStack()
 stack.add_system_message(
     "You will be provided with Python code, and your task is to calculate its time complexity."
 )
-stack.add_user_input(
+stack.add_user_message(
     """
     def foo(n, k):
         accum = 0
