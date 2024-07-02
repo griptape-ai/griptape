@@ -21,6 +21,7 @@ class ActionArtifact(BaseArtifact, SerializableMixin):
         name: The name (Tool name) of the action.
         path: The path (Tool activity name) of the action.
         input: The input (Tool params) of the action.
+        tool: The matched Tool of the action.
         output: The output (Tool result) of the action.
     """
 

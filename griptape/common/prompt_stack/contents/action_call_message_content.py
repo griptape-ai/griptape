@@ -29,8 +29,8 @@ class ActionCallMessageContent(BaseMessageContent):
                 name = delta.name
             if delta.path is not None:
                 path = delta.path
-            if delta.delta_input is not None:
-                input += delta.delta_input
+            if delta.partial_input is not None:
+                input += delta.partial_input
 
         if tag is not None and name is not None and path is not None:
             try:

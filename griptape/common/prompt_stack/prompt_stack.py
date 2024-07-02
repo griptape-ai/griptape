@@ -24,6 +24,18 @@ class PromptStack(SerializableMixin):
     messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
     actions: list[BaseTool] = field(factory=list, kw_only=True)
 
+    @property
+    def system_messages(self) -> list[Message]:
+        return [message for message in self.messages if message.is_system()]
+
+    @property
+    def user_messages(self) -> list[Message]:
+        return [message for message in self.messages if message.is_user()]
+
+    @property
+    def assistant_messages(self) -> list[Message]:
+        return [message for message in self.messages if message.is_assistant()]
+
     def add_message(self, artifact: str | BaseArtifact, role: str) -> Message:
         content = self.__process_artifact(artifact)
 

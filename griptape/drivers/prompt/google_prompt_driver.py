@@ -127,9 +127,9 @@ class GooglePromptDriver(BasePromptDriver):
         ]
 
         # Gemini does not have the notion of a system message, so we insert it as part of the first message in the history.
-        system = next((i for i in prompt_stack.messages if i.is_system()), None)
-        if system is not None:
-            inputs[0]["parts"].insert(0, "\n".join(content.to_text() for content in system.content))
+        system_messages = prompt_stack.system_messages
+        if system_messages:
+            inputs[0]["parts"].insert(0, system_messages[0].to_text())
 
         return inputs
 
@@ -165,7 +165,7 @@ class GooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type {content_dict}")
 
-    def __message_content_to_google_message_content(self, content: BaseMessageContent) -> ContentDict | Part | str:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> ContentDict | Part | str:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
         Part = import_optional_dependency("google.generativeai.protos").Part
         FunctionCall = import_optional_dependency("google.generativeai.protos").FunctionCall
@@ -203,7 +203,7 @@ class GooglePromptDriver(BasePromptDriver):
             name, path = function_call["name"].split("_", 1)
 
             return ActionCallDeltaMessageContent(
-                tag=function_call["name"], name=name, path=path, delta_input=json.dumps(function_call["args"])
+                tag=function_call["name"], name=name, path=path, partial_input=json.dumps(function_call["args"])
             )
         else:
             raise ValueError(f"Unsupported message content type {content_dict}")
@@ -213,6 +213,9 @@ class GooglePromptDriver(BasePromptDriver):
             return "model"
         else:
             return "user"
+
+    def __to_content(self, message: Message) -> list[ContentDict | str | Part]:
+        return [self.__prompt_stack_content_message_content(content) for content in message.content]
 
     def __to_tools(self, tools: list[BaseTool]) -> list[dict]:
         FunctionDeclaration = import_optional_dependency("google.generativeai.types").FunctionDeclaration
@@ -238,6 +241,3 @@ class GooglePromptDriver(BasePromptDriver):
                 tool_declarations.append(tool_declaration)
 
         return tool_declarations
-
-    def __to_content(self, message: Message) -> list[ContentDict | str | Part]:
-        return [self.__message_content_to_google_message_content(content) for content in message.content]

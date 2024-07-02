@@ -75,8 +75,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []
 
-        for i in prompt_stack.messages:
-            messages.append({"role": i.role, "content": i.to_text()})
+        for message in prompt_stack.messages:
+            messages.append({"role": message.role, "content": message.to_text()})
 
         return messages
 

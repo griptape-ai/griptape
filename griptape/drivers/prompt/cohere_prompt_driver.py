@@ -73,7 +73,7 @@ class CoherePromptDriver(BasePromptDriver):
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
                 yield DeltaMessage(content=self.__message_delta_to_message_content(event.dict()))
 
-    def _messages_to_messages(self, messages: list[Message]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
         new_messages = []
 
         for message in messages:
@@ -81,14 +81,14 @@ class CoherePromptDriver(BasePromptDriver):
 
             if message.has_action_results():
                 new_message["tool_results"] = [
-                    self.__message_content_message_content(action_call)
+                    self.__prompt_stack_content_message_content(action_call)
                     for action_call in message.content
                     if isinstance(action_call, ActionResultMessageContent)
                 ]
             else:
                 new_message["message"] = message.to_text()
                 new_message["tool_calls"] = [
-                    self.__message_content_message_content(action_call)
+                    self.__prompt_stack_content_message_content(action_call)
                     for action_call in message.content
                     if isinstance(action_call, ActionCallMessageContent)
                 ]
@@ -110,7 +110,7 @@ class CoherePromptDriver(BasePromptDriver):
         user_message = ""
         tool_results = []
         if last_input is not None:
-            message = self._messages_to_messages([prompt_stack.messages[-1]])
+            message = self._prompt_stack_messages_to_messages([prompt_stack.messages[-1]])
 
             if "message" in message[0]:
                 user_message = message[0]["message"]
@@ -120,17 +120,14 @@ class CoherePromptDriver(BasePromptDriver):
                 raise ValueError("Unsupported message type")
 
         # History messages
-        history_messages = self._messages_to_messages(
+        history_messages = self._prompt_stack_messages_to_messages(
             [message for message in prompt_stack.messages[:-1] if not message.is_system()]
         )
 
         # System message (preamble)
-        system_element = next((message for message in prompt_stack.messages if message.is_system()), None)
-        if system_element is not None:
-            if len(system_element.content) == 1:
-                preamble = system_element.content[0].artifact.to_text()
-            else:
-                raise ValueError("System element must have exactly one content.")
+        system_messages = prompt_stack.system_messages
+        if system_messages:
+            preamble = system_messages[0].to_text()
         else:
             preamble = None
 
@@ -145,7 +142,7 @@ class CoherePromptDriver(BasePromptDriver):
             **({"preamble": preamble} if preamble else {}),
         }
 
-    def __message_content_message_content(self, content: BaseMessageContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
         if isinstance(content, TextMessageContent):
             return {"text": content.artifact.to_text()}
         elif isinstance(content, ActionCallMessageContent):
@@ -203,7 +200,7 @@ class CoherePromptDriver(BasePromptDriver):
 
                     return ActionCallDeltaMessageContent(tag=tool_call_delta["name"], name=name, path=path)
                 else:
-                    return ActionCallDeltaMessageContent(delta_input=tool_call_delta["parameters"])
+                    return ActionCallDeltaMessageContent(partial_input=tool_call_delta["parameters"])
 
             else:
                 return TextDeltaMessageContent(event["text"])
@@ -213,6 +210,8 @@ class CoherePromptDriver(BasePromptDriver):
     def __to_role(self, message: Message) -> str:
         if message.is_system():
             return "SYSTEM"
+        elif message.is_user():
+            return "USER"
         elif message.is_assistant():
             return "CHATBOT"
         else:

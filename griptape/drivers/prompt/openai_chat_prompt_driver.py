@@ -89,7 +89,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             message = result.choices[0].message
 
             return Message(
-                content=self.__response_to_message_content(message),
+                content=self.__message_to_prompt_stack_content(message),
                 role=Message.ASSISTANT_ROLE,
                 usage=Message.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
@@ -115,7 +115,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     choice = chunk.choices[0]
                     delta = choice.delta
 
-                    yield DeltaMessage(content=self.__message_delta_to_message_content_delta(delta))
+                    yield DeltaMessage(content=self.__message_delta_to_prompt_stack_content_delta(delta))
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
@@ -130,7 +130,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         messages.append(
                             {
                                 "role": self.__to_role(message),
-                                "content": self.__message_content_to_openai_message_content(action_result),
+                                "content": self.__prompt_stack_content_message_content(action_result),
                                 "tool_call_id": action_result.action.tag,
                             }
                         )
@@ -140,7 +140,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     {
                         "role": self.__to_role(message),
                         "content": [
-                            self.__message_content_to_openai_message_content(content)
+                            self.__prompt_stack_content_message_content(content)
                             for content in message.content
                             if not isinstance(  # Action calls do not belong in the content
                                 content, ActionCallMessageContent
@@ -149,7 +149,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         **(
                             {
                                 "tool_calls": [
-                                    self.__message_content_to_openai_message_content(action_call)
+                                    self.__prompt_stack_content_message_content(action_call)
                                     for action_call in message.content
                                     if isinstance(action_call, ActionCallMessageContent)
                                 ]
@@ -182,7 +182,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if self.response_format == "json_object":
             params["response_format"] = {"type": "json_object"}
-            # JSON mode still requires a system input instructing the LLM to output JSON.
+            # JSON mode still requires a system message instructing the LLM to output JSON.
             prompt_stack.add_system_message("Provide your response as a valid JSON object.")
 
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -216,7 +216,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             for activity in tool.activities()
         ]
 
-    def __message_content_to_openai_message_content(self, content: BaseMessageContent) -> str | dict:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> str | dict:
         if isinstance(content, TextMessageContent):
             return {"type": "text", "text": content.artifact.to_text()}
         elif isinstance(content, ImageMessageContent):
@@ -237,7 +237,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __response_to_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
+    def __message_to_prompt_stack_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
         if response.content is not None:
             return [TextMessageContent(TextArtifact(response.content))]
         elif response.tool_calls is not None:
@@ -257,7 +257,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message type: {response}")
 
-    def __message_delta_to_message_content_delta(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent:
+    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent:
         if content_delta.content is not None:
             return TextDeltaMessageContent(content_delta.content)
         elif content_delta.tool_calls is not None:
@@ -276,7 +276,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         path=tool_call.function.name.split("_", 1)[1],
                     )
                 else:
-                    return ActionCallDeltaMessageContent(index=index, delta_input=tool_call.function.arguments)
+                    return ActionCallDeltaMessageContent(index=index, partial_input=tool_call.function.arguments)
             else:
                 raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
         else:

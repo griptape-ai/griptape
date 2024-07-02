@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import Optional
 from collections.abc import Sequence
 from attrs import field, define

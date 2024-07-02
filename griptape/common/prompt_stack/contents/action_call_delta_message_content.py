@@ -10,7 +10,7 @@ class ActionCallDeltaMessageContent(BaseDeltaMessageContent):
     tag: Optional[str] = field(default=None, metadata={"serializable": True})
     name: Optional[str] = field(default=None, metadata={"serializable": True})
     path: Optional[str] = field(default=None, metadata={"serializable": True})
-    delta_input: Optional[str] = field(default=None, metadata={"serializable": True})
+    partial_input: Optional[str] = field(default=None, metadata={"serializable": True})
 
     def __str__(self) -> str:
         output = ""
@@ -21,7 +21,7 @@ class ActionCallDeltaMessageContent(BaseDeltaMessageContent):
                 output += f".{self.path}"
                 if self.tag is not None:
                     output += f" ({self.tag})"
-        if self.delta_input is not None:
-            output += f" {self.delta_input}"
+        if self.partial_input is not None:
+            output += f" {self.partial_input}"
 
         return output

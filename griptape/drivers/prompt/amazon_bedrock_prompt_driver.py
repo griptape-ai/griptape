@@ -51,9 +51,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     use_native_tools: bool = field(default=True, kw_only=True)
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
     tool_schema_id: str = field(
-        default="https://griptape.ai",
+        default="https://griptape.ai",  # Amazon Bedrock requires that this be a valid URL.
         kw_only=True,
-        metadata={"serializable": True},  # Amazon Bedrock requires that this be a valid URL.
+        metadata={"serializable": True},
     )
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -63,9 +63,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         output_message = response["output"]["message"]
 
         return Message(
-            content=[
-                self.__bedrock_message_content_to_message_content(content) for content in output_message["content"]
-            ],
+            content=[self.__message_content_to_prompt_stack_content(content) for content in output_message["content"]],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
@@ -76,9 +74,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         stream = response.get("stream")
         if stream is not None:
             for event in stream:
-                if "messageStart" in event:
-                    yield DeltaMessage(role=Message.ASSISTANT_ROLE)
-                elif "contentBlockDelta" in event or "contentBlockStart" in event:
+                if "contentBlockDelta" in event or "contentBlockStart" in event:
                     yield DeltaMessage(content=self.__bedrock_message_content_delta_to_message_content_delta(event))
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
@@ -88,11 +84,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise Exception("model response is empty")
 
-    def _messages_to_messages(self, messages: list[Message]) -> list[dict]:
+    def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
         return [
             {
                 "role": self.__to_role(message),
-                "content": [self.__message_content_to_bedrock_message_content(content) for content in message.content],
+                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
             }
             for message in messages
         ]
@@ -105,9 +101,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        system_messages = [{"text": message.to_text()} for message in prompt_stack.messages if message.is_system()]
+        system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
 
-        messages = self._messages_to_messages([message for message in prompt_stack.messages if not message.is_system()])
+        messages = self._prompt_stack_messages_to_messages(
+            [message for message in prompt_stack.messages if not message.is_system()]
+        )
 
         return {
             "modelId": self.model,
@@ -118,7 +116,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             **self._prompt_stack_to_tools(prompt_stack),
         }
 
-    def __bedrock_message_content_to_message_content(self, content: dict) -> BaseMessageContent:
+    def __message_content_to_prompt_stack_content(self, content: dict) -> BaseMessageContent:
         if "text" in content:
             return TextMessageContent(TextArtifact(content["text"]))
         elif "toolUse" in content:
@@ -162,14 +160,14 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             elif "toolUse" in content_block_delta["delta"]:
                 return ActionCallDeltaMessageContent(
                     index=content_block_delta["contentBlockIndex"],
-                    delta_input=content_block_delta["delta"]["toolUse"]["input"],
+                    partial_input=content_block_delta["delta"]["toolUse"]["input"],
                 )
             else:
                 raise ValueError(f"Unsupported message content type: {event}")
         else:
             raise ValueError(f"Unsupported message content type: {event}")
 
-    def __message_content_to_bedrock_message_content(self, content: BaseMessageContent) -> dict:
+    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
         if isinstance(content, TextMessageContent):
             return self.__artifact_to_message_content(content.artifact)
         elif isinstance(content, ImageMessageContent):
@@ -217,9 +215,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
     def __to_role(self, message: Message) -> str:
-        if message.is_system():
-            return "system"
-        elif message.is_assistant():
+        if message.is_assistant():
             return "assistant"
         else:
             return "user"
