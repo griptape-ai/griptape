@@ -11,7 +11,7 @@ from griptape.tokenizers import BaseTokenizer
 from griptape.artifacts import TextArtifact
 
 if TYPE_CHECKING:
-    from griptape.structures import Structure
+    from griptape.events import EventListener
 
 
 @define(kw_only=True)
@@ -21,40 +21,42 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     Attributes:
         temperature: The temperature to use for the completion.
         max_tokens: The maximum number of tokens to generate. If not specified, the value will be automatically generated based by the tokenizer.
-        structure: An optional `Structure` to publish events to.
+        event_listeners: An optional list of `EventListener` to publish events to.
         prompt_stack_to_string: A function that converts a `PromptStack` to a string.
         ignored_exception_types: A tuple of exception types to ignore.
         model: The model name.
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
-        stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
+        stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `EventListener` if one is provided.
     """
 
     temperature: float = field(default=0.1, metadata={"serializable": True})
     max_tokens: Optional[int] = field(default=None, metadata={"serializable": True})
-    structure: Optional[Structure] = field(default=None)
+    event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
-        if self.structure:
-            self.structure.publish_event(
-                StartPromptEvent(
-                    model=self.model,
-                    token_count=self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack)),
-                    prompt_stack=prompt_stack,
-                    prompt=self.prompt_stack_to_string(prompt_stack),
+        if self.event_listeners:
+            for event_listener in self.event_listeners:
+                event_listener.publish_event(
+                    StartPromptEvent(
+                        model=self.model,
+                        token_count=self.tokenizer.count_tokens(self.prompt_stack_to_string(prompt_stack)),
+                        prompt_stack=prompt_stack,
+                        prompt=self.prompt_stack_to_string(prompt_stack),
+                    )
                 )
-            )
 
     def after_run(self, result: TextArtifact) -> None:
-        if self.structure:
-            self.structure.publish_event(
-                FinishPromptEvent(
-                    model=self.model, result=result.value, token_count=self.tokenizer.count_tokens(result.value)
+        if self.event_listeners:
+            for event_listener in self.event_listeners:
+                event_listener.publish_event(
+                    FinishPromptEvent(
+                        model=self.model, result=result.value, token_count=self.tokenizer.count_tokens(result.value)
+                    )
                 )
-            )
 
     def run(self, prompt_stack: PromptStack) -> TextArtifact:
         for attempt in self.retrying():
@@ -65,7 +67,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     tokens = []
                     completion_chunks = self.try_stream(prompt_stack)
                     for chunk in completion_chunks:
-                        self.structure.publish_event(CompletionChunkEvent(token=chunk.value))
+                        if self.event_listeners:
+                            for event_listener in self.event_listeners:
+                                event_listener.publish_event(CompletionChunkEvent(token=chunk.value))
                         tokens.append(chunk.value)
                     result = TextArtifact(value="".join(tokens).strip())
                 else:

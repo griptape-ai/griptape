@@ -50,7 +50,7 @@ class PromptTask(BaseTextInputTask):
     def preprocess(self, structure: Structure) -> PromptTask:
         super().preprocess(structure)
         if self.prompt_driver is not None:
-            self.prompt_driver.structure = structure
+            self.prompt_driver.event_listeners = structure.event_listeners
 
         return self
 
