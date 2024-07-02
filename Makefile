@@ -16,8 +16,8 @@ publish: ## Push git tag and publish version to PyPI.
 install: ## Install all dependencies.
 	@poetry install --with dev --with test --with docs --all-extras
 
-.PHONY: test
-test: test/unit test/integration ## Run all tests.
+.PHONY: test  ## Run all tests.
+test: test/unit test/integration
 
 .PHONY: test/unit
 test/unit: ## Run unit tests.
@@ -57,6 +57,10 @@ check/types:
 .PHONY: check/spell
 check/spell:
 	@poetry run typos 
+	
+.PHONY: docs
+docs: ## Build documentation.
+	@poetry run mkdocs build
 
 .DEFAULT_GOAL := help
 .PHONY: help
