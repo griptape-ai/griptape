@@ -155,9 +155,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                     subtask.run()
                     subtask.after_run()
 
-                    subtask = self.add_subtask(
-                        ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_artifact())
-                    )
+                    result = self.prompt_driver.run(prompt_stack=self.prompt_stack)
+                    subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
             else:
                 break
 

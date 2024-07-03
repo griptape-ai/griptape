@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
-import json
 from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
@@ -133,10 +132,6 @@ class CoherePromptDriver(BasePromptDriver):
         else:
             preamble = None
 
-        for message in history_messages:
-            print(json.dumps(message, indent=2))
-        print(user_message)
-        print(json.dumps(tool_results, indent=2))
         return {
             "message": user_message,
             "chat_history": history_messages,

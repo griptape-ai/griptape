@@ -176,6 +176,8 @@ class ActionsSubtask(BaseTask):
     ) -> TextArtifact | ListArtifact:
         if isinstance(task_input, TextArtifact) or isinstance(task_input, ListArtifact):
             return task_input
+        elif isinstance(task_input, ActionArtifact):
+            return ListArtifact([task_input])
         elif isinstance(task_input, Callable):
             return self._process_task_input(task_input(self))
         elif isinstance(task_input, str):
