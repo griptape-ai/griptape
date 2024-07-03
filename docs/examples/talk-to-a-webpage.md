@@ -19,9 +19,12 @@ engine = RagEngine(
     retrieval_stage=RetrievalRagStage(
         retrieval_modules=[
             VectorStoreRetrievalRagModule(
-                namespace=namespace,
                 vector_store_driver=vector_store_driver,
-                top_n=20
+                query_params={
+                    "namespace": namespace,
+                    "top_n": 20
+                    
+                }
             )
         ]
     ),
