@@ -27,7 +27,7 @@ numpy = ">=1"
 stringcase = "^1.2.0"
 docker = "^7.1.0"
 sqlalchemy = "~=1.0"
-requests = "^2"
+requests = "^2.32.0"
 
 # drivers
 cohere = { version = "^5.5.4", optional = true }
