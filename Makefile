@@ -15,6 +15,7 @@ publish: ## Push git tag and publish version to PyPI.
 .PHONY: install
 install: ## Install all dependencies.
 	@poetry install --with dev --with test --with docs --all-extras
+	@poetry run pre-commit install
 
 .PHONY: test  ## Run all tests.
 test: test/unit test/integration

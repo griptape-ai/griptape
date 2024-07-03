@@ -47,3 +47,7 @@ A [BooleanArtifact](../../reference/griptape/artifacts/boolean_artifact.md) is u
 
 !!! info
     Any object passed on init to `BooleanArtifact` will be coerced into a `bool` type. This might lead to unintended behavior: `BooleanArtifact("False").value is True`. Use [BooleanArtifact.parse_bool](../../reference/griptape/artifacts/boolean_artifact.md#griptape.artifacts.boolean_artifact.BooleanArtifact.parse_bool) to convert case-insensitive string literal values `"True"` and `"False"` into a `BooleanArtifact`: `BooleanArtifact.parse_bool("False").value is False`.
+
+## JsonArtifact
+
+A [JsonArtifact](../../reference/griptape/artifacts/json_artifact.md) is used for passing JSON-serliazable data around the framework. Any object passed to `value` will be converted using `json.dumps`, and any time `value` is retrieved, it will call `json.loads`.

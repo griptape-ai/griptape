@@ -28,7 +28,7 @@ class TextArtifact(BaseArtifact):
 
     def generate_embedding(self, driver: BaseEmbeddingDriver) -> Optional[list[float]]:
         self._embedding.clear()
-        self._embedding.extend(driver.embed_string(str(self.value)))
+        self._embedding.extend(driver.embed_string(self.to_text()))
 
         return self.embedding
 
@@ -36,4 +36,4 @@ class TextArtifact(BaseArtifact):
         return tokenizer.count_tokens(str(self.value))
 
     def to_bytes(self) -> bytes:
-        return self.value.encode(encoding=self.encoding, errors=self.encoding_error_handler)
+        return self.to_text().encode(encoding=self.encoding, errors=self.encoding_error_handler)

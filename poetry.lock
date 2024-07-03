@@ -2380,6 +2380,17 @@ files = [
 ]
 
 [[package]]
+name = "jsonalias"
+version = "0.1.2"
+description = "A microlibrary that defines a Json type alias for Python."
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "jsonalias-0.1.2-py3-none-any.whl", hash = "sha256:0dece9b199f6aa9a6a2dcfa81d233f5673a9227b66ab16425c39eebf4b45bb94"},
+    {file = "jsonalias-0.1.2.tar.gz", hash = "sha256:e397874a4a13b45c500565703dc71bd42011efde0570246de7a92d284610ac4c"},
+]
+
+[[package]]
 name = "jsondiff"
 version = "2.0.0"
 description = "Diff JSON and JSON-like structures in Python"
@@ -6564,4 +6575,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a38d0f0671ff5deb42783721f4ce103e670a689f618e950451a807921f5d7139"
+content-hash = "43be4729565571b12952e2646d8c94c7bf996ff9742fc994eafecaa5a0d9f498"

@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ### Added
 - `RagEngine` is an abstraction for implementing modular RAG pipelines.
   - `RagContext` is a container object for passing around RAG context. 
@@ -51,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for storing Artifacts as inputs/outputs in Conversation Memory Runs.
 - `Agent.input` for passing Artifacts as input.
 - Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
+- `JsonArtifact` for handling de/seralization of values.
 
 ### Changed
 - **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.

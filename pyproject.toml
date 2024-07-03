@@ -28,6 +28,7 @@ stringcase = "^1.2.0"
 docker = "^7.1.0"
 sqlalchemy = "~=1.0"
 requests = "^2.32.0"
+jsonalias = "^0.1.2"
 
 # drivers
 cohere = { version = "^5.5.4", optional = true }
