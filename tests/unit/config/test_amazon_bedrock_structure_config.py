@@ -51,7 +51,9 @@ class TestAmazonBedrockStructureConfig:
                 "stream": False,
                 "temperature": 0.1,
                 "type": "AmazonBedrockPromptDriver",
-                "use_native_tools": False,
+                "tool_choice": {"auto": {}},
+                "tool_schema_id": "https://griptape.ai",
+                "use_native_tools": True,
             },
             "vector_store_driver": {
                 "embedding_driver": {
@@ -103,6 +105,9 @@ class TestAmazonBedrockStructureConfig:
                 "stream": False,
                 "temperature": 0.1,
                 "type": "AmazonBedrockPromptDriver",
+                "tool_choice": {"auto": {}},
+                "tool_schema_id": "https://griptape.ai",
+                "use_native_tools": True,
             },
             "vector_store_driver": {
                 "embedding_driver": {

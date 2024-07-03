@@ -1,4 +1,4 @@
-from griptape.artifacts import ErrorArtifact, TextArtifact
+from griptape.artifacts import ErrorArtifact, TextArtifact, ActionArtifact
 from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
 from tests.mocks.mock_tool.tool import MockTool
@@ -221,10 +221,10 @@ class TestToolkitSubtask:
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test1", actions=[ActionArtifact.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test2", actions=[ActionArtifact.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)
@@ -245,10 +245,10 @@ class TestToolkitSubtask:
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test1", actions=[ActionArtifact.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test2", actions=[ActionArtifact.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)

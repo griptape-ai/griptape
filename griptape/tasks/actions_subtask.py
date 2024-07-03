@@ -192,7 +192,7 @@ class ActionsSubtask(BaseTask):
         actions_matches = re.findall(self.ACTIONS_PATTERN, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
-        if self.thought is None and len(thought_matches) > 1:
+        if self.thought is None and thought_matches:
             self.thought = thought_matches[-1]
 
         self.__parse_actions(actions_matches)

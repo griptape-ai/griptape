@@ -66,7 +66,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream_options={"include_usage": True},
         )
 
-        assert isinstance(event, TextDeltaMessageContent)
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 
         event = next(stream)

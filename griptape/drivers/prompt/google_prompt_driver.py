@@ -82,22 +82,26 @@ class GooglePromptDriver(BasePromptDriver):
 
         prompt_token_count = None
         for chunk in response:
+            print(chunk)
             usage_metadata = chunk.usage_metadata
 
-            for part in chunk.parts:
-                yield DeltaMessage(content=self.__google_message_content_delta_to_message_content_delta(part))
-
+            content = (
+                self.__google_message_content_delta_to_message_content_delta(chunk.parts[0]) if chunk.parts else None
+            )
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None:
                 prompt_token_count = usage_metadata.prompt_token_count
                 yield DeltaMessage(
+                    content=content,
                     usage=DeltaMessage.Usage(
                         input_tokens=usage_metadata.prompt_token_count,
                         output_tokens=usage_metadata.candidates_token_count,
-                    )
+                    ),
                 )
             else:
-                yield DeltaMessage(usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count))
+                yield DeltaMessage(
+                    content=content, usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count)
+                )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
@@ -112,7 +116,16 @@ class GooglePromptDriver(BasePromptDriver):
 
         return {
             "generation_config": GenerationConfig(
-                max_output_tokens=self.max_tokens, temperature=self.temperature, top_p=self.top_p, top_k=self.top_k
+                **{
+                    "stop_sequences": []
+                    if self.stream
+                    and self.use_native_tools  # For some reason, providing stop sequences when streaming breaks native functions
+                    else self.tokenizer.stop_sequences,
+                    "max_output_tokens": self.max_tokens,
+                    "temperature": self.temperature,
+                    "top_p": self.top_p,
+                    "top_k": self.top_k,
+                }
             ),
             **self._prompt_stack_to_tools(prompt_stack),
         }
@@ -145,26 +158,21 @@ class GooglePromptDriver(BasePromptDriver):
         )
 
     def __google_message_content_to_message_content(self, content: Part) -> BaseMessageContent:
-        MessageToDict = import_optional_dependency("google.protobuf.json_format").MessageToDict
-        # https://stackoverflow.com/questions/64403737/attribute-error-descriptor-while-trying-to-convert-google-vision-response-to-dic
-        content_dict = MessageToDict(content._pb)
+        if content.text:
+            return TextMessageContent(TextArtifact(content.text))
+        elif content.function_call:
+            function_call = content.function_call
 
-        if "text" in content_dict:
-            return TextMessageContent(TextArtifact(content_dict["text"]))
-        elif "functionCall" in content_dict:
-            function_call = content_dict["functionCall"]
+            name, path = function_call.name.split("_", 1)
 
-            name, path = function_call["name"].split("_", 1)
-
+            args = {k: v for k, v in function_call.args.items()}
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
-                    value=ActionArtifact.Action(
-                        tag=function_call["name"], name=name, path=path, input=function_call["args"]
-                    )
+                    value=ActionArtifact.Action(tag=function_call.name, name=name, path=path, input=args)
                 )
             )
         else:
-            raise ValueError(f"Unsupported message content type {content_dict}")
+            raise ValueError(f"Unsupported message content type {content}")
 
     def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> ContentDict | Part | str:
         ContentDict = import_optional_dependency("google.generativeai.types").ContentDict

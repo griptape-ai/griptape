@@ -48,7 +48,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
-    use_native_tools: bool = field(default=True, kw_only=True)
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
     tool_schema_id: str = field(
         default="https://griptape.ai",  # Amazon Bedrock requires that this be a valid URL.

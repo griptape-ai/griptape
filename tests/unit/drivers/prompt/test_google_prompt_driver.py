@@ -1,4 +1,5 @@
-from google.generativeai.types import GenerationConfig
+from google.generativeai.types import ContentDict, GenerationConfig
+from google.generativeai.protos import Part
 from griptape.artifacts import TextArtifact, ImageArtifact
 from griptape.common.prompt_stack.contents.text_delta_message_content import TextDeltaMessageContent
 from griptape.drivers import GooglePromptDriver
@@ -22,8 +23,14 @@ class TestGooglePromptDriver:
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
         mock_generative_model.return_value.generate_content.return_value = iter(
             [
-                Mock(text="model-output", usage_metadata=Mock(prompt_token_count=5, candidates_token_count=5)),
-                Mock(text="model-output", usage_metadata=Mock(prompt_token_count=5, candidates_token_count=5)),
+                Mock(
+                    parts=[Mock(text="model-output")],
+                    usage_metadata=Mock(prompt_token_count=5, candidates_token_count=5),
+                ),
+                Mock(
+                    parts=[Mock(text="model-output")],
+                    usage_metadata=Mock(prompt_token_count=5, candidates_token_count=5),
+                ),
             ]
         )
 
@@ -50,15 +57,15 @@ class TestGooglePromptDriver:
 
         # Then
         messages = [
-            *(
-                [{"parts": ["system-input", "user-input"], "role": "user"}]
-                if system_enabled
-                else [{"parts": ["user-input"], "role": "user"}]
-            ),
+            {"parts": ["user-input"], "role": "user"},
             {"parts": ["user-input"], "role": "user"},
             {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
             {"parts": ["assistant-input"], "role": "model"},
         ]
+        if system_enabled:
+            assert mock_generative_model.return_value._system_instruction == ContentDict(
+                role="system", parts=[Part(text="system-input")]
+            )
         mock_generative_model.return_value.generate_content.assert_called_once_with(
             messages,
             generation_config=GenerationConfig(
@@ -87,15 +94,15 @@ class TestGooglePromptDriver:
         # Then
         event = next(stream)
         messages = [
-            *(
-                [{"parts": ["system-input", "user-input"], "role": "user"}]
-                if system_enabled
-                else [{"parts": ["user-input"], "role": "user"}]
-            ),
+            {"parts": ["user-input"], "role": "user"},
             {"parts": ["user-input"], "role": "user"},
             {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
             {"parts": ["assistant-input"], "role": "model"},
         ]
+        if system_enabled:
+            assert mock_stream_generative_model.return_value._system_instruction == ContentDict(
+                role="system", parts=[Part(text="system-input")]
+            )
         mock_stream_generative_model.return_value.generate_content.assert_called_once_with(
             messages,
             stream=True,

@@ -112,6 +112,11 @@ class BaseSchema(Schema):
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
         Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
+        GenerativeModel = (
+            import_optional_dependency("google.generativeai").GenerativeModel
+            if is_dependency_installed("google.generativeai")
+            else Any
+        )
 
         attrs.resolve_types(
             attrs_cls,
@@ -125,6 +130,7 @@ class BaseSchema(Schema):
                 "BaseTokenizer": BaseTokenizer,
                 "boto3": boto3,
                 "Client": Client,
+                "GenerativeModel": GenerativeModel,
             },
         )
 
