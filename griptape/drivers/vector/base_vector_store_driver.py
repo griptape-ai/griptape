@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
@@ -56,7 +57,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         **kwargs,
     ) -> str:
         meta = {} if meta is None else meta
-        vector_id = utils.str_to_hash(artifact.to_text()) if vector_id is None else vector_id
+        vector_id = self._get_default_vector_id(artifact.to_text()) if vector_id is None else vector_id
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id
@@ -81,7 +82,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        vector_id = utils.str_to_hash(string) if vector_id is None else vector_id
+        vector_id = self._get_default_vector_id(string) if vector_id is None else vector_id
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id
@@ -134,3 +135,6 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         include_vectors: bool = False,
         **kwargs,
     ) -> list[Entry]: ...
+
+    def _get_default_vector_id(self, value: str) -> str:
+        return str(uuid.uuid5(uuid.NAMESPACE_OID, value))
