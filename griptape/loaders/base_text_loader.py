@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 from abc import ABC
 from typing import Any, Optional, Union, cast
-
 from attrs import define, field, Factory
-
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.chunkers import TextChunker, BaseChunker
@@ -32,6 +29,7 @@ class BaseTextLoader(BaseLoader, ABC):
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
+    source: Optional[str] = field(default=None, kw_only=True)
 
     def load_collection(self, sources: list[Any], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
@@ -46,12 +44,15 @@ class BaseTextLoader(BaseLoader, ABC):
         else:
             chunks = [TextArtifact(text)]
 
-        if self.embedding_driver:
-            for chunk in chunks:
+        for chunk in chunks:
+            if self.embedding_driver:
                 chunk.generate_embedding(self.embedding_driver)
 
-        for chunk in chunks:
+            if self.source is not None:
+                chunk.meta["source"] = self.source
+
             chunk.encoding = self.encoding
+
             artifacts.append(chunk)
 
         return artifacts

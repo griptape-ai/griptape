@@ -7,8 +7,8 @@ from griptape.utils import J2
 @define(kw_only=True)
 class CitationPromptResponseRagModule(PromptResponseRagModule):
     def default_system_template_generator(self, context: RagContext) -> str:
-        return J2("engines/rag/modules/response/prompt/system.j2").render(
-            text_chunks=context.text_chunks,
+        return J2("engines/rag/modules/response/citation_prompt/system.j2").render(
+            text_chunk_artifacts=context.text_chunks,
             before_system_prompt="\n\n".join(context.before_query),
             after_system_prompt="\n\n".join(context.after_query),
         )
