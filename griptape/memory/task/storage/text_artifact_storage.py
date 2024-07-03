@@ -14,9 +14,15 @@ if TYPE_CHECKING:
 class TextArtifactStorage(BaseArtifactStorage):
     vector_store_driver: BaseVectorStoreDriver = field()
     rag_engine: Optional[RagEngine] = field(default=None)
+    retrieval_rag_module_name: Optional[str] = field(default=None)
     summary_engine: Optional[BaseSummaryEngine] = field(default=None)
     csv_extraction_engine: Optional[CsvExtractionEngine] = field(default=None)
     json_extraction_engine: Optional[JsonExtractionEngine] = field(default=None)
+
+    @rag_engine.validator  # pyright: ignore
+    def validate_rag_engine(self, _, rag_engine: str) -> None:
+        if rag_engine is not None and self.retrieval_rag_module_name is None:
+            raise ValueError("You have to set retrieval_rag_module_name if rag_engine is provided")
 
     def can_store(self, artifact: BaseArtifact) -> bool:
         return isinstance(artifact, TextArtifact)
@@ -36,12 +42,25 @@ class TextArtifactStorage(BaseArtifactStorage):
 
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
 
-    def query(self, namespace: str, query: str, metadata: Any = None) -> TextArtifact | InfoArtifact:
+    def query(self, namespace: str, query: str, metadata: Any = None) -> BaseArtifact:
         if self.rag_engine is None:
-            raise ValueError("RAG engine is not set.")
+            raise ValueError("rag_engine is not set")
+
+        if self.retrieval_rag_module_name is None:
+            raise ValueError("retrieval_rag_module_name is not set")
 
         result = self.rag_engine.process(
-            RagContext(initial_query=query, namespace=namespace, metadata=None if metadata is None else str(metadata))
+            RagContext(
+                query=query,
+                module_params={
+                    self.retrieval_rag_module_name: {
+                        "query_params": {
+                            "namespace": namespace,
+                            "metadata": None if metadata is None else str(metadata),
+                        }
+                    }
+                },
+            )
         ).output
 
         if result is None:

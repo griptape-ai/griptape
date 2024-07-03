@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 from typing import TYPE_CHECKING
 from schema import Schema, Literal
 from attrs import define, field, Factory
@@ -33,7 +34,7 @@ class AwsIamClient(BaseAwsClient):
             policy = self.iam_client.get_user_policy(
                 UserName=params["values"]["user_name"], PolicyName=params["values"]["policy_name"]
             )
-            return TextArtifact(policy["PolicyDocument"])
+            return TextArtifact(json.dumps(policy["PolicyDocument"]))
         except Exception as e:
             return ErrorArtifact(f"error returning policy document: {e}")
 

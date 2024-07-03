@@ -13,12 +13,12 @@ from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDr
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
-    TextRetrievalRagModule,
-    RulesetsGenerationRagModule,
-    PromptGenerationRagModule,
-    MetadataGenerationRagModule,
+    VectorStoreRetrievalRagModule,
+    RulesetsBeforeResponseRagModule,
+    PromptResponseRagModule,
+    MetadataBeforeResponseRagModule,
 )
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
@@ -174,14 +174,14 @@ class Structure(ABC):
     def default_rag_engine(self) -> RagEngine:
         return RagEngine(
             retrieval_stage=RetrievalRagStage(
-                retrieval_modules=[TextRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
+                retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
             ),
-            generation_stage=GenerationRagStage(
-                before_generator_modules=[
-                    RulesetsGenerationRagModule(rulesets=self.rulesets),
-                    MetadataGenerationRagModule(),
+            response_stage=ResponseRagStage(
+                before_response_modules=[
+                    RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
+                    MetadataBeforeResponseRagModule(),
                 ],
-                generation_module=PromptGenerationRagModule(prompt_driver=self.config.prompt_driver),
+                response_module=PromptResponseRagModule(prompt_driver=self.config.prompt_driver),
             ),
         )
 
@@ -191,6 +191,7 @@ class Structure(ABC):
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
                     rag_engine=self.rag_engine,
+                    retrieval_rag_module_name="VectorStoreRetrievalRagModule",
                     vector_store_driver=self.config.vector_store_driver,
                     summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
                     csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),

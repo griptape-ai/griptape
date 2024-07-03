@@ -3,12 +3,12 @@ from attrs import define, field, Factory
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseGenerationRagModule
+from griptape.engines.rag.modules import BaseResponseRagModule
 from griptape.utils import J2
 
 
 @define(kw_only=True)
-class PromptGenerationRagModule(BaseGenerationRagModule):
+class PromptResponseRagModule(BaseResponseRagModule):
     answer_token_offset: int = field(default=400)
     prompt_driver: BasePromptDriver = field()
     generate_system_template: Callable[[list[str], list[str], list[str]], str] = field(
@@ -16,7 +16,7 @@ class PromptGenerationRagModule(BaseGenerationRagModule):
     )
 
     def run(self, context: RagContext) -> RagContext:
-        query = context.initial_query
+        query = context.query
         before_query = context.before_query
         after_query = context.after_query
         text_artifact_chunks = context.text_chunks
@@ -24,7 +24,7 @@ class PromptGenerationRagModule(BaseGenerationRagModule):
         if query:
             tokenizer = self.prompt_driver.tokenizer
             text_chunks = []
-            system_prompt = ""
+            system_prompt = self.generate_system_template(text_chunks, before_query, after_query)
 
             for artifact in text_artifact_chunks:
                 text_chunks.append(artifact.value)
@@ -53,7 +53,7 @@ class PromptGenerationRagModule(BaseGenerationRagModule):
     def default_system_template_generator(
         self, text_chunks: list[str], before_system_prompt: list, after_system_prompt: list
     ) -> str:
-        return J2("engines/rag/modules/prompt_generation/system.j2").render(
+        return J2("engines/rag/modules/response/prompt/system.j2").render(
             text_chunks=text_chunks,
             before_system_prompt="\n\n".join(before_system_prompt),
             after_system_prompt="\n\n".join(after_system_prompt),

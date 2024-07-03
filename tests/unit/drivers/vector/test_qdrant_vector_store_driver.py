@@ -16,7 +16,8 @@ class TestQdrantVectorStoreDriver:
         return MagicMock()
 
     @pytest.fixture(autouse=True)
-    def driver(self, embedding_driver):
+    def driver(self, embedding_driver, mocker):
+        mocker.patch("qdrant_client.QdrantClient")
         driver = QdrantVectorStoreDriver(
             url="http://some_url",
             port=8080,

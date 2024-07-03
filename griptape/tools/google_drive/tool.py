@@ -2,6 +2,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 import schema
+import json
 from schema import Schema, Literal, Or
 from attrs import define, field
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
@@ -64,7 +65,7 @@ class GoogleDriveClient(BaseGoogleClient):
                     return ErrorArtifact(f"Could not find folder: {folder_path}")
 
             items = self._list_files(service, query)
-            return ListArtifact([TextArtifact(i) for i in items])
+            return ListArtifact([TextArtifact(json.dumps(i)) for i in items])
 
         except MalformedError:
             return ErrorArtifact("error listing files due to malformed credentials")

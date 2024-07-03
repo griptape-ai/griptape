@@ -5,6 +5,6 @@ from griptape.engines.rag.modules import BaseRagModule
 
 
 @define(kw_only=True)
-class BaseGenerationRagModule(BaseRagModule, ABC):
+class BaseAfterResponseRagModule(BaseRagModule, ABC):
     @abstractmethod
     def run(self, context: RagContext) -> RagContext: ...

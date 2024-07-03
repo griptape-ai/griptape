@@ -27,7 +27,7 @@ numpy = ">=1"
 stringcase = "^1.2.0"
 docker = "^7.1.0"
 sqlalchemy = "~=1.0"
-requests = "^2"
+requests = "^2.32.0"
 
 # drivers
 cohere = { version = "^5.5.4", optional = true }
@@ -216,6 +216,7 @@ exclude = [
 pythonVersion = "3.9"
 reportOptionalMemberAccess = "none"
 reportIncompatibleVariableOverride = "none" # see thread: https://github.com/microsoft/pyright/issues/5933 
+enableExperimentalFeatures = true # https://github.com/microsoft/pyright/issues/7713
 
 [tool.pytest_env]
 OPENAI_API_KEY = {value = "api-key", skip_if_set = true}

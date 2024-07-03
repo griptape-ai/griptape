@@ -35,7 +35,7 @@ class BaseTool(ActivityMixin, ABC):
     MANIFEST_FILE = "manifest.yml"
     REQUIREMENTS_FILE = "requirements.txt"
 
-    name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
+    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
     output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
@@ -60,10 +60,6 @@ class BaseTool(ActivityMixin, ABC):
 
                 if len(output_memory_names) > len(set(output_memory_names)):
                     raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
-
-    @property
-    def class_name(self):
-        return self.__class__.__name__
 
     @property
     def manifest_path(self) -> str:
