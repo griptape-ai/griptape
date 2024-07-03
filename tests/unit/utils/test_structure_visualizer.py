@@ -11,8 +11,6 @@ class TestStructureVisualizer:
         visualizer = StructureVisualizer(agent)
         result = visualizer.to_url()
 
-        print(result)
-
         assert result == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgljYzVkYWYyNih0YXNrMSk7"
 
     def test_pipeline(self):
@@ -28,8 +26,6 @@ class TestStructureVisualizer:
 
         visualizer = StructureVisualizer(pipeline)
         result = visualizer.to_url()
-
-        print(result)
 
         assert (
             result
@@ -49,8 +45,6 @@ class TestStructureVisualizer:
 
         visualizer = StructureVisualizer(workflow)
         result = visualizer.to_url()
-
-        print(result)
 
         assert (
             result
