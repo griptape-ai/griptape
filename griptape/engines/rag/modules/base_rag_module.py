@@ -18,7 +18,7 @@ class BaseRagModule(ABC):
             messages=[Message(system_prompt, role=Message.SYSTEM_ROLE), Message(query, role=Message.USER_ROLE)]
         )
 
-    def context_param(self, context: RagContext, key: str) -> Optional[Any]:
+    def get_context_param(self, context: RagContext, key: str) -> Optional[Any]:
         return context.module_params.get(self.name, {}).get(key)
 
     def set_context_param(self, context: RagContext, key: str, value: Any) -> None:

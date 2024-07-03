@@ -18,7 +18,7 @@ class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
     )
 
     def run(self, context: RagContext) -> Sequence[TextArtifact]:
-        context_query_params = self.context_param(context, "query_params")
+        context_query_params = self.get_context_param(context, "query_params")
         query_params = self.query_params if context_query_params is None else context_query_params
 
         return self.process_query_output_fn(self.vector_store_driver.query(context.query, **query_params))

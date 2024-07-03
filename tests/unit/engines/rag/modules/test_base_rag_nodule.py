@@ -10,13 +10,13 @@ class TestBaseRagModule:
         assert prompt_stack.messages[0].is_system()
         assert prompt_stack.messages[1].is_user()
 
-    def test_context_param(self):
+    def test_get_context_param(self):
         module = MockRagModule(name="boo")
         context = RagContext(query="test")
 
         context.module_params["boo"] = {"foo": "bar"}
 
-        assert module.context_param(context, "foo") == "bar"
+        assert module.get_context_param(context, "foo") == "bar"
 
     def test_set_context_param(self):
         module = MockRagModule(name="boo")

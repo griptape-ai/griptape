@@ -10,7 +10,7 @@ class MetadataBeforeResponseRagModule(BaseBeforeResponseRagModule):
     metadata: Optional[str] = field(default=None)
 
     def run(self, context: RagContext) -> RagContext:
-        context_metadata = self.context_param(context, "metadata")
+        context_metadata = self.get_context_param(context, "metadata")
         metadata = self.metadata if context_metadata is None else context_metadata
 
         if metadata is not None:
