@@ -25,6 +25,6 @@ class Calculator(BaseTool):
         try:
             expression = params["values"]["expression"]
 
-            return TextArtifact(numexpr.evaluate(expression))
+            return TextArtifact(str(numexpr.evaluate(expression)))
         except Exception as e:
             return ErrorArtifact(f"error calculating: {e}")

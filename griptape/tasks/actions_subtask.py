@@ -45,7 +45,7 @@ class ActionsSubtask(BaseTextInputTask):
         elif isinstance(self._input, Callable):
             return self._input(self)
         else:
-            return TextArtifact(self._input)
+            return TextArtifact(self._input if self._input is not None else "")
 
     @input.setter
     def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
