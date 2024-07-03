@@ -238,7 +238,7 @@ class TestAgent:
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
-        assert storage.rag_engine.generation_stage.generation_module.prompt_driver == prompt_driver
+        assert storage.rag_engine.response_stage.response_module.prompt_driver == prompt_driver
         assert (
             storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
             == embedding_driver

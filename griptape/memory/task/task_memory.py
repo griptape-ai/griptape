@@ -124,7 +124,7 @@ class TaskMemory(ActivityMixin):
         else:
             return InfoArtifact("Can't find memory content")
 
-    def query_namespace(self, namespace: str, query: str) -> TextArtifact | InfoArtifact:
+    def query_namespace(self, namespace: str, query: str) -> BaseArtifact:
         storage = self.namespace_storage.get(namespace)
 
         if storage:

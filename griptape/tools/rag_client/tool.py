@@ -1,7 +1,7 @@
 from __future__ import annotations
 from attrs import define, field
 from schema import Schema, Literal
-from griptape.artifacts import ErrorArtifact, TextArtifact
+from griptape.artifacts import ErrorArtifact, BaseArtifact
 from griptape.engines.rag import RagEngine
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
@@ -24,7 +24,7 @@ class RagClient(BaseTool):
             "schema": Schema({Literal("query", description="A natural language search query"): str}),
         }
     )
-    def search(self, params: dict) -> TextArtifact | ErrorArtifact:
+    def search(self, params: dict) -> BaseArtifact:
         query = params["values"]["query"]
 
         try:
