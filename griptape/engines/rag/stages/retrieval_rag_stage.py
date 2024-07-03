@@ -5,7 +5,7 @@ from attrs import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseRerankRagModule
+from griptape.engines.rag.modules import BaseRerankRagModule, BaseRagModule
 from griptape.engines.rag.modules import BaseRetrievalRagModule
 from griptape.engines.rag.stages import BaseRagStage
 
@@ -15,6 +15,17 @@ class RetrievalRagStage(BaseRagStage):
     retrieval_modules: list[BaseRetrievalRagModule] = field()
     rerank_module: Optional[BaseRerankRagModule] = field(default=None)
     max_chunks: Optional[int] = field(default=None)
+
+    @property
+    def modules(self) -> list[BaseRagModule]:
+        ms = []
+
+        ms.extend(self.retrieval_modules)
+
+        if self.rerank_module is not None:
+            ms.append(self.rerank_module)
+
+        return ms
 
     def run(self, context: RagContext) -> RagContext:
         logging.info(f"RetrievalStage: running {len(self.retrieval_modules)} retrieval modules in parallel")

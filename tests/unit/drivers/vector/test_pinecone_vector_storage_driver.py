@@ -34,7 +34,7 @@ class TestPineconeVectorStorageDriver:
     def test_upsert_text_artifact(self, driver):
         artifact = TextArtifact("foo")
 
-        assert driver.upsert_text_artifact(artifact) == utils.str_to_hash(artifact.value)
+        assert driver.upsert_text_artifact(artifact) == driver._get_default_vector_id("foo")
 
     def test_upsert_vector(self, driver):
         assert driver.upsert_vector([0, 1, 2], vector_id="foo") == "foo"

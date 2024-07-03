@@ -39,17 +39,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RAG stages:
     - `QueryRagStage` for parsing and expanding queries.
     - `RetrievalRagStage` for retrieving content.
-    - `GenerationRagStage` for augmenting and generating outputs.
+    - `ResponseRagStage` for augmenting and generating outputs.
   - RAG modules:
-    - Query:
-      - `RelatedQueryGenerationRagModule` for generating related queries.
     - Retrieval:
-      - `TextRetrievalRagModule` for retrieving text chunks.
-      - `TextRerankRagModule` for re-ranking retrieved results.
-    - Generation:
-      - `MetadataGenerationRagModule` for appending metadata.
-      - `RulesetsGenerationRagModule` for appending rulesets.
-      - `PromptGenerationRagModule` for generating responses based on retrieved text chunks.
+      - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
+      - `TextChunksRerankRagModule` for re-ranking retrieved results.
+    - Response:
+      - `MetadataBeforeResponseRagModule` for appending metadata.
+      - `RulesetsBeforeResponseRagModule` for appending rulesets.
+      - `PromptResponseRagModule` for generating responses based on retrieved text chunks.
+      - `TextChunksResponseRagModule` for responding with retrieved text chunks.
 - `RagClient` tool for exposing `RagEngines` to LLM agents.
 - `RagTask` task for including `RagEngines` in any structure.
 - Rerank drivers:
