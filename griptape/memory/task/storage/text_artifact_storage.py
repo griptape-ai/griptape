@@ -21,8 +21,8 @@ class TextArtifactStorage(BaseArtifactStorage):
 
     @rag_engine.validator  # pyright: ignore
     def validate_rag_engine(self, _, rag_engine: str) -> None:
-        if self.rag_engine is not None and self.retrieval_rag_module_name is None:
-            raise ValueError("You have to set retrieval_rag_module_name if rag_engine is set")
+        if rag_engine is not None and self.retrieval_rag_module_name is None:
+            raise ValueError("You have to set retrieval_rag_module_name if rag_engine is provided")
 
     def can_store(self, artifact: BaseArtifact) -> bool:
         return isinstance(artifact, TextArtifact)
@@ -44,13 +44,16 @@ class TextArtifactStorage(BaseArtifactStorage):
 
     def query(self, namespace: str, query: str, metadata: Any = None) -> BaseArtifact:
         if self.rag_engine is None:
-            raise ValueError("RAG engine is not set.")
+            raise ValueError("rag_engine is not set")
+
+        if self.retrieval_rag_module_name is None:
+            raise ValueError("retrieval_rag_module_name is not set")
 
         result = self.rag_engine.process(
             RagContext(
                 query=query,
                 module_params={
-                    self.retrieval_rag_module_name: {  # pyright: ignore
+                    self.retrieval_rag_module_name: {
                         "query_params": {
                             "namespace": namespace,
                             "metadata": None if metadata is None else str(metadata),
