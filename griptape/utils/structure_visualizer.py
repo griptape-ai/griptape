@@ -1,5 +1,6 @@
 from __future__ import annotations
 import base64
+import hashlib
 
 from attrs import define, field
 from typing import TYPE_CHECKING
@@ -36,7 +37,10 @@ class StructureVisualizer:
 
     def __render_task(self, task: BaseTask) -> str:
         if task.children:
-            children = " & ".join([f"'{child.id}'" for child in task.children])
-            return f"'{task.id}'--> {children};"
+            children = " & ".join([f"{self.__get_id(child.id)}({child.id})" for child in task.children])
+            return f"{self.__get_id(task.id)}({task.id})--> {children};"
         else:
-            return f"'{task.id}';"
+            return f"{self.__get_id(task.id)}({task.id});"
+
+    def __get_id(self, string: str) -> str:
+        return hashlib.md5(string.encode()).hexdigest()[:8]
