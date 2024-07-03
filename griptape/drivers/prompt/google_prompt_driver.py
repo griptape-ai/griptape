@@ -82,7 +82,6 @@ class GooglePromptDriver(BasePromptDriver):
 
         prompt_token_count = None
         for chunk in response:
-            print(chunk)
             usage_metadata = chunk.usage_metadata
 
             content = (
