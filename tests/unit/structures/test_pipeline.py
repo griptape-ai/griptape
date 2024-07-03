@@ -277,18 +277,18 @@ class TestPipeline:
 
         pipeline.add_tasks(task1, task2)
 
-        assert len(task1.prompt_stack.inputs) == 2
-        assert len(task2.prompt_stack.inputs) == 2
+        assert len(task1.prompt_stack.messages) == 2
+        assert len(task2.prompt_stack.messages) == 2
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
-        assert len(task2.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.messages) == 3
+        assert len(task2.prompt_stack.messages) == 3
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
-        assert len(task2.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.messages) == 3
+        assert len(task2.prompt_stack.messages) == 3
 
     def test_prompt_stack_with_memory(self):
         pipeline = Pipeline(prompt_driver=MockPromptDriver())
@@ -298,18 +298,18 @@ class TestPipeline:
 
         pipeline.add_tasks(task1, task2)
 
-        assert len(task1.prompt_stack.inputs) == 2
-        assert len(task2.prompt_stack.inputs) == 2
+        assert len(task1.prompt_stack.messages) == 2
+        assert len(task2.prompt_stack.messages) == 2
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.inputs) == 5
-        assert len(task2.prompt_stack.inputs) == 5
+        assert len(task1.prompt_stack.messages) == 5
+        assert len(task2.prompt_stack.messages) == 5
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.inputs) == 7
-        assert len(task2.prompt_stack.inputs) == 7
+        assert len(task1.prompt_stack.messages) == 7
+        assert len(task2.prompt_stack.messages) == 7
 
     def test_text_artifact_token_count(self):
         text = "foobar"

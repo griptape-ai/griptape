@@ -10,7 +10,7 @@ from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -65,16 +65,16 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         stack = PromptStack()
         memory = self.structure.conversation_memory
 
-        stack.add_system_input(self.generate_system_template(self))
+        stack.add_system_message(self.generate_system_template(self))
 
-        stack.add_user_input(self.input.to_text())
+        stack.add_user_message(self.input)
 
         if self.output:
-            stack.add_assistant_input(self.output.to_text())
+            stack.add_assistant_message(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_assistant_input(self.generate_assistant_subtask_template(s))
-                stack.add_user_input(self.generate_user_subtask_template(s))
+                stack.add_assistant_message(self.generate_assistant_subtask_template(s))
+                stack.add_user_message(self.generate_user_subtask_template(s))
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
@@ -130,7 +130,9 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         self.subtasks.clear()
 
-        self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
+        if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
+            self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
+
         subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
 
         while True:

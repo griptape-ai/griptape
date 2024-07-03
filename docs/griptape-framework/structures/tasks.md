@@ -88,6 +88,31 @@ agent.run("Write me a haiku")
                              Day begins anew.
 ```
 
+If the model supports it, you can also pass image inputs:
+
+```python
+from griptape.structures import Agent
+from griptape.loaders import ImageLoader
+
+agent = Agent()
+with open("tests/resources/mountain.jpg", "rb") as f:
+    image_artifact = ImageLoader().load(f.read())
+
+agent.run(["What's in this image?", image_artifact])
+```
+
+```
+[06/21/24 10:01:08] INFO     PromptTask c229d1792da34ab1a7c45768270aada9
+                             Input: What's in this image?
+
+                             Media, type: image/jpeg, size: 82351 bytes
+[06/21/24 10:01:12] INFO     PromptTask c229d1792da34ab1a7c45768270aada9
+                             Output: The image depicts a stunning mountain landscape at sunrise or sunset. The sun is partially visible on the left side of the image,
+                             casting a warm golden light over the scene. The mountains are covered with snow at their peaks, and a layer of clouds or fog is settled in the
+                             valleys between them. The sky is a mix of warm colors near the horizon, transitioning to cooler blues higher up, with some scattered clouds
+                             adding texture to the sky. The overall scene is serene and majestic, highlighting the natural beauty of the mountainous terrain.
+```
+
 ## Toolkit Task
 
 To use [Griptape Tools](../../griptape-framework/tools/index.md), use a [Toolkit Task](../../reference/griptape/tasks/toolkit_task.md).
@@ -516,7 +541,7 @@ engine = VariationImageGenerationEngine(
 with open("tests/resources/mountain.png", "rb") as f:
     image_artifact = ImageLoader().load(f.read())
 
-# Instatiate a pipeline.
+# Instantiate a pipeline.
 pipeline = Pipeline()
 
 # Add a VariationImageGenerationTask to the pipeline.
@@ -740,7 +765,7 @@ def build_researcher():
 
 def build_writer():
     writer = Agent(
-        input_template="Instructions: {{args[0]}}\nContext: {{args[1]}}",
+        input="Instructions: {{args[0]}}\nContext: {{args[1]}}",
         rulesets=[
             Ruleset(
                 name="Position",

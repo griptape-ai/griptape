@@ -406,3 +406,65 @@ vector_store_driver.upsert_text_artifacts(
 result = vector_store_driver.query("What is griptape?")
 print(result)
 ```
+
+### Qdrant
+
+!!! info
+    This driver requires the `drivers-vector-qdrant` [extra](../index.md#extras).
+
+The QdrantVectorStoreDriver supports the [Qdrant vector database](https://qdrant.tech/).
+
+Here is an example of how the driver can be used to query information in a Qdrant collection:
+
+```python
+import os
+from griptape.drivers import QdrantVectorStoreDriver, HuggingFaceHubEmbeddingDriver
+from griptape.tokenizers import HuggingFaceTokenizer
+from griptape.loaders import WebLoader
+
+# Set up environment variables
+embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
+host = os.environ["QDRANT_CLUSTER_ENDPOINT"]
+huggingface_token = os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"]
+
+# Initialize HuggingFace embedding driver
+embedding_driver = HuggingFaceHubEmbeddingDriver(
+    api_token=huggingface_token,
+    model=embedding_model_name,
+    tokenizer=HuggingFaceTokenizer(model=embedding_model_name, max_output_tokens=512),
+)
+
+# Initialize Qdrant vector store driver
+vector_store_driver = QdrantVectorStoreDriver(
+    url=host,
+    collection_name="griptape",
+    content_payload_key="content",
+    embedding_driver=embedding_driver,
+    api_key=os.environ["QDRANT_CLUSTER_API_KEY"],
+)
+
+# Load data from the website
+artifacts = WebLoader().load("https://www.griptape.ai")
+
+# Encode text to get embeddings
+embeddings = embedding_driver.embed_text_artifact(artifacts[0])
+
+# Recreate Qdrant collection
+vector_store_driver.client.recreate_collection(
+    collection_name=vector_store_driver.collection_name,
+    vectors_config={
+        "size": len(embeddings),
+        "distance": vector_store_driver.distance
+    },
+)
+
+# Upsert vector into Qdrant
+vector_store_driver.upsert_vector(
+    vector=embeddings,
+    vector_id=str(artifacts[0].id),
+    content=artifacts[0].value
+)
+
+print("Vectors successfully inserted into Qdrant.")
+
+```
