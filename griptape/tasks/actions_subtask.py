@@ -65,10 +65,15 @@ class ActionsSubtask(BaseTask):
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
 
-        if isinstance(self.input, TextArtifact):
-            self.__init_from_prompt(self.input.to_text())
-        else:
-            self.__init_from_artifacts(self.input)
+        try:
+            if isinstance(self.input, TextArtifact):
+                self.__init_from_prompt(self.input.to_text())
+            else:
+                self.__init_from_artifacts(self.input)
+        except Exception as e:
+            self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
+
+            self.output = ErrorArtifact(f"Action input parsing error: {e}", exception=e)
 
     def before_run(self) -> None:
         self.structure.publish_event(
@@ -198,7 +203,7 @@ class ActionsSubtask(BaseTask):
         self.__parse_actions(actions_matches)
 
         # If there are no actions to take but an answer is provided, set the answer as the output.
-        if len(self.actions) == 0 and self.output is None and len(answer_matches) > 0:
+        if len(self.actions) == 0 and self.output is None and answer_matches:
             self.output = TextArtifact(answer_matches[-1])
 
     def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
@@ -226,7 +231,7 @@ class ActionsSubtask(BaseTask):
             self.output = ErrorArtifact(f"Actions JSON decoding error: {e}", exception=e)
 
     def __process_action_object(self, action_object: dict) -> ActionArtifact.Action:
-        # Load action name; throw exception if the key is not present
+        # Load action tag; throw exception if the key is not present
         action_tag = action_object["tag"]
 
         # Load action name; throw exception if the key is not present

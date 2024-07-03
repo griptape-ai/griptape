@@ -1,4 +1,5 @@
 import json
+from griptape.artifacts.error_artifact import ErrorArtifact
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.structures import Agent
@@ -87,7 +88,6 @@ class TestActionsSubtask:
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(invalid_input))
-        json_dict = json.loads(subtask.actions_to_json())
 
-        assert json_dict[0]["name"] == "error"
-        assert "Action input parsing error" in json_dict[0]["input"]["error"]
+        assert isinstance(subtask.output, ErrorArtifact)
+        assert "Actions JSON decoding error" in subtask.output.value
