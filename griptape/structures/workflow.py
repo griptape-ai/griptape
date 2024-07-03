@@ -87,20 +87,22 @@ class Workflow(Structure):
     def try_run(self, *args) -> Workflow:
         exit_loop = False
 
-        while not self.is_finished() and not exit_loop:
+        while not self.is_complete() and not exit_loop:
             futures_list = {}
-            ordered_tasks = self.order_tasks()
+            executable_tasks = [*filter(lambda task: task.can_execute(), self.order_tasks())]
 
-            for task in ordered_tasks:
-                if task.can_execute():
-                    future = self.futures_executor_fn().submit(task.execute)
-                    futures_list[future] = task
+            if not executable_tasks:
+                exit_loop = True
+                break
+
+            for task in executable_tasks:
+                future = self.futures_executor_fn().submit(task.execute)
+                futures_list[future] = task
 
             # Wait for all tasks to complete
             for future in futures.as_completed(futures_list):
                 if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
                     exit_loop = True
-
                     break
 
         if self.conversation_memory and self.output is not None:

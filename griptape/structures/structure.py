@@ -211,6 +211,9 @@ class Structure(ABC, EventPublisherMixin):
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)
 
+    def is_complete(self) -> bool:
+        return all(s.is_complete() for s in self.tasks)
+
     def is_executing(self) -> bool:
         return any(s for s in self.tasks if s.is_executing())
 

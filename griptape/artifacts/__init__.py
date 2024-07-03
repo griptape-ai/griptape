@@ -12,6 +12,8 @@ from .image_artifact import ImageArtifact
 from .audio_artifact import AudioArtifact
 from .action_artifact import ActionArtifact
 from .generic_artifact import GenericArtifact
+from .control_flow_artifact import ControlFlowArtifact
+from .task_artifact import TaskArtifact
 
 
 __all__ = [
@@ -29,4 +31,6 @@ __all__ = [
     "AudioArtifact",
     "ActionArtifact",
     "GenericArtifact",
+    "ControlFlowArtifact",
+    "TaskArtifact",
 ]

@@ -40,7 +40,12 @@ class StructureVisualizer:
     def __render_task(self, task: BaseTask) -> str:
         if task.children:
             children = " & ".join([f"{self.__get_id(child.id)}({child.id})" for child in task.children])
-            return f"{self.__get_id(task.id)}({task.id})--> {children};"
+            from griptape.tasks import ChoiceControlFlowTask
+
+            if isinstance(task, ChoiceControlFlowTask):
+                return f"{self.__get_id(task.id)}{{{task.id}}}-.-> {children};"
+            else:
+                return f"{self.__get_id(task.id)}({task.id})--> {children};"
         else:
             return f"{self.__get_id(task.id)}({task.id});"
 
