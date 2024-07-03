@@ -215,6 +215,7 @@ exclude = [
 pythonVersion = "3.9"
 reportOptionalMemberAccess = "none"
 reportIncompatibleVariableOverride = "none" # see thread: https://github.com/microsoft/pyright/issues/5933 
+enableExperimentalFeatures = true # https://github.com/microsoft/pyright/issues/7713
 
 [tool.pytest_env]
 OPENAI_API_KEY = {value = "api-key", skip_if_set = true}
