@@ -1,12 +1,11 @@
 import pytest
-
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import PromptResponseRagModule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-class TestPromptResponseRagModule:
+class TestCitationPromptResponseRagModule:
     @pytest.fixture
     def module(self):
         return PromptResponseRagModule(prompt_driver=MockPromptDriver())
