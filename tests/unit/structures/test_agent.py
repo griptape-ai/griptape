@@ -166,15 +166,15 @@ class TestAgent:
 
         agent.add_task(task1)
 
-        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task1.prompt_stack.messages) == 2
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.messages) == 3
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.messages) == 3
 
     def test_prompt_stack_with_memory(self):
         agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
@@ -183,15 +183,15 @@ class TestAgent:
 
         agent.add_task(task1)
 
-        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task1.prompt_stack.messages) == 2
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 5
+        assert len(task1.prompt_stack.messages) == 5
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 7
+        assert len(task1.prompt_stack.messages) == 7
 
     def test_run(self):
         task = PromptTask("test")
@@ -238,7 +238,7 @@ class TestAgent:
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
-        assert storage.rag_engine.generation_stage.generation_module.prompt_driver == prompt_driver
+        assert storage.rag_engine.response_stage.response_module.prompt_driver == prompt_driver
         assert (
             storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
             == embedding_driver

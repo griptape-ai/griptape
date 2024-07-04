@@ -87,9 +87,13 @@ class Workflow(Structure):
             if task.id not in parent_task.child_ids:
                 parent_task.child_ids.append(task.id)
 
-            parent_index = self.tasks.index(parent_task)
-            if parent_index > last_parent_index:
-                last_parent_index = parent_index
+            try:
+                parent_index = self.tasks.index(parent_task)
+            except ValueError:
+                raise ValueError(f"Parent task {parent_task.id} not found in workflow.")
+            else:
+                if parent_index > last_parent_index:
+                    last_parent_index = parent_index
 
         # Insert the new task once, just after the last parent task
         self.tasks.insert(last_parent_index + 1, task)
@@ -116,12 +120,7 @@ class Workflow(Structure):
                     break
 
         if self.conversation_memory and self.output is not None:
-            if isinstance(self.input_task.input, tuple):
-                input_text = self.input_task.input[0].to_text()
-            else:
-                input_text = self.input_task.input.to_text()
-
-            run = Run(input=input_text, output=self.output_task.output.to_text())
+            run = Run(input=self.input_task.input, output=self.output)
 
             self.conversation_memory.add_run(run)
 

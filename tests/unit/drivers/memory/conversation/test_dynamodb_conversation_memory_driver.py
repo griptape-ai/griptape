@@ -108,8 +108,8 @@ class TestDynamoDbConversationMemoryDriver:
 
         assert new_memory.type == "ConversationMemory"
         assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input == "test"
-        assert new_memory.runs[0].output == "mock output"
+        assert new_memory.runs[0].input.value == "test"
+        assert new_memory.runs[0].output.value == "mock output"
 
     def test_load_with_sort_key(self):
         prompt_driver = MockPromptDriver()
@@ -134,5 +134,5 @@ class TestDynamoDbConversationMemoryDriver:
 
         assert new_memory.type == "ConversationMemory"
         assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input == "test"
-        assert new_memory.runs[0].output == "mock output"
+        assert new_memory.runs[0].input.value == "test"
+        assert new_memory.runs[0].output.value == "mock output"

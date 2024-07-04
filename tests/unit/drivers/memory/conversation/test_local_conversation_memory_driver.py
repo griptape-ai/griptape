@@ -52,8 +52,8 @@ class TestLocalConversationMemoryDriver:
 
         assert new_memory.type == "ConversationMemory"
         assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input == "test"
-        assert new_memory.runs[0].output == "mock output"
+        assert new_memory.runs[0].input.value == "test"
+        assert new_memory.runs[0].output.value == "mock output"
         assert new_memory.max_runs == 5
 
     def test_autoload(self):
@@ -71,8 +71,8 @@ class TestLocalConversationMemoryDriver:
 
         assert autoloaded_memory.type == "ConversationMemory"
         assert len(autoloaded_memory.runs) == 2
-        assert autoloaded_memory.runs[0].input == "test"
-        assert autoloaded_memory.runs[0].output == "mock output"
+        assert autoloaded_memory.runs[0].input.value == "test"
+        assert autoloaded_memory.runs[0].output.value == "mock output"
 
     def __delete_file(self, file_path):
         try:

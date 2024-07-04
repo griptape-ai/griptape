@@ -10,21 +10,23 @@
 ### RAG Stages
 - `QueryRagStage` is for parsing and expanding queries.
 - `RetrievalRagStage` is for retrieving content.
-- `GenerationRagStage` is for augmenting and generating outputs.
+- `ResponseRagStage` is for augmenting and generating outputs.
 
 ### RAG Modules
 
 #### Query
-- `RelatedQueryGenerationRagModule` is for generating related queries.
+
+No modules implemented yet.
 
 #### Retrieval
 - `TextRetrievalRagModule` is for retrieving text chunks.
-- `TextRerankRagModule` is for re-ranking retrieved results.
+- `TextChunksRerankRagModule` is for re-ranking retrieved results.
 
-#### Generation
-- `MetadataGenerationRagModule` is for appending metadata.
-- `RulesetsGenerationRagModule` is for appending rulesets.
-- `PromptGenerationRagModule` is for generating responses based on retrieved text chunks.
+#### Response
+- `MetadataBeforeResponseRagModule` is for appending metadata.
+- `RulesetsBeforeResponseRagModule` is for appending rulesets.
+- `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
+- `TextChunksResponseRagModule` for responding with retrieved text chunks.
 
 ### Example
 
@@ -32,8 +34,8 @@
 from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 
 vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
@@ -46,15 +48,17 @@ vector_store.upsert_text_artifacts({"griptape": artifacts})
 engine = RagEngine(
     retrieval_stage=RetrievalRagStage(
         retrieval_modules=[
-            TextRetrievalRagModule(
-                namespace="griptape",
+            VectorStoreRetrievalRagModule(
                 vector_store_driver=vector_store,
-                top_n=20
+                query_params={
+                    "namespace": "griptape",
+                    "top_n": 20
+                }
             )
         ]
     ),
-    generation_stage=GenerationRagStage(
-        generation_module=PromptGenerationRagModule(
+    response_stage=ResponseRagStage(
+        response_module=PromptResponseRagModule(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
         )
     )

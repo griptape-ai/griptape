@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.utils import PromptStack, import_optional_dependency
+from griptape.common import PromptStack, Message, DeltaMessage, TextDeltaMessageContent
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from huggingface_hub import InferenceClient
@@ -47,37 +47,54 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
+    def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
         )
+        input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
+        output_tokens = len(self.tokenizer.tokenizer.encode(response))
 
-        return TextArtifact(value=response)
+        return Message(
+            content=response,
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
+        )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
             prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
         )
 
-        for token in response:
-            yield TextArtifact(value=token)
+        input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
 
-    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
-        return {"role": prompt_input.role, "content": prompt_input.content}
+        full_text = ""
+        for token in response:
+            full_text += token
+            yield DeltaMessage(content=TextDeltaMessageContent(token, index=0))
+
+        output_tokens = len(self.tokenizer.tokenizer.encode(full_text))
+        yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens))
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
+    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
+        messages = []
+        for message in prompt_stack.messages:
+            if len(message.content) == 1:
+                messages.append({"role": message.role, "content": message.to_text()})
+            else:
+                raise ValueError("Invalid input content length.")
+
+        return messages
+
     def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
-        tokens = self.tokenizer.tokenizer.apply_chat_template(
-            [self._prompt_stack_input_to_message(i) for i in prompt_stack.inputs],
-            add_generation_prompt=True,
-            tokenize=True,
-        )
+        messages = self._prompt_stack_to_messages(prompt_stack)
+        tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):
             return tokens

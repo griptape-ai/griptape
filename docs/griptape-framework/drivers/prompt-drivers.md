@@ -14,7 +14,7 @@ agent = Agent(
     config=StructureConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.3),
     ),
-    input_template="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
+    input="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
     rules=[
         Rule(
             value="Output only the sentiment."
@@ -28,23 +28,23 @@ agent.run("I loved the new Batman movie!")
 Or use them independently:
 
 ```python
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
 
 stack = PromptStack()
 
-stack.add_system_input(
+stack.add_system_message(
     "You will be provided with Python code, and your task is to calculate its time complexity."
 )
-stack.add_user_input(
-"""
-def foo(n, k):
-    accum = 0
-    for i in range(n):
-        for l in range(k):
-            accum += i
-    return accum
-"""
+stack.add_user_message(
+    """
+    def foo(n, k):
+        accum = 0
+        for i in range(n):
+            for l in range(k):
+                accum += i
+        return accum
+    """
 )
 
 result = OpenAiChatPromptDriver(model="gpt-3.5-turbo-16k", temperature=0).run(stack)
@@ -57,7 +57,7 @@ print(result.value)
 Griptape offers the following Prompt Drivers for interacting with LLMs.
 
 !!! warning
-    When overriding a default Prompt Driver, take care to ensure you've updated the Structure's configured Embedding Driver as well. If Task Memory isn't needed, you can avoid compatability issues by setting `task_memory=None` to disable Task Memory in your Structure.
+    When overriding a default Prompt Driver, take care to ensure you've updated the Structure's configured Embedding Driver as well. If Task Memory isn't needed, you can avoid compatibility issues by setting `task_memory=None` to disable Task Memory in your Structure.
 
 ### OpenAI Chat
 
@@ -80,7 +80,7 @@ agent = Agent(
             seed=42,
         )
     ),
-    input_template="You will be provided with a description of a mood, and your task is to generate the CSS code for a color that matches it. Description: {{ args[0] }}",
+    input="You will be provided with a description of a mood, and your task is to generate the CSS code for a color that matches it. Description: {{ args[0] }}",
     rules=[
         Rule(
             value='Write your output in json with a single key called "css_code".'

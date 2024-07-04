@@ -4,8 +4,8 @@ This example demonstrates how to vectorize a PDF of the [Attention Is All You Ne
 import requests
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import TextRetrievalRagModule, PromptGenerationRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, GenerationRagStage
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.loaders import PdfLoader
 from griptape.structures import Agent
 from griptape.tools import RagClient
@@ -19,15 +19,18 @@ vector_store = LocalVectorStoreDriver(
 engine = RagEngine(
     retrieval_stage=RetrievalRagStage(
         retrieval_modules=[
-            TextRetrievalRagModule(
-                namespace=namespace,
+            VectorStoreRetrievalRagModule(
                 vector_store_driver=vector_store,
-                top_n=20
+                query_params={
+                    "namespace": namespace,
+                    "top_n": 20
+                    
+                }
             )
         ]
     ),
-    generation_stage=GenerationRagStage(
-        generation_module=PromptGenerationRagModule(
+    response_stage=ResponseRagStage(
+        response_module=PromptResponseRagModule(
             prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
         )
     )
