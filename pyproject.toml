@@ -200,7 +200,22 @@ line-length = 120
 skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "TID251"]
+select = [
+    "E", # pycodestyle
+    "F", # Pyflakes
+    "UP", # pyupgrade
+    "B", # flake8-bugbear
+    "SIM", # flake8-simplify
+    "TID251", # banned-api
+    "T201", # print
+]
+ignore = [
+    "UP007", # non-pep604-annotation
+    "E501", # line-too-long
+    "B024", # abstract-base-class-without-abstract-method
+    "B009", # get-attr-with-constant
+    "B010", # set-attr-with-constant
+]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "attr".msg = "The attr module is deprecated, use attrs instead."

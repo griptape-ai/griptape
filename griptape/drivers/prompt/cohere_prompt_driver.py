@@ -79,10 +79,7 @@ class CoherePromptDriver(BasePromptDriver):
         )
 
         system_messages = prompt_stack.system_messages
-        if system_messages:
-            preamble = system_messages[0].to_text()
-        else:
-            preamble = None
+        preamble = system_messages[0].to_text() if system_messages else None
 
         return {
             "message": user_message,
