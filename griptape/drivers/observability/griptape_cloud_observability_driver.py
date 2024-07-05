@@ -41,6 +41,14 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
         kw_only=True,
     )
 
+    @staticmethod
+    def format_trace_id(trace_id: int) -> str:
+        return str(UUID(int=trace_id))
+
+    @staticmethod
+    def format_span_id(span_id: int) -> str:
+        return str(UUID(int=span_id))
+
     @define
     class SpanExporter(SpanExporter):
         base_url: str = field(kw_only=True)
@@ -52,9 +60,11 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
             url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/spans")
             payload = [
                 {
-                    "trace_id": str(UUID(int=span.context.trace_id)),
-                    "span_id": str(UUID(int=span.context.span_id)),
-                    "parent_id": str(UUID(int=span.parent.span_id)) if span.parent else None,
+                    "trace_id": GriptapeCloudObservabilityDriver.format_trace_id(span.context.trace_id),
+                    "span_id": GriptapeCloudObservabilityDriver.format_span_id(span.context.span_id),
+                    "parent_id": GriptapeCloudObservabilityDriver.format_span_id(span.parent.span_id)
+                    if span.parent
+                    else None,
                     "name": span.name,
                     "start_time": ns_to_iso_str(span.start_time) if span.start_time else None,
                     "end_time": ns_to_iso_str(span.end_time) if span.end_time else None,
@@ -85,4 +95,4 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
         span = get_current_span()
         if span is INVALID_SPAN:
             return None
-        return str(UUID(int=span.get_span_context().span_id))
+        return GriptapeCloudObservabilityDriver.format_span_id(span.get_span_context().span_id)
