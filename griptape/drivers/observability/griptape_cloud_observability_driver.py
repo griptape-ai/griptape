@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Optional
 import requests
 
 from uuid import UUID
@@ -80,7 +81,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
             )
 
-    def get_span_id(self) -> str | None:
+    def get_span_id(self) -> Optional[str]:
         span = get_current_span()
         if span is INVALID_SPAN:
             return None
