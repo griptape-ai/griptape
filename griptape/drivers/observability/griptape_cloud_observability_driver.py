@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 import os
 import requests
 
+from uuid import UUID
 from collections.abc import Sequence
 
 from attrs import define, Factory, field
 from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
-from opentelemetry.trace import format_trace_id, format_span_id
+from opentelemetry.trace import get_current_span, INVALID_SPAN
 from opentelemetry.sdk.trace import SpanProcessor, ReadableSpan
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
@@ -48,9 +51,9 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
             url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/spans")
             payload = [
                 {
-                    "trace_id": format_trace_id(span.context.trace_id),
-                    "span_id": format_span_id(span.context.span_id),
-                    "parent_id": format_span_id(span.parent.span_id) if span.parent else None,
+                    "trace_id": str(UUID(int=span.context.trace_id)),
+                    "span_id": str(UUID(int=span.context.span_id)),
+                    "parent_id": str(UUID(int=span.parent.span_id)) if span.parent else None,
                     "name": span.name,
                     "start_time": ns_to_iso_str(span.start_time) if span.start_time else None,
                     "end_time": ns_to_iso_str(span.end_time) if span.end_time else None,
@@ -76,3 +79,9 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
             )
+
+    def get_span_id(self) -> str | None:
+        span = get_current_span()
+        if span is INVALID_SPAN:
+            return None
+        return str(UUID(int=span.get_span_context().span_id))
