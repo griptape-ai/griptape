@@ -205,8 +205,8 @@ class TestGriptapeCloudObservabilityDriverSpanExporter:
             url="http://base-url:1234/api/structure-runs/structure-run-id/spans",
             json=[
                 {
-                    "trace_id": "00000000000000000000000000000001",
-                    "span_id": "0000000000000002",
+                    "trace_id": "00000000-0000-0000-0000-000000000001",
+                    "span_id": "00000000-0000-0000-0000-000000000002",
                     "parent_id": None,
                     "name": "main",
                     "start_time": "1970-01-01T00:00:00.000003Z",
@@ -216,9 +216,9 @@ class TestGriptapeCloudObservabilityDriverSpanExporter:
                     "events": [],
                 },
                 {
-                    "trace_id": "00000000000000000000000000000001",
-                    "span_id": "0000000000000003",
-                    "parent_id": "0000000000000002",
+                    "trace_id": "00000000-0000-0000-0000-000000000001",
+                    "span_id": "00000000-0000-0000-0000-000000000003",
+                    "parent_id": "00000000-0000-0000-0000-000000000002",
                     "name": "thing-1",
                     "start_time": "1970-01-01T00:00:00.000008Z",
                     "end_time": "1970-01-01T00:00:00.000009Z",
@@ -227,9 +227,9 @@ class TestGriptapeCloudObservabilityDriverSpanExporter:
                     "events": [],
                 },
                 {
-                    "trace_id": "00000000000000000000000000000001",
-                    "span_id": "0000000000000003",
-                    "parent_id": "0000000000000002",
+                    "trace_id": "00000000-0000-0000-0000-000000000001",
+                    "span_id": "00000000-0000-0000-0000-000000000003",
+                    "parent_id": "00000000-0000-0000-0000-000000000002",
                     "name": "thing-2",
                     "start_time": "1970-01-01T00:00:00.000008Z",
                     "end_time": "1970-01-01T00:00:00.000009Z",
