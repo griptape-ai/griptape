@@ -102,7 +102,7 @@ class PromptTask(RuleMixin, BaseTask):
             return self._process_task_input(task_input(self))
         elif isinstance(task_input, BaseArtifact):
             return task_input
-        elif isinstance(task_input, list) or isinstance(task_input, tuple):
+        elif isinstance(task_input, (list, tuple)):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             return self._process_task_input(TextArtifact(task_input))

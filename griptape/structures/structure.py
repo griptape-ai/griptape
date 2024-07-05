@@ -147,15 +147,9 @@ class Structure(ABC):
         if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
 
-            if self.prompt_driver is None:
-                prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
-            else:
-                prompt_driver = self.prompt_driver
+            prompt_driver = OpenAiChatPromptDriver(model="gpt-4o") if self.prompt_driver is None else self.prompt_driver
 
-            if self.embedding_driver is None:
-                embedding_driver = OpenAiEmbeddingDriver()
-            else:
-                embedding_driver = self.embedding_driver
+            embedding_driver = OpenAiEmbeddingDriver() if self.embedding_driver is None else self.embedding_driver
 
             if self.stream is not None:
                 prompt_driver.stream = self.stream
