@@ -69,7 +69,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
         return Message(
-            content=[self.__message_content_to_prompt_stack_content(content) for content in response.content],
+            content=[self.__to_prompt_stack_message_content(content) for content in response.content],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens),
         )
@@ -79,24 +79,14 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         for event in events:
             if event.type == "content_block_delta" or event.type == "content_block_start":
-                yield DeltaMessage(content=self.__message_content_delta_to_prompt_stack_content_delta(event))
+                yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(event))
             elif event.type == "message_start":
                 yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=event.message.usage.input_tokens))
             elif event.type == "message_delta":
                 yield DeltaMessage(usage=DeltaMessage.Usage(output_tokens=event.usage.output_tokens))
 
-    def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
-        return [{"role": self.__to_role(message), "content": self.__to_content(message)} for message in messages]
-
-    def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
-        return (
-            {"tools": self.__to_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
-            if prompt_stack.actions and self.use_native_tools
-            else {}
-        )
-
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        messages = self._prompt_stack_messages_to_messages([i for i in prompt_stack.messages if not i.is_system()])
+        messages = self.__to_anthropic_messages([i for i in prompt_stack.messages if not i.is_system()])
 
         system_messages = prompt_stack.system_messages
         if system_messages:
@@ -112,17 +102,27 @@ class AnthropicPromptDriver(BasePromptDriver):
             "top_k": self.top_k,
             "max_tokens": self.max_tokens,
             "messages": messages,
-            **self._prompt_stack_to_tools(prompt_stack),
+            **(
+                {"tools": self.__to_anthropic_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
+                if prompt_stack.actions and self.use_native_tools
+                else {}
+            ),
             **({"system": system_message} if system_message else {}),
         }
 
-    def __to_role(self, message: Message) -> str:
+    def __to_anthropic_messages(self, messages: list[Message]) -> list[dict]:
+        return [
+            {"role": self.__to_anthropic_role(message), "content": self.__to_anthropic_content(message)}
+            for message in messages
+        ]
+
+    def __to_anthropic_role(self, message: Message) -> str:
         if message.is_assistant():
             return "assistant"
         else:
             return "user"
 
-    def __to_tools(self, tools: list[BaseTool]) -> list[dict]:
+    def __to_anthropic_tools(self, tools: list[BaseTool]) -> list[dict]:
         return [
             {
                 "name": f"{tool.name}_{tool.activity_name(activity)}",
@@ -133,17 +133,22 @@ class AnthropicPromptDriver(BasePromptDriver):
             for activity in tool.activities()
         ]
 
-    def __to_content(self, message: Message) -> str | list[dict]:
-        if all(isinstance(content, TextMessageContent) for content in message.content):
+    def __to_anthropic_content(self, message: Message) -> str | list[dict]:
+        if message.has_all_content_type(TextMessageContent):
             return message.to_text()
         else:
-            return [self.__prompt_stack_content_message_content(content) for content in message.content]
+            return [self.__to_anthropic_message_content(content) for content in message.content]
 
-    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
+    def __to_anthropic_message_content(self, content: BaseMessageContent) -> dict:
         if isinstance(content, TextMessageContent):
-            return self.__artifact_to_message_content(content.artifact)
+            return {"type": "text", "text": content.artifact.value}
         elif isinstance(content, ImageMessageContent):
-            return self.__artifact_to_message_content(content.artifact)
+            artifact = content.artifact
+
+            return {
+                "type": "image",
+                "source": {"type": "base64", "media_type": artifact.mime_type, "data": artifact.base64},
+            }
         elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
@@ -152,9 +157,9 @@ class AnthropicPromptDriver(BasePromptDriver):
             artifact = content.artifact
 
             if isinstance(artifact, ListArtifact):
-                message_content = [self.__artifact_to_message_content(artifact) for artifact in artifact.value]
+                message_content = [self.__to_anthropic_tool_result_content(artifact) for artifact in artifact.value]
             else:
-                message_content = [self.__artifact_to_message_content(artifact)]
+                message_content = [self.__to_anthropic_tool_result_content(artifact)]
 
             return {
                 "type": "tool_result",
@@ -165,24 +170,18 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported prompt content type: {type(content)}")
 
-    def __artifact_to_message_content(self, artifact: BaseArtifact) -> dict:
+    def __to_anthropic_tool_result_content(self, artifact: BaseArtifact) -> dict:
         if isinstance(artifact, ImageArtifact):
             return {
                 "type": "image",
                 "source": {"type": "base64", "media_type": artifact.mime_type, "data": artifact.base64},
             }
-        elif (
-            isinstance(artifact, TextArtifact)
-            or isinstance(artifact, ErrorArtifact)
-            or isinstance(artifact, InfoArtifact)
-        ):
-            return {"type": "text", "text": artifact.to_text()}
-        elif isinstance(artifact, ErrorArtifact):
+        elif isinstance(artifact, (TextArtifact, ErrorArtifact, InfoArtifact)):
             return {"type": "text", "text": artifact.to_text()}
         else:
-            raise ValueError(f"Unsupported artifact type: {type(artifact)}")
+            raise ValueError(f"Unsupported tool result artifact type: {type(artifact)}")
 
-    def __message_content_to_prompt_stack_content(self, content: ContentBlock) -> BaseMessageContent:
+    def __to_prompt_stack_message_content(self, content: ContentBlock) -> BaseMessageContent:
         if content.type == "text":
             return TextMessageContent(TextArtifact(content.text))
         elif content.type == "tool_use":
@@ -196,7 +195,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type: {content.type}")
 
-    def __message_content_delta_to_prompt_stack_content_delta(
+    def __to_prompt_stack_delta_message_content(
         self, event: ContentBlockDeltaEvent | ContentBlockStartEvent
     ) -> BaseDeltaMessageContent:
         if event.type == "content_block_start":

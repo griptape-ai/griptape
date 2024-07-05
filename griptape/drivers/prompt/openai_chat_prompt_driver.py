@@ -89,7 +89,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             message = result.choices[0].message
 
             return Message(
-                content=self.__message_to_prompt_stack_content(message),
+                content=self.__to_prompt_stack_message_content(message),
                 role=Message.ASSISTANT_ROLE,
                 usage=Message.Usage(
                     input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
@@ -115,61 +115,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     choice = chunk.choices[0]
                     delta = choice.delta
 
-                    yield DeltaMessage(content=self.__message_delta_to_prompt_stack_content_delta(delta))
+                    yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(delta))
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
-
-    def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
-        messages = []
-
-        for message in prompt_stack.messages:
-            if message.is_text():
-                messages.append({"role": message.role, "content": message.to_text()})
-            elif message.has_action_results():
-                # Action results need to be expanded into separate messages.
-                for action_result in message.content:
-                    if isinstance(action_result, ActionResultMessageContent):
-                        messages.append(
-                            {
-                                "role": self.__to_role(message),
-                                "content": self.__prompt_stack_content_message_content(action_result),
-                                "tool_call_id": action_result.action.tag,
-                            }
-                        )
-            else:
-                # Action calls are attached to the assistant message that originally generated them.
-                messages.append(
-                    {
-                        "role": self.__to_role(message),
-                        "content": [
-                            self.__prompt_stack_content_message_content(content)
-                            for content in message.content
-                            if not isinstance(  # Action calls do not belong in the content
-                                content, ActionCallMessageContent
-                            )
-                        ],
-                        **(
-                            {
-                                "tool_calls": [
-                                    self.__prompt_stack_content_message_content(action_call)
-                                    for action_call in message.content
-                                    if isinstance(action_call, ActionCallMessageContent)
-                                ]
-                            }
-                            if message.has_action_calls()
-                            else {}
-                        ),
-                    }
-                )
-
-        return messages
-
-    def _prompt_stack_to_tools(self, prompt_stack: PromptStack) -> dict:
-        return (
-            {"tools": self.__to_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
-            if prompt_stack.actions and self.use_native_tools
-            else {}
-        )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
@@ -177,7 +125,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "user": self.user,
             "seed": self.seed,
-            **self._prompt_stack_to_tools(prompt_stack),
+            **(
+                {"tools": self.__to_openai_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
+                if prompt_stack.actions and self.use_native_tools
+                else {}
+            ),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
         }
@@ -187,24 +139,73 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             # JSON mode still requires a system message instructing the LLM to output JSON.
             prompt_stack.add_system_message("Provide your response as a valid JSON object.")
 
-        messages = self._prompt_stack_to_messages(prompt_stack)
+        messages = self.__to_openai_messages(prompt_stack.messages)
 
         params["messages"] = messages
 
         return params
 
-    def __to_role(self, message: Message) -> str:
+    def __to_openai_messages(self, messages: list[Message]) -> list[dict]:
+        openai_messages = []
+
+        for message in messages:
+            if message.is_text():
+                openai_messages.append({"role": message.role, "content": message.to_text()})
+            elif message.has_any_content_type(ActionResultMessageContent):
+                # Action results need to be expanded into separate messages.
+                openai_messages.extend(
+                    [
+                        {
+                            "role": self.__to_openai_role(message),
+                            "content": self.__to_openai_message_content(action_result),
+                            "tool_call_id": action_result.action.tag,
+                        }
+                        for action_result in message.get_content_type(ActionResultMessageContent)
+                    ]
+                )
+            else:
+                # Action calls are attached to the assistant message that originally generated them.
+                action_call_content = []
+                non_action_call_content = []
+                for content in message.content:
+                    if isinstance(content, ActionCallMessageContent):
+                        action_call_content.append(content)
+                    else:
+                        non_action_call_content.append(content)
+
+                openai_messages.append(
+                    {
+                        "role": self.__to_openai_role(message),
+                        "content": [
+                            self.__to_openai_message_content(content)
+                            for content in non_action_call_content  # Action calls do not belong in the content
+                        ],
+                        **(
+                            {
+                                "tool_calls": [
+                                    self.__to_openai_message_content(action_call) for action_call in action_call_content
+                                ]
+                            }
+                            if action_call_content
+                            else {}
+                        ),
+                    }
+                )
+
+        return openai_messages
+
+    def __to_openai_role(self, message: Message) -> str:
         if message.is_system():
             return "system"
         elif message.is_assistant():
             return "assistant"
         else:
-            if message.has_action_results():
+            if message.has_any_content_type(ActionResultMessageContent):
                 return "tool"
             else:
                 return "user"
 
-    def __to_tools(self, tools: list[BaseTool]) -> list[dict]:
+    def __to_openai_tools(self, tools: list[BaseTool]) -> list[dict]:
         return [
             {
                 "function": {
@@ -218,7 +219,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             for activity in tool.activities()
         ]
 
-    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> str | dict:
+    def __to_openai_message_content(self, content: BaseMessageContent) -> str | dict:
         if isinstance(content, TextMessageContent):
             return {"type": "text", "text": content.artifact.to_text()}
         elif isinstance(content, ImageMessageContent):
@@ -239,7 +240,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
 
-    def __message_to_prompt_stack_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
+    def __to_prompt_stack_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
         if response.content is not None:
             return [TextMessageContent(TextArtifact(response.content))]
         elif response.tool_calls is not None:
@@ -259,7 +260,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message type: {response}")
 
-    def __message_delta_to_prompt_stack_content_delta(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent:
+    def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent:
         if content_delta.content is not None:
             return TextDeltaMessageContent(content_delta.content)
         elif content_delta.tool_calls is not None:
