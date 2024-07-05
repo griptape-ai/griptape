@@ -6,33 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- `Message` for storing messages in a `PromptStack`. Messages consist of a role, content, and usage.
-- `DeltaMessage` for storing partial messages in a `PromptStack`. Multiple `DeltaMessage` can be combined to form a `Message`.
-- `TextMessageContent` for storing textual content in a `Message`.
-- `ImageMessageContent` for storing image content in a `Message`.
-- Support for adding `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s to `PromptStack`.
-- Support for image inputs to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AmazonBedrockPromptDriver`, `AnthropicPromptDriver`, and `GooglePromptDriver`.
-- Input/output token usage metrics to all Prompt Drivers. 
-- `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
-- Support for storing Artifacts as inputs/outputs in Conversation Memory Runs.
-- `Agent.input` for passing Artifacts as input.
-- Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
-
-### Changed
-- **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.
-- **BREAKING**: Renamed `PromptStack.inputs` to `PromptStack.messages`.
-- **BREAKING**: Moved `PromptStack.USER_ROLE`, `PromptStack.ASSISTANT_ROLE`, and `PromptStack.SYSTEM_ROLE` to `Message`.
-- **BREAKING**: Updated return type of `PromptDriver.try_run` from `TextArtifact` to `Message`.
-- **BREAKING**: Updated return type of `PromptDriver.try_stream` from `Iterator[TextArtifact]` to `Iterator[DeltaMessage]`.
-- **BREAKING**: Removed `BasePromptEvent.token_count` in favor of `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
-- **BREAKING**: Removed `StartPromptEvent.prompt`. Use `StartPromptEvent.prompt_stack` instead.
-- **BREAKING**: Removed `Agent.input_template` in favor of `Agent.input`.
-- **BREAKING**: `BasePromptDriver.run` now returns a `Message` instead of a `TextArtifact`. For compatibility, `Message.value` contains the Message's Artifact value
-- Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
-
-
-
-### Added
 - `RagEngine` is an abstraction for implementing modular RAG pipelines.
   - `RagContext` is a container object for passing around RAG context. 
   - RAG stages:
@@ -67,8 +40,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameter `fail_fast` to `Structure`.
 - `BooleanArtifact` for handling boolean values.
 - `typos` to dev dependencies to catch typos in code/docs.
+- `Message` for storing messages in a `PromptStack`. Messages consist of a role, content, and usage.
+- `DeltaMessage` for storing partial messages in a `PromptStack`. Multiple `DeltaMessage` can be combined to form a `Message`.
+- `TextMessageContent` for storing textual content in a `Message`.
+- `ImageMessageContent` for storing image content in a `Message`.
+- Support for adding `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s to `PromptStack`.
+- Support for image inputs to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AmazonBedrockPromptDriver`, `AnthropicPromptDriver`, and `GooglePromptDriver`.
+- Input/output token usage metrics to all Prompt Drivers. 
+- `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- Support for storing Artifacts as inputs/outputs in Conversation Memory Runs.
+- `Agent.input` for passing Artifacts as input.
+- Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
+- Parameters `sort_key` and `sort_key_value` on `AmazonDynamoDbConversationMemoryDriver` for tables with sort keys.
 
 ### Changed
+- **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.
+- **BREAKING**: Renamed `PromptStack.inputs` to `PromptStack.messages`.
+- **BREAKING**: Moved `PromptStack.USER_ROLE`, `PromptStack.ASSISTANT_ROLE`, and `PromptStack.SYSTEM_ROLE` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_run` from `TextArtifact` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_stream` from `Iterator[TextArtifact]` to `Iterator[DeltaMessage]`.
+- **BREAKING**: Removed `BasePromptEvent.token_count` in favor of `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- **BREAKING**: Removed `StartPromptEvent.prompt`. Use `StartPromptEvent.prompt_stack` instead.
+- **BREAKING**: Removed `Agent.input_template` in favor of `Agent.input`.
+- **BREAKING**: `BasePromptDriver.run` now returns a `Message` instead of a `TextArtifact`. For compatibility, `Message.value` contains the Message's Artifact value
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
 - **BREAKING**: Removed `VectorQueryEngine` in favor of `RagEngine`.
 - **BREAKING**: Removed `TextQueryTask` in favor of `RagTask`.
@@ -78,8 +72,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Replaced `query_engine` with `vector_store_driver` in `VectorStoreClient`.
 - **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
 - **BREAKING**: removed `VectorStoreClient.top_n` and `VectorStoreClient.namespace` in favor of `VectorStoreClient.query_params`.
-- `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
 - **BREAKING**: All `futures_executor` fields renamed to `futures_executor_fn` and now accept callables instead of futures; wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
+- `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
+- Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
 
 ### Fixed
 - `CoherePromptDriver` to properly handle empty history.

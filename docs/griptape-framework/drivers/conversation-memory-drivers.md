@@ -47,6 +47,7 @@ agent = Agent(conversation_memory=ConversationMemory(driver=dynamodb_driver))
 agent.run("My name is Jeff.")
 agent.run("What is my name?")
 ```
+Optional parameters `sort_key` and `sort_key_value` can be supplied for tables with a composite primary key.
 
 
 ### Redis
