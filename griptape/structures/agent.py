@@ -44,9 +44,7 @@ class Agent(Structure):
         self.tasks.clear()
 
         task.preprocess(self)
-
         self.tasks.append(task)
-
         return task
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:

@@ -76,9 +76,12 @@ class BaseTask(ABC):
 
     def add_parent(self, parent: str | BaseTask) -> None:
         parent_id = parent if isinstance(parent, str) else parent.id
+        parent_task = parent if isinstance(parent, BaseTask) else None
 
         if parent_id not in self.parent_ids:
             self.parent_ids.append(parent_id)
+
+        self._add_to_structure(parent_task)
 
     def add_children(self, children: list[str | BaseTask]) -> None:
         for child in children:
@@ -86,9 +89,12 @@ class BaseTask(ABC):
 
     def add_child(self, child: str | BaseTask) -> None:
         child_id = child if isinstance(child, str) else child.id
+        child_task = child if isinstance(child, BaseTask) else None
 
         if child_id not in self.child_ids:
             self.child_ids.append(child_id)
+
+        self._add_to_structure(child_task)
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure
@@ -168,3 +174,15 @@ class BaseTask(ABC):
             return structure_context
         else:
             return {}
+
+    def _add_to_structure(self, task: Optional[BaseTask]):
+        if task is not None:
+            if self.structure is not None and task.structure is not None and self.structure != task.structure:
+                raise ValueError("Task is already associated with a different structure.")
+            elif self.structure:
+                if task not in self.structure.tasks:
+                    self.structure.add_task(task)  # pyright: ignore reportArgumentType
+            elif task.structure:
+                if self not in task.structure.tasks:
+                    self.preprocess(task.structure)
+                    task.structure.add_task(self)

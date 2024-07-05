@@ -177,6 +177,10 @@ class ActionsSubtask(BaseTextInputTask):
     def actions_to_json(self) -> str:
         return json.dumps(self.actions_to_dicts())
 
+    def _add_to_structure(self, task: Optional[BaseTask]):
+        # dont want subtasks added to structure
+        pass
+
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
         actions_matches = re.findall(self.ACTIONS_PATTERN, value, re.DOTALL)

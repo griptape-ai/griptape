@@ -75,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: All `futures_executor` fields renamed to `futures_executor_fn` and now accept callables instead of futures; wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
 - `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
 - Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
+- Methods `add_parent` and `add_child` on `BaseTask` to add task to its `Structure` if set.
 
 ### Fixed
 - `CoherePromptDriver` to properly handle empty history.

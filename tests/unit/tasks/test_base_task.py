@@ -68,3 +68,23 @@ class TestBaseTask:
         parent_2.output = None
 
         assert child.parents_output_text == "foobar1\nfoobar3"
+
+    def test_task_different_structures(self, task):
+        task1 = MockTask("foobar1", id="foobar1")
+        Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tasks=[task1])
+
+        task2 = MockTask("foobar2", id="foobar2")
+        Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tasks=[task2])
+
+        with pytest.raises(ValueError, match="Task is already associated with a different structure."):
+            task1.add_parent(task2)
+
+    def test_add_parent_no_structure(self, task):
+        task1 = MockTask("foobar1", id="foobar1")
+        task2 = MockTask("foobar2", id="foobar2")
+        Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tasks=[task2])
+
+        task1.add_parent(task2)
+
+        assert task1.parent_ids == ["foobar2"]
+        assert task1.structure == task2.structure
