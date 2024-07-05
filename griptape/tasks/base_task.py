@@ -175,14 +175,13 @@ class BaseTask(ABC):
         else:
             return {}
 
-    def _add_to_structure(self, task: Optional[BaseTask]):
+    def _add_to_structure(self, task: Optional[BaseTask]) -> None:
         if task is not None:
             if self.structure is not None and task.structure is not None and self.structure != task.structure:
                 raise ValueError("Task is already associated with a different structure.")
-            elif self.structure:
+            elif self.structure is not None:
                 if task not in self.structure.tasks:
-                    self.structure.add_task(task)  # pyright: ignore reportArgumentType
-            elif task.structure:
+                    self.structure.add_task(task)
+            elif task.structure is not None:
                 if self not in task.structure.tasks:
-                    self.preprocess(task.structure)
                     task.structure.add_task(self)

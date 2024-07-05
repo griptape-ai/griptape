@@ -177,7 +177,7 @@ class ActionsSubtask(BaseTextInputTask):
     def actions_to_json(self) -> str:
         return json.dumps(self.actions_to_dicts())
 
-    def _add_to_structure(self, task: Optional[BaseTask]):
+    def _add_to_structure(self, task: Optional[BaseTask]) -> None:
         # dont want subtasks added to structure
         pass
 
