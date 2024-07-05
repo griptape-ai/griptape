@@ -235,7 +235,6 @@ class CoherePromptDriver(BasePromptDriver):
             if event.tool_call_delta is not None:
                 tool_call_delta = event.tool_call_delta
                 if tool_call_delta.name is not None:
-                    print(tool_call_delta)
                     name, path = tool_call_delta.name.split("_", 1)
 
                     return ActionCallDeltaMessageContent(tag=tool_call_delta.name, name=name, path=path)

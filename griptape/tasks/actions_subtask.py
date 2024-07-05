@@ -178,7 +178,7 @@ class ActionsSubtask(BaseTask):
     def _process_task_input(
         self, task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
     ) -> TextArtifact | ListArtifact:
-        if isinstance(task_input, TextArtifact) or isinstance(task_input, ListArtifact):
+        if isinstance(task_input, (TextArtifact, ListArtifact)):
             return task_input
         elif isinstance(task_input, ActionArtifact):
             return ListArtifact([task_input])
@@ -186,7 +186,7 @@ class ActionsSubtask(BaseTask):
             return self._process_task_input(task_input(self))
         elif isinstance(task_input, str):
             return self._process_task_input(TextArtifact(task_input))
-        elif isinstance(task_input, list) or isinstance(task_input, tuple):
+        elif isinstance(task_input, (list, tuple)):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             raise ValueError(f"Invalid input type: {type(task_input)} ")
@@ -264,9 +264,8 @@ class ActionsSubtask(BaseTask):
             tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool
         )
 
-        if action.tool:
-            if action.input:
-                self.__validate_action(action)
+        if action.tool and action.input:
+            self.__validate_action(action)
 
         return action
 

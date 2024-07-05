@@ -35,8 +35,8 @@ class ActionCallMessageContent(BaseMessageContent):
         if tag is not None and name is not None and path is not None:
             try:
                 parsed_input = json.loads(input)
-            except json.JSONDecodeError:
-                raise ValueError("Invalid JSON input for ActionArtifact.Action")
+            except json.JSONDecodeError as exc:
+                raise ValueError("Invalid JSON input for ActionArtifact.Action") from exc
             action = ActionArtifact.Action(tag=tag, name=name, path=path, input=parsed_input)
         else:
             raise ValueError("Missing required fields for ActionArtifact.Action")
