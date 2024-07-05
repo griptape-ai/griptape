@@ -14,8 +14,8 @@ def load_artifact_from_memory(
 
     try:
         artifact = [a for a in artifacts if a.name == artifact_name][0]
-    except IndexError:
-        raise ValueError(f"artifact {artifact_name} not found in namespace {artifact_namespace}")
+    except IndexError as exc:
+        raise ValueError(f"artifact {artifact_name} not found in namespace {artifact_namespace}") from exc
 
     if not isinstance(artifact, artifact_type):
         raise ValueError(f"{artifact.name} is not of type {artifact_type}")

@@ -82,11 +82,8 @@ class BaseFileManagerDriver(ABC):
             encoding = None if loader is None else loader.encoding
 
             if isinstance(value, str):
-                if encoding is None:
-                    value = value.encode()
-                else:
-                    value = value.encode(encoding=encoding)
-            elif isinstance(value, bytearray) or isinstance(value, memoryview):
+                value = value.encode() if encoding is None else value.encode(encoding=encoding)
+            elif isinstance(value, (bytearray, memoryview)):
                 raise ValueError(f"Unsupported type: {type(value)}")
 
             self.try_save_file(path, value)

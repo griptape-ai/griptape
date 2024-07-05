@@ -90,10 +90,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         Entries can optionally be filtered by namespace.
         """
         collection = self.get_collection()
-        if namespace is None:
-            cursor = collection.find()
-        else:
-            cursor = collection.find({"namespace": namespace})
+        cursor = collection.find() if namespace is None else collection.find({"namespace": namespace})
 
         return [
             BaseVectorStoreDriver.Entry(

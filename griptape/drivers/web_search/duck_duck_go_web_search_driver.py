@@ -26,4 +26,4 @@ class DuckDuckGoWebSearchDriver(BaseWebSearchDriver):
                 ]
             )
         except Exception as e:
-            raise Exception(f"Error searching '{query}' with DuckDuckGo: {e}")
+            raise Exception(f"Error searching '{query}' with DuckDuckGo: {e}") from e

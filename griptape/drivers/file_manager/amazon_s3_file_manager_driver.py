@@ -55,7 +55,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
             return response["Body"].read()
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] in {"NoSuchKey", "404"}:
-                raise FileNotFoundError
+                raise FileNotFoundError from e
             else:
                 raise e
 

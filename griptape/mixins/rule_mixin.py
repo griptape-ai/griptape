@@ -49,10 +49,7 @@ class RuleMixin:
         if self.rulesets:
             task_rulesets = self.rulesets
         elif self.rules:
-            if structure_rulesets:
-                task_ruleset_name = self.ADDITIONAL_RULESET_NAME
-            else:
-                task_ruleset_name = self.DEFAULT_RULESET_NAME
+            task_ruleset_name = self.ADDITIONAL_RULESET_NAME if structure_rulesets else self.DEFAULT_RULESET_NAME
 
             task_rulesets = [Ruleset(name=task_ruleset_name, rules=self.rules)]
 

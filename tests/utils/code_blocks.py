@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import textwrap
 
@@ -13,7 +14,7 @@ def check_py_string(source: str) -> None:
     try:
         exec(source, {"__MODULE__": "__main__"})
     except Exception:
-        print(source)
+        logging.info(source)
         raise
 
 
