@@ -24,10 +24,7 @@ class BaseArtifact(SerializableMixin, ABC):
 
     @classmethod
     def value_to_dict(cls, value: Any) -> dict:
-        if isinstance(value, dict):
-            dict_value = value
-        else:
-            dict_value = json.loads(value)
+        dict_value = value if isinstance(value, dict) else json.loads(value)
 
         return {k: v for k, v in dict_value.items()}
 

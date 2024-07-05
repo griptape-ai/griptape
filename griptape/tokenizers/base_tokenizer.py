@@ -1,6 +1,6 @@
 from __future__ import annotations
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 from attrs import define, field, Factory
 
 
@@ -40,6 +40,7 @@ class BaseTokenizer(ABC):
         else:
             return 0
 
+    @abstractmethod
     def count_tokens(self, text: str) -> int: ...
 
     def _default_max_input_tokens(self) -> int:

@@ -144,7 +144,7 @@ class BaseTask(ABC):
         finally:
             self.state = BaseTask.State.FINISHED
 
-            return self.output
+        return self.output
 
     def can_execute(self) -> bool:
         return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)

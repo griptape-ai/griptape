@@ -69,10 +69,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             with attempt:
                 self.before_run(prompt_stack)
 
-                if self.stream:
-                    result = self.__process_stream(prompt_stack)
-                else:
-                    result = self.__process_run(prompt_stack)
+                result = self.__process_stream(prompt_stack) if self.stream else self.__process_run(prompt_stack)
 
                 self.after_run(result)
 

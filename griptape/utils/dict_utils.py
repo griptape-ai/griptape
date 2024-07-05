@@ -37,7 +37,7 @@ def dict_merge(dct: dict, merge_dct: dict, add_keys: bool = True) -> dict:
     if not add_keys:
         merge_dct = {k: merge_dct[k] for k in set(dct).intersection(set(merge_dct))}
 
-    for key in merge_dct.keys():
+    for key in merge_dct:
         if key in dct and isinstance(dct[key], dict):
             dct[key] = dict_merge(dct[key], merge_dct[key], add_keys=add_keys)
         else:

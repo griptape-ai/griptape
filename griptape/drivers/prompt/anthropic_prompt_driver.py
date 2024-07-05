@@ -89,10 +89,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         messages = self.__to_anthropic_messages([i for i in prompt_stack.messages if not i.is_system()])
 
         system_messages = prompt_stack.system_messages
-        if system_messages:
-            system_message = system_messages[0].to_text()
-        else:
-            system_message = None
+        system_message = system_messages[0].to_text() if system_messages else None
 
         return {
             "model": self.model,
