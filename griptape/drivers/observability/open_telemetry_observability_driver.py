@@ -1,8 +1,7 @@
 from attrs import define, Factory, field
 from griptape.common import Observable
 from griptape.drivers import BaseObservabilityDriver
-from opentelemetry import trace
-from opentelemetry.trace import format_span_id
+from opentelemetry.trace import format_span_id, get_current_span, get_tracer, INVALID_SPAN
 from opentelemetry.instrumentation.threading import ThreadingInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
@@ -27,7 +26,7 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
 
     def __attrs_post_init__(self):
         self.trace_provider.add_span_processor(self.span_processor)
-        self._tracer = trace.get_tracer(self.service_name, tracer_provider=self.trace_provider)
+        self._tracer = get_tracer(self.service_name, tracer_provider=self.trace_provider)
 
     def __enter__(self) -> None:
         ThreadingInstrumentor().instrument()
@@ -40,9 +39,9 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
         exc_value: Optional[BaseException],
         exc_traceback: Optional[TracebackType],
     ) -> bool:
-        root_span = trace.get_current_span()
+        root_span = get_current_span()
         if exc_value:
-            root_span = trace.get_current_span()
+            root_span = get_current_span()
             root_span.set_status(Status(StatusCode.ERROR))
             root_span.record_exception(exc_value)
         else:
@@ -71,4 +70,7 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
                 raise e
 
     def get_span_id(self) -> Optional[str]:
-        return format_span_id(trace.get_current_span().get_span_context().span_id)
+        span = get_current_span()
+        if span is INVALID_SPAN:
+            return None
+        return format_span_id(span.get_span_context().span_id)
