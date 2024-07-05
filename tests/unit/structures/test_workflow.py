@@ -423,7 +423,6 @@ class TestWorkflow:
 
     def test_run_topology_2_imperative_parents(self):
         taska = PromptTask("testa", id="taska")
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska])
         taskb = PromptTask("testb", id="taskb")
         taskc = PromptTask("testc", id="taskc")
         taskd = PromptTask("testd", id="taskd")
@@ -432,6 +431,7 @@ class TestWorkflow:
         taskc.add_parent("taska")
         taskd.add_parents([taska, taskb, taskc])
         taske.add_parents(["taska", taskd, "taskc"])
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
 
@@ -439,13 +439,29 @@ class TestWorkflow:
 
     def test_run_topology_2_imperative_children(self):
         taska = PromptTask("testa", id="taska")
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska])
         taskb = PromptTask("testb", id="taskb")
         taskc = PromptTask("testc", id="taskc")
         taskd = PromptTask("testd", id="taskd")
         taske = PromptTask("teste", id="taske")
         taska.add_children([taskb, taskc, taskd, taske])
         taskb.add_child(taskd)
+        taskc.add_children([taskd, taske])
+        taskd.add_child(taske)
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
+
+        workflow.run()
+
+        self._validate_topology_2(workflow)
+
+    def test_run_topology_2_imperative_implicit_add_task(self):
+        taska = PromptTask("testa", id="taska")
+        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska])
+        taskb = PromptTask("testb", id="taskb")
+        taskc = PromptTask("testc", id="taskc")
+        taskd = PromptTask("testd", id="taskd")
+        taske = PromptTask("teste", id="taske")
+        taska.add_children([taskb, taskc, taskd, taske])
+        taskd.add_parent(taskb)
         taskc.add_children([taskd, taske])
         taskd.add_child(taske)
 
