@@ -46,7 +46,6 @@ class CoherePromptDriver(BasePromptDriver):
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True)
     )
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -108,7 +107,7 @@ class CoherePromptDriver(BasePromptDriver):
             **({"tool_results": tool_results} if tool_results else {}),
             **(
                 {"tools": self.__to_cohere_tools(prompt_stack.actions), "force_single_step": self.force_single_step}
-                if prompt_stack.actions and self.use_native_tools
+                if self.use_native_tools
                 else {}
             ),
             **({"preamble": preamble} if preamble else {}),
@@ -179,10 +178,14 @@ class CoherePromptDriver(BasePromptDriver):
 
         for tool in tools:
             for activity in tool.activities():
-                properties_values = tool.activity_schema(activity).json_schema("Parameters Schema")["properties"][
-                    "values"
-                ]
-                properties = properties_values["properties"]
+                activity_schema = tool.activity_schema(activity)
+                if activity_schema is not None:
+                    properties_values = activity_schema.json_schema("Parameters Schema")["properties"]["values"]
+
+                    properties = properties_values["properties"]
+                else:
+                    properties_values = {}
+                    properties = {}
 
                 tool_definitions.append(
                     {
@@ -235,6 +238,7 @@ class CoherePromptDriver(BasePromptDriver):
             if event.tool_call_delta is not None:
                 tool_call_delta = event.tool_call_delta
                 if tool_call_delta.name is not None:
+                    print(tool_call_delta)
                     name, path = tool_call_delta.name.split("_", 1)
 
                     return ActionCallDeltaMessageContent(tag=tool_call_delta.name, name=name, path=path)
