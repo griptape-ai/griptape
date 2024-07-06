@@ -1,6 +1,5 @@
 from __future__ import annotations
 import io
-import json
 from typing import Any, TYPE_CHECKING
 from schema import Schema, Literal
 from attrs import define, field, Factory
@@ -32,7 +31,7 @@ class AwsS3Client(BaseAwsClient):
     def get_bucket_acl(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
             acl = self.s3_client.get_bucket_acl(Bucket=params["values"]["bucket_name"])
-            return TextArtifact(json.dumps(acl))
+            return TextArtifact(acl)
         except Exception as e:
             return ErrorArtifact(f"error getting bucket acl: {e}")
 
@@ -47,7 +46,7 @@ class AwsS3Client(BaseAwsClient):
     def get_bucket_policy(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
             policy = self.s3_client.get_bucket_policy(Bucket=params["values"]["bucket_name"])
-            return TextArtifact(json.dumps(policy))
+            return TextArtifact(policy)
         except Exception as e:
             return ErrorArtifact(f"error getting bucket policy: {e}")
 
@@ -67,7 +66,7 @@ class AwsS3Client(BaseAwsClient):
             acl = self.s3_client.get_object_acl(
                 Bucket=params["values"]["bucket_name"], Key=params["values"]["object_key"]
             )
-            return TextArtifact(json.dumps(acl))
+            return TextArtifact(acl)
         except Exception as e:
             return ErrorArtifact(f"error getting object acl: {e}")
 
