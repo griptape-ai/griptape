@@ -112,11 +112,10 @@ class ActionsSubtask(BaseTextInputTask):
             self.structure.logger.error(f"Subtask {self.id}\n{e}", exc_info=True)
 
             self.output = ErrorArtifact(str(e), exception=e)
-        finally:
-            if self.output is not None:
-                return self.output
-            else:
-                return ErrorArtifact("no tool output")
+        if self.output is not None:
+            return self.output
+        else:
+            return ErrorArtifact("no tool output")
 
     def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
         with self.futures_executor_fn() as executor:
@@ -234,9 +233,8 @@ class ActionsSubtask(BaseTextInputTask):
                     tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool
                 )
 
-                if new_action.tool:
-                    if new_action.input:
-                        self.__validate_action(new_action)
+                if new_action.tool and new_action.input:
+                    self.__validate_action(new_action)
 
                 # Don't forget to add it to the subtask actions list!
                 self.actions.append(new_action)

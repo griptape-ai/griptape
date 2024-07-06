@@ -39,10 +39,7 @@ class BaseTextLoader(BaseLoader, ABC):
     def _text_to_artifacts(self, text: str) -> list[TextArtifact]:
         artifacts = []
 
-        if self.chunker:
-            chunks = self.chunker.chunk(text)
-        else:
-            chunks = [TextArtifact(text)]
+        chunks = self.chunker.chunk(text) if self.chunker else [TextArtifact(text)]
 
         for chunk in chunks:
             if self.embedding_driver:

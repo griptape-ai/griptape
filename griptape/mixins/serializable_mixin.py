@@ -42,7 +42,7 @@ class SerializableMixin(Generic[T]):
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:
-        return cast(T, cls.get_schema(subclass_name=data["type"] if "type" in data else None).load(data))
+        return cast(T, cls.get_schema(subclass_name=data.get("type")).load(data))
 
     @classmethod
     def from_json(cls: type[T], data: str) -> T:

@@ -89,8 +89,8 @@ class Workflow(Structure):
 
             try:
                 parent_index = self.tasks.index(parent_task)
-            except ValueError:
-                raise ValueError(f"Parent task {parent_task.id} not found in workflow.")
+            except ValueError as exc:
+                raise ValueError(f"Parent task {parent_task.id} not found in workflow.") from exc
             else:
                 if parent_index > last_parent_index:
                     last_parent_index = parent_index
