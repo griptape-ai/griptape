@@ -12,6 +12,7 @@ class TestRagContext:
             text_chunks=[
                 TextArtifact("foo", reference=reference1),
                 TextArtifact("foo", reference=reference1),
+                TextArtifact("foo"),
                 TextArtifact("foo", reference=reference2),
             ]
         )
