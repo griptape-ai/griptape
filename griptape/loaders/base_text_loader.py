@@ -29,7 +29,7 @@ class BaseTextLoader(BaseLoader, ABC):
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
-    source: Optional[str] = field(default=None, kw_only=True)
+    reference: Optional[str] = field(default=None, kw_only=True)
 
     def load_collection(self, sources: list[Any], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
@@ -48,8 +48,8 @@ class BaseTextLoader(BaseLoader, ABC):
             if self.embedding_driver:
                 chunk.generate_embedding(self.embedding_driver)
 
-            if self.source is not None:
-                chunk.meta["source"] = self.source
+            if self.reference is not None:
+                chunk.meta["reference"] = self.reference
 
             chunk.encoding = self.encoding
 

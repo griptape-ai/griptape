@@ -1,15 +1,14 @@
 import pytest
-
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import CitationPromptResponseRagModule
+from griptape.engines.rag.modules import FootnotePromptResponseRagModule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
-class TestCitationPromptResponseRagModule:
+class TestFootnotePromptResponseRagModule:
     @pytest.fixture
     def module(self):
-        return CitationPromptResponseRagModule(prompt_driver=MockPromptDriver())
+        return FootnotePromptResponseRagModule(prompt_driver=MockPromptDriver())
 
     def test_run(self, module):
         assert module.run(RagContext(query="test")).output.value == "mock output"

@@ -23,3 +23,6 @@ class RagContext:
     after_query: list[str] = field(factory=list)
     text_chunks: list[TextArtifact] = field(factory=list)
     output: Optional[BaseArtifact] = field(default=None)
+
+    def get_references(self) -> list[str]:
+        return list({a.meta["reference"] for a in self.text_chunks if a.meta.get("reference") is not None})
