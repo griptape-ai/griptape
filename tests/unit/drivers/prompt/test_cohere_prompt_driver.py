@@ -118,7 +118,7 @@ class TestCoherePromptDriver:
                     "tool_calls": [{"name": "MockTool_test", "parameters": {"foo": "bar"}}],
                 },
                 {
-                    "role": "USER",
+                    "role": "TOOL",
                     "tool_results": [
                         {
                             "call": {"name": "MockTool_test", "parameters": {"foo": "bar"}},
@@ -166,7 +166,7 @@ class TestCoherePromptDriver:
                     "tool_calls": [{"name": "MockTool_test", "parameters": {"foo": "bar"}}],
                 },
                 {
-                    "role": "USER",
+                    "role": "TOOL",
                     "tool_results": [
                         {
                             "call": {"name": "MockTool_test", "parameters": {"foo": "bar"}},

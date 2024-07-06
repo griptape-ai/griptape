@@ -50,11 +50,6 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
-    tool_schema_id: str = field(
-        default="https://griptape.ai",  # Amazon Bedrock requires that this be a valid URL.
-        kw_only=True,
-        metadata={"serializable": True},
-    )
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
@@ -124,7 +119,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "name": f"{tool.name}_{tool.activity_name(activity)}",
                     "description": tool.activity_description(activity),
                     "inputSchema": {
-                        "json": (tool.activity_schema(activity) or Schema({})).json_schema(self.tool_schema_id)
+                        "json": (tool.activity_schema(activity) or Schema({})).json_schema(
+                            "http://json-schema.org/draft-07/schema#"
+                        )
                     },
                 }
             }

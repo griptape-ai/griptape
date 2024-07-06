@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 from google.generativeai.types import ContentsType
 
+
 from griptape.common import (
     BaseMessageContent,
     DeltaMessage,
@@ -24,13 +25,13 @@ from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency, remove_key_in_dict_recursively
+from schema import Schema
 
 if TYPE_CHECKING:
     from google.generativeai import GenerativeModel
     from google.generativeai.types import ContentDict, GenerateContentResponse
     from google.generativeai.protos import Part
     from griptape.tools import BaseTool
-    from schema import Schema
 
 
 @define
@@ -166,9 +167,10 @@ class GooglePromptDriver(BasePromptDriver):
         tool_declarations = []
         for tool in tools:
             for activity in tool.activities():
-                schema = (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema")["properties"][
-                    "values"
-                ]
+                schema = (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema")
+
+                if "values" in schema["properties"]:
+                    schema = schema["properties"]["values"]
 
                 schema = remove_key_in_dict_recursively(schema, "additionalProperties")
                 tool_declaration = FunctionDeclaration(

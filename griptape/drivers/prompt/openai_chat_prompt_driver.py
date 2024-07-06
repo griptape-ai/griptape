@@ -241,24 +241,28 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported content type: {type(content)}")
 
     def __to_prompt_stack_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
+        content = []
+
         if response.content is not None:
-            return [TextMessageContent(TextArtifact(response.content))]
-        elif response.tool_calls is not None:
-            return [
-                ActionCallMessageContent(
-                    ActionArtifact(
-                        ActionArtifact.Action(
-                            tag=tool_call.id,
-                            name=tool_call.function.name.split("_", 1)[0],
-                            path=tool_call.function.name.split("_", 1)[1],
-                            input=json.loads(tool_call.function.arguments),
+            content.append(TextMessageContent(TextArtifact(response.content)))
+        if response.tool_calls is not None:
+            content.extend(
+                [
+                    ActionCallMessageContent(
+                        ActionArtifact(
+                            ActionArtifact.Action(
+                                tag=tool_call.id,
+                                name=tool_call.function.name.split("_", 1)[0],
+                                path=tool_call.function.name.split("_", 1)[1],
+                                input=json.loads(tool_call.function.arguments),
+                            )
                         )
                     )
-                )
-                for tool_call in response.tool_calls
-            ]
-        else:
-            raise ValueError(f"Unsupported message type: {response}")
+                    for tool_call in response.tool_calls
+                ]
+            )
+
+        return content
 
     def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent:
         if content_delta.content is not None:

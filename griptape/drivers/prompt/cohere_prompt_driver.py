@@ -81,10 +81,8 @@ class CoherePromptDriver(BasePromptDriver):
 
             if "message" in message[0]:
                 user_message = message[0]["message"]
-            elif "tool_results" in message[0]:
+            if "tool_results" in message[0]:
                 tool_results = message[0]["tool_results"]
-            else:
-                raise ValueError("Unsupported message type")
 
         # History messages
         history_messages = self.__to_cohere_messages(
@@ -104,7 +102,7 @@ class CoherePromptDriver(BasePromptDriver):
             **({"tool_results": tool_results} if tool_results else {}),
             **(
                 {"tools": self.__to_cohere_tools(prompt_stack.actions), "force_single_step": self.force_single_step}
-                if self.use_native_tools
+                if prompt_stack.actions and self.use_native_tools
                 else {}
             ),
             **({"preamble": preamble} if preamble else {}),
@@ -160,8 +158,6 @@ class CoherePromptDriver(BasePromptDriver):
     def __to_cohere_role(self, message: Message) -> str:
         if message.is_system():
             return "SYSTEM"
-        elif message.is_user():
-            return "USER"
         elif message.is_assistant():
             return "CHATBOT"
         else:
