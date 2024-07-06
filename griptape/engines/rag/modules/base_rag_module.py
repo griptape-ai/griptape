@@ -19,10 +19,10 @@ class BaseRagModule(ABC):
         )
 
     def get_context_param(self, context: RagContext, key: str) -> Optional[Any]:
-        return context.module_params.get(self.name, {}).get(key)
+        return context.module_configs.get(self.name, {}).get(key)
 
     def set_context_param(self, context: RagContext, key: str, value: Any) -> None:
-        if not isinstance(context.module_params.get(self.name), dict):
-            context.module_params[self.name] = {}
+        if not isinstance(context.module_configs.get(self.name), dict):
+            context.module_configs[self.name] = {}
 
-        context.module_params[self.name][key] = value
+        context.module_configs[self.name][key] = value

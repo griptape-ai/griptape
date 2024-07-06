@@ -45,13 +45,13 @@ class TestVectorStoreRetrievalRagModule:
 
         result1 = module.run(
             RagContext(
-                query="test", module_params={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "empty"}}}
+                query="test", module_configs={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "empty"}}}
             )
         )
 
         result2 = module.run(
             RagContext(
-                query="test", module_params={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "test"}}}
+                query="test", module_configs={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "test"}}}
             )
         )
 
