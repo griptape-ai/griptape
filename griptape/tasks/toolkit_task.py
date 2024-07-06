@@ -5,7 +5,7 @@ from attrs import define, field, Factory
 from schema import Schema
 
 from griptape import utils
-from griptape.artifacts import BaseArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
@@ -75,9 +75,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             for s in self.subtasks:
                 if self.prompt_driver.use_native_tools:
                     stack.add_action_call_message(s.thought, s.actions)
-                    stack.add_action_result_message(
-                        None if s.output else "Please keep going!", s.actions
-                    )  # TODO: Instructions may not be necessary
+                    stack.add_action_result_message(None if s.output else TextArtifact("Please keep going!"), s.actions)
                 else:
                     stack.add_assistant_message(self.generate_assistant_subtask_template(s))
                     stack.add_user_message(self.generate_user_subtask_template(s))

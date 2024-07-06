@@ -62,7 +62,7 @@ class PromptStack(SerializableMixin):
         return self.messages[-1]
 
     def add_action_result_message(
-        self, instructions: Optional[str | BaseArtifact], actions: list[ActionArtifact.Action]
+        self, instructions: Optional[TextArtifact], actions: list[ActionArtifact.Action]
     ) -> Message:
         instructions_content = self.__process_artifact(instructions) if instructions else []
 
