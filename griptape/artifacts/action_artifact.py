@@ -40,7 +40,7 @@ class ActionArtifact(BaseArtifact, SerializableMixin):
         def to_dict(self) -> dict:
             return {"tag": self.tag, "name": self.name, "path": self.path, "input": self.input}
 
-    value: Action = field(metadata={"serializable": True})
+    value: ActionArtifact.Action = field(metadata={"serializable": True})
 
     def __add__(self, other: BaseArtifact) -> ActionArtifact:
         raise NotImplementedError
