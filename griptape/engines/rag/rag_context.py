@@ -1,6 +1,10 @@
-from typing import Optional
+from __future__ import annotations
+from typing import Optional, TYPE_CHECKING
 from attrs import define, field
-from griptape.artifacts import TextArtifact, BaseArtifact
+from griptape.common import Reference
+
+if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact, BaseArtifact
 
 
 @define(kw_only=True)
@@ -24,5 +28,11 @@ class RagContext:
     text_chunks: list[TextArtifact] = field(factory=list)
     output: Optional[BaseArtifact] = field(default=None)
 
-    def get_references(self) -> list[str]:
-        return list({a.meta["reference"] for a in self.text_chunks if a.meta.get("reference") is not None})
+    def get_references(self) -> list[Reference]:
+        references = []
+
+        for chunk in self.text_chunks:
+            if chunk.reference is not None and not (chunk.reference in references):
+                references.append(chunk.reference)
+
+        return references

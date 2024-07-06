@@ -1,5 +1,6 @@
 import pytest
 from griptape.artifacts import TextArtifact
+from griptape.common import Reference
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import FootnotePromptResponseRagModule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -18,8 +19,8 @@ class TestFootnotePromptResponseRagModule:
             RagContext(
                 query="test",
                 text_chunks=[
-                    TextArtifact("*TEXT SEGMENT 1*", meta={"source": "source 1"}),
-                    TextArtifact("*TEXT SEGMENT 2*", meta={"source": "source 2"}),
+                    TextArtifact("*TEXT SEGMENT 1*", reference=Reference(title="source 1")),
+                    TextArtifact("*TEXT SEGMENT 2*", reference=Reference(title="source 2")),
                     TextArtifact("*TEXT SEGMENT 3*"),
                 ],
                 before_query=["*RULESET*", "*META*"],

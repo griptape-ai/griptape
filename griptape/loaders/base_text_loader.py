@@ -5,6 +5,7 @@ from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.chunkers import TextChunker, BaseChunker
+from griptape.common import Reference
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
 from griptape.tokenizers import OpenAiTokenizer
@@ -29,7 +30,7 @@ class BaseTextLoader(BaseLoader, ABC):
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
-    reference: Optional[str] = field(default=None, kw_only=True)
+    reference: Optional[Reference] = field(default=None, kw_only=True)
 
     def load_collection(self, sources: list[Any], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
@@ -45,8 +46,7 @@ class BaseTextLoader(BaseLoader, ABC):
             if self.embedding_driver:
                 chunk.generate_embedding(self.embedding_driver)
 
-            if self.reference is not None:
-                chunk.meta["reference"] = self.reference
+            chunk.reference = self.reference
 
             chunk.encoding = self.encoding
 

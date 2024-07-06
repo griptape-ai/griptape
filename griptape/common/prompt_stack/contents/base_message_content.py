@@ -1,14 +1,13 @@
 from __future__ import annotations
-
 from abc import ABC
 from collections.abc import Sequence
-
+from typing import TYPE_CHECKING
 from attrs import define, field
-
-from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.mixins import SerializableMixin
-
 from .base_delta_message_content import BaseDeltaMessageContent
+
+if TYPE_CHECKING:
+    from griptape.artifacts.base_artifact import BaseArtifact
 
 
 @define

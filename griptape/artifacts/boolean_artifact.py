@@ -7,7 +7,6 @@ from griptape.artifacts import BaseArtifact
 @define
 class BooleanArtifact(BaseArtifact):
     value: bool = field(converter=bool, metadata={"serializable": True})
-    meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     @classmethod
     def parse_bool(cls, value: Union[str, bool]) -> BooleanArtifact:

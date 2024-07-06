@@ -105,7 +105,7 @@ class BaseSchema(Schema):
         # These modules are required to avoid `NameError`s when resolving types.
         from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
         from griptape.structures import Structure
-        from griptape.common import PromptStack, Message
+        from griptape.common import PromptStack, Message, Reference
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
         from typing import Any
 
@@ -123,6 +123,7 @@ class BaseSchema(Schema):
                 "BaseTokenizer": BaseTokenizer,
                 "boto3": boto3,
                 "Client": Client,
+                "Reference": Reference
             },
         )
 
