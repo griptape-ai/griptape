@@ -57,7 +57,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         **kwargs,
     ) -> str:
         meta = {} if meta is None else meta
-        vector_id = self._get_default_vector_id(artifact.to_text()) if vector_id is None else vector_id
+
+        if vector_id is None:
+            value = artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
+            vector_id = self._get_default_vector_id(value)
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id
