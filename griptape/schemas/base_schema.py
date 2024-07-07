@@ -59,7 +59,7 @@ class BaseSchema(Schema):
             if ABC in field_class.__bases__:
                 return fields.Nested(PolymorphicSchema(inner_class=field_class), allow_none=optional)
             else:
-                return fields.Nested(cls.from_attrs_cls(field_type), allow_none=optional)
+                return fields.Nested(cls.from_attrs_cls(field_class), allow_none=optional)
         elif cls.is_list_sequence(field_class):
             if args:
                 return fields.List(cls_or_instance=cls._get_field_for_type(args[0]), allow_none=optional)
@@ -108,6 +108,7 @@ class BaseSchema(Schema):
         from griptape.common import PromptStack, Message, Reference
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
         from typing import Any
+        from griptape.artifacts import BaseArtifact
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
         Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
@@ -123,7 +124,8 @@ class BaseSchema(Schema):
                 "BaseTokenizer": BaseTokenizer,
                 "boto3": boto3,
                 "Client": Client,
-                "Reference": Reference
+                "Reference": Reference,
+                "BaseArtifact": BaseArtifact
             },
         )
 
