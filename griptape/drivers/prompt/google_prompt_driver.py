@@ -117,6 +117,7 @@ class GooglePromptDriver(BasePromptDriver):
             "generation_config": GenerationConfig(
                 **{
                     # For some reason, providing stop sequences when streaming breaks native functions
+                    # https://github.com/google-gemini/generative-ai-python/issues/446
                     "stop_sequences": [] if self.stream and self.use_native_tools else self.tokenizer.stop_sequences,
                     "max_output_tokens": self.max_tokens,
                     "temperature": self.temperature,
