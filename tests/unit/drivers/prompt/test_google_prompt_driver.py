@@ -1,5 +1,5 @@
 from google.generativeai.types import ContentDict, GenerationConfig
-from google.generativeai.protos import Part
+from google.generativeai.protos import FunctionCall, FunctionResponse, Part
 from griptape.artifacts import TextArtifact, ImageArtifact, ActionArtifact
 from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent
 from griptape.drivers import GooglePromptDriver
@@ -84,6 +84,22 @@ class TestGooglePromptDriver:
         prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
         prompt_stack.add_assistant_message("assistant-input")
 
+        prompt_stack.add_action_call_message(
+            "thought", [ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})]
+        )
+        prompt_stack.add_action_result_message(
+            "keep-going",
+            [
+                ActionArtifact.Action(
+                    tag="MockTool_test",
+                    name="MockTool",
+                    path="test",
+                    input={"foo": "bar"},
+                    output=TextArtifact("tool-output", id="output"),
+                )
+            ],
+        )
+
         return prompt_stack
 
     @pytest.fixture
@@ -93,6 +109,21 @@ class TestGooglePromptDriver:
             {"parts": ["user-input"], "role": "user"},
             {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
             {"parts": ["assistant-input"], "role": "model"},
+            {
+                "parts": ["thought", Part(function_call=FunctionCall(name="MockTool_test", args={"foo": "bar"}))],
+                "role": "model",
+            },
+            {
+                "parts": [
+                    Part(
+                        function_response=FunctionResponse(
+                            name="MockTool_test", response=TextArtifact("tool-output", id="output").to_dict()
+                        )
+                    ),
+                    "keep-going",
+                ],
+                "role": "user",
+            },
         ]
 
     def test_init(self):

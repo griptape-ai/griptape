@@ -1,4 +1,5 @@
 import json
+from griptape.artifacts import ListArtifact, TextArtifact, ActionArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.tasks import ToolkitTask, ActionsSubtask
@@ -19,6 +20,25 @@ class TestActionsSubtask:
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
 
+        assert json_dict[0]["name"] == "MockTool"
+        assert json_dict[0]["path"] == "test"
+        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+
+    def test_action_input(self):
+        valid_input = ListArtifact(
+            [
+                TextArtifact("thought"),
+                ActionArtifact(
+                    ActionArtifact.Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
+                ),
+            ]
+        )
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        json_dict = json.loads(subtask.actions_to_json())
+
+        assert subtask.thought == "thought"
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
