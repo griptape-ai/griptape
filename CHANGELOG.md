@@ -15,12 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RAG modules:
     - Retrieval:
       - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
+      - `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
       - `TextChunksRerankRagModule` for re-ranking retrieved results.
     - Response:
       - `MetadataBeforeResponseRagModule` for appending metadata.
       - `RulesetsBeforeResponseRagModule` for appending rulesets.
       - `PromptResponseRagModule` for generating responses based on retrieved text chunks.
       - `TextChunksResponseRagModule` for responding with retrieved text chunks.
+      - `FootnotePromptResponseRagModule` is for responding with automatic footnotes from text chunk references.
 - `RagClient` tool for exposing `RagEngines` to LLM agents.
 - `RagTask` task for including `RagEngines` in any structure.
 - Rerank drivers:
