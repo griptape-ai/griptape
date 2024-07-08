@@ -132,7 +132,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     self.structure.publish_event(CompletionChunkEvent(token=content.text))
                 elif isinstance(content, ActionCallDeltaMessageContent):
                     if content.tag is not None and content.name is not None and content.path is not None:
-                        self.structure.publish_event(CompletionChunkEvent(token=str(message_delta)))
+                        self.structure.publish_event(CompletionChunkEvent(token=str(content)))
                     elif content.partial_input is not None:
                         self.structure.publish_event(CompletionChunkEvent(token=content.partial_input))
 
