@@ -52,7 +52,7 @@ class TextArtifactStorage(BaseArtifactStorage):
         result = self.rag_engine.process(
             RagContext(
                 query=query,
-                module_params={
+                module_configs={
                     self.retrieval_rag_module_name: {
                         "query_params": {
                             "namespace": namespace,
