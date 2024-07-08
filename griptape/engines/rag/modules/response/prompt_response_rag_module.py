@@ -1,5 +1,7 @@
 from typing import Callable
 from attrs import define, field, Factory
+
+from griptape import utils
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import Reference
 from griptape.drivers import BasePromptDriver
@@ -54,10 +56,4 @@ class PromptResponseRagModule(BaseResponseRagModule):
         )
 
     def references_from_artifacts(self, artifacts: list[TextArtifact]) -> list[Reference]:
-        references = []
-
-        for a in artifacts:
-            if a.reference is not None and a.reference not in references:
-                references.append(a.reference)
-
-        return references
+        return utils.references_from_artifacts(artifacts)
