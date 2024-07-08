@@ -37,7 +37,7 @@ class PromptStack(SerializableMixin):
         return [message for message in self.messages if message.is_assistant()]
 
     def add_message(self, artifact: str | BaseArtifact, role: str) -> Message:
-        content = self.__process_artifact(artifact)
+        content = self.__to_message_content(artifact)
 
         self.messages.append(Message(content=content, role=role))
 
@@ -52,7 +52,7 @@ class PromptStack(SerializableMixin):
     def add_assistant_message(self, artifact: str | BaseArtifact) -> Message:
         return self.add_message(artifact, Message.ASSISTANT_ROLE)
 
-    def __process_artifact(self, artifact: str | BaseArtifact) -> list[BaseMessageContent]:
+    def __to_message_content(self, artifact: str | BaseArtifact) -> list[BaseMessageContent]:
         if isinstance(artifact, str):
             return [TextMessageContent(TextArtifact(artifact))]
         elif isinstance(artifact, TextArtifact):
@@ -67,7 +67,7 @@ class PromptStack(SerializableMixin):
             else:
                 return [ActionResultMessageContent(output, action=action)]
         elif isinstance(artifact, ListArtifact):
-            processed_contents = [self.__process_artifact(artifact) for artifact in artifact.value]
+            processed_contents = [self.__to_message_content(artifact) for artifact in artifact.value]
             flattened_content = [
                 sub_content for processed_content in processed_contents for sub_content in processed_content
             ]
