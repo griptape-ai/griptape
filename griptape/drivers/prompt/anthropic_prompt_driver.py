@@ -26,6 +26,7 @@ from griptape.common import (
     ImageMessageContent,
     PromptStack,
     Message,
+    Action,
     TextMessageContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -186,7 +187,7 @@ class AnthropicPromptDriver(BasePromptDriver):
 
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
-                    value=ActionArtifact.Action(tag=content.id, name=name, path=path, input=content.input)  # pyright: ignore[reportArgumentType]
+                    value=Action(tag=content.id, name=name, path=path, input=content.input)  # pyright: ignore[reportArgumentType]
                 )
             )
         else:

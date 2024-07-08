@@ -20,6 +20,7 @@ from griptape.common import (
     ActionResultMessageContent,
     ActionCallDeltaMessageContent,
     BaseDeltaMessageContent,
+    Action,
 )
 from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
@@ -221,9 +222,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             args = {k: v for k, v in function_call.args.items()}
             return ActionCallMessageContent(
-                artifact=ActionArtifact(
-                    value=ActionArtifact.Action(tag=function_call.name, name=name, path=path, input=args)
-                )
+                artifact=ActionArtifact(value=Action(tag=function_call.name, name=name, path=path, input=args))
             )
         else:
             raise ValueError(f"Unsupported message content type {content}")

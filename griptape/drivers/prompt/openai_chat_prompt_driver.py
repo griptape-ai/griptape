@@ -21,6 +21,7 @@ from griptape.common import (
     PromptStack,
     Message,
     TextMessageContent,
+    Action,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -250,7 +251,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 [
                     ActionCallMessageContent(
                         ActionArtifact(
-                            ActionArtifact.Action(
+                            Action(
                                 tag=tool_call.id,
                                 name=tool_call.function.name.split("_", 1)[0],
                                 path=tool_call.function.name.split("_", 1)[1],

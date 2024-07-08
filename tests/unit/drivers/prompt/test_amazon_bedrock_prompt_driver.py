@@ -2,7 +2,7 @@ import pytest
 
 from griptape.artifacts import ImageArtifact, TextArtifact, ListArtifact, ErrorArtifact, ActionArtifact
 from griptape.common import PromptStack
-from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent
+from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent, Action
 from griptape.drivers import AmazonBedrockPromptDriver
 
 from tests.mocks.mock_tool.tool import MockTool
@@ -192,9 +192,7 @@ class TestAmazonBedrockPromptDriver:
             ListArtifact(
                 [
                     TextArtifact("thought"),
-                    ActionArtifact(
-                        ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})
-                    ),
+                    ActionArtifact(Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
                 ]
             )
         )
@@ -202,7 +200,7 @@ class TestAmazonBedrockPromptDriver:
             ListArtifact(
                 [
                     ActionArtifact(
-                        ActionArtifact.Action(
+                        Action(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",
@@ -218,7 +216,7 @@ class TestAmazonBedrockPromptDriver:
             ListArtifact(
                 [
                     ActionArtifact(
-                        ActionArtifact.Action(
+                        Action(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",
@@ -239,7 +237,7 @@ class TestAmazonBedrockPromptDriver:
             ListArtifact(
                 [
                     ActionArtifact(
-                        ActionArtifact.Action(
+                        Action(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",

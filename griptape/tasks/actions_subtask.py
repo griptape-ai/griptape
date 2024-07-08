@@ -6,6 +6,7 @@ from typing import Optional, TYPE_CHECKING, Callable
 import schema
 from attrs import define, field
 from griptape import utils
+from griptape.common import Action
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
@@ -24,7 +25,7 @@ class ActionsSubtask(BaseTask):
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    actions: list[ActionArtifact.Action] = field(factory=list, kw_only=True)
+    actions: list[Action] = field(factory=list, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
     _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
@@ -115,13 +116,13 @@ class ActionsSubtask(BaseTask):
         else:
             return ErrorArtifact("no tool output")
 
-    def execute_actions(self, actions: list[ActionArtifact.Action]) -> list[tuple[str, BaseArtifact]]:
+    def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
         with self.futures_executor_fn() as executor:
             results = utils.execute_futures_dict({a.tag: executor.submit(self.execute_action, a) for a in actions})
 
         return [r for r in results.values()]
 
-    def execute_action(self, action: ActionArtifact.Action) -> tuple[str, BaseArtifact]:
+    def execute_action(self, action: Action) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
                 output = action.tool.execute(getattr(action.tool, action.path), self, action)
@@ -229,7 +230,7 @@ class ActionsSubtask(BaseTask):
 
             self.output = ErrorArtifact(f"Actions JSON decoding error: {e}", exception=e)
 
-    def __process_action_object(self, action_object: dict) -> ActionArtifact.Action:
+    def __process_action_object(self, action_object: dict) -> Action:
         # Load action tag; throw exception if the key is not present
         action_tag = action_object["tag"]
 
@@ -260,16 +261,14 @@ class ActionsSubtask(BaseTask):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
-        action = ActionArtifact.Action(
-            tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool
-        )
+        action = Action(tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool)
 
         if action.tool and action.input:
             self.__validate_action(action)
 
         return action
 
-    def __validate_action(self, action: ActionArtifact.Action) -> None:
+    def __validate_action(self, action: Action) -> None:
         try:
             if action.path is not None:
                 activity = getattr(action.tool, action.path)

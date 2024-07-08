@@ -4,6 +4,7 @@ from griptape.artifacts.error_artifact import ErrorArtifact
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.structures import Agent
+from griptape.common import Action
 
 
 class TestActionsSubtask:
@@ -28,9 +29,7 @@ class TestActionsSubtask:
         valid_input = ListArtifact(
             [
                 TextArtifact("thought"),
-                ActionArtifact(
-                    ActionArtifact.Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
-                ),
+                ActionArtifact(Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})),
             ]
         )
         task = ToolkitTask(tools=[MockTool()])

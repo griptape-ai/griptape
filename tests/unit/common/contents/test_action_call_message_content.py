@@ -1,12 +1,12 @@
 import pytest
 from griptape.artifacts.action_artifact import ActionArtifact
-from griptape.common import ActionCallMessageContent, ActionCallDeltaMessageContent
+from griptape.common import ActionCallMessageContent, ActionCallDeltaMessageContent, Action
 
 
 class TestActionCallMessageContent:
     def test_init(self):
         assert ActionCallMessageContent(
-            ActionArtifact(ActionArtifact.Action(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"}))
+            ActionArtifact(Action(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"}))
         ).artifact.value.to_dict() == {
             "tag": "TestTag",
             "name": "TestName",

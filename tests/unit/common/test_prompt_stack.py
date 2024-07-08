@@ -2,8 +2,8 @@ import pytest
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact, ActionArtifact
 from griptape.common import ImageMessageContent, PromptStack, TextMessageContent
-from griptape.common.prompt_stack.contents.action_call_message_content import ActionCallMessageContent
-from griptape.common.prompt_stack.contents.action_result_message_content import ActionResultMessageContent
+from griptape.common import ActionCallMessageContent
+from griptape.common import ActionResultMessageContent, Action
 
 
 class TestPromptStack:
@@ -20,21 +20,14 @@ class TestPromptStack:
         prompt_stack.add_message(ImageArtifact(b"foo", format="png", width=100, height=100), "role")
         prompt_stack.add_message(ListArtifact([TextArtifact("foo"), TextArtifact("bar")]), "role")
         prompt_stack.add_message(
-            ListArtifact(
-                [
-                    TextArtifact("foo"),
-                    ActionArtifact(ActionArtifact.Action(tag="foo", name="bar", path="baz", input={})),
-                ]
-            ),
+            ListArtifact([TextArtifact("foo"), ActionArtifact(Action(tag="foo", name="bar", path="baz", input={}))]),
             "role",
         )
         prompt_stack.add_message(
             ListArtifact(
                 [
                     TextArtifact("foo"),
-                    ActionArtifact(
-                        ActionArtifact.Action(tag="foo", name="bar", path="baz", input={}, output=TextArtifact("qux"))
-                    ),
+                    ActionArtifact(Action(tag="foo", name="bar", path="baz", input={}, output=TextArtifact("qux"))),
                 ]
             ),
             "role",

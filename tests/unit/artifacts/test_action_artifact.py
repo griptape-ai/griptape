@@ -1,12 +1,13 @@
 import json
 import pytest
+from griptape.common import Action
 from griptape.artifacts import ActionArtifact, BaseArtifact
 
 
 class TestActionArtifact:
     @pytest.fixture()
-    def action(self) -> ActionArtifact.Action:
-        return ActionArtifact.Action(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"})
+    def action(self) -> Action:
+        return Action(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"})
 
     def test___add__(self, action):
         with pytest.raises(NotImplementedError):

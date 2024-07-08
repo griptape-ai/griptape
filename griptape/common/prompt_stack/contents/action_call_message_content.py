@@ -5,6 +5,7 @@ from collections.abc import Sequence
 
 from attrs import define, field
 
+from griptape.common import Action
 from griptape.artifacts import ActionArtifact
 from griptape.common import BaseDeltaMessageContent, BaseMessageContent, ActionCallDeltaMessageContent
 
@@ -36,10 +37,10 @@ class ActionCallMessageContent(BaseMessageContent):
             try:
                 parsed_input = json.loads(input)
             except json.JSONDecodeError as exc:
-                raise ValueError("Invalid JSON input for ActionArtifact.Action") from exc
-            action = ActionArtifact.Action(tag=tag, name=name, path=path, input=parsed_input)
+                raise ValueError("Invalid JSON input for Action") from exc
+            action = Action(tag=tag, name=name, path=path, input=parsed_input)
         else:
-            raise ValueError("Missing required fields for ActionArtifact.Action")
+            raise ValueError("Missing required fields for Action")
 
         artifact = ActionArtifact(value=action)
 

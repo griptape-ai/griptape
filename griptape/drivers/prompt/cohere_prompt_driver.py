@@ -18,6 +18,7 @@ from griptape.common import (
     Message,
     TextMessageContent,
     ActionResultMessageContent,
+    Action,
 )
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
@@ -210,7 +211,7 @@ class CoherePromptDriver(BasePromptDriver):
                 [
                     ActionCallMessageContent(
                         ActionArtifact(
-                            ActionArtifact.Action(
+                            Action(
                                 tag=tool_call.name,
                                 name=tool_call.name.split("_", 1)[0],
                                 path=tool_call.name.split("_", 1)[1],

@@ -26,6 +26,7 @@ from griptape.common import (
     Message,
     TextDeltaMessageContent,
     TextMessageContent,
+    Action,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
@@ -179,7 +180,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             name, path = content["toolUse"]["name"].split("_", 1)
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
-                    value=ActionArtifact.Action(
+                    value=Action(
                         tag=content["toolUse"]["toolUseId"], name=name, path=path, input=content["toolUse"]["input"]
                     )
                 )

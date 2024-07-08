@@ -5,7 +5,7 @@ import pytest
 from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import PromptStack
+from griptape.common import PromptStack, Action
 from griptape.drivers import CoherePromptDriver
 from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent
 from tests.mocks.mock_tool.tool import MockTool
@@ -83,9 +83,7 @@ class TestCoherePromptDriver:
             ListArtifact(
                 [
                     TextArtifact("thought"),
-                    ActionArtifact(
-                        ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})
-                    ),
+                    ActionArtifact(Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
                 ]
             )
         )
@@ -94,7 +92,7 @@ class TestCoherePromptDriver:
                 [
                     TextArtifact("tool-output"),
                     ActionArtifact(
-                        ActionArtifact.Action(
+                        Action(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",
