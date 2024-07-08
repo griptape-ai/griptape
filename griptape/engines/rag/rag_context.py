@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 from attrs import define, field
+
+from griptape import utils
 from griptape.common import Reference
 from griptape.mixins import SerializableMixin
 
@@ -30,10 +32,4 @@ class RagContext(SerializableMixin):
     output: Optional[BaseArtifact] = field(default=None, metadata={"serializable": True})
 
     def get_references(self) -> list[Reference]:
-        references = []
-
-        for chunk in self.text_chunks:
-            if chunk.reference is not None and chunk.reference not in references:
-                references.append(chunk.reference)
-
-        return references
+        return utils.references_from_artifacts(self.text_chunks)

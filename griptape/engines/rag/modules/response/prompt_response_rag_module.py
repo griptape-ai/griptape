@@ -1,9 +1,6 @@
 from typing import Callable
 from attrs import define, field, Factory
-
-from griptape import utils
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import Reference
 from griptape.drivers import BasePromptDriver
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseResponseRagModule
@@ -54,6 +51,3 @@ class PromptResponseRagModule(BaseResponseRagModule):
             before_system_prompt="\n\n".join(context.before_query),
             after_system_prompt="\n\n".join(context.after_query),
         )
-
-    def references_from_artifacts(self, artifacts: list[TextArtifact]) -> list[Reference]:
-        return utils.references_from_artifacts(artifacts)
