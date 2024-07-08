@@ -10,7 +10,7 @@ from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
-from griptape.common import PromptStack
+from griptape.common import PromptStack, Action
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -74,18 +74,27 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         else:
             for s in self.subtasks:
                 if self.prompt_driver.use_native_tools:
+                    action_calls = [
+                        Action(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                        for action in s.actions
+                    ]
+                    action_results = [
+                        Action(name=action.name, path=action.path, tag=action.tag, output=action.output)
+                        for action in s.actions
+                    ]
+
                     stack.add_assistant_message(
                         ListArtifact(
                             [
                                 *([TextArtifact(s.thought)] if s.thought else []),
-                                *[ActionArtifact(action) for action in s.actions],
+                                *[ActionArtifact(a) for a in action_calls],
                             ]
                         )
                     )
                     stack.add_user_message(
                         ListArtifact(
                             [
-                                *[ActionArtifact(action) for action in s.actions],
+                                *[ActionArtifact(a) for a in action_results],
                                 *([] if s.output else [TextArtifact("Please keep going")]),
                             ]
                         )
