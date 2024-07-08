@@ -170,7 +170,7 @@ class TestAnthropicPromptDriver:
     @pytest.fixture(params=[True, False])
     def prompt_stack(self, request):
         prompt_stack = PromptStack()
-        prompt_stack.actions = [MockTool()]
+        prompt_stack.tools = [MockTool()]
         if request.param:
             prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")

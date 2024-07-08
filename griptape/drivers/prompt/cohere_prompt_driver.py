@@ -101,8 +101,8 @@ class CoherePromptDriver(BasePromptDriver):
             "max_tokens": self.max_tokens,
             **({"tool_results": tool_results} if tool_results else {}),
             **(
-                {"tools": self.__to_cohere_tools(prompt_stack.actions), "force_single_step": self.force_single_step}
-                if prompt_stack.actions and self.use_native_tools
+                {"tools": self.__to_cohere_tools(prompt_stack.tools), "force_single_step": self.force_single_step}
+                if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
             **({"preamble": preamble} if preamble else {}),

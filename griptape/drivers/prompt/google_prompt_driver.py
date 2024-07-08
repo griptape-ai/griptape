@@ -125,10 +125,10 @@ class GooglePromptDriver(BasePromptDriver):
             ),
             **(
                 {
-                    "tools": self.__to_google_tools(prompt_stack.actions),
+                    "tools": self.__to_google_tools(prompt_stack.tools),
                     "tool_config": {"function_calling_config": {"mode": self.tool_choice}},
                 }
-                if prompt_stack.actions and self.use_native_tools
+                if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
         }

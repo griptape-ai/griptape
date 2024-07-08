@@ -187,7 +187,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.actions = [MockTool()]
+        prompt_stack.tools = [MockTool()]
         prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_user_message(

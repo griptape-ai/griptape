@@ -126,8 +126,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "user": self.user,
             "seed": self.seed,
             **(
-                {"tools": self.__to_openai_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
-                if prompt_stack.actions and self.use_native_tools
+                {"tools": self.__to_openai_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
+                if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),

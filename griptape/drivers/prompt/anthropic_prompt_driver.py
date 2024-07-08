@@ -100,8 +100,8 @@ class AnthropicPromptDriver(BasePromptDriver):
             "max_tokens": self.max_tokens,
             "messages": messages,
             **(
-                {"tools": self.__to_anthropic_tools(prompt_stack.actions), "tool_choice": self.tool_choice}
-                if prompt_stack.actions and self.use_native_tools
+                {"tools": self.__to_anthropic_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
+                if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
             **({"system": system_message} if system_message else {}),

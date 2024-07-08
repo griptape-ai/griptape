@@ -91,8 +91,8 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "inferenceConfig": {"temperature": self.temperature},
             "additionalModelRequestFields": self.additional_model_request_fields,
             **(
-                {"toolConfig": {"tools": self.__to_bedrock_tools(prompt_stack.actions), "toolChoice": self.tool_choice}}
-                if prompt_stack.actions and self.use_native_tools
+                {"toolConfig": {"tools": self.__to_bedrock_tools(prompt_stack.tools), "toolChoice": self.tool_choice}}
+                if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
         }

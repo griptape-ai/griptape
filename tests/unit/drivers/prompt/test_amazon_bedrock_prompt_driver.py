@@ -178,7 +178,7 @@ class TestAmazonBedrockPromptDriver:
     @pytest.fixture(params=[True, False])
     def prompt_stack(self, request):
         prompt_stack = PromptStack()
-        prompt_stack.actions = [MockTool()]
+        prompt_stack.tools = [MockTool()]
         if request.param:
             prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
@@ -357,7 +357,7 @@ class TestAmazonBedrockPromptDriver:
             **({"system": [{"text": "system-input"}]} if prompt_stack.system_messages else {"system": []}),
             **(
                 {"toolConfig": {"tools": self.BEDROCK_TOOLS, "toolChoice": driver.tool_choice}}
-                if prompt_stack.actions and use_native_tools
+                if prompt_stack.tools and use_native_tools
                 else {}
             ),
         )
