@@ -112,22 +112,22 @@ class CoherePromptDriver(BasePromptDriver):
         cohere_messages = []
 
         for message in messages:
-            new_message: dict = {"role": self.__to_cohere_role(message)}
+            cohere_message: dict = {"role": self.__to_cohere_role(message)}
 
             if message.has_any_content_type(ActionResultMessageContent):
-                new_message["tool_results"] = [
+                cohere_message["tool_results"] = [
                     self.__to_cohere_message_content(action_call)
                     for action_call in message.get_content_type(ActionResultMessageContent)
                 ]
             else:
-                new_message["message"] = message.to_text()
+                cohere_message["message"] = message.to_text()
                 if message.has_any_content_type(ActionCallMessageContent):
-                    new_message["tool_calls"] = [
+                    cohere_message["tool_calls"] = [
                         self.__to_cohere_message_content(action_call)
                         for action_call in message.get_content_type(ActionCallMessageContent)
                     ]
 
-            cohere_messages.append(new_message)
+            cohere_messages.append(cohere_message)
 
         return cohere_messages
 
