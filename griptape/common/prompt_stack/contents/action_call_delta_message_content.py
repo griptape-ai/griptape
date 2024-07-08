@@ -13,15 +13,19 @@ class ActionCallDeltaMessageContent(BaseDeltaMessageContent):
     partial_input: Optional[str] = field(default=None, metadata={"serializable": True})
 
     def __str__(self) -> str:
-        output = ""
+        parts = []
 
-        if self.name is not None:
-            output += f"{self.name}"
-            if self.path is not None:
-                output += f".{self.path}"
-                if self.tag is not None:
-                    output += f" ({self.tag})"
-        if self.partial_input is not None:
-            output += f" {self.partial_input}"
+        if self.name:
+            parts.append(self.name)
+            if self.path:
+                parts.append(f".{self.path}")
+                if self.tag:
+                    parts.append(f" ({self.tag})")
 
-        return output
+        if self.partial_input:
+            if parts:
+                parts.append(f" {self.partial_input}")
+            else:
+                parts.append(self.partial_input)
+
+        return "".join(parts)

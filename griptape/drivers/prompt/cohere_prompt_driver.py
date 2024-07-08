@@ -116,8 +116,8 @@ class CoherePromptDriver(BasePromptDriver):
 
             if message.has_any_content_type(ActionResultMessageContent):
                 cohere_message["tool_results"] = [
-                    self.__to_cohere_message_content(action_call)
-                    for action_call in message.get_content_type(ActionResultMessageContent)
+                    self.__to_cohere_message_content(action_result)
+                    for action_result in message.get_content_type(ActionResultMessageContent)
                 ]
             else:
                 cohere_message["message"] = message.to_text()
@@ -212,8 +212,8 @@ class CoherePromptDriver(BasePromptDriver):
                         ActionArtifact(
                             ActionArtifact.Action(
                                 tag=tool_call.name,
-                                name=tool_call.name.split("_")[0],
-                                path=tool_call.name.split("_")[1],
+                                name=tool_call.name.split("_", 1)[0],
+                                path=tool_call.name.split("_", 1)[1],
                                 input=tool_call.parameters,
                             )
                         )
