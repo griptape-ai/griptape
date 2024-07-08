@@ -11,20 +11,13 @@ class TestLocalVectorStoreDriver(BaseLocalVectorStoreDriver):
         return LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
 
     def test_upsert_text_artifacts_dict(self, driver):
-        driver.upsert_text_artifacts(
-            {
-                "foo": [TextArtifact("bar"), TextArtifact("baz")],
-                "bar": [TextArtifact("bar")]
-            }
-        )
+        driver.upsert_text_artifacts({"foo": [TextArtifact("bar"), TextArtifact("baz")], "bar": [TextArtifact("bar")]})
 
         assert len(driver.load_artifacts("foo")) == 2
         assert len(driver.load_artifacts("bar")) == 1
 
     def test_upsert_text_artifacts_list(self, driver):
-        driver.upsert_text_artifacts(
-            [TextArtifact("bar"), TextArtifact("baz")]
-        )
+        driver.upsert_text_artifacts([TextArtifact("bar"), TextArtifact("baz")])
 
         assert len(driver.load_artifacts("foo")) == 0
         assert len(driver.load_artifacts()) == 2

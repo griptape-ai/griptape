@@ -27,10 +27,7 @@ class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
         context_source = self.get_context_param(context, "source")
         source = self.source if context_source is None else context_source
 
-        query_params = utils.dict_merge(
-            self.query_params,
-            self.get_context_param(context, "query_params")
-        )
+        query_params = utils.dict_merge(self.query_params, self.get_context_param(context, "query_params"))
 
         query_params["namespace"] = namespace
 

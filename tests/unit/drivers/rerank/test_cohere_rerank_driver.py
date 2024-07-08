@@ -14,7 +14,7 @@ class TestCohereRerankDriver:
             ),
             RerankResponseResultsItem(
                 index=2, relevance_score=0.5, document=RerankResponseResultsItemDocument(text="bar")
-            )
+            ),
         ]
 
         return mock_client

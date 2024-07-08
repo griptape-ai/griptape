@@ -49,10 +49,6 @@ class TestSerializableMixin:
             MockSerializable._import_cls_rec("griptape.memory.task", "ConversationMemory")
 
     def test_nested_optional_serializable(self):
-        assert MockSerializable(
-            nested=None
-        ).to_dict().get("nested") is None
+        assert MockSerializable(nested=None).to_dict().get("nested") is None
 
-        assert MockSerializable(
-            nested=MockSerializable.NestedMockSerializable()
-        ).to_dict()["nested"]["foo"] == "bar"
+        assert MockSerializable(nested=MockSerializable.NestedMockSerializable()).to_dict()["nested"]["foo"] == "bar"

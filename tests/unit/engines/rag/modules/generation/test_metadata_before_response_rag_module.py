@@ -6,7 +6,9 @@ class TestMetadataBeforeResponseRagModule:
     def test_run(self):
         module = MetadataBeforeResponseRagModule(name="foo")
 
-        assert "foo" in module.run(RagContext(module_configs={"foo": {"metadata": "foo"}}, query="test")).before_query[0]
+        assert (
+            "foo" in module.run(RagContext(module_configs={"foo": {"metadata": "foo"}}, query="test")).before_query[0]
+        )
 
     def test_run_with_override(self):
         module = MetadataBeforeResponseRagModule(name="foo", metadata="bar")

@@ -19,9 +19,6 @@ class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
     )
 
     def run(self, context: RagContext) -> Sequence[TextArtifact]:
-        query_params = utils.dict_merge(
-            self.query_params,
-            self.get_context_param(context, "query_params")
-        )
+        query_params = utils.dict_merge(self.query_params, self.get_context_param(context, "query_params"))
 
         return self.process_query_output_fn(self.vector_store_driver.query(context.query, **query_params))

@@ -33,7 +33,7 @@ class RagContext(SerializableMixin):
         references = []
 
         for chunk in self.text_chunks:
-            if chunk.reference is not None and not (chunk.reference in references):
+            if chunk.reference is not None and chunk.reference not in references:
                 references.append(chunk.reference)
 
         return references

@@ -125,7 +125,7 @@ class BaseSchema(Schema):
                 "boto3": boto3,
                 "Client": Client,
                 "Reference": Reference,
-                "BaseArtifact": BaseArtifact
+                "BaseArtifact": BaseArtifact,
             },
         )
 

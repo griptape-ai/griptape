@@ -14,7 +14,7 @@ class TestRagContext:
                 TextArtifact("foo", reference=reference1),
                 TextArtifact("foo"),
                 TextArtifact("foo", reference=reference2),
-            ]
+            ],
         )
         references = context.get_references()
 

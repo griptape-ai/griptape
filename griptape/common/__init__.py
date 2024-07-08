@@ -22,5 +22,5 @@ __all__ = [
     "TextMessageContent",
     "ImageMessageContent",
     "PromptStack",
-    "Reference"
+    "Reference",
 ]

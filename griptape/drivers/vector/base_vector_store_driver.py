@@ -42,10 +42,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         with self.futures_executor_fn() as executor:
             if isinstance(artifacts, list):
                 utils.execute_futures_list(
-                    [
-                        executor.submit(self.upsert_text_artifact, a, None, meta, **kwargs)
-                        for a in artifacts
-                    ]
+                    [executor.submit(self.upsert_text_artifact, a, None, meta, **kwargs) for a in artifacts]
                 )
             else:
                 utils.execute_futures_dict(
