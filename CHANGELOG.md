@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Agent.input` for passing Artifacts as input.
 - Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
 - Parameters `sort_key` and `sort_key_value` on `AmazonDynamoDbConversationMemoryDriver` for tables with sort keys.
+- `Citation` for supporting artifact citations in loaders and RAG engine modules.
 
 ### Changed
 - **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.
