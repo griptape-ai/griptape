@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts.action_artifact import ActionArtifact
+from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import PromptStack
 from griptape.drivers import CoherePromptDriver
@@ -78,20 +79,31 @@ class TestCoherePromptDriver:
             prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_assistant_message("assistant-input")
-        prompt_stack.add_action_call_message(
-            "thought", [ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})]
+        prompt_stack.add_assistant_message(
+            ListArtifact(
+                [
+                    TextArtifact("thought"),
+                    ActionArtifact(
+                        ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})
+                    ),
+                ]
+            )
         )
-        prompt_stack.add_action_result_message(
-            "keep-going",
-            [
-                ActionArtifact.Action(
-                    tag="MockTool_test",
-                    name="MockTool",
-                    path="test",
-                    input={"foo": "bar"},
-                    output=TextArtifact("tool-output"),
-                )
-            ],
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [
+                    TextArtifact("tool-output"),
+                    ActionArtifact(
+                        ActionArtifact.Action(
+                            tag="MockTool_test",
+                            name="MockTool",
+                            path="test",
+                            input={"foo": "bar"},
+                            output=TextArtifact("tool-output"),
+                        )
+                    ),
+                ]
+            )
         )
         prompt_stack.add_user_message("user-input")
         return prompt_stack

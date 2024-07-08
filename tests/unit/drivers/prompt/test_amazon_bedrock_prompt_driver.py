@@ -188,49 +188,68 @@ class TestAmazonBedrockPromptDriver:
             )
         )
         prompt_stack.add_assistant_message("assistant-input")
-        prompt_stack.add_action_call_message(
-            "thought", [ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})]
-        )
-        prompt_stack.add_action_result_message(
-            "keep-going",
-            [
-                ActionArtifact.Action(
-                    tag="MockTool_test",
-                    name="MockTool",
-                    path="test",
-                    input={"foo": "bar"},
-                    output=TextArtifact("tool-output"),
-                )
-            ],
-        )
-        prompt_stack.add_action_result_message(
-            "keep-going",
-            [
-                ActionArtifact.Action(
-                    tag="MockTool_test",
-                    name="MockTool",
-                    path="test",
-                    input={"foo": "bar"},
-                    output=ListArtifact(
-                        [
-                            TextArtifact("tool-output"),
-                            ImageArtifact(value=b"image-data", format="png", width=100, height=100),
-                        ]
+        prompt_stack.add_assistant_message(
+            ListArtifact(
+                [
+                    TextArtifact("thought"),
+                    ActionArtifact(
+                        ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})
                     ),
-                )
-            ],
+                ]
+            )
         )
-        prompt_stack.add_action_result_message(
-            "keep-going",
-            [
-                ActionArtifact.Action(
-                    tag="MockTool_test",
-                    name="MockTool",
-                    path="test",
-                    input={"foo": "bar"},
-                    output=ErrorArtifact("error"),
-                )
-            ],
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [
+                    ActionArtifact(
+                        ActionArtifact.Action(
+                            tag="MockTool_test",
+                            name="MockTool",
+                            path="test",
+                            input={"foo": "bar"},
+                            output=TextArtifact("tool-output"),
+                        )
+                    ),
+                    TextArtifact("keep-going"),
+                ]
+            )
+        )
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [
+                    ActionArtifact(
+                        ActionArtifact.Action(
+                            tag="MockTool_test",
+                            name="MockTool",
+                            path="test",
+                            input={"foo": "bar"},
+                            output=ListArtifact(
+                                [
+                                    TextArtifact("tool-output"),
+                                    ImageArtifact(value=b"image-data", format="png", width=100, height=100),
+                                ]
+                            ),
+                        )
+                    ),
+                    TextArtifact("keep-going"),
+                ]
+            )
+        )
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [
+                    ActionArtifact(
+                        ActionArtifact.Action(
+                            tag="MockTool_test",
+                            name="MockTool",
+                            path="test",
+                            input={"foo": "bar"},
+                            output=ErrorArtifact("error"),
+                        )
+                    ),
+                    TextArtifact("keep-going"),
+                ]
+            )
         )
 
         return prompt_stack

@@ -1,6 +1,7 @@
 from google.generativeai.types import ContentDict, GenerationConfig
 from google.generativeai.protos import FunctionCall, FunctionResponse, Part
 from griptape.artifacts import TextArtifact, ImageArtifact, ActionArtifact
+from griptape.artifacts.list_artifact import ListArtifact
 from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent
 from griptape.drivers import GooglePromptDriver
 from griptape.common import PromptStack
@@ -84,20 +85,31 @@ class TestGooglePromptDriver:
         prompt_stack.add_user_message(ImageArtifact(value=b"image-data", format="png", width=100, height=100))
         prompt_stack.add_assistant_message("assistant-input")
 
-        prompt_stack.add_action_call_message(
-            "thought", [ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})]
+        prompt_stack.add_assistant_message(
+            ListArtifact(
+                [
+                    TextArtifact("thought"),
+                    ActionArtifact(
+                        ActionArtifact.Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})
+                    ),
+                ]
+            )
         )
-        prompt_stack.add_action_result_message(
-            "keep-going",
-            [
-                ActionArtifact.Action(
-                    tag="MockTool_test",
-                    name="MockTool",
-                    path="test",
-                    input={"foo": "bar"},
-                    output=TextArtifact("tool-output", id="output"),
-                )
-            ],
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [
+                    ActionArtifact(
+                        ActionArtifact.Action(
+                            tag="MockTool_test",
+                            name="MockTool",
+                            path="test",
+                            input={"foo": "bar"},
+                            output=TextArtifact("tool-output", id="output"),
+                        )
+                    ),
+                    TextArtifact("keep-going"),
+                ]
+            )
         )
 
         return prompt_stack

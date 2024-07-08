@@ -1,7 +1,9 @@
 import pytest
 
-from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact, ActionArtifact
 from griptape.common import ImageMessageContent, PromptStack, TextMessageContent
+from griptape.common.prompt_stack.contents.action_call_message_content import ActionCallMessageContent
+from griptape.common.prompt_stack.contents.action_result_message_content import ActionResultMessageContent
 
 
 class TestPromptStack:
@@ -17,6 +19,26 @@ class TestPromptStack:
         prompt_stack.add_message(TextArtifact("foo"), "role")
         prompt_stack.add_message(ImageArtifact(b"foo", format="png", width=100, height=100), "role")
         prompt_stack.add_message(ListArtifact([TextArtifact("foo"), TextArtifact("bar")]), "role")
+        prompt_stack.add_message(
+            ListArtifact(
+                [
+                    TextArtifact("foo"),
+                    ActionArtifact(ActionArtifact.Action(tag="foo", name="bar", path="baz", input={})),
+                ]
+            ),
+            "role",
+        )
+        prompt_stack.add_message(
+            ListArtifact(
+                [
+                    TextArtifact("foo"),
+                    ActionArtifact(
+                        ActionArtifact.Action(tag="foo", name="bar", path="baz", input={}, output=TextArtifact("qux"))
+                    ),
+                ]
+            ),
+            "role",
+        )
 
         assert prompt_stack.messages[0].role == "role"
         assert isinstance(prompt_stack.messages[0].content[0], TextMessageContent)
@@ -35,6 +57,29 @@ class TestPromptStack:
         assert prompt_stack.messages[3].content[0].artifact.value == "foo"
         assert isinstance(prompt_stack.messages[3].content[1], TextMessageContent)
         assert prompt_stack.messages[3].content[1].artifact.value == "bar"
+
+        assert prompt_stack.messages[4].role == "role"
+        assert isinstance(prompt_stack.messages[4].content[0], TextMessageContent)
+        assert prompt_stack.messages[4].content[0].artifact.value == "foo"
+        assert isinstance(prompt_stack.messages[4].content[1], ActionCallMessageContent)
+        assert prompt_stack.messages[4].content[1].artifact.value.to_dict() == {
+            "tag": "foo",
+            "name": "bar",
+            "path": "baz",
+            "input": {},
+        }
+
+        assert prompt_stack.messages[5].role == "role"
+        assert isinstance(prompt_stack.messages[5].content[0], TextMessageContent)
+        assert prompt_stack.messages[5].content[0].artifact.value == "foo"
+        assert isinstance(prompt_stack.messages[5].content[1], ActionResultMessageContent)
+        assert prompt_stack.messages[5].content[1].artifact.value == "qux"
+        assert prompt_stack.messages[5].content[1].action.to_dict() == {
+            "tag": "foo",
+            "name": "bar",
+            "path": "baz",
+            "input": {},
+        }
 
     def test_add_system_message(self, prompt_stack):
         prompt_stack.add_system_message("foo")

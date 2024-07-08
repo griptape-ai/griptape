@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -52,28 +52,6 @@ class PromptStack(SerializableMixin):
     def add_assistant_message(self, artifact: str | BaseArtifact) -> Message:
         return self.add_message(artifact, Message.ASSISTANT_ROLE)
 
-    def add_action_call_message(self, thought: Optional[str], actions: list[ActionArtifact.Action]) -> Message:
-        thought_content = self.__process_artifact(thought) if thought else []
-
-        action_calls_content = [ActionCallMessageContent(ActionArtifact(action)) for action in actions]
-
-        self.messages.append(Message(content=[*thought_content, *action_calls_content], role=Message.ASSISTANT_ROLE))
-
-        return self.messages[-1]
-
-    def add_action_result_message(
-        self, instructions: Optional[str | TextArtifact], actions: list[ActionArtifact.Action]
-    ) -> Message:
-        instructions_content = self.__process_artifact(instructions) if instructions else []
-
-        action_results_content = [
-            ActionResultMessageContent(action.output, action=action) for action in actions if action.output is not None
-        ]
-
-        self.messages.append(Message(content=[*action_results_content, *instructions_content], role=Message.USER_ROLE))
-
-        return self.messages[-1]
-
     def __process_artifact(self, artifact: str | BaseArtifact) -> list[BaseMessageContent]:
         if isinstance(artifact, str):
             return [TextMessageContent(TextArtifact(artifact))]
@@ -82,7 +60,12 @@ class PromptStack(SerializableMixin):
         elif isinstance(artifact, ImageArtifact):
             return [ImageMessageContent(artifact)]
         elif isinstance(artifact, ActionArtifact):
-            return [ActionCallMessageContent(artifact)]
+            action = artifact.value
+            output = action.output
+            if output is None:
+                return [ActionCallMessageContent(artifact)]
+            else:
+                return [ActionResultMessageContent(output, action=action)]
         elif isinstance(artifact, ListArtifact):
             processed_contents = [self.__process_artifact(artifact) for artifact in artifact.value]
             flattened_content = [
