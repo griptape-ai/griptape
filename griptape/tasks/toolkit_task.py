@@ -86,7 +86,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                         ListArtifact(
                             [
                                 *[ActionArtifact(action) for action in s.actions],
-                                *([] if s.thought else [TextArtifact("Please keep going")]),
+                                *([] if s.output else [TextArtifact("Please keep going")]),
                             ]
                         )
                     )
