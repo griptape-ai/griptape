@@ -234,7 +234,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             return {
                 "type": "function",
                 "id": action.tag,
-                "function": {"name": f"{action.name}_{action.path}", "arguments": json.dumps(action.input)},
+                "function": {"name": action.to_native_tool_name(), "arguments": json.dumps(action.input)},
             }
         elif isinstance(content, ActionResultMessageContent):
             return content.artifact.to_text()
@@ -253,8 +253,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         ActionArtifact(
                             Action(
                                 tag=tool_call.id,
-                                name=tool_call.function.name.split("_", 1)[0],
-                                path=tool_call.function.name.split("_", 1)[1],
+                                name=Action.from_native_tool_name(tool_call.function.name)[0],
+                                path=Action.from_native_tool_name(tool_call.function.name)[1],
                                 input=json.loads(tool_call.function.arguments),
                             )
                         )
@@ -276,12 +276,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 index = tool_call.index
 
                 # Tool call delta either contains the function header or the partial input.
-                if tool_call.id is not None:
+                if tool_call.id is not None and tool_call.function.name is not None:
                     return ActionCallDeltaMessageContent(
                         index=index,
                         tag=tool_call.id,
-                        name=tool_call.function.name.split("_", 1)[0],
-                        path=tool_call.function.name.split("_", 1)[1],
+                        name=Action.from_native_tool_name(tool_call.function.name)[0],
+                        path=Action.from_native_tool_name(tool_call.function.name)[1],
                     )
                 else:
                     return ActionCallDeltaMessageContent(index=index, partial_input=tool_call.function.arguments)

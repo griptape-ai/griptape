@@ -138,7 +138,7 @@ class CoherePromptDriver(BasePromptDriver):
         elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
-            return {"name": f"{action.name}_{action.path}", "parameters": action.input}
+            return {"name": action.to_native_tool_name(), "parameters": action.input}
         elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
@@ -148,7 +148,7 @@ class CoherePromptDriver(BasePromptDriver):
                 message_content = [{"text": artifact.to_text()}]
 
             return {
-                "call": {"name": f"{content.action.name}_{content.action.path}", "parameters": content.action.input},
+                "call": {"name": content.action.to_native_tool_name(), "parameters": content.action.input},
                 "outputs": message_content,
             }
         elif isinstance(content, ActionResultMessageContent):
@@ -213,8 +213,8 @@ class CoherePromptDriver(BasePromptDriver):
                         ActionArtifact(
                             Action(
                                 tag=tool_call.name,
-                                name=tool_call.name.split("_", 1)[0],
-                                path=tool_call.name.split("_", 1)[1],
+                                name=Action.from_native_tool_name(tool_call.name)[0],
+                                path=Action.from_native_tool_name(tool_call.name)[1],
                                 input=tool_call.parameters,
                             )
                         )
@@ -232,7 +232,7 @@ class CoherePromptDriver(BasePromptDriver):
             if event.tool_call_delta is not None:
                 tool_call_delta = event.tool_call_delta
                 if tool_call_delta.name is not None:
-                    name, path = tool_call_delta.name.split("_", 1)
+                    name, path = Action.from_native_tool_name(tool_call_delta.name)
 
                     return ActionCallDeltaMessageContent(tag=tool_call_delta.name, name=name, path=path)
                 else:

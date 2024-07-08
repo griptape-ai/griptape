@@ -177,7 +177,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         if "text" in content:
             return TextMessageContent(TextArtifact(content["text"]))
         elif "toolUse" in content:
-            name, path = content["toolUse"]["name"].split("_", 1)
+            name, path = Action.from_native_tool_name(content["toolUse"]["name"])
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
                     value=Action(
@@ -193,7 +193,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             content_block = event["contentBlockStart"]["start"]
 
             if "toolUse" in content_block:
-                name, path = content_block["toolUse"]["name"].split("_", 1)
+                name, path = Action.from_native_tool_name(content_block["toolUse"]["name"])
 
                 return ActionCallDeltaMessageContent(
                     index=event["contentBlockStart"]["contentBlockIndex"],

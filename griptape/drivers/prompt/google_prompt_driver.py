@@ -205,7 +205,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             return protos.Part(
                 function_response=protos.FunctionResponse(
-                    name=f"{content.action.name}_{content.action.path}", response=artifact.to_dict()
+                    name=content.action.to_native_tool_name(), response=artifact.to_dict()
                 )
             )
 
@@ -218,7 +218,7 @@ class GooglePromptDriver(BasePromptDriver):
         elif content.function_call:
             function_call = content.function_call
 
-            name, path = function_call.name.split("_", 1)
+            name, path = Action.from_native_tool_name(function_call.name)
 
             args = {k: v for k, v in function_call.args.items()}
             return ActionCallMessageContent(
@@ -233,7 +233,7 @@ class GooglePromptDriver(BasePromptDriver):
         elif content.function_call:
             function_call = content.function_call
 
-            name, path = function_call.name.split("_", 1)
+            name, path = Action.from_native_tool_name(function_call.name)
 
             args = {k: v for k, v in function_call.args.items()}
             return ActionCallDeltaMessageContent(

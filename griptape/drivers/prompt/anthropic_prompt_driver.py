@@ -150,7 +150,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
-            return {"type": "tool_use", "id": action.tag, "name": f"{action.name}_{action.path}", "input": action.input}
+            return {"type": "tool_use", "id": action.tag, "name": action.to_native_tool_name(), "input": action.input}
         elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
@@ -183,7 +183,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         if content.type == "text":
             return TextMessageContent(TextArtifact(content.text))
         elif content.type == "tool_use":
-            name, path = content.name.split("_", 1)
+            name, path = Action.from_native_tool_name(content.name)
 
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
@@ -200,7 +200,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             content_block = event.content_block
 
             if content_block.type == "tool_use":
-                name, path = content_block.name.split("_", 1)
+                name, path = Action.from_native_tool_name(content_block.name)
 
                 return ActionCallDeltaMessageContent(index=event.index, tag=content_block.id, name=name, path=path)
             elif content_block.type == "text":

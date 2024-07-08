@@ -25,3 +25,22 @@ class Action(SerializableMixin):
 
     def to_dict(self) -> dict:
         return {"tag": self.tag, "name": self.name, "path": self.path, "input": self.input}
+
+    def to_native_tool_name(self) -> str:
+        parts = [self.name]
+
+        if self.path is not None:
+            parts.append(self.path)
+
+        return "_".join(parts)
+
+    @classmethod
+    def from_native_tool_name(cls, native_tool_name: str) -> tuple[str, Optional[str]]:
+        parts = native_tool_name.split("_", 1)
+
+        if len(parts) == 1:
+            name, path = parts[0], None
+        else:
+            name, path = parts
+
+        return name, path
