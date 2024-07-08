@@ -1,4 +1,5 @@
 import pytest
+from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import PromptResponseRagModule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -14,9 +15,8 @@ class TestPromptResponseRagModule:
 
     def test_prompt(self, module):
         system_message = module.default_system_template_generator(
-            text_chunks=["*TEXT SEGMENT 1*", "*TEXT SEGMENT 2*"],
-            before_system_prompt=["*RULESET*", "*META*"],
-            after_system_prompt=[],
+            RagContext(query="test", before_query=["*RULESET*", "*META*"], after_query=[]),
+            artifacts=[TextArtifact("*TEXT SEGMENT 1*"), TextArtifact("*TEXT SEGMENT 2*")],
         )
 
         assert "*RULESET*" in system_message
