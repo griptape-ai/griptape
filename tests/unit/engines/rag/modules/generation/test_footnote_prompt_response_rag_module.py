@@ -16,15 +16,12 @@ class TestFootnotePromptResponseRagModule:
 
     def test_prompt(self, module):
         system_message = module.default_system_template_generator(
-            RagContext(
-                query="test",
-                text_chunks=[
-                    TextArtifact("*TEXT SEGMENT 1*", reference=Reference(title="source 1")),
-                    TextArtifact("*TEXT SEGMENT 2*", reference=Reference(title="source 2")),
-                    TextArtifact("*TEXT SEGMENT 3*"),
-                ],
-                before_query=["*RULESET*", "*META*"],
-            )
+            RagContext(query="test", before_query=["*RULESET*", "*META*"]),
+            artifacts=[
+                TextArtifact("*TEXT SEGMENT 1*", reference=Reference(title="source 1")),
+                TextArtifact("*TEXT SEGMENT 2*", reference=Reference(title="source 2")),
+                TextArtifact("*TEXT SEGMENT 3*"),
+            ],
         )
 
         assert "*RULESET*" in system_message

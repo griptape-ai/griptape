@@ -20,7 +20,7 @@ class TestTextLoaderRetrievalRagModule:
         module = TextLoaderRetrievalRagModule(
             loader=WebLoader(max_tokens=MAX_TOKENS, embedding_driver=embedding_driver),
             vector_store_driver=LocalVectorStoreDriver(embedding_driver=embedding_driver),
-            source="https://www.griptape.ai"
+            source="https://www.griptape.ai",
         )
 
         assert module.run(RagContext(query="foo"))[0].value == "foobar"

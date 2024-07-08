@@ -23,16 +23,22 @@ class TestSerializableMixin:
 
     def test_str(self):
         assert str(MockSerializable()) == json.dumps(
-            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None}
+            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None, "nested": None}
         )
 
     def test_to_json(self):
         assert MockSerializable().to_json() == json.dumps(
-            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None}
+            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None, "nested": None}
         )
 
     def test_to_dict(self):
-        assert MockSerializable().to_dict() == {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None}
+        assert MockSerializable().to_dict() == {
+            "type": "MockSerializable",
+            "foo": "bar",
+            "bar": None,
+            "baz": None,
+            "nested": None,
+        }
 
     def test_import_class_rec(self):
         assert (
