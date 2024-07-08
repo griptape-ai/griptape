@@ -20,13 +20,15 @@ No modules implemented yet.
 
 #### Retrieval
 - `TextRetrievalRagModule` is for retrieving text chunks.
+- `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
 
 #### Response
 - `MetadataBeforeResponseRagModule` is for appending metadata.
 - `RulesetsBeforeResponseRagModule` is for appending rulesets.
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
-- `TextChunksResponseRagModule` for responding with retrieved text chunks.
+- `TextChunksResponseRagModule` is for responding with retrieved text chunks.
+- `FootnotePromptResponseRagModule` is for responding with automatic footnotes from text chunk references.
 
 ### Example
 

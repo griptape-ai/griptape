@@ -15,12 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RAG modules:
     - Retrieval:
       - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
+      - `TextLoaderRetrievalRagModule` for retrieving data with text loaders in real time.
       - `TextChunksRerankRagModule` for re-ranking retrieved results.
     - Response:
       - `MetadataBeforeResponseRagModule` for appending metadata.
       - `RulesetsBeforeResponseRagModule` for appending rulesets.
       - `PromptResponseRagModule` for generating responses based on retrieved text chunks.
       - `TextChunksResponseRagModule` for responding with retrieved text chunks.
+      - `FootnotePromptResponseRagModule` for responding with automatic footnotes from text chunk references.
 - `RagClient` tool for exposing `RagEngines` to LLM agents.
 - `RagTask` task for including `RagEngines` in any structure.
 - Rerank drivers:
@@ -52,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Agent.input` for passing Artifacts as input.
 - Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
 - Parameters `sort_key` and `sort_key_value` on `AmazonDynamoDbConversationMemoryDriver` for tables with sort keys.
+- `Reference` for supporting artifact citations in loaders and RAG engine modules.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
 
 ### Changed

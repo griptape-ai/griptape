@@ -37,16 +37,21 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     )
 
     def upsert_text_artifacts(
-        self, artifacts: dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
+        self, artifacts: list[TextArtifact] | dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
     ) -> None:
         with self.futures_executor_fn() as executor:
-            utils.execute_futures_dict(
-                {
-                    namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
-                    for namespace, artifact_list in artifacts.items()
-                    for a in artifact_list
-                }
-            )
+            if isinstance(artifacts, list):
+                utils.execute_futures_list(
+                    [executor.submit(self.upsert_text_artifact, a, None, meta, **kwargs) for a in artifacts]
+                )
+            else:
+                utils.execute_futures_dict(
+                    {
+                        namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
+                        for namespace, artifact_list in artifacts.items()
+                        for a in artifact_list
+                    }
+                )
 
     def upsert_text_artifact(
         self,
@@ -57,7 +62,10 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         **kwargs,
     ) -> str:
         meta = {} if meta is None else meta
-        vector_id = self._get_default_vector_id(artifact.to_text()) if vector_id is None else vector_id
+
+        if vector_id is None:
+            value = artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
+            vector_id = self._get_default_vector_id(value)
 
         if self.does_entry_exist(vector_id, namespace):
             return vector_id

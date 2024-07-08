@@ -10,7 +10,7 @@ class TestDictUtils:
 
         assert remove_null_values_in_dict_recursively(dict_with_nones) == dict_without_nones
 
-    def test_merges_dicts(self):
+    def test_dict_merge_merges_dicts(self):
         a = {"a": 1, "b": {"b1": 2, "b2": 3}}
         b = {"a": 1, "b": {"b1": 4}}
 
@@ -18,7 +18,22 @@ class TestDictUtils:
         assert dict_merge(a, b)["b"]["b2"] == 3
         assert dict_merge(a, b)["b"]["b1"] == 4
 
-    def test_inserts_new_keys(self):
+    def test_dict_merge_works_with_optionals(self):
+        a = {"a": 1, "b": {"b1": 2, "b2": 3}}
+        b = None
+
+        assert dict_merge(a, b)["a"] == 1
+        assert dict_merge(a, b)["b"]["b2"] == 3
+        assert dict_merge(a, b)["b"]["b1"] == 2
+
+        a = None
+        b = {"a": 1, "b": {"b1": 2, "b2": 3}}
+
+        assert dict_merge(a, b)["a"] == 1
+        assert dict_merge(a, b)["b"]["b2"] == 3
+        assert dict_merge(a, b)["b"]["b1"] == 2
+
+    def test_dict_merge_inserts_new_keys(self):
         a = {"a": 1, "b": {"b1": 2, "b2": 3}}
         b = {"a": 1, "b": {"b1": 4, "b3": 5}, "c": 6}
 
@@ -28,7 +43,7 @@ class TestDictUtils:
         assert dict_merge(a, b)["b"]["b3"] == 5
         assert dict_merge(a, b)["c"] == 6
 
-    def test_does_not_insert_new_keys(self):
+    def test_dict_merge_does_not_insert_new_keys(self):
         a = {"a": 1, "b": {"b1": 2, "b2": 3}}
         b = {"a": 1, "b": {"b1": 4, "b3": 5}, "c": 6}
 
