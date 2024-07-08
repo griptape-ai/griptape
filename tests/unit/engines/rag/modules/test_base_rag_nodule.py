@@ -14,7 +14,7 @@ class TestBaseRagModule:
         module = MockRagModule(name="boo")
         context = RagContext(query="test")
 
-        context.module_params["boo"] = {"foo": "bar"}
+        context.module_configs["boo"] = {"foo": "bar"}
 
         assert module.get_context_param(context, "foo") == "bar"
 
@@ -24,4 +24,4 @@ class TestBaseRagModule:
 
         module.set_context_param(context, "foo", "bar")
 
-        assert context.module_params["boo"]["foo"] == "bar"
+        assert context.module_configs["boo"]["foo"] == "bar"

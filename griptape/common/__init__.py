@@ -10,6 +10,8 @@ from .prompt_stack.messages.message import Message
 
 from .prompt_stack.prompt_stack import PromptStack
 
+from .reference import Reference
+
 __all__ = [
     "BaseMessage",
     "BaseDeltaMessageContent",
@@ -20,4 +22,5 @@ __all__ = [
     "TextMessageContent",
     "ImageMessageContent",
     "PromptStack",
+    "Reference",
 ]
