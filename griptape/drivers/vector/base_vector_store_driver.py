@@ -37,16 +37,24 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     )
 
     def upsert_text_artifacts(
-        self, artifacts: dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
+        self, artifacts: list[TextArtifact] | dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
     ) -> None:
         with self.futures_executor_fn() as executor:
-            utils.execute_futures_dict(
-                {
-                    namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
-                    for namespace, artifact_list in artifacts.items()
-                    for a in artifact_list
-                }
-            )
+            if isinstance(artifacts, list):
+                utils.execute_futures_list(
+                    [
+                        executor.submit(self.upsert_text_artifact, a, None, meta, **kwargs)
+                        for a in artifacts
+                    ]
+                )
+            else:
+                utils.execute_futures_dict(
+                    {
+                        namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
+                        for namespace, artifact_list in artifacts.items()
+                        for a in artifact_list
+                    }
+                )
 
     def upsert_text_artifact(
         self,
