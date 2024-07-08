@@ -207,6 +207,14 @@ class ActionsSubtask(BaseTask):
             self.output = TextArtifact(answer_matches[-1])
 
     def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
+        """Parses the input Artifacts to extract the thought and actions.
+        Text Artifacts are used to extract the thought, and Action Artifacts are used to extract the actions.
+
+        Args:
+            artifacts: The input Artifacts.
+        Returns:
+            None
+        """
         self.actions = [
             self.__process_action_object(artifact.value.to_dict())
             for artifact in artifacts.value
