@@ -113,7 +113,7 @@ class CoherePromptDriver(BasePromptDriver):
         cohere_messages = []
 
         for message in messages:
-            cohere_message: dict = {"role": self.__to_cohere_role(message)}
+            cohere_message: dict = {"role": self.__to_cohere_role(message), "message": message.to_text()}
 
             if message.has_any_content_type(ActionResultMessageContent):
                 cohere_message["tool_results"] = [
@@ -121,7 +121,6 @@ class CoherePromptDriver(BasePromptDriver):
                     for action_result in message.get_content_type(ActionResultMessageContent)
                 ]
             else:
-                cohere_message["message"] = message.to_text()
                 if message.has_any_content_type(ActionCallMessageContent):
                     cohere_message["tool_calls"] = [
                         self.__to_cohere_message_content(action_call)
@@ -133,9 +132,7 @@ class CoherePromptDriver(BasePromptDriver):
         return cohere_messages
 
     def __to_cohere_message_content(self, content: BaseMessageContent) -> str | dict:
-        if isinstance(content, TextMessageContent):
-            return content.artifact.to_text()
-        elif isinstance(content, ActionCallMessageContent):
+        if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
             return {"name": action.to_native_tool_name(), "parameters": action.input}

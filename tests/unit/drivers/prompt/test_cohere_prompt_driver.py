@@ -90,7 +90,7 @@ class TestCoherePromptDriver:
         prompt_stack.add_user_message(
             ListArtifact(
                 [
-                    TextArtifact("tool-output"),
+                    TextArtifact("keep going"),
                     ActionArtifact(
                         Action(
                             tag="MockTool_test",
@@ -103,7 +103,22 @@ class TestCoherePromptDriver:
                 ]
             )
         )
-        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_user_message(
+            ListArtifact(
+                [
+                    TextArtifact("keep going"),
+                    ActionArtifact(
+                        Action(
+                            tag="MockTool_test",
+                            name="MockTool",
+                            path="test",
+                            input={"foo": "bar"},
+                            output=TextArtifact("tool-output"),
+                        )
+                    ),
+                ]
+            )
+        )
         return prompt_stack
 
     def test_init(self):
@@ -128,6 +143,7 @@ class TestCoherePromptDriver:
                     "tool_calls": [{"name": "MockTool_test", "parameters": {"foo": "bar"}}],
                 },
                 {
+                    "message": "keep going",
                     "role": "TOOL",
                     "tool_results": [
                         {
@@ -138,9 +154,12 @@ class TestCoherePromptDriver:
                 },
             ],
             max_tokens=None,
-            message="user-input",
+            message="keep going",
             **({"tools": self.COHERE_TOOLS, "force_single_step": False} if use_native_tools else {}),
             **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
+            tool_results=[
+                {"call": {"name": "MockTool_test", "parameters": {"foo": "bar"}}, "outputs": [{"text": "tool-output"}]}
+            ],
             stop_sequences=[],
             temperature=0.1,
         )
@@ -177,6 +196,7 @@ class TestCoherePromptDriver:
                 },
                 {
                     "role": "TOOL",
+                    "message": "keep going",
                     "tool_results": [
                         {
                             "call": {"name": "MockTool_test", "parameters": {"foo": "bar"}},
@@ -186,9 +206,12 @@ class TestCoherePromptDriver:
                 },
             ],
             max_tokens=None,
-            message="user-input",
+            message="keep going",
             **({"tools": self.COHERE_TOOLS, "force_single_step": False} if use_native_tools else {}),
             **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
+            tool_results=[
+                {"call": {"name": "MockTool_test", "parameters": {"foo": "bar"}}, "outputs": [{"text": "tool-output"}]}
+            ],
             stop_sequences=[],
             temperature=0.1,
         )
