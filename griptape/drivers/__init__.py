@@ -39,6 +39,7 @@ from .vector.amazon_opensearch_vector_store_driver import AmazonOpenSearchVector
 from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDriver
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
+from .vector.qdrant_vector_store_driver import QdrantVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -73,6 +74,11 @@ from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQue
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
 from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
+from .web_scraper.proxy_web_scraper_driver import ProxyWebScraperDriver
+
+from .web_search.base_web_search_driver import BaseWebSearchDriver
+from .web_search.google_web_search_driver import GoogleWebSearchDriver
+from .web_search.duck_duck_go_web_search_driver import DuckDuckGoWebSearchDriver
 
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
@@ -84,6 +90,9 @@ from .event_listener.pusher_event_listener_driver import PusherEventListenerDriv
 from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
+
+from .rerank.base_rerank_driver import BaseRerankDriver
+from .rerank.cohere_rerank_driver import CohereRerankDriver
 
 from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
@@ -136,6 +145,7 @@ __all__ = [
     "OpenSearchVectorStoreDriver",
     "AmazonOpenSearchVectorStoreDriver",
     "PgVectorVectorStoreDriver",
+    "QdrantVectorStoreDriver",
     "DummyVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
@@ -163,6 +173,10 @@ __all__ = [
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",
+    "ProxyWebScraperDriver",
+    "BaseWebSearchDriver",
+    "GoogleWebSearchDriver",
+    "DuckDuckGoWebSearchDriver",
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
@@ -172,6 +186,8 @@ __all__ = [
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
+    "BaseRerankDriver",
+    "CohereRerankDriver",
     "BaseTextToSpeechDriver",
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",

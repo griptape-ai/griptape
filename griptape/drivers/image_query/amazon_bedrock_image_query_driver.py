@@ -32,4 +32,4 @@ class AmazonBedrockImageQueryDriver(BaseMultiModelImageQueryDriver):
         try:
             return self.image_query_model_driver.process_output(response_body)
         except Exception as e:
-            raise ValueError(f"Output is unable to be processed as returned {e}")
+            raise ValueError(f"Output is unable to be processed as returned {e}") from e

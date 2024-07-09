@@ -1,13 +1,11 @@
 from __future__ import annotations
-
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any, Optional, Union, cast
-
 from attrs import define, field, Factory
-
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.chunkers import TextChunker, BaseChunker
+from griptape.common import Reference
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
 from griptape.tokenizers import OpenAiTokenizer
@@ -32,6 +30,10 @@ class BaseTextLoader(BaseLoader, ABC):
     )
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
+    reference: Optional[Reference] = field(default=None, kw_only=True)
+
+    @abstractmethod
+    def load(self, source: Any, *args, **kwargs) -> ErrorArtifact | list[TextArtifact]: ...
 
     def load_collection(self, sources: list[Any], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
@@ -41,17 +43,16 @@ class BaseTextLoader(BaseLoader, ABC):
     def _text_to_artifacts(self, text: str) -> list[TextArtifact]:
         artifacts = []
 
-        if self.chunker:
-            chunks = self.chunker.chunk(text)
-        else:
-            chunks = [TextArtifact(text)]
-
-        if self.embedding_driver:
-            for chunk in chunks:
-                chunk.generate_embedding(self.embedding_driver)
+        chunks = self.chunker.chunk(text) if self.chunker else [TextArtifact(text)]
 
         for chunk in chunks:
+            if self.embedding_driver:
+                chunk.generate_embedding(self.embedding_driver)
+
+            chunk.reference = self.reference
+
             chunk.encoding = self.encoding
+
             artifacts.append(chunk)
 
         return artifacts

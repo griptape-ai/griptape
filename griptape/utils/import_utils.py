@@ -32,8 +32,8 @@ def import_optional_dependency(name: str) -> Optional[ModuleType]:
     )
     try:
         module = import_module(name)
-    except ImportError:
-        raise ImportError(msg)
+    except ImportError as exc:
+        raise ImportError(msg) from exc
 
     return module
 

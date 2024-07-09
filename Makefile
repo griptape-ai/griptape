@@ -16,8 +16,8 @@ publish: ## Push git tag and publish version to PyPI.
 install: ## Install all dependencies.
 	@poetry install --with dev --with test --with docs --all-extras
 
-.PHONY: test
-test: test/unit test/integration ## Run all tests.
+.PHONY: test  ## Run all tests.
+test: test/unit test/integration
 
 .PHONY: test/unit
 test/unit: ## Run unit tests.
@@ -40,7 +40,7 @@ format: ## Format project.
 	@poetry run ruff format .
 
 .PHONY: check
-check: check/format check/lint check/types ## Run all checks.
+check: check/format check/lint check/types check/spell ## Run all checks.
 
 .PHONY: check/format
 check/format:
@@ -53,6 +53,14 @@ check/lint:
 .PHONY: check/types
 check/types:
 	@poetry run pyright griptape/
+	
+.PHONY: check/spell
+check/spell:
+	@poetry run typos 
+	
+.PHONY: docs
+docs: ## Build documentation.
+	@poetry run mkdocs build
 
 .DEFAULT_GOAL := help
 .PHONY: help

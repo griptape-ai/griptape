@@ -84,7 +84,7 @@ class TestAmazonS3FileManagerDriver:
     @pytest.mark.parametrize(
         "workdir,path,expected",
         [
-            # Valid non-empty directories (witout trailing slash)
+            # Valid non-empty directories (without trailing slash)
             ("/", "", ["foo", "foo.txt", "foo-empty", "resources"]),
             ("/", "foo", ["bar", "bar.txt", "bar-empty"]),
             ("/", "foo/bar", ["baz.txt", "baz-empty"]),
@@ -111,7 +111,7 @@ class TestAmazonS3FileManagerDriver:
             ("/./..", "bar/..", ["foo", "foo.txt", "foo-empty", "resources"]),
             ("/./..", "foo/.", ["bar", "bar.txt", "bar-empty"]),
             ("/./..", "foo/bar/.", ["baz.txt", "baz-empty"]),
-            # Empty folders (witout trailing slash)
+            # Empty folders (without trailing slash)
             ("/", "foo-empty", []),
             ("/", "foo/bar-empty", []),
             ("/", "foo/bar/baz-empty", []),

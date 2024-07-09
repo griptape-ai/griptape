@@ -6,7 +6,7 @@
 [![Checked with pyright](https://microsoft.github.io/pyright/img/pyright_badge.svg)](https://microsoft.github.io/pyright/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![codecov](https://codecov.io/github/griptape-ai/griptape/graph/badge.svg?token=HUBqUpl3NB)](https://codecov.io/github/griptape-ai/griptape)
-[![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/gnWRz88eym)
+[![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/griptape)
 
 Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
 
@@ -50,7 +50,7 @@ Drivers facilitate interactions with external resources and services:
 
 Engines wrap Drivers and provide use-case-specific functionality:
 
-- 📊 **Query Engines** execute Retrieval Augmented Generation (RAG) queries.
+- 📊 **RAG Engine** is an abstraction for implementing modular Retrieval Augmented Generation (RAG) pipelines.
 - 🛠️ **Extraction Engines** extract JSON or CSV data from unstructured text.
 - 📝 **Summary Engines** generate summaries from textual content.
 - 🖼️ **Image Generation Engines** generate images from textual descriptions.
@@ -92,7 +92,7 @@ from griptape.structures import Agent
 from griptape.tools import WebScraper, FileManager, TaskMemoryClient
 
 agent = Agent(
-    input_template="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
+    input="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
         WebScraper(off_prompt=True),
         TaskMemoryClient(off_prompt=True),
@@ -162,12 +162,6 @@ Thank you for considering contributing to Griptape! Before you start, please rea
 
 If you have identified a bug, want to propose a new feature, or have a question, please submit an issue through our public [issue tracker](https://github.com/griptape-ai/griptape/issues). Before submitting a new issue, please check the existing issues to ensure it hasn't been reported or discussed before.
 
-### New Griptape Tools
-
-Griptape's extensibility allows anyone to develop and distribute tools independently. With rare exceptions for Tools providing broadly applicable functionality, new Griptape Tools should be managed as their own projects and not submitted to the core framework. Pull requests for new tools (unless addressing an [existing issue](https://github.com/griptape-ai/griptape/issues)) will be closed.
-
-The [Griptape Tool Template](https://github.com/griptape-ai/tool-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new Tools. In the Template, select **Use this template** then **Create a new repository** to begin a new Tool project.
-
 ### Submitting Pull Requests
 
 We welcome and encourage pull requests. To streamline the process, please follow these guidelines:
@@ -178,13 +172,27 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 3. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
 
+Run `make test/unit` to execute the test suite locally.
+
 4. **Documentation:** Every pull request must include updates to documentation or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
 
-5. **Code Style:** Griptape uses [Ruff](https://github.com/astral-sh/ruff) to enforce style guidelines. You can ensure that your code is formatted accordingly and will pass formatting checks using `pre-commit`. See [Tools](#tools) for information on how to configure this and other dev tools.
+Run `make docs` to build the documentation locally.
 
-### Tools
+5. **Code Checks:** Griptape a variety of tools to enforce code quality and style. Your code must pass all checks before it can be merged.
 
-Install dev dependencies via Make:
+Run `make check` to run all code checks locally.
+
+6. **Changelog:** If your pull request introduces a notable change, please update the [changelog](https://github.com/griptape-ai/griptape/blob/dev/CHANGELOG.md).
+
+### New Griptape Tools
+
+Griptape's extensibility allows anyone to develop and distribute tools independently. With rare exceptions for Tools providing broadly applicable functionality, new Griptape Tools should be managed as their own projects and not submitted to the core framework. Pull requests for new tools (unless addressing an [existing issue](https://github.com/griptape-ai/griptape/issues)) will be closed.
+
+The [Griptape Tool Template](https://github.com/griptape-ai/tool-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new Tools. In the Template, select **Use this template** then **Create a new repository** to begin a new Tool project.
+
+### Dev and Test Dependencies
+
+Install all dependencies via Make:
 
 ```shell
 make install

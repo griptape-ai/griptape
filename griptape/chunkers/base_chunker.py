@@ -58,10 +58,7 @@ class BaseChunker(ABC):
                     # Iterate through the subchunks and calculate token counts.
                     for index, subchunk in enumerate(subchunks):
                         if index < len(subchunks):
-                            if separator.is_prefix:
-                                subchunk = separator.value + subchunk
-                            else:
-                                subchunk = subchunk + separator.value
+                            subchunk = separator.value + subchunk if separator.is_prefix else subchunk + separator.value
 
                         tokens_count += self.tokenizer.count_tokens(subchunk)
 

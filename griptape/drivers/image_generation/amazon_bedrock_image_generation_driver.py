@@ -122,6 +122,6 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         try:
             image_bytes = self.image_generation_model_driver.get_generated_image(response_body)
         except Exception as e:
-            raise ValueError(f"Inpainting generation failed: {e}")
+            raise ValueError(f"Inpainting generation failed: {e}") from e
 
         return image_bytes

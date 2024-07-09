@@ -1,7 +1,7 @@
 ## Overview 
 
 Tokenizers are used throughout Griptape to calculate the number of [tokens](https://learn.microsoft.com/en-us/semantic-kernel/prompt-engineering/tokens) in a piece of text.
-They are particulary useful for ensuring that the LLM token limits are not exceeded.
+They are particularly useful for ensuring that the LLM token limits are not exceeded.
 
 Tokenizers are a low level abstraction that you will rarely interact with directly.
 

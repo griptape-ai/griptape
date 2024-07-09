@@ -1,5 +1,5 @@
 from griptape.drivers import HuggingFaceHubPromptDriver
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 import pytest
 
 
@@ -7,6 +7,7 @@ class TestHuggingFaceHubPromptDriver:
     @pytest.fixture
     def mock_client(self, mocker):
         mock_client = mocker.patch("huggingface_hub.InferenceClient").return_value
+
         mock_client.text_generation.return_value = "model-output"
         return mock_client
 
@@ -14,6 +15,8 @@ class TestHuggingFaceHubPromptDriver:
     def tokenizer(self, mocker):
         from_pretrained = tokenizer = mocker.patch("transformers.AutoTokenizer").from_pretrained
         from_pretrained.return_value.apply_chat_template.return_value = [1, 2, 3]
+        from_pretrained.return_value.decode.return_value = "foo\n\nUser: bar"
+        from_pretrained.return_value.encode.return_value = [1, 2, 3]
 
         return tokenizer
 
@@ -27,10 +30,9 @@ class TestHuggingFaceHubPromptDriver:
     @pytest.fixture
     def prompt_stack(self):
         prompt_stack = PromptStack()
-        prompt_stack.add_generic_input("generic-input")
-        prompt_stack.add_system_input("system-input")
-        prompt_stack.add_user_input("user-input")
-        prompt_stack.add_assistant_input("assistant-input")
+        prompt_stack.add_system_message("system-input")
+        prompt_stack.add_user_message("user-input")
+        prompt_stack.add_assistant_message("assistant-input")
         return prompt_stack
 
     @pytest.fixture(autouse=True)
@@ -47,17 +49,24 @@ class TestHuggingFaceHubPromptDriver:
         driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id")
 
         # When
-        text_artifact = driver.try_run(prompt_stack)
+        message = driver.try_run(prompt_stack)
 
         # Then
-        assert text_artifact.value == "model-output"
+        assert message.value == "model-output"
+        assert message.usage.input_tokens == 3
+        assert message.usage.output_tokens == 3
 
     def test_try_stream(self, prompt_stack, mock_client_stream):
         # Given
         driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id", stream=True)
 
         # When
-        text_artifact = next(driver.try_stream(prompt_stack))
+        stream = driver.try_stream(prompt_stack)
+        event = next(stream)
 
         # Then
-        assert text_artifact.value == "model-output"
+        assert event.content.text == "model-output"
+
+        event = next(stream)
+        assert event.usage.input_tokens == 3
+        assert event.usage.output_tokens == 3

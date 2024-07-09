@@ -46,12 +46,7 @@ class Pipeline(Structure):
         self.__run_from_task(self.input_task)
 
         if self.conversation_memory and self.output is not None:
-            if isinstance(self.input_task.input, tuple):
-                input_text = self.input_task.input[0].to_text()
-            else:
-                input_text = self.input_task.input.to_text()
-
-            run = Run(input=input_text, output=self.output.to_text())
+            run = Run(input=self.input_task.input, output=self.output)
 
             self.conversation_memory.add_run(run)
 
@@ -74,7 +69,7 @@ class Pipeline(Structure):
         if task is None:
             return
         else:
-            if isinstance(task.execute(), ErrorArtifact):
+            if isinstance(task.execute(), ErrorArtifact) and self.fail_fast:
                 return
             else:
                 self.__run_from_task(next(iter(task.children), None))

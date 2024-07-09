@@ -1,7 +1,7 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 from attrs import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
@@ -11,7 +11,9 @@ from griptape.memory.structure import Run
 
 @define
 class Workflow(Structure):
-    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+    )
 
     @property
     def output_task(self) -> Optional[BaseTask]:
@@ -85,9 +87,13 @@ class Workflow(Structure):
             if task.id not in parent_task.child_ids:
                 parent_task.child_ids.append(task.id)
 
-            parent_index = self.tasks.index(parent_task)
-            if parent_index > last_parent_index:
-                last_parent_index = parent_index
+            try:
+                parent_index = self.tasks.index(parent_task)
+            except ValueError as exc:
+                raise ValueError(f"Parent task {parent_task.id} not found in workflow.") from exc
+            else:
+                if parent_index > last_parent_index:
+                    last_parent_index = parent_index
 
         # Insert the new task once, just after the last parent task
         self.tasks.insert(last_parent_index + 1, task)
@@ -103,23 +109,18 @@ class Workflow(Structure):
 
             for task in ordered_tasks:
                 if task.can_execute():
-                    future = self.futures_executor.submit(task.execute)
+                    future = self.futures_executor_fn().submit(task.execute)
                     futures_list[future] = task
 
             # Wait for all tasks to complete
             for future in futures.as_completed(futures_list):
-                if isinstance(future.result(), ErrorArtifact):
+                if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
                     exit_loop = True
 
                     break
 
         if self.conversation_memory and self.output is not None:
-            if isinstance(self.input_task.input, tuple):
-                input_text = self.input_task.input[0].to_text()
-            else:
-                input_text = self.input_task.input.to_text()
-
-            run = Run(input=input_text, output=self.output_task.output.to_text())
+            run = Run(input=self.input_task.input, output=self.output)
 
             self.conversation_memory.add_run(run)
 

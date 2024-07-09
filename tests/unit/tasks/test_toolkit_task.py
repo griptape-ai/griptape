@@ -1,13 +1,8 @@
-import pytest
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
 from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
-from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils import defaults
 
 
@@ -141,13 +136,6 @@ class TestToolkitSubtask:
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
-    @pytest.fixture
-    def query_engine(self):
-        return VectorQueryEngine(
-            prompt_driver=MockPromptDriver(),
-            vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver()),
-        )
-
     def test_init(self):
         assert len(ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]).tools) == 2
 
@@ -161,7 +149,7 @@ class TestToolkitSubtask:
         output = """Answer: done"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 
@@ -175,7 +163,7 @@ class TestToolkitSubtask:
         output = """Actions: [{"name": "blah"}]"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 
@@ -188,7 +176,7 @@ class TestToolkitSubtask:
         output = """foo bar"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 
@@ -279,7 +267,7 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_memory(self, query_engine):
+    def test_find_memory(self):
         m1 = defaults.text_task_memory("Memory1")
         m2 = defaults.text_task_memory("Memory2")
 
@@ -291,7 +279,7 @@ class TestToolkitSubtask:
         assert task.find_memory("Memory1") == m1
         assert task.find_memory("Memory2") == m2
 
-    def test_memory(self, query_engine):
+    def test_memory(self):
         tool1 = MockTool(
             name="Tool1",
             output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},

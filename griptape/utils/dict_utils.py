@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 def remove_null_values_in_dict_recursively(d: dict) -> dict:
     if isinstance(d, dict):
         return {k: remove_null_values_in_dict_recursively(v) for k, v in d.items() if v is not None}
@@ -5,7 +8,7 @@ def remove_null_values_in_dict_recursively(d: dict) -> dict:
         return d
 
 
-def dict_merge(dct: dict, merge_dct: dict, add_keys: bool = True) -> dict:
+def dict_merge(dct: Optional[dict], merge_dct: Optional[dict], add_keys: bool = True) -> dict:
     """Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
     updating only top-level keys, dict_merge recurses down into dicts nested
     to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
@@ -26,11 +29,15 @@ def dict_merge(dct: dict, merge_dct: dict, add_keys: bool = True) -> dict:
     Returns:
         dict: updated dict
     """
+    dct = {} if dct is None else dct
+    merge_dct = {} if merge_dct is None else merge_dct
+
     dct = dct.copy()
+
     if not add_keys:
         merge_dct = {k: merge_dct[k] for k in set(dct).intersection(set(merge_dct))}
 
-    for key in merge_dct.keys():
+    for key in merge_dct:
         if key in dct and isinstance(dct[key], dict):
             dct[key] = dict_merge(dct[key], merge_dct[key], add_keys=add_keys)
         else:
