@@ -26,8 +26,8 @@ class TestActionsSubtask:
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
 
     def test_action_input(self):
-        valid_input = ListArtifact(
-            [ActionArtifact(Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}}))]
+        valid_input = ActionArtifact(
+            Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
         )
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
