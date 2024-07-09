@@ -115,7 +115,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             stream=True,
             messages=messages,
-            stream_options={"include_usage": True},
             **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
         )
 
