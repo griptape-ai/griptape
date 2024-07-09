@@ -44,6 +44,10 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = super()._base_params(prompt_stack)
         # TODO: Add `seed` parameter once Azure supports it.
-        del params["seed"]
+        if "seed" in params:
+            del params["seed"]
+        # TODO: Add `stream_options` parameter once Azure supports it.
+        if "stream_options" in params:
+            del params["stream_options"]
 
         return params
