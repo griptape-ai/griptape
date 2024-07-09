@@ -1,0 +1,5 @@
+You can answer questions about the following video frames and timestamps.
+
+{% for image_frame in image_frames %}
+Frame #{{ loop.index }}: {{ image_frame.meta["timestamp"] }}
+{% endfor %}

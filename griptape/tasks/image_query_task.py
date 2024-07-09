@@ -66,7 +66,7 @@ class ImageQueryTask(BaseTask):
     def image_query_engine(self) -> ImageQueryEngine:
         if self._image_query_engine is None:
             if self.structure is not None:
-                self._image_query_engine = ImageQueryEngine(image_query_driver=self.structure.config.image_query_driver)
+                self._image_query_engine = ImageQueryEngine(prompt_driver=self.structure.config.prompt_driver)
             else:
                 raise ValueError("Image Query Engine is not set.")
         return self._image_query_engine

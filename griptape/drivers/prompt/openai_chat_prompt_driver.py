@@ -226,7 +226,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         elif isinstance(content, ImageMessageContent):
             return {
                 "type": "image_url",
-                "image_url": {"url": f"data:{content.artifact.mime_type};base64,{content.artifact.base64}"},
+                "image_url": {
+                    "url": f"data:{content.artifact.mime_type};base64,{content.artifact.base64}",
+                    "detail": "low",
+                },
             }
         elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
