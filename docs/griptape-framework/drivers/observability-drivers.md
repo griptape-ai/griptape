@@ -56,7 +56,7 @@ with Observability(observability_driver=observability_driver):
     agent.run("Name an animal")
 ```
 
-Ouput (only relevant because of use of `ConsoleSpanExporter`):
+Output (only relevant because of use of `ConsoleSpanExporter`):
 ```
 [06/18/24 06:57:22] INFO     PromptTask 2d8ef95bf817480188ae2f74e754308a
                              Input: Name an animal

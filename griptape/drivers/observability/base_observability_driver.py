@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 @define
 class BaseObservabilityDriver(ABC):
-    def __enter__(self) -> None:
+    def __enter__(self) -> None:  # noqa: B027
         pass
 
     def __exit__(

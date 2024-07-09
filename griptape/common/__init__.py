@@ -26,5 +26,5 @@ __all__ = [
     "PromptStack",
     "Reference",
     "observable",
-    "Observable"
+    "Observable",
 ]
