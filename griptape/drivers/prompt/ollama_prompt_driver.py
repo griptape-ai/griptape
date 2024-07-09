@@ -5,7 +5,7 @@ from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers.base_tokenizer import BaseTokenizer
-from griptape.common import PromptStack, TextMessageContent
+from griptape.common import PromptStack, TextMessageContent, observable
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
 from griptape.common import Message, DeltaMessage, TextDeltaMessageContent
@@ -49,6 +49,7 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         response = self.client.chat(**self._base_params(prompt_stack))
 
@@ -60,6 +61,7 @@ class OllamaPromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid model response")
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         stream = self.client.chat(**self._base_params(prompt_stack), stream=True)
 

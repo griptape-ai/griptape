@@ -14,6 +14,7 @@ from griptape.common import (
     PromptStack,
     Message,
     TextMessageContent,
+    observable,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
@@ -45,6 +46,7 @@ class GooglePromptDriver(BasePromptDriver):
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 
@@ -70,6 +72,7 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
 

@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import PromptStack, Message, DeltaMessage, TextDeltaMessageContent
+from griptape.common import PromptStack, Message, DeltaMessage, TextDeltaMessageContent, observable
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -47,6 +47,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
@@ -62,6 +63,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 

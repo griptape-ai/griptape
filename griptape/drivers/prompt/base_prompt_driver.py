@@ -13,6 +13,7 @@ from griptape.common import (
     PromptStack,
     Message,
     TextMessageContent,
+    observable,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
@@ -60,6 +61,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 )
             )
 
+    @observable
     def run(self, prompt_stack: PromptStack) -> Message:
         for attempt in self.retrying():
             with attempt:

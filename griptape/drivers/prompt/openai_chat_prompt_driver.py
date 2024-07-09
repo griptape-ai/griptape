@@ -15,6 +15,7 @@ from griptape.common import (
     PromptStack,
     Message,
     TextMessageContent,
+    observable,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -73,6 +74,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         result = self.client.chat.completions.create(**self._base_params(prompt_stack))
 
@@ -89,6 +91,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         result = self.client.chat.completions.create(
             **self._base_params(prompt_stack), stream=True, stream_options={"include_usage": True}

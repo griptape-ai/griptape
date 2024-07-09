@@ -12,6 +12,7 @@ from griptape.common import (
     TextMessageContent,
     BaseMessageContent,
     TextDeltaMessageContent,
+    observable,
 )
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
@@ -38,6 +39,7 @@ class CoherePromptDriver(BasePromptDriver):
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True)
     )
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         result = self.client.chat(**self._base_params(prompt_stack))
         usage = result.meta.tokens
@@ -48,6 +50,7 @@ class CoherePromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         result = self.client.chat_stream(**self._base_params(prompt_stack))
 

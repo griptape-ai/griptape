@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import DeltaMessage, PromptStack, Message, TextMessageContent
+from griptape.common import DeltaMessage, PromptStack, Message, TextMessageContent, observable
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -42,6 +42,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         )
     )
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
@@ -66,6 +67,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid output format")
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 

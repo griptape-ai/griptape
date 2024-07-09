@@ -13,6 +13,7 @@ from griptape.common import (
     BaseMessageContent,
     TextMessageContent,
     ImageMessageContent,
+    observable,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
@@ -35,6 +36,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
 
@@ -47,6 +49,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
 
