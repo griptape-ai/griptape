@@ -54,7 +54,7 @@ class Workflow(Structure):
 
         return tasks
 
-    def insert_task(
+    def insert_task(  # noqa: C901
         self,
         parent_tasks: list[BaseTask],
         task: BaseTask,
