@@ -90,9 +90,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             raise Exception("Completion with more than one choice is not supported yet.")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        result = self.client.chat.completions.create(
-            **self._base_params(prompt_stack), stream=True, stream_options={"include_usage": True}
-        )
+        result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
 
         for chunk in result:
             if chunk.usage is not None:
@@ -124,6 +122,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "seed": self.seed,
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
+            **({"stream_options": {"include_usage": True}} if self.stream else {}),
         }
 
         if self.response_format == "json_object":

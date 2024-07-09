@@ -57,12 +57,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         # Then
         mock_chat_completion_stream_create.assert_called_once_with(
-            model=driver.model,
-            temperature=driver.temperature,
-            user=driver.user,
-            stream=True,
-            messages=messages,
-            stream_options={"include_usage": True},
+            model=driver.model, temperature=driver.temperature, user=driver.user, stream=True, messages=messages
         )
 
         assert event.content.text == "model-output"
