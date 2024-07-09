@@ -1,6 +1,6 @@
 from attrs import define, field, Factory
 from typing import Callable, Optional
-from griptape.common import PromptStack
+from griptape.utils import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
 import openai
 
@@ -44,10 +44,6 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = super()._base_params(prompt_stack)
         # TODO: Add `seed` parameter once Azure supports it.
-        if "seed" in params:
-            del params["seed"]
-        # TODO: Add `stream_options` parameter once Azure supports it.
-        if "stream_options" in params:
-            del params["stream_options"]
+        del params["seed"]
 
         return params

@@ -90,7 +90,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         Entries can optionally be filtered by namespace.
         """
         collection = self.get_collection()
-        cursor = collection.find() if namespace is None else collection.find({"namespace": namespace})
+        if namespace is None:
+            cursor = collection.find()
+        else:
+            cursor = collection.find({"namespace": namespace})
 
         return [
             BaseVectorStoreDriver.Entry(
@@ -107,7 +110,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         offset: Optional[int] = None,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Queries the MongoDB collection for documents that match the provided query string.
 
         Results can be customized based on parameters like count, namespace, inclusion of vectors, offset, and index.
@@ -145,7 +148,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             pipeline[0]["$vectorSearch"]["filter"] = {"namespace": namespace}
 
         results = [
-            BaseVectorStoreDriver.Entry(
+            BaseVectorStoreDriver.QueryResult(
                 id=str(doc["_id"]),
                 vector=doc[self.vector_path] if include_vectors else [],
                 score=doc["score"],

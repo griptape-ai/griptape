@@ -1,10 +1,13 @@
 from __future__ import annotations
 import json
+import logging
 import numpy as np
 from griptape.utils import import_optional_dependency, str_to_hash
 from typing import Optional, TYPE_CHECKING
 from attrs import define, field, Factory
 from griptape.drivers import BaseVectorStoreDriver
+
+logging.basicConfig(level=logging.WARNING)
 
 if TYPE_CHECKING:
     from redis import Redis
@@ -108,13 +111,13 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on Redis to find vectors similar to the provided input vector.
 
         Results can be limited using the count parameter and optionally filtered by a namespace.
 
         Returns:
-            A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
+            A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
         Query = import_optional_dependency("redis.commands.search.query").Query
 
@@ -140,7 +143,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             vector_id = document.id.split(":")[1] if ":" in document.id else document.id
             vector_float_list = json.loads(document.vec_string) if include_vectors else None
             query_results.append(
-                BaseVectorStoreDriver.Entry(
+                BaseVectorStoreDriver.QueryResult(
                     id=vector_id,
                     vector=vector_float_list,
                     score=float(document.score),

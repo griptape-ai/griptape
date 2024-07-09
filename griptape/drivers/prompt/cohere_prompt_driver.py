@@ -4,23 +4,14 @@ from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import CohereTokenizer
-from griptape.common import (
-    PromptStack,
-    Message,
-    DeltaMessage,
-    TextMessageContent,
-    BaseMessageContent,
-    TextDeltaMessageContent,
-)
-from griptape.utils import import_optional_dependency
-from griptape.tokenizers import BaseTokenizer
+from griptape.utils import PromptStack, import_optional_dependency
+from griptape.tokenizers import BaseTokenizer, CohereTokenizer
 
 if TYPE_CHECKING:
     from cohere import Client
 
 
-@define(kw_only=True)
+@define
 class CoherePromptDriver(BasePromptDriver):
     """
     Attributes:
@@ -29,57 +20,41 @@ class CoherePromptDriver(BasePromptDriver):
         client: Custom `cohere.Client`.
     """
 
-    api_key: str = field(metadata={"serializable": False})
-    model: str = field(metadata={"serializable": True})
+    api_key: str = field(kw_only=True, metadata={"serializable": False})
+    model: str = field(kw_only=True, metadata={"serializable": True})
     client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True)
+        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
+        kw_only=True,
     )
     tokenizer: BaseTokenizer = field(
-        default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True)
+        default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
+        kw_only=True,
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         result = self.client.chat(**self._base_params(prompt_stack))
-        usage = result.meta.tokens
 
-        return Message(
-            content=[TextMessageContent(TextArtifact(result.text))],
-            role=Message.ASSISTANT_ROLE,
-            usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
-        )
+        return TextArtifact(value=result.text)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         result = self.client.chat_stream(**self._base_params(prompt_stack))
 
         for event in result:
             if event.event_type == "text-generation":
-                yield DeltaMessage(content=TextDeltaMessageContent(event.text, index=0))
-            elif event.event_type == "stream-end":
-                usage = event.response.meta.tokens
+                yield TextArtifact(value=event.text)
 
-                yield DeltaMessage(
-                    usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens)
-                )
-
-    def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
-        return [
-            {
-                "role": self.__to_role(message),
-                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
-            }
-            for message in messages
-        ]
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        if prompt_input.is_system():
+            return {"role": "SYSTEM", "text": prompt_input.content}
+        elif prompt_input.is_user():
+            return {"role": "USER", "text": prompt_input.content}
+        else:
+            return {"role": "ASSISTANT", "text": prompt_input.content}
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        last_input = prompt_stack.messages[-1]
-        user_message = last_input.to_text()
+        user_message = prompt_stack.inputs[-1].content
 
-        history_messages = self._prompt_stack_messages_to_messages(
-            [message for message in prompt_stack.messages[:-1] if not message.is_system()]
-        )
-
-        system_messages = prompt_stack.system_messages
-        preamble = system_messages[0].to_text() if system_messages else None
+        history_messages = [self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs[:-1]]
 
         return {
             "message": user_message,
@@ -87,19 +62,4 @@ class CoherePromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
-            **({"preamble": preamble} if preamble else {}),
         }
-
-    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
-        if isinstance(content, TextMessageContent):
-            return {"text": content.artifact.to_text()}
-        else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
-
-    def __to_role(self, message: Message) -> str:
-        if message.is_system():
-            return "SYSTEM"
-        elif message.is_user():
-            return "USER"
-        else:
-            return "CHATBOT"

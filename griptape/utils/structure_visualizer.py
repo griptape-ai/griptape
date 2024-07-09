@@ -1,6 +1,5 @@
 from __future__ import annotations
 import base64
-import hashlib
 
 from attrs import define, field
 from typing import TYPE_CHECKING
@@ -33,14 +32,11 @@ class StructureVisualizer:
         base64_string = base64.b64encode(graph_bytes).decode("utf-8")
 
         url = f"https://mermaid.ink/svg/{base64_string}"
+
         return url
 
     def __render_task(self, task: BaseTask) -> str:
         if task.children:
-            children = " & ".join([f"{self.__get_id(child.id)}({child.id})" for child in task.children])
-            return f"{self.__get_id(task.id)}({task.id})--> {children};"
+            return f'{task.id}--> {" & ".join([child.id for child in task.children])};'
         else:
-            return f"{self.__get_id(task.id)}({task.id});"
-
-    def __get_id(self, string: str) -> str:
-        return hashlib.md5(string.encode()).hexdigest()[:8]
+            return f"{task.id};"

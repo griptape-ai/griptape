@@ -36,5 +36,5 @@ class DummyVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         raise DummyException(__class__.__name__, "query")

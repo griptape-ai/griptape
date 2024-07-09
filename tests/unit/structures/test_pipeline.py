@@ -1,11 +1,10 @@
 import pytest
-import time
 
-from griptape.artifacts import TextArtifact, ErrorArtifact
+from griptape.artifacts import TextArtifact
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.tokenizers import OpenAiTokenizer
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask
+from griptape.tasks import PromptTask, BaseTask, ToolkitTask
 from griptape.memory.structure import ConversationMemory
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
@@ -14,21 +13,6 @@ from tests.unit.structures.test_agent import MockEmbeddingDriver
 
 
 class TestPipeline:
-    @pytest.fixture
-    def waiting_task(self):
-        def fn(task):
-            time.sleep(2)
-            return TextArtifact("done")
-
-        return CodeExecutionTask(run_fn=fn)
-
-    @pytest.fixture
-    def error_artifact_task(self):
-        def fn(task):
-            return ErrorArtifact("error")
-
-        return CodeExecutionTask(run_fn=fn)
-
     def test_init(self):
         driver = MockPromptDriver()
         pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
@@ -110,9 +94,7 @@ class TestPipeline:
 
         storage = list(pipeline.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
-            0
-        ].vector_store_driver.embedding_driver
+        memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -277,18 +259,18 @@ class TestPipeline:
 
         pipeline.add_tasks(task1, task2)
 
-        assert len(task1.prompt_stack.messages) == 2
-        assert len(task2.prompt_stack.messages) == 2
+        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task2.prompt_stack.inputs) == 2
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.messages) == 3
-        assert len(task2.prompt_stack.messages) == 3
+        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task2.prompt_stack.inputs) == 3
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.messages) == 3
-        assert len(task2.prompt_stack.messages) == 3
+        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task2.prompt_stack.inputs) == 3
 
     def test_prompt_stack_with_memory(self):
         pipeline = Pipeline(prompt_driver=MockPromptDriver())
@@ -298,18 +280,18 @@ class TestPipeline:
 
         pipeline.add_tasks(task1, task2)
 
-        assert len(task1.prompt_stack.messages) == 2
-        assert len(task2.prompt_stack.messages) == 2
+        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task2.prompt_stack.inputs) == 2
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.messages) == 5
-        assert len(task2.prompt_stack.messages) == 5
+        assert len(task1.prompt_stack.inputs) == 5
+        assert len(task2.prompt_stack.inputs) == 5
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.messages) == 7
-        assert len(task2.prompt_stack.messages) == 7
+        assert len(task1.prompt_stack.inputs) == 7
+        assert len(task2.prompt_stack.inputs) == 7
 
     def test_text_artifact_token_count(self):
         text = "foobar"
@@ -373,19 +355,3 @@ class TestPipeline:
 
         with pytest.deprecated_call():
             Pipeline(stream=True)
-
-    def test_run_with_error_artifact(self, error_artifact_task, waiting_task):
-        end_task = PromptTask("end")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task])
-        pipeline.run()
-
-        assert pipeline.output is None
-
-    def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
-        end_task = PromptTask("end")
-        pipeline = Pipeline(
-            prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False
-        )
-        pipeline.run()
-
-        assert pipeline.output is not None

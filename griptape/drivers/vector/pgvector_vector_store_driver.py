@@ -127,7 +127,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         distance_metric: str = "cosine_distance",
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a search on the collection to find vectors similar to the provided input vector,
         optionally filtering to only those that match the provided namespace.
         """
@@ -163,7 +163,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             results = query_result.limit(count).all()
 
             return [
-                BaseVectorStoreDriver.Entry(
+                BaseVectorStoreDriver.QueryResult(
                     id=str(result[0].id),
                     vector=result[0].vector if include_vectors else None,
                     score=result[1],

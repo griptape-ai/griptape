@@ -1,11 +1,8 @@
 from __future__ import annotations
-
+from attrs import define, field, Factory
 from typing import TYPE_CHECKING, Optional
-
-from attrs import Factory, define, field
-
-from griptape.tokenizers import BaseTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
     from voyageai import Client

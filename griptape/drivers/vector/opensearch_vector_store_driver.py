@@ -127,13 +127,13 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         include_metadata=True,
         field_name: str = "vector",
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string.
 
         Results can be limited using the count parameter and optionally filtered by a namespace.
 
         Returns:
-            A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
+            A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
         count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         vector = self.embedding_driver.embed_string(query)
@@ -150,7 +150,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         response = self.client.search(index=self.index_name, body=query_body)
 
         return [
-            BaseVectorStoreDriver.Entry(
+            BaseVectorStoreDriver.QueryResult(
                 id=hit["_id"],
                 namespace=hit["_source"].get("namespace") if namespace else None,
                 score=hit["_score"],

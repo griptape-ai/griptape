@@ -1,30 +1,22 @@
-from unittest.mock import Mock
-
-import pytest
-
-from griptape.common import PromptStack
 from griptape.drivers import CoherePromptDriver
+from griptape.utils import PromptStack
+from unittest.mock import Mock
+import pytest
 
 
 class TestCoherePromptDriver:
     @pytest.fixture
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
-        mock_client.chat.return_value = Mock(
-            text="model-output", meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10))
-        )
+        mock_client.chat.return_value = Mock(text="model-output")
 
         return mock_client
 
     @pytest.fixture
     def mock_stream_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
-        mock_client.chat_stream.return_value = iter(
-            [
-                Mock(text="model-output", event_type="text-generation"),
-                Mock(response=Mock(meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10))), event_type="stream-end"),
-            ]
-        )
+        mock_chunk = Mock(text="model-output", event_type="text-generation")
+        mock_client.chat_stream.return_value = iter([mock_chunk])
 
         return mock_client
 
@@ -32,21 +24,19 @@ class TestCoherePromptDriver:
     def mock_tokenizer(self, mocker):
         return mocker.patch("griptape.tokenizers.CohereTokenizer").return_value
 
-    @pytest.fixture(params=[True, False])
-    def prompt_stack(self, request):
+    @pytest.fixture
+    def prompt_stack(self):
         prompt_stack = PromptStack()
-        if request.param:
-            prompt_stack.add_system_message("system-input")
-        prompt_stack.add_user_message("user-input")
-        prompt_stack.add_assistant_message("assistant-input")
-        prompt_stack.add_user_message("user-input")
-        prompt_stack.add_assistant_message("assistant-input")
+        prompt_stack.add_generic_input("generic-input")
+        prompt_stack.add_system_input("system-input")
+        prompt_stack.add_user_input("user-input")
+        prompt_stack.add_assistant_input("assistant-input")
         return prompt_stack
 
     def test_init(self):
         assert CoherePromptDriver(model="command", api_key="foobar")
 
-    def test_try_run(self, mock_client, prompt_stack):
+    def test_try_run(self, mock_client, prompt_stack):  # pyright: ignore
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key")
 
@@ -54,48 +44,14 @@ class TestCoherePromptDriver:
         text_artifact = driver.try_run(prompt_stack)
 
         # Then
-        mock_client.chat.assert_called_once_with(
-            chat_history=[
-                {"content": [{"text": "user-input"}], "role": "USER"},
-                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
-                {"content": [{"text": "user-input"}], "role": "USER"},
-            ],
-            max_tokens=None,
-            message="assistant-input",
-            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
-            stop_sequences=[],
-            temperature=0.1,
-        )
-
         assert text_artifact.value == "model-output"
-        assert text_artifact.usage.input_tokens == 5
-        assert text_artifact.usage.output_tokens == 10
 
     def test_try_stream_run(self, mock_stream_client, prompt_stack):  # pyright: ignore
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key", stream=True)
 
         # When
-        stream = driver.try_stream(prompt_stack)
-        event = next(stream)
+        text_artifact = next(driver.try_stream(prompt_stack))
 
         # Then
-
-        mock_stream_client.chat_stream.assert_called_once_with(
-            chat_history=[
-                {"content": [{"text": "user-input"}], "role": "USER"},
-                {"content": [{"text": "assistant-input"}], "role": "CHATBOT"},
-                {"content": [{"text": "user-input"}], "role": "USER"},
-            ],
-            max_tokens=None,
-            message="assistant-input",
-            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
-            stop_sequences=[],
-            temperature=0.1,
-        )
-
-        assert event.content.text == "model-output"
-
-        event = next(stream)
-        assert event.usage.input_tokens == 5
-        assert event.usage.output_tokens == 10
+        assert text_artifact.value == "model-output"

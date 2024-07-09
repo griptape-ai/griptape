@@ -2,10 +2,11 @@
 import os
 from griptape import utils
 from griptape.drivers import MarqoVectorStoreDriver
+from griptape.engines import VectorQueryEngine
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
 from griptape.tools import VectorStoreClient
-from griptape.drivers import OpenAiEmbeddingDriver
+from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 
 # Define the namespace
 namespace = "griptape-ai"
@@ -17,12 +18,14 @@ vector_store = MarqoVectorStoreDriver(
     index=os.environ["MARQO_INDEX_NAME"],
     embedding_driver=OpenAiEmbeddingDriver()
 )
+# Initialize the query engine
+query_engine = VectorQueryEngine(vector_store_driver=vector_store, prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"))
 
 # Initialize the knowledge base tool
 vector_store_tool = VectorStoreClient(
     description="Contains information about the Griptape Framework from www.griptape.ai",
+    query_engine=query_engine,
     namespace=namespace,
-    vector_store_driver=vector_store
 )
 
 # Load artifacts from the web

@@ -2,9 +2,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
-from griptape.common.prompt_stack.messages.message import Message
-from griptape.utils import J2
-from griptape.common import PromptStack
+from griptape.utils import J2, PromptStack
 from griptape.memory.structure import ConversationMemory
 
 if TYPE_CHECKING:
@@ -39,11 +37,11 @@ class SummaryConversationMemory(ConversationMemory):
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
-            stack.add_user_message(self.summary_template_generator.render(summary=self.summary))
+            stack.add_user_input(self.summary_template_generator.render(summary=self.summary))
 
         for r in self.unsummarized_runs(last_n):
-            stack.add_user_message(r.input)
-            stack.add_assistant_message(r.output)
+            stack.add_user_input(r.input)
+            stack.add_assistant_input(r.output)
 
         return stack
 
@@ -75,7 +73,7 @@ class SummaryConversationMemory(ConversationMemory):
             if len(runs) > 0:
                 summary = self.summarize_conversation_template_generator.render(summary=previous_summary, runs=runs)
                 return self.prompt_driver.run(
-                    prompt_stack=PromptStack(messages=[Message(summary, role=Message.USER_ROLE)])
+                    prompt_stack=PromptStack(inputs=[PromptStack.Input(summary, role=PromptStack.USER_ROLE)])
                 ).to_text()
             else:
                 return previous_summary

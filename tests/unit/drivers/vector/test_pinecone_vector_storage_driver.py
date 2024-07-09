@@ -1,6 +1,4 @@
 import pytest
-
-from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.drivers import PineconeVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -34,7 +32,7 @@ class TestPineconeVectorStorageDriver:
     def test_upsert_text_artifact(self, driver):
         artifact = TextArtifact("foo")
 
-        assert driver.upsert_text_artifact(artifact) == driver._get_default_vector_id("foo")
+        assert driver.upsert_text_artifact(artifact) == artifact.id
 
     def test_upsert_vector(self, driver):
         assert driver.upsert_vector([0, 1, 2], vector_id="foo") == "foo"

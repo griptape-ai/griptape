@@ -6,8 +6,6 @@ This driver acts as a critical bridge between audio transcription Engines and th
 
 This capability is essential for enhancing accessibility, improving content discoverability, and automating tasks that traditionally relied on manual transcription, thereby streamlining operations and enhancing efficiency across various industries.
 
-## Audio Transcription Drivers
-
 ### OpenAI
 
 The [OpenAI Audio Transcription Driver](../../reference/griptape/drivers/audio_transcription/openai_audio_transcription_driver.md) utilizes OpenAI's sophisticated `whisper` model to accurately transcribe spoken audio into text. This model supports multiple languages, ensuring precise transcription across a wide range of dialects. 

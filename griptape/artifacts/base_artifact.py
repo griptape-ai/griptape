@@ -1,20 +1,15 @@
 from __future__ import annotations
 from griptape.mixins import SerializableMixin
-from typing import Any, TYPE_CHECKING, Optional
+from typing import Any
 import json
 import uuid
 from abc import ABC, abstractmethod
 from attrs import define, field, Factory
 
-if TYPE_CHECKING:
-    from griptape.common import Reference
 
-
-@define
+@define()
 class BaseArtifact(SerializableMixin, ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
-    reference: Optional[Reference] = field(default=None, kw_only=True, metadata={"serializable": True})
-    meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     name: str = field(
         default=Factory(lambda self: self.id, takes_self=True), kw_only=True, metadata={"serializable": True}
     )
@@ -29,7 +24,10 @@ class BaseArtifact(SerializableMixin, ABC):
 
     @classmethod
     def value_to_dict(cls, value: Any) -> dict:
-        dict_value = value if isinstance(value, dict) else json.loads(value)
+        if isinstance(value, dict):
+            dict_value = value
+        else:
+            dict_value = json.loads(value)
 
         return {k: v for k, v in dict_value.items()}
 

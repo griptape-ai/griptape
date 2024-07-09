@@ -4,39 +4,7 @@ Web Scraper Drivers can be used to scrape text from the web. They are used by [W
 
 * `scrape_url()` scrapes text from a website and returns a [TextArtifact](../../reference/griptape/artifacts/text_artifact.md). The format of the scrapped text is determined by the Driver.
 
-## Web Scraper Drivers
-
-### Proxy
-
-The [ProxyWebScraperDriver](../../reference/griptape/drivers/web_scraper/proxy_web_scraper_driver.md) uses the `requests` library with a provided set of proxies to do web scraping. Paid webscraping services like [ZenRows](https://www.zenrows.com/) or [ScraperAPI](https://www.scraperapi.com/) offer a way to use their API via a set of proxies passed to `requests.get()`
-
-Example using `ProxyWebScraperDriver` directly:
-
-```python
-import os
-from griptape.drivers import ProxyWebScraperDriver
-
-query_params = [
-    "markdown_response=true",
-    "js_render=false",
-    "premium_proxy=false",
-]
-proxy_url = f'http://{os.environ["ZENROWS_API_KEY"]}:{"&".join(query_params)}@proxy.zenrows.com:8001'
-
-driver = ProxyWebScraperDriver(
-    proxies={
-        "http": proxy_url,
-        "https": proxy_url,
-    },
-    params={
-        "verify": False
-    }
-)
-
-driver.scrape_url("https://griptape.ai")
-```
-
-### Markdownify
+## Markdownify
 
 !!! info
     This driver requires the `drivers-web-scraper-markdownify` [extra](../index.md#extras) and the
@@ -96,7 +64,7 @@ agent = Agent(
 agent.run("List all email addresses on griptape.ai in a flat numbered markdown list.")
 ```
 
-### Trafilatura
+## Trafilatura
 
 !!! info
     This driver requires the `drivers-web-scraper-trafilatura` [extra](../index.md#extras).

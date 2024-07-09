@@ -6,8 +6,8 @@ from .python_runner import PythonRunner
 from .command_runner import CommandRunner
 from .chat import Chat
 from .futures import execute_futures_dict
-from .futures import execute_futures_list
 from .token_counter import TokenCounter
+from .prompt_stack import PromptStack
 from .dict_utils import remove_null_values_in_dict_recursively, dict_merge
 from .file_utils import load_file, load_files
 from .hash import str_to_hash
@@ -17,7 +17,6 @@ from .stream import Stream
 from .load_artifact_from_memory import load_artifact_from_memory
 from .deprecation import deprecation_warn
 from .structure_visualizer import StructureVisualizer
-from .reference_utils import references_from_artifacts
 
 
 def minify_json(value: str) -> str:
@@ -36,8 +35,8 @@ __all__ = [
     "import_optional_dependency",
     "is_dependency_installed",
     "execute_futures_dict",
-    "execute_futures_list",
     "TokenCounter",
+    "PromptStack",
     "remove_null_values_in_dict_recursively",
     "dict_merge",
     "Stream",
@@ -46,5 +45,4 @@ __all__ = [
     "load_file",
     "load_files",
     "StructureVisualizer",
-    "references_from_artifacts",
 ]

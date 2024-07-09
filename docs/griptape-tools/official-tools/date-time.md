@@ -12,7 +12,9 @@ agent = Agent(
 )
 
 # Fetch the current date and time
-agent.run("What is the current date and time?")
+agent.run({
+    "description": "What is the current date and time?"
+})
 ```
 ```
 [09/11/23 15:26:02] INFO     Task d0bf49dacd8849e695494578a333f6cc              

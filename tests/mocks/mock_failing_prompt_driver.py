@@ -1,11 +1,10 @@
-from __future__ import annotations
 from collections.abc import Iterator
 from attrs import define
 
-from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, TextMessageContent, DeltaMessage, TextDeltaMessageContent
+from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
+from griptape.tokenizers import OpenAiTokenizer, BaseTokenizer
+from griptape.artifacts import TextArtifact
 
 
 @define
@@ -15,25 +14,18 @@ class MockFailingPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
 
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
-            raise Exception("failed attempt")
+            raise Exception(f"failed attempt")
         else:
-            return Message(
-                content=[TextMessageContent(TextArtifact("success"))],
-                role=Message.ASSISTANT_ROLE,
-                usage=Message.Usage(input_tokens=100, output_tokens=100),
-            )
+            return TextArtifact("success")
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         if self.current_attempt < self.max_failures:
             self.current_attempt += 1
 
-            raise Exception("failed attempt")
+            raise Exception(f"failed attempt")
         else:
-            yield DeltaMessage(
-                content=TextDeltaMessageContent("success"),
-                usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100),
-            )
+            yield TextArtifact("success")

@@ -1,49 +1,15 @@
-import json
-import os
-import threading
-from dataclasses import asdict
-from typing import Optional, Callable, TextIO
-from attrs import define, field, Factory
+from typing import Optional, Callable
 from numpy import dot
 from numpy.linalg import norm
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
+from attrs import define, field
 
 
-@define(kw_only=True)
+@define
 class LocalVectorStoreDriver(BaseVectorStoreDriver):
-    entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict)
-    persist_file: Optional[str] = field(default=None)
-    relatedness_fn: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)))
-    thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
-
-    def __attrs_post_init__(self) -> None:
-        if self.persist_file is not None:
-            directory = os.path.dirname(self.persist_file)
-
-            if directory and not os.path.exists(directory):
-                os.makedirs(directory)
-
-            if not os.path.isfile(self.persist_file):
-                with open(self.persist_file, "w") as file:
-                    self.save_entries_to_file(file)
-
-            with open(self.persist_file, "r+") as file:
-                if os.path.getsize(self.persist_file) > 0:
-                    self.entries = self.load_entries_from_file(file)
-                else:
-                    self.save_entries_to_file(file)
-
-    def save_entries_to_file(self, json_file: TextIO) -> None:
-        with self.thread_lock:
-            serialized_data = {k: asdict(v) for k, v in self.entries.items()}
-
-            json.dump(serialized_data, json_file)
-
-    def load_entries_from_file(self, json_file: TextIO) -> dict[str, BaseVectorStoreDriver.Entry]:
-        data = json.load(json_file)
-
-        return {k: BaseVectorStoreDriver.Entry.from_dict(v) for k, v in data.items()}
+    entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict, kw_only=True)
+    relatedness_fn: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)), kw_only=True)
 
     def upsert_vector(
         self,
@@ -55,16 +21,9 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
 
-        with self.thread_lock:
-            self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
-                id=vector_id, vector=vector, meta=meta, namespace=namespace
-            )
-
-        if self.persist_file is not None:
-            # TODO: optimize later since it reserializes all entries from memory and stores them in the JSON file
-            #  every time a new vector is inserted
-            with open(self.persist_file, "w") as file:
-                self.save_entries_to_file(file)
+        self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
+            id=vector_id, vector=vector, meta=meta, namespace=namespace
+        )
 
         return vector_id
 
@@ -81,7 +40,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         query_embedding = self.embedding_driver.embed_string(query)
 
         if namespace:
@@ -95,7 +54,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
 
         result = [
-            BaseVectorStoreDriver.Entry(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)
+            BaseVectorStoreDriver.QueryResult(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)
             for er in entries_and_relatednesses
         ][:count]
 
@@ -103,12 +62,12 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
             return result
         else:
             return [
-                BaseVectorStoreDriver.Entry(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
+                BaseVectorStoreDriver.QueryResult(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
                 for r in result
             ]
 
-    def delete_vector(self, vector_id: str):
-        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
-
     def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):
         return vector_id if namespace is None else f"{namespace}-{vector_id}"
+
+    def delete_vector(self, vector_id: str):
+        raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

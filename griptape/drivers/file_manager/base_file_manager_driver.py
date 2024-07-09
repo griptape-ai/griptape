@@ -12,7 +12,7 @@ class BaseFileManagerDriver(ABC):
 
     Attributes:
         default_loader: The default loader to use for loading file contents into artifacts.
-        loaders: Dictionary of file extension specific loaders to use for loading file contents into artifacts.
+        loaders: Dictionary of file extension specifc loaders to use for loading file contents into artifacts.
     """
 
     default_loader: loaders.BaseLoader = field(default=Factory(lambda: loaders.BlobLoader()), kw_only=True)
@@ -82,8 +82,11 @@ class BaseFileManagerDriver(ABC):
             encoding = None if loader is None else loader.encoding
 
             if isinstance(value, str):
-                value = value.encode() if encoding is None else value.encode(encoding=encoding)
-            elif isinstance(value, (bytearray, memoryview)):
+                if encoding is None:
+                    value = value.encode()
+                else:
+                    value = value.encode(encoding=encoding)
+            elif isinstance(value, bytearray) or isinstance(value, memoryview):
                 raise ValueError(f"Unsupported type: {type(value)}")
 
             self.try_save_file(path, value)

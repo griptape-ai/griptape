@@ -1,24 +1,19 @@
 from __future__ import annotations
+
 import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import Factory, define, field
 from rich.logging import RichHandler
+
 from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
-from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
-from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import (
-    VectorStoreRetrievalRagModule,
-    RulesetsBeforeResponseRagModule,
-    PromptResponseRagModule,
-    MetadataBeforeResponseRagModule,
-)
-from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
+from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine, VectorQueryEngine
 from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
@@ -57,12 +52,10 @@ class Structure(ABC):
         ),
         kw_only=True,
     )
-    rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
-    task_memory: TaskMemory = field(
+    task_memory: Optional[TaskMemory] = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
-    fail_fast: bool = field(default=True, kw_only=True)
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
@@ -147,9 +140,15 @@ class Structure(ABC):
         if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
             config = StructureConfig()
 
-            prompt_driver = OpenAiChatPromptDriver(model="gpt-4o") if self.prompt_driver is None else self.prompt_driver
+            if self.prompt_driver is None:
+                prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
+            else:
+                prompt_driver = self.prompt_driver
 
-            embedding_driver = OpenAiEmbeddingDriver() if self.embedding_driver is None else self.embedding_driver
+            if self.embedding_driver is None:
+                embedding_driver = OpenAiEmbeddingDriver()
+            else:
+                embedding_driver = self.embedding_driver
 
             if self.stream is not None:
                 prompt_driver.stream = self.stream
@@ -165,28 +164,13 @@ class Structure(ABC):
         return config
 
     @property
-    def default_rag_engine(self) -> RagEngine:
-        return RagEngine(
-            retrieval_stage=RetrievalRagStage(
-                retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
-            ),
-            response_stage=ResponseRagStage(
-                before_response_modules=[
-                    RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
-                    MetadataBeforeResponseRagModule(),
-                ],
-                response_module=PromptResponseRagModule(prompt_driver=self.config.prompt_driver),
-            ),
-        )
-
-    @property
     def default_task_memory(self) -> TaskMemory:
         return TaskMemory(
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
-                    rag_engine=self.rag_engine,
-                    retrieval_rag_module_name="VectorStoreRetrievalRagModule",
-                    vector_store_driver=self.config.vector_store_driver,
+                    query_engine=VectorQueryEngine(
+                        prompt_driver=self.config.prompt_driver, vector_store_driver=self.config.vector_store_driver
+                    ),
                     summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
                     csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),
                     json_extraction_engine=JsonExtractionEngine(prompt_driver=self.config.prompt_driver),

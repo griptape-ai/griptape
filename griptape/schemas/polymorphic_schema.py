@@ -58,12 +58,12 @@ class PolymorphicSchema(BaseSchema):
         obj_type = self.get_obj_type(obj)
 
         if not obj_type:
-            return (None, {"_schema": f"Unknown object class: {obj.__class__.__name__}"})
+            return (None, {"_schema": "Unknown object class: %s" % obj.__class__.__name__})
 
         type_schema = BaseSchema.from_attrs_cls(obj.__class__)
 
         if not type_schema:
-            return None, {"_schema": f"Unsupported object type: {obj_type}"}
+            return None, {"_schema": "Unsupported object type: %s" % obj_type}
 
         schema = type_schema if isinstance(type_schema, Schema) else type_schema()
 
@@ -110,7 +110,7 @@ class PolymorphicSchema(BaseSchema):
 
     def _load(self, data, *, partial=None, unknown=None, **kwargs):
         if not isinstance(data, dict):
-            raise ValidationError({"_schema": f"Invalid data type: {data}"})
+            raise ValidationError({"_schema": "Invalid data type: %s" % data})
 
         data = dict(data)
         unknown = unknown or self.unknown
@@ -121,7 +121,7 @@ class PolymorphicSchema(BaseSchema):
 
         type_schema = self.inner_class.get_schema(data_type)
         if not type_schema:
-            raise ValidationError({self.type_field: [f"Unsupported value: {data_type}"]})
+            raise ValidationError({self.type_field: ["Unsupported value: %s" % data_type]})
 
         schema = type_schema if isinstance(type_schema, Schema) else type_schema()
 

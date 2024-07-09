@@ -6,14 +6,6 @@ from typing import TYPE_CHECKING, Any
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import (
-    DeltaMessage,
-    Message,
-    TextDeltaMessageContent,
-    BaseMessageContent,
-    TextMessageContent,
-    ImageMessageContent,
-)
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
@@ -21,7 +13,7 @@ from griptape.utils import import_optional_dependency
 if TYPE_CHECKING:
     import boto3
 
-    from griptape.common import PromptStack
+    from griptape.utils import PromptStack
 
 
 @define
@@ -35,54 +27,44 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
     )
 
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    def try_run(self, prompt_stack: PromptStack) -> TextArtifact:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
 
-        usage = response["usage"]
         output_message = response["output"]["message"]
+        output_content = output_message["content"][0]["text"]
 
-        return Message(
-            content=[TextMessageContent(TextArtifact(content["text"])) for content in output_message["content"]],
-            role=Message.ASSISTANT_ROLE,
-            usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
-        )
+        return TextArtifact(output_content)
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[TextArtifact]:
         response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
 
         stream = response.get("stream")
         if stream is not None:
             for event in stream:
                 if "contentBlockDelta" in event:
-                    content_block_delta = event["contentBlockDelta"]
-                    yield DeltaMessage(
-                        content=TextDeltaMessageContent(
-                            content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
-                        )
-                    )
-                elif "metadata" in event:
-                    usage = event["metadata"]["usage"]
-                    yield DeltaMessage(
-                        usage=DeltaMessage.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"])
-                    )
+                    yield TextArtifact(event["contentBlockDelta"]["delta"]["text"])
         else:
             raise Exception("model response is empty")
 
-    def _prompt_stack_messages_to_messages(self, messages: list[Message]) -> list[dict]:
-        return [
-            {
-                "role": self.__to_role(message),
-                "content": [self.__prompt_stack_content_message_content(content) for content in message.content],
-            }
-            for message in messages
-        ]
+    def _prompt_stack_input_to_message(self, prompt_input: PromptStack.Input) -> dict:
+        content = [{"text": prompt_input.content}]
+
+        if prompt_input.is_system():
+            return {"text": prompt_input.content}
+        elif prompt_input.is_assistant():
+            return {"role": "assistant", "content": content}
+        else:
+            return {"role": "user", "content": content}
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
-
-        messages = self._prompt_stack_messages_to_messages(
-            [message for message in prompt_stack.messages if not message.is_system()]
-        )
+        system_messages = [
+            self._prompt_stack_input_to_message(input)
+            for input in prompt_stack.inputs
+            if input.is_system() and input.content
+        ]
+        messages = [
+            self._prompt_stack_input_to_message(input) for input in prompt_stack.inputs if not input.is_system()
+        ]
 
         return {
             "modelId": self.model,
@@ -91,17 +73,3 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "inferenceConfig": {"temperature": self.temperature},
             "additionalModelRequestFields": self.additional_model_request_fields,
         }
-
-    def __prompt_stack_content_message_content(self, content: BaseMessageContent) -> dict:
-        if isinstance(content, TextMessageContent):
-            return {"text": content.artifact.to_text()}
-        elif isinstance(content, ImageMessageContent):
-            return {"image": {"format": content.artifact.format, "source": {"bytes": content.artifact.value}}}
-        else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
-
-    def __to_role(self, message: Message) -> str:
-        if message.is_assistant():
-            return "assistant"
-        else:
-            return "user"

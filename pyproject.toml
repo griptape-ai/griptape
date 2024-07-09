@@ -27,7 +27,7 @@ numpy = ">=1"
 stringcase = "^1.2.0"
 docker = "^7.1.0"
 sqlalchemy = "~=1.0"
-requests = "^2.32.0"
+requests = "^2"
 
 # drivers
 cohere = { version = "^5.5.4", optional = true }
@@ -44,7 +44,7 @@ redis = { version = "^4.6.0", optional = true }
 opensearch-py = { version = "^2.3.1", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
-google-generativeai = { version = "^0.7.0", optional = true }
+google-generativeai = { version = "^0.4.1", optional = true }
 trafilatura = {version = "^1.6", optional = true}
 playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
@@ -52,10 +52,8 @@ markdownify = {version = "^0.11.6", optional = true}
 voyageai = {version = "^0.2.1", optional = true}
 elevenlabs = {version = "^1.1.2", optional = true}
 torch = {version = "^2.3.0", optional = true}
-qdrant-client = { version = ">=1.9.1", optional = true }
 pusher = {version = "^3.3.2", optional = true}
 ollama = {version = "^0.2.1", optional = true} 
-duckduckgo-search = {version = "^6.1.6", optional = true}
 
 # loaders
 pandas = {version = "^1.3", optional = true}
@@ -88,7 +86,6 @@ drivers-vector-redis = ["redis"]
 drivers-vector-opensearch = ["opensearch-py"]
 drivers-vector-amazon-opensearch = ["opensearch-py", "boto3"]
 drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
-drivers-vector-qdrant = ["qdrant-client"]
 
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
@@ -100,13 +97,9 @@ drivers-embedding-cohere = ["cohere"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]
 
-drivers-web-search-duckduckgo = ["duckduckgo-search"]
-
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-pusher = ["pusher"]
-
-drivers-rerank-cohere = ["cohere"]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
@@ -126,7 +119,6 @@ all = [
     "snowflake",
     "marqo",
     "pinecone-client",
-    "qdrant-client",
     "pymongo",
     "redis",
     "opensearch-py",
@@ -142,7 +134,6 @@ all = [
     "torch",
     "pusher",
     "ollama",
-    "duckduckgo-search",
 
     # loaders
     "pandas",
@@ -177,7 +168,6 @@ ruff = "^0.4.6"
 pyright = "^1.1.363"
 pre-commit = "^3.7.1"
 boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], version = "^1.34.105"}
-typos = "^1.22.9"
 
 
 [tool.poetry.group.docs]
@@ -200,22 +190,7 @@ line-length = 120
 skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
-select = [
-    "E", # pycodestyle
-    "F", # Pyflakes
-    "UP", # pyupgrade
-    "B", # flake8-bugbear
-    "SIM", # flake8-simplify
-    "TID251", # banned-api
-    "T201", # print
-]
-ignore = [
-    "UP007", # non-pep604-annotation
-    "E501", # line-too-long
-    "B024", # abstract-base-class-without-abstract-method
-    "B009", # get-attr-with-constant
-    "B010", # set-attr-with-constant
-]
+select = ["E4", "E7", "E9", "F", "TID251"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "attr".msg = "The attr module is deprecated, use attrs instead."
@@ -230,7 +205,6 @@ exclude = [
 pythonVersion = "3.9"
 reportOptionalMemberAccess = "none"
 reportIncompatibleVariableOverride = "none" # see thread: https://github.com/microsoft/pyright/issues/5933 
-enableExperimentalFeatures = true # https://github.com/microsoft/pyright/issues/7713
 
 [tool.pytest_env]
 OPENAI_API_KEY = {value = "api-key", skip_if_set = true}

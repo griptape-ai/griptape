@@ -29,48 +29,30 @@ class TestBaseEvent:
     def test_start_prompt_event_from_dict(self):
         dict_value = {
             "type": "StartPromptEvent",
-            "id": "917298d4bf894b0a824a8fdb26717a0c",
-            "timestamp": 123,
+            "timestamp": 123.0,
+            "token_count": 10,
+            "prompt_stack": {"inputs": [{"content": "foo", "role": "user"}, {"content": "bar", "role": "system"}]},
+            "prompt": "foo bar",
             "model": "foo bar",
-            "prompt_stack": {
-                "type": "PromptStack",
-                "messages": [
-                    {
-                        "type": "Message",
-                        "role": "user",
-                        "content": [
-                            {"type": "TextMessageContent", "artifact": {"type": "TextArtifact", "value": "foo"}}
-                        ],
-                        "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
-                    },
-                    {
-                        "type": "Message",
-                        "role": "system",
-                        "content": [
-                            {"type": "TextMessageContent", "artifact": {"type": "TextArtifact", "value": "bar"}}
-                        ],
-                        "usage": {"type": "Usage", "input_tokens": None, "output_tokens": None},
-                    },
-                ],
-            },
         }
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, StartPromptEvent)
         assert event.timestamp == 123
-        assert event.prompt_stack.messages[0].content[0].artifact.value == "foo"
-        assert event.prompt_stack.messages[0].role == "user"
-        assert event.prompt_stack.messages[1].content[0].artifact.value == "bar"
-        assert event.prompt_stack.messages[1].role == "system"
+        assert event.token_count == 10
+        assert event.prompt_stack.inputs[0].content == "foo"
+        assert event.prompt_stack.inputs[0].role == "user"
+        assert event.prompt_stack.inputs[1].content == "bar"
+        assert event.prompt_stack.inputs[1].role == "system"
+        assert event.prompt == "foo bar"
         assert event.model == "foo bar"
 
     def test_finish_prompt_event_from_dict(self):
         dict_value = {
             "type": "FinishPromptEvent",
             "timestamp": 123.0,
-            "input_token_count": 10,
-            "output_token_count": 12,
+            "token_count": 10,
             "result": "foo bar",
             "model": "foo bar",
         }
@@ -79,8 +61,7 @@ class TestBaseEvent:
 
         assert isinstance(event, FinishPromptEvent)
         assert event.timestamp == 123
-        assert event.input_token_count == 10
-        assert event.output_token_count == 12
+        assert event.token_count == 10
         assert event.result == "foo bar"
         assert event.model == "foo bar"
 

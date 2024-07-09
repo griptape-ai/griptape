@@ -19,7 +19,7 @@ class TestGoogleStructureConfig:
                 "temperature": 0.1,
                 "max_tokens": None,
                 "stream": False,
-                "model": "gemini-1.5-pro",
+                "model": "gemini-pro",
                 "top_p": None,
                 "top_k": None,
             },

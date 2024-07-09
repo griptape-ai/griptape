@@ -2,8 +2,7 @@ from typing import Optional, cast
 from attrs import define, Factory, field
 from griptape.artifacts import TextArtifact, ListArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.common import PromptStack
-from griptape.common.prompt_stack.messages.message import Message
+from griptape.utils import PromptStack
 from griptape.drivers import BasePromptDriver
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
@@ -61,19 +60,14 @@ class PromptSummaryEngine(BaseSummaryEngine):
             self.prompt_driver.tokenizer.count_input_tokens_left(user_prompt + system_prompt)
             >= self.min_response_tokens
         ):
-            result = self.prompt_driver.run(
+            return self.prompt_driver.run(
                 PromptStack(
-                    messages=[
-                        Message(system_prompt, role=Message.SYSTEM_ROLE),
-                        Message(user_prompt, role=Message.USER_ROLE),
+                    inputs=[
+                        PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
+                        PromptStack.Input(user_prompt, role=PromptStack.USER_ROLE),
                     ]
                 )
-            ).to_artifact()
-
-            if isinstance(result, TextArtifact):
-                return result
-            else:
-                raise ValueError("Prompt driver did not return a TextArtifact")
+            )
         else:
             chunks = self.chunker.chunk(artifacts_text)
 
@@ -83,9 +77,9 @@ class PromptSummaryEngine(BaseSummaryEngine):
                 chunks[1:],
                 self.prompt_driver.run(
                     PromptStack(
-                        messages=[
-                            Message(system_prompt, role=Message.SYSTEM_ROLE),
-                            Message(partial_text, role=Message.USER_ROLE),
+                        inputs=[
+                            PromptStack.Input(system_prompt, role=PromptStack.SYSTEM_ROLE),
+                            PromptStack.Input(partial_text, role=PromptStack.USER_ROLE),
                         ]
                     )
                 ).value,

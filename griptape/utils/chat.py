@@ -1,9 +1,6 @@
 from __future__ import annotations
-
-from typing import TYPE_CHECKING, Callable, Optional
-
+from typing import TYPE_CHECKING, Optional, Callable
 from attrs import Factory, define, field
-
 from griptape.utils.stream import Stream
 
 if TYPE_CHECKING:
@@ -25,9 +22,9 @@ class Chat:
 
     def default_output_fn(self, text: str) -> None:
         if self.structure.config.prompt_driver.stream:
-            print(text, end="", flush=True)  # noqa T201
+            print(text, end="", flush=True)
         else:
-            print(text)  # noqa T201
+            print(text)
 
     def start(self) -> None:
         if self.intro_text:

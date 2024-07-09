@@ -15,7 +15,7 @@ from griptape.structures import Agent
 
 
 agent = Agent(
-    input="Calculate the following: {{ args[0] }}",
+    input_template="Calculate the following: {{ args[0] }}",
     tools=[Calculator()]
 )
 

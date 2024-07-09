@@ -1,8 +1,0 @@
-[default.extend-words]
-# Don't correct the state ND
-ND = "ND"
-# Don't correct pirates using acronyms
-mornin = "mornin"
-
-[files]
-extend-exclude = ["docs/assets", "tests/resources/"]

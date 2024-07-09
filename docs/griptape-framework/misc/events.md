@@ -244,9 +244,9 @@ from griptape.events import BaseEvent, StartPromptEvent, EventListener
 
 def handler(event: BaseEvent):
     if isinstance(event, StartPromptEvent):
-        print("Prompt Stack PromptStack:")
-        for message in event.prompt_stack.messages:
-            print(f"{message.role}: {message.content}")
+        print("Prompt Stack Inputs:")
+        for input in event.prompt_stack.inputs:
+            print(f"{input.role}: {input.content}")
         print("Final Prompt String:")
         print(event.prompt)
 
@@ -259,7 +259,7 @@ agent.run("Write me a poem.")
 ```
 ```
 ...
-Prompt Stack Messages:
+Prompt Stack Inputs:
 system:
 user: Write me a poem.
 Final Prompt String:

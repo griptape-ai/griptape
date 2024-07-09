@@ -1,11 +1,8 @@
 from __future__ import annotations
-
 import logging
-from typing import Optional
-
+from attrs import define, field, Factory
 import tiktoken
-from attrs import Factory, define, field
-
+from typing import Optional
 from griptape.tokenizers import BaseTokenizer
 
 

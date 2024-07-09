@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Optional, Any, TYPE_CHECKING
-from griptape import utils
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.artifacts import TextArtifact
@@ -66,12 +65,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError(f"Failed to upsert text: {response}")
 
     def upsert_text_artifact(
-        self,
-        artifact: TextArtifact,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
-        **kwargs,
+        self, artifact: TextArtifact, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
     ) -> str:
         """Upsert a text artifact into the Marqo index.
 
@@ -79,17 +73,15 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             artifact: The text artifact to be indexed.
             namespace: An optional namespace for the artifact.
             meta: An optional dictionary of metadata for the artifact.
-            vector_id: An optional explicit vector_id.
 
         Returns:
             str: The ID of the artifact that was added.
         """
 
         artifact_json = artifact.to_json()
-        vector_id = utils.str_to_hash(artifact.value) if vector_id is None else vector_id
 
         doc = {
-            "_id": vector_id,
+            "_id": artifact.id,
             "Description": artifact.value,  # Description will be treated as tensor field
             "artifact": str(artifact_json),
             "namespace": namespace,
@@ -168,7 +160,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         include_metadata: bool = True,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
+    ) -> list[BaseVectorStoreDriver.QueryResult]:
         """Query the Marqo index for documents.
 
         Args:
@@ -196,7 +188,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             ]
 
         return [
-            BaseVectorStoreDriver.Entry(
+            BaseVectorStoreDriver.QueryResult(
                 id=r["_id"],
                 vector=r["_tensor_facets"][0]["_embedding"] if include_vectors else [],
                 score=r["_score"],

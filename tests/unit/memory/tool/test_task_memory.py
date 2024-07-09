@@ -83,7 +83,7 @@ class TestTaskMemory:
         memory.process_output(
             MockTool().test,
             ActionsSubtask(),
-            ListArtifact([TextArtifact("foo1", name="test1"), TextArtifact("foo2", name="test2")], name="test"),
+            ListArtifact([TextArtifact("foo", name="test1"), TextArtifact("foo", name="test2")], name="test"),
         )
 
         assert len(memory.load_artifacts("test")) == 2

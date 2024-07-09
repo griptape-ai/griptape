@@ -16,7 +16,10 @@ class SqlLoader(BaseLoader):
         rows = self.sql_driver.execute_query(source)
         artifacts = []
 
-        chunks = [CsvRowArtifact(row.cells) for row in rows] if rows else []
+        if rows:
+            chunks = [CsvRowArtifact(row.cells) for row in rows]
+        else:
+            chunks = []
 
         if self.embedding_driver:
             for chunk in chunks:

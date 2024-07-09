@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock
 import pytest
+import redis
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from griptape.drivers import RedisVectorStoreDriver
 

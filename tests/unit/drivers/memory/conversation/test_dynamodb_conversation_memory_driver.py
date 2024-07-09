@@ -60,33 +60,6 @@ class TestDynamoDbConversationMemoryDriver:
         response = table.get_item(TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar"})
         assert "Item" in response
 
-    def test_store_with_sort_key(self):
-        session = boto3.Session(region_name=self.AWS_REGION)
-        dynamodb = session.resource("dynamodb")
-        table = dynamodb.Table(self.DYNAMODB_TABLE_NAME)
-        prompt_driver = MockPromptDriver()
-        memory_driver = AmazonDynamoDbConversationMemoryDriver(
-            session=session,
-            table_name=self.DYNAMODB_TABLE_NAME,
-            partition_key=self.DYNAMODB_PARTITION_KEY,
-            value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
-            partition_key_value=self.PARTITION_KEY_VALUE,
-            sort_key="sortKey",
-            sort_key_value="foo",
-        )
-        memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
-
-        pipeline.add_task(PromptTask("test"))
-
-        response = table.get_item(TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar", "sortKey": "foo"})
-        assert "Item" not in response
-
-        pipeline.run()
-
-        response = table.get_item(TableName=self.DYNAMODB_TABLE_NAME, Key={"entryId": "bar", "sortKey": "foo"})
-        assert "Item" in response
-
     def test_load(self):
         prompt_driver = MockPromptDriver()
         memory_driver = AmazonDynamoDbConversationMemoryDriver(
@@ -108,31 +81,5 @@ class TestDynamoDbConversationMemoryDriver:
 
         assert new_memory.type == "ConversationMemory"
         assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input.value == "test"
-        assert new_memory.runs[0].output.value == "mock output"
-
-    def test_load_with_sort_key(self):
-        prompt_driver = MockPromptDriver()
-        memory_driver = AmazonDynamoDbConversationMemoryDriver(
-            session=boto3.Session(region_name=self.AWS_REGION),
-            table_name=self.DYNAMODB_TABLE_NAME,
-            partition_key=self.DYNAMODB_PARTITION_KEY,
-            value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
-            partition_key_value=self.PARTITION_KEY_VALUE,
-            sort_key="sortKey",
-            sort_key_value="foo",
-        )
-        memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
-
-        pipeline.add_task(PromptTask("test"))
-
-        pipeline.run()
-        pipeline.run()
-
-        new_memory = memory_driver.load()
-
-        assert new_memory.type == "ConversationMemory"
-        assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input.value == "test"
-        assert new_memory.runs[0].output.value == "mock output"
+        assert new_memory.runs[0].input == "test"
+        assert new_memory.runs[0].output == "mock output"
