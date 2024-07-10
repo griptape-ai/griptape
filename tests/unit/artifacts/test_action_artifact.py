@@ -1,13 +1,13 @@
 import json
 import pytest
-from griptape.common import Action
+from griptape.common import ToolAction
 from griptape.artifacts import ActionArtifact, BaseArtifact
 
 
 class TestActionArtifact:
     @pytest.fixture()
-    def action(self) -> Action:
-        return Action(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"})
+    def action(self) -> ToolAction:
+        return ToolAction(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"})
 
     def test___add__(self, action):
         with pytest.raises(NotImplementedError):
@@ -22,8 +22,7 @@ class TestActionArtifact:
             "name": "TestName",
             "path": "TestPath",
             "input": {"foo": "bar"},
-            "type": "Action",
-            "output": None,
+            "type": "ToolAction",
         }
 
     def test_from_dict(self, action):
@@ -32,8 +31,7 @@ class TestActionArtifact:
             "name": "TestName",
             "path": "TestPath",
             "input": {"foo": "bar"},
-            "type": "Action",
-            "output": None,
+            "type": "ToolAction",
         }
 
     def test_to_json(self, action):
@@ -42,8 +40,7 @@ class TestActionArtifact:
             "name": "TestName",
             "path": "TestPath",
             "input": {"foo": "bar"},
-            "type": "Action",
-            "output": None,
+            "type": "ToolAction",
         }
 
     def test_from_json(self, action):
@@ -52,6 +49,5 @@ class TestActionArtifact:
             "name": "TestName",
             "path": "TestPath",
             "input": {"foo": "bar"},
-            "type": "Action",
-            "output": None,
+            "type": "ToolAction",
         }

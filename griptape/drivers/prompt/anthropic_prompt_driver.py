@@ -26,7 +26,7 @@ from griptape.common import (
     ImageMessageContent,
     PromptStack,
     Message,
-    Action,
+    ToolAction,
     TextMessageContent,
 )
 from griptape.drivers import BasePromptDriver
@@ -183,11 +183,11 @@ class AnthropicPromptDriver(BasePromptDriver):
         if content.type == "text":
             return TextMessageContent(TextArtifact(content.text))
         elif content.type == "tool_use":
-            name, path = Action.from_native_tool_name(content.name)
+            name, path = ToolAction.from_native_tool_name(content.name)
 
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
-                    value=Action(tag=content.id, name=name, path=path, input=content.input)  # pyright: ignore[reportArgumentType]
+                    value=ToolAction(tag=content.id, name=name, path=path, input=content.input)  # pyright: ignore[reportArgumentType]
                 )
             )
         else:
@@ -200,7 +200,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             content_block = event.content_block
 
             if content_block.type == "tool_use":
-                name, path = Action.from_native_tool_name(content_block.name)
+                name, path = ToolAction.from_native_tool_name(content_block.name)
 
                 return ActionCallDeltaMessageContent(index=event.index, tag=content_block.id, name=name, path=path)
             elif content_block.type == "text":

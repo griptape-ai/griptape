@@ -2,7 +2,7 @@ from google.generativeai.types import ContentDict, GenerationConfig
 from google.generativeai.protos import FunctionCall, FunctionResponse, Part
 from griptape.artifacts import TextArtifact, ImageArtifact, ActionArtifact
 from griptape.artifacts.list_artifact import ListArtifact
-from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent, Action
+from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
 from griptape.drivers import GooglePromptDriver
 from griptape.common import PromptStack
 from unittest.mock import Mock
@@ -89,7 +89,7 @@ class TestGooglePromptDriver:
             ListArtifact(
                 [
                     TextArtifact("thought"),
-                    ActionArtifact(Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
+                    ActionArtifact(ToolAction(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
                 ]
             )
         )
@@ -97,7 +97,7 @@ class TestGooglePromptDriver:
             ListArtifact(
                 [
                     ActionArtifact(
-                        Action(
+                        ToolAction(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",

@@ -18,7 +18,7 @@ from griptape.common import (
     Message,
     TextMessageContent,
     ActionResultMessageContent,
-    Action,
+    ToolAction,
 )
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
@@ -208,10 +208,10 @@ class CoherePromptDriver(BasePromptDriver):
                 [
                     ActionCallMessageContent(
                         ActionArtifact(
-                            Action(
+                            ToolAction(
                                 tag=tool_call.name,
-                                name=Action.from_native_tool_name(tool_call.name)[0],
-                                path=Action.from_native_tool_name(tool_call.name)[1],
+                                name=ToolAction.from_native_tool_name(tool_call.name)[0],
+                                path=ToolAction.from_native_tool_name(tool_call.name)[1],
                                 input=tool_call.parameters,
                             )
                         )
@@ -229,7 +229,7 @@ class CoherePromptDriver(BasePromptDriver):
             if event.tool_call_delta is not None:
                 tool_call_delta = event.tool_call_delta
                 if tool_call_delta.name is not None:
-                    name, path = Action.from_native_tool_name(tool_call_delta.name)
+                    name, path = ToolAction.from_native_tool_name(tool_call_delta.name)
 
                     return ActionCallDeltaMessageContent(tag=tool_call_delta.name, name=name, path=path)
                 else:

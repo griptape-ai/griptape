@@ -6,7 +6,7 @@ from typing import Optional, TYPE_CHECKING, Callable
 import schema
 from attrs import define, field
 from griptape import utils
-from griptape.common import Action
+from griptape.common import ToolAction
 from griptape.utils import remove_null_values_in_dict_recursively
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
@@ -25,7 +25,7 @@ class ActionsSubtask(BaseTask):
 
     parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
-    actions: list[Action] = field(factory=list, kw_only=True)
+    actions: list[ToolAction] = field(factory=list, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
     _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
@@ -74,7 +74,7 @@ class ActionsSubtask(BaseTask):
         except Exception as e:
             self.structure.logger.error(f"Subtask {self.origin_task.id}\nError parsing tool action: {e}")
 
-            self.output = ErrorArtifact(f"Action input parsing error: {e}", exception=e)
+            self.output = ErrorArtifact(f"ToolAction input parsing error: {e}", exception=e)
 
     def before_run(self) -> None:
         self.structure.publish_event(
@@ -116,13 +116,13 @@ class ActionsSubtask(BaseTask):
         else:
             return ErrorArtifact("no tool output")
 
-    def execute_actions(self, actions: list[Action]) -> list[tuple[str, BaseArtifact]]:
+    def execute_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
         with self.futures_executor_fn() as executor:
             results = utils.execute_futures_dict({a.tag: executor.submit(self.execute_action, a) for a in actions})
 
         return [r for r in results.values()]
 
-    def execute_action(self, action: Action) -> tuple[str, BaseArtifact]:
+    def execute_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
                 output = action.tool.execute(getattr(action.tool, action.path), self, action)
@@ -208,7 +208,7 @@ class ActionsSubtask(BaseTask):
 
     def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
         """Parses the input Artifacts to extract the thought and actions.
-        Text Artifacts are used to extract the thought, and Action Artifacts are used to extract the actions.
+        Text Artifacts are used to extract the thought, and ToolAction Artifacts are used to extract the actions.
 
         Args:
             artifacts: The input Artifacts.
@@ -238,7 +238,7 @@ class ActionsSubtask(BaseTask):
 
             self.output = ErrorArtifact(f"Actions JSON decoding error: {e}", exception=e)
 
-    def __process_action_object(self, action_object: dict) -> Action:
+    def __process_action_object(self, action_object: dict) -> ToolAction:
         # Load action tag; throw exception if the key is not present
         action_tag = action_object["tag"]
 
@@ -269,19 +269,19 @@ class ActionsSubtask(BaseTask):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
-        action = Action(tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool)
+        action = ToolAction(tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool)
 
         if action.tool and action.input:
             self.__validate_action(action)
 
         return action
 
-    def __validate_action(self, action: Action) -> None:
+    def __validate_action(self, action: ToolAction) -> None:
         try:
             if action.path is not None:
                 activity = getattr(action.tool, action.path)
             else:
-                raise Exception("Action path not found.")
+                raise Exception("ToolAction path not found.")
 
             if activity is not None:
                 activity_schema = action.tool.activity_schema(activity)

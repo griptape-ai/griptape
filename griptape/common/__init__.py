@@ -1,4 +1,5 @@
-from .action import Action
+from .actions.base_action import BaseAction
+from .actions.tool_action import ToolAction
 
 from .prompt_stack.contents.base_message_content import BaseMessageContent
 from .prompt_stack.contents.base_delta_message_content import BaseDeltaMessageContent
@@ -32,5 +33,6 @@ __all__ = [
     "ActionResultMessageContent",
     "PromptStack",
     "Reference",
-    "Action",
+    "BaseAction",
+    "ToolAction",
 ]

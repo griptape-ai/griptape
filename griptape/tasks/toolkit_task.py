@@ -10,7 +10,7 @@ from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask
 from griptape.tasks import PromptTask
 from griptape.utils import J2
-from griptape.common import PromptStack, Action
+from griptape.common import PromptStack, ToolAction
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -75,11 +75,11 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             for s in self.subtasks:
                 if self.prompt_driver.use_native_tools:
                     action_calls = [
-                        Action(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                        ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
                         for action in s.actions
                     ]
                     action_results = [
-                        Action(name=action.name, path=action.path, tag=action.tag, output=action.output)
+                        ToolAction(name=action.name, path=action.path, tag=action.tag, output=action.output)
                         for action in s.actions
                     ]
 

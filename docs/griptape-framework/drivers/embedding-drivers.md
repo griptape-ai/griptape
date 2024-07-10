@@ -97,8 +97,28 @@ embeddings = driver.embed_string("Hello world!")
 
 # display the first 3 embeddings
 print(embeddings[:3])
-
 ```
+
+### Ollama
+
+!!! info
+    This driver requires the `drivers-embedding-ollama` [extra](../index.md#extras).
+
+The [OllamaEmbeddingDriver](../../reference/griptape/drivers/embedding/ollama_embedding_driver.md) uses the [Ollama Embeddings API](https://ollama.com/blog/embedding-models).
+
+```python title="PYTEST_IGNORE"
+from griptape.drivers import OllamaEmbeddingDriver
+
+driver = OllamaEmbeddingDriver(
+    model="all-minilm",
+)
+
+results = driver.embed_string("Hello world!")
+
+# display the first 3 embeddings
+print(results[:3])
+```
+
 ### Amazon SageMaker Jumpstart
 
 The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_sagemaker_jumpstart_embedding_driver.md) uses the [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) to generate embeddings on AWS.
