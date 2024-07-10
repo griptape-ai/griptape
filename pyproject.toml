@@ -96,6 +96,7 @@ drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
 drivers-embedding-google = ["google-generativeai"]
 drivers-embedding-cohere = ["cohere"]
+drivers-embedding-ollama = ["ollama"]
 
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]

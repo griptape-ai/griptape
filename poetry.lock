@@ -6526,6 +6526,7 @@ drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-cohere = ["cohere"]
 drivers-embedding-google = ["google-generativeai"]
 drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
+drivers-embedding-ollama = ["ollama"]
 drivers-embedding-voyageai = ["voyageai"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-amazon-sqs = ["boto3"]
@@ -6564,4 +6565,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "38b27b1953b5b0e75a285951390e1cbc6724d1d6f015059fde2e15733a308097"
+content-hash = "cdcfb6d4a27cbce4b7538548c1e13a361bf2e14cb0c722ba5fdf6e84e7d37441"
