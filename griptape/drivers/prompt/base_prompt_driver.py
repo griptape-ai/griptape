@@ -61,7 +61,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 )
             )
 
-    @observable
+    @observable(tags=["PromptDriver.run()"])
     def run(self, prompt_stack: PromptStack) -> Message:
         for attempt in self.retrying():
             with attempt:

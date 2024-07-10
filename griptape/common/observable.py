@@ -29,6 +29,10 @@ class Observable:
             args = (self.instance, *self.args) if self.instance and not hasattr(self.func, "__self__") else self.args
             return self.func(*args, **self.kwargs)
 
+        @property
+        def tags(self) -> Optional[list[str]]:
+            return self.decorator_kwargs.get("tags")
+
     def __init__(self, *args, **kwargs):
         self._instance = None
         if len(args) == 1 and len(kwargs) == 0 and isfunction(args[0]):

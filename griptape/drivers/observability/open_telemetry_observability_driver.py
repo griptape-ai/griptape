@@ -56,10 +56,14 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
     def observe(self, call: Observable.Call) -> Any:
         func = call.func
         instance = call.instance
+        tags = call.tags
 
         class_name = f"{instance.__class__.__name__}." if instance else ""
         span_name = f"{class_name}{func.__name__}()"
         with self._tracer.start_as_current_span(span_name) as span:  # pyright: ignore[reportCallIssue]
+            if tags is not None:
+                span.set_attribute("tags", tags)
+
             try:
                 result = call()
                 span.set_status(Status(StatusCode.OK))

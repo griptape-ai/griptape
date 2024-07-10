@@ -11,6 +11,7 @@ from typing import Optional
 import yaml
 from attrs import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
+from griptape.common import observable
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -113,6 +114,7 @@ class BaseTool(ActivityMixin, ABC):
     def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> Optional[dict]:
         return action.input
 
+    @observable(tags=["Tool.run()"])
     def run(
         self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: Optional[dict]
     ) -> BaseArtifact:
