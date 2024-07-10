@@ -285,7 +285,7 @@ agent.run("What color is the sky at different times of the day?")
 
 ### LM Studio
 
-The [LmStudioPromptDriver](../../reference/griptape/drivers/prompt/lm_studio_prompt_driver.md) connects to the [Lm Studio Local Server](https://lmstudio.ai/docs/local-server).
+The [LmStudioPromptDriver](../../reference/griptape/drivers/prompt/lm_studio_prompt_driver.md) connects to the [LM Studio Local Server](https://lmstudio.ai/docs/local-server).
 
 ```python title="PYTEST_IGNORE"
 from griptape.structures import Agent
