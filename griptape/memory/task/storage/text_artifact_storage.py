@@ -2,11 +2,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Optional
 from attrs import define, field
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact, InfoArtifact
-from griptape.drivers import BaseVectorStoreDriver
 from griptape.engines.rag import RagEngine, RagContext
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
+    from griptape.drivers import BaseVectorStoreDriver
     from griptape.engines import BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 
 

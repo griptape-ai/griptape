@@ -4,14 +4,18 @@ from attrs import define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import BaseArtifact, TextArtifact
-from griptape.drivers import BaseStructureRunDriver
 from griptape.tools.base_tool import BaseTool
 from griptape.utils.decorators import activity
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseStructureRunDriver
 
 
 @define
 class StructureRunClient(BaseTool):
-    """
+    """Tool for running a Structure.
+
     Attributes:
         description: A description of what the Structure does.
         driver: Driver to run the Structure.

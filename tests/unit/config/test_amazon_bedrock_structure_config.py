@@ -51,6 +51,8 @@ class TestAmazonBedrockStructureConfig:
                 "stream": False,
                 "temperature": 0.1,
                 "type": "AmazonBedrockPromptDriver",
+                "tool_choice": {"auto": {}},
+                "use_native_tools": True,
             },
             "vector_store_driver": {
                 "embedding_driver": {
@@ -102,6 +104,8 @@ class TestAmazonBedrockStructureConfig:
                 "stream": False,
                 "temperature": 0.1,
                 "type": "AmazonBedrockPromptDriver",
+                "tool_choice": {"auto": {}},
+                "use_native_tools": True,
             },
             "vector_store_driver": {
                 "embedding_driver": {

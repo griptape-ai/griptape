@@ -74,10 +74,11 @@ class OpenAiTokenizer(BaseTokenizer):
         else:
             return tokens
 
-    def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:  # noqa: C901
-        """
-        Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
-        https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
+    def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int: # noqa: C901
+        """Handles the special case of ChatML.
+
+        Implementation adopted from the official OpenAI notebook:
+        https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb.
         """
         if isinstance(text, list):
             model = model if model else self.model

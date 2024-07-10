@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
@@ -11,12 +10,14 @@ from griptape.common import PromptStack, Message, DeltaMessage, TextDeltaMessage
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from huggingface_hub import InferenceClient
 
 
 @define
 class HuggingFaceHubPromptDriver(BasePromptDriver):
-    """
+    """Hugging Face Hub Prompt Driver.
+
     Attributes:
         api_token: Hugging Face Hub API token.
         use_gpu: Use GPU during model run.
@@ -24,7 +25,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         model: Hugging Face Hub model name.
         client: Custom `InferenceApi`.
         tokenizer: Custom `HuggingFaceTokenizer`.
-
     """
 
     api_token: str = field(kw_only=True, metadata={"serializable": True})

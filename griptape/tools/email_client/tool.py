@@ -14,7 +14,7 @@ import smtplib
 
 @define
 class EmailClient(BaseTool):
-    """Tool for working with email
+    """Tool for working with email.
 
     Attributes:
         username: Username/email address used to send email via the SMTP protocol and retrieve email via the IMAP protocol.

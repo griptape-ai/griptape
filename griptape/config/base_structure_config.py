@@ -1,22 +1,24 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.config import BaseConfig
-from griptape.drivers import (
-    BaseConversationMemoryDriver,
-    BaseEmbeddingDriver,
-    BaseImageGenerationDriver,
-    BaseImageQueryDriver,
-    BasePromptDriver,
-    BaseVectorStoreDriver,
-    BaseTextToSpeechDriver,
-    BaseAudioTranscriptionDriver,
-)
 from griptape.utils import dict_merge
+
+if TYPE_CHECKING:
+    from griptape.drivers import (
+        BaseConversationMemoryDriver,
+        BaseEmbeddingDriver,
+        BaseImageGenerationDriver,
+        BaseImageQueryDriver,
+        BasePromptDriver,
+        BaseVectorStoreDriver,
+        BaseTextToSpeechDriver,
+        BaseAudioTranscriptionDriver,
+    )
 
 
 @define

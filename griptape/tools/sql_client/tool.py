@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from attrs import define, field
 from griptape.artifacts import InfoArtifact, ListArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import SqlLoader
 from schema import Schema
+
+if TYPE_CHECKING:
+    from griptape.loaders import SqlLoader
 
 
 @define

@@ -4,16 +4,17 @@ from typing import Any, TYPE_CHECKING
 from attrs import define, field, Factory
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers.amazon_bedrock_tokenizer import AmazonBedrockTokenizer
-from griptape.tokenizers.base_tokenizer import BaseTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    from griptape.tokenizers.base_tokenizer import BaseTokenizer
     import boto3
 
 
 @define
 class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Amazon Bedrock Cohere Embedding Driver.
+
     Attributes:
         model: Embedding model name. Defaults to DEFAULT_MODEL.
         input_type: Defaults to `search_query`. Prepends special tokens to differentiate each type from one another:

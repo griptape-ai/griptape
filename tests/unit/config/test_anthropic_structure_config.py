@@ -23,11 +23,12 @@ class TestAnthropicStructureConfig:
                 "model": "claude-3-5-sonnet-20240620",
                 "top_p": 0.999,
                 "top_k": 250,
+                "use_native_tools": True,
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {
                 "type": "AnthropicImageQueryDriver",
-                "model": "claude-3-opus-20240229",
+                "model": "claude-3-5-sonnet-20240620",
                 "max_tokens": 256,
             },
             "embedding_driver": {

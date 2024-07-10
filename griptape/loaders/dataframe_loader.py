@@ -5,12 +5,12 @@ from typing import Optional, TYPE_CHECKING, cast
 from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact
-from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
 from griptape.utils import import_optional_dependency
 from griptape.utils.hash import str_to_hash
 
 if TYPE_CHECKING:
+    from griptape.drivers import BaseEmbeddingDriver
     from pandas import DataFrame
 
 

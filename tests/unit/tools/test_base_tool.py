@@ -4,6 +4,7 @@ import pytest
 import yaml
 from schema import SchemaMissingKeyError, Schema, Or
 from griptape.tasks import ActionsSubtask, ToolkitTask
+from griptape.common import ToolAction
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -125,7 +126,7 @@ class TestBaseTool:
                 "additionalProperties": False,
             },
         ],
-        "$id": "MockTool Action Schema",
+        "$id": "MockTool ToolAction Schema",
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
@@ -206,7 +207,7 @@ class TestBaseTool:
         assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
-        action = ActionsSubtask.Action(input={}, name="", tag="")
+        action = ToolAction(input={}, name="", tag="")
         assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):
@@ -219,6 +220,6 @@ class TestBaseTool:
 
         full_schema = Schema(Or(*tool.activity_schemas()), description=f"{tool.name} action schema.")
 
-        tool_schema = full_schema.json_schema(f"{tool.name} Action Schema")
+        tool_schema = full_schema.json_schema(f"{tool.name} ToolAction Schema")
 
         assert tool_schema == self.TARGET_TOOL_SCHEMA

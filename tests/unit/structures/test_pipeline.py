@@ -270,7 +270,7 @@ class TestPipeline:
         assert [child.id for child in third_task.children] == []
 
     def test_prompt_stack_without_memory(self):
-        pipeline = Pipeline(conversation_memory=None, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=None, prompt_driver=MockPromptDriver(), rules=[Rule("test")])
 
         task1 = PromptTask("test")
         task2 = PromptTask("test")
@@ -291,7 +291,7 @@ class TestPipeline:
         assert len(task2.prompt_stack.messages) == 3
 
     def test_prompt_stack_with_memory(self):
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(prompt_driver=MockPromptDriver(), rules=[Rule("test")])
 
         task1 = PromptTask("test")
         task2 = PromptTask("test")

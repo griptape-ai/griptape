@@ -15,7 +15,7 @@ from griptape.loaders import BaseLoader
 class EmailLoader(BaseLoader):
     @define(frozen=True)
     class EmailQuery:
-        """An email retrieval query
+        """An email retrieval query.
 
         Attributes:
             label: Label to retrieve emails from such as 'INBOX' or 'SENT'.

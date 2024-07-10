@@ -8,7 +8,8 @@ import openai
 
 @define
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """OpenAI Embedding Driver.
+
     Attributes:
         model: OpenAI embedding model name. Defaults to `text-embedding-3-small`.
         base_url: API URL. Defaults to OpenAI's v1 API URL.

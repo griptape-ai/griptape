@@ -7,7 +7,8 @@ from griptape.utils import import_optional_dependency
 
 @define
 class GoogleEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Google Embedding Driver.
+
     Attributes:
         api_key: Google API key.
         model: Google model name.

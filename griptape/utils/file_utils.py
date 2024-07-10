@@ -26,7 +26,6 @@ def load_files(paths: list[str], futures_executor: Optional[futures.ThreadPoolEx
     Returns:
         A dictionary where the keys are a hash of the path and the values are the content of the files.
     """
-
     if futures_executor is None:
         futures_executor = futures.ThreadPoolExecutor()
 

@@ -1,6 +1,7 @@
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.structures import Agent
 from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
+from griptape.common import ToolAction
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils import defaults
@@ -160,7 +161,7 @@ class TestToolkitSubtask:
         assert result.output_task.output.to_text() == "done"
 
     def test_run_max_subtasks(self):
-        output = """Actions: [{"name": "blah"}]"""
+        output = 'Actions: [{"tag": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]'
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
@@ -221,10 +222,10 @@ class TestToolkitSubtask:
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test1", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test2", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)
@@ -245,10 +246,10 @@ class TestToolkitSubtask:
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test1", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test2", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)

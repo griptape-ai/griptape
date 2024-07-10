@@ -1,18 +1,21 @@
 from __future__ import annotations
 import numpy as np
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from abc import ABC, abstractmethod
 from attrs import define, field
-from griptape.artifacts import TextArtifact
 from griptape.mixins import ExponentialBackoffMixin
-from griptape.tokenizers import BaseTokenizer
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.mixins import SerializableMixin
+
+if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact
+    from griptape.tokenizers import BaseTokenizer
 
 
 @define
 class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
-    """
+    """Base Embedding Driver.
+
     Attributes:
         model: The name of the model to use.
         tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.

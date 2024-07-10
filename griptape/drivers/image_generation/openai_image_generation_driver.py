@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import base64
-from typing import Literal, Optional, cast, Union
+from typing import Literal, Optional, cast, Union, TYPE_CHECKING
 
 import openai
-from openai.types.images_response import ImagesResponse
 from attrs import field, Factory, define
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
+
+if TYPE_CHECKING:
+    from openai.types.images_response import ImagesResponse
 
 
 @define

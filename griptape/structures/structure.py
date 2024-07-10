@@ -19,18 +19,18 @@ from griptape.engines.rag.modules import (
     MetadataBeforeResponseRagModule,
 )
 from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
-from griptape.events import BaseEvent, EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
-from griptape.rules import Rule, Ruleset
-from griptape.tasks import BaseTask
 from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
+    from griptape.rules import Rule, Ruleset
+    from griptape.events import BaseEvent, EventListener
+    from griptape.tasks import BaseTask
     from griptape.memory.structure import BaseConversationMemory
 
 

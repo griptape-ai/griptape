@@ -11,7 +11,8 @@ from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 
 @define
 class RestApiClient(BaseTool):
-    """
+    """A tool for making REST API requests.
+
     Attributes:
         base_url: The base url that will be used for the request.
         path: The resource path that will be appended to base_url.

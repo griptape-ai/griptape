@@ -8,8 +8,17 @@ def remove_null_values_in_dict_recursively(d: dict) -> dict:
         return d
 
 
+def remove_key_in_dict_recursively(d: dict, key: str) -> dict:
+    if isinstance(d, dict):
+        return {k: remove_key_in_dict_recursively(v, key) for k, v in d.items() if k != key}
+    else:
+        return d
+
+
 def dict_merge(dct: Optional[dict], merge_dct: Optional[dict], add_keys: bool = True) -> dict:
-    """Recursive dict merge. Inspired by :meth:``dict.update()``, instead of
+    """Recursive dict merge.
+
+    Inspired by :meth:``dict.update()``, instead of
     updating only top-level keys, dict_merge recurses down into dicts nested
     to an arbitrary depth, updating keys. The ``merge_dct`` is merged into
     ``dct``.
