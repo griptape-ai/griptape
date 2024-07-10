@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Sending empty system content in `PromptTask`.
+- Throttling issues with `DuckDuckGoWebSearchDriver`.
 
 ## [0.28.0] - 2024-07-09
 ### Added
