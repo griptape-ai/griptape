@@ -160,7 +160,7 @@ class TestAgent:
             assert True
 
     def test_prompt_stack_without_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None)
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None, rules=[Rule("test")])
 
         task1 = PromptTask("test")
 
@@ -177,7 +177,7 @@ class TestAgent:
         assert len(task1.prompt_stack.messages) == 3
 
     def test_prompt_stack_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory(), rules=[Rule("test")])
 
         task1 = PromptTask("test")
 
