@@ -11,6 +11,7 @@ class ExpectedSpan:
     parent: str = field(kw_only=True)
     status_code: StatusCode = field(kw_only=True)
     exception: Optional[Exception] = field(default=None, kw_only=True)
+    attributes: Optional[dict] = field(default=None, kw_only=True)
 
 
 @define
@@ -75,5 +76,13 @@ class ExpectedSpans:
             expected_parent = parent and other_span_by_name[parent].context.span_id
             if actual_parent != expected_parent:
                 raise Exception(f"Span {child} has wrong parent")
+
+        expected_attributes = {span.name: span.attributes for span in self.spans}
+        for span_name, expected_attributes in expected_attributes.items():
+            other_span = other_span_by_name[span_name]
+            if expected_attributes is not None and other_span.attributes != expected_attributes:
+                raise Exception(
+                    f"Span {span_name} has attributes {other_span.attributes} instead of {expected_attributes}"
+                )
 
         return True
