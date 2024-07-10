@@ -18,11 +18,11 @@ def import_optional_dependency(name: str) -> Optional[ModuleType]:
 
     Args:
         name: The module name.
+
     Returns:
         The imported module, when found.
         None is returned when the package is not found and `errors` is False.
     """
-
     package_name = INSTALL_MAPPING.get(name)
     install_name = package_name if package_name is not None else name
 
@@ -43,6 +43,7 @@ def is_dependency_installed(name: str) -> bool:
 
     Args:
         name: The module name.
+
     Returns:
         True if the dependency is available.
         False if the dependency is not available.

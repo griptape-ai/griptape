@@ -14,7 +14,8 @@ if TYPE_CHECKING:
 
 @define
 class StructureRunClient(BaseTool):
-    """
+    """Tool for running a Structure.
+
     Attributes:
         description: A description of what the Structure does.
         driver: Driver to run the Structure.

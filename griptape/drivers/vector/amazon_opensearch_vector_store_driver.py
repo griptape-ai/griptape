@@ -57,7 +57,6 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
         If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         Metadata associated with the vector can also be provided.
         """
-
         vector_id = vector_id if vector_id else str_to_hash(str(vector))
         doc = {"vector": vector, "namespace": namespace, "metadata": meta}
         doc.update(kwargs)

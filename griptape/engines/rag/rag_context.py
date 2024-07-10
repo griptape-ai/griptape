@@ -12,8 +12,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class RagContext(SerializableMixin):
-    """Used by RagEngine stages and module to pass context that individual modules are expected to update in the `run`
-    method.
+    """Used by RagEngine stages and module to pass context that individual modules are expected to update in the `run` method.
 
     Attributes:
         query: Query provided by the user.

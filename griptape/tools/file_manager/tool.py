@@ -10,8 +10,7 @@ from schema import Schema, Literal
 
 @define
 class FileManager(BaseTool):
-    """
-    FileManager is a tool that can be used to list, load, and save files.
+    """FileManager is a tool that can be used to list, load, and save files.
 
     Attributes:
         file_manager_driver: File Manager Driver to use to list, load, and save files.

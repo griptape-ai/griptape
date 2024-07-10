@@ -12,11 +12,13 @@ from griptape.utils import J2
 
 @define
 class VariationImageGenerationTask(BaseImageGenerationTask):
-    """A task that generates a variation of an image using a prompt. Accepts a text prompt and image as
+    """A task that generates a variation of an image using a prompt.
+
+    Accepts a text prompt and image as
     input in one of the following formats:
     - tuple of (template string, ImageArtifact)
     - tuple of (TextArtifact, ImageArtifact)
-    - Callable that returns a tuple of (TextArtifact, ImageArtifact)
+    - Callable that returns a tuple of (TextArtifact, ImageArtifact).
 
     Attributes:
         image_generation_engine: The engine used to generate the image.

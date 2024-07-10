@@ -9,7 +9,8 @@ import openai
 
 @define
 class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
-    """
+    """Azure OpenAi Embedding Driver.
+
     Attributes:
         azure_deployment: An optional Azure OpenAi deployment id. Defaults to the model name.
         azure_endpoint: An Azure OpenAi endpoint.
