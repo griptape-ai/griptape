@@ -42,7 +42,9 @@ class PromptTask(RuleMixin, BaseTask):
         stack = PromptStack()
         memory = self.structure.conversation_memory
 
-        stack.add_system_message(self.generate_system_template(self))
+        system_template = self.generate_system_template(self)
+        if system_template:
+            stack.add_system_message(system_template)
 
         stack.add_user_message(self.input)
 
