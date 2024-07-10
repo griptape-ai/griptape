@@ -150,7 +150,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         for message in messages:
             if message.is_text():
-                openai_messages.append({"role": message.role, "content": message.to_text()})
+                if message.to_text():
+                    openai_messages.append({"role": message.role, "content": message.to_text()})
             elif message.has_any_content_type(ActionResultMessageContent):
                 # Action results need to be expanded into separate messages.
                 openai_messages.extend(

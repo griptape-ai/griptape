@@ -163,6 +163,23 @@ embeddings = embedding_driver.embed_string("Hello world!")
 print(embeddings[:3])
 ```
 
+### LM Studio
+
+The [LmStudioEmbeddingDriver](../../reference/griptape/drivers/embedding/lm_studio_embedding_driver.md) uses the [LM Studio Embeddings API](https://lmstudio.ai/docs/text-embeddings).
+
+```python title="PYTEST_IGNORE"
+from griptape.drivers import LmStudioEmbeddingDriver
+
+embedding_driver = LmStudioEmbeddingDriver(
+    model="nomic-ai/nomic-embed-text-v1.5-GGUF/nomic-embed-text-v1.5.Q2_K",
+)
+
+embeddings = embedding_driver.embed_string("Hello world!")
+
+# display the first 3 embeddings
+print(embeddings[:3])
+```
+
 ### Override Default Structure Embedding Driver
 Here is how you can override the Embedding Driver that is used by default in Structures. 
 

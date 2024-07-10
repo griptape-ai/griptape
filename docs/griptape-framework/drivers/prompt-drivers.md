@@ -282,6 +282,29 @@ agent = Agent(
 agent.run("What color is the sky at different times of the day?")
 ```
 
+
+### LM Studio
+
+The [LmStudioPromptDriver](../../reference/griptape/drivers/prompt/lm_studio_prompt_driver.md) connects to the [Lm Studio Local Server](https://lmstudio.ai/docs/local-server).
+
+```python title="PYTEST_IGNORE"
+from griptape.structures import Agent
+from griptape.drivers import LmStudioPromptDriver
+from griptape.rules import Rule
+from griptape.config import StructureConfig
+
+agent = Agent(
+    config=StructureConfig(
+        prompt_driver=LmStudioPromptDriver(
+            model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF"
+        )
+    ),
+    rules=[Rule(value="You are a helpful coding assistant.")],
+)
+
+agent.run("How do I init and update a git submodule?")
+```
+
 ### Hugging Face Hub
 
 !!! info

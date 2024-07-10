@@ -10,6 +10,7 @@ from .prompt.amazon_bedrock_prompt_driver import AmazonBedrockPromptDriver
 from .prompt.google_prompt_driver import GooglePromptDriver
 from .prompt.dummy_prompt_driver import DummyPromptDriver
 from .prompt.ollama_prompt_driver import OllamaPromptDriver
+from .prompt.lm_studio_prompt_driver import LmStudioPromptDriver
 
 from .memory.conversation.base_conversation_memory_driver import BaseConversationMemoryDriver
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
@@ -27,6 +28,7 @@ from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingD
 from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
 from .embedding.cohere_embedding_driver import CohereEmbeddingDriver
+from .embedding.lm_studio_embedding_driver import LmStudioEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -120,6 +122,7 @@ __all__ = [
     "GooglePromptDriver",
     "DummyPromptDriver",
     "OllamaPromptDriver",
+    "LmStudioPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
@@ -135,6 +138,7 @@ __all__ = [
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "CohereEmbeddingDriver",
+    "LmStudioEmbeddingDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
