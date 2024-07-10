@@ -21,6 +21,8 @@ class TestCohereStructureConfig:
                 "max_tokens": None,
                 "stream": False,
                 "model": "command-r",
+                "force_single_step": False,
+                "use_native_tools": True,
             },
             "embedding_driver": {
                 "type": "CohereEmbeddingDriver",

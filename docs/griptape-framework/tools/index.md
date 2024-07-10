@@ -1,11 +1,10 @@
 ## Overview
 
-One of the most powerful features of Griptape is the ability for Toolkit Tasks to generate _chains of thought_ (CoT) and use tools that can interact with the outside world. We use the [ReAct](https://arxiv.org/abs/2210.03629) technique to implement CoT reasoning and acting in the underlying LLMs without using any fine-tuning.
-
-Griptape implements the reasoning loop in the Toolkit Tasks and integrates Griptape Tools natively.
+One of the most powerful features of Griptape is the ability to use tools that can interact with the outside world.
+Many of our [Prompt Drivers](../drivers/prompt-drivers.md) leverage the native function calling built into the LLMs. For LLMs that don't support this, Griptape provides its own implementation using the [ReAct](https://arxiv.org/abs/2210.03629) technique.
 
 ## Tools
-Here is an example of a pipeline using tools: 
+Here is an example of a Pipeline using Tools: 
 
 ```python
 from griptape.tasks import ToolkitTask

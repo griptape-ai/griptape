@@ -1,5 +1,5 @@
 from griptape.drivers import HuggingFaceHubPromptDriver
-from griptape.common import PromptStack
+from griptape.common import PromptStack, TextDeltaMessageContent
 import pytest
 
 
@@ -65,6 +65,7 @@ class TestHuggingFaceHubPromptDriver:
         event = next(stream)
 
         # Then
+        assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 
         event = next(stream)

@@ -7,7 +7,9 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 
 from griptape.common import (
+    ActionCallMessageContent,
     BaseDeltaMessageContent,
+    ActionCallDeltaMessageContent,
     DeltaMessage,
     TextDeltaMessageContent,
     PromptStack,
@@ -35,6 +37,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         model: The model name.
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
+        use_native_tools: Whether to use LLM's native function calling capabilities. Must be supported by the model.
     """
 
     temperature: float = field(default=0.1, metadata={"serializable": True})
@@ -43,7 +46,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
-    stream: bool = field(default=False, metadata={"serializable": True})
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:
@@ -114,25 +118,34 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         usage = DeltaMessage.Usage()
 
         # Aggregate all content deltas from the stream
-        deltas = self.try_stream(prompt_stack)
-        for delta in deltas:
-            usage += delta.usage
+        message_deltas = self.try_stream(prompt_stack)
+        for message_delta in message_deltas:
+            usage += message_delta.usage
+            content = message_delta.content
 
-            if delta.content is not None:
-                if delta.content.index in delta_contents:
-                    delta_contents[delta.content.index].append(delta.content)
+            if content is not None:
+                if content.index in delta_contents:
+                    delta_contents[content.index].append(content)
                 else:
-                    delta_contents[delta.content.index] = [delta.content]
-
-            if isinstance(delta.content, TextDeltaMessageContent):
-                self.structure.publish_event(CompletionChunkEvent(token=delta.content.text))
+                    delta_contents[content.index] = [content]
+                if isinstance(content, TextDeltaMessageContent):
+                    self.structure.publish_event(CompletionChunkEvent(token=content.text))
+                elif isinstance(content, ActionCallDeltaMessageContent):
+                    if content.tag is not None and content.name is not None and content.path is not None:
+                        self.structure.publish_event(CompletionChunkEvent(token=str(content)))
+                    elif content.partial_input is not None:
+                        self.structure.publish_event(CompletionChunkEvent(token=content.partial_input))
 
         # Build a complete content from the content deltas
         content = []
-        for deltas in delta_contents.values():
-            text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaMessageContent)]
+        for delta_content in delta_contents.values():
+            text_deltas = [delta for delta in delta_content if isinstance(delta, TextDeltaMessageContent)]
+            action_deltas = [delta for delta in delta_content if isinstance(delta, ActionCallDeltaMessageContent)]
+
             if text_deltas:
                 content.append(TextMessageContent.from_deltas(text_deltas))
+            if action_deltas:
+                content.append(ActionCallMessageContent.from_deltas(action_deltas))
 
         result = Message(
             content=content,

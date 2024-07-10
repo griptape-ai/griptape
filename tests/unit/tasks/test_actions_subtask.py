@@ -1,7 +1,10 @@
 import json
+from griptape.artifacts import ListArtifact, TextArtifact, ActionArtifact
+from griptape.artifacts.error_artifact import ErrorArtifact
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.structures import Agent
+from griptape.common import ToolAction
 
 
 class TestActionsSubtask:
@@ -18,6 +21,58 @@ class TestActionsSubtask:
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
 
+        assert json_dict[0]["name"] == "MockTool"
+        assert json_dict[0]["path"] == "test"
+        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+
+    def test_action_input(self):
+        valid_input = ActionArtifact(
+            ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
+        )
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        json_dict = json.loads(subtask.actions_to_json())
+
+        assert subtask.thought is None
+        assert json_dict[0]["name"] == "MockTool"
+        assert json_dict[0]["path"] == "test"
+        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+
+    def test_action_and_thought_input(self):
+        valid_input = ListArtifact(
+            [
+                TextArtifact("thought"),
+                ActionArtifact(
+                    ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
+                ),
+            ]
+        )
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        json_dict = json.loads(subtask.actions_to_json())
+
+        assert subtask.thought == "thought"
+        assert json_dict[0]["name"] == "MockTool"
+        assert json_dict[0]["path"] == "test"
+        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+
+    def test_callable_input(self):
+        valid_input = ListArtifact(
+            [
+                TextArtifact("thought"),
+                ActionArtifact(
+                    ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
+                ),
+            ]
+        )
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(lambda task: valid_input))
+        json_dict = json.loads(subtask.actions_to_json())
+
+        assert subtask.thought == "thought"
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
@@ -87,7 +142,23 @@ class TestActionsSubtask:
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(invalid_input))
+
+        assert isinstance(subtask.output, ErrorArtifact)
+        assert "Actions JSON decoding error" in subtask.output.value
+
+    def test_implicit_values(self):
+        valid_input = (
+            "Thought: need to test\n"
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"test":\n"value"}}]'
+            "Response: test response\n"
+            "Answer: test output"
+        )
+
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
 
-        assert json_dict[0]["name"] == "error"
-        assert "Action input parsing error" in json_dict[0]["input"]["error"]
+        assert json_dict[0]["name"] == "MockTool"
+        assert json_dict[0]["path"] == "test"
+        assert json_dict[0]["input"] == {"values": {"test": "value"}}

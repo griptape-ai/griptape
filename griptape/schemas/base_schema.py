@@ -105,25 +105,34 @@ class BaseSchema(Schema):
         # These modules are required to avoid `NameError`s when resolving types.
         from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
         from griptape.structures import Structure
-        from griptape.common import PromptStack, Message, Reference
+        from griptape.common import PromptStack, Message, Reference, ToolAction
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
+        from griptape.tools import BaseTool
         from typing import Any
         from griptape.artifacts import BaseArtifact
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
         Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
+        GenerativeModel = (
+            import_optional_dependency("google.generativeai").GenerativeModel
+            if is_dependency_installed("google.generativeai")
+            else Any
+        )
 
         attrs.resolve_types(
             attrs_cls,
             localns={
                 "PromptStack": PromptStack,
                 "Usage": Message.Usage,
+                "BaseTool": BaseTool,
                 "Structure": Structure,
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BasePromptDriver": BasePromptDriver,
                 "BaseTokenizer": BaseTokenizer,
                 "boto3": boto3,
                 "Client": Client,
+                "ToolAction": ToolAction,
+                "GenerativeModel": GenerativeModel,
                 "Reference": Reference,
                 "BaseArtifact": BaseArtifact,
             },
