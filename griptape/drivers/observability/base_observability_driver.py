@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
-from attrs import define
-from griptape.common import Observable
 from types import TracebackType
 from typing import Any, Optional
+
+from attrs import define
+
+from griptape.common import Observable
 
 
 @define
 class BaseObservabilityDriver(ABC):
-    def __enter__(self) -> None:
+    def __enter__(self) -> None:  # noqa: B027
         pass
 
     def __exit__(

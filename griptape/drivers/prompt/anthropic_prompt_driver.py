@@ -27,6 +27,7 @@ from griptape.common import (
     TextDeltaMessageContent,
     TextMessageContent,
     ToolAction,
+    observable,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
@@ -70,6 +71,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         response = self.client.messages.create(**self._base_params(prompt_stack))
 
@@ -79,6 +81,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         events = self.client.messages.create(**self._base_params(prompt_stack), stream=True)
 

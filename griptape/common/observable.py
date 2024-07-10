@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import functools
-
-from attrs import define, field, Factory
 from inspect import isfunction
 from typing import Any, Callable, Optional, TypeVar, cast
 
+from attrs import Factory, define, field
 
 T = TypeVar("T", bound=Callable)
 
@@ -28,6 +27,10 @@ class Observable:
             # If self.func has a __self__ attribute, it is a bound method and we do not need to pass the instance.
             args = (self.instance, *self.args) if self.instance and not hasattr(self.func, "__self__") else self.args
             return self.func(*args, **self.kwargs)
+
+        @property
+        def tags(self) -> Optional[list[str]]:
+            return self.decorator_kwargs.get("tags")
 
     def __init__(self, *args, **kwargs):
         self._instance = None

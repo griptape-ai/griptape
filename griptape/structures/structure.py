@@ -10,6 +10,7 @@ from attrs import Attribute, Factory, define, field
 from rich.logging import RichHandler
 
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
+from griptape.common import observable
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -29,7 +30,6 @@ from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.utils import deprecation_warn
-from griptape.common import observable
 
 if TYPE_CHECKING:
     from griptape.events import BaseEvent, EventListener

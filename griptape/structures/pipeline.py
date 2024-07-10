@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import define
 
 from griptape.artifacts import ErrorArtifact
+from griptape.common import observable
 from griptape.memory.structure import Run
 from griptape.structures import Structure
-from griptape.common import observable
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask

@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
-import requests
-
-from uuid import UUID
 from collections.abc import Sequence
+from typing import Optional
+from urllib.parse import urljoin
+from uuid import UUID
 
-from attrs import define, Factory, field
-from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
-from opentelemetry.trace import get_current_span, INVALID_SPAN
-from opentelemetry.sdk.trace import SpanProcessor, ReadableSpan
+import requests
+from attrs import Factory, define, field
+from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
-from urllib.parse import urljoin
+from opentelemetry.trace import INVALID_SPAN, get_current_span
+
+from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
 
 
 @define

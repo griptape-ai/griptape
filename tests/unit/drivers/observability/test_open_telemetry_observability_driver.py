@@ -164,3 +164,25 @@ class TestOpenTelemetryObservabilityDriver:
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
+
+    def test_context_manager_observe_adds_tags_attribute(self, driver, mock_span_exporter):
+        expected_spans = ExpectedSpans(
+            spans=[
+                ExpectedSpan(name="main", parent=None, status_code=StatusCode.OK),
+                ExpectedSpan(
+                    name="func()", parent="main", status_code=StatusCode.OK, attributes={"tags": ("Foo.bar()",)}
+                ),
+            ]
+        )
+
+        def func(word: str):
+            return word + " you"
+
+        with driver:
+            driver.observe(
+                Observable.Call(func=func, instance=None, args=["Hi"], decorator_kwargs={"tags": ["Foo.bar()"]})
+            ) == "Hi you"
+
+        assert mock_span_exporter.export.call_count == 1
+        mock_span_exporter.export.assert_called_with(expected_spans)
+        mock_span_exporter.export.reset_mock()

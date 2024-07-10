@@ -20,6 +20,7 @@ from griptape.common import (
     TextDeltaMessageContent,
     TextMessageContent,
     ToolAction,
+    observable,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
@@ -62,6 +63,7 @@ class GooglePromptDriver(BasePromptDriver):
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(
@@ -80,6 +82,7 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         messages = self.__to_google_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(

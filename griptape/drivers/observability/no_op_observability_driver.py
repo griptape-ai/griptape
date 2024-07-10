@@ -1,7 +1,9 @@
+from typing import Any, Optional
+
 from attrs import define
+
 from griptape.common import Observable
 from griptape.drivers import BaseObservabilityDriver
-from typing import Any, Optional
 
 
 @define

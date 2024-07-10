@@ -1,13 +1,14 @@
-from attrs import define, Factory, field
-from griptape.common import Observable
-from griptape.drivers import BaseObservabilityDriver
-from opentelemetry.trace import format_span_id, get_current_span, get_tracer, INVALID_SPAN
-from opentelemetry.instrumentation.threading import ThreadingInstrumentor
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
-from opentelemetry.trace import Tracer, Status, StatusCode
 from types import TracebackType
 from typing import Any, Optional
+
+from attrs import Factory, define, field
+from opentelemetry.instrumentation.threading import ThreadingInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import SpanProcessor, TracerProvider
+from opentelemetry.trace import INVALID_SPAN, Status, StatusCode, Tracer, format_span_id, get_current_span, get_tracer
+
+from griptape.common import Observable
+from griptape.drivers import BaseObservabilityDriver
 
 
 @define
@@ -56,10 +57,14 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
     def observe(self, call: Observable.Call) -> Any:
         func = call.func
         instance = call.instance
+        tags = call.tags
 
         class_name = f"{instance.__class__.__name__}." if instance else ""
         span_name = f"{class_name}{func.__name__}()"
         with self._tracer.start_as_current_span(span_name) as span:  # pyright: ignore[reportCallIssue]
+            if tags is not None:
+                span.set_attribute("tags", tags)
+
             try:
                 result = call()
                 span.set_status(Status(StatusCode.OK))

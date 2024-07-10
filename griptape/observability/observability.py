@@ -1,6 +1,8 @@
 from types import TracebackType
 from typing import Any, Optional
+
 from attrs import define, field
+
 from griptape.common import Observable
 from griptape.drivers import BaseObservabilityDriver, NoOpObservabilityDriver
 
