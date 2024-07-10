@@ -4,6 +4,7 @@ from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from tests.mocks.mock_structure_config import MockStructureConfig
 from griptape.tasks import PromptTask
+from griptape.rules import Rule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
 
@@ -122,3 +123,20 @@ class TestPromptTask:
         task = PromptTask({"default": "test"})
 
         assert task.input.value == str({"default": "test"})
+
+    def test_prompt_stack(self):
+        task = PromptTask("{{ test }}", context={"test": "test value"}, rules=[Rule("test rule")])
+
+        Pipeline().add_task(task)
+
+        assert len(task.prompt_stack.messages) == 2
+        assert task.prompt_stack.messages[0].is_system()
+        assert task.prompt_stack.messages[1].is_user()
+
+    def test_prompt_stack_empty_system_content(self):
+        task = PromptTask("{{ test }}", context={"test": "test value"})
+
+        Pipeline().add_task(task)
+
+        assert len(task.prompt_stack.messages) == 1
+        assert task.prompt_stack.messages[0].is_user()
