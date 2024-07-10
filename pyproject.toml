@@ -26,7 +26,6 @@ tenacity = ">=8.0"
 numpy = ">=1"
 stringcase = "^1.2.0"
 docker = "^7.1.0"
-sqlalchemy = "~=1.0"
 requests = "^2.32.0"
 
 # drivers
@@ -35,8 +34,7 @@ anthropic = { version = "^0.29.0", optional = true }
 transformers = { version = "^4.39.3", optional = true, extras=["torch"] }
 huggingface-hub = { version = ">=0.13", optional = true }
 boto3 = { version = "^1.34.119", optional = true }
-sqlalchemy-redshift = { version = "*", optional = true }
-snowflake-sqlalchemy = { version = "^1.4.7", optional = true }
+snowflake-sqlalchemy = { version = "^1.6.1", optional = true }
 pinecone-client = { version = "^3", optional = true }
 pymongo = { version = "*", optional = true }
 marqo = { version = ">=1.1.0", optional = true }
@@ -55,6 +53,7 @@ qdrant-client = { version = ">=1.9.1", optional = true }
 pusher = {version = "^3.3.2", optional = true}
 ollama = {version = "^0.2.1", optional = true} 
 duckduckgo-search = {version = "^6.1.12", optional = true}
+sqlalchemy = {version = "^2.0.31", optional = true}
 opentelemetry-sdk = {version = "^1.25.0", optional = true}
 opentelemetry-api = {version = "^1.25.0", optional = true}
 opentelemetry-instrumentation = {version = "^0.46b0", optional = true}
@@ -78,9 +77,9 @@ drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-google = ["google-generativeai"]
 drivers-prompt-ollama = ["ollama"]
 
-drivers-sql-redshift = ["sqlalchemy-redshift", "boto3"]
-drivers-sql-snowflake = ["snowflake-sqlalchemy", "snowflake", "snowflake-connector-python"]
-drivers-sql-postgres = ["pgvector", "psycopg2-binary"]
+drivers-sql-amazon-redshift = ["boto3"]
+drivers-sql-snowflake = ["sqlalchemy", "snowflake-sqlalchemy", "snowflake"]
+drivers-sql-postgres = ["sqlalchemy", "pgvector", "psycopg2-binary"]
 
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
 drivers-memory-conversation-redis = ["redis"]
@@ -91,7 +90,7 @@ drivers-vector-mongodb = ["pymongo"]
 drivers-vector-redis = ["redis"]
 drivers-vector-opensearch = ["opensearch-py"]
 drivers-vector-amazon-opensearch = ["opensearch-py", "boto3"]
-drivers-vector-postgresql = ["pgvector", "psycopg2-binary"]
+drivers-vector-postgresql = ["sqlalchemy", "pgvector", "psycopg2-binary"]
 drivers-vector-qdrant = ["qdrant-client"]
 
 drivers-embedding-amazon-bedrock = ["boto3"]
@@ -133,6 +132,7 @@ loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]
 loaders-email = ["mail-parser"]
 loaders-audio = ["filetype"]
+loaders-sql = ["sqlalchemy"]
 
 all = [
     # drivers
@@ -140,7 +140,7 @@ all = [
     "anthropic",
     "hugginface-hub",
     "transformers",
-    "sqlalchemy-redshift",
+    "sqlalchemy",
     "boto3",
     "snowflake-sqlalchemy",
     "snowflake",

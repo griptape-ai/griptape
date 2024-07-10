@@ -11,6 +11,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import text
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
@@ -58,6 +59,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
     def __attrs_post_init__(self) -> None:
         if self.engine is None:
+            if self.connection_string is None:
+                raise ValueError("An engine or connection string is required")
             self.engine = cast(Engine, create_engine(self.connection_string, **self.create_engine_params))
 
     def setup(
@@ -69,10 +72,12 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     ) -> None:
         """Provides a mechanism to initialize the database schema and extensions."""
         if install_uuid_extension:
-            self.engine.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
+            with self.engine.begin() as conn:
+                conn.execute(text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
 
         if install_vector_extension:
-            self.engine.execute('CREATE EXTENSION IF NOT EXISTS "vector";')
+            with self.engine.begin() as conn:
+                conn.execute(text('CREATE EXTENSION IF NOT EXISTS "vector";'))
 
         if create_schema:
             self._model.metadata.create_all(self.engine)
