@@ -29,13 +29,10 @@ class Action(SerializableMixin):
     path: Optional[str] = field(default=None, metadata={"serializable": True})
     input: dict = field(factory=dict, metadata={"serializable": True})
     tool: Optional[BaseTool] = field(default=None)
-    output: Optional[BaseArtifact] = field(default=None, metadata={"serializable": True})
+    output: Optional[BaseArtifact] = field(default=None)
 
     def __str__(self) -> str:
         return json.dumps(self.to_dict())
-
-    def to_dict(self) -> dict:
-        return {"tag": self.tag, "name": self.name, "path": self.path, "input": self.input}
 
     def to_native_tool_name(self) -> str:
         parts = [self.name]

@@ -10,11 +10,17 @@ class TestAction:
 
     def test__str__(self, action: Action):
         assert str(action) == json.dumps(
-            {"tag": "TestTag", "name": "TestName", "path": "TestPath", "input": {"foo": "bar"}}
+            {"type": "Action", "tag": "TestTag", "name": "TestName", "path": "TestPath", "input": {"foo": "bar"}}
         )
 
     def test_to_dict(self, action: Action):
-        assert action.to_dict() == {"tag": "TestTag", "name": "TestName", "path": "TestPath", "input": {"foo": "bar"}}
+        assert action.to_dict() == {
+            "tag": "TestTag",
+            "name": "TestName",
+            "path": "TestPath",
+            "input": {"foo": "bar"},
+            "type": "Action",
+        }
 
     def test_to_native_tool_name(self, action: Action):
         assert action.to_native_tool_name() == "TestName_TestPath"
