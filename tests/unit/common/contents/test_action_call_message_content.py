@@ -1,13 +1,14 @@
 import pytest
 from griptape.artifacts.action_artifact import ActionArtifact
-from griptape.common import ActionCallMessageContent, ActionCallDeltaMessageContent, Action
+from griptape.common import ActionCallMessageContent, ActionCallDeltaMessageContent, ToolAction
 
 
 class TestActionCallMessageContent:
     def test_init(self):
         assert ActionCallMessageContent(
-            ActionArtifact(Action(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"}))
+            ActionArtifact(ToolAction(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"}))
         ).artifact.value.to_dict() == {
+            "type": "ToolAction",
             "tag": "TestTag",
             "name": "TestName",
             "path": "TestPath",
@@ -24,6 +25,7 @@ class TestActionCallMessageContent:
         ]
 
         assert ActionCallMessageContent.from_deltas(deltas).artifact.value.to_dict() == {
+            "type": "ToolAction",
             "tag": "testtag",
             "name": "TestName",
             "path": "test_tag",

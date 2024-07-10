@@ -21,7 +21,7 @@ from griptape.common import (
     PromptStack,
     Message,
     TextMessageContent,
-    Action,
+    ToolAction,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -152,7 +152,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             if message.is_text():
                 openai_messages.append({"role": message.role, "content": message.to_text()})
             elif message.has_any_content_type(ActionResultMessageContent):
-                # Action results need to be expanded into separate messages.
+                # ToolAction results need to be expanded into separate messages.
                 openai_messages.extend(
                     [
                         {
@@ -164,7 +164,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     ]
                 )
             else:
-                # Action calls are attached to the assistant message that originally generated them.
+                # ToolAction calls are attached to the assistant message that originally generated them.
                 action_call_content = []
                 non_action_call_content = []
                 for content in message.content:
@@ -178,7 +178,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         "role": self.__to_openai_role(message),
                         "content": [
                             self.__to_openai_message_content(content)
-                            for content in non_action_call_content  # Action calls do not belong in the content
+                            for content in non_action_call_content  # ToolAction calls do not belong in the content
                         ],
                         **(
                             {
@@ -250,10 +250,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 [
                     ActionCallMessageContent(
                         ActionArtifact(
-                            Action(
+                            ToolAction(
                                 tag=tool_call.id,
-                                name=Action.from_native_tool_name(tool_call.function.name)[0],
-                                path=Action.from_native_tool_name(tool_call.function.name)[1],
+                                name=ToolAction.from_native_tool_name(tool_call.function.name)[0],
+                                path=ToolAction.from_native_tool_name(tool_call.function.name)[1],
                                 input=json.loads(tool_call.function.arguments),
                             )
                         )
@@ -279,8 +279,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     return ActionCallDeltaMessageContent(
                         index=index,
                         tag=tool_call.id,
-                        name=Action.from_native_tool_name(tool_call.function.name)[0],
-                        path=Action.from_native_tool_name(tool_call.function.name)[1],
+                        name=ToolAction.from_native_tool_name(tool_call.function.name)[0],
+                        path=ToolAction.from_native_tool_name(tool_call.function.name)[1],
                     )
                 else:
                     return ActionCallDeltaMessageContent(index=index, partial_input=tool_call.function.arguments)

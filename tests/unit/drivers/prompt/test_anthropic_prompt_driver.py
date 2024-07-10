@@ -1,6 +1,6 @@
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import AnthropicPromptDriver
-from griptape.common import PromptStack, TextDeltaMessageContent, ActionCallDeltaMessageContent, Action
+from griptape.common import PromptStack, TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
 from griptape.artifacts import TextArtifact, ActionArtifact, ImageArtifact, ListArtifact
 from unittest.mock import Mock
 import pytest
@@ -184,7 +184,7 @@ class TestAnthropicPromptDriver:
             ListArtifact(
                 [
                     TextArtifact("thought"),
-                    ActionArtifact(Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
+                    ActionArtifact(ToolAction(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
                 ]
             )
         )
@@ -192,7 +192,7 @@ class TestAnthropicPromptDriver:
             ListArtifact(
                 [
                     ActionArtifact(
-                        Action(
+                        ToolAction(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",
@@ -208,7 +208,7 @@ class TestAnthropicPromptDriver:
             ListArtifact(
                 [
                     ActionArtifact(
-                        Action(
+                        ToolAction(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",
@@ -229,7 +229,7 @@ class TestAnthropicPromptDriver:
             ListArtifact(
                 [
                     ActionArtifact(
-                        Action(
+                        ToolAction(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",

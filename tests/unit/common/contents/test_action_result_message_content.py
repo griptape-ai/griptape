@@ -1,6 +1,6 @@
 import pytest
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import ActionResultMessageContent, Action
+from griptape.common import ActionResultMessageContent, ToolAction
 
 
 class TestActionResultMessageContent:
@@ -8,7 +8,7 @@ class TestActionResultMessageContent:
         assert (
             ActionResultMessageContent(
                 TextArtifact("foo"),
-                action=Action(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"}),
+                action=ToolAction(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"}),
             ).artifact.value
             == "foo"
         )

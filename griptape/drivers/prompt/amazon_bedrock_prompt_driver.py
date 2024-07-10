@@ -26,7 +26,7 @@ from griptape.common import (
     Message,
     TextDeltaMessageContent,
     TextMessageContent,
-    Action,
+    ToolAction,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
@@ -177,10 +177,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         if "text" in content:
             return TextMessageContent(TextArtifact(content["text"]))
         elif "toolUse" in content:
-            name, path = Action.from_native_tool_name(content["toolUse"]["name"])
+            name, path = ToolAction.from_native_tool_name(content["toolUse"]["name"])
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
-                    value=Action(
+                    value=ToolAction(
                         tag=content["toolUse"]["toolUseId"], name=name, path=path, input=content["toolUse"]["input"]
                     )
                 )
@@ -193,7 +193,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             content_block = event["contentBlockStart"]["start"]
 
             if "toolUse" in content_block:
-                name, path = Action.from_native_tool_name(content_block["toolUse"]["name"])
+                name, path = ToolAction.from_native_tool_name(content_block["toolUse"]["name"])
 
                 return ActionCallDeltaMessageContent(
                     index=event["contentBlockStart"]["contentBlockIndex"],

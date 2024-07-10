@@ -1,7 +1,7 @@
 from griptape.artifacts import ImageArtifact, ListArtifact
 from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.common import PromptStack, TextDeltaMessageContent, ActionCallDeltaMessageContent, Action
+from griptape.common import PromptStack, TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
 from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
 from tests.mocks.mock_tokenizer import MockTokenizer
@@ -200,7 +200,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             ListArtifact(
                 [
                     TextArtifact("thought"),
-                    ActionArtifact(Action(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
+                    ActionArtifact(ToolAction(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
                 ]
             )
         )
@@ -209,7 +209,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 [
                     TextArtifact("keep-going"),
                     ActionArtifact(
-                        Action(
+                        ToolAction(
                             tag="MockTool_test",
                             name="MockTool",
                             path="test",

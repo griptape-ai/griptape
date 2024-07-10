@@ -5,15 +5,15 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
-from griptape.mixins import SerializableMixin
+from griptape.common import BaseAction
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
 
 
 @define(kw_only=True)
-class Action(SerializableMixin):
-    """Represents an instance of an LLM calling a Action.
+class ToolAction(BaseAction):
+    """Represents an instance of an LLM using a Tool.
 
     Attributes:
         tag: The tag (unique identifier) of the action.

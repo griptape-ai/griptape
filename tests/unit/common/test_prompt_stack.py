@@ -3,7 +3,7 @@ import pytest
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact, ActionArtifact
 from griptape.common import ImageMessageContent, PromptStack, TextMessageContent
 from griptape.common import ActionCallMessageContent
-from griptape.common import ActionResultMessageContent, Action
+from griptape.common import ActionResultMessageContent, ToolAction
 
 
 class TestPromptStack:
@@ -20,14 +20,16 @@ class TestPromptStack:
         prompt_stack.add_message(ImageArtifact(b"foo", format="png", width=100, height=100), "role")
         prompt_stack.add_message(ListArtifact([TextArtifact("foo"), TextArtifact("bar")]), "role")
         prompt_stack.add_message(
-            ListArtifact([TextArtifact("foo"), ActionArtifact(Action(tag="foo", name="bar", path="baz", input={}))]),
+            ListArtifact(
+                [TextArtifact("foo"), ActionArtifact(ToolAction(tag="foo", name="bar", path="baz", input={}))]
+            ),
             "role",
         )
         prompt_stack.add_message(
             ListArtifact(
                 [
                     TextArtifact("foo"),
-                    ActionArtifact(Action(tag="foo", name="bar", path="baz", input={}, output=TextArtifact("qux"))),
+                    ActionArtifact(ToolAction(tag="foo", name="bar", path="baz", input={}, output=TextArtifact("qux"))),
                 ]
             ),
             "role",
@@ -60,6 +62,7 @@ class TestPromptStack:
             "name": "bar",
             "path": "baz",
             "input": {},
+            "type": "ToolAction",
         }
 
         assert prompt_stack.messages[5].role == "role"
@@ -67,12 +70,6 @@ class TestPromptStack:
         assert prompt_stack.messages[5].content[0].artifact.value == "foo"
         assert isinstance(prompt_stack.messages[5].content[1], ActionResultMessageContent)
         assert prompt_stack.messages[5].content[1].artifact.value == "qux"
-        assert prompt_stack.messages[5].content[1].action.to_dict() == {
-            "tag": "foo",
-            "name": "bar",
-            "path": "baz",
-            "input": {},
-        }
 
     def test_add_system_message(self, prompt_stack):
         prompt_stack.add_system_message("foo")

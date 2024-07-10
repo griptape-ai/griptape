@@ -4,7 +4,7 @@ from griptape.artifacts.error_artifact import ErrorArtifact
 from tests.mocks.mock_tool.tool import MockTool
 from griptape.tasks import ToolkitTask, ActionsSubtask
 from griptape.structures import Agent
-from griptape.common import Action
+from griptape.common import ToolAction
 
 
 class TestActionsSubtask:
@@ -27,7 +27,7 @@ class TestActionsSubtask:
 
     def test_action_input(self):
         valid_input = ActionArtifact(
-            Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
+            ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
         )
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -43,7 +43,9 @@ class TestActionsSubtask:
         valid_input = ListArtifact(
             [
                 TextArtifact("thought"),
-                ActionArtifact(Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})),
+                ActionArtifact(
+                    ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
+                ),
             ]
         )
         task = ToolkitTask(tools=[MockTool()])
@@ -60,7 +62,9 @@ class TestActionsSubtask:
         valid_input = ListArtifact(
             [
                 TextArtifact("thought"),
-                ActionArtifact(Action(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})),
+                ActionArtifact(
+                    ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
+                ),
             ]
         )
         task = ToolkitTask(tools=[MockTool()])
