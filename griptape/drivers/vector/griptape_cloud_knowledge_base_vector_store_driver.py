@@ -77,9 +77,10 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         filter: Optional[dict] = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """Performs a query on the Knowledge Base
+        """Performs a query on the Knowledge Base.
 
-        Performs a query on the Knowledge Base and returns Artifacts with close vector proximity to the query, optionally filtering to only those that match the provided filter(s)."""
+        Performs a query on the Knowledge Base and returns Artifacts with close vector proximity to the query, optionally filtering to only those that match the provided filter(s).
+        """
         url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
 
         request: dict[str, Any] = {
