@@ -17,7 +17,7 @@ Be truthful. ALWAYS be proactive and NEVER ask the user for more information inp
 NEVER make up actions, action names, or action paths. NEVER make up facts. NEVER reference tags in other action input values.
 
 Actions might store their output in memory as artifacts (with `memory_name` and `artifact_namespace`). If action output is stored in memory, ALWAYS try to pass it to another action. NEVER make up memory names or artifact namespaces.
-{% if meta_memory %}
+{% if meta_memory and not use_native_tools %}
 
 {{ meta_memory }}
 {% endif %}
