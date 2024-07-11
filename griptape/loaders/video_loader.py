@@ -77,7 +77,7 @@ class VideoLoader(BaseLoader):
     def __process_frame(self, index, frame, timestamp_ms, image_loader, image_format, compression_params):
         cv2 = import_optional_dependency("cv2")
 
-        minutes, seconds = divmod(min(timestamp_ms, 0) / 1000, 60)
+        minutes, seconds = divmod(max(timestamp_ms, 0) / 1000, 60)
         formatted_timestamp = f"{int(minutes):02}:{int(seconds):02}"
 
         # Compress the frame
