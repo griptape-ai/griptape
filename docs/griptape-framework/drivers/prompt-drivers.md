@@ -100,7 +100,7 @@ agent.run("Blue sky at dusk.")
 ### OpenAI Compatible
 
 Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) to interact with these services.
-Simply set the `base_url` to the service's API endpoint and the `model` to the model name.
+Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
 
 ```python title="PYTEST_IGNORE"
 from griptape.structures import Agent
