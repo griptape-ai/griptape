@@ -62,15 +62,11 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         raise NotImplementedError(f"{self.__class__.__name__} does not support entry loading.")
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        """Retrieves all vector entries from the collection, optionally filtering to only
-        those that match the provided namespace.
-        """
+        """Retrieves all vector entries from the collection, optionally filtering to only those that match the provided namespace."""
         raise NotImplementedError(f"{self.__class__.__name__} does not support entry loading.")
 
     def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
-        """Retrieves all Artifacts from the collection, optionally filtering to only
-        those that match the provided namespace.
-        """
+        """Retrieves all Artifacts from the collection, optionally filtering to only those that match the provided namespace."""
         raise NotImplementedError(f"{self.__class__.__name__} does not support Artifact loading.")
 
     def query(
@@ -84,9 +80,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         filter: Optional[dict] = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """Performs a search on the Knowledge Base to find vectors similar to the provided input vector,
-        optionally filtering to only those that match the provided filter(s).
-        """
+        """Performs a search on the Knowledge Base to find vectors similar to the provided input vector, optionally filtering to only those that match the provided filter(s)."""
         url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
 
         request: dict[str, Any] = {
