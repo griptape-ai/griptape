@@ -89,7 +89,13 @@ class ActionsSubtask(BaseTask):
                 subtask_actions=self.actions_to_dicts(),
             )
         )
-        self.structure.logger.info(f"Subtask {self.id}\n{self.actions_to_json()}")
+
+        parts = [
+            f"Subtask {self.id}",
+            *([f"\nThought: {self.thought}"] if self.thought is not None else []),
+            f"\nActions: {self.actions_to_json()}",
+        ]
+        self.structure.logger.info("".join(parts))
 
     def run(self) -> BaseArtifact:
         try:
