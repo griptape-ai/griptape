@@ -46,6 +46,9 @@ embeddings = embedding_driver.embed_string("Hello world!")
 print(embeddings[:3])
 ```
 
+!!! tip
+    Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
+
 ### Azure OpenAI
 
 The [AzureOpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/azure_openai_embedding_driver.md) uses the same parameters as [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md)

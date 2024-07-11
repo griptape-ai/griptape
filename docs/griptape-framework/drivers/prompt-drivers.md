@@ -94,6 +94,9 @@ agent = Agent(
 agent.run("Blue sky at dusk.")
 ```
 
+!!! info
+    `response_format` and `seed` are unique to the OpenAI Chat Prompt Driver and Azure OpenAi Chat Prompt Driver.
+
 ### OpenAI Compatible
 
 Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) to interact with these services.
@@ -118,8 +121,8 @@ agent = Agent(
 agent.run("How do I init and update a git submodule?")
 ```
 
-!!! info
-    `response_format` and `seed` are unique to the OpenAI Chat Prompt Driver and Azure OpenAi Chat Prompt Driver.
+!!! tip
+    Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
 
 ### Azure OpenAI Chat
 
