@@ -74,7 +74,7 @@ class OpenAiTokenizer(BaseTokenizer):
         else:
             return tokens
 
-    def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:
+    def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:  # noqa: C901
         """Handles the special case of ChatML.
 
         Implementation adopted from the official OpenAI notebook:
