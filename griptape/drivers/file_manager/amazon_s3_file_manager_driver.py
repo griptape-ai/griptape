@@ -12,8 +12,7 @@ if TYPE_CHECKING:
 
 @define
 class AmazonS3FileManagerDriver(BaseFileManagerDriver):
-    """
-    AmazonS3FileManagerDriver can be used to list, load, and save files in an Amazon S3 bucket.
+    """AmazonS3FileManagerDriver can be used to list, load, and save files in an Amazon S3 bucket.
 
     Attributes:
         session: The boto3 session to use for S3 operations.

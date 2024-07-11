@@ -43,7 +43,6 @@ class Workflow(Structure):
             child_tasks: The tasks that will be the children of the new tasks.
             preserve_relationship: Whether to preserve the parent/child relationship when inserting between parent and child tasks.
         """
-
         if not isinstance(parent_tasks, list):
             parent_tasks = [parent_tasks]
         if not isinstance(tasks, list):

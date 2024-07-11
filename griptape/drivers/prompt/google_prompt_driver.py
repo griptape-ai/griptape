@@ -37,7 +37,8 @@ if TYPE_CHECKING:
 
 @define
 class GooglePromptDriver(BasePromptDriver):
-    """
+    """Google Prompt Driver.
+
     Attributes:
         api_key: Google API key.
         model: Google model name.

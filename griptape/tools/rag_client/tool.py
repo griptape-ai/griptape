@@ -12,7 +12,8 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class RagClient(BaseTool):
-    """
+    """Tool for querying a RAG engine.
+
     Attributes:
         description: LLM-friendly RAG engine description.
         rag_engine: `RagEngine`.

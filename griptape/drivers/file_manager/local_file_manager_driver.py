@@ -7,8 +7,7 @@ from .base_file_manager_driver import BaseFileManagerDriver
 
 @define
 class LocalFileManagerDriver(BaseFileManagerDriver):
-    """
-    LocalFileManagerDriver can be used to list, load, and save files on the local file system.
+    """LocalFileManagerDriver can be used to list, load, and save files on the local file system.
 
     Attributes:
         workdir: The absolute working directory. List, load, and save operations will be performed relative to this directory.

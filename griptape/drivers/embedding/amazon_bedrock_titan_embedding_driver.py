@@ -13,7 +13,8 @@ if TYPE_CHECKING:
 
 @define
 class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Amazon Bedrock Titan Embedding Driver.
+
     Attributes:
         model: Embedding model name. Defaults to DEFAULT_MODEL.
         tokenizer: Optionally provide custom `BedrockTitanTokenizer`.

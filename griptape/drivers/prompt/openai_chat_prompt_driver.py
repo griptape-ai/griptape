@@ -35,7 +35,8 @@ if TYPE_CHECKING:
 
 @define
 class OpenAiChatPromptDriver(BasePromptDriver):
-    """
+    """OpenAI Chat Prompt Driver.
+
     Attributes:
         base_url: An optional OpenAi API URL.
         api_key: An optional OpenAi API key. If not provided, the `OPENAI_API_KEY` environment variable will be used.

@@ -11,7 +11,8 @@ if TYPE_CHECKING:
 
 @define
 class CohereEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Cohere Embedding Driver.
+
     Attributes:
         api_key: Cohere API key.
         model: 	Cohere model name.

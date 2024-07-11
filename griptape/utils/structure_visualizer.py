@@ -12,14 +12,15 @@ if TYPE_CHECKING:
 
 @define
 class StructureVisualizer:
-    """Utility class to visualize a Structure structure"""
+    """Utility class to visualize a Structure structure."""
 
     structure: Structure = field()
     header: str = field(default="graph TD;", kw_only=True)
 
     def to_url(self) -> str:
-        """Generates a url that renders the Workflow structure as a Mermaid flowchart
-        Reference: https://mermaid.js.org/ecosystem/tutorials#jupyter-integration-with-mermaid-js
+        """Generates a url that renders the Workflow structure as a Mermaid flowchart.
+
+        Reference: https://mermaid.js.org/ecosystem/tutorials#jupyter-integration-with-mermaid-js.
 
         Returns:
             str: URL to the rendered image

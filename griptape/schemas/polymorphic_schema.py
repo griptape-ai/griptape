@@ -4,9 +4,7 @@ from griptape.schemas import BaseSchema
 
 
 class PolymorphicSchema(BaseSchema):
-    """
-    PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema
-    """
+    """PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema."""
 
     def __init__(self, inner_class: Any, **kwargs):
         super().__init__(**kwargs)
@@ -17,13 +15,11 @@ class PolymorphicSchema(BaseSchema):
     type_field_remove = True
 
     def get_obj_type(self, obj):
-        """Returns name of the schema during dump() calls, given the object
-        being dumped."""
+        """Returns name of the schema during dump() calls, given the object being dumped."""
         return obj.__class__.__name__
 
     def get_data_type(self, data):
-        """Returns name of the schema during load() calls, given the data being
-        loaded. Defaults to looking up `type_field` in the data."""
+        """Returns name of the schema during load() calls, given the data being loaded. Defaults to looking up `type_field` in the data."""
         data_type = data.get(self.type_field)
         if self.type_field in data and self.type_field_remove:
             data.pop(self.type_field)

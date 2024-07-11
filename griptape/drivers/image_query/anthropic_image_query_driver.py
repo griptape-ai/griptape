@@ -8,7 +8,8 @@ from griptape.utils import import_optional_dependency
 
 @define
 class AnthropicImageQueryDriver(BaseImageQueryDriver):
-    """
+    """Anthropic Image Query Driver.
+
     Attributes:
         api_key: Anthropic API key.
         model: Anthropic model name.

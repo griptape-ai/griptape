@@ -12,10 +12,12 @@ from griptape.utils import J2
 
 @define
 class PromptImageGenerationTask(BaseImageGenerationTask):
-    """Used to generate an image from a text prompt. Accepts prompt as input in one of the following formats:
+    """Used to generate an image from a text prompt.
+
+    Accepts prompt as input in one of the following formats:
     - template string
     - TextArtifact
-    - Callable that returns a TextArtifact
+    - Callable that returns a TextArtifact.
 
     Attributes:
         image_generation_engine: The engine used to generate the image.

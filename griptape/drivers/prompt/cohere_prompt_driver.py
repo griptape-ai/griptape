@@ -31,7 +31,8 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class CoherePromptDriver(BasePromptDriver):
-    """
+    """Cohere Prompt Driver.
+
     Attributes:
         api_key: Cohere API key.
         model: 	Cohere model name.

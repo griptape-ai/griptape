@@ -10,7 +10,8 @@ if TYPE_CHECKING:
 
 @define
 class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Hugging Face Hub Embedding Driver.
+
     Attributes:
         api_token: Hugging Face Hub API token.
         model: Hugging Face Hub model name.
