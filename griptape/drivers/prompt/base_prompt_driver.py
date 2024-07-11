@@ -138,8 +138,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                         self.structure.publish_event(CompletionChunkEvent(token=content.partial_input))
 
         # Build a complete content from the content deltas
+        result = self.__build_message(list(delta_contents.values()), usage)
+
+        return result
+
+    def __build_message(self, delta_contents: list[list[BaseDeltaMessageContent]], usage: DeltaMessage.Usage):
         content = []
-        for delta_content in delta_contents.values():
+        for delta_content in delta_contents:
             text_deltas = [delta for delta in delta_content if isinstance(delta, TextDeltaMessageContent)]
             action_deltas = [delta for delta in delta_content if isinstance(delta, ActionCallDeltaMessageContent)]
 
