@@ -124,7 +124,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     def __to_anthropic_tools(self, tools: list[BaseTool]) -> list[dict]:
         return [
             {
-                "name": f"{tool.name}_{tool.activity_name(activity)}",
+                "name": tool.to_native_tool_name(activity),
                 "description": tool.activity_description(activity),
                 "input_schema": (tool.activity_schema(activity) or Schema({})).json_schema("Input Schema"),
             }

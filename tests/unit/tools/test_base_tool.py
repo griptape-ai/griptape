@@ -223,3 +223,12 @@ class TestBaseTool:
         tool_schema = full_schema.json_schema(f"{tool.name} ToolAction Schema")
 
         assert tool_schema == self.TARGET_TOOL_SCHEMA
+
+    def test_to_native_tool_name(self, tool):
+        tool = MockTool()
+
+        assert tool.to_native_tool_name(tool.test) == "MockTool_test"
+
+        with pytest.raises(ValueError):
+            tool.name = "mock_tool"
+            tool.to_native_tool_name(tool.foo)
