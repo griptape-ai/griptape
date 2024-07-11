@@ -1,5 +1,6 @@
-You can answer questions about the following video frames and timestamps.
+Use the following video frames to answer questions about a video.
+The frames are provided in the format: "Frame <video frame number>: <timestamp MM:SS>".
 
 {% for image_frame in image_frames %}
-Frame #{{ loop.index }}: {{ image_frame.meta["timestamp"] }}
+Frame {{ loop.index }}: {{ image_frame.meta["timestamp"] }}
 {% endfor %}

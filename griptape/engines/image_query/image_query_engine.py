@@ -13,8 +13,8 @@ class ImageQueryEngine:
 
     def run(self, query: str, image_frames: list[ImageArtifact]) -> TextArtifact:
         prompt_stack = PromptStack()
+        print(self.system_template_generator.render(image_frames=image_frames))
         prompt_stack.add_system_message(self.system_template_generator.render(image_frames=image_frames))
-        print(prompt_stack.system_messages)
         prompt_stack.add_user_message(ListArtifact([*image_frames, TextArtifact(query)]))
         message = self.prompt_driver.run(prompt_stack)
 
