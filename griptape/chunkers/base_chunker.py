@@ -31,7 +31,7 @@ class BaseChunker(ABC):
 
         return [TextArtifact(c) for c in self._chunk_recursively(text)]
 
-    def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:  # noqa: C901
+    def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:
         token_count = self.tokenizer.count_tokens(chunk)
 
         if token_count <= self.max_tokens:
@@ -43,10 +43,9 @@ class BaseChunker(ABC):
             half_token_count = token_count // 2
 
             # If a separator is provided, only use separators after it.
-            if current_separator:
-                separators = self.separators[self.separators.index(current_separator) :]
-            else:
-                separators = self.separators
+            separators = (
+                self.separators[self.separators.index(current_separator) :] if current_separator else self.separators
+            )
 
             # Loop through available separators to find the best split.
             for separator in separators:
@@ -68,14 +67,7 @@ class BaseChunker(ABC):
                             balance_diff = abs(tokens_count - half_token_count)
 
                     # Create the two subchunks based on the best separator.
-                    if separator.is_prefix:
-                        # If the separator is a prefix, append it before this subchunk.
-                        first_subchunk = separator.value + separator.value.join(subchunks[: balance_index + 1])
-                        second_subchunk = separator.value + separator.value.join(subchunks[balance_index + 1 :])
-                    else:
-                        # If the separator is not a prefix, append it after this subchunk.
-                        first_subchunk = separator.value.join(subchunks[: balance_index + 1]) + separator.value
-                        second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
+                    first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, balance_index)
 
                     # Continue recursively chunking the subchunks.
                     first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
@@ -94,3 +86,16 @@ class BaseChunker(ABC):
             # If none of the separators result in a balanced split, split the chunk in half.
             midpoint = len(chunk) // 2
             return self._chunk_recursively(chunk[:midpoint]) + self._chunk_recursively(chunk[midpoint:])
+
+    def __get_subchunks(self, separator: ChunkSeparator, subchunks: list[str], balance_index: int) -> tuple[str, str]:
+        # Create the two subchunks based on the best separator.
+        if separator.is_prefix:
+            # If the separator is a prefix, append it before this subchunk.
+            first_subchunk = separator.value + separator.value.join(subchunks[: balance_index + 1])
+            second_subchunk = separator.value + separator.value.join(subchunks[balance_index + 1 :])
+        else:
+            # If the separator is not a prefix, append it after this subchunk.
+            first_subchunk = separator.value.join(subchunks[: balance_index + 1]) + separator.value
+            second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
+
+        return first_subchunk, second_subchunk
