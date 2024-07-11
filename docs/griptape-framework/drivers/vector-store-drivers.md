@@ -8,13 +8,13 @@ Griptape provides a way to build drivers for vector DBs where embeddings can be 
 - `upsert_vector()` for updating and inserting new vectors directly.
 - `query()` for querying vector DBs.
 
-Each vector Driver takes a [BaseEmbeddingDriver](../../reference/griptape/drivers/embedding/base_embedding_driver.md) used to dynamically generate embeddings for strings.
+Each Vector Store Driver takes a [BaseEmbeddingDriver](../../reference/griptape/drivers/embedding/base_embedding_driver.md) used to dynamically generate embeddings for strings.
 
 !!! info
     When working with vector database indexes with Griptape drivers, make sure the number of dimensions is equal to 1536. Nearly all embedding models create vectors with this number of dimensions. Check the documentation for your vector database on how to create/update vector indexes.
 
 !!! info
-    More vector drivers are coming soon.
+    More Vector Store Drivers are coming soon.
 
 ## Vector Store Drivers
 
