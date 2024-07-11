@@ -1,12 +1,14 @@
 from __future__ import annotations
-from typing import Callable, Any
+from typing import Callable, Any, TYPE_CHECKING
 from attrs import define, field, Factory
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, BaseArtifact
 from griptape.artifacts import ListArtifact
-from griptape.drivers import BaseVectorStoreDriver
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseVectorStoreDriver
 
 
 @define(kw_only=True)

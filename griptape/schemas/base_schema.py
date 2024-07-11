@@ -103,11 +103,28 @@ class BaseSchema(Schema):
         from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
 
         # These modules are required to avoid `NameError`s when resolving types.
-        from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
+        from griptape.drivers import (
+            BaseConversationMemoryDriver,
+            BasePromptDriver,
+            BaseImageGenerationDriver,
+            BaseImageQueryDriver,
+            BaseEmbeddingDriver,
+            BaseVectorStoreDriver,
+            BaseTextToSpeechDriver,
+            BaseAudioTranscriptionDriver,
+        )
         from griptape.structures import Structure
-        from griptape.common import PromptStack, Message, Reference, ToolAction
+        from griptape.common import (
+            PromptStack,
+            Message,
+            Reference,
+            ToolAction,
+            BaseMessageContent,
+            BaseDeltaMessageContent,
+        )
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
         from griptape.tools import BaseTool
+        from griptape.memory.structure import Run
         from typing import Any
         from griptape.artifacts import BaseArtifact
 
@@ -122,19 +139,29 @@ class BaseSchema(Schema):
         attrs.resolve_types(
             attrs_cls,
             localns={
-                "PromptStack": PromptStack,
-                "Usage": Message.Usage,
-                "BaseTool": BaseTool,
-                "Structure": Structure,
-                "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BasePromptDriver": BasePromptDriver,
-                "BaseTokenizer": BaseTokenizer,
-                "boto3": boto3,
-                "Client": Client,
-                "ToolAction": ToolAction,
-                "GenerativeModel": GenerativeModel,
-                "Reference": Reference,
+                "BaseImageQueryDriver": BaseImageQueryDriver,
+                "BaseEmbeddingDriver": BaseEmbeddingDriver,
+                "BaseVectorStoreDriver": BaseVectorStoreDriver,
+                "BaseTextToSpeechDriver": BaseTextToSpeechDriver,
+                "BaseAudioTranscriptionDriver": BaseAudioTranscriptionDriver,
+                "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
+                "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseArtifact": BaseArtifact,
+                "PromptStack": PromptStack,
+                "BaseMessageContent": BaseMessageContent,
+                "BaseDeltaMessageContent": BaseDeltaMessageContent,
+                "BaseTool": BaseTool,
+                "Usage": Message.Usage,
+                "Structure": Structure,
+                "BaseTokenizer": BaseTokenizer,
+                "ToolAction": ToolAction,
+                "Reference": Reference,
+                "Run": Run,
+                # Third party modules
+                "Client": Client,
+                "GenerativeModel": GenerativeModel,
+                "boto3": boto3,
             },
         )
 

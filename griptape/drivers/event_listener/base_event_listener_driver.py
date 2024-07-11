@@ -2,9 +2,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from concurrent import futures
 from logging import Logger
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from attrs import Factory, define, field
-from griptape.events import BaseEvent
+
+if TYPE_CHECKING:
+    from griptape.events import BaseEvent
 
 logger = Logger(__name__)
 

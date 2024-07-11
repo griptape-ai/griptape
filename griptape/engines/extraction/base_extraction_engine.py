@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from abc import ABC, abstractmethod
 from attrs import define, field, Factory
-from griptape.artifacts import ListArtifact, ErrorArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.drivers import BasePromptDriver
-from griptape.rules import Ruleset
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ListArtifact, ErrorArtifact
+    from griptape.rules import Ruleset
+    from griptape.drivers import BasePromptDriver
 
 
 @define

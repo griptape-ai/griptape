@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.common import BaseDeltaMessageContent
 
 from .base_message import BaseMessage
+
+if TYPE_CHECKING:
+    from griptape.common import BaseDeltaMessageContent
 
 
 @define

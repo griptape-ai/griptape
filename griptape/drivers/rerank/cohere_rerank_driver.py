@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
-from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseRerankDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact
     from cohere import Client
 
 

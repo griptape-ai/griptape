@@ -3,10 +3,10 @@ from typing import Optional, Any, TYPE_CHECKING
 from griptape import utils
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
-from griptape.artifacts import TextArtifact
 from attrs import define, field, Factory
 
 if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact
     import marqo
 
 

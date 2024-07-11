@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
-from collections.abc import Iterator
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
@@ -24,6 +23,7 @@ from griptape.utils import import_optional_dependency
 from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from cohere import Client
     from cohere.types import NonStreamedChatResponse
     from griptape.tools import BaseTool

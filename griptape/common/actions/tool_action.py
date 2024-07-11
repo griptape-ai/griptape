@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact
 from griptape.common import BaseAction
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
     from griptape.tools import BaseTool
 
 

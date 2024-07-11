@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field, Factory
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers.base_tokenizer import BaseTokenizer
 from griptape.common import PromptStack, TextMessageContent
 from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
@@ -12,6 +11,7 @@ from griptape.common import Message, DeltaMessage, TextDeltaMessageContent
 from griptape.common import ImageMessageContent
 
 if TYPE_CHECKING:
+    from griptape.tokenizers.base_tokenizer import BaseTokenizer
     from ollama import Client
 
 

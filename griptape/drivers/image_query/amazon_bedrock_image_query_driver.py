@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 from attrs import define, field, Factory
-from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseMultiModelImageQueryDriver
 from griptape.utils import import_optional_dependency
 import json
 
 if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact, TextArtifact
     import boto3
 
 

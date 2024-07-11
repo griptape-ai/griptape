@@ -2,13 +2,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Callable
 from attrs import define, field
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.tools import BaseTool
 from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
-from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
+    from griptape.tools import BaseTool
+    from griptape.artifacts import BaseArtifact
     from griptape.tasks import BaseTask
 
 

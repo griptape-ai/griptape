@@ -3,17 +3,17 @@ import json
 import re
 from typing import Optional, TYPE_CHECKING
 from attrs import define, field
-from schema import Schema
 
 from griptape import utils
 from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact, ListArtifact
 from griptape.tasks import PromptTask, ActionsSubtask
-from griptape.tools import BaseTool
 from griptape.utils import J2
 from griptape.mixins import ActionsSubtaskOriginMixin
-from griptape.common import PromptStack
 
 if TYPE_CHECKING:
+    from schema import Schema
+    from griptape.tools import BaseTool
+    from griptape.common import PromptStack
     from griptape.memory import TaskMemory
     from griptape.structures import Structure
 

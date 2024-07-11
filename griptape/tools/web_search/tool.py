@@ -4,7 +4,10 @@ from griptape.artifacts import ErrorArtifact, ListArtifact
 from schema import Schema, Literal
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.drivers import BaseWebSearchDriver
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseWebSearchDriver
 
 
 @define

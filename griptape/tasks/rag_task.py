@@ -1,8 +1,11 @@
 from __future__ import annotations
 from attrs import define, field
 from griptape.artifacts import ErrorArtifact, BaseArtifact
-from griptape.engines.rag import RagEngine
 from griptape.tasks import BaseTextInputTask
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagEngine
 
 
 @define
