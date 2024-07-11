@@ -187,3 +187,17 @@ class BaseTool(ActivityMixin, ABC):
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:
             return None
+
+    def to_native_tool_name(self, activity: Callable) -> str:
+        """Converts a Tool into to a native tool name.
+
+        Args:
+            activity: Activity to convert.
+
+        Returns:
+            str: Native tool name.
+        """
+        if "_" in self.name:
+            raise ValueError("Tool name can't contain underscores when using native tools.")
+
+        return f"{self.name}_{self.activity_name(activity)}"
