@@ -17,7 +17,8 @@ if TYPE_CHECKING:
 
 @define
 class OllamaPromptDriver(BasePromptDriver):
-    """
+    """Ollama Prompt Driver.
+
     Attributes:
         model: Model name.
     """

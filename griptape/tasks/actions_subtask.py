@@ -208,10 +208,12 @@ class ActionsSubtask(BaseTask):
 
     def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
         """Parses the input Artifacts to extract the thought and actions.
+
         Text Artifacts are used to extract the thought, and ToolAction Artifacts are used to extract the actions.
 
         Args:
             artifacts: The input Artifacts.
+
         Returns:
             None
         """

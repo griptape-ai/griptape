@@ -13,7 +13,8 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class VectorStoreClient(BaseTool):
-    """
+    """A tool for querying a vector database.
+
     Attributes:
         description: LLM-friendly vector DB description.
         vector_store_driver: `BaseVectorStoreDriver`.

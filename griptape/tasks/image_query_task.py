@@ -12,11 +12,13 @@ from griptape.utils import J2
 
 @define
 class ImageQueryTask(BaseTask):
-    """A task that executes a natural language query on one or more input images. Accepts a text prompt and a list of
+    """A task that executes a natural language query on one or more input images.
+
+    Accepts a text prompt and a list of
     images as input in one of the following formats:
     - tuple of (template string, list[ImageArtifact])
     - tuple of (TextArtifact, list[ImageArtifact])
-    - Callable that returns a tuple of (TextArtifact, list[ImageArtifact])
+    - Callable that returns a tuple of (TextArtifact, list[ImageArtifact]).
 
     Attributes:
         image_query_engine: The engine used to execute the query.

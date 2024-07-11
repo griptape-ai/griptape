@@ -14,7 +14,8 @@ if TYPE_CHECKING:
 
 @define
 class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
-    """
+    """Base Embedding Driver.
+
     Attributes:
         model: The name of the model to use.
         tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.

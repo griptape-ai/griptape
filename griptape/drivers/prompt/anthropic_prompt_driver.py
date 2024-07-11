@@ -42,7 +42,8 @@ if TYPE_CHECKING:
 
 @define
 class AnthropicPromptDriver(BasePromptDriver):
-    """
+    """Anthropic Prompt Driver.
+
     Attributes:
         api_key: Anthropic API key.
         model: Anthropic model name.

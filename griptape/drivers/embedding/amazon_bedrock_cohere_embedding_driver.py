@@ -13,7 +13,8 @@ if TYPE_CHECKING:
 
 @define
 class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Amazon Bedrock Cohere Embedding Driver.
+
     Attributes:
         model: Embedding model name. Defaults to DEFAULT_MODEL.
         input_type: Defaults to `search_query`. Prepends special tokens to differentiate each type from one another:

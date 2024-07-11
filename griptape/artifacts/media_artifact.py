@@ -12,8 +12,7 @@ import base64
 
 @define
 class MediaArtifact(BlobArtifact):
-    """MediaArtifact is a type of BlobArtifact that represents media (image, audio, video, etc.)
-    and can be extended to support a specific media type.
+    """MediaArtifact is a type of BlobArtifact that represents media (image, audio, video, etc.) and can be extended to support a specific media type.
 
     Attributes:
         value: Raw bytes representing media data.

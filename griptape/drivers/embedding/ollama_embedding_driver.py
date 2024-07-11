@@ -10,7 +10,8 @@ if TYPE_CHECKING:
 
 @define
 class OllamaEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Ollama Embedding Driver.
+
     Attributes:
         model: Ollama embedding model name.
         host: Optional Ollama host.

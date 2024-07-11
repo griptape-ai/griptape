@@ -17,11 +17,11 @@ if TYPE_CHECKING:
 
 @define
 class HuggingFacePipelinePromptDriver(BasePromptDriver):
-    """
+    """Hugging Face Pipeline Prompt Driver.
+
     Attributes:
         params: Custom model run parameters.
         model: Hugging Face Hub model name.
-
     """
 
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})

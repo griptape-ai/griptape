@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 @define
 class HuggingFaceHubPromptDriver(BasePromptDriver):
-    """
+    """Hugging Face Hub Prompt Driver.
+
     Attributes:
         api_token: Hugging Face Hub API token.
         use_gpu: Use GPU during model run.
@@ -24,7 +25,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         model: Hugging Face Hub model name.
         client: Custom `InferenceApi`.
         tokenizer: Custom `HuggingFaceTokenizer`.
-
     """
 
     api_token: str = field(kw_only=True, metadata={"serializable": True})

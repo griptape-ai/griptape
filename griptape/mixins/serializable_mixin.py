@@ -64,6 +64,7 @@ class SerializableMixin(Generic[T]):
     @classmethod
     def _import_cls_rec(cls, module_name: str, class_name: str) -> type:
         """Imports a class given a module name and class name.
+
         Will recursively traverse up the module's path until it finds a
         package that it can import `class_name` from.
 

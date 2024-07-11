@@ -7,8 +7,7 @@ import griptape.loaders as loaders
 
 @define
 class BaseFileManagerDriver(ABC):
-    """
-    BaseFileManagerDriver can be used to list, load, and save files.
+    """BaseFileManagerDriver can be used to list, load, and save files.
 
     Attributes:
         default_loader: The default loader to use for loading file contents into artifacts.

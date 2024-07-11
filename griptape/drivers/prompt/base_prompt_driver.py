@@ -79,6 +79,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         """Converts a Prompt Stack to a string for token counting or model input.
+
         This base implementation is only a rough approximation, and should be overridden by subclasses with model-specific tokens.
 
         Args:
