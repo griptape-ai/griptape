@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING, Callable
 from attrs import define, field, Factory
-from .base_event import BaseEvent
 
 if TYPE_CHECKING:
+    from .base_event import BaseEvent
     from griptape.drivers import BaseEventListenerDriver
 
 

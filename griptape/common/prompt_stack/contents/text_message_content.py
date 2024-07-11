@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from attrs import define, field
-from collections.abc import Sequence
 
 from griptape.artifacts import TextArtifact
 from griptape.common import BaseMessageContent, BaseDeltaMessageContent, TextDeltaMessageContent
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 @define

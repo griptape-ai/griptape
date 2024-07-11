@@ -25,6 +25,7 @@ class TestOpenAiStructureConfig:
                 "max_tokens": None,
                 "stream": False,
                 "user": "",
+                "use_native_tools": True,
             },
             "conversation_memory_driver": None,
             "embedding_driver": {

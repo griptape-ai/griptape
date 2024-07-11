@@ -14,6 +14,7 @@ from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
+    from griptape.common import ToolAction
     from griptape.memory import TaskMemory
     from griptape.tasks import ActionsSubtask
 
@@ -87,7 +88,7 @@ class BaseTool(ActivityMixin, ABC):
     def schema(self) -> dict:
         full_schema = Schema(Or(*self.activity_schemas()), description=f"{self.name} action schema.")
 
-        return full_schema.json_schema(f"{self.name} Action Schema")
+        return full_schema.json_schema(f"{self.name} ToolAction Schema")
 
     def activity_schemas(self) -> list[Schema]:
         return [
@@ -103,18 +104,18 @@ class BaseTool(ActivityMixin, ABC):
             for activity in self.activities()
         ]
 
-    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> BaseArtifact:
+    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
         preprocessed_input = self.before_run(activity, subtask, action)
         output = self.run(activity, subtask, action, preprocessed_input)
         postprocessed_output = self.after_run(activity, subtask, action, output)
 
         return postprocessed_output
 
-    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> Optional[dict]:
+    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> Optional[dict]:
         return action.input
 
     def run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: Optional[dict]
+        self, activity: Callable, subtask: ActionsSubtask, action: ToolAction, value: Optional[dict]
     ) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -128,7 +129,7 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: BaseArtifact
+        self, activity: Callable, subtask: ActionsSubtask, action: ToolAction, value: BaseArtifact
     ) -> BaseArtifact:
         if value:
             if self.output_memory:

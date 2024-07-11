@@ -244,7 +244,7 @@ from griptape.events import BaseEvent, StartPromptEvent, EventListener
 
 def handler(event: BaseEvent):
     if isinstance(event, StartPromptEvent):
-        print("Prompt Stack PromptStack:")
+        print("Prompt Stack Messages:")
         for message in event.prompt_stack.messages:
             print(f"{message.role}: {message.content}")
         print("Final Prompt String:")

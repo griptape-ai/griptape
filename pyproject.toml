@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "griptape"
-version = "0.28.0"
+version = "0.28.1"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
@@ -44,7 +44,7 @@ redis = { version = "^4.6.0", optional = true }
 opensearch-py = { version = "^2.3.1", optional = true }
 pgvector = { version = "^0.2.3", optional = true }
 psycopg2-binary = { version = "^2.9.9", optional = true }
-google-generativeai = { version = "^0.7.0", optional = true }
+google-generativeai = { version = "^0.7.2", optional = true }
 trafilatura = {version = "^1.6", optional = true}
 playwright = {version = "^1.42", optional = true}
 beautifulsoup4 = {version = "^4.12.3", optional = true}
@@ -55,7 +55,7 @@ torch = {version = "^2.3.0", optional = true}
 qdrant-client = { version = ">=1.9.1", optional = true }
 pusher = {version = "^3.3.2", optional = true}
 ollama = {version = "^0.2.1", optional = true} 
-duckduckgo-search = {version = "^6.1.6", optional = true}
+duckduckgo-search = {version = "^6.1.12", optional = true}
 
 # loaders
 pandas = {version = "^1.3", optional = true}
@@ -96,6 +96,7 @@ drivers-embedding-huggingface = ["huggingface-hub", "transformers"]
 drivers-embedding-voyageai = ["voyageai"]
 drivers-embedding-google = ["google-generativeai"]
 drivers-embedding-cohere = ["cohere"]
+drivers-embedding-ollama = ["ollama"]
 
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"]
@@ -208,6 +209,7 @@ select = [
     "SIM", # flake8-simplify
     "TID251", # banned-api
     "T201", # print
+    "TCH"
 ]
 ignore = [
     "UP007", # non-pep604-annotation

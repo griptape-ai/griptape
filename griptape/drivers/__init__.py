@@ -27,6 +27,7 @@ from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingD
 from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
 from .embedding.cohere_embedding_driver import CohereEmbeddingDriver
+from .embedding.ollama_embedding_driver import OllamaEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -136,6 +137,7 @@ __all__ = [
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "CohereEmbeddingDriver",
+    "OllamaEmbeddingDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",

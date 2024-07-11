@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from attrs import define, field
 from schema import Schema, Literal
 
-from griptape.artifacts import ErrorArtifact, AudioArtifact
-from griptape.engines import TextToSpeechEngine
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.mixins import BlobArtifactFileOutputMixin
+
+if TYPE_CHECKING:
+    from griptape.engines import TextToSpeechEngine
+    from griptape.artifacts import ErrorArtifact, AudioArtifact
 
 
 @define

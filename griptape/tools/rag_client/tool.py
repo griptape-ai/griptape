@@ -2,9 +2,12 @@ from __future__ import annotations
 from attrs import define, field
 from schema import Schema, Literal
 from griptape.artifacts import ErrorArtifact, BaseArtifact
-from griptape.engines.rag import RagEngine
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagEngine
 
 
 @define(kw_only=True)
