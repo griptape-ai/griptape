@@ -51,7 +51,7 @@ print("\n\n".join(values))
 
 ### Griptape Cloud Knowledge Base
 
-The [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../reference/griptape/drivers/vector/griptape_cloud_knowledge_base_vector_store_driver.md) can be used to query data from a Griptape Cloud Knowledge Base. Loading into Knowledge Bases is not support, only querying. Here is a complete example of how the driver can be used to query an existing Knowledge Base:
+The [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../reference/griptape/drivers/vector/griptape_cloud_knowledge_base_vector_store_driver.md) can be used to query data from a Griptape Cloud Knowledge Base. Loading into Knowledge Bases is not supported at this time, only querying. Here is a complete example of how the driver can be used to query an existing Knowledge Base:
 
 ```python
 import os 
