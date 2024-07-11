@@ -31,7 +31,7 @@ class TestActivityMixin:
         assert tool.find_activity("test_str_output") is None
 
     def test_activities(self, tool):
-        assert len(tool.activities()) == 6
+        assert len(tool.activities()) == 7
         assert tool.activities()[0] == tool.test
 
     def test_allowlist_and_denylist_validation(self):
@@ -46,7 +46,7 @@ class TestActivityMixin:
     def test_denylist(self):
         tool = MockTool(test_field="hello", test_int=5, denylist=["test"])
 
-        assert len(tool.activities()) == 5
+        assert len(tool.activities()) == 6
 
     def test_invalid_allowlist(self):
         with pytest.raises(ValueError):
