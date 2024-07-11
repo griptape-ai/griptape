@@ -27,6 +27,25 @@ print(embeddings[:3])
 [0.0017853748286142945, 0.006118456833064556, -0.005811543669551611]
 ```
 
+### OpenAI Compatible
+
+Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) are compatible with the OpenAI API. You can use the [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md) to interact with these services.
+Simply set the `base_url` to the service's API endpoint and the `model` to the model name.
+
+```python title="PYTEST_IGNORE"
+from griptape.drivers import OpenAiEmbeddingDriver
+
+embedding_driver = OpenAiEmbeddingDriver(
+    base_url="http://127.0.0.1:1234/v1",
+    model="nomic-ai/nomic-embed-text-v1.5-GGUF/nomic-embed-text-v1.5.Q2_K",
+)
+
+embeddings = embedding_driver.embed_string("Hello world!")
+
+# display the first 3 embeddings
+print(embeddings[:3])
+```
+
 ### Azure OpenAI
 
 The [AzureOpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/azure_openai_embedding_driver.md) uses the same parameters as [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md)
