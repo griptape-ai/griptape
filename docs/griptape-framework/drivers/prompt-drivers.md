@@ -97,6 +97,33 @@ agent.run("Blue sky at dusk.")
 !!! info
     `response_format` and `seed` are unique to the OpenAI Chat Prompt Driver and Azure OpenAi Chat Prompt Driver.
 
+### OpenAI Compatible
+
+Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) to interact with these services.
+Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
+
+```python title="PYTEST_IGNORE"
+from griptape.structures import Agent
+from griptape.drivers import OpenAiChatPromptDriver
+from griptape.rules import Rule
+from griptape.config import StructureConfig
+
+agent = Agent(
+    config=StructureConfig(
+        prompt_driver=OpenAiChatPromptDriver(
+            base_url="http://127.0.0.1:1234/v1",
+            model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF", stream=True
+        )
+    ),
+    rules=[Rule(value="You are a helpful coding assistant.")],
+)
+
+agent.run("How do I init and update a git submodule?")
+```
+
+!!! tip
+    Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
+
 ### Azure OpenAI Chat
 
 !!! info
