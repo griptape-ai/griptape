@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
@@ -34,6 +33,7 @@ from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from anthropic import Client
     from anthropic.types import ContentBlock, ContentBlockDeltaEvent, ContentBlockStartEvent
 
@@ -42,7 +42,8 @@ if TYPE_CHECKING:
 
 @define
 class AnthropicPromptDriver(BasePromptDriver):
-    """
+    """Anthropic Prompt Driver.
+
     Attributes:
         api_key: Anthropic API key.
         model: Anthropic model name.

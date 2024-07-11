@@ -2,11 +2,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from attrs import field, define
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageGenerationDriver
-from griptape.rules import Ruleset
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseImageGenerationDriver
+    from griptape.artifacts import ImageArtifact
+    from griptape.rules import Ruleset
 
 
 @define

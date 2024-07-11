@@ -6,7 +6,8 @@ from griptape.tools import BaseTool
 
 @define
 class BaseGriptapeCloudClient(BaseTool, ABC):
-    """
+    """Base class for Griptape Cloud clients.
+
     Attributes:
         base_url: Base URL for the Griptape Cloud Knowledge Base API.
         api_key: API key for Griptape Cloud.

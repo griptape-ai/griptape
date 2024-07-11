@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, cast
+from typing import Optional, cast, TYPE_CHECKING
 import csv
 import io
 from attrs import field, Factory, define
@@ -8,7 +8,9 @@ from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
-from griptape.rules import Ruleset
+
+if TYPE_CHECKING:
+    from griptape.rules import Ruleset
 
 
 @define

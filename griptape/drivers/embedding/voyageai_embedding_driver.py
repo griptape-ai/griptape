@@ -8,7 +8,8 @@ from griptape.tokenizers import VoyageAiTokenizer
 
 @define
 class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """VoyageAI Embedding Driver.
+
     Attributes:
         model: VoyageAI embedding model name. Defaults to `voyage-large-2`.
         api_key: API key to pass directly. Defaults to `VOYAGE_API_KEY` environment variable.

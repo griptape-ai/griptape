@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Sequence
 
 from attrs import define, field
 
 from griptape.common import ToolAction
 from griptape.artifacts import ActionArtifact
 from griptape.common import BaseDeltaMessageContent, BaseMessageContent, ActionCallDeltaMessageContent
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 @define

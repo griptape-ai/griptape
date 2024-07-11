@@ -5,11 +5,14 @@ from abc import ABC
 
 from attrs import field, define
 
-from griptape.artifacts import MediaArtifact
 from griptape.loaders import ImageLoader
 from griptape.mixins import RuleMixin, BlobArtifactFileOutputMixin
 from griptape.rules import Ruleset, Rule
 from griptape.tasks import BaseTask
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.artifacts import MediaArtifact
 
 
 @define

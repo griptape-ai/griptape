@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
@@ -18,9 +17,10 @@ from griptape.common import (
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
-from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
+    from griptape.tokenizers import BaseTokenizer
+    from collections.abc import Iterator
     from griptape.structures import Structure
 
 
@@ -79,6 +79,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         """Converts a Prompt Stack to a string for token counting or model input.
+
         This base implementation is only a rough approximation, and should be overridden by subclasses with model-specific tokens.
 
         Args:

@@ -10,9 +10,7 @@ class BooleanArtifact(BaseArtifact):
 
     @classmethod
     def parse_bool(cls, value: Union[str, bool]) -> BooleanArtifact:
-        """
-        Convert a string literal or bool to a BooleanArtifact. The string must be either "true" or "false" with any casing.
-        """
+        """Convert a string literal or bool to a BooleanArtifact. The string must be either "true" or "false" with any casing."""
         if value is not None:
             if isinstance(value, str):
                 if value.lower() == "true":

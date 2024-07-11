@@ -3,10 +3,10 @@ from typing import Optional, Any, TYPE_CHECKING
 from griptape import utils
 from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
-from griptape.artifacts import TextArtifact
 from attrs import define, field, Factory
 
 if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact
     import marqo
 
 
@@ -37,7 +37,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Upsert a text document into the Marqo index.
 
@@ -46,11 +46,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             vector_id: The ID for the vector. If None, Marqo will generate an ID.
             namespace: An optional namespace for the document.
             meta: An optional dictionary of metadata for the document.
+            kwargs: Additional keyword arguments to pass to the Marqo client.
 
         Returns:
             str: The ID of the document that was added.
         """
-
         doc = {"_id": vector_id, "Description": string}  # Description will be treated as tensor field
 
         # Non-tensor fields
@@ -71,7 +71,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         vector_id: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Upsert a text artifact into the Marqo index.
 
@@ -80,11 +80,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             namespace: An optional namespace for the artifact.
             meta: An optional dictionary of metadata for the artifact.
             vector_id: An optional explicit vector_id.
+            kwargs: Additional keyword arguments to pass to the Marqo client.
 
         Returns:
             str: The ID of the artifact that was added.
         """
-
         artifact_json = artifact.to_json()
         vector_id = utils.str_to_hash(artifact.value) if vector_id is None else vector_id
 
@@ -131,7 +131,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             The list of loaded Entries.
         """
-
         filter_string = f"namespace:{namespace}" if namespace else None
 
         if filter_string is not None:
@@ -167,7 +166,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         include_metadata: bool = True,
-        **kwargs,
+        **kwargs: Any,
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Query the Marqo index for documents.
 
@@ -177,11 +176,11 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             namespace: The namespace to filter results by.
             include_vectors: Whether to include vector data in the results.
             include_metadata: Whether to include metadata in the results.
+            kwargs: Additional keyword arguments to pass to the Marqo client.
 
         Returns:
             The list of query results.
         """
-
         params = {
             "limit": count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
             "attributes_to_retrieve": ["*"] if include_metadata else ["_id"],
@@ -211,7 +210,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Args:
             name: The name of the index to delete.
         """
-
         return self.mq.delete_index(name)
 
     def get_indexes(self) -> list[str]:
@@ -220,7 +218,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             The list of all indexes.
         """
-
         return [index["index"] for index in self.mq.get_indexes()["results"]]
 
     def upsert_vector(
@@ -229,7 +226,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Upsert a vector into the Marqo index.
 
@@ -238,6 +235,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             vector_id: The ID for the vector. If None, Marqo will generate an ID.
             namespace: An optional namespace for the vector.
             meta: An optional dictionary of metadata for the vector.
+            kwargs: Additional keyword arguments to pass to the Marqo client.
 
         Raises:
             Exception: This function is not yet implemented.
@@ -245,7 +243,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             The ID of the vector that was added.
         """
-
         raise NotImplementedError(f"{self.__class__.__name__} does not support upserting a vector.")
 
     def delete_vector(self, vector_id: str):

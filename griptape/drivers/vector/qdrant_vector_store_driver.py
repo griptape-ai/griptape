@@ -12,7 +12,8 @@ CONTENT_PAYLOAD_KEY = "data"
 
 @define
 class QdrantVectorStoreDriver(BaseVectorStoreDriver):
-    """
+    """Vector Store Driver for Qdrant.
+
     Attributes:
         location: An optional location for the Qdrant client. If set to ':memory:', an in-memory client is used.
         url: An optional Qdrant API URL.
@@ -68,8 +69,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         )
 
     def delete_vector(self, vector_id: str) -> None:
-        """
-        Delete a vector from the Qdrant collection based on its ID.
+        """Delete a vector from the Qdrant collection based on its ID.
 
         Parameters:
             vector_id (str | id): ID of the vector to delete.
@@ -89,8 +89,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """
-        Query the Qdrant collection based on a query vector.
+        """Query the Qdrant collection based on a query vector.
 
         Parameters:
             query (str): Query string.
@@ -127,8 +126,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         content: Optional[str] = None,
         **kwargs,
     ) -> str:
-        """
-        Upsert vectors into the Qdrant collection.
+        """Upsert vectors into the Qdrant collection.
 
         Parameters:
             vector (list[float]): The vector to be upserted.
@@ -140,7 +138,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             str: The ID of the upserted vector.
         """
-
         if vector_id is None:
             vector_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, str(vector)))
 
@@ -158,8 +155,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         return vector_id
 
     def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        """
-        Load a vector entry from the Qdrant collection based on its ID.
+        """Load a vector entry from the Qdrant collection based on its ID.
 
         Parameters:
             vector_id (str): ID of the vector to load.
@@ -180,8 +176,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             return None
 
     def load_entries(self, namespace: Optional[str] = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
-        """
-        Load vector entries from the Qdrant collection.
+        """Load vector entries from the Qdrant collection.
 
         Parameters:
             namespace: Optional namespace of the vectors.
@@ -189,7 +184,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             List of points.
         """
-
         results = self.client.retrieve(
             collection_name=self.collection_name,
             ids=kwargs.get("ids", []),

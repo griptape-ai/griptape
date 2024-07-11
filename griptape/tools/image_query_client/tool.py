@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import Any, cast, TYPE_CHECKING
 
 from attrs import define, field, Factory
 from schema import Schema, Literal
@@ -10,7 +10,9 @@ from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
 from griptape.utils.decorators import activity
-from griptape.engines import ImageQueryEngine
+
+if TYPE_CHECKING:
+    from griptape.engines import ImageQueryEngine
 
 
 @define

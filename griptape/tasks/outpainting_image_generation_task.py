@@ -12,11 +12,13 @@ from griptape.utils import J2
 
 @define
 class OutpaintingImageGenerationTask(BaseImageGenerationTask):
-    """A task that modifies an image outside the bounds of a mask. Accepts a text prompt, image, and mask as
+    """A task that modifies an image outside the bounds of a mask.
+
+    Accepts a text prompt, image, and mask as
     input in one of the following formats:
     - tuple of (template string, ImageArtifact, ImageArtifact)
     - tuple of (TextArtifact, ImageArtifact, ImageArtifact)
-    - Callable that returns a tuple of (TextArtifact, ImageArtifact, ImageArtifact)
+    - Callable that returns a tuple of (TextArtifact, ImageArtifact, ImageArtifact).
 
     Attributes:
         image_generation_engine: The engine used to generate the image.

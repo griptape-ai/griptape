@@ -209,6 +209,8 @@ select = [
     "SIM", # flake8-simplify
     "TID251", # banned-api
     "T201", # print
+    "TCH", # flake8-type-checking
+    "D" # pydocstyle
 ]
 ignore = [
     "UP007", # non-pep604-annotation
@@ -216,7 +218,17 @@ ignore = [
     "B024", # abstract-base-class-without-abstract-method
     "B009", # get-attr-with-constant
     "B010", # set-attr-with-constant
+    "D100", # undocumented-public-module
+    "D101", # undocumented-public-class
+    "D102", # undocumented-public-method
+    "D103", # undocumented-public-function
+    "D104", # undocumented-public-package
+    "D105", # undocumented-magic-method
+    "D106", # undocumented-public-nested-class
+    "D107", # undocumented-public-init
 ]
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "attr".msg = "The attr module is deprecated, use attrs instead."

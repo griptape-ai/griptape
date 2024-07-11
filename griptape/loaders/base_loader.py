@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from concurrent import futures
-from typing import Any, Optional, Callable
-from collections.abc import Mapping, Sequence
+from typing import Any, Optional, Callable, TYPE_CHECKING
 
 from attrs import define, field, Factory
 
-from griptape.artifacts import BaseArtifact
 from griptape.utils.futures import execute_futures_dict
 from griptape.utils.hash import bytes_to_hash, str_to_hash
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+    from griptape.artifacts import BaseArtifact
 
 
 @define

@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
-from google.generativeai.types import ContentsType
 
 
 from griptape.common import (
@@ -29,6 +27,8 @@ from griptape.utils import import_optional_dependency, remove_key_in_dict_recurs
 from schema import Schema
 
 if TYPE_CHECKING:
+    from google.generativeai.types import ContentsType
+    from collections.abc import Iterator
     from google.generativeai import GenerativeModel
     from google.generativeai.types import ContentDict, GenerateContentResponse
     from google.generativeai.protos import Part
@@ -37,7 +37,8 @@ if TYPE_CHECKING:
 
 @define
 class GooglePromptDriver(BasePromptDriver):
-    """
+    """Google Prompt Driver.
+
     Attributes:
         api_key: Google API key.
         model: Google model name.

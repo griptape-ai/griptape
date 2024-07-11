@@ -1,12 +1,14 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, TYPE_CHECKING
 from attrs import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
-from griptape.tasks import BaseTask
 from griptape.memory.structure import Run
+
+if TYPE_CHECKING:
+    from griptape.tasks import BaseTask
 
 
 @define
@@ -41,7 +43,6 @@ class Workflow(Structure):
             child_tasks: The tasks that will be the children of the new tasks.
             preserve_relationship: Whether to preserve the parent/child relationship when inserting between parent and child tasks.
         """
-
         if not isinstance(parent_tasks, list):
             parent_tasks = [parent_tasks]
         if not isinstance(tasks, list):

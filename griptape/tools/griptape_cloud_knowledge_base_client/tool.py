@@ -10,7 +10,8 @@ from griptape.artifacts import TextArtifact, ErrorArtifact
 
 @define
 class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
-    """
+    """Tool for querying a Griptape Cloud Knowledge Base.
+
     Attributes:
         description: LLM-friendly knowledge base description.
         knowledge_base_id: ID of the Griptape Cloud Knowledge Base.

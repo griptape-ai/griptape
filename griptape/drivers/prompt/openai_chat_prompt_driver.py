@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Literal, Optional
 
 import openai
@@ -27,6 +26,7 @@ from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from openai.types.chat.chat_completion_chunk import ChoiceDelta
     from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
@@ -35,7 +35,8 @@ if TYPE_CHECKING:
 
 @define
 class OpenAiChatPromptDriver(BasePromptDriver):
-    """
+    """OpenAI Chat Prompt Driver.
+
     Attributes:
         base_url: An optional OpenAi API URL.
         api_key: An optional OpenAi API key. If not provided, the `OPENAI_API_KEY` environment variable will be used.
