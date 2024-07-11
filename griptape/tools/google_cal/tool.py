@@ -86,7 +86,7 @@ class GoogleCalendarClient(BaseGoogleClient):
                     Literal("description", description="description of the event"): str,
                     Literal(
                         "attendees", description="list of the email addresses of attendees using 'email' as key"
-                    ): list,
+                    ): list[str],
                     Optional(Literal("location", description="location of the event")): str,
                 }
             ),
