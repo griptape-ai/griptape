@@ -49,6 +49,30 @@ print("\n\n".join(values))
 
 ```
 
+### Griptape Cloud Knowledge Base
+
+The [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../reference/griptape/drivers/vector/griptape_cloud_knowledge_base_vector_store_driver.md) can be used to query data from a Griptape Cloud Knowledge Base. Loading into Knowledge Bases is not support, only querying. Here is a complete example of how the driver can be used to query an existing Knowledge Base:
+
+```python
+import os 
+from griptape.artifacts import BaseArtifact
+from griptape.drivers import GriptapeCloudKnowledgeBaseVectorStoreDriver
+
+
+# Initialize environment variables
+gt_cloud_api_key = os.environ["GT_CLOUD_API_KEY"]
+gt_cloud_knowledge_base_id = os.environ["GT_CLOUD_KNOWLEDGE_BASE_ID"]
+
+vector_store_driver = GriptapeCloudKnowledgeBaseVectorStoreDriver(api_key=gt_cloud_api_key, knowledge_base_id=gt_cloud_knowledge_base_id)
+
+result = vector_store_driver.query(query="What is griptape?")
+
+values = [r.to_artifact().value for r in results]
+
+print("\n\n".join(values))
+
+```
+
 ### Pinecone
 
 !!! info
@@ -127,7 +151,7 @@ prompt_driver = OpenAiChatPromptDriver(model="gpt-3.5-turbo")
 namespace = 'griptape-ai'
 
 # Initialize the vector store driver
-vector_store = MarqoVectorStoreDriver(
+vector_store_driver = MarqoVectorStoreDriver(
     api_key=os.environ["MARQO_API_KEY"],
     url=os.environ["MARQO_URL"],
     index=os.environ["MARQO_INDEX_NAME"],
@@ -138,13 +162,13 @@ vector_store = MarqoVectorStoreDriver(
 artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
 
 # Upsert the artifacts into the vector store
-vector_store.upsert_text_artifacts(
+vector_store_driver.upsert_text_artifacts(
     {
         "griptape": artifacts,
     }
 )
 
-result = vector_store.query(query="What is griptape?")
+result = vector_store_driver.query(query="What is griptape?")
 print(result)
 ```
 
@@ -174,7 +198,7 @@ index_name = os.environ["MONGODB_INDEX_NAME"]
 vector_path = os.environ["MONGODB_VECTOR_PATH"]
 
 # Initialize the vector store driver
-vector_store = MongoDbAtlasVectorStoreDriver(
+vector_store_driver = MongoDbAtlasVectorStoreDriver(
     connection_string=f"mongodb+srv://{username}:{password}@{host}/{database_name}",
     database_name=database_name,
     collection_name=collection_name,
@@ -187,13 +211,13 @@ vector_store = MongoDbAtlasVectorStoreDriver(
 artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
 
 # Upsert the artifacts into the vector store
-vector_store.upsert_text_artifacts(
+vector_store_driver.upsert_text_artifacts(
     {
         "griptape": artifacts,
     }
 )
 
-result = vector_store.query(query="What is griptape?")
+result = vector_store_driver.query(query="What is griptape?")
 print(result)
 ```
 
@@ -242,7 +266,7 @@ index_name = os.environ["AZURE_MONGODB_INDEX_NAME"]
 vector_path = os.environ["AZURE_MONGODB_VECTOR_PATH"]
 
 # Initialize the vector store driver
-vector_store = AzureMongoDbVectorStoreDriver(
+vector_store_driver = AzureMongoDbVectorStoreDriver(
     connection_string=f"mongodb+srv://{username}:{password}@{azure_host}/{database_name}?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000",
     database_name=database_name,
     collection_name=collection_name,
@@ -255,13 +279,13 @@ vector_store = AzureMongoDbVectorStoreDriver(
 artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
 
 # Upsert the artifacts into the vector store
-vector_store.upsert_text_artifacts(
+vector_store_driver.upsert_text_artifacts(
     {
         "griptape": artifacts,
     }
 )
 
-result = vector_store.query(query="What is griptape?")
+result = vector_store_driver.query(query="What is griptape?")
 print(result)
 ```
 
@@ -403,7 +427,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-result = vector_store_driver.query("What is griptape?")
+result = vector_store_driver.query(query="What is griptape?")
 print(result)
 ```
 
