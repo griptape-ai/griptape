@@ -1,13 +1,15 @@
 from __future__ import annotations
 import csv
 from io import StringIO
-from typing import Optional, Union, cast
+from typing import Optional, Union, cast, TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact, ErrorArtifact
-from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseEmbeddingDriver
 
 
 @define

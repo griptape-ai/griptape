@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from attrs import define
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from griptape.artifacts import ImageArtifact
-from griptape.rules import Ruleset
 from griptape.engines import BaseImageGenerationEngine
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
+    from griptape.rules import Ruleset
 
 
 @define

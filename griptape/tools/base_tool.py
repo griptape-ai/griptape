@@ -11,10 +11,10 @@ from typing import Optional
 import yaml
 from attrs import define, field, Factory
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
-from griptape.common import ToolAction
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
+    from griptape.common import ToolAction
     from griptape.memory import TaskMemory
     from griptape.tasks import ActionsSubtask
 

@@ -1,17 +1,17 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from collections.abc import Iterator
 from threading import Thread
 from queue import Queue
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.events.completion_chunk_event import CompletionChunkEvent
 from griptape.events.event_listener import EventListener
-from griptape.events.base_event import BaseEvent
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.finish_prompt_event import FinishPromptEvent
 from attrs import field, define, Factory
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from griptape.events.base_event import BaseEvent
     from griptape.structures import Structure
 
 

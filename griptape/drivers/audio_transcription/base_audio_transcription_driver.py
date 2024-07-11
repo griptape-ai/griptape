@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact, AudioArtifact
 from griptape.events import StartAudioTranscriptionEvent, FinishAudioTranscriptionEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact, AudioArtifact
     from griptape.structures import Structure
 
 

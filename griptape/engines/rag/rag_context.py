@@ -3,10 +3,10 @@ from typing import Optional, TYPE_CHECKING
 from attrs import define, field
 
 from griptape import utils
-from griptape.common import Reference
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
+    from griptape.common import Reference
     from griptape.artifacts import TextArtifact, BaseArtifact
 
 

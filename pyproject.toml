@@ -209,6 +209,7 @@ select = [
     "SIM", # flake8-simplify
     "TID251", # banned-api
     "T201", # print
+    "TCH"
 ]
 ignore = [
     "UP007", # non-pep604-annotation

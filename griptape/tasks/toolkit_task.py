@@ -2,7 +2,6 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Callable, Optional
 from attrs import define, field, Factory
-from schema import Schema
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact, ActionArtifact
@@ -13,6 +12,7 @@ from griptape.utils import J2
 from griptape.common import PromptStack, ToolAction
 
 if TYPE_CHECKING:
+    from schema import Schema
     from griptape.tools import BaseTool
     from griptape.memory import TaskMemory
     from griptape.structures import Structure

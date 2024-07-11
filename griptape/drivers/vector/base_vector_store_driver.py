@@ -4,12 +4,14 @@ from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
 from typing import Any, Callable
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from attrs import define, field, Factory
 from griptape import utils
 from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
-from griptape.drivers import BaseEmbeddingDriver
 from griptape.mixins import SerializableMixin
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseEmbeddingDriver
 
 
 @define

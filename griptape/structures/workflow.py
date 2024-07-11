@@ -1,12 +1,14 @@
 from __future__ import annotations
 import concurrent.futures as futures
 from graphlib import TopologicalSorter
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, TYPE_CHECKING
 from attrs import define, field, Factory
 from griptape.artifacts import ErrorArtifact
 from griptape.structures import Structure
-from griptape.tasks import BaseTask
 from griptape.memory.structure import Run
+
+if TYPE_CHECKING:
+    from griptape.tasks import BaseTask
 
 
 @define

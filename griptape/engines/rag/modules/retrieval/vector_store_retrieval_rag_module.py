@@ -1,12 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Sequence, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 from attrs import define, field, Factory
 from griptape import utils
-from griptape.artifacts import TextArtifact
-from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRetrievalRagModule
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+    from griptape.engines.rag import RagContext
+    from griptape.artifacts import TextArtifact
     from griptape.drivers import BaseVectorStoreDriver
 
 

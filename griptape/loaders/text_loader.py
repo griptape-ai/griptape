@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import Optional, Union, cast
+from typing import Optional, Union, cast, TYPE_CHECKING
 
 from attrs import field, define, Factory
 
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.chunkers import TextChunker
-from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseTextLoader
 from griptape.tokenizers import OpenAiTokenizer
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseEmbeddingDriver
 
 
 @define

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import base64
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from attrs import field, define
 
-from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationModelDriver
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
 
 
 @define

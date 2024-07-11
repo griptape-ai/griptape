@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.engines import TextToSpeechEngine
 from griptape.artifacts import TextArtifact
-from griptape.tasks import BaseTask
 from griptape.tasks.base_audio_generation_task import BaseAudioGenerationTask
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.artifacts.audio_artifact import AudioArtifact
+    from griptape.tasks import BaseTask
 
 
 @define
