@@ -9,6 +9,7 @@ from .prompt_stack.contents.image_message_content import ImageMessageContent
 from .prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
 from .prompt_stack.contents.action_call_message_content import ActionCallMessageContent
 from .prompt_stack.contents.action_result_message_content import ActionResultMessageContent
+from .prompt_stack.contents.generic_message_content import GenericMessageContent
 
 from .prompt_stack.messages.base_message import BaseMessage
 from .prompt_stack.messages.delta_message import DeltaMessage
@@ -28,6 +29,7 @@ __all__ = [
     "TextDeltaMessageContent",
     "TextMessageContent",
     "ImageMessageContent",
+    "GenericMessageContent",
     "ActionCallDeltaMessageContent",
     "ActionCallMessageContent",
     "ActionResultMessageContent",

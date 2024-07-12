@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts import ActionArtifact, BaseArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, BaseArtifact, ImageArtifact, ListArtifact, TextArtifact, GenericArtifact
 from griptape.common import (
     ActionCallMessageContent,
     ActionResultMessageContent,
@@ -12,6 +12,7 @@ from griptape.common import (
     ImageMessageContent,
     Message,
     TextMessageContent,
+    GenericMessageContent,
 )
 from griptape.mixins import SerializableMixin
 
@@ -59,6 +60,8 @@ class PromptStack(SerializableMixin):
             return [TextMessageContent(artifact)]
         elif isinstance(artifact, ImageArtifact):
             return [ImageMessageContent(artifact)]
+        elif isinstance(artifact, GenericArtifact):
+            return [GenericMessageContent(artifact)]
         elif isinstance(artifact, ActionArtifact):
             action = artifact.value
             output = action.output

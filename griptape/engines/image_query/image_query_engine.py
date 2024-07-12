@@ -1,5 +1,6 @@
 from attrs import define, field, Factory
 
+from typing import cast
 from griptape.artifacts import ImageArtifact, TextArtifact, ListArtifact
 from griptape.common import PromptStack
 from griptape.drivers import BasePromptDriver
@@ -13,9 +14,8 @@ class ImageQueryEngine:
 
     def run(self, query: str, image_frames: list[ImageArtifact]) -> TextArtifact:
         prompt_stack = PromptStack()
-        print(self.system_template_generator.render(image_frames=image_frames))
         prompt_stack.add_system_message(self.system_template_generator.render(image_frames=image_frames))
         prompt_stack.add_user_message(ListArtifact([*image_frames, TextArtifact(query)]))
         message = self.prompt_driver.run(prompt_stack)
 
-        return message.to_artifact()
+        return cast(TextArtifact, message.to_artifact())

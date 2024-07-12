@@ -126,7 +126,7 @@ class BaseSchema(Schema):
         from griptape.tools import BaseTool
         from griptape.memory.structure import Run
         from typing import Any
-        from griptape.artifacts import BaseArtifact
+        from griptape.artifacts import BaseArtifact, GenericArtifact
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
         Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
@@ -148,6 +148,7 @@ class BaseSchema(Schema):
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseArtifact": BaseArtifact,
+                "GenericArtifact": GenericArtifact,
                 "PromptStack": PromptStack,
                 "BaseMessageContent": BaseMessageContent,
                 "BaseDeltaMessageContent": BaseDeltaMessageContent,

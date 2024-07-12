@@ -18,6 +18,7 @@ from griptape.common import (
     ActionResultMessageContent,
     ActionCallDeltaMessageContent,
     BaseDeltaMessageContent,
+    GenericMessageContent,
     ToolAction,
 )
 from griptape.artifacts import TextArtifact, ActionArtifact
@@ -210,7 +211,8 @@ class GooglePromptDriver(BasePromptDriver):
                     name=content.action.to_native_tool_name(), response=artifact.to_dict()
                 )
             )
-
+        elif isinstance(content, GenericMessageContent):
+            return content.artifact.value
         else:
             raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
