@@ -122,7 +122,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
+        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         include_metadata=True,
@@ -136,7 +136,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
-        count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         vector = self.embedding_driver.embed_string(query)
         # Base k-NN query
         query_body = {"size": count, "query": {"knn": {field_name: {"vector": vector, "k": count}}}}

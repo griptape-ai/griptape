@@ -14,10 +14,9 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
+        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        offset: Optional[int] = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Queries the MongoDB collection for documents that match the provided query string.
@@ -28,9 +27,6 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
 
         # Using the embedding driver to convert the query string into a vector
         vector = self.embedding_driver.embed_string(query)
-
-        count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
-        offset = offset if offset else 0
 
         pipeline = []
 

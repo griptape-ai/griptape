@@ -166,7 +166,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
+        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         include_metadata: bool = True,
@@ -186,7 +186,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The list of query results.
         """
         params = {
-            "limit": count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            "limit": count,
             "attributes_to_retrieve": ["*"] if include_metadata else ["_id"],
             "filter_string": f"namespace:{namespace}" if namespace else None,
         } | kwargs

@@ -107,7 +107,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
+        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
@@ -125,10 +125,10 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         filter_expression = f"(@namespace:{{{namespace}}})" if namespace else "*"
         query_expression = (
-            Query(f"{filter_expression}=>[KNN {count or 10} @vector $vector as score]")
+            Query(f"{filter_expression}=>[KNN {count} @vector $vector as score]")
             .sort_by("score")
             .return_fields("id", "score", "metadata", "vec_string")
-            .paging(0, count or 10)
+            .paging(0, count)
             .dialect(2)
         )
 

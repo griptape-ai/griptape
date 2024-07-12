@@ -74,7 +74,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
+        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         # PineconeVectorStorageDriver-specific params:
@@ -84,7 +84,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         vector = self.embedding_driver.embed_string(query)
 
         params = {
-            "top_k": count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            "top_k": count,
             "namespace": namespace,
             "include_values": include_vectors,
             "include_metadata": include_metadata,
