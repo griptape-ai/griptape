@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.28.2] - 2024-07-12
+### Fixed
+- Conversation Memory being incorrectly inserted into the `PromptTask.prompt_stack` when no system content is present.
+
 ## [0.28.1] - 2024-07-10
 
 ### Fixed

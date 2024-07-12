@@ -2,6 +2,8 @@ import pytest
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
+from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure.run import Run
 from tests.mocks.mock_structure_config import MockStructureConfig
 from griptape.tasks import PromptTask
 from griptape.rules import Rule
@@ -136,7 +138,17 @@ class TestPromptTask:
     def test_prompt_stack_empty_system_content(self):
         task = PromptTask("{{ test }}", context={"test": "test value"})
 
-        Pipeline().add_task(task)
+        pipeline = Pipeline(
+            conversation_memory=ConversationMemory(
+                runs=[Run(input=TextArtifact("input"), output=TextArtifact("output"))]
+            )
+        )
+        pipeline.add_task(task)
 
-        assert len(task.prompt_stack.messages) == 1
+        assert len(task.prompt_stack.messages) == 3
         assert task.prompt_stack.messages[0].is_user()
+        assert task.prompt_stack.messages[0].to_text() == "input"
+        assert task.prompt_stack.messages[1].is_assistant()
+        assert task.prompt_stack.messages[1].to_text() == "output"
+        assert task.prompt_stack.messages[2].is_user()
+        assert task.prompt_stack.messages[2].to_text() == "test value"

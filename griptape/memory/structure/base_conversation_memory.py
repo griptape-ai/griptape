@@ -88,7 +88,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
         if num_runs_to_fit_in_prompt:
             memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).messages
-            if index:
+            if index is not None:
                 prompt_stack.messages[index:index] = memory_inputs
             else:
                 prompt_stack.messages.extend(memory_inputs)
