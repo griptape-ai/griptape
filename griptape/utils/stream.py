@@ -1,16 +1,20 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from threading import Thread
+
 from queue import Queue
+from threading import Thread
+from typing import TYPE_CHECKING
+
+from attrs import Factory, define, field
+
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.events.completion_chunk_event import CompletionChunkEvent
 from griptape.events.event_listener import EventListener
-from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.finish_prompt_event import FinishPromptEvent
-from attrs import field, define, Factory
+from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from griptape.events.base_event import BaseEvent
     from griptape.structures import Structure
 
@@ -31,7 +35,7 @@ class Stream:
 
     structure: Structure = field()
 
-    @structure.validator  # pyright: ignore
+    @structure.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_structure(self, _, structure: Structure):
         if structure and not structure.config.prompt_driver.stream:
             raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")

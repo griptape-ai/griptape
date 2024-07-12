@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.tasks import BaseMultiTextInputTask
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
     from griptape.artifacts import BaseArtifact
+    from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
 
 
 @define

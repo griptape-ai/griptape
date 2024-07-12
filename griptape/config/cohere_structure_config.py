@@ -4,9 +4,9 @@ from griptape.config import StructureConfig
 from griptape.drivers import (
     BaseEmbeddingDriver,
     BasePromptDriver,
-    CoherePromptDriver,
-    CohereEmbeddingDriver,
     BaseVectorStoreDriver,
+    CohereEmbeddingDriver,
+    CoherePromptDriver,
     LocalVectorStoreDriver,
 )
 

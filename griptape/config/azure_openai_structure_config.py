@@ -1,18 +1,21 @@
+from __future__ import annotations
+
 from typing import Callable, Optional
+
 from attrs import Factory, define, field
 
 from griptape.config import StructureConfig
 from griptape.drivers import (
-    LocalVectorStoreDriver,
     AzureOpenAiChatPromptDriver,
     AzureOpenAiEmbeddingDriver,
     AzureOpenAiImageGenerationDriver,
     AzureOpenAiImageQueryDriver,
-    BasePromptDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
     BaseImageQueryDriver,
+    BasePromptDriver,
     BaseVectorStoreDriver,
+    LocalVectorStoreDriver,
 )
 
 

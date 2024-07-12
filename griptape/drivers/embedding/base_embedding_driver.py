@@ -1,11 +1,13 @@
 from __future__ import annotations
-import numpy as np
-from typing import Optional, TYPE_CHECKING
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
+
+import numpy as np
 from attrs import define, field
-from griptape.mixins import ExponentialBackoffMixin
+
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.mixins import SerializableMixin
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextArtifact

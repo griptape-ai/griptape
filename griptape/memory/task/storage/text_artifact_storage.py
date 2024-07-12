@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import define, field
-from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact, InfoArtifact
-from griptape.engines.rag import RagEngine, RagContext
+
+from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.engines.rag import RagContext, RagEngine
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
@@ -19,7 +22,7 @@ class TextArtifactStorage(BaseArtifactStorage):
     csv_extraction_engine: Optional[CsvExtractionEngine] = field(default=None)
     json_extraction_engine: Optional[JsonExtractionEngine] = field(default=None)
 
-    @rag_engine.validator  # pyright: ignore
+    @rag_engine.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_rag_engine(self, _, rag_engine: str) -> None:
         if rag_engine is not None and self.retrieval_rag_module_name is None:
             raise ValueError("You have to set retrieval_rag_module_name if rag_engine is provided")

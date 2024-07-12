@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import base64
-from typing import Literal, Optional, cast, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, Optional, Union, cast
 
 import openai
-from attrs import field, Factory, define
+from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver

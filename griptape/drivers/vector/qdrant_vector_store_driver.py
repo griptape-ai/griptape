@@ -1,10 +1,13 @@
 from __future__ import annotations
+
+import logging
+import uuid
 from typing import Optional
+
 from attrs import define, field
+
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
-import uuid
-import logging
 
 DEFAULT_DISTANCE = "Cosine"
 CONTENT_PAYLOAD_KEY = "data"
@@ -103,7 +106,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         query_vector = self.embedding_driver.embed_string(query)
 
         # Create a search request
-        results = self.client.search(collection_name=self.collection_name, query_vector=query_vector, limit=count)
+        request = {"collection_name": self.collection_name, "query_vector": query_vector, "limit": count}
+        request = {k: v for k, v in request.items() if v is not None}
+        results = self.client.search(**request)
 
         # Convert results to QueryResult objects
         query_results = [

@@ -1,13 +1,18 @@
+from __future__ import annotations
+
 import itertools
 import logging
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
+
 from griptape import utils
 from griptape.artifacts import TextArtifact
-from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseRerankRagModule, BaseRagModule
-from griptape.engines.rag.modules import BaseRetrievalRagModule
 from griptape.engines.rag.stages import BaseRagStage
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagContext
+    from griptape.engines.rag.modules import BaseRagModule, BaseRerankRagModule, BaseRetrievalRagModule
 
 
 @define(kw_only=True)

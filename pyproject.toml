@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "griptape"
-version = "0.28.1"
+version = "0.28.2"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = ["Griptape <hello@griptape.ai>"]
 license = "Apache 2.0"
@@ -214,7 +214,10 @@ select = [
     "T201", # print
     "C901", # complex-structure
     "TCH", # flake8-type-checking
-    "D" # pydocstyle
+    "D", # pydocstyle
+    "PGH", # pygrep-hooks
+    "I", # isort
+    "FA" # flake8-future-annotations
 ]
 ignore = [
     "UP007", # non-pep604-annotation
@@ -233,6 +236,9 @@ ignore = [
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["I"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "attr".msg = "The attr module is deprecated, use attrs instead."

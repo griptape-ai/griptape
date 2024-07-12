@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from attrs import define, field
-from schema import Schema, Literal
+from schema import Literal, Schema
 
 from griptape.artifacts import ErrorArtifact, ImageArtifact
 from griptape.loaders import ImageLoader

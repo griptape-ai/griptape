@@ -1,15 +1,18 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Callable
+
+from typing import TYPE_CHECKING, Callable, Optional
+
 from attrs import define, field
+
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
 
 if TYPE_CHECKING:
-    from griptape.tools import BaseTool
     from griptape.artifacts import BaseArtifact
     from griptape.tasks import BaseTask
+    from griptape.tools import BaseTool
 
 
 @define
@@ -21,7 +24,7 @@ class Agent(Structure):
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
 
-    @fail_fast.validator  # pyright: ignore
+    @fail_fast.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_fail_fast(self, _, fail_fast: bool) -> None:
         if fail_fast:
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")

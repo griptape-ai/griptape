@@ -1,9 +1,13 @@
 from __future__ import annotations
+
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.utils.import_utils import import_optional_dependency
+
 from .base_file_manager_driver import BaseFileManagerDriver
 
 if TYPE_CHECKING:
@@ -27,7 +31,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
     workdir: str = field(default="/", kw_only=True)
     s3_client: Any = field(default=Factory(lambda self: self.session.client("s3"), takes_self=True), kw_only=True)
 
-    @workdir.validator  # pyright: ignore
+    @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _, workdir: str) -> None:
         if not Path(workdir).is_absolute():
             raise ValueError("Workdir must be an absolute path")

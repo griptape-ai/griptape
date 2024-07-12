@@ -1,5 +1,7 @@
 from typing import Any
-from marshmallow import ValidationError, Schema
+
+from marshmallow import Schema, ValidationError
+
 from griptape.schemas import BaseSchema
 
 
@@ -47,7 +49,7 @@ class PolymorphicSchema(BaseSchema):
         if not errors:
             return result
         else:
-            exc = ValidationError(errors, data=obj, valid_data=result)  # pyright: ignore
+            exc = ValidationError(errors, data=obj, valid_data=result)  # pyright: ignore[reportArgumentType]
             raise exc
 
     def _dump(self, obj, *, update_fields=True, **kwargs):
@@ -68,7 +70,7 @@ class PolymorphicSchema(BaseSchema):
         result = schema.dump(obj, many=False, **kwargs)
 
         if result is not None:
-            result[self.type_field] = obj_type  # pyright: ignore
+            result[self.type_field] = obj_type  # pyright: ignore[reportArgumentType,reportCallIssue]
 
         return result
 
@@ -125,7 +127,7 @@ class PolymorphicSchema(BaseSchema):
 
         return schema.load(data, many=False, partial=partial, unknown=unknown, **kwargs)
 
-    def validate(self, data, *, many=None, partial=None):  # pyright: ignore
+    def validate(self, data, *, many=None, partial=None):  # pyright: ignore[reportIncompatibleMethodOverride]
         try:
             self.load(data, many=many, partial=partial)
         except ValidationError as ve:

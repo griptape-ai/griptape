@@ -4,35 +4,35 @@ import json
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
+from schema import Schema
 
-
+from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.common import (
-    BaseMessageContent,
-    DeltaMessage,
-    TextDeltaMessageContent,
-    ImageMessageContent,
-    PromptStack,
-    Message,
-    TextMessageContent,
+    ActionCallDeltaMessageContent,
     ActionCallMessageContent,
     ActionResultMessageContent,
-    ActionCallDeltaMessageContent,
     BaseDeltaMessageContent,
+    BaseMessageContent,
+    DeltaMessage,
     GenericMessageContent,
+    ImageMessageContent,
+    Message,
+    PromptStack,
+    TextDeltaMessageContent,
+    TextMessageContent,
     ToolAction,
 )
-from griptape.artifacts import TextArtifact, ActionArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency, remove_key_in_dict_recursively
-from schema import Schema
 
 if TYPE_CHECKING:
-    from google.generativeai.types import ContentsType
     from collections.abc import Iterator
+
     from google.generativeai import GenerativeModel
-    from google.generativeai.types import ContentDict, GenerateContentResponse
     from google.generativeai.protos import Part
+    from google.generativeai.types import ContentDict, ContentsType, GenerateContentResponse
+
     from griptape.tools import BaseTool
 
 

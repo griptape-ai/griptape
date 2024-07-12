@@ -1,6 +1,9 @@
-import griptape.utils as utils
+from __future__ import annotations
+
 from concurrent import futures
 from typing import Optional
+
+import griptape.utils as utils
 
 
 def load_file(path: str) -> bytes:

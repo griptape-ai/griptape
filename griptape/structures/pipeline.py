@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any
+
+from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import define
+
 from griptape.artifacts import ErrorArtifact
 from griptape.memory.structure import Run
 from griptape.structures import Structure

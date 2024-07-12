@@ -1,13 +1,20 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
+
 from attrs import define, field
-from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import (
-    BaseResponseRagModule,
-    BaseBeforeResponseRagModule,
-    BaseAfterResponseRagModule,
-    BaseRagModule,
-)
+
 from griptape.engines.rag.stages import BaseRagStage
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagContext
+    from griptape.engines.rag.modules import (
+        BaseAfterResponseRagModule,
+        BaseBeforeResponseRagModule,
+        BaseRagModule,
+        BaseResponseRagModule,
+    )
 
 
 @define(kw_only=True)

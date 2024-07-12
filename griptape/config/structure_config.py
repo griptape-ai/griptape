@@ -1,24 +1,26 @@
-from attrs import Factory, define, field
+from __future__ import annotations
+
 from typing import Optional
 
-from griptape.config import BaseStructureConfig
+from attrs import Factory, define, field
 
+from griptape.config import BaseStructureConfig
 from griptape.drivers import (
+    BaseAudioTranscriptionDriver,
     BaseConversationMemoryDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
+    BaseImageQueryDriver,
     BasePromptDriver,
+    BaseTextToSpeechDriver,
     BaseVectorStoreDriver,
-    DummyVectorStoreDriver,
+    DummyAudioTranscriptionDriver,
     DummyEmbeddingDriver,
     DummyImageGenerationDriver,
-    DummyPromptDriver,
     DummyImageQueryDriver,
-    BaseImageQueryDriver,
-    BaseTextToSpeechDriver,
+    DummyPromptDriver,
     DummyTextToSpeechDriver,
-    BaseAudioTranscriptionDriver,
-    DummyAudioTranscriptionDriver,
+    DummyVectorStoreDriver,
 )
 
 

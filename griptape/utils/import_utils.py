@@ -1,7 +1,10 @@
-from importlib import import_module
-from types import ModuleType
-from typing import Optional
+from __future__ import annotations
 
+from importlib import import_module
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from types import ModuleType
 
 INSTALL_MAPPING = {
     "huggingface_hub": "huggingface-hub",

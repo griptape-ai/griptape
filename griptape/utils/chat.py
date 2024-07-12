@@ -25,9 +25,9 @@ class Chat:
 
     def default_output_fn(self, text: str) -> None:
         if self.structure.config.prompt_driver.stream:
-            print(text, end="", flush=True)  # noqa T201
+            print(text, end="", flush=True)  # noqa: T201
         else:
-            print(text)  # noqa T201
+            print(text)  # noqa: T201
 
     def start(self) -> None:
         if self.intro_text:

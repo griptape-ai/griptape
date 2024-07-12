@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
-from typing import Optional
 
 if TYPE_CHECKING:
     from griptape.artifacts import BlobArtifact
@@ -15,7 +14,7 @@ class BlobArtifactFileOutputMixin:
     output_dir: Optional[str] = field(default=None, kw_only=True)
     output_file: Optional[str] = field(default=None, kw_only=True)
 
-    @output_dir.validator  # pyright: ignore
+    @output_dir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_output_dir(self, _, output_dir: str) -> None:
         if not output_dir:
             return
@@ -23,7 +22,7 @@ class BlobArtifactFileOutputMixin:
         if self.output_file:
             raise ValueError("Can't have both output_dir and output_file specified.")
 
-    @output_file.validator  # pyright: ignore
+    @output_file.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_output_file(self, _, output_file: str) -> None:
         if not output_file:
             return

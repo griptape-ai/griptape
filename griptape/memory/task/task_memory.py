@@ -1,7 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any, Callable
-from attrs import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
+
+from typing import TYPE_CHECKING, Any, Callable, Optional
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 
@@ -17,7 +20,7 @@ class TaskMemory(ActivityMixin):
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
 
-    @artifact_storages.validator  # pyright: ignore
+    @artifact_storages.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_artifact_storages(self, _, artifact_storage: dict[type, BaseArtifactStorage]) -> None:
         seen_types = []
 

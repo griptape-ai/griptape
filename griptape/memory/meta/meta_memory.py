@@ -1,5 +1,11 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from attrs import define, field
-from griptape.memory.meta import BaseMetaEntry
+
+if TYPE_CHECKING:
+    from griptape.memory.meta import BaseMetaEntry
 
 
 @define

@@ -1,8 +1,11 @@
 from __future__ import annotations
+
+from typing import Callable
+
 from attrs import define, field
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.tasks import BaseTextInputTask
-from typing import Callable
 
 
 @define

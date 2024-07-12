@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 import time
-from typing import Optional, TYPE_CHECKING, Any
-from griptape.drivers import BaseSqlDriver
+from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import Factory, define, field
+
+from griptape.drivers import BaseSqlDriver
 
 if TYPE_CHECKING:
     import boto3
@@ -21,7 +24,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         default=Factory(lambda self: self.session.client("redshift-data"), takes_self=True), kw_only=True
     )
 
-    @workgroup_name.validator  # pyright: ignore
+    @workgroup_name.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_params(self, _, workgroup_name: Optional[str]) -> None:
         if not self.cluster_identifier and not self.workgroup_name:
             raise ValueError("Provide a value for one of `cluster_identifier` or `workgroup_name`")

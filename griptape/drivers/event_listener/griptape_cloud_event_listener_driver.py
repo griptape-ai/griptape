@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import os
-import requests
-
 from urllib.parse import urljoin
-from attrs import define, field, Factory
+
+import requests
+from attrs import Factory, define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 
@@ -29,7 +29,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     )
     structure_run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
 
-    @structure_run_id.validator  # pyright: ignore
+    @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_run_id(self, _, structure_run_id: str):
         if structure_run_id is None:
             raise ValueError(

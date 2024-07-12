@@ -1,8 +1,14 @@
-from attrs import define, field, Factory
-from typing import Callable, Optional
-from griptape.common import PromptStack
-from griptape.drivers import OpenAiChatPromptDriver
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Callable, Optional
+
 import openai
+from attrs import Factory, define, field
+
+from griptape.drivers import OpenAiChatPromptDriver
+
+if TYPE_CHECKING:
+    from griptape.common import PromptStack
 
 
 @define

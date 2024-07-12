@@ -1,16 +1,18 @@
 from __future__ import annotations
+
+import inspect
 import logging
+import os
 import subprocess
 import sys
-from typing import TYPE_CHECKING, Callable
-from schema import Schema, Literal, Or
-import inspect
-import os
 from abc import ABC
-from typing import Optional
+from typing import TYPE_CHECKING, Callable, Optional
+
 import yaml
-from attrs import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact, ErrorArtifact
+from attrs import Factory, define, field
+from schema import Literal, Or, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -48,7 +50,7 @@ class BaseTool(ActivityMixin, ABC):
         if self.install_dependencies_on_init:
             self.install_dependencies(os.environ.copy())
 
-    @output_memory.validator  # pyright: ignore
+    @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_output_memory(self, _, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():

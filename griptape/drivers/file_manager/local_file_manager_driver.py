@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 import os
 from pathlib import Path
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from .base_file_manager_driver import BaseFileManagerDriver
 
 
@@ -15,7 +18,7 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
 
     workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
 
-    @workdir.validator  # pyright: ignore
+    @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _, workdir: str) -> None:
         if not Path(workdir).is_absolute():
             raise ValueError("Workdir must be an absolute path")

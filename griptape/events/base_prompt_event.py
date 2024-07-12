@@ -1,6 +1,9 @@
 from __future__ import annotations
-from attrs import define, field
+
 from abc import ABC
+
+from attrs import define, field
+
 from .base_event import BaseEvent
 
 

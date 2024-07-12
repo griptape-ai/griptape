@@ -1,7 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from attrs import define, field
-from griptape.artifacts.audio_artifact import AudioArtifact
+
 from griptape.drivers import BaseTextToSpeechDriver
 from griptape.exceptions import DummyException
+
+if TYPE_CHECKING:
+    from griptape.artifacts.audio_artifact import AudioArtifact
 
 
 @define

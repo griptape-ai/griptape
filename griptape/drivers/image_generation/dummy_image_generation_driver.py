@@ -1,8 +1,14 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
-from griptape.artifacts import ImageArtifact
+
 from griptape.drivers import BaseImageGenerationDriver
 from griptape.exceptions import DummyException
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
 
 
 @define

@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.common import BaseDeltaMessageContent, BaseMessageContent, ToolAction
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact
     from collections.abc import Sequence
+
+    from griptape.artifacts import BaseArtifact
 
 
 @define

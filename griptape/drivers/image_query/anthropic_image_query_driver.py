@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import Optional, Any
-from attrs import define, field, Factory
+
+from typing import Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryDriver
 from griptape.utils import import_optional_dependency

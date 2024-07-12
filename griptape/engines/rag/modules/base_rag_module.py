@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 from abc import ABC
 from concurrent import futures
-from typing import Callable, Any, Optional
-from attrs import define, field, Factory
-from griptape.engines.rag import RagContext
-from griptape.common import PromptStack, Message
+from typing import TYPE_CHECKING, Any, Callable, Optional
+
+from attrs import Factory, define, field
+
+from griptape.common import Message, PromptStack
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)

@@ -1,10 +1,14 @@
-from typing import Optional, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact
-from griptape.drivers import BaseSqlDriver, BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseEmbeddingDriver, BaseSqlDriver
 
 
 @define

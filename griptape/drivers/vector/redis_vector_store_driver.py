@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 import json
+from typing import TYPE_CHECKING, Optional
+
 import numpy as np
-from griptape.utils import import_optional_dependency, str_to_hash
-from typing import Optional, TYPE_CHECKING
-from attrs import define, field, Factory
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseVectorStoreDriver
+from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:
     from redis import Redis
@@ -131,7 +134,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_params = {"vector": np.array(vector, dtype=np.float32).tobytes()}
 
-        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore
+        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore[reportArgumentType]
 
         query_results = []
         for document in results:

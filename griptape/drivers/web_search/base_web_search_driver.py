@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from attrs import field, define
+
+from attrs import define, field
 
 from griptape.artifacts import ListArtifact
 

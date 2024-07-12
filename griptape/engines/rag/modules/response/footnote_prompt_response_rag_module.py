@@ -1,10 +1,16 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from attrs import define
 
 from griptape import utils
-from griptape.artifacts import TextArtifact
-from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import PromptResponseRagModule
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact
+    from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)

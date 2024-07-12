@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from attrs import define
+
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryModelDriver
 

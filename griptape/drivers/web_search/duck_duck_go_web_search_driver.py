@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 import json
 from typing import TYPE_CHECKING
-from attrs import define, field, Factory
-from griptape.artifacts import TextArtifact, ListArtifact
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import BaseWebSearchDriver
 from griptape.utils import import_optional_dependency
 

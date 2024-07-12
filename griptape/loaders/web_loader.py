@@ -1,9 +1,12 @@
 from __future__ import annotations
-from attrs import define, field, Factory
+
+from typing import TYPE_CHECKING
+
+from attrs import Factory, define, field
+
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import BaseWebScraperDriver, TrafilaturaWebScraperDriver
 from griptape.loaders import BaseTextLoader
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextArtifact

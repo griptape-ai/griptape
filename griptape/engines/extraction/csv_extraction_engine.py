@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Optional, cast, TYPE_CHECKING
+
 import csv
 import io
-from attrs import field, Factory, define
-from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, ErrorArtifact
+from typing import TYPE_CHECKING, Optional, cast
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import CsvRowArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
