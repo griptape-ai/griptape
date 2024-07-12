@@ -87,7 +87,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
-        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+        count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
@@ -106,7 +106,13 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         query_vector = self.embedding_driver.embed_string(query)
 
         # Create a search request
-        results = self.client.search(collection_name=self.collection_name, query_vector=query_vector, limit=count)
+        request = {
+            "collection_name": self.collection_name,
+            "query_vector": query_vector,
+            "limit": count,
+        }
+        request = {k: v for k, v in request.items() if v is not None}
+        results = self.client.search(**request)
 
         # Convert results to QueryResult objects
         query_results = [
