@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Optional
 
 import docker
 import stringcase
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from docker.errors import NotFound
 from docker.models.containers import Container
 from schema import Literal, Schema
@@ -52,7 +52,7 @@ class Computer(BaseTool):
             self.local_workdir = self._tempdir.name
 
     @docker_client.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_docker_client(self, _, docker_client: DockerClient) -> None:
+    def validate_docker_client(self, _: Attribute, docker_client: DockerClient) -> None:
         if not docker_client:
             raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")
 

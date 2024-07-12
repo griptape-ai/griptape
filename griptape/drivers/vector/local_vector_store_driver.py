@@ -4,7 +4,7 @@ import json
 import os
 import threading
 from dataclasses import asdict
-from typing import Callable, Optional, TextIO
+from typing import Callable, NoReturn, Optional, TextIO
 
 from attrs import Factory, define, field
 from numpy import dot
@@ -114,8 +114,8 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
                 for r in result
             ]
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
 
-    def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):
+    def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]) -> str:
         return vector_id if namespace is None else f"{namespace}-{vector_id}"

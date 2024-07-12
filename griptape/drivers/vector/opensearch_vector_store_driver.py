@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, NoReturn, Optional
 
 from attrs import Factory, define, field
 
@@ -125,7 +125,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        include_metadata=True,
+        include_metadata: bool = True,
         field_name: str = "vector",
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
@@ -164,5 +164,5 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             for hit in response["hits"]["hits"]
         ]
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

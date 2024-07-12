@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Callable, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
@@ -46,7 +46,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             self.set_default_tools_memory(self.task_memory)
 
     @tools.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_tools(self, _, tools: list[BaseTool]) -> None:
+    def validate_tools(self, _: Attribute, tools: list[BaseTool]) -> None:
         tool_names = [t.name for t in tools]
 
         if len(tool_names) > len(set(tool_names)):

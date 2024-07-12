@@ -4,7 +4,7 @@ from queue import Queue
 from threading import Thread
 from typing import TYPE_CHECKING
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.events.completion_chunk_event import CompletionChunkEvent
@@ -36,7 +36,7 @@ class Stream:
     structure: Structure = field()
 
     @structure.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_structure(self, _, structure: Structure):
+    def validate_structure(self, _: Attribute, structure: Structure) -> None:
         if structure and not structure.config.prompt_driver.stream:
             raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
 
@@ -56,8 +56,8 @@ class Stream:
                 yield TextArtifact(value=event.token)
         t.join()
 
-    def _run_structure(self, *args):
-        def event_handler(event: BaseEvent):
+    def _run_structure(self, *args) -> None:
+        def event_handler(event: BaseEvent) -> None:
             self._event_queue.put(event)
 
         stream_event_listener = EventListener(

@@ -14,7 +14,7 @@ T = TypeVar("T", bound=BaseMessageContent)
 
 @define
 class Message(BaseMessage):
-    def __init__(self, content: str | list[BaseMessageContent], **kwargs: Any):
+    def __init__(self, content: str | list[BaseMessageContent], **kwargs: Any) -> None:
         if isinstance(content, str):
             content = [TextMessageContent(TextArtifact(value=content))]
         self.__attrs_init__(content, **kwargs)  # pyright: ignore[reportAttributeAccessIssue]

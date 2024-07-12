@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.drivers import BaseSqlDriver
 from griptape.utils import import_optional_dependency
@@ -29,7 +29,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
     )
 
     @connection_func.validator  # pyright: ignore[reportFunctionMemberAccess]
-    def validate_connection_func(self, _, connection_func: Callable[[], SnowflakeConnection]) -> None:
+    def validate_connection_func(self, _: Attribute, connection_func: Callable[[], SnowflakeConnection]) -> None:
         snowflake_connection = connection_func()
         snowflake = import_optional_dependency("snowflake")
 
@@ -39,7 +39,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             raise ValueError("Provide a schema and database for the Snowflake connection")
 
     @engine.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_engine_url(self, _, engine: Engine) -> None:
+    def validate_engine_url(self, _: Attribute, engine: Engine) -> None:
         if not engine.url.render_as_string().startswith("snowflake://"):
             raise ValueError("Provide a Snowflake connection")
 

@@ -43,7 +43,7 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
 
         return TextArtifact(text_content)
 
-    def _base_params(self, text_query: str, images: list[ImageArtifact]):
+    def _base_params(self, text_query: str, images: list[ImageArtifact]) -> dict:
         content = [self._construct_image_message(image) for image in images]
         content.append(self._construct_text_message(text_query))
         messages = self._construct_messages(content)

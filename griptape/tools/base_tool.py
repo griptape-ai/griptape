@@ -9,7 +9,7 @@ from abc import ABC
 from typing import TYPE_CHECKING, Callable, Optional
 
 import yaml
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
@@ -51,7 +51,7 @@ class BaseTool(ActivityMixin, ABC):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_output_memory(self, _, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
+    def validate_output_memory(self, _: Attribute, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
@@ -78,11 +78,11 @@ class BaseTool(ActivityMixin, ABC):
             return yaml.safe_load(yaml_file)
 
     @property
-    def abs_file_path(self):
+    def abs_file_path(self) -> str:
         return os.path.abspath(inspect.getfile(self.__class__))
 
     @property
-    def abs_dir_path(self):
+    def abs_dir_path(self) -> str:
         return os.path.dirname(self.abs_file_path)
 
     # This method has to remain a method and can't be decorated with @property because
@@ -174,7 +174,7 @@ class BaseTool(ActivityMixin, ABC):
 
         return True
 
-    def tool_dir(self):
+    def tool_dir(self) -> str:
         class_file = inspect.getfile(self.__class__)
 
         return os.path.dirname(os.path.abspath(class_file))

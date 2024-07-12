@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.drivers import BaseSqlDriver
 
@@ -26,14 +26,14 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
     )
 
     @workgroup_name.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_params(self, _, workgroup_name: Optional[str]) -> None:
+    def validate_params(self, _: Attribute, workgroup_name: Optional[str]) -> None:
         if not self.cluster_identifier and not self.workgroup_name:
             raise ValueError("Provide a value for one of `cluster_identifier` or `workgroup_name`")
         elif self.cluster_identifier and self.workgroup_name:
             raise ValueError("Provide a value for either `cluster_identifier` or `workgroup_name`, but not both")
 
     @classmethod
-    def _process_rows_from_records(cls, records) -> list[list]:
+    def _process_rows_from_records(cls, records: list) -> list[list]:
         return [[c[list(c.keys())[0]] for c in r] for r in records]
 
     @classmethod
@@ -41,11 +41,11 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         return [{column: r[idx] for idx, column in enumerate(columns)} for r in rows]
 
     @classmethod
-    def _process_columns_from_column_metadata(cls, meta) -> list:
+    def _process_columns_from_column_metadata(cls, meta: dict) -> list:
         return [k["name"] for k in meta]
 
     @classmethod
-    def _post_process(cls, meta, records) -> list[dict[str, Any]]:
+    def _post_process(cls, meta: dict, records: list) -> list[dict[str, Any]]:
         columns = cls._process_columns_from_column_metadata(meta)
         rows = cls._process_rows_from_records(records)
         return cls._process_cells_from_rows_and_columns(columns, rows)
