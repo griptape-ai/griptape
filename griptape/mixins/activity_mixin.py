@@ -12,7 +12,7 @@ class ActivityMixin:
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
 
-    @allowlist.validator  # pyright: ignore
+    @allowlist.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_allowlist(self, _, allowlist: Optional[list[str]]) -> None:
         if allowlist is None:
             return
@@ -23,7 +23,7 @@ class ActivityMixin:
         for activity_name in allowlist:
             self._validate_tool_activity(activity_name)
 
-    @denylist.validator  # pyright: ignore
+    @denylist.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_denylist(self, _, denylist: Optional[list[str]]) -> None:
         if denylist is None:
             return

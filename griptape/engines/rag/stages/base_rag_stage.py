@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from concurrent import futures
 from typing import Callable
 
@@ -19,4 +20,4 @@ class BaseRagStage(ABC):
 
     @property
     @abstractmethod
-    def modules(self) -> list[BaseRagModule]: ...
+    def modules(self) -> Sequence[BaseRagModule]: ...

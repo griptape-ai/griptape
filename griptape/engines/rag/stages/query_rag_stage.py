@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Sequence
 
 from attrs import define, field
 
@@ -13,8 +14,8 @@ class QueryRagStage(BaseRagStage):
     query_modules: list[BaseQueryRagModule] = field()
 
     @property
-    def modules(self) -> list[BaseRagModule]:
-        return self.query_modules  # pyright: ignore
+    def modules(self) -> Sequence[BaseRagModule]:
+        return self.query_modules
 
     def run(self, context: RagContext) -> RagContext:
         logging.info(f"QueryStage: running {len(self.query_modules)} query generation modules in parallel")

@@ -37,7 +37,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    @stream.validator  # pyright: ignore
+    @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_stream(self, _, stream):
         if stream:
             raise ValueError("streaming is not supported")

@@ -134,7 +134,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_params = {"vector": np.array(vector, dtype=np.float32).tobytes()}
 
-        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore
+        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore[reportArgumentType]
 
         query_results = []
         for document in results:

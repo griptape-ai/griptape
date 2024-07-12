@@ -1,8 +1,10 @@
+from typing import Any, Optional
 from urllib.parse import urljoin
+
 import requests
-from typing import Optional, Any
 from attrs import Factory, define, field
-from griptape.artifacts import TextArtifact, ListArtifact
+
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
 
 
