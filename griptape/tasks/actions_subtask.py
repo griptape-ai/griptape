@@ -131,10 +131,7 @@ class ActionsSubtask(BaseTask):
     def execute_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
-                try:
-                    output = action.tool.execute(getattr(action.tool, action.path), self, action)
-                except Exception as e:
-                    output = ErrorArtifact(str(e), exception=e)
+                output = action.tool.execute(getattr(action.tool, action.path), self, action)
             else:
                 output = ErrorArtifact("action path not found")
         else:
