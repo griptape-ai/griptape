@@ -63,12 +63,12 @@ from griptape.drivers import GriptapeCloudKnowledgeBaseVectorStoreDriver
 
 
 # Initialize environment variables
-gt_cloud_api_key = os.environ["GT_CLOUD_API_KEY"]
-gt_cloud_knowledge_base_id = os.environ["GT_CLOUD_KNOWLEDGE_BASE_ID"]
+gt_cloud_api_key = os.environ["GRIPTAPE_CLOUD_API_KEY"]
+gt_cloud_knowledge_base_id = os.environ["GRIPTAPE_CLOUD_KB_ID"]
 
 vector_store_driver = GriptapeCloudKnowledgeBaseVectorStoreDriver(api_key=gt_cloud_api_key, knowledge_base_id=gt_cloud_knowledge_base_id)
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -124,12 +124,16 @@ vector_store_driver = PineconeVectorStoreDriver(
 
 load_data(vector_store_driver)
 
-result = vector_store_driver.query(
+results = vector_store_driver.query(
     "fruit",
     count=3,
     filter={"price": {"$lte": 15}, "rating": {"$gte": 4}},
     namespace="supermarket-products",
 )
+
+values = [r.to_artifact().value for r in results]
+
+print("\n\n".join(values))
 ```
 
 ### Marqo
@@ -171,7 +175,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -223,7 +227,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -294,7 +298,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -337,7 +341,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -384,7 +388,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -446,7 +450,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -511,7 +515,7 @@ vector_store_driver.upsert_vector(
     content=artifacts[0].value
 )
 
-result = vector_store_driver.query(query="What is griptape?")
+results =vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
