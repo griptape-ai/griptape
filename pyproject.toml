@@ -207,9 +207,9 @@ select = [
     "UP", # pyupgrade
     "B", # flake8-bugbear
     "SIM", # flake8-simplify
-    "TID251", # banned-api
-    "T201", # print
-    "C901", # complex-structure
+    "TID", # flake8-tidy-imports
+    "T20", # flake8-print
+    "C90", # mccabe
     "TCH", # flake8-type-checking
     "D", # pydocstyle
     "PGH", # pygrep-hooks
