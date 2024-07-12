@@ -24,7 +24,6 @@ The [LocalVectorStoreDriver](../../reference/griptape/drivers/vector/local_vecto
 
 ```python
 import os 
-from griptape.artifacts import BaseArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
@@ -53,7 +52,6 @@ The [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../reference/griptape/drive
 
 ```python
 import os 
-from griptape.artifacts import BaseArtifact
 from griptape.drivers import GriptapeCloudKnowledgeBaseVectorStoreDriver
 
 
@@ -81,7 +79,6 @@ Here is an example of how the Driver can be used to load and query information i
 
 ```python
 import os 
-from griptape.artifacts import BaseArtifact
 from griptape.drivers import PineconeVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
@@ -92,7 +89,7 @@ embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
 vector_store_driver = PineconeVectorStoreDriver(
     api_key=os.environ["PINECONE_API_KEY"],
     environment=os.environ["PINECONE_ENVIRONMENT"],
-    index_name=os.environ['PINECONE_INDEX_NAME'],
+    index_name=os.environ["PINECONE_INDEX_NAME"],
     embedding_driver=embedding_driver,
 )
 
@@ -446,47 +443,34 @@ from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.loaders import WebLoader
 
 # Set up environment variables
-embedding_model_name = "sentence-transformers/all-MiniLM-L6-v2"
 host = os.environ["QDRANT_CLUSTER_ENDPOINT"]
-huggingface_token = os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"]
+api_key = os.environ["QDRANT_CLUSTER_API_KEY"]
 
-# Initialize HuggingFace Embedding Driver
-embedding_driver = HuggingFaceHubEmbeddingDriver(
-    api_token=huggingface_token,
-    model=embedding_model_name,
-    tokenizer=HuggingFaceTokenizer(model=embedding_model_name, max_output_tokens=512),
-)
+# Initialize an Embedding Driver.
+embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
 
-# Initialize Qdrant Vector Store Driver
 vector_store_driver = QdrantVectorStoreDriver(
     url=host,
     collection_name="griptape",
     content_payload_key="content",
     embedding_driver=embedding_driver,
-    api_key=os.environ["QDRANT_CLUSTER_API_KEY"],
+    api_key=api_key,
 )
 
 # Load Artifacts from the web
 artifacts = WebLoader().load("https://www.griptape.ai")
 
-# Encode text to get embeddings
-embeddings = embedding_driver.embed_text_artifact(artifacts[0])
-
 # Recreate Qdrant collection
 vector_store_driver.client.recreate_collection(
     collection_name=vector_store_driver.collection_name,
     vectors_config={
-        "size": len(embeddings),
+        "size": 1536,
         "distance": vector_store_driver.distance
     },
 )
 
-# Upsert vector into Qdrant
-vector_store_driver.upsert_vector(
-    vector=embeddings,
-    vector_id=str(artifacts[0].id),
-    content=artifacts[0].value
-)
+# Upsert Artifacts into the Vector Store Driver
+[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
 
 results = vector_store_driver.query(query="What is griptape?")
 
