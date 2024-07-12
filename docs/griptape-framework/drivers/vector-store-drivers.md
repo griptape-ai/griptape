@@ -40,11 +40,7 @@ artifacts = WebLoader(max_tokens=100).load("https://www.griptape.ai")
 # Upsert Artifacts into the Vector Store Driver
 [vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
 
-results = vector_store_driver.query(
-    "creativity",
-    count=3,
-    namespace="griptape"
-)
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -67,7 +63,7 @@ gt_cloud_knowledge_base_id = os.environ["GRIPTAPE_CLOUD_KB_ID"]
 
 vector_store_driver = GriptapeCloudKnowledgeBaseVectorStoreDriver(api_key=gt_cloud_api_key, knowledge_base_id=gt_cloud_knowledge_base_id)
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -106,11 +102,7 @@ artifacts = WebLoader(max_tokens=100).load("https://www.griptape.ai")
 # Upsert Artifacts into the Vector Store Driver
 [vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
 
-results = vector_store_driver.query(
-    "creativity",
-    count=3,
-    namespace="griptape"
-)
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -156,7 +148,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -208,7 +200,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -279,7 +271,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -322,7 +314,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -369,7 +361,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -431,7 +423,7 @@ vector_store_driver.upsert_text_artifacts(
     }
 )
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
@@ -496,7 +488,7 @@ vector_store_driver.upsert_vector(
     content=artifacts[0].value
 )
 
-results =vector_store_driver.query(query="What is griptape?")
+results = vector_store_driver.query(query="What is griptape?")
 
 values = [r.to_artifact().value for r in results]
 
