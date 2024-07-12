@@ -249,11 +249,18 @@ class TestBaseTool:
 
         assert tool_schema == self.TARGET_TOOL_SCHEMA
 
-    def test_to_native_tool_name(self, tool):
+    def test_to_native_tool_name(self, tool, mocker):
         tool = MockTool()
 
         assert tool.to_native_tool_name(tool.test) == "MockTool_test"
 
+        # Bad name
         tool.name = "mock_tool"
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Tool name"):
             tool.to_native_tool_name(tool.foo)
+
+        # Bad activity name
+        mocker.patch.object(tool, "activity_name", return_value="foo^bar")
+        tool.name = "MockTool"
+        with pytest.raises(ValueError, match="Activity name"):
+            tool.to_native_tool_name(tool.test)
