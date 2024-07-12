@@ -21,7 +21,8 @@ class HuggingFaceTokenizer(BaseTokenizer):
         kw_only=True,
     )
     max_input_tokens: int = field(
-        default=Factory(lambda self: self.tokenizer.model_max_length, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.tokenizer.model_max_length, takes_self=True),
+        kw_only=True,
     )
     max_output_tokens: int = field(default=4096, kw_only=True)
 

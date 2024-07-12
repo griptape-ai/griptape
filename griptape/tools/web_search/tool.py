@@ -25,10 +25,10 @@ class WebSearch(BaseTool):
                     Literal(
                         "query",
                         description="Search engine request that returns a list of pages with titles, descriptions, and URLs",
-                    ): str
-                }
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def search(self, props: dict) -> ListArtifact | ErrorArtifact:
         query = props["values"]["query"]

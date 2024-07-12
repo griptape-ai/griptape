@@ -28,10 +28,12 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
     http_auth: str | tuple[str, str] = field(
         default=Factory(
             lambda self: import_optional_dependency("opensearchpy").AWSV4SignerAuth(
-                self.session.get_credentials(), self.session.region_name, self.service
+                self.session.get_credentials(),
+                self.session.region_name,
+                self.service,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     client: OpenSearch = field(
@@ -44,7 +46,7 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
                 connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def upsert_vector(

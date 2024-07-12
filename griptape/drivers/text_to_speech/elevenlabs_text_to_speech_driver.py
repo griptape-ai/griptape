@@ -25,7 +25,10 @@ class ElevenLabsTextToSpeechDriver(BaseTextToSpeechDriver):
 
     def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         audio = self.client.generate(
-            text=". ".join(prompts), voice=self.voice, model=self.model, output_format=self.output_format
+            text=". ".join(prompts),
+            voice=self.voice,
+            model=self.model,
+            output_format=self.output_format,
         )
 
         content = b""

@@ -47,7 +47,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     https: bool = field(default=None, kw_only=True, metadata={"serializable": True})
     prefix: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     force_disable_check_same_thread: Optional[bool] = field(
-        default=False, kw_only=True, metadata={"serializable": True}
+        default=False,
+        kw_only=True,
+        metadata={"serializable": True},
     )
     timeout: Optional[int] = field(default=5, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
@@ -153,7 +155,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             meta[self.content_payload_key] = content
 
         points = import_optional_dependency("qdrant_client.http.models").Batch(
-            ids=[vector_id], vectors=[vector], payloads=[meta] if meta else None
+            ids=[vector_id],
+            vectors=[vector],
+            payloads=[meta] if meta else None,
         )
 
         self.client.upsert(collection_name=self.collection_name, points=points)

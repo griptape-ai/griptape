@@ -17,7 +17,8 @@ class AnthropicTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"claude": 4096}
 
     client: Anthropic = field(
-        default=Factory(lambda: import_optional_dependency("anthropic").Anthropic()), kw_only=True
+        default=Factory(lambda: import_optional_dependency("anthropic").Anthropic()),
+        kw_only=True,
     )
 
     def count_tokens(self, text: str) -> int:

@@ -30,9 +30,9 @@ class ImageQueryClient(BaseTool):
                         description="A detailed question to be answered using the contents of the provided images.",
                     ): str,
                     Literal("image_paths", description="The paths to an image files on disk."): list[str],
-                }
+                },
             ),
-        }
+        },
     )
     def query_image_from_disk(self, params: dict) -> TextArtifact | ErrorArtifact:
         query = params["values"]["query"]
@@ -55,12 +55,12 @@ class ImageQueryClient(BaseTool):
                         description="A detailed question to be answered using the contents of the provided images.",
                     ): str,
                     Literal("image_artifacts", description="Image artifact memory references."): [
-                        {"image_artifact_namespace": str, "image_artifact_name": str}
+                        {"image_artifact_namespace": str, "image_artifact_name": str},
                     ],
                     "memory_name": str,
-                }
+                },
             ),
-        }
+        },
     )
     def query_images_from_memory(self, params: dict[str, Any]) -> TextArtifact | ErrorArtifact:
         query = params["values"]["query"]

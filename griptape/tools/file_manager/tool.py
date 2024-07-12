@@ -25,9 +25,9 @@ class FileManager(BaseTool):
         config={
             "description": "Can be used to list files on disk",
             "schema": Schema(
-                {Literal("path", description="Relative path in the POSIX format. For example, 'foo/bar'"): str}
+                {Literal("path", description="Relative path in the POSIX format. For example, 'foo/bar'"): str},
             ),
-        }
+        },
     )
     def list_files_from_disk(self, params: dict) -> TextArtifact | ErrorArtifact:
         path = params["values"]["path"]
@@ -41,10 +41,10 @@ class FileManager(BaseTool):
                     Literal(
                         "paths",
                         description="Relative paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
-                    ): list[str]
-                }
+                    ): list[str],
+                },
             ),
-        }
+        },
     )
     def load_files_from_disk(self, params: dict) -> ListArtifact | ErrorArtifact:
         paths = params["values"]["paths"]
@@ -70,9 +70,9 @@ class FileManager(BaseTool):
                     Literal("file_name", description="Destination file name. For example, 'baz.txt'"): str,
                     "memory_name": str,
                     "artifact_namespace": str,
-                }
+                },
             ),
-        }
+        },
     )
     def save_memory_artifacts_to_disk(self, params: dict) -> ErrorArtifact | InfoArtifact:
         dir_name = params["values"]["dir_name"]
@@ -88,7 +88,7 @@ class FileManager(BaseTool):
 
         if len(list_artifact) == 0:
             return ErrorArtifact(
-                f"Failed to save memory artifacts to disk - memory named '{memory_name}' does not contain any artifacts"
+                f"Failed to save memory artifacts to disk - memory named '{memory_name}' does not contain any artifacts",
             )
 
         for artifact in list_artifact.value:
@@ -109,9 +109,9 @@ class FileManager(BaseTool):
                         description="Destination file path on disk in the POSIX format. For example, 'foo/bar/baz.txt'",
                     ): str,
                     "content": str,
-                }
+                },
             ),
-        }
+        },
     )
     def save_content_to_file(self, params: dict) -> ErrorArtifact | InfoArtifact:
         path = params["values"]["path"]

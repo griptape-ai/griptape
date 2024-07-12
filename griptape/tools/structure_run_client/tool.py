@@ -29,9 +29,9 @@ class StructureRunClient(BaseTool):
         config={
             "description": "Can be used to run a Griptape Structure with the following description: {{ self.description }}",
             "schema": Schema(
-                {Literal("args", description="A list of string arguments to submit to the Structure Run"): list[str]}
+                {Literal("args", description="A list of string arguments to submit to the Structure Run"): list[str]},
             ),
-        }
+        },
     )
     def run_structure(self, params: dict) -> BaseArtifact:
         args: list[str] = params["values"]["args"]

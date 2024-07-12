@@ -197,9 +197,6 @@ pymdown-extensions = "^10.3"
 [tool.ruff]
 line-length = 120
 
-[tool.ruff.format]
-skip-magic-trailing-comma = true
-
 [tool.ruff.lint]
 select = [
     "E", # pycodestyle
@@ -214,7 +211,8 @@ select = [
     "D", # pydocstyle
     "PGH", # pygrep-hooks
     "I", # isort
-    "FA" # flake8-future-annotations
+    "FA", # flake8-future-annotations
+    "COM" # flake8-commas
 ]
 ignore = [
     "UP007", # non-pep604-annotation
@@ -230,6 +228,7 @@ ignore = [
     "D105", # undocumented-magic-method
     "D106", # undocumented-public-nested-class
     "D107", # undocumented-public-init
+    "COM812" # missing-trailing-comma -- disabled for compatability with formatter.
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"

@@ -45,10 +45,12 @@ class OpenAiTokenizer(BaseTokenizer):
     ]
 
     max_input_tokens: int = field(
-        kw_only=True, default=Factory(lambda self: self._default_max_input_tokens(), takes_self=True)
+        kw_only=True,
+        default=Factory(lambda self: self._default_max_input_tokens(), takes_self=True),
     )
     max_output_tokens: int = field(
-        kw_only=True, default=Factory(lambda self: self._default_max_output_tokens(), takes_self=True)
+        kw_only=True,
+        default=Factory(lambda self: self._default_max_output_tokens(), takes_self=True),
     )
 
     @property
@@ -66,7 +68,8 @@ class OpenAiTokenizer(BaseTokenizer):
 
     def _default_max_output_tokens(self) -> int:
         tokens = next(
-            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)), None
+            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)),
+            None,
         )
 
         if tokens is None:
@@ -119,7 +122,7 @@ class OpenAiTokenizer(BaseTokenizer):
                 raise NotImplementedError(
                     f"""token_count() is not implemented for model {model}. 
                     See https://github.com/openai/openai-python/blob/main/chatml.md for 
-                    information on how messages are converted to tokens."""
+                    information on how messages are converted to tokens.""",
                 )
 
             num_tokens = 0

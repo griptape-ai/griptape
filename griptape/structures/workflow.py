@@ -17,7 +17,8 @@ if TYPE_CHECKING:
 @define
 class Workflow(Structure):
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+        kw_only=True,
     )
 
     @property
@@ -114,7 +115,7 @@ class Workflow(Structure):
                 "parents_output_text": task.parents_output_text,
                 "parents": {parent.id: parent for parent in task.parents},
                 "children": {child.id: child for child in task.children},
-            }
+            },
         )
 
         return context
@@ -143,7 +144,9 @@ class Workflow(Structure):
                 child_task.parent_ids.append(task.id)
 
     def __remove_old_parent_child_relationships(
-        self, parent_tasks: list[BaseTask], child_tasks: list[BaseTask]
+        self,
+        parent_tasks: list[BaseTask],
+        child_tasks: list[BaseTask],
     ) -> None:
         for parent_task in parent_tasks:
             for child_task in child_tasks:

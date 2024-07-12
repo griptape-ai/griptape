@@ -20,7 +20,8 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             # Creator bypasses the URL param
             # https://docs.sqlalchemy.org/en/14/core/engines.html#sqlalchemy.create_engine.params.creator
             lambda self: import_optional_dependency("sqlalchemy").create_engine(
-                "snowflake://not@used/db", creator=self.connection_func
+                "snowflake://not@used/db",
+                creator=self.connection_func,
             ),
             takes_self=True,
         ),

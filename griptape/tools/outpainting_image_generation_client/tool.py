@@ -47,9 +47,9 @@ class OutpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                         description="The path to an image file to be used as a base to generate variations from.",
                     ): str,
                     Literal("mask_file", description="The path to mask image file."): str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_outpainting_from_file(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
@@ -78,9 +78,9 @@ class OutpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                     "memory_name": str,
                     "image_artifact_namespace": str,
                     "mask_artifact_namespace": str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_outpainting_from_memory(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
@@ -96,16 +96,25 @@ class OutpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
 
         try:
             image_artifact = load_artifact_from_memory(
-                memory, image_artifact_namespace, image_artifact_name, ImageArtifact
+                memory,
+                image_artifact_namespace,
+                image_artifact_name,
+                ImageArtifact,
             )
             mask_artifact = load_artifact_from_memory(
-                memory, mask_artifact_namespace, mask_artifact_name, ImageArtifact
+                memory,
+                mask_artifact_namespace,
+                mask_artifact_name,
+                ImageArtifact,
             )
         except ValueError as e:
             return ErrorArtifact(str(e))
 
         return self._generate_outpainting(
-            prompts, negative_prompts, cast(ImageArtifact, image_artifact), cast(ImageArtifact, mask_artifact)
+            prompts,
+            negative_prompts,
+            cast(ImageArtifact, image_artifact),
+            cast(ImageArtifact, mask_artifact),
         )
 
     def _generate_outpainting(
@@ -116,7 +125,10 @@ class OutpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
         mask_artifact: ImageArtifact,
     ):
         output_artifact = self.engine.run(
-            prompts=prompts, negative_prompts=negative_prompts, image=image_artifact, mask=mask_artifact
+            prompts=prompts,
+            negative_prompts=negative_prompts,
+            image=image_artifact,
+            mask=mask_artifact,
         )
 
         if self.output_dir or self.output_file:

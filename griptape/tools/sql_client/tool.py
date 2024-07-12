@@ -41,7 +41,7 @@ class SqlClient(BaseTool):
             "{{ _self.table_name }} schema: {{ _self.table_schema }}\n"
             "{% if _self.table_description %}{{ _self.table_name }} description: {{ _self.table_description }}{% endif %}",
             "schema": Schema({"sql_query": str}),
-        }
+        },
     )
     def execute_query(self, params: dict) -> ListArtifact | InfoArtifact | ErrorArtifact:
         try:

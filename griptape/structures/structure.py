@@ -46,7 +46,8 @@ class Structure(ABC):
     prompt_driver: Optional[BasePromptDriver] = field(default=None)
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     config: BaseStructureConfig = field(
-        default=Factory(lambda self: self.default_config, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_config, takes_self=True),
+        kw_only=True,
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
@@ -56,13 +57,15 @@ class Structure(ABC):
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(
-            lambda self: ConversationMemory(driver=self.config.conversation_memory_driver), takes_self=True
+            lambda self: ConversationMemory(driver=self.config.conversation_memory_driver),
+            takes_self=True,
         ),
         kw_only=True,
     )
     rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
     task_memory: TaskMemory = field(
-        default=Factory(lambda self: self.default_task_memory, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_task_memory, takes_self=True),
+        kw_only=True,
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
@@ -171,7 +174,7 @@ class Structure(ABC):
     def default_rag_engine(self) -> RagEngine:
         return RagEngine(
             retrieval_stage=RetrievalRagStage(
-                retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)]
+                retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)],
             ),
             response_stage=ResponseRagStage(
                 before_response_modules=[
@@ -195,7 +198,7 @@ class Structure(ABC):
                     json_extraction_engine=JsonExtractionEngine(prompt_driver=self.config.prompt_driver),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
-            }
+            },
         )
 
     def is_finished(self) -> bool:
@@ -259,8 +262,10 @@ class Structure(ABC):
 
         self.publish_event(
             StartStructureRunEvent(
-                structure_id=self.id, input_task_input=self.input_task.input, input_task_output=self.input_task.output
-            )
+                structure_id=self.id,
+                input_task_input=self.input_task.input,
+                input_task_output=self.input_task.output,
+            ),
         )
 
         self.resolve_relationships()
