@@ -35,6 +35,15 @@ class MockTool(BaseTool):
             "schema": Schema({Literal("test"): str}, description="Test input"),
         }
     )
+    def test_exception(self, value: dict) -> BaseArtifact:
+        raise Exception(f"error {value['values']['test']}")
+
+    @activity(
+        config={
+            "description": "test description: {{ _self.foo() }}",
+            "schema": Schema({Literal("test"): str}, description="Test input"),
+        }
+    )
     def test_str_output(self, value: dict) -> str:
         return f"ack {value['values']['test']}"
 

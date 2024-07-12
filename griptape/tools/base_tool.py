@@ -10,7 +10,7 @@ from abc import ABC
 from typing import Optional
 import yaml
 from attrs import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact, ErrorArtifact
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -105,11 +105,16 @@ class BaseTool(ActivityMixin, ABC):
         ]
 
     def execute(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
-        preprocessed_input = self.before_run(activity, subtask, action)
-        output = self.run(activity, subtask, action, preprocessed_input)
-        postprocessed_output = self.after_run(activity, subtask, action, output)
+        try:
+            output = self.before_run(activity, subtask, action)
 
-        return postprocessed_output
+            output = self.run(activity, subtask, action, output)
+
+            output = self.after_run(activity, subtask, action, output)
+        except Exception as e:
+            output = ErrorArtifact(str(e), exception=e)
+
+        return output
 
     def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> Optional[dict]:
         return action.input
