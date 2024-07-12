@@ -177,7 +177,7 @@ class GooglePromptDriver(BasePromptDriver):
 
                 schema = remove_key_in_dict_recursively(schema, "additionalProperties")
                 tool_declaration = FunctionDeclaration(
-                    name=f"{tool.name}_{tool.activity_name(activity)}",
+                    name=tool.to_native_tool_name(activity),
                     description=tool.activity_description(activity),
                     parameters={
                         "type": schema["type"],
