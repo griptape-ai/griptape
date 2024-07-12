@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from concurrent import futures
 from typing import Callable
+from collections.abc import Sequence
 from attrs import define, field, Factory
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRagModule
@@ -17,4 +18,4 @@ class BaseRagStage(ABC):
 
     @property
     @abstractmethod
-    def modules(self) -> list[BaseRagModule]: ...
+    def modules(self) -> Sequence[BaseRagModule]: ...

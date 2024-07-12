@@ -31,7 +31,7 @@ class Stream:
 
     structure: Structure = field()
 
-    @structure.validator  # pyright: ignore
+    @structure.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_structure(self, _, structure: Structure):
         if structure and not structure.config.prompt_driver.stream:
             raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")

@@ -66,7 +66,7 @@ class Structure(ABC):
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
-    @rulesets.validator  # pyright: ignore
+    @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
@@ -74,7 +74,7 @@ class Structure(ABC):
         if self.rules:
             raise ValueError("can't have both rulesets and rules specified")
 
-    @rules.validator  # pyright: ignore
+    @rules.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_rules(self, _, rules: list[Rule]) -> None:
         if not rules:
             return
@@ -93,17 +93,17 @@ class Structure(ABC):
     def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
         return self.add_tasks(*other) if isinstance(other, list) else self + [other]
 
-    @prompt_driver.validator  # pyright: ignore
+    @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_prompt_driver(self, attribute, value):
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver` instead.")
 
-    @embedding_driver.validator  # pyright: ignore
+    @embedding_driver.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_embedding_driver(self, attribute, value):
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.embedding_driver` instead.")
 
-    @stream.validator  # pyright: ignore
+    @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_stream(self, attribute, value):
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver.stream` instead.")

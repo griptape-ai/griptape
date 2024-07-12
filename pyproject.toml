@@ -211,7 +211,8 @@ select = [
     "T201", # print
     "C901", # complex-structure
     "TCH", # flake8-type-checking
-    "D" # pydocstyle
+    "D", # pydocstyle
+    "PGH" # pygrep-hooks
 ]
 ignore = [
     "UP007", # non-pep604-annotation

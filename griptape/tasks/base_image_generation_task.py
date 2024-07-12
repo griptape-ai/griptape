@@ -31,7 +31,7 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
     negative_rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 
-    @negative_rulesets.validator  # pyright: ignore
+    @negative_rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_negative_rulesets(self, _, negative_rulesets: list[Ruleset]) -> None:
         if not negative_rulesets:
             return
@@ -39,7 +39,7 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
         if self.negative_rules:
             raise ValueError("Can't have both negative_rulesets and negative_rules specified.")
 
-    @negative_rules.validator  # pyright: ignore
+    @negative_rules.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_negative_rules(self, _, negative_rules: list[Rule]) -> None:
         if not negative_rules:
             return

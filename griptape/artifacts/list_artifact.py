@@ -10,7 +10,7 @@ class ListArtifact(BaseArtifact):
     item_separator: str = field(default="\n\n", kw_only=True, metadata={"serializable": True})
     validate_uniform_types: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
-    @value.validator  # pyright: ignore
+    @value.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_value(self, _, value: list[BaseArtifact]) -> None:
         if self.validate_uniform_types and len(value) > 0:
             first_type = type(value[0])

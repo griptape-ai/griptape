@@ -15,7 +15,7 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
 
     workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
 
-    @workdir.validator  # pyright: ignore
+    @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _, workdir: str) -> None:
         if not Path(workdir).is_absolute():
             raise ValueError("Workdir must be an absolute path")
