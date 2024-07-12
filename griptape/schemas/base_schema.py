@@ -101,6 +101,7 @@ class BaseSchema(Schema):
         Args:
             attrs_cls: An attrs class.
         """
+        from collections.abc import Sequence
         from typing import Any
 
         from griptape.artifacts import BaseArtifact
@@ -160,6 +161,7 @@ class BaseSchema(Schema):
                 "ToolAction": ToolAction,
                 "Reference": Reference,
                 "Run": Run,
+                "Sequence": Sequence,
                 # Third party modules
                 "Client": Client,
                 "GenerativeModel": GenerativeModel,
