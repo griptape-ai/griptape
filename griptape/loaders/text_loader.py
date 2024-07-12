@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Optional, Union, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union, cast
 
-from attrs import field, define, Factory
+from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact

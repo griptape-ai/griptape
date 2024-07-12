@@ -1,15 +1,18 @@
 from __future__ import annotations
-from attrs import Factory, define, field
+
+import logging
+import smtplib
 from email.mime.text import MIMEText
+from typing import Optional
+
+import schema
+from attrs import Factory, define, field
+from schema import Literal, Schema
+
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.loaders.email_loader import EmailLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
-from typing import Optional
-import logging
-import schema
-import smtplib
 
 
 @define

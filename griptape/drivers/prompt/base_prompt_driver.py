@@ -6,22 +6,23 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 
 from griptape.common import (
+    ActionCallDeltaMessageContent,
     ActionCallMessageContent,
     BaseDeltaMessageContent,
-    ActionCallDeltaMessageContent,
     DeltaMessage,
-    TextDeltaMessageContent,
-    PromptStack,
     Message,
+    PromptStack,
+    TextDeltaMessageContent,
     TextMessageContent,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.tokenizers import BaseTokenizer
     from collections.abc import Iterator
+
     from griptape.structures import Structure
+    from griptape.tokenizers import BaseTokenizer
 
 
 @define(kw_only=True)

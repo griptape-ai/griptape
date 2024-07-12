@@ -1,5 +1,7 @@
 import logging
+
 from attrs import define, field
+
 from griptape import utils
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseQueryRagModule, BaseRagModule

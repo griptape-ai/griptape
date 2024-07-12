@@ -1,11 +1,14 @@
 from __future__ import annotations
+
 from typing import Optional
 from urllib.parse import urljoin
-from schema import Schema, Literal
+
 from attrs import define, field
+from schema import Literal, Schema
+
+from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.tools.base_griptape_cloud_client import BaseGriptapeCloudClient
 from griptape.utils.decorators import activity
-from griptape.artifacts import TextArtifact, ErrorArtifact
 
 
 @define
@@ -29,7 +32,7 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
         }
     )
     def query(self, params: dict) -> TextArtifact | ErrorArtifact:
-        from requests import post, exceptions
+        from requests import exceptions, post
 
         query = params["values"]["query"]
         url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/search")

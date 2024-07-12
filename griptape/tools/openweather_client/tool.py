@@ -1,12 +1,15 @@
 from __future__ import annotations
-from griptape.artifacts import ListArtifact, TextArtifact, ErrorArtifact, InfoArtifact
+
+import logging
+from typing import Optional
+
+import requests
+from attrs import define, field
+from schema import Literal, Schema
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
-from typing import Optional
-from attrs import define, field
-import requests
-import logging
 
 
 @define

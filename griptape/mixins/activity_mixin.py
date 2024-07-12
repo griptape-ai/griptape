@@ -1,9 +1,10 @@
 import inspect
-from typing import Optional, Callable
+from typing import Callable, Optional
+
+import schema
 from attrs import define, field
 from jinja2 import Template
-import schema
-from schema import Schema, Literal
+from schema import Literal, Schema
 
 
 @define(slots=False)

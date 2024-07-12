@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from abc import ABC
 from typing import Optional
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import ChunkSeparator
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer

@@ -1,9 +1,11 @@
 from abc import ABC
 from concurrent import futures
-from typing import Callable, Any, Optional
-from attrs import define, field, Factory
+from typing import Any, Callable, Optional
+
+from attrs import Factory, define, field
+
+from griptape.common import Message, PromptStack
 from griptape.engines.rag import RagContext
-from griptape.common import PromptStack, Message
 
 
 @define(kw_only=True)

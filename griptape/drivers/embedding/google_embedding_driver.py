@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from typing import Optional
+
 from attrs import define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.utils import import_optional_dependency
 

@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import CohereTokenizer
 from griptape.utils import import_optional_dependency

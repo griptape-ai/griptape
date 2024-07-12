@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Callable, Optional
 
-from attrs import define, field, Factory
 import openai
+from attrs import Factory, define, field
+
 from griptape.drivers.image_query.openai_image_query_driver import OpenAiImageQueryDriver
 
 

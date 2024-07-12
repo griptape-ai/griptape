@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
+
 from attrs import Factory, define, field
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, InfoArtifact, ListArtifact
+
 import griptape.loaders as loaders
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 
 
 @define

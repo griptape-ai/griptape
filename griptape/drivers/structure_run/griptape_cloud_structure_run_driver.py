@@ -69,7 +69,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
             return InfoArtifact("No output found in response")
 
     def _get_structure_run_result_attempt(self, structure_run_url: str) -> Any:
-        from requests import get, Response
+        from requests import Response, get
 
         response: Response = get(structure_run_url, headers=self.headers)
         response.raise_for_status()

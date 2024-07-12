@@ -1,5 +1,7 @@
-from attrs import define, field
 from typing import Optional
+
+from attrs import define, field
+
 from griptape.events.base_prompt_event import BasePromptEvent
 
 

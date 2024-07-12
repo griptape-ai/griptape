@@ -1,31 +1,34 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
-from attrs import define, field, Factory
-from griptape.artifacts import TextArtifact
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
-from griptape.common.prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
-from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import CohereTokenizer
-from griptape.artifacts import ActionArtifact
 from griptape.common import (
     ActionCallMessageContent,
+    ActionResultMessageContent,
     BaseDeltaMessageContent,
     BaseMessageContent,
     DeltaMessage,
-    TextDeltaMessageContent,
-    PromptStack,
     Message,
+    PromptStack,
+    TextDeltaMessageContent,
     TextMessageContent,
-    ActionResultMessageContent,
     ToolAction,
 )
+from griptape.common.prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
+from griptape.drivers import BasePromptDriver
+from griptape.tokenizers import BaseTokenizer, CohereTokenizer
 from griptape.utils import import_optional_dependency
-from griptape.tokenizers import BaseTokenizer
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from cohere import Client
     from cohere.types import NonStreamedChatResponse
+
     from griptape.tools import BaseTool
 
 

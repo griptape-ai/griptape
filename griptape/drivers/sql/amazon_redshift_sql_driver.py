@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 import time
-from typing import Optional, TYPE_CHECKING, Any
-from griptape.drivers import BaseSqlDriver
+from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import Factory, define, field
+
+from griptape.drivers import BaseSqlDriver
 
 if TYPE_CHECKING:
     import boto3

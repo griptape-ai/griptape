@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from attrs import define, field, Factory
+import openai
+from attrs import Factory, define, field
 from openai.types.chat import (
-    ChatCompletionUserMessageParam,
+    ChatCompletionContentPartImageParam,
     ChatCompletionContentPartParam,
     ChatCompletionContentPartTextParam,
-    ChatCompletionContentPartImageParam,
+    ChatCompletionUserMessageParam,
 )
-import openai
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers.image_query.base_image_query_driver import BaseImageQueryDriver

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
@@ -10,14 +10,14 @@ from griptape.utils import dict_merge
 
 if TYPE_CHECKING:
     from griptape.drivers import (
+        BaseAudioTranscriptionDriver,
         BaseConversationMemoryDriver,
         BaseEmbeddingDriver,
         BaseImageGenerationDriver,
         BaseImageQueryDriver,
         BasePromptDriver,
-        BaseVectorStoreDriver,
         BaseTextToSpeechDriver,
-        BaseAudioTranscriptionDriver,
+        BaseVectorStoreDriver,
     )
 
 

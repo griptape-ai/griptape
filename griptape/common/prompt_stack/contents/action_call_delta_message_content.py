@@ -1,6 +1,8 @@
 from __future__ import annotations
-from attrs import define, field
+
 from typing import Optional
+
+from attrs import define, field
 
 from griptape.common import BaseDeltaMessageContent
 

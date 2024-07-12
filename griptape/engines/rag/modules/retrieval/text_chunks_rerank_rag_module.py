@@ -1,6 +1,7 @@
-from typing import Sequence
+from collections.abc import Sequence
 
 from attrs import define
+
 from griptape.artifacts import BaseArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRerankRagModule

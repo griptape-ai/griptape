@@ -1,6 +1,8 @@
-from attrs import field, define, Factory
 from typing import Optional
-from griptape.drivers import BaseVectorStoreDriver, BaseEmbeddingDriver, DummyEmbeddingDriver
+
+from attrs import Factory, define, field
+
+from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
 from griptape.exceptions import DummyException
 
 

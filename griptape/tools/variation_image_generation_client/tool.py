@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from attrs import define, field
-from schema import Schema, Literal
+from schema import Literal, Schema
 
 from griptape.artifacts import ErrorArtifact, ImageArtifact
 from griptape.loaders import ImageLoader
+from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 if TYPE_CHECKING:

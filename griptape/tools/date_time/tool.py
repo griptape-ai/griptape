@@ -1,5 +1,7 @@
 from datetime import datetime
-from schema import Schema, Literal
+
+from schema import Literal, Schema
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity

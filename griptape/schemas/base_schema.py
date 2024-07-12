@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Union, Literal, get_args, get_origin
 from collections.abc import Sequence
+from typing import Literal, Union, get_args, get_origin
 
 import attrs
-from marshmallow import Schema, fields, INCLUDE
+from marshmallow import INCLUDE, Schema, fields
 
 from griptape.schemas.bytes_field import Bytes
 
@@ -24,6 +24,7 @@ class BaseSchema(Schema):
             attrs_cls: An attrs class.
         """
         from marshmallow import post_load
+
         from griptape.mixins import SerializableMixin
 
         class SubSchema(cls):
@@ -100,33 +101,34 @@ class BaseSchema(Schema):
         Args:
             attrs_cls: An attrs class.
         """
-        from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
+        from typing import Any
+
+        from griptape.artifacts import BaseArtifact
+        from griptape.common import (
+            BaseDeltaMessageContent,
+            BaseMessageContent,
+            Message,
+            PromptStack,
+            Reference,
+            ToolAction,
+        )
 
         # These modules are required to avoid `NameError`s when resolving types.
         from griptape.drivers import (
+            BaseAudioTranscriptionDriver,
             BaseConversationMemoryDriver,
-            BasePromptDriver,
+            BaseEmbeddingDriver,
             BaseImageGenerationDriver,
             BaseImageQueryDriver,
-            BaseEmbeddingDriver,
-            BaseVectorStoreDriver,
+            BasePromptDriver,
             BaseTextToSpeechDriver,
-            BaseAudioTranscriptionDriver,
+            BaseVectorStoreDriver,
         )
+        from griptape.memory.structure import Run
         from griptape.structures import Structure
-        from griptape.common import (
-            PromptStack,
-            Message,
-            Reference,
-            ToolAction,
-            BaseMessageContent,
-            BaseDeltaMessageContent,
-        )
         from griptape.tokenizers.base_tokenizer import BaseTokenizer
         from griptape.tools import BaseTool
-        from griptape.memory.structure import Run
-        from typing import Any
-        from griptape.artifacts import BaseArtifact
+        from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
 
         boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
         Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any

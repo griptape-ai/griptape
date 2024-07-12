@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+
 from attrs import define
+
 from griptape.artifacts import TextArtifact
 
 

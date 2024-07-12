@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import define, field
 
@@ -10,8 +10,9 @@ from griptape.utils import import_optional_dependency
 from griptape.utils.hash import str_to_hash
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseEmbeddingDriver
     from pandas import DataFrame
+
+    from griptape.drivers import BaseEmbeddingDriver
 
 
 @define

@@ -1,8 +1,11 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Any
-from griptape.utils import str_to_hash, import_optional_dependency
-from griptape.drivers import BaseVectorStoreDriver
+
+from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import define, field
+
+from griptape.drivers import BaseVectorStoreDriver
+from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:
     import pinecone

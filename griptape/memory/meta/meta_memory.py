@@ -1,4 +1,5 @@
 from attrs import define, field
+
 from griptape.memory.meta import BaseMetaEntry
 
 

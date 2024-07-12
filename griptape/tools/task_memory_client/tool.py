@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from attrs import define
-from schema import Schema, Literal
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, BaseArtifact
+from schema import Literal, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 

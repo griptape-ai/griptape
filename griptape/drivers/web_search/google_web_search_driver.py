@@ -1,8 +1,10 @@
-from attrs import define, field
-from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.drivers import BaseWebSearchDriver
-import requests
 import json
+
+import requests
+from attrs import define, field
+
+from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.drivers import BaseWebSearchDriver
 
 
 @define
