@@ -65,6 +65,30 @@ class TestToolkitSubtask:
                     "type": "object",
                     "properties": {
                         "name": {"const": "MockTool"},
+                        "path": {"description": "test description: foo", "const": "test_exception"},
+                        "input": {
+                            "type": "object",
+                            "properties": {
+                                "values": {
+                                    "description": "Test input",
+                                    "type": "object",
+                                    "properties": {"test": {"type": "string"}},
+                                    "required": ["test"],
+                                    "additionalProperties": False,
+                                }
+                            },
+                            "required": ["values"],
+                            "additionalProperties": False,
+                        },
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "input", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_list_output"},
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
                         "input": {"additionalProperties": False, "properties": {}, "required": [], "type": "object"},

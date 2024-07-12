@@ -58,6 +58,29 @@ class TestAmazonBedrockPromptDriver:
         },
         {
             "toolSpec": {
+                "description": "test description: foo",
+                "inputSchema": {
+                    "json": {
+                        "$id": "http://json-schema.org/draft-07/schema#",
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": False,
+                        "properties": {
+                            "values": {
+                                "additionalProperties": False,
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "type": "object",
+                            }
+                        },
+                        "required": ["values"],
+                        "type": "object",
+                    }
+                },
+                "name": "MockTool_test_exception",
+            }
+        },
+        {
+            "toolSpec": {
                 "description": "test description",
                 "inputSchema": {
                     "json": {

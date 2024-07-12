@@ -162,3 +162,33 @@ class TestActionsSubtask:
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
+
+    def test_execute_tool(self):
+        valid_input = (
+            "Thought: need to test\n"
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]'
+        )
+
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        subtask.execute()
+
+        assert isinstance(subtask.output, ListArtifact)
+        assert isinstance(subtask.output.value[0], TextArtifact)
+        assert subtask.output.value[0].value == "ack value"
+
+    def test_execute_tool_exception(self):
+        valid_input = (
+            "Thought: need to test\n"
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test_exception","input": {"values": {"test": "value"}}}]'
+        )
+
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        subtask.execute()
+
+        assert isinstance(subtask.output, ListArtifact)
+        assert isinstance(subtask.output.value[0], ErrorArtifact)
+        assert subtask.output.value[0].value == "error value"
