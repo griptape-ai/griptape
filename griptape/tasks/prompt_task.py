@@ -51,9 +51,9 @@ class PromptTask(RuleMixin, BaseTask):
         if self.output:
             stack.add_assistant_message(self.output)
 
-        if memory:
-            # inserting at index 1 to place memory right after system prompt
-            memory.add_to_prompt_stack(stack, 1)
+        if memory is not None:
+            # insert memory into the stack right before the user messages
+            memory.add_to_prompt_stack(stack, 1 if system_template else 0)
 
         return stack
 
