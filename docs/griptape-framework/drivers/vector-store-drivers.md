@@ -49,7 +49,6 @@ results = vector_store_driver.query(
 values = [r.to_artifact().value for r in results]
 
 print("\n\n".join(values))
-
 ```
 
 ### Griptape Cloud Knowledge Base
@@ -73,7 +72,6 @@ results =vector_store_driver.query(query="What is griptape?")
 values = [r.to_artifact().value for r in results]
 
 print("\n\n".join(values))
-
 ```
 
 ### Pinecone
@@ -86,49 +84,27 @@ The [PineconeVectorStoreDriver](../../reference/griptape/drivers/vector/pinecone
 Here is an example of how the Driver can be used to load and query information in a Pinecone cluster:
 
 ```python
-import os
-import hashlib
-import json
-from urllib.request import urlopen
+import os 
+from griptape.artifacts import BaseArtifact
 from griptape.drivers import PineconeVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.loaders import WebLoader
 
-def load_data(driver: PineconeVectorStoreDriver) -> None:
-    response = urlopen(
-        "https://raw.githubusercontent.com/wedeploy-examples/"
-        "supermarket-web-example/master/products.json"
-    )
-
-    for product in json.loads(response.read()):
-        driver.upsert_text(
-            product["description"],
-            vector_id=hashlib.md5(product["title"].encode()).hexdigest(),
-            meta={
-                "title": product["title"],
-                "description": product["description"],
-                "type": product["type"],
-                "price": product["price"],
-                "rating": product["rating"],
-            },
-            namespace="supermarket-products",
-        )
 
 # Initialize an Embedding Driver
 embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
 
-vector_store_driver = PineconeVectorStoreDriver(
-    api_key=os.environ["PINECONE_API_KEY"],
-    environment=os.environ["PINECONE_ENVIRONMENT"],
-    index_name=os.environ['PINECONE_INDEX_NAME'],
-    embedding_driver=embedding_driver,
-)
+vector_store_driver = PineconeVectorStoreDriver(embedding_driver=embedding_driver)
 
-load_data(vector_store_driver)
+# Load Artifacts from the web
+artifacts = WebLoader(max_tokens=100).load("https://www.griptape.ai")
+
+# Upsert Artifacts into the Vector Store Driver
+[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
 
 results = vector_store_driver.query(
-    "fruit",
+    "creativity",
     count=3,
-    filter={"price": {"$lte": 15}, "rating": {"$gte": 4}},
-    namespace="supermarket-products",
+    namespace="griptape"
 )
 
 values = [r.to_artifact().value for r in results]
