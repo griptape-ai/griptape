@@ -438,8 +438,7 @@ Here is an example of how the Driver can be used to query information in a Qdran
 
 ```python
 import os
-from griptape.drivers import QdrantVectorStoreDriver, HuggingFaceHubEmbeddingDriver
-from griptape.tokenizers import HuggingFaceTokenizer
+from griptape.drivers import QdrantVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
 # Set up environment variables
