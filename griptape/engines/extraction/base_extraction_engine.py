@@ -26,7 +26,7 @@ class BaseExtractionEngine(ABC):
         kw_only=True,
     )
 
-    @max_token_multiplier.validator  # pyright: ignore
+    @max_token_multiplier.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_max_token_multiplier(self, _, max_token_multiplier: int) -> None:
         if max_token_multiplier > 1:
             raise ValueError("has to be less than or equal to 1")

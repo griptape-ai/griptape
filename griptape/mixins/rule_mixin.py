@@ -19,7 +19,7 @@ class RuleMixin:
     rules: list[Rule] = field(factory=list, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
-    @rulesets.validator  # pyright: ignore
+    @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
@@ -27,7 +27,7 @@ class RuleMixin:
         if self.rules:
             raise ValueError("Can't have both rulesets and rules specified.")
 
-    @rules.validator  # pyright: ignore
+    @rules.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_rules(self, _, rules: list[Rule]) -> None:
         if not rules:
             return

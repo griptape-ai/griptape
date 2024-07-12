@@ -43,7 +43,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         if self.task_memory:
             self.set_default_tools_memory(self.task_memory)
 
-    @tools.validator  # pyright: ignore
+    @tools.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_tools(self, _, tools: list[BaseTool]) -> None:
         tool_names = [t.name for t in tools]
 

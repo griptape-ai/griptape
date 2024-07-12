@@ -31,7 +31,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     table_name: str = field(kw_only=True, metadata={"serializable": True})
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
-    @connection_string.validator  # pyright: ignore
+    @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
@@ -44,7 +44,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         if not connection_string.startswith("postgresql://"):
             raise ValueError("The connection string must describe a Postgres database connection")
 
-    @engine.validator  # pyright: ignore
+    @engine.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_engine(self, _, engine: Optional[Engine]) -> None:
         # If a connection string is provided, an engine does not need to be provided.
         if self.connection_string is not None:
@@ -141,7 +141,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
-            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore
+            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore[reportOptionalCall]
 
             filter_kwargs: Optional[OrderedDict] = None
 
