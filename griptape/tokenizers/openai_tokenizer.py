@@ -120,9 +120,9 @@ class OpenAiTokenizer(BaseTokenizer):
                 return self.count_tokens(text, model="gpt-4-0613")
             else:
                 raise NotImplementedError(
-                    f"""token_count() is not implemented for model {model}. 
-                    See https://github.com/openai/openai-python/blob/main/chatml.md for 
-                    information on how messages are converted to tokens.""",
+                    f"""token_count() is not implemented for model {model}.
+                    See https://github.com/openai/openai-python/blob/main/chatml.md for
+                    information on how messages are converted to tokens."""
                 )
 
             num_tokens = 0
