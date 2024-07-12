@@ -1,24 +1,27 @@
 from __future__ import annotations
+
 import logging
 import uuid
 from abc import ABC, abstractmethod
 from logging import Logger
 from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import Factory, define, field
 from rich.logging import RichHandler
-from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
-from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
+from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
-    VectorStoreRetrievalRagModule,
-    RulesetsBeforeResponseRagModule,
-    PromptResponseRagModule,
     MetadataBeforeResponseRagModule,
+    PromptResponseRagModule,
+    RulesetsBeforeResponseRagModule,
+    VectorStoreRetrievalRagModule,
 )
-from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
+from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory import TaskMemory
@@ -28,10 +31,10 @@ from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorag
 from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
-    from griptape.rules import Rule, Ruleset
     from griptape.events import BaseEvent, EventListener
-    from griptape.tasks import BaseTask
     from griptape.memory.structure import BaseConversationMemory
+    from griptape.rules import Rule, Ruleset
+    from griptape.tasks import BaseTask
 
 
 @define

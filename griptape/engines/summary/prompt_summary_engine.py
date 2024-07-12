@@ -1,13 +1,15 @@
 from typing import Optional, cast
-from attrs import define, Factory, field
-from griptape.artifacts import TextArtifact, ListArtifact
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.drivers import BasePromptDriver
 from griptape.engines import BaseSummaryEngine
-from griptape.utils import J2
 from griptape.rules import Ruleset
+from griptape.utils import J2
 
 
 @define

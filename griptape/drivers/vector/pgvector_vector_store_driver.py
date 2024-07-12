@@ -1,15 +1,17 @@
 import uuid
-from typing import Optional, Any, cast
-from attrs import define, field, Factory
+from collections import OrderedDict
 from dataclasses import dataclass
+from typing import Any, Optional, cast
+
+from attrs import Factory, define, field
+from sqlalchemy import JSON, Column, String, create_engine
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.engine import Engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session
+
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
-from sqlalchemy.engine import Engine
-from sqlalchemy import create_engine, Column, String, JSON
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Session
-from collections import OrderedDict
 
 
 @define

@@ -1,6 +1,7 @@
 from typing import Optional
 
 from attrs import define, field
+
 from griptape.artifacts import AudioArtifact, TextArtifact
 from griptape.drivers import BaseAudioTranscriptionDriver
 from griptape.exceptions import DummyException

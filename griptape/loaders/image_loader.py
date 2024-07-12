@@ -5,9 +5,9 @@ from typing import Optional, cast
 
 from attrs import define, field
 
-from griptape.utils import import_optional_dependency
 from griptape.artifacts import ImageArtifact
 from griptape.loaders import BaseLoader
+from griptape.utils import import_optional_dependency
 
 
 @define

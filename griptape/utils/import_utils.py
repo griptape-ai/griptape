@@ -2,7 +2,6 @@ from importlib import import_module
 from types import ModuleType
 from typing import Optional
 
-
 INSTALL_MAPPING = {
     "huggingface_hub": "huggingface-hub",
     "pinecone": "pinecone-client",

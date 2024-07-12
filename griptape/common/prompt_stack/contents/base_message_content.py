@@ -2,13 +2,17 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
+
 from attrs import define, field
+
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
-    from .base_delta_message_content import BaseDeltaMessageContent
     from collections.abc import Sequence
+
     from griptape.artifacts.base_artifact import BaseArtifact
+
+    from .base_delta_message_content import BaseDeltaMessageContent
 
 
 @define

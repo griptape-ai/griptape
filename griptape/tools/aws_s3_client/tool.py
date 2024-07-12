@@ -1,11 +1,14 @@
 from __future__ import annotations
+
 import io
-from typing import Any, TYPE_CHECKING
-from schema import Schema, Literal
-from attrs import define, field, Factory
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact
-from griptape.utils.decorators import activity
+from typing import TYPE_CHECKING, Any
+
+from attrs import Factory, define, field
+from schema import Literal, Schema
+
+from griptape.artifacts import BlobArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.tools import BaseAwsClient
+from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
     from mypy_boto3_s3 import Client

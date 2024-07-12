@@ -1,13 +1,14 @@
 from __future__ import annotations
+
 import base64
 import hashlib
-
-from attrs import define, field
 from typing import TYPE_CHECKING
 
+from attrs import define, field
+
 if TYPE_CHECKING:
-    from griptape.tasks import BaseTask
     from griptape.structures import Structure
+    from griptape.tasks import BaseTask
 
 
 @define

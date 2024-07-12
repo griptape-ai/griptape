@@ -1,6 +1,9 @@
 from __future__ import annotations
-from attrs import define, field
+
 from typing import Optional
+
+from attrs import define, field
+
 from griptape.exceptions import DummyException
 from griptape.tokenizers import BaseTokenizer
 

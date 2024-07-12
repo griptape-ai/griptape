@@ -1,13 +1,15 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 from abc import abstractmethod
+from typing import TYPE_CHECKING
+
 from attrs import define
-from schema import Schema, Literal
+from schema import Literal, Schema
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
-    from griptape.tools import BaseTool
     from griptape.tasks import ActionsSubtask
+    from griptape.tools import BaseTool
 
 
 @define(slots=False)

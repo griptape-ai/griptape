@@ -1,9 +1,11 @@
 from __future__ import annotations
-from typing import Callable, Any, TYPE_CHECKING
-from attrs import define, field, Factory
-from schema import Schema, Literal
-from griptape.artifacts import ErrorArtifact, BaseArtifact
-from griptape.artifacts import ListArtifact
+
+from typing import TYPE_CHECKING, Any, Callable
+
+from attrs import Factory, define, field
+from schema import Literal, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 

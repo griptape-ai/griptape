@@ -1,7 +1,10 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any, Callable
-from attrs import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, ErrorArtifact, TextArtifact
+
+from typing import TYPE_CHECKING, Any, Callable, Optional
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 

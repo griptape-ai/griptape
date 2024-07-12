@@ -1,5 +1,7 @@
 import uuid
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.mixins import SerializableMixin
 

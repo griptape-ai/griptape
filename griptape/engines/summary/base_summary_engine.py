@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Optional
+
 from attrs import define
-from griptape.artifacts import TextArtifact, ListArtifact
+
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.rules import Ruleset
 
 

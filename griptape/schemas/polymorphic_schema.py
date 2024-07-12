@@ -1,5 +1,7 @@
 from typing import Any
-from marshmallow import ValidationError, Schema
+
+from marshmallow import Schema, ValidationError
+
 from griptape.schemas import BaseSchema
 
 

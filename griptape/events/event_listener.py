@@ -1,10 +1,13 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Callable
-from attrs import define, field, Factory
+
+from typing import TYPE_CHECKING, Callable, Optional
+
+from attrs import Factory, define, field
 
 if TYPE_CHECKING:
-    from .base_event import BaseEvent
     from griptape.drivers import BaseEventListenerDriver
+
+    from .base_event import BaseEvent
 
 
 @define

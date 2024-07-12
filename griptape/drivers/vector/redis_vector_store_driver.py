@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 import json
+from typing import TYPE_CHECKING, Optional
+
 import numpy as np
-from griptape.utils import import_optional_dependency, str_to_hash
-from typing import Optional, TYPE_CHECKING
-from attrs import define, field, Factory
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseVectorStoreDriver
+from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:
     from redis import Redis

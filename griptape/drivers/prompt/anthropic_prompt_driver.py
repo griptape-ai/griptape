@@ -15,18 +15,18 @@ from griptape.artifacts import (
     TextArtifact,
 )
 from griptape.common import (
+    ActionCallDeltaMessageContent,
     ActionCallMessageContent,
     ActionResultMessageContent,
     BaseDeltaMessageContent,
     BaseMessageContent,
-    ActionCallDeltaMessageContent,
     DeltaMessage,
-    TextDeltaMessageContent,
     ImageMessageContent,
-    PromptStack,
     Message,
-    ToolAction,
+    PromptStack,
+    TextDeltaMessageContent,
     TextMessageContent,
+    ToolAction,
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
@@ -34,6 +34,7 @@ from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from anthropic import Client
     from anthropic.types import ContentBlock, ContentBlockDeltaEvent, ContentBlockStartEvent
 

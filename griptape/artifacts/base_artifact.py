@@ -1,10 +1,13 @@
 from __future__ import annotations
-from griptape.mixins import SerializableMixin
-from typing import Any, TYPE_CHECKING, Optional
+
 import json
 import uuid
 from abc import ABC, abstractmethod
-from attrs import define, field, Factory
+from typing import TYPE_CHECKING, Any, Optional
+
+from attrs import Factory, define, field
+
+from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.common import Reference

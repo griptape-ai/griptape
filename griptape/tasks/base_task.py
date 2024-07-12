@@ -4,17 +4,17 @@ import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional, Callable
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 
-from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
+from griptape.events import FinishTaskEvent, StartTaskEvent
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
-    from griptape.structures import Structure
     from griptape.memory.meta import BaseMetaEntry
+    from griptape.structures import Structure
 
 
 @define

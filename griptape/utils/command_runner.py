@@ -1,6 +1,8 @@
 import subprocess
+
 from attrs import define
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 
 
 @define

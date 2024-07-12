@@ -1,6 +1,8 @@
 from typing import Optional
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
 from jinja2 import Environment, FileSystemLoader
+
 from .paths import abs_path
 
 

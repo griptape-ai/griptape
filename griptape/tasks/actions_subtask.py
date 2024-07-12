@@ -1,17 +1,19 @@
 from __future__ import annotations
+
 import json
 import re
-from typing import Optional, TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Optional
 
 import schema
 from attrs import define, field
+
 from griptape import utils
+from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import ToolAction
-from griptape.utils import remove_null_values_in_dict_recursively
+from griptape.events import FinishActionsSubtaskEvent, StartActionsSubtaskEvent
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact, ListArtifact, ActionArtifact
-from griptape.events import StartActionsSubtaskEvent, FinishActionsSubtaskEvent
+from griptape.utils import remove_null_values_in_dict_recursively
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory

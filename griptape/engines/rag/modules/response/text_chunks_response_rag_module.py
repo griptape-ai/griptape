@@ -1,4 +1,5 @@
 from attrs import define
+
 from griptape.artifacts import ListArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseResponseRagModule

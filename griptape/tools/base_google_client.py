@@ -1,7 +1,9 @@
 from abc import ABC
+from typing import Any, Optional
+
 from attrs import define, field
+
 from griptape.tools import BaseTool
-from typing import Optional, Any
 
 
 @define

@@ -4,7 +4,7 @@ from typing import Any, TypeVar
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact, ListArtifact, BaseArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import BaseMessageContent, TextMessageContent
 
 from .base_message import BaseMessage

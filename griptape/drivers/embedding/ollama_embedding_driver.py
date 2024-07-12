@@ -1,8 +1,11 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from attrs import define, field, Factory
-from griptape.utils import import_optional_dependency
+
+from typing import TYPE_CHECKING, Optional
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEmbeddingDriver
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from ollama import Client

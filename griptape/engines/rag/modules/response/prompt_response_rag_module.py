@@ -1,5 +1,7 @@
 from typing import Callable
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.drivers import BasePromptDriver
 from griptape.engines.rag import RagContext

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.rules import Ruleset, Rule
+from griptape.rules import Rule, Ruleset
 
 if TYPE_CHECKING:
     from griptape.structures import Structure

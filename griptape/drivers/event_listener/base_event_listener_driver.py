@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from concurrent import futures
 from logging import Logger
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
+
 from attrs import Factory, define, field
 
 if TYPE_CHECKING:

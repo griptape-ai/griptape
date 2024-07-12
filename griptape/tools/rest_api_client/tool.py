@@ -1,12 +1,14 @@
 from textwrap import dedent
 from typing import Optional
 from urllib.parse import urljoin
+
 import schema
-from schema import Schema, Literal
 from attrs import define, field
+from schema import Literal, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
 
 
 @define
@@ -51,7 +53,7 @@ class RestApiClient(BaseTool):
         }
     )
     def put(self, params: dict) -> BaseArtifact:
-        from requests import put, exceptions
+        from requests import exceptions, put
 
         values = params["values"]
         base_url = self.base_url
@@ -86,7 +88,7 @@ class RestApiClient(BaseTool):
         }
     )
     def patch(self, params: dict) -> BaseArtifact:
-        from requests import patch, exceptions
+        from requests import exceptions, patch
 
         values = params["values"]
         base_url = self.base_url
@@ -115,7 +117,7 @@ class RestApiClient(BaseTool):
         }
     )
     def post(self, params: dict) -> BaseArtifact:
-        from requests import post, exceptions
+        from requests import exceptions, post
 
         values = params["values"]
         base_url = self.base_url
@@ -151,7 +153,7 @@ class RestApiClient(BaseTool):
         }
     )
     def get(self, params: dict) -> BaseArtifact:
-        from requests import get, exceptions
+        from requests import exceptions, get
 
         values = params["values"]
         base_url = self.base_url

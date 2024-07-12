@@ -1,9 +1,12 @@
 from __future__ import annotations
-from typing import Optional, Any
-from attrs import define, field, Factory
-from griptape.utils import import_optional_dependency
+
+from typing import Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import VoyageAiTokenizer
+from griptape.utils import import_optional_dependency
 
 
 @define

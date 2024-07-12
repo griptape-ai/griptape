@@ -1,8 +1,9 @@
 import logging
 from abc import ABC
-from attrs import define, field
-from tenacity import Retrying, wait_exponential, stop_after_attempt, retry_if_not_exception_type
 from typing import Callable
+
+from attrs import define, field
+from tenacity import Retrying, retry_if_not_exception_type, stop_after_attempt, wait_exponential
 
 
 @define(slots=False)

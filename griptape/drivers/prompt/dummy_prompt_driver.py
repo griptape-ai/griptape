@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from attrs import Factory, define, field
 
 from griptape.drivers import BasePromptDriver
 from griptape.exceptions import DummyException
 from griptape.tokenizers import DummyTokenizer
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from griptape.common import PromptStack, Message, DeltaMessage
     from collections.abc import Iterator
+
+    from griptape.common import DeltaMessage, Message, PromptStack
 
 
 @define

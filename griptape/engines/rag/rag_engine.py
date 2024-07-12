@@ -1,5 +1,7 @@
 from typing import Optional
+
 from attrs import define, field
+
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.stages import QueryRagStage, ResponseRagStage, RetrievalRagStage
 

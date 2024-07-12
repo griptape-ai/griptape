@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from attrs import define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import BaseMessageContent, BaseDeltaMessageContent, TextDeltaMessageContent
-from typing import TYPE_CHECKING
+from griptape.common import BaseDeltaMessageContent, BaseMessageContent, TextDeltaMessageContent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

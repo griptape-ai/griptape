@@ -6,13 +6,14 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, TextMessageContent, DeltaMessage
+from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     import boto3
 
     from griptape.common import PromptStack

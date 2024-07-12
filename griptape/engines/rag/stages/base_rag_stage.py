@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from concurrent import futures
 from typing import Callable
-from collections.abc import Sequence
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRagModule
 

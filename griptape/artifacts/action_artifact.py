@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from attrs import define, field
 from typing import TYPE_CHECKING
+
+from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
 from griptape.mixins import SerializableMixin

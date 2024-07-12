@@ -2,20 +2,20 @@ from attrs import Factory, define, field
 
 from griptape.config import StructureConfig
 from griptape.drivers import (
+    BaseAudioTranscriptionDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
     BaseImageQueryDriver,
     BasePromptDriver,
+    BaseTextToSpeechDriver,
     BaseVectorStoreDriver,
     LocalVectorStoreDriver,
+    OpenAiAudioTranscriptionDriver,
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
     OpenAiImageGenerationDriver,
-    BaseTextToSpeechDriver,
-    OpenAiTextToSpeechDriver,
-    BaseAudioTranscriptionDriver,
-    OpenAiAudioTranscriptionDriver,
     OpenAiImageQueryDriver,
+    OpenAiTextToSpeechDriver,
 )
 
 

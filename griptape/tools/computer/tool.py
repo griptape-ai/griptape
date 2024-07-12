@@ -1,20 +1,22 @@
 from __future__ import annotations
+
 import logging
 import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
-from attrs import define, field, Factory
-from docker.models.containers import Container
-from schema import Schema, Literal
-import stringcase
+from typing import TYPE_CHECKING, Optional
+
 import docker
+import stringcase
+from attrs import Factory, define, field
 from docker.errors import NotFound
+from docker.models.containers import Container
+from schema import Literal, Schema
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-
 
 if TYPE_CHECKING:
     from docker import DockerClient

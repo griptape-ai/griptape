@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from attrs import define, field, Factory
-from griptape.utils import import_optional_dependency
+
+from attrs import Factory, define, field
+
 from griptape.tokenizers import BaseTokenizer
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from transformers import PreTrainedTokenizerBase

@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
-from typing import Optional
 
 if TYPE_CHECKING:
     from griptape.artifacts import BlobArtifact

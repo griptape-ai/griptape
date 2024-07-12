@@ -1,12 +1,15 @@
 from __future__ import annotations
-import logging
+
 import base64
+import logging
 from email.message import EmailMessage
-from schema import Schema, Literal
+
 from attrs import define, field
-from griptape.artifacts import InfoArtifact, ErrorArtifact
-from griptape.utils.decorators import activity
+from schema import Literal, Schema
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact
 from griptape.tools import BaseGoogleClient
+from griptape.utils.decorators import activity
 
 
 @define

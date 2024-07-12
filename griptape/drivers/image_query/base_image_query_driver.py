@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
-from typing import Optional, TYPE_CHECKING
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.events import StartImageQueryEvent, FinishImageQueryEvent
+from griptape.events import FinishImageQueryEvent, StartImageQueryEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextArtifact, ImageArtifact
+    from griptape.artifacts import ImageArtifact, TextArtifact
     from griptape.structures import Structure
 
 

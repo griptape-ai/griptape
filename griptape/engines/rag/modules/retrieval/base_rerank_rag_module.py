@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Sequence
+from collections.abc import Sequence
 
 from attrs import define, field
+
 from griptape.artifacts import BaseArtifact
 from griptape.drivers import BaseRerankDriver
 from griptape.engines.rag import RagContext

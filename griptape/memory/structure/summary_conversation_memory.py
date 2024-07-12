@@ -1,11 +1,14 @@
 from __future__ import annotations
+
 import logging
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field, Factory
-from griptape.common.prompt_stack.messages.message import Message
-from griptape.utils import J2
+
+from attrs import Factory, define, field
+
 from griptape.common import PromptStack
+from griptape.common.prompt_stack.messages.message import Message
 from griptape.memory.structure import ConversationMemory
+from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
