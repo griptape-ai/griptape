@@ -1,11 +1,14 @@
 from __future__ import annotations
+
 import os
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+from schema import Literal, Schema
+
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import BaseFileManagerDriver, LocalFileManagerDriver
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
 
 
 @define

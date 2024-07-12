@@ -1,7 +1,7 @@
 import functools
+
 import schema
 from schema import Schema
-
 
 CONFIG_SCHEMA = Schema({"description": str, schema.Optional("schema"): Schema})
 

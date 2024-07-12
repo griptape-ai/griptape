@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from attrs import field, Factory, define
 import requests
+from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseWebScraperDriver

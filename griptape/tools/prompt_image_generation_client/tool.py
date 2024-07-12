@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from attrs import define, field
-from schema import Schema, Literal
-
-from griptape.tools import BaseTool
-from griptape.utils.decorators import activity
-from griptape.mixins import BlobArtifactFileOutputMixin
 from typing import TYPE_CHECKING
 
+from attrs import define, field
+from schema import Literal, Schema
+
+from griptape.mixins import BlobArtifactFileOutputMixin
+from griptape.tools import BaseTool
+from griptape.utils.decorators import activity
+
 if TYPE_CHECKING:
-    from griptape.engines import PromptImageGenerationEngine
     from griptape.artifacts import ErrorArtifact, ImageArtifact
+    from griptape.engines import PromptImageGenerationEngine
 
 
 @define

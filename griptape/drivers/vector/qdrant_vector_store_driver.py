@@ -1,10 +1,13 @@
 from __future__ import annotations
+
+import logging
+import uuid
 from typing import Optional
+
 from attrs import define, field
+
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
-import uuid
-import logging
 
 DEFAULT_DISTANCE = "Cosine"
 CONTENT_PAYLOAD_KEY = "data"

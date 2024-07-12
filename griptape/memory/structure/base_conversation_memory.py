@@ -1,13 +1,16 @@
 from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
+
 from griptape.common import PromptStack
 from griptape.mixins import SerializableMixin
-from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
-    from griptape.memory.structure import Run
     from griptape.drivers import BaseConversationMemoryDriver
+    from griptape.memory.structure import Run
     from griptape.structures import Structure
 
 

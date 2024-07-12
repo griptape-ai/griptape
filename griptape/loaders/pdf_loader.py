@@ -1,14 +1,15 @@
 from __future__ import annotations
-from io import BytesIO
 
-from attrs import define, field, Factory
+from io import BytesIO
 from typing import Optional, Union, cast
 
+from attrs import Factory, define, field
+
+from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
+from griptape.chunkers import PdfChunker
 from griptape.loaders import BaseTextLoader
 from griptape.utils import import_optional_dependency
-from griptape.artifacts import TextArtifact
-from griptape.chunkers import PdfChunker
 
 
 @define

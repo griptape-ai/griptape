@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.events import StartImageGenerationEvent, FinishImageGenerationEvent
+from griptape.events import FinishImageGenerationEvent, StartImageGenerationEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:

@@ -1,9 +1,9 @@
 import json
 import time
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 import requests
-from attrs import field, define, Factory
+from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver

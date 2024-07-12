@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver

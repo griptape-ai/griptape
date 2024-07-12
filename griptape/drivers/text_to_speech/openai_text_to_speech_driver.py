@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 import openai
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver

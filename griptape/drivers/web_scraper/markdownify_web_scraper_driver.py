@@ -1,6 +1,8 @@
 import re
 from typing import Optional
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseWebScraperDriver
 from griptape.utils import import_optional_dependency

@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any
+
 from attrs import define
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact, InfoArtifact
+    from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, TextArtifact
 
 
 @define

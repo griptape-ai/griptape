@@ -1,6 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
+
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:

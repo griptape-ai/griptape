@@ -1,13 +1,16 @@
 from __future__ import annotations
+
 import logging
-from typing import Any, Optional
-import schema
-from schema import Schema, Literal, Or
-from attrs import define, field
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, BlobArtifact, TextArtifact
-from griptape.utils.decorators import activity
-from griptape.tools import BaseGoogleClient
 from io import BytesIO
+from typing import Any, Optional
+
+import schema
+from attrs import define, field
+from schema import Literal, Or, Schema
+
+from griptape.artifacts import BlobArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.tools import BaseGoogleClient
+from griptape.utils.decorators import activity
 
 
 @define

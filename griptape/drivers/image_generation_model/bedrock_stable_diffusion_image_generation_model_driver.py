@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import base64
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from attrs import field, define
+from attrs import define, field
 
 from griptape.drivers import BaseImageGenerationModelDriver
 

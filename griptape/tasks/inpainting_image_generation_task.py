@@ -4,8 +4,8 @@ from typing import Callable
 
 from attrs import define, field
 
+from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 from griptape.engines import InpaintingImageGenerationEngine
-from griptape.artifacts import ImageArtifact, TextArtifact, ListArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 

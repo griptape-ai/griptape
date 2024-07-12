@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import requests
-
 from attrs import define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver

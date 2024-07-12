@@ -1,5 +1,5 @@
-from attrs import field
-from attrs import define
+from attrs import define, field
+
 from griptape.events.base_event import BaseEvent
 
 

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import os
 from abc import ABC
+from typing import TYPE_CHECKING
 
-from attrs import field, define
+from attrs import define, field
 
 from griptape.loaders import ImageLoader
-from griptape.mixins import RuleMixin, BlobArtifactFileOutputMixin
-from griptape.rules import Ruleset, Rule
+from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
+from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from griptape.artifacts import MediaArtifact

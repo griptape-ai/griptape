@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 import json
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 

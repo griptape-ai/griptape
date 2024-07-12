@@ -1,4 +1,5 @@
-from attrs import field, define
+from attrs import define, field
+
 from griptape.rules import Rule
 
 

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
-from attrs import define, field, Factory
-from schema import Schema, Literal
+from attrs import Factory, define, field
+from schema import Literal, Schema
 
-from griptape.artifacts import ErrorArtifact, AudioArtifact, TextArtifact
+from griptape.artifacts import AudioArtifact, ErrorArtifact, TextArtifact
 from griptape.loaders.audio_loader import AudioLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory

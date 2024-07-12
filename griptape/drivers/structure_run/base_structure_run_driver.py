@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from attrs import define, Factory, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact
 

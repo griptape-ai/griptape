@@ -7,18 +7,18 @@ import openai
 from attrs import Factory, define, field
 from schema import Schema
 
-from griptape.artifacts import TextArtifact, ActionArtifact
+from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.common import (
+    ActionCallDeltaMessageContent,
     ActionCallMessageContent,
     ActionResultMessageContent,
     BaseDeltaMessageContent,
     BaseMessageContent,
-    ActionCallDeltaMessageContent,
     DeltaMessage,
-    TextDeltaMessageContent,
     ImageMessageContent,
-    PromptStack,
     Message,
+    PromptStack,
+    TextDeltaMessageContent,
     TextMessageContent,
     ToolAction,
 )
@@ -27,6 +27,7 @@ from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from openai.types.chat.chat_completion_chunk import ChoiceDelta
     from openai.types.chat.chat_completion_message import ChatCompletionMessage
 

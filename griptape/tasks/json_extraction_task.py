@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from attrs import define, field
+
 from griptape.engines import JsonExtractionEngine
 from griptape.tasks import ExtractionTask
 

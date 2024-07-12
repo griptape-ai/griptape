@@ -1,13 +1,15 @@
 from __future__ import annotations
+
 import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
-from typing import Any, Callable
-from typing import Optional, TYPE_CHECKING
-from attrs import define, field, Factory
+from typing import TYPE_CHECKING, Any, Callable, Optional
+
+from attrs import Factory, define, field
+
 from griptape import utils
-from griptape.artifacts import TextArtifact, BaseArtifact, ListArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:

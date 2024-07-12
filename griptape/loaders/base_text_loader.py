@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Union, cast, TYPE_CHECKING
-from attrs import define, field, Factory
+from typing import TYPE_CHECKING, Any, Optional, Union, cast
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
-from griptape.chunkers import TextChunker, BaseChunker
+from griptape.chunkers import BaseChunker, TextChunker
 from griptape.loaders import BaseLoader
 from griptape.tokenizers import OpenAiTokenizer
 

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import base64
+import random
 import string
 import time
-import random
 from typing import Optional
 
 from attrs import define, field
+
 from griptape.artifacts import BlobArtifact
-import base64
 
 
 @define

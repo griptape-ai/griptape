@@ -1,12 +1,15 @@
 from __future__ import annotations
-from typing import Optional, cast, TYPE_CHECKING
+
 import json
-from attrs import field, Factory, define
-from griptape.artifacts import TextArtifact, ListArtifact, ErrorArtifact
+from typing import TYPE_CHECKING, Optional, cast
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
+from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
-from griptape.common import PromptStack
 
 if TYPE_CHECKING:
     from griptape.rules import Ruleset

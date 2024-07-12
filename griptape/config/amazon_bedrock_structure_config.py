@@ -1,9 +1,9 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 from attrs import Factory, define, field
 
-from griptape.drivers import BasePromptDriver
-from griptape.utils import import_optional_dependency
 from griptape.config import StructureConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
@@ -12,11 +12,13 @@ from griptape.drivers import (
     AmazonBedrockTitanEmbeddingDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
+    BasePromptDriver,
     BaseVectorStoreDriver,
     BedrockClaudeImageQueryModelDriver,
     BedrockTitanImageGenerationModelDriver,
     LocalVectorStoreDriver,
 )
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     import boto3

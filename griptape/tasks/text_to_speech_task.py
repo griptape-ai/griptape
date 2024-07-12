@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from attrs import define, field
 
-from griptape.engines import TextToSpeechEngine
 from griptape.artifacts import TextArtifact
+from griptape.engines import TextToSpeechEngine
 from griptape.tasks.base_audio_generation_task import BaseAudioGenerationTask
 from griptape.utils import J2
 

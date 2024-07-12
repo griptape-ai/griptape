@@ -1,5 +1,7 @@
 from typing import Optional
+
 from attrs import define, field
+
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
 from griptape.exceptions import DummyException

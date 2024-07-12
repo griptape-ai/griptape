@@ -4,12 +4,11 @@ from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
+from griptape.mixins import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
-from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.mixins import RuleMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver

@@ -1,13 +1,17 @@
 from __future__ import annotations
-from typing import Optional, Any, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape import utils
-from griptape.utils import import_optional_dependency
 from griptape.drivers import BaseVectorStoreDriver
-from attrs import define, field, Factory
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextArtifact
     import marqo
+
+    from griptape.artifacts import TextArtifact
 
 
 @define

@@ -4,13 +4,14 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
+from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import PromptStack, Message, DeltaMessage, TextDeltaMessageContent
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from huggingface_hub import InferenceClient
 
 

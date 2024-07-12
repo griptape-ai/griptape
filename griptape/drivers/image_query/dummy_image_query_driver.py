@@ -1,6 +1,6 @@
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact, ImageArtifact
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryDriver
 from griptape.exceptions import DummyException
 

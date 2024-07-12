@@ -1,4 +1,5 @@
 from attrs import define, field
+
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseBeforeResponseRagModule
 from griptape.rules import Ruleset

@@ -3,7 +3,7 @@ from typing import Optional, cast
 from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact
-from griptape.drivers import BaseSqlDriver, BaseEmbeddingDriver
+from griptape.drivers import BaseEmbeddingDriver, BaseSqlDriver
 from griptape.loaders import BaseLoader
 
 

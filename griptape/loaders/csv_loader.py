@@ -1,7 +1,8 @@
 from __future__ import annotations
+
 import csv
 from io import StringIO
-from typing import Optional, Union, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union, cast
 
 from attrs import define, field
 

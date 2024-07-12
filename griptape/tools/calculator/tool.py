@@ -1,7 +1,8 @@
+from schema import Literal, Schema
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
 
 
 class Calculator(BaseTool):

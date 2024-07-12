@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from abc import ABC
-from attrs import define, field
 from typing import TYPE_CHECKING, Optional
+
+from attrs import define, field
+
 from .base_task_event import BaseTaskEvent
 
 if TYPE_CHECKING:

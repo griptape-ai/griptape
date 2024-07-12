@@ -1,13 +1,15 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
 
 from griptape import utils
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact, TextArtifact
     from griptape.common import Reference
-    from griptape.artifacts import TextArtifact, BaseArtifact
 
 
 @define(kw_only=True)

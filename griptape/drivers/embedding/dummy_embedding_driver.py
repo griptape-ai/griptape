@@ -1,4 +1,5 @@
 from attrs import define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.exceptions import DummyException
 

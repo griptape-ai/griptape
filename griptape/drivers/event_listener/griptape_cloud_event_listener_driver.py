@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import os
-import requests
-
 from urllib.parse import urljoin
-from attrs import define, field, Factory
+
+import requests
+from attrs import Factory, define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 

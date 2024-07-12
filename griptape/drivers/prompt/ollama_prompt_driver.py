@@ -1,18 +1,27 @@
 from __future__ import annotations
+
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
+from griptape.common import (
+    DeltaMessage,
+    ImageMessageContent,
+    Message,
+    PromptStack,
+    TextDeltaMessageContent,
+    TextMessageContent,
+)
 from griptape.drivers import BasePromptDriver
-from griptape.common import PromptStack, TextMessageContent
-from griptape.utils import import_optional_dependency
 from griptape.tokenizers import SimpleTokenizer
-from griptape.common import Message, DeltaMessage, TextDeltaMessageContent
-from griptape.common import ImageMessageContent
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from griptape.tokenizers.base_tokenizer import BaseTokenizer
     from ollama import Client
+
+    from griptape.tokenizers.base_tokenizer import BaseTokenizer
 
 
 @define

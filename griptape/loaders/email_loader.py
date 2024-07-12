@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import Optional, Union, cast
-import logging
 import imaplib
+import logging
+from typing import Optional, Union, cast
 
 from attrs import astuple, define, field
 
-from griptape.utils import import_optional_dependency
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.loaders import BaseLoader
+from griptape.utils import import_optional_dependency
 
 
 @define

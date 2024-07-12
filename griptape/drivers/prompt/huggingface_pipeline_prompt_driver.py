@@ -5,13 +5,14 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import DeltaMessage, PromptStack, Message, TextMessageContent
+from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from transformers import TextGenerationPipeline
 
 
