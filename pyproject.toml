@@ -212,7 +212,8 @@ select = [
     "PGH", # pygrep-hooks
     "I", # isort
     "FA", # flake8-future-annotations
-    "COM" # flake8-commas
+    "COM", # flake8-commas
+    "C4", # flake8-comprehensions
 ]
 ignore = [
     "UP007", # non-pep604-annotation

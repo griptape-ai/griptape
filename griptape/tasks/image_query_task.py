@@ -78,7 +78,7 @@ class ImageQueryTask(BaseTask):
     def run(self) -> TextArtifact:
         query = self.input.value[0]
 
-        if all([isinstance(input, ImageArtifact) for input in self.input.value[1:]]):
+        if all(isinstance(input, ImageArtifact) for input in self.input.value[1:]):
             image_artifacts = [input for input in self.input.value[1:] if isinstance(input, ImageArtifact)]
         else:
             raise ValueError("All inputs after the query must be ImageArtifacts.")

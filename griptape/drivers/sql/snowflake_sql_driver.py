@@ -59,7 +59,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
 
             if results is not None:
                 if results.returns_rows:
-                    return [{column: value for column, value in result.items()} for result in results]
+                    return [dict(result.items()) for result in results]
                 else:
                     return None
             else:
