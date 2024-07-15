@@ -128,7 +128,7 @@ class ActionsSubtask(BaseTask):
         with self.futures_executor_fn() as executor:
             results = utils.execute_futures_dict({a.tag: executor.submit(self.execute_action, a) for a in actions})
 
-        return [r for r in results.values()]
+        return list(results.values())
 
     def execute_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
