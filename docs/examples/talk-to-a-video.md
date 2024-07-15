@@ -1,5 +1,5 @@
 We can use Google Gemini's [native video input](https://ai.google.dev/gemini-api/docs/vision?lang=python#prompting-video) capabilities to ask questions about [a video](https://www.youtube.com/watch?v=XXuIBHO4qa8).
-In this example, we upload a video file using Gemini's file API, and then pass the result using the [GenericArtifact](../../reference/griptape/artifacts/generic_artifact.md) to the Agent.
+In this example, we upload a video file using Gemini's file API, and then pass the result using the [GenericArtifact](../reference/griptape/artifacts/generic_artifact.md) to the Agent.
 Note that because we are using Gemini-specific features, this will not work with other [Prompt Drivers](../griptape-framework/drivers/prompt-drivers.md).
 
 ```python

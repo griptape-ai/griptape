@@ -160,6 +160,7 @@ nav:
           - Talk to Redshift: "examples/talk-to-redshift.md"
           - Talk to a Webpage: "examples/talk-to-a-webpage.md"
           - Talk to a PDF: "examples/talk-to-a-pdf.md"
+          - Talk to a Video: "examples/talk-to-a-video.md"
           - Multi Agent Workflows: "examples/multi-agent-workflow.md"
           - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
           - Chat Sessions with Amazon DynamoDB: "examples/amazon-dynamodb-sessions.md"
