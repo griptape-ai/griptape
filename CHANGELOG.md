@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
 
 ### Changed
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.does_entry_exist` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.load_artifacts` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_vector` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.query` optional arguments are now keyword-only arguments.
+- **BREAKING**: `EventListener.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: `BaseEventListenerDriver.publish_event`'s `flush` argument is now a keyword-only argument.
 
 ### Fixed
 - Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.

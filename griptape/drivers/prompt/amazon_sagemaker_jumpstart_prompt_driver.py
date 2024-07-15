@@ -40,7 +40,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     )
 
     @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_stream(self, _: Attribute, stream: bool) -> None:
+    def validate_stream(self, _: Attribute, stream: bool) -> None:  # noqa: FBT001
         if stream:
             raise ValueError("streaming is not supported")
 

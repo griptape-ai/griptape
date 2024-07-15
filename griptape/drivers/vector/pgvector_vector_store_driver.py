@@ -62,6 +62,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
     def setup(
         self,
+        *,
         create_schema: bool = True,
         install_uuid_extension: bool = True,
         install_vector_extension: bool = True,
@@ -79,6 +80,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -93,7 +95,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return str(getattr(obj, "id"))
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
         with Session(self.engine) as session:
             result = session.get(self._model, vector_id)
@@ -105,7 +107,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 meta=getattr(result, "meta"),
             )
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from the collection, optionally filtering to only those that match the provided namespace."""
         with Session(self.engine) as session:
             query = session.query(self._model)
@@ -127,6 +129,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,

@@ -44,18 +44,24 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     def upsert_text_artifacts(
         self,
         artifacts: list[TextArtifact] | dict[str, list[TextArtifact]],
+        *,
         meta: Optional[dict] = None,
         **kwargs,
     ) -> None:
         with self.futures_executor_fn() as executor:
             if isinstance(artifacts, list):
                 utils.execute_futures_list(
-                    [executor.submit(self.upsert_text_artifact, a, None, meta, **kwargs) for a in artifacts],
+                    [
+                        executor.submit(self.upsert_text_artifact, a, namespace=None, meta=meta, **kwargs)
+                        for a in artifacts
+                    ],
                 )
             else:
                 utils.execute_futures_dict(
                     {
-                        namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
+                        namespace: executor.submit(
+                            self.upsert_text_artifact, a, namespace=namespace, meta=meta, **kwargs
+                        )
                         for namespace, artifact_list in artifacts.items()
                         for a in artifact_list
                     },
@@ -64,6 +70,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     def upsert_text_artifact(
         self,
         artifact: TextArtifact,
+        *,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         vector_id: Optional[str] = None,
@@ -75,7 +82,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             value = artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
             vector_id = self._get_default_vector_id(value)
 
-        if self.does_entry_exist(vector_id, namespace):
+        if self.does_entry_exist(vector_id, namespace=namespace):
             return vector_id
         else:
             meta["artifact"] = artifact.to_json()
@@ -90,6 +97,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     def upsert_text(
         self,
         string: str,
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -97,7 +105,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     ) -> str:
         vector_id = self._get_default_vector_id(string) if vector_id is None else vector_id
 
-        if self.does_entry_exist(vector_id, namespace):
+        if self.does_entry_exist(vector_id, namespace=namespace):
             return vector_id
         else:
             return self.upsert_vector(
@@ -108,14 +116,14 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
                 **kwargs,
             )
 
-    def does_entry_exist(self, vector_id: str, namespace: Optional[str] = None) -> bool:
+    def does_entry_exist(self, vector_id: str, *, namespace: Optional[str] = None) -> bool:
         try:
-            return self.load_entry(vector_id, namespace) is not None
+            return self.load_entry(vector_id, namespace=namespace) is not None
         except Exception:
             return False
 
-    def load_artifacts(self, namespace: Optional[str] = None) -> ListArtifact:
-        result = self.load_entries(namespace)
+    def load_artifacts(self, *, namespace: Optional[str] = None) -> ListArtifact:
+        result = self.load_entries(namespace=namespace)
         artifacts = [r.to_artifact() for r in result]
 
         return ListArtifact([a for a in artifacts if isinstance(a, TextArtifact)])
@@ -127,6 +135,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -134,15 +143,16 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
     ) -> str: ...
 
     @abstractmethod
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[Entry]: ...
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[Entry]: ...
 
     @abstractmethod
-    def load_entries(self, namespace: Optional[str] = None) -> list[Entry]: ...
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[Entry]: ...
 
     @abstractmethod
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,

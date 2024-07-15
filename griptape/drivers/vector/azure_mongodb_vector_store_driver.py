@@ -14,6 +14,7 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,

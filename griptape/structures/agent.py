@@ -25,7 +25,7 @@ class Agent(Structure):
     fail_fast: bool = field(default=False, kw_only=True)
 
     @fail_fast.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_fail_fast(self, _: Attribute, fail_fast: bool) -> None:
+    def validate_fail_fast(self, _: Attribute, fail_fast: bool) -> None:  # noqa: FBT001
         if fail_fast:
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
 

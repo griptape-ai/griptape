@@ -93,7 +93,7 @@ class TestQdrantVectorStoreDriver:
             count = 10
             include_vectors = True
 
-            results = driver.query(query, count, include_vectors=include_vectors)
+            results = driver.query(query, count=count, include_vectors=include_vectors)
 
             mock_embed.assert_called_once_with(query)
             mock_search.assert_called_once_with(
