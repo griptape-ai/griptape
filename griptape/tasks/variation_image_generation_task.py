@@ -29,10 +29,12 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
     """
 
     _image_generation_engine: VariationImageGenerationEngine = field(
-        default=None, kw_only=True, alias="image_generation_engine"
+        default=None,
+        kw_only=True,
+        alias="image_generation_engine",
     )
     _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact = field(
-        default=None
+        default=None,
     )
 
     @property
@@ -60,7 +62,7 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         if self._image_generation_engine is None:
             if self.structure is not None:
                 self._image_generation_engine = VariationImageGenerationEngine(
-                    image_generation_driver=self.structure.config.image_generation_driver
+                    image_generation_driver=self.structure.config.image_generation_driver,
                 )
             else:
                 raise ValueError("Image Generation Engine is not set.")

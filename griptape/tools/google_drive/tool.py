@@ -41,10 +41,10 @@ class GoogleDriveClient(BaseGoogleClient):
                         default=DEFAULT_FOLDER_PATH,
                         description="Path of the Google Drive folder (like 'MainFolder/Subfolder1/Subfolder2') "
                         "from which files should be listed.",
-                    ): str
-                }
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def list_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
@@ -54,7 +54,10 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                self.LIST_FILES_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
+                self.LIST_FILES_SCOPES,
+                self.SERVICE_NAME,
+                self.SERVICE_VERSION,
+                self.owner_email,
             )
 
             if folder_path == self.DEFAULT_FOLDER_PATH:
@@ -88,9 +91,9 @@ class GoogleDriveClient(BaseGoogleClient):
                         "where the file should be saved.",
                         default=DEFAULT_FOLDER_PATH,
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def save_memory_artifacts_to_drive(self, params: dict) -> ErrorArtifact | InfoArtifact:
         values = params["values"]
@@ -103,7 +106,10 @@ class GoogleDriveClient(BaseGoogleClient):
 
             if artifacts:
                 service = self._build_client(
-                    self.DRIVE_FILE_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
+                    self.DRIVE_FILE_SCOPES,
+                    self.SERVICE_NAME,
+                    self.SERVICE_VERSION,
+                    self.owner_email,
                 )
 
                 if folder_path == self.DEFAULT_FOLDER_PATH:
@@ -141,9 +147,9 @@ class GoogleDriveClient(BaseGoogleClient):
                         "For example, 'foo/bar/baz.txt'",
                     ): str,
                     "content": str,
-                }
+                },
             ),
-        }
+        },
     )
     def save_content_to_drive(self, params: dict) -> ErrorArtifact | InfoArtifact:
         content = params["values"]["content"]
@@ -165,10 +171,10 @@ class GoogleDriveClient(BaseGoogleClient):
                         "paths",
                         description="List of paths to files to be loaded in the POSIX format. "
                         "For example, ['foo/bar/file1.txt', 'foo/bar/file2.txt']",
-                    ): [str]
-                }
+                    ): [str],
+                },
             ),
-        }
+        },
     )
     def download_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         from google.auth.exceptions import MalformedError
@@ -179,7 +185,10 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                self.LIST_FILES_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
+                self.LIST_FILES_SCOPES,
+                self.SERVICE_NAME,
+                self.SERVICE_VERSION,
+                self.owner_email,
             )
 
             for path in values["paths"]:
@@ -230,9 +239,9 @@ class GoogleDriveClient(BaseGoogleClient):
                         "where the search should be performed.",
                         default=DEFAULT_FOLDER_PATH,
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def search_files(self, params: dict) -> ListArtifact | ErrorArtifact:
         from google.auth.exceptions import MalformedError
@@ -245,7 +254,10 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                self.LIST_FILES_SCOPES, self.SERVICE_NAME, self.SERVICE_VERSION, self.owner_email
+                self.LIST_FILES_SCOPES,
+                self.SERVICE_NAME,
+                self.SERVICE_VERSION,
+                self.owner_email,
             )
 
             folder_id = None
@@ -296,9 +308,9 @@ class GoogleDriveClient(BaseGoogleClient):
                         "writer",  # pyright: ignore [reportArgumentType]
                         "commenter",  # pyright: ignore [reportArgumentType]
                     ),
-                }
+                },
             ),
-        }
+        },
     )
     def share_file(self, params: dict) -> InfoArtifact | ErrorArtifact:
         from google.auth.exceptions import MalformedError
@@ -311,7 +323,10 @@ class GoogleDriveClient(BaseGoogleClient):
 
         try:
             service = self._build_client(
-                scopes=self.DRIVE_AUTH_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
+                scopes=self.DRIVE_AUTH_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email,
             )
 
             if file_path.lower() == self.DEFAULT_FOLDER_PATH:
@@ -322,7 +337,9 @@ class GoogleDriveClient(BaseGoogleClient):
             if file_id:
                 batch_update_permission_request_body = {"role": role, "type": "user", "emailAddress": email_address}
                 request = service.permissions().create(
-                    fileId=file_id, body=batch_update_permission_request_body, fields="id"
+                    fileId=file_id,
+                    body=batch_update_permission_request_body,
+                    fields="id",
                 )
                 request.execute()
                 return InfoArtifact(f"File at {file_path} shared with {email_address} as a {role}")
@@ -336,7 +353,10 @@ class GoogleDriveClient(BaseGoogleClient):
             return ErrorArtifact(f"error sharing file: {e}")
 
     def _save_to_drive(
-        self, filename: str, value: Any, parent_folder_id: Optional[str] = None
+        self,
+        filename: str,
+        value: Any,
+        parent_folder_id: Optional[str] = None,
     ) -> InfoArtifact | ErrorArtifact:
         from googleapiclient.http import MediaIoBaseUpload  # pyright: ignore[reportMissingImports]
 

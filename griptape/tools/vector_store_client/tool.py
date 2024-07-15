@@ -30,7 +30,7 @@ class VectorStoreClient(BaseTool):
     vector_store_driver: BaseVectorStoreDriver = field()
     query_params: dict[str, Any] = field(factory=dict)
     process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], BaseArtifact] = field(
-        default=Factory(lambda: lambda es: ListArtifact([e.to_artifact() for e in es]))
+        default=Factory(lambda: lambda es: ListArtifact([e.to_artifact() for e in es])),
     )
 
     @activity(
@@ -39,11 +39,12 @@ class VectorStoreClient(BaseTool):
             "schema": Schema(
                 {
                     Literal(
-                        "query", description="A natural language search query to run against the vector database"
-                    ): str
-                }
+                        "query",
+                        description="A natural language search query to run against the vector database",
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def search(self, params: dict) -> BaseArtifact:
         query = params["values"]["query"]

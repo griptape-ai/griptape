@@ -64,8 +64,8 @@ class JsonExtractionEngine(BaseExtractionEngine):
         if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             extractions.extend(
                 self.json_to_text_artifacts(
-                    self.prompt_driver.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value
-                )
+                    self.prompt_driver.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
+                ),
             )
 
             return extractions
@@ -79,8 +79,8 @@ class JsonExtractionEngine(BaseExtractionEngine):
 
             extractions.extend(
                 self.json_to_text_artifacts(
-                    self.prompt_driver.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value
-                )
+                    self.prompt_driver.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
+                ),
             )
 
             return self._extract_rec(chunks[1:], json_template_schema, extractions, rulesets=rulesets)

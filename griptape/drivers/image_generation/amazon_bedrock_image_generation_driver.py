@@ -28,7 +28,7 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
 
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client(service_name="bedrock-runtime"), takes_self=True)
+        default=Factory(lambda self: self.session.client(service_name="bedrock-runtime"), takes_self=True),
     )
     image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})
     image_height: int = field(default=512, kw_only=True, metadata={"serializable": True})
@@ -36,7 +36,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         request = self.image_generation_model_driver.text_to_image_request_parameters(
-            prompts, self.image_width, self.image_height, negative_prompts=negative_prompts, seed=self.seed
+            prompts,
+            self.image_width,
+            self.image_height,
+            negative_prompts=negative_prompts,
+            seed=self.seed,
         )
 
         image_bytes = self._make_request(request)
@@ -51,10 +55,16 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_variation_request_parameters(
-            prompts, image=image, negative_prompts=negative_prompts, seed=self.seed
+            prompts,
+            image=image,
+            negative_prompts=negative_prompts,
+            seed=self.seed,
         )
 
         image_bytes = self._make_request(request)
@@ -76,7 +86,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_inpainting_request_parameters(
-            prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
+            prompts,
+            image=image,
+            mask=mask,
+            negative_prompts=negative_prompts,
+            seed=self.seed,
         )
 
         image_bytes = self._make_request(request)
@@ -98,7 +112,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         request = self.image_generation_model_driver.image_outpainting_request_parameters(
-            prompts, image=image, mask=mask, negative_prompts=negative_prompts, seed=self.seed
+            prompts,
+            image=image,
+            mask=mask,
+            negative_prompts=negative_prompts,
+            seed=self.seed,
         )
 
         image_bytes = self._make_request(request)
@@ -114,7 +132,10 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
 
     def _make_request(self, request: dict) -> bytes:
         response = self.bedrock_client.invoke_model(
-            body=json.dumps(request), modelId=self.model, accept="application/json", contentType="application/json"
+            body=json.dumps(request),
+            modelId=self.model,
+            accept="application/json",
+            contentType="application/json",
         )
 
         response_body = json.loads(response.get("body").read())

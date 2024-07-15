@@ -34,7 +34,8 @@ class BaseTask(ABC):
     structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+        kw_only=True,
     )
 
     @property
@@ -113,7 +114,7 @@ class BaseTask(ABC):
                     task_child_ids=self.child_ids,
                     task_input=self.input,
                     task_output=self.output,
-                )
+                ),
             )
 
     def after_run(self) -> None:
@@ -125,7 +126,7 @@ class BaseTask(ABC):
                     task_child_ids=self.child_ids,
                     task_input=self.input,
                     task_output=self.output,
-                )
+                ),
             )
 
     def execute(self) -> Optional[BaseArtifact]:

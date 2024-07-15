@@ -27,8 +27,9 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     client: Any = field(
         default=Factory(
-            lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key), takes_self=True
-        )
+            lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key),
+            takes_self=True,
+        ),
     )
     tokenizer: VoyageAiTokenizer = field(
         default=Factory(lambda self: VoyageAiTokenizer(model=self.model, api_key=self.api_key), takes_self=True),

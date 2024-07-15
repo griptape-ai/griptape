@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 @define
 class Agent(Structure):
     input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
-        default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value="")
+        default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)

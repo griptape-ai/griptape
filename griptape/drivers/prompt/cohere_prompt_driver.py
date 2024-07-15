@@ -45,10 +45,10 @@ class CoherePromptDriver(BasePromptDriver):
     api_key: str = field(metadata={"serializable": False})
     model: str = field(metadata={"serializable": True})
     client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True)
+        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
     )
     tokenizer: BaseTokenizer = field(
-        default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True)
+        default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
     )
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
@@ -71,7 +71,7 @@ class CoherePromptDriver(BasePromptDriver):
                 usage = event.response.meta.tokens
 
                 yield DeltaMessage(
-                    usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens)
+                    usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
                 )
             elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
                 yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(event))
@@ -91,7 +91,7 @@ class CoherePromptDriver(BasePromptDriver):
 
         # History messages
         history_messages = self.__to_cohere_messages(
-            [message for message in prompt_stack.messages[:-1] if not message.is_system()]
+            [message for message in prompt_stack.messages[:-1] if not message.is_system()],
         )
 
         # System message (preamble)
@@ -198,7 +198,7 @@ class CoherePromptDriver(BasePromptDriver):
                             }
                             for property_name, property_value in properties.items()
                         },
-                    }
+                    },
                 )
 
         return tool_definitions
@@ -217,11 +217,11 @@ class CoherePromptDriver(BasePromptDriver):
                                 name=ToolAction.from_native_tool_name(tool_call.name)[0],
                                 path=ToolAction.from_native_tool_name(tool_call.name)[1],
                                 input=tool_call.parameters,
-                            )
-                        )
+                            ),
+                        ),
                     )
                     for tool_call in response.tool_calls
-                ]
+                ],
             )
 
         return content

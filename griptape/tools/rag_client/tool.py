@@ -29,7 +29,7 @@ class RagClient(BaseTool):
         config={
             "description": "{{ _self.description }}",
             "schema": Schema({Literal("query", description="A natural language search query"): str}),
-        }
+        },
     )
     def search(self, params: dict) -> BaseArtifact:
         query = params["values"]["query"]

@@ -63,7 +63,7 @@ class Pipeline(Structure):
                 "parent_output": task.parents[0].output.to_text() if task.parents and task.parents[0].output else None,
                 "parent": task.parents[0] if task.parents else None,
                 "child": task.children[0] if task.children else None,
-            }
+            },
         )
 
         return context

@@ -19,7 +19,10 @@ class DummyImageGenerationDriver(BaseImageGenerationDriver):
         raise DummyException(__class__.__name__, "try_text_to_image")
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         raise DummyException(__class__.__name__, "try_image_variation")
 

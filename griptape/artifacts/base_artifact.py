@@ -19,7 +19,9 @@ class BaseArtifact(SerializableMixin, ABC):
     reference: Optional[Reference] = field(default=None, kw_only=True, metadata={"serializable": True})
     meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     name: str = field(
-        default=Factory(lambda self: self.id, takes_self=True), kw_only=True, metadata={"serializable": True}
+        default=Factory(lambda self: self.id, takes_self=True),
+        kw_only=True,
+        metadata={"serializable": True},
     )
     value: Any = field()
 

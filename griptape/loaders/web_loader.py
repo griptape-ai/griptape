@@ -15,7 +15,8 @@ if TYPE_CHECKING:
 @define
 class WebLoader(BaseTextLoader):
     web_scraper_driver: BaseWebScraperDriver = field(
-        default=Factory(lambda: TrafilaturaWebScraperDriver()), kw_only=True
+        default=Factory(lambda: TrafilaturaWebScraperDriver()),
+        kw_only=True,
     )
 
     def load(self, source: str, *args, **kwargs) -> ErrorArtifact | list[TextArtifact]:

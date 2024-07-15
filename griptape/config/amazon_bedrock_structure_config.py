@@ -35,7 +35,8 @@ class AmazonBedrockStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
         default=Factory(
             lambda self: AmazonBedrockPromptDriver(
-                session=self.session, model="anthropic.claude-3-5-sonnet-20240620-v1:0"
+                session=self.session,
+                model="anthropic.claude-3-5-sonnet-20240620-v1:0",
             ),
             takes_self=True,
         ),

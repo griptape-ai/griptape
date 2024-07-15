@@ -37,16 +37,20 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
 
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+        kw_only=True,
     )
 
     def upsert_text_artifacts(
-        self, artifacts: list[TextArtifact] | dict[str, list[TextArtifact]], meta: Optional[dict] = None, **kwargs
+        self,
+        artifacts: list[TextArtifact] | dict[str, list[TextArtifact]],
+        meta: Optional[dict] = None,
+        **kwargs,
     ) -> None:
         with self.futures_executor_fn() as executor:
             if isinstance(artifacts, list):
                 utils.execute_futures_list(
-                    [executor.submit(self.upsert_text_artifact, a, None, meta, **kwargs) for a in artifacts]
+                    [executor.submit(self.upsert_text_artifact, a, None, meta, **kwargs) for a in artifacts],
                 )
             else:
                 utils.execute_futures_dict(
@@ -54,7 +58,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
                         namespace: executor.submit(self.upsert_text_artifact, a, namespace, meta, **kwargs)
                         for namespace, artifact_list in artifacts.items()
                         for a in artifact_list
-                    }
+                    },
                 )
 
     def upsert_text_artifact(

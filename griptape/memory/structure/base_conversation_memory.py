@@ -80,7 +80,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
                 # Convert the Prompt Stack into tokens left.
                 tokens_left = prompt_driver.tokenizer.count_input_tokens_left(
-                    prompt_driver.prompt_stack_to_string(temp_stack)
+                    prompt_driver.prompt_stack_to_string(temp_stack),
                 )
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.

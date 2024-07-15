@@ -24,7 +24,7 @@ class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
     source: Any = field()
     query_params: dict[str, Any] = field(factory=dict)
     process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
-        default=Factory(lambda: lambda es: [e.to_artifact() for e in es])
+        default=Factory(lambda: lambda es: [e.to_artifact() for e in es]),
     )
 
     def run(self, context: RagContext) -> Sequence[TextArtifact]:

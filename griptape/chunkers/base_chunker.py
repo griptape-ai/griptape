@@ -15,13 +15,16 @@ class BaseChunker(ABC):
     DEFAULT_SEPARATORS = [ChunkSeparator(" ")]
 
     separators: list[ChunkSeparator] = field(
-        default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True),
+        kw_only=True,
     )
     tokenizer: BaseTokenizer = field(
-        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
+        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
+        kw_only=True,
     )
     max_tokens: int = field(
-        default=Factory(lambda self: self.tokenizer.max_input_tokens, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.tokenizer.max_input_tokens, takes_self=True),
+        kw_only=True,
     )
 
     @max_tokens.validator  # pyright: ignore[reportAttributeAccessIssue]
